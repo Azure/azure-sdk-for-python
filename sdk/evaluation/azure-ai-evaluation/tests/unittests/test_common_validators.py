@@ -77,9 +77,7 @@ class TestConversationValidator:
 
     def test_valid_conversation(self):
         validator = ConversationValidator(error_target=TARGET)
-        eval_input = {
-            "conversation": {"messages": [_user_message(), _assistant_message()]}
-        }
+        eval_input = {"conversation": {"messages": [_user_message(), _assistant_message()]}}
         assert validator.validate_eval_input(eval_input) is True
 
     def test_query_not_required(self):
@@ -96,46 +94,34 @@ class TestConversationValidator:
     def test_empty_query_list_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input(
-                {"query": [], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": [], "response": [_assistant_message()]})
         assert exc_info.value.category == ErrorCategory.MISSING_FIELD
 
     def test_empty_query_string_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": "", "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": "", "response": [_assistant_message()]})
 
     def test_query_wrong_type_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input(
-                {"query": 123, "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": 123, "response": [_assistant_message()]})
         assert exc_info.value.category == ErrorCategory.INVALID_VALUE
 
     def test_message_not_dict_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": ["not a dict"], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": ["not a dict"], "response": [_assistant_message()]})
 
     def test_message_missing_role_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": [{"content": "hi"}], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": [{"content": "hi"}], "response": [_assistant_message()]})
 
     def test_message_missing_content_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": [{"role": "user"}], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": [{"role": "user"}], "response": [_assistant_message()]})
 
     def test_empty_content_raises(self):
         validator = ConversationValidator(error_target=TARGET)
@@ -151,17 +137,13 @@ class TestConversationValidator:
         validator = ConversationValidator(error_target=TARGET)
         bad = {"role": "user", "content": [{"text": "hi"}]}
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": [bad], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": [bad], "response": [_assistant_message()]})
 
     def test_user_message_invalid_content_type_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         bad = {"role": "user", "content": [{"type": "tool_call", "text": "hi"}]}
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": [bad], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": [bad], "response": [_assistant_message()]})
 
     def test_assistant_message_with_tool_call(self):
         validator = ConversationValidator(error_target=TARGET)
@@ -174,26 +156,18 @@ class TestConversationValidator:
         bad_item = {"type": "tool_call", "arguments": {}, "tool_call_id": "1"}
         assistant = {"role": "assistant", "content": [bad_item]}
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": [_user_message()], "response": [assistant]}
-            )
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
 
     def test_unsupported_tool_raises_when_enabled(self):
-        validator = ConversationValidator(
-            error_target=TARGET, check_for_unsupported_tools=True
-        )
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
         unsupported = _tool_call_content_item(name="bing_grounding")
         assistant = {"role": "assistant", "content": [unsupported]}
         with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input(
-                {"query": [_user_message()], "response": [assistant]}
-            )
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
         assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
 
     def test_unsupported_tool_allowed_when_disabled(self):
-        validator = ConversationValidator(
-            error_target=TARGET, check_for_unsupported_tools=False
-        )
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=False)
         unsupported = _tool_call_content_item(name="bing_grounding")
         assistant = {"role": "assistant", "content": [unsupported]}
         eval_input = {"query": [_user_message()], "response": [assistant]}
@@ -226,24 +200,18 @@ class TestConversationValidator:
         validator = ConversationValidator(error_target=TARGET)
         tool_msg = {"role": "tool", "tool_call_id": "call_1", "content": "result"}
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"query": [tool_msg], "response": [_assistant_message()]}
-            )
+            validator.validate_eval_input({"query": [tool_msg], "response": [_assistant_message()]})
 
 
 @pytest.mark.unittest
 class TestToolDefinitionsValidator:
     def test_optional_tool_definitions_absent_ok(self):
-        validator = ToolDefinitionsValidator(
-            error_target=TARGET, optional_tool_definitions=True
-        )
+        validator = ToolDefinitionsValidator(error_target=TARGET, optional_tool_definitions=True)
         eval_input = {"query": [_user_message()], "response": [_assistant_message()]}
         assert validator.validate_eval_input(eval_input) is True
 
     def test_required_tool_definitions_absent_raises(self):
-        validator = ToolDefinitionsValidator(
-            error_target=TARGET, optional_tool_definitions=False
-        )
+        validator = ToolDefinitionsValidator(error_target=TARGET, optional_tool_definitions=False)
         eval_input = {"query": [_user_message()], "response": [_assistant_message()]}
         with pytest.raises(EvaluationException) as exc_info:
             validator.validate_eval_input(eval_input)
@@ -294,9 +262,7 @@ class TestToolDefinitionsValidator:
         eval_input = {
             "query": [_user_message()],
             "response": [_assistant_message()],
-            "tool_definitions": [
-                {"type": "openapi", "functions": [_tool_definition()]}
-            ],
+            "tool_definitions": [{"type": "openapi", "functions": [_tool_definition()]}],
         }
         assert validator.validate_eval_input(eval_input) is True
 
@@ -485,17 +451,13 @@ class TestTaskNavigationEfficiencyValidator:
     def test_response_none_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input(
-                {"response": None, "ground_truth": ["search"]}
-            )
+            validator.validate_eval_input({"response": None, "ground_truth": ["search"]})
         assert exc_info.value.category == ErrorCategory.MISSING_FIELD
 
     def test_response_not_list_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"response": {"role": "user"}, "ground_truth": ["search"]}
-            )
+            validator.validate_eval_input({"response": {"role": "user"}, "ground_truth": ["search"]})
 
     def test_action_missing_role_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
@@ -525,30 +487,22 @@ class TestTaskNavigationEfficiencyValidator:
     def test_ground_truth_empty_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"response": self._response(), "ground_truth": []}
-            )
+            validator.validate_eval_input({"response": self._response(), "ground_truth": []})
 
     def test_ground_truth_wrong_type_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"response": self._response(), "ground_truth": 123}
-            )
+            validator.validate_eval_input({"response": self._response(), "ground_truth": 123})
 
     def test_ground_truth_list_non_string_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"response": self._response(), "ground_truth": ["search", 1]}
-            )
+            validator.validate_eval_input({"response": self._response(), "ground_truth": ["search", 1]})
 
     def test_ground_truth_tuple_wrong_length_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input(
-                {"response": self._response(), "ground_truth": (["search"],)}
-            )
+            validator.validate_eval_input({"response": self._response(), "ground_truth": (["search"],)})
 
     def test_ground_truth_tuple_params_not_dict_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
@@ -621,15 +575,11 @@ class TestMessagesOrQueryResponseInputValidator:
             validator.validate_eval_input({"messages": self._messages()})
 
     def test_no_enforce_tool_definitions_ok(self):
-        validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, enforce_tool_definitions=False
-        )
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, enforce_tool_definitions=False)
         assert validator.validate_eval_input({"messages": self._messages()}) is True
 
     def test_query_response_fallback_no_enforce_tool_definitions(self):
-        validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, enforce_tool_definitions=False
-        )
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, enforce_tool_definitions=False)
         eval_input = {"query": [_user_message()], "response": [_assistant_message()]}
         assert validator.validate_eval_input(eval_input) is True
 
@@ -678,17 +628,12 @@ class TestUnsupportedToolsListConversationValidator:
 
     def test_unsupported_list_exact_match(self):
         # Defensive: keep the list explicit so future additions surface here.
-        assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(
-            STILL_UNSUPPORTED_TOOLS
-        )
+        assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(STILL_UNSUPPORTED_TOOLS)
 
     def test_tool_definitions_validator_inherits_same_list(self):
         # TCS / TOU use ``ToolDefinitionsValidator``; it must not silently
         # diverge from the shared default.
-        assert (
-            ToolDefinitionsValidator.UNSUPPORTED_TOOLS
-            is ConversationValidator.UNSUPPORTED_TOOLS
-        )
+        assert ToolDefinitionsValidator.UNSUPPORTED_TOOLS is ConversationValidator.UNSUPPORTED_TOOLS
 
 
 @pytest.mark.unittest
@@ -710,17 +655,13 @@ class TestUnsupportedToolsListGroundednessValidator:
 
     @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
     def test_groundedness_validator_still_rejects_newly_enabled_tools(self, tool_name):
-        validator = GroundednessConversationValidator(
-            error_target=TARGET, check_for_unsupported_tools=True
-        )
+        validator = GroundednessConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
         }
         with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input(
-                {"query": [_user_message()], "response": [assistant]}
-            )
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
         assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
 
 
@@ -730,9 +671,7 @@ class TestConversationValidatorAcceptsNewlyEnabledTools:
 
     @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
     def test_validate_eval_input_accepts_tool(self, tool_name):
-        validator = ConversationValidator(
-            error_target=TARGET, check_for_unsupported_tools=True
-        )
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
@@ -742,9 +681,7 @@ class TestConversationValidatorAcceptsNewlyEnabledTools:
 
     @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
     def test_tool_definitions_validator_accepts_tool(self, tool_name):
-        validator = ToolDefinitionsValidator(
-            error_target=TARGET, check_for_unsupported_tools=True
-        )
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
@@ -759,17 +696,13 @@ class TestConversationValidatorRejectsStillUnsupportedTools:
 
     @pytest.mark.parametrize("tool_name", STILL_UNSUPPORTED_TOOLS)
     def test_validate_eval_input_rejects_tool(self, tool_name):
-        validator = ConversationValidator(
-            error_target=TARGET, check_for_unsupported_tools=True
-        )
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
         }
         with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input(
-                {"query": [_user_message()], "response": [assistant]}
-            )
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
         assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
 
 
@@ -788,9 +721,7 @@ class TestUnsupportedToolCheckOptOut:
         NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS,
     )
     def test_opt_out_skips_unsupported_tool_check(self, tool_name):
-        validator = ToolDefinitionsValidator(
-            error_target=TARGET, check_for_unsupported_tools=False
-        )
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=False)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
