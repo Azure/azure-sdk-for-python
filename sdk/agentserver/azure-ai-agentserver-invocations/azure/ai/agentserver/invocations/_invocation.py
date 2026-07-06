@@ -208,6 +208,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         self._invoke_fn: Optional[Callable] = None
         self._get_invocation_fn: Optional[Callable] = None
         self._cancel_invocation_fn: Optional[Callable] = None
+        # asyncapi_spec_* are validated eagerly: a stringified dict passed as
+        # asyncapi_spec_yaml is technically valid YAML and would silently reach
+        # clients as a single-line JSON blob. openapi_spec is left unchecked to
+        # preserve backward-compat with existing callers passing dict-like
+        # Mapping subclasses; consider unifying in a future release.
         if asyncapi_spec_json is not None and not isinstance(asyncapi_spec_json, dict):
             raise TypeError(
                 f"asyncapi_spec_json must be dict, got {type(asyncapi_spec_json).__name__}"
@@ -422,7 +427,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 status_code=404,
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
-        return Response(spec, media_type="application/yaml")
+        return Response(spec, media_type="application/yaml; charset=utf-8")
 
     def _wrap_streaming_response(
         self,

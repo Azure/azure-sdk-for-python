@@ -167,15 +167,13 @@ async def test_asyncapi_representations_are_independent():
         assert (await client.get("/invocations/docs/asyncapi.json")).status_code == 404
 
 
-@pytest.mark.asyncio
-async def test_asyncapi_json_rejects_non_dict():
+def test_asyncapi_json_rejects_non_dict():
     """Constructor rejects non-dict asyncapi_spec_json to avoid silent misuse."""
     with pytest.raises(TypeError, match="asyncapi_spec_json must be dict"):
         InvocationAgentServerHost(asyncapi_spec_json="not a dict")  # type: ignore[arg-type]
 
 
-@pytest.mark.asyncio
-async def test_asyncapi_yaml_rejects_non_str():
+def test_asyncapi_yaml_rejects_non_str():
     """Constructor rejects non-str asyncapi_spec_yaml to avoid stringified dict leaking to client."""
     with pytest.raises(TypeError, match="asyncapi_spec_yaml must be str"):
         InvocationAgentServerHost(asyncapi_spec_yaml={"not": "a string"})  # type: ignore[arg-type]
