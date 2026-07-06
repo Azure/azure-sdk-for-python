@@ -1,5 +1,39 @@
 # Release History
 
+## 3.0.0b1 (2026-07-06)
+
+### Features Added
+
+  - Model `MonitoredSubscriptionProperties` added property `system_data`
+  - Model `OpenAIIntegrationRPModel` added property `system_data`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `TrackedResource`
+  - Added model `createAndAssociateIPFilterOperations`
+  - Added model `createAndAssociatePLFilterOperations`
+  - Added model `listAssociatedTrafficFiltersOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `MicrosoftElastic`
+  - Deleted or renamed model `ConnectedPartnerResourcesListResponse`
+  - Deleted or renamed model `ElasticMonitorResourceListResponse`
+  - Deleted or renamed model `ElasticVersionsListResponse`
+  - Deleted or renamed model `MonitoredResourceListResponse`
+  - Deleted or renamed model `MonitoredSubscriptionPropertiesList`
+  - Deleted or renamed model `MonitoringTagRulesListResponse`
+  - Deleted or renamed model `OpenAIIntegrationRPModelListResponse`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `VMHostListResponse`
+  - Method `AssociateTrafficFilterOperations.begin_associate` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `DetachAndDeleteTrafficFilterOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `DetachTrafficFilterOperations.begin_update` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ElasticVersionsOperations.list` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
+  - Method `TrafficFiltersOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `CreateAndAssociateIPFilterOperations`
+  - Deleted or renamed model `CreateAndAssociatePLFilterOperations`
+  - Deleted or renamed model `ListAssociatedTrafficFiltersOperations`
+
 ## 2.0.0 (2025-11-17)
 
 ### Features Added
