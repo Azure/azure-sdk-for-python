@@ -26,12 +26,12 @@
   - Method `JobsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `JobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `JobsOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Operation group `DataBoxManagementClientOperationsMixin` renamed to `_DataBoxManagementClientOperationsMixin`
 
 ### Other Changes
 
   - Deleted model `AvailableSkusResult`/`JobResourceList`/`OperationList`/`UnencryptedCredentialsList` which actually were not used by SDK users
   - Deleted model `ArmBaseObject` which actually was not used by SDK users
+  - Operation group `DataBoxManagementClientOperationsMixin` renamed to `_DataBoxManagementClientOperationsMixin`
 
 ## 3.1.0 (2025-03-18)
 
