@@ -15,7 +15,7 @@ from azure.search.documents.indexes.models import (
     SearchableField,
     SimpleField,
 )
-from tests._capabilities import require_capability
+from _capabilities import require_capability
 
 
 INDEX_NAME = "hotels"
