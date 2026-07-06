@@ -293,6 +293,29 @@ def _make_slow_completing_handler():
     return handler
 
 
+def _make_idle_gap_handler(gap_seconds: float):
+    """Handler that stays idle between response.created and response.completed for
+    longer than the keep-alive interval, so keep-alive comments are emitted while
+    the client remains connected."""
+    handler_completed = asyncio.Event()
+
+    def handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created()
+            await asyncio.sleep(gap_seconds)
+            yield stream.emit_completed()
+            handler_completed.set()
+
+        return _events()
+
+    handler.handler_completed = handler_completed
+    return handler
+
+
 # ════════════════════════════════════════════════════════════
 # T036: bg+stream — client disconnects after 3 events,
 # handler produces 10 total → GET returns completed with all output
@@ -562,3 +585,21 @@ async def test_bg_stream_disconnect_does_not_cancel_handler_with_keep_alive() ->
         )
     finally:
         await _ensure_task_done(post_task, handler)
+
+
+@pytest.mark.asyncio
+async def test_bg_stream_emits_keep_alive_comments_while_connected() -> None:
+    """bg+stream with keep-alive enabled: while the client stays connected and the
+    handler is idle longer than the keep-alive interval, keep-alive comments are
+    emitted on the background stream (exercises the emission path, not just setup)."""
+    handler = _make_idle_gap_handler(gap_seconds=1.5)
+    client = _build_client_keep_alive(handler, keep_alive_seconds=1)
+
+    response = await client.post(
+        "/responses",
+        json_body={"model": "test", "background": True, "stream": True, "store": True},
+    )
+
+    assert response.status_code == 200
+    body = response.body.decode()
+    assert ": keep-alive" in body, "background stream should emit keep-alive comments while the client is connected"
