@@ -56,7 +56,7 @@ optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
     # ------------------------------------------------------------------

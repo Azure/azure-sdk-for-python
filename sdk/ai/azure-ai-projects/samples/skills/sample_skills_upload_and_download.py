@@ -62,7 +62,7 @@ skill_source_dir = Path(__file__).parent / "assets/team-status-update"
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
     try:

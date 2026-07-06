@@ -14,6 +14,11 @@
 
 * Placeholder
 
+### Sample updates
+
+* Added new Hosted Agent sample `sample_agent_user_identity_isolation.py` under `samples/hosted_agents/`, demonstrating per-user response-chain isolation with delegated end-user identities sent in the `x-ms-user-identity` header.
+* Updated Hosted Agent toolbox asset `samples/hosted_agents/assets/toolbox-agent/main.py` to use `FoundryToolbox` and `as_skills_provider()` for toolbox MCP skill discovery and wiring, replacing the earlier manual MCP session, auth, and HTTP client setup.
+* Updated Hosted Agent asset requirements under `samples/hosted_agents/assets/toolbox-agent/requirements.txt` to use new versions of `agent-framework-foundry` and `agent-framework-foundry-hosting`
 
 ## 2.3.0 (2026-07-01)
 

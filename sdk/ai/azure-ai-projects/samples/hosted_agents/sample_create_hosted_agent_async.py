@@ -55,7 +55,6 @@ async def main() -> None:
         AIProjectClient(
             endpoint=endpoint,
             credential=credential,
-            allow_preview=True,
         ) as project_client,
     ):
         created = await project_client.agents.create_version(
