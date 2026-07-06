@@ -930,13 +930,10 @@ def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=
         return messages
 
 
-<<<<<<< HEAD
-=======
 # Runtime tool-call statuses that indicate a failed or incomplete execution.
 _FAILED_RUNTIME_STATUSES = frozenset({"failed", "incomplete"})
 
 
->>>>>>> origin/main
 def _stringify_tool_result(result):
     """Render a tool_result value as a string the LLM judge can read.
 
@@ -997,8 +994,6 @@ def _log_safe_summary(obj):
         return f"type={type(obj).__name__} (summary unavailable)"
 
 
-<<<<<<< HEAD
-=======
 def _coerce_bool(value) -> Optional[bool]:
     """Coerce an LLM output value to bool or None.
 
@@ -1117,7 +1112,6 @@ def _collect_failed_tool_calls(messages):
     return ordered
 
 
->>>>>>> origin/main
 def _get_tool_calls_results(agent_response_msgs):
     """Extract formatted agent tool calls and results from a response.
 
@@ -1194,8 +1188,6 @@ def _reformat_tool_calls_results(response, logger=None):
         return response
 
 
-<<<<<<< HEAD
-=======
 def _get_conversation_history_with_tool_calls(query, include_system_messages=False):
     """Parse conversation history, rendering tool calls/results inline within agent turns.
 
@@ -1286,7 +1278,6 @@ def _get_conversation_history_with_tool_calls(query, include_system_messages=Fal
     return result
 
 
->>>>>>> origin/main
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
 
