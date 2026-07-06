@@ -1046,7 +1046,7 @@ class JobOperations(_ScopeDependentOperations):
         refreshed = self._get_job(name)
         if refreshed.properties.job_type == RestJobType.PIPELINE:
             refreshed = self._get_job_2401(name)
-        return Job._from_rest_object(refreshed)
+        return self._resolve_azureml_id(Job._from_rest_object(refreshed))
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "Job.Stream", ActivityType.PUBLICAPI)

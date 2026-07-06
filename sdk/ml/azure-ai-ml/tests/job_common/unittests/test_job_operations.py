@@ -276,24 +276,29 @@ class TestJobOperations:
             mock_job_operation.update(name="random_name")
 
     @patch.object(Job, "_from_rest_object")
+    @patch.object(JobOperations, "_resolve_azureml_id")
     @patch.object(JobOperations, "_get_job")
     def test_update_routes_through_runhistory_patch(
-        self, mock_get_job, mock_from_rest, mock_job_operation: JobOperations
+        self, mock_get_job, mock_resolve, mock_from_rest, mock_job_operation: JobOperations
     ) -> None:
         """update() with fields must invoke add_or_modify_by_experiment_name exactly once with
-        the correct experiment_name / run_id and a CreateRun body carrying the supplied fields."""
+        the correct experiment_name / run_id and a CreateRun body carrying the supplied fields.
+        The returned entity must also be routed through _resolve_azureml_id so callers get the
+        same resolved view they'd get from jobs.get()."""
         from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 
         fake_job = Mock()
         fake_job.properties.job_type = RestJobType.COMMAND
         fake_job.properties.experiment_name = "exp1"
         mock_get_job.return_value = fake_job
+        resolved_job = Command(component=None)
         mock_from_rest.return_value = Command(component=None)
+        mock_resolve.return_value = resolved_job
         # Force the property to return a fresh mock so add_or_modify_by_experiment_name is
         # assertable (bypasses the lazy RunOperations construction that would fail on mocks).
         mock_job_operation._runs_operations_client = Mock()
 
-        mock_job_operation.update(
+        result = mock_job_operation.update(
             name="random_name",
             display_name="new dn",
             description="new desc",
@@ -311,19 +316,23 @@ class TestJobOperations:
         assert body.description == "new desc"
         assert body.tags == {"k": "v"}
         assert body.properties == {"pk": "pv"}
+        mock_resolve.assert_called_once()
+        assert result is resolved_job
 
     @patch.object(Job, "_from_rest_object")
+    @patch.object(JobOperations, "_resolve_azureml_id")
     @patch.object(JobOperations, "_get_job_2401")
     @patch.object(JobOperations, "_get_job")
     def test_update_pipeline_uses_2401_refetch(
         self,
         mock_get_job,
         mock_get_job_2401,
+        mock_resolve,
         mock_from_rest,
         mock_job_operation: JobOperations,
     ) -> None:
         """PIPELINE jobs must be re-fetched via _get_job_2401 to obtain the non-projected view
-        before the RunHistory PATCH is issued."""
+        before the RunHistory PATCH is issued. The refreshed entity is then resolved."""
         from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 
         pipeline_job = Mock()
@@ -332,6 +341,7 @@ class TestJobOperations:
         mock_get_job.return_value = pipeline_job
         mock_get_job_2401.return_value = pipeline_job
         mock_from_rest.return_value = Command(component=None)
+        mock_resolve.return_value = Command(component=None)
         mock_job_operation._runs_operations_client = Mock()
 
         mock_job_operation.update(name="random_name", display_name="new dn")
@@ -340,6 +350,7 @@ class TestJobOperations:
         # PIPELINE jobs); the RunHistory PATCH must still be issued.
         assert mock_get_job_2401.call_count >= 1
         mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name.assert_called_once()
+        mock_resolve.assert_called_once()
 
     @patch.object(JobOperations, "_get_job_2401")
     @patch.object(JobOperations, "_get_job")
