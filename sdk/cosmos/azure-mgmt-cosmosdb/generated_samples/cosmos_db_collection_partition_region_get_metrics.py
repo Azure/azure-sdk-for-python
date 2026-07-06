@@ -37,12 +37,12 @@ def main():
         region="North Europe",
         database_rid="databaseRid",
         collection_rid="collectionRid",
-        filter="$filter=(name.value eq 'Max RUs Per Second') and timeGrain eq duration'PT1M' and startTime eq '2017-11-19T23:53:55.2780000Z' and endTime eq '2017-11-20T23:58:55.2780000Z",
+        filter="(name.value eq 'Max RUs Per Second') and timeGrain eq duration'PT1M' and startTime eq '2017-11-19T23:53:55.2780000Z' and endTime eq '2017-11-20T23:58:55.2780000Z",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBCollectionPartitionRegionGetMetrics.json
+# x-ms-original-file: 2026-03-15/CosmosDBCollectionPartitionRegionGetMetrics.json
 if __name__ == "__main__":
     main()

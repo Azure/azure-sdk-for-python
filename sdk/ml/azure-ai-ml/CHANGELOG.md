@@ -11,7 +11,7 @@
 ## 1.34.1 (unreleased)
 
 ### Bugs Fixed
-- Fixed `BatchEndpoint` defaults serialization regression where `deployment_name` was sent to the service as snake_case instead of camelCase (`deploymentName`), causing `begin_create_or_update` to fail with "Could not find member 'deployment_name' on object of type 'BatchEndpointDefaults'". `BatchEndpoint.defaults` is now consistently exposed as a snake_case dict to users and converted to the correct wire format on serialization.
+- Fixed `BatchEndpoint` defaults serialization regression where `deployment_name` was sent to the service as snake_case instead of camelCase (`deploymentName`), causing `begin_create_or_update` to fail with "Could not find member 'deployment_name' on object of type 'BatchEndpointDefaults'". Serialization now emits the correct camelCase wire format, while `BatchEndpoint.defaults` returned from `get()` continues to expose an object that supports attribute access (e.g. `endpoint.defaults.deployment_name`), preserving backward compatibility with existing code and samples.
 
 ## 1.34.0 (2026-06-11)
 

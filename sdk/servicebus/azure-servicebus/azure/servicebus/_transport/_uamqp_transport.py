@@ -59,6 +59,7 @@ try:
     from .._common.constants import (
         UAMQP_LIBRARY,
         DATETIMEOFFSET_EPOCH,
+        _X_OPT_PARTITION_KEY,
         RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
         RECEIVER_LINK_DEAD_LETTER_REASON,
         DEADLETTERNAME,
@@ -617,6 +618,29 @@ try:
             """
             # pylint: disable=protected-access
             sb_message_batch._message._body_gen.append(outgoing_sb_message._message)
+
+        @staticmethod
+        def set_batch_envelope_properties(
+            batch_message: "BatchMessage",
+            message_id: Optional[str],
+            session_id: Optional[str],
+            partition_key: Optional[str],
+        ) -> None:
+            """
+            Populate the batch envelope's message_id/session_id properties and partition_key annotation
+            on the underlying uamqp BatchMessage.
+            :param uamqp.BatchMessage batch_message: The underlying uamqp batch message.
+            :param str or None message_id: The message_id of the first message in the batch.
+            :param str or None session_id: The session_id of the first message in the batch.
+            :param str or None partition_key: The partition_key of the first message in the batch.
+            :rtype: None
+            """
+            if message_id or session_id:
+                batch_message.properties = MessageProperties(message_id=message_id, group_id=session_id)
+            if partition_key:
+                annotations = batch_message.annotations or {}
+                annotations[_X_OPT_PARTITION_KEY] = partition_key
+                batch_message.annotations = annotations
 
         @staticmethod
         def create_source(source: "Source", session_filter: Optional[str]) -> "Source":

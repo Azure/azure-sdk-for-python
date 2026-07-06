@@ -61,11 +61,39 @@ class _GenAIMainAgentSpanProcessor(SpanProcessor):
             if key.startswith(_MAIN_AGENT_PREFIX):
                 return
 
+        # Access the internal mutable attributes mapping. on_end receives a
+        # ReadableSpan which has no set_attribute, so we write to the underlying
+        # BoundedAttributes mapping directly.
+        mutable = getattr(span, "_attributes", None)
+        if mutable is None:
+            return
+
+        # Build the attributes to write before touching the (now frozen) span.
+        updates = {}
         # Self-attribute from the span's own gen_ai attributes
         for target, source in _MAIN_AGENT_SELF_ATTRIBUTES:
             value = attributes.get(source)
             if value is not None:
-                span._attributes[target] = value  # type: ignore
+                updates[target] = value
+
+        if not updates:
+            return
+
+        # OTel SDK >= 1.43 freezes span attributes (_immutable = True) inside
+        # end() *before* invoking on_end. Writing then raises TypeError.
+        # Temporarily lift the freeze for our own synchronous writes and always
+        # restore it so the exported ReadableSpan snapshot stays frozen.
+        was_immutable = getattr(mutable, "_immutable", False)
+        if was_immutable:
+            mutable._immutable = False  # type: ignore # pylint: disable=protected-access
+            try:
+                for target, value in updates.items():
+                    mutable[target] = value
+            finally:
+                mutable._immutable = True  # type: ignore # pylint: disable=protected-access
+        else:
+            for target, value in updates.items():
+                mutable[target] = value
 
     def shutdown(self):
         pass
