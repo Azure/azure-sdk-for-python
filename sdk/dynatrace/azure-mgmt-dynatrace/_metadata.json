@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2024-04-24",
+  "apiVersions": {
+    "Dynatrace.Observability": "2024-04-24"
+  },
+  "commit": "6c19e3347d60ee62bccec0b56680ca79a162b99b",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/dynatrace/Dynatrace.Management",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
+}
