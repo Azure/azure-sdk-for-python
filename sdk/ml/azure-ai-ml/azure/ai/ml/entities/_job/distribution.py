@@ -6,14 +6,19 @@
 
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DistributionConfiguration as RestDistributionConfiguration,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DistributionType as RestDistributionType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi as RestMpi
-from azure.ai.ml._restclient.v2023_04_01_preview.models import PyTorch as RestPyTorch
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    DistributionType as RestDistributionType,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import Mpi as RestMpi
+from azure.ai.ml._restclient.arm_ml_service.models import PyTorch as RestPyTorch
+
+# ``Ray`` distribution is not modeled on the shared arm_ml_service client yet, so keep the legacy msrest
+# model for that subtype; the ``to_hybrid_rest_model`` boundary converts it when embedded in an arm envelope.
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Ray as RestRay
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as RestTensorFlow
+from azure.ai.ml._restclient.arm_ml_service.models import TensorFlow as RestTensorFlow
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import DistributionType
@@ -102,7 +107,9 @@ class MpiDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with an MpiDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any
+    ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.MPI
         self.process_count_per_instance = process_count_per_instance
@@ -129,7 +136,9 @@ class PyTorchDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with a PyTorchDistribution.
     """
 
-    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any
+    ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.PYTORCH
         self.process_count_per_instance = process_count_per_instance
@@ -164,7 +173,11 @@ class TensorFlowDistribution(DistributionConfiguration):
     """
 
     def __init__(
-        self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        parameter_server_count: Optional[int] = 0,
+        worker_count: Optional[int] = None,
+        **kwargs: Any
     ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.TENSORFLOW
@@ -172,7 +185,10 @@ class TensorFlowDistribution(DistributionConfiguration):
         self.worker_count = worker_count
 
     def _to_rest_object(self) -> RestTensorFlow:
-        return RestTensorFlow(parameter_server_count=self.parameter_server_count, worker_count=self.worker_count)
+        return RestTensorFlow(
+            parameter_server_count=self.parameter_server_count,
+            worker_count=self.worker_count,
+        )
 
 
 @experimental
