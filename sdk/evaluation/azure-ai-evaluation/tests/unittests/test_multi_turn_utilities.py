@@ -804,5 +804,22 @@ class TestPreprocessMessages:
         # function_call_output should be normalized to tool_result
         assert result[2]["content"][0]["type"] == "tool_result"
 
+    def test_normalizes_openapi_types(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Call the API"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "openapi_call", "name": "api", "arguments": {}, "tool_call_id": "c1"}],
+            },
+            {
+                "role": "tool",
+                "content": [{"type": "openapi_call_output", "openapi_call_output": "api result"}],
+            },
+        ]
+        result = _preprocess_messages(messages)
+        assert result[1]["content"][0]["type"] == "tool_call"
+        assert result[2]["content"][0]["type"] == "tool_result"
+        assert result[2]["content"][0]["tool_result"] == "api result"
+
 
 # endregion
