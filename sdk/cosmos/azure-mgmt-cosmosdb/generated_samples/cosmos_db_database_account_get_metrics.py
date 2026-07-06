@@ -34,12 +34,12 @@ def main():
     response = client.database_accounts.list_metrics(
         resource_group_name="rg1",
         account_name="ddb1",
-        filter="$filter=(name.value eq 'Total Requests') and timeGrain eq duration'PT5M' and startTime eq '2017-11-19T23:53:55.2780000Z' and endTime eq '2017-11-20T00:13:55.2780000Z",
+        filter="(name.value eq 'Total Requests') and timeGrain eq duration'PT5M' and startTime eq '2017-11-19T23:53:55.2780000Z' and endTime eq '2017-11-20T00:13:55.2780000Z",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBDatabaseAccountGetMetrics.json
+# x-ms-original-file: 2026-03-15/CosmosDBDatabaseAccountGetMetrics.json
 if __name__ == "__main__":
     main()

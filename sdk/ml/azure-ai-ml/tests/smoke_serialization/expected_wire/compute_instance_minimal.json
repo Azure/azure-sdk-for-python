@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "computeType": "ComputeInstance",
+    "disableLocalAuth": true,
+    "properties": {
+      "applicationSharingPolicy": "Shared",
+      "computeInstanceAuthorizationType": "personal",
+      "enableNodePublicIp": true,
+      "enableOSPatching": false,
+      "enableRootAccess": true,
+      "enableSSO": true,
+      "releaseQuotaOnStop": false,
+      "vmSize": "STANDARD_DS3_V2"
+    }
+  }
+}

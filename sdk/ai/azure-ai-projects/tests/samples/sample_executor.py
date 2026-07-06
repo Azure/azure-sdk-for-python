@@ -1276,14 +1276,14 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
             @functools.wraps(fn)
             async def _wrapper_async(test_class, sample_path: str, *args, **kwargs):
                 _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
-                return await fn(test_class, sample_path, *args, **kwargs)
+                return await fn(test_class, *args, sample_path=sample_path, **kwargs)
 
             return _wrapper_async
 
         @functools.wraps(fn)
         def _wrapper_sync(test_class, sample_path: str, *args, **kwargs):
             _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
-            return fn(test_class, sample_path, *args, **kwargs)
+            return fn(test_class, *args, sample_path=sample_path, **kwargs)
 
         return _wrapper_sync
 

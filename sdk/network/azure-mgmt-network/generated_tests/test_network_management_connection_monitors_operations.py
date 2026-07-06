@@ -25,7 +25,7 @@ class TestNetworkManagementConnectionMonitorsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             connection_monitor_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -95,7 +95,7 @@ class TestNetworkManagementConnectionMonitorsOperations(AzureMgmtRecordedTestCas
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestNetworkManagementConnectionMonitorsOperations(AzureMgmtRecordedTestCas
             network_watcher_name="str",
             connection_monitor_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestNetworkManagementConnectionMonitorsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             connection_monitor_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -134,7 +134,7 @@ class TestNetworkManagementConnectionMonitorsOperations(AzureMgmtRecordedTestCas
         response = self.client.connection_monitors.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -147,7 +147,7 @@ class TestNetworkManagementConnectionMonitorsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             connection_monitor_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
