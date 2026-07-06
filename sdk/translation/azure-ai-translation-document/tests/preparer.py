@@ -14,7 +14,6 @@ DocumentTranslationPreparer = functools.partial(
     "translation",
     document_translation_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     document_translation_storage_name="fakeendpoint",
-    document_translation_storage_key="fakeZmFrZV9hY29jdW50X2tleQ==",
 )
 
 
