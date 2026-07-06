@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.powerbidedicated import PowerBIDedicated
+from azure.mgmt.powerbidedicated import PowerBIDedicatedClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = PowerBIDedicated(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = PowerBIDedicatedClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
