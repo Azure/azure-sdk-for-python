@@ -11,30 +11,26 @@ parameters:
 - name: TestProxy
   type: boolean
   default: false
-- name: EmulatorBasedTesting
-  type: boolean
-  default: true
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ${{ if eq(parameters.EmulatorBasedTesting, true) }}:
-      # Run only emulator tests in Emulator CI
-      TestMarkArgument: cosmosEmulator
-      BeforeTestSteps:
-        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-          parameters:
-            StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
-      MatrixConfigs:
-        - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          - Name: Python_cosmos_emulator
-            Path: sdk/cosmos/cosmos-emulator-public-matrix.json
-            Selection: all
-            GenerateVMJobs: true
-        - ${{ else }}:
-          - Name: Python_cosmos_emulator
-            Path: sdk/cosmos/cosmos-emulator-internal-matrix.json
-            Selection: all
-            GenerateVMJobs: true
+    # Run only emulator tests in Emulator CI
+    TestMarkArgument: cosmosEmulator
     ServiceDirectory: cosmos
+    BeforeTestSteps:
+      - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+        parameters:
+          StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
+    MatrixConfigs:
+      - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        - Name: Python_cosmos_emulator
+          Path: sdk/cosmos/cosmos-emulator-public-matrix.json
+          Selection: all
+          GenerateVMJobs: true
+      - ${{ else }}:
+        - Name: Python_cosmos_emulator
+          Path: sdk/cosmos/cosmos-emulator-internal-matrix.json
+          Selection: all
+          GenerateVMJobs: true
     Artifacts: ${{ parameters.Artifacts }}

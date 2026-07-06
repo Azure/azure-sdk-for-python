@@ -115,7 +115,9 @@ cd sdk/storage/<package-name>
 pytest tests/ -v --live
 ```
 
-### Run tests against the Azurite local emulator
+### Run tests against the Azurite local emulator (optional)
+
+> **Optional**: Azurite emulator testing is not required. Most tests can be run in playback mode (see above) without any live service or local emulator. Use this section only if you specifically need to validate behavior against a local emulator.
 
 Start Azurite before running tests:
 
