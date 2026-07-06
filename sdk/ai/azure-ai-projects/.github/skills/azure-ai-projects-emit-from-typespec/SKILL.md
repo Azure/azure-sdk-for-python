@@ -209,19 +209,4 @@ Open a new tab in the default browser and navigate to the PR URL.
 
 ---
 
-## Step 15: Optionally run tests locally
-
-Prompt the user with this message: "Tests will run as part of the Pull Request. However, you can optionally run tests locally in a Python virtual environment, right now. It will take a few minutes. Do you want to run tests locally? (yes/no)"
-
-If the user answers "yes", run all tests from recordings. Follow these guidelines:
-* Run tests in a local Python virtual environment. Create this virtual environment if it does not already exists:
-  ```
-  python -m venv .venv
-  ```
-  and activate it:
-  ```
-  .venv\Scripts\activate
-  ```
-* Show test progress on screen, as tests are run.
-
 
