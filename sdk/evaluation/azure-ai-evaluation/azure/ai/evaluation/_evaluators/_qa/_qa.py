@@ -7,6 +7,7 @@ from typing import Union
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import MultiEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
@@ -99,7 +100,12 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             ("f1_score_threshold", f1_score_threshold),
         ]:
             if not isinstance(value, (int, float)):
-                raise TypeError(f"{name} must be an int or float, got {type(value)}")
+                raise EvaluationException(
+                    message=f"{name} must be an int or float, got {type(value)}",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.QA_EVALUATOR,
+                )
 
         # Extract is_reasoning_model from kwargs to pass to LLM-based evaluators
         is_reasoning_model = kwargs.get("is_reasoning_model", False)
