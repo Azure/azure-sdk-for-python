@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import json
 import os
 import posixpath
 import re
@@ -905,6 +906,142 @@ def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=
         if logger:
             logger.debug(f"Error simplifying messages: {str(ex)}. Returning original messages.")
         return messages
+
+
+def _stringify_tool_result(result):
+    """Render a tool_result value as a string the LLM judge can read.
+
+    Tool outputs arrive in mixed shapes depending on the producer: function/MCP tools usually
+    emit a plain ``str``, while built-in grounding tools (``azure_ai_search``, ``azure_fabric``,
+    ``sharepoint_grounding``) emit a list/dict. Falling back to ``f"{result}"`` for the latter
+    produced a Python ``repr`` (single quotes, trailing commas) that the LLM had to
+    reverse-engineer. Strings are passed through unchanged (zero behavior change for function/MCP
+    tools), anything else is serialized as JSON with ``default=str`` so non-JSON-native values do
+    not raise, and ``None`` renders as the empty string.
+
+    :param result: The raw tool_result value.
+    :type result: Any
+    :return: A string representation suitable for an LLM prompt.
+    :rtype: str
+    """
+    if result is None:
+        return ""
+    if isinstance(result, str):
+        return result
+    try:
+        return json.dumps(result, default=str, ensure_ascii=False)
+    except (TypeError, ValueError):
+        return str(result)
+
+
+def _log_safe_summary(obj):
+    """Return a non-sensitive structural summary of a payload for safe logging.
+
+    The raw payload may contain customer-controlled data (tool arguments, tool results, assistant
+    text, database rows, file content, etc.) which can include credentials or PII. Logging the
+    payload itself risks leaking that data into telemetry sinks at any log level. This helper
+    returns shape-only metadata - type, length, top-level keys/roles - which is sufficient to
+    diagnose schema drift without exposing values.
+
+    :param obj: The payload to summarize.
+    :type obj: Any
+    :return: A shape-only, non-sensitive summary string.
+    :rtype: str
+    """
+    try:
+        type_name = type(obj).__name__
+        if isinstance(obj, list):
+            roles = []
+            for item in obj[:10]:
+                if isinstance(item, dict):
+                    role = item.get("role")
+                    if isinstance(role, str):
+                        roles.append(role)
+            roles_summary = roles if roles else "n/a"
+            return f"type={type_name} len={len(obj)} roles={roles_summary}"
+        if isinstance(obj, dict):
+            keys = sorted(k for k in obj.keys() if isinstance(k, str))[:10]
+            return f"type={type_name} top_keys={keys}"
+        length = len(obj) if hasattr(obj, "__len__") else "n/a"
+        return f"type={type_name} len={length}"
+    except Exception:  # pylint: disable=broad-except
+        return f"type={type(obj).__name__} (summary unavailable)"
+
+
+def _get_tool_calls_results(agent_response_msgs):
+    """Extract formatted agent tool calls and results from a response.
+
+    The output uses the ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line format. Tool results are rendered
+    via :func:`_stringify_tool_result` so list/dict grounding outputs are readable JSON.
+
+    :param agent_response_msgs: The agent response messages to scan.
+    :type agent_response_msgs: List[dict]
+    :return: A list of formatted tool-call/result lines.
+    :rtype: List[str]
+    """
+    agent_response_text = []
+    tool_results = {}
+
+    for msg in agent_response_msgs:
+        if msg.get("role") == "tool" and "tool_call_id" in msg:
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_result":
+                    result = content.get("tool_result")
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
+
+    for msg in agent_response_msgs:
+        if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_call":
+                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                        tc = content.get("tool_call", {})
+                        func_name = tc.get("function", {}).get("name", "")
+                        args = tc.get("function", {}).get("arguments", {})
+                        tool_call_id = tc.get("id")
+                    else:
+                        tool_call_id = content.get("tool_call_id")
+                        func_name = content.get("name", "")
+                        args = content.get("arguments", {})
+                    args_str = ", ".join(f"{k}={_format_value(v)}" for k, v in args.items())
+                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
+                    agent_response_text.append(call_line)
+                    if tool_call_id in tool_results:
+                        agent_response_text.append(tool_results[tool_call_id])
+
+    return agent_response_text
+
+
+def _reformat_tool_calls_results(response, logger=None):
+    """Reformat an agent response into tool-call/result lines, with a safe fallback.
+
+    :param response: The agent response to reformat.
+    :type response: Union[None, List[dict], str]
+    :param logger: Optional logger for warning messages.
+    :type logger: Optional[logging.Logger]
+    :return: The formatted string, or the original response if parsing fails.
+    :rtype: Union[str, List[dict]]
+    """
+    try:
+        if response is None or response == []:
+            return ""
+        agent_response = _get_tool_calls_results(response)
+        if agent_response == []:
+            if logger:
+                logger.warning(
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to using the original response. %s",
+                    _log_safe_summary(response),
+                )
+            return response
+        return "\n".join(agent_response)
+    except Exception as e:  # pylint: disable=broad-except
+        if logger:
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
+        return response
 
 
 def upload(path: str, container_client: ContainerClient, logger=None):
