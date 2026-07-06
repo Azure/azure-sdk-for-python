@@ -33,9 +33,7 @@ class ToolDefinitionsValidator(ConversationValidator):
         super().__init__(error_target, requires_query, check_for_unsupported_tools)
         self.optional_tool_definitions = optional_tool_definitions
 
-    def _validate_tool_definition(
-        self, tool_definition
-    ) -> Optional[EvaluationException]:
+    def _validate_tool_definition(self, tool_definition) -> Optional[EvaluationException]:
         """Validate a single tool definition item."""
         if not isinstance(tool_definition, dict):
             return EvaluationException(
@@ -49,16 +47,12 @@ class ToolDefinitionsValidator(ConversationValidator):
         if error:
             return error
 
-        error = self._validate_dict_field(
-            tool_definition, "parameters", "tool definitions"
-        )
+        error = self._validate_dict_field(tool_definition, "parameters", "tool definitions")
         if error:
             return error
         return None
 
-    def _validate_tool_definitions(
-        self, tool_definitions
-    ) -> Optional[EvaluationException]:
+    def _validate_tool_definitions(self, tool_definitions) -> Optional[EvaluationException]:
         """Validate tool definitions input."""
         if not tool_definitions:
             if not self.optional_tool_definitions:
@@ -92,9 +86,7 @@ class ToolDefinitionsValidator(ConversationValidator):
                 )
 
             if tool_definition and tool_definition.get("type") == "openapi":
-                error = self._validate_list_field(
-                    tool_definition, "functions", "openapi tool definition"
-                )
+                error = self._validate_list_field(tool_definition, "functions", "openapi tool definition")
                 if error:
                     return error
                 functions_tool_definitions = tool_definition.get("functions", [])
@@ -114,9 +106,7 @@ class ToolDefinitionsValidator(ConversationValidator):
         """Validate the evaluation input dictionary."""
         if super().validate_eval_input(eval_input):
             tool_definitions = eval_input.get("tool_definitions")
-            tool_definitions_validation_exception = self._validate_tool_definitions(
-                tool_definitions
-            )
+            tool_definitions_validation_exception = self._validate_tool_definitions(tool_definitions)
             if tool_definitions_validation_exception:
                 raise tool_definitions_validation_exception
         return True
