@@ -771,28 +771,6 @@ def _format_value(v):
     return v
 
 
-def _stringify_tool_result(result):
-    """Render a tool_result payload as a string for the LLM judge.
-
-    Strings pass through unchanged so existing function/MCP tool outputs
-    (which already arrive as strings) keep their previous rendering and
-    avoid double-encoding. ``None`` becomes the empty string so the
-    literal text ``"None"`` is not leaked into the prompt. Anything
-    else (dicts and lists produced by tools like ``azure_ai_search``,
-    ``azure_fabric``, or ``sharepoint_grounding``) is JSON-encoded so
-    the judge can parse the structured payload directly; if that fails
-    we fall back to ``str()`` so the call never raises.
-    """
-    if result is None:
-        return ""
-    if isinstance(result, str):
-        return result
-    try:
-        return json.dumps(result, ensure_ascii=False)
-    except (TypeError, ValueError):
-        return str(result)
-
-
 def _get_agent_response(agent_response_msgs, include_tool_messages=False):
     """Extracts formatted agent response including text, and optionally tool calls/results."""
     agent_response_text = []
