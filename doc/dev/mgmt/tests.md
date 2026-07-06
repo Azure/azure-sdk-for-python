@@ -76,9 +76,9 @@ import os
 from azure.identity import ClientSecretCredential
 
 credentials = ClientSecretCredential(
+    tenant_id = os.environ['AZURE_TENANT_ID'],
     client_id = os.environ['AZURE_CLIENT_ID'],
-    secret = os.environ['AZURE_CLIENT_SECRET'],
-    tenant = os.environ['AZURE_TENANT_ID']
+    client_secret = os.environ['AZURE_CLIENT_SECRET']
 )
 ```
 Or you can use `DefaultAzureCredential`, which we prefer.
@@ -115,7 +115,7 @@ def get_credential(**kwargs):
     from azure.identity import DefaultAzureCredential
     return DefaultAzureCredential()
 ```
-These two methods are used by the authentication methods within `AzureTestCase` to provide the correct credential for your client class, you do not need to call these methods directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
+These two methods are used by the authentication methods within `AzureMgmtRecordedTestCase` to provide the correct credential for your client class, you do not need to call these methods directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
 
 **Important: `mgmt_settings_real.py` should not be committed since it contains your actual credentials! To prevent this, it is included in `.gitignore`.**
 
