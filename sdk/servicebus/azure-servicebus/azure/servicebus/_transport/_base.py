@@ -193,6 +193,22 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def set_batch_envelope_properties(batch_message, message_id, session_id, partition_key):
+        """
+        Populate the batch envelope's message_id/session_id properties and partition_key annotation
+        on the underlying uamqp/pyamqp batch message, using the transport-appropriate representation.
+        session_id is carried as the AMQP group_id on the envelope. When message_id, session_id, and
+        partition_key are all falsy this is a no-op and the batch message is left unchanged.
+        :param batch_message: The underlying batch message (a list for pyamqp, a BatchMessage for uamqp).
+        :type batch_message: list or ~uamqp.BatchMessage
+        :param str or None message_id: The message_id of the first message in the batch.
+        :param str or None session_id: The session_id of the first message in the batch.
+        :param str or None partition_key: The partition_key of the first message in the batch.
+        :rtype: None
+        """
+
+    @staticmethod
+    @abstractmethod
     def create_source(source, session_filter):
         """
         Creates and returns the Source.

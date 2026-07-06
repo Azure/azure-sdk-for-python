@@ -605,6 +605,45 @@ class ApiReviewPrTests(unittest.TestCase):
 
         find_package_dir.assert_not_called()
 
+    def test_generate_api_for_package_uses_package_dir_destination(self):
+        package_dir = Path("sdk/example/azure-example")
+        with (
+            patch.object(workflow, "find_package_dir", return_value=package_dir),
+            patch.object(workflow, "run", return_value=command_result()) as run,
+        ):
+            workflow.generate_api_for_package("azure-example", runtime_executable=None)
+
+        run.assert_called_once_with(
+            ["azpysdk", "apistub", "--dest-dir", str(package_dir), "azure-example"],
+            check=True,
+            shell=workflow.sys.platform == "win32",
+        )
+
+    def test_generate_api_for_package_runtime_executable_uses_package_dir_destination(
+        self,
+    ):
+        package_dir = Path("sdk/example/azure-example")
+        with (
+            patch.object(workflow, "find_package_dir", return_value=package_dir),
+            patch.object(workflow, "run", return_value=command_result()) as run,
+        ):
+            workflow.generate_api_for_package(
+                "azure-example", runtime_executable="python"
+            )
+
+        run.assert_called_once_with(
+            [
+                "python",
+                "-m",
+                "azpysdk.main",
+                "apistub",
+                "--dest-dir",
+                str(package_dir),
+                "azure-example",
+            ],
+            check=True,
+        )
+
     def test_resolve_azsdk_uses_path_first(self):
         with patch.object(workflow.shutil, "which", return_value="C:/tools/azsdk.exe"):
             self.assertEqual(workflow.resolve_azsdk_executable(), "C:/tools/azsdk.exe")

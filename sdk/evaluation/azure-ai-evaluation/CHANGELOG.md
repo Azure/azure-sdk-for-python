@@ -4,6 +4,12 @@
 
 ### Bugs Fixed
 
+- Evaluators now raise `EvaluationException` (instead of bare `ValueError`/`TypeError`) for input and
+  configuration validation failures, and consistently set `blame=ErrorBlame.USER_ERROR` with an
+  appropriate `category` and `target`. Affected evaluators include `ContentSafetyEvaluator`,
+  `QAEvaluator`, `RougeScoreEvaluator`, `DocumentRetrievalEvaluator`, the task navigation efficiency
+  evaluator, and the shared evaluator base (conversation/tool-call input validation).
+
 - Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
   encoded payload for converter-based attack strategies (Base64, Flip,
   Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The

@@ -1142,8 +1142,6 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHAREPOINT_GROUNDING_PREVIEW."""
     MEMORY_SEARCH_PREVIEW = "memory_search_preview"
     """MEMORY_SEARCH_PREVIEW."""
-    REMINDER_PREVIEW = "reminder_preview"
-    """REMINDER_PREVIEW."""
     WORK_IQ_PREVIEW = "work_iq_preview"
     """WORK_IQ_PREVIEW."""
     FABRIC_IQ_PREVIEW = "fabric_iq_preview"
