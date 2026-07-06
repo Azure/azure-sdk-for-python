@@ -21,7 +21,9 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
@@ -46,12 +48,20 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.sweep import SweepJob
+from azure.core.serialization import as_attribute_dict
 
 from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._schema import PathAwareSchema
-from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..._schema._utils.data_binding_expression import (
+    support_data_binding_expression_for_fields,
+)
 from ..._utils.utils import camel_to_snake
 from .base_node import BaseNode
 
@@ -138,20 +148,40 @@ class Sweep(ParameterizedSweep, BaseNode):
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Objective] = None,
         early_termination: Optional[
-            Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy, EarlyTerminationPolicy, str]
+            Union[
+                BanditPolicy,
+                MedianStoppingPolicy,
+                TruncationSelectionPolicy,
+                EarlyTerminationPolicy,
+                str,
+            ]
         ] = None,
         search_space: Optional[
             Dict[
                 str,
                 Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                    Choice,
+                    LogNormal,
+                    LogUniform,
+                    Normal,
+                    QLogNormal,
+                    QLogUniform,
+                    QNormal,
+                    QUniform,
+                    Randint,
+                    Uniform,
                 ],
             ]
         ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
-            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict,
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
@@ -201,7 +231,18 @@ class Sweep(ParameterizedSweep, BaseNode):
     ) -> Optional[
         Dict[
             str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+            Union[
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ],
         ]
     ]:
         """Dictionary of the hyperparameter search space.
@@ -216,7 +257,9 @@ class Sweep(ParameterizedSweep, BaseNode):
         return self._search_space
 
     @search_space.setter
-    def search_space(self, values: Optional[Dict[str, Dict[str, Union[str, int, float, dict]]]]) -> None:
+    def search_space(
+        self, values: Optional[Dict[str, Dict[str, Union[str, int, float, dict]]]]
+    ) -> None:
         """Sets the search space for the sweep job.
 
         :param values: The search space to set.
@@ -228,7 +271,11 @@ class Sweep(ParameterizedSweep, BaseNode):
             search_space: Dict = {}
             for name, value in values.items():
                 # If value is a SearchSpace object, directly pass it to job.search_space[name]
-                search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
+                search_space[name] = (
+                    self._value_type_to_class(value)
+                    if isinstance(value, dict)
+                    else value
+                )
             self._search_space = search_space
 
     @classmethod
@@ -259,7 +306,9 @@ class Sweep(ParameterizedSweep, BaseNode):
         )
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Sweep":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "Sweep":
         raise NotImplementedError("Sweep._load_from_dict is not supported")
 
     @classmethod
@@ -285,7 +334,12 @@ class Sweep(ParameterizedSweep, BaseNode):
         # the change
         if "early_termination" in rest_obj:
             _early_termination: EarlyTerminationPolicy = self.early_termination  # type: ignore
-            rest_obj["early_termination"] = _early_termination._to_rest_object().as_dict()
+            # ``as_attribute_dict`` yields the snake_case field view (``policy_type``/``delay_evaluation``)
+            # that the round-trip reader and schema expect; the arm_ml_service hybrid ``as_dict`` would emit
+            # camelCase and break the node dict.
+            rest_obj["early_termination"] = as_attribute_dict(
+                _early_termination._to_rest_object()
+            )
 
         rest_obj.update(
             {
@@ -303,13 +357,19 @@ class Sweep(ParameterizedSweep, BaseNode):
         # the change
         if "early_termination" in obj and "policy_type" in obj["early_termination"]:
             # can't use _from_rest_object here, because obj is a dict instead of an EarlyTerminationPolicy rest object
-            obj["early_termination"]["type"] = camel_to_snake(obj["early_termination"].pop("policy_type"))
+            obj["early_termination"]["type"] = camel_to_snake(
+                obj["early_termination"].pop("policy_type")
+            )
 
         # TODO: use cls._get_schema() to load from rest object
-        from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
+        from azure.ai.ml._schema._sweep.parameterized_sweep import (
+            ParameterizedSweepSchema,
+        )
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
+        support_data_binding_expression_for_fields(
+            schema, ["type", "component", "trial"]
+        )
 
         base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)
         for key, value in base_sweep.items():
@@ -330,7 +390,9 @@ class Sweep(ParameterizedSweep, BaseNode):
             return {"componentId": trial_component_id}
         if isinstance(trial_component_id, CommandComponent):
             return trial_component_id._to_rest_object()
-        raise UserErrorException(f"invalid trial in sweep node {self.name}: {str(self.trial)}")
+        raise UserErrorException(
+            f"invalid trial in sweep node {self.name}: {str(self.trial)}"
+        )
 
     def _to_job(self) -> SweepJob:
         command = self.trial.command
@@ -338,7 +400,9 @@ class Sweep(ParameterizedSweep, BaseNode):
             for key, _ in self.search_space.items():
                 if command is not None:
                     # Double curly brackets to escape
-                    command = command.replace(f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
+                    command = command.replace(
+                        f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}"
+                    )
 
         # TODO: raise exception when the trial is a pre-registered component
         if command != self.trial.command and isinstance(self.trial, CommandComponent):
@@ -380,13 +444,17 @@ class Sweep(ParameterizedSweep, BaseNode):
         return built_inputs
 
     @classmethod
-    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(
+        cls, context: Any
+    ) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 
         return SweepSchema(context=context)
 
     @classmethod
-    def _get_origin_inputs_and_search_space(cls, built_inputs: Optional[Dict[str, NodeInput]]) -> Tuple:
+    def _get_origin_inputs_and_search_space(
+        cls, built_inputs: Optional[Dict[str, NodeInput]]
+    ) -> Tuple:
         """Separate mixed true inputs & search space definition from inputs of
         this node and return them.
 
@@ -413,7 +481,9 @@ class Sweep(ParameterizedSweep, BaseNode):
                     msg = "unsupported built input type: {}: {}"
                     raise ValidationException(
                         message=msg.format(input_name, type(input_obj)),
-                        no_personal_data_message=msg.format("[input_name]", type(input_obj)),
+                        no_personal_data_message=msg.format(
+                            "[input_name]", type(input_obj)
+                        ),
                         target=ErrorTarget.SWEEP_JOB,
                         error_type=ValidationErrorType.INVALID_VALUE,
                     )
@@ -426,7 +496,9 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     def __setattr__(self, key: Any, value: Any) -> None:
         super(Sweep, self).__setattr__(key, value)
-        if key == "early_termination" and isinstance(self.early_termination, BanditPolicy):
+        if key == "early_termination" and isinstance(
+            self.early_termination, BanditPolicy
+        ):
             # only one of slack_amount and slack_factor can be specified but default value is 0.0.
             # Need to keep track of which one is null.
             if self.early_termination.slack_amount == 0.0:
@@ -444,7 +516,9 @@ class Sweep(ParameterizedSweep, BaseNode):
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Optional[Union[str, EarlyTerminationPolicy]]) -> None:
+    def early_termination(
+        self, value: Optional[Union[str, EarlyTerminationPolicy]]
+    ) -> None:
         """Sets the early termination policy for the sweep job.
 
         :param value: The early termination policy for the sweep job.
@@ -453,5 +527,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         """
         if isinstance(value, dict):
             early_termination_schema = EarlyTerminationField()
-            value = early_termination_schema._deserialize(value=value, attr=None, data=None)
+            value = early_termination_schema._deserialize(
+                value=value, attr=None, data=None
+            )
         self._early_termination = value  # type: ignore[assignment]
