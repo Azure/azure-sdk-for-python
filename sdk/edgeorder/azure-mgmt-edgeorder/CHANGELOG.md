@@ -13,8 +13,6 @@
   - Client `EdgeOrderManagementClient` added operation group `products_and_configurations`
   - Model `AddressProperties` added property `address_classification`
   - Model `AddressProperties` added property `provisioning_state`
-  - Model `AddressResource` added property `properties`
-  - Model `AddressUpdateParameter` added property `properties`
   - Enum `AvailabilityStage` added member `DISCOVERABLE`
   - Model `BasicInformation` added property `fulfilled_by`
   - Model `BillingMeterDetails` added property `term_type_details`
@@ -24,7 +22,6 @@
   - Model `ConfigurationProperties` added property `grouped_child_configurations`
   - Model `ConfigurationProperties` added property `supported_term_commitment_durations`
   - Model `ConfigurationProperties` added property `fulfilled_by`
-  - Model `ConfigurationsRequest` added property `configuration_filter`
   - Model `DeviceDetails` added property `display_serial_number`
   - Model `DeviceDetails` added property `provisioning_support`
   - Model `DeviceDetails` added property `provisioning_details`
@@ -32,12 +29,9 @@
   - Enum `LinkType` added member `DISCOVERABLE`
   - Model `OrderItemDetails` added property `order_item_mode`
   - Model `OrderItemDetails` added property `site_details`
-  - Model `OrderItemResource` added property `properties`
   - Model `OrderItemResource` added property `identity`
   - Enum `OrderItemType` added member `EXTERNAL`
-  - Model `OrderItemUpdateParameter` added property `properties`
   - Model `OrderItemUpdateParameter` added property `identity`
-  - Model `OrderResource` added property `properties`
   - Model `Preferences` added property `term_commitment_preferences`
   - Model `ProductDetails` added property `identification_type`
   - Model `ProductDetails` added property `parent_device_details`
@@ -55,7 +49,6 @@
   - Model `TrackedResource` added property `system_data`
   - Added model `AdditionalConfiguration`
   - Added enum `AddressClassification`
-  - Added model `AddressUpdateProperties`
   - Added enum `AutoProvisioningStatus`
   - Added model `CategoryInformation`
   - Added model `ChildConfiguration`
@@ -63,17 +56,13 @@
   - Added model `ChildConfigurationProperties`
   - Added enum `ChildConfigurationType`
   - Added model `ConfigurationDeviceDetails`
-  - Added model `ConfigurationFilter`
   - Added model `DevicePresenceVerificationDetails`
   - Added enum `DevicePresenceVerificationStatus`
   - Added enum `FulfillmentType`
   - Added model `GroupedChildConfigurations`
   - Added enum `IdentificationType`
   - Added model `OrderItemDetailsUpdateParameter`
-  - Added model `OrderItemProperties`
-  - Added model `OrderItemUpdateProperties`
   - Added enum `OrderMode`
-  - Added model `OrderProperties`
   - Added model `ProductDetailsUpdateParameter`
   - Added model `ProvisioningDetails`
   - Added enum `ProvisioningState`
@@ -87,6 +76,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client method `EdgeOrderManagementClient.begin_create_address`
   - Deleted or renamed client method `EdgeOrderManagementClient.begin_create_order_item`
   - Deleted or renamed client method `EdgeOrderManagementClient.begin_delete_address_by_name`
@@ -108,78 +98,27 @@
   - Deleted or renamed client method `EdgeOrderManagementClient.list_order_items_at_subscription_level`
   - Deleted or renamed client method `EdgeOrderManagementClient.list_product_families`
   - Deleted or renamed client method `EdgeOrderManagementClient.list_product_families_metadata`
-  - Model `AddressResource` deleted or renamed its instance variable `shipping_address`
-  - Model `AddressResource` deleted or renamed its instance variable `contact_details`
-  - Model `AddressResource` deleted or renamed its instance variable `address_validation_status`
-  - Model `AddressUpdateParameter` deleted or renamed its instance variable `shipping_address`
-  - Model `AddressUpdateParameter` deleted or renamed its instance variable `contact_details`
-  - Model `Configuration` deleted or renamed its instance variable `display_name`
-  - Model `Configuration` deleted or renamed its instance variable `description`
-  - Model `Configuration` deleted or renamed its instance variable `image_information`
-  - Model `Configuration` deleted or renamed its instance variable `cost_information`
-  - Model `Configuration` deleted or renamed its instance variable `availability_information`
-  - Model `Configuration` deleted or renamed its instance variable `hierarchy_information`
-  - Model `Configuration` deleted or renamed its instance variable `filterable_properties`
-  - Model `Configuration` deleted or renamed its instance variable `specifications`
-  - Model `Configuration` deleted or renamed its instance variable `dimensions`
-  - Model `ConfigurationsRequest` deleted or renamed its instance variable `configuration_filters`
-  - Model `OrderItemDetails` deleted or renamed its instance variable `management_rp_details`
-  - Model `OrderItemResource` deleted or renamed its instance variable `order_item_details`
-  - Model `OrderItemResource` deleted or renamed its instance variable `address_details`
-  - Model `OrderItemResource` deleted or renamed its instance variable `start_time`
-  - Model `OrderItemResource` deleted or renamed its instance variable `order_id`
-  - Model `OrderItemUpdateParameter` deleted or renamed its instance variable `forward_address`
-  - Model `OrderItemUpdateParameter` deleted or renamed its instance variable `preferences`
-  - Model `OrderItemUpdateParameter` deleted or renamed its instance variable `notification_email_list`
-  - Model `OrderResource` deleted or renamed its instance variable `order_item_ids`
-  - Model `OrderResource` deleted or renamed its instance variable `current_stage`
-  - Model `OrderResource` deleted or renamed its instance variable `order_stage_history`
-  - Model `Product` deleted or renamed its instance variable `display_name`
-  - Model `Product` deleted or renamed its instance variable `description`
-  - Model `Product` deleted or renamed its instance variable `image_information`
-  - Model `Product` deleted or renamed its instance variable `cost_information`
-  - Model `Product` deleted or renamed its instance variable `availability_information`
-  - Model `Product` deleted or renamed its instance variable `hierarchy_information`
-  - Model `Product` deleted or renamed its instance variable `filterable_properties`
-  - Model `Product` deleted or renamed its instance variable `configurations`
+  - Model `AddressResource` moved instance variable `shipping_address`, `contact_details` and `address_validation_status` under property `properties` whose type is `AddressProperties`
+  - Model `AddressUpdateParameter` moved instance variable `shipping_address` and `contact_details` under property `properties` whose type is `AddressUpdateProperties`
+  - Model `Configuration` moved instance variable `display_name`, `description`, `image_information`, `cost_information`, `availability_information`, `hierarchy_information`, `filterable_properties`, `specifications` and `dimensions` under property `properties` whose type is `ConfigurationProperties`
+  - Model `ConfigurationsRequest` renamed its instance variable `configuration_filters` to `configuration_filter`
+  - Renamed model `ConfigurationFilters` to `ConfigurationFilter`
+  - Model `OrderItemDetails` renamed its instance variable `management_rp_details` to `management_rp_details_list`
+  - Model `OrderItemResource` moved instance variable `order_item_details`, `address_details`, `start_time` and `order_id` under property `properties` whose type is `OrderItemProperties`
+  - Model `OrderItemUpdateParameter` moved instance variable `forward_address`, `preferences` and `notification_email_list` under property `properties` whose type is `OrderItemUpdateProperties`
+  - Model `OrderResource` moved instance variable `order_item_ids`, `current_stage` and `order_stage_history` under property `properties` whose type is `OrderProperties`
+  - Model `Product` moved instance variable `display_name`, `description`, `image_information`, `cost_information`, `availability_information`, `hierarchy_information`, `filterable_properties` and `configurations` under property `properties` whose type is `ProductProperties`
   - Model `ProductDetails` deleted or renamed its instance variable `count`
   - Model `ProductDetails` deleted or renamed its instance variable `device_details`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `display_name`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `description`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `image_information`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `cost_information`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `availability_information`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `hierarchy_information`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `filterable_properties`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `product_lines`
-  - Model `ProductFamiliesMetadataDetails` deleted or renamed its instance variable `resource_provider_details`
-  - Model `ProductFamily` deleted or renamed its instance variable `display_name`
-  - Model `ProductFamily` deleted or renamed its instance variable `description`
-  - Model `ProductFamily` deleted or renamed its instance variable `image_information`
-  - Model `ProductFamily` deleted or renamed its instance variable `cost_information`
-  - Model `ProductFamily` deleted or renamed its instance variable `availability_information`
-  - Model `ProductFamily` deleted or renamed its instance variable `hierarchy_information`
-  - Model `ProductFamily` deleted or renamed its instance variable `filterable_properties`
-  - Model `ProductFamily` deleted or renamed its instance variable `product_lines`
-  - Model `ProductFamily` deleted or renamed its instance variable `resource_provider_details`
-  - Model `ProductLine` deleted or renamed its instance variable `display_name`
-  - Model `ProductLine` deleted or renamed its instance variable `description`
-  - Model `ProductLine` deleted or renamed its instance variable `image_information`
-  - Model `ProductLine` deleted or renamed its instance variable `cost_information`
-  - Model `ProductLine` deleted or renamed its instance variable `availability_information`
-  - Model `ProductLine` deleted or renamed its instance variable `hierarchy_information`
-  - Model `ProductLine` deleted or renamed its instance variable `filterable_properties`
-  - Model `ProductLine` deleted or renamed its instance variable `products`
-  - Deleted or renamed model `AddressResourceList`
-  - Deleted or renamed model `ConfigurationFilters`
-  - Deleted or renamed model `Configurations`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `OrderItemResourceList`
-  - Deleted or renamed model `OrderResourceList`
-  - Deleted or renamed model `ProductFamilies`
-  - Deleted or renamed model `ProductFamiliesMetadata`
-  - Deleted or renamed model `ShippingDetails`
-  - Deleted or renamed model `EdgeOrderManagementClientOperationsMixin`
+  - Model `ProductFamiliesMetadataDetails` moved instance variable `display_name`, `description`, `image_information`, `cost_information`, `availability_information`, `hierarchy_information`, `filterable_properties`, `product_lines` and `resource_provider_details` under property `properties` whose type is `ProductFamilyProperties`
+  - Model `ProductFamily` moved instance variable `display_name`, `description`, `image_information`, `cost_information`, `availability_information`, `hierarchy_information`, `filterable_properties`, `product_lines` and `resource_provider_details` under property `properties` whose type is `ProductFamilyProperties`
+  - Model `ProductLine` moved instance variable `display_name`, `description`, `image_information`, `cost_information`, `availability_information`, `hierarchy_information`, `filterable_properties` and `products` under property `properties` whose type is `ProductLineProperties`
+
+### Other Changes
+
+  - Deleted model `AddressResourceList`/`Configurations`/`OperationListResult`/`OrderItemResourceList`/`OrderResourceList`/`ProductFamilies`/`ProductFamiliesMetadata` which actually were not used by SDK users
+  - Deleted model `ShippingDetails` which actually was not used by SDK users
+  - Deleted operation group `EdgeOrderManagementClientOperationsMixin` which actually was not used by SDK users
 
 ## 2.0.0 (2024-10-30)
 
