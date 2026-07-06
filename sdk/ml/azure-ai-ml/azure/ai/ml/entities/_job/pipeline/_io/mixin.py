@@ -6,11 +6,36 @@ import copy
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobOutput as RestJobOutput,
+)
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._util import copy_output_setting
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.core.serialization import as_attribute_dict
+
+
+def _rest_io_to_snake_dict(rest_io: Any) -> Dict:
+    """Convert a rest input/output model to the snake_case dict the node serializer expects.
+
+    The legacy msrest models produced snake_case from ``as_dict()``; the shared arm_ml_service hybrid
+    models produce camelCase from ``as_dict()`` (and drop ``assetVersion``/``pathOnCompute`` to unknown
+    wire keys), so use ``as_attribute_dict`` for the snake_case field view and merge any dropped wire
+    keys back so downstream name/version handling still finds them.
+
+    :param rest_io: A msrest or arm_ml_service rest input/output model.
+    :return: The snake_case dict view.
+    :rtype: Dict
+    """
+    if getattr(rest_io, "_is_model", False) is True:
+        result = as_attribute_dict(rest_io)
+        asset_version = rest_io.get("assetVersion")
+        if asset_version is not None:
+            result["asset_version"] = asset_version
+        return result
+    return rest_io.as_dict()
+
 
 from ..._input_output_helpers import (
     from_rest_data_outputs,
@@ -36,7 +61,9 @@ class NodeIOMixin:
         return None
 
     @classmethod
-    def _validate_io(cls, value: Any, allowed_types: Optional[tuple], *, key: Optional[str] = None) -> None:
+    def _validate_io(
+        cls, value: Any, allowed_types: Optional[tuple], *, key: Optional[str] = None
+    ) -> None:
         if allowed_types is None:
             return
 
@@ -46,7 +73,9 @@ class NodeIOMixin:
             msg = "Expecting {} for input/output {}, got {} instead."
             raise ValidationException(
                 message=msg.format(allowed_types, key, type(value)),
-                no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
+                no_personal_data_message=msg.format(
+                    allowed_types, "[key]", type(value)
+                ),
                 target=ErrorTarget.PIPELINE,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
@@ -55,7 +84,9 @@ class NodeIOMixin:
         self,
         name: str,
         meta: Optional[Input],
-        data: Optional[Union[dict, int, bool, float, str, Output, "PipelineInput", Input]],
+        data: Optional[
+            Union[dict, int, bool, float, str, Output, "PipelineInput", Input]
+        ],
     ) -> NodeInput:
         # output mode of last node should not affect input mode of next node
         if isinstance(data, NodeOutput):
@@ -75,7 +106,9 @@ class NodeIOMixin:
                 self._validate_io(data, self._get_supported_inputs_types(), key=name)
         return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name: str, meta: Optional[Output], data: Optional[Union[Output, str]]) -> NodeOutput:
+    def _build_output(
+        self, name: str, meta: Optional[Output], data: Optional[Union[Output, str]]
+    ) -> NodeOutput:
         if isinstance(data, dict):
             data = Output(**data)
 
@@ -113,16 +146,25 @@ class NodeIOMixin:
                     # If input is set through component functions' kwargs, create an input object with real value.
                     data = inputs[key]
                 else:
-                    data = self._get_default_input_val(val)  # pylint: disable=assignment-from-none
+                    data = self._get_default_input_val(
+                        val
+                    )  # pylint: disable=assignment-from-none
 
                 val = self._build_input(name=key, meta=val, data=data)
                 input_dict[key] = val
         else:
-            input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
+            input_dict = {
+                key: self._build_input(name=key, meta=None, data=val)
+                for key, val in inputs.items()
+            }
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(
-        self, outputs: Dict, *, output_definition_dict: Optional[dict] = None, none_data: bool = False
+        self,
+        outputs: Dict,
+        *,
+        output_definition_dict: Optional[dict] = None,
+        none_data: bool = False,
     ) -> OutputsAttrDict:
         """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
@@ -150,7 +192,9 @@ class NodeIOMixin:
         else:
             output_dict = {}
             for key, val in outputs.items():
-                output_val = self._build_output(name=key, meta=None, data=val if not none_data else None)
+                output_val = self._build_output(
+                    name=key, meta=None, data=val if not none_data else None
+                )
                 output_dict[key] = output_val
         return OutputsAttrDict(output_dict)
 
@@ -215,7 +259,9 @@ class NodeIOMixin:
         return self._input_entity_to_rest_inputs(input_entity=built_inputs)
 
     @classmethod
-    def _input_entity_to_rest_inputs(cls, input_entity: Dict[str, Input]) -> Dict[str, Dict]:
+    def _input_entity_to_rest_inputs(
+        cls, input_entity: Dict[str, Input]
+    ) -> Dict[str, Dict]:
         # Convert io entity to rest io objects
         input_bindings, dataset_literal_inputs = process_sdk_component_job_io(
             input_entity, [ComponentJobConstants.INPUT_PATTERN]
@@ -231,7 +277,7 @@ class NodeIOMixin:
         # convert rest io to dict
         rest_dataset_literal_inputs = {}
         for name, val in rest_inputs.items():
-            rest_dataset_literal_inputs[name] = val.as_dict()
+            rest_dataset_literal_inputs[name] = _rest_io_to_snake_dict(val)
             if hasattr(val, "mode") and val.mode:
                 rest_dataset_literal_inputs[name].update({"mode": val.mode.value})
         return rest_dataset_literal_inputs
@@ -273,13 +319,18 @@ class NodeIOMixin:
                 output_dict["version"] = output_dict.pop("asset_version")
             return output_dict
 
-        rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}
+        rest_data_outputs = {
+            name: _rename_name_and_version(_rest_io_to_snake_dict(val))
+            for name, val in rest_data_outputs.items()
+        }
         self._update_output_types(rest_data_outputs)
         rest_data_outputs.update(rest_output_bindings)
         return rest_data_outputs
 
     @classmethod
-    def _from_rest_inputs(cls, inputs: Dict) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def _from_rest_inputs(
+        cls, inputs: Dict
+    ) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Load inputs from rest inputs.
 
         :param inputs: The REST inputs
@@ -289,7 +340,9 @@ class NodeIOMixin:
         """
 
         # JObject -> RestJobInput/RestJobOutput
-        input_bindings, rest_inputs = from_dict_to_rest_io(inputs, RestJobInput, [ComponentJobConstants.INPUT_PATTERN])
+        input_bindings, rest_inputs = from_dict_to_rest_io(
+            inputs, RestJobInput, [ComponentJobConstants.INPUT_PATTERN]
+        )
 
         # RestJobInput/RestJobOutput -> Input/Output
         dataset_literal_inputs = from_rest_inputs_to_dataset_literal(rest_inputs)
@@ -385,23 +438,32 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         """
         # Note: We put and extra validation here instead of doing it in pipeline._validate()
         # due to group input will be discarded silently if assign it to a non-group parameter.
-        group_msg = "'%s' is defined as a parameter group but got input '%s' with type '%s'."
-        non_group_msg = "'%s' is defined as a parameter but got a parameter group as input."
+        group_msg = (
+            "'%s' is defined as a parameter group but got input '%s' with type '%s'."
+        )
+        non_group_msg = (
+            "'%s' is defined as a parameter but got a parameter group as input."
+        )
         for key, val in inputs.items():
             definition = input_definition_dict.get(key)
             val = GroupInput.custom_class_value_to_attr_dict(val)
             if val is None:
                 continue
             # 1. inputs.group = 'a string'
-            if isinstance(definition, GroupInput) and not isinstance(val, (_GroupAttrDict, dict)):
+            if isinstance(definition, GroupInput) and not isinstance(
+                val, (_GroupAttrDict, dict)
+            ):
                 raise ValidationException(
                     message=group_msg % (key, val, type(val)),
-                    no_personal_data_message=group_msg % ("[key]", "[val]", "[type(val)]"),
+                    no_personal_data_message=group_msg
+                    % ("[key]", "[val]", "[type(val)]"),
                     target=ErrorTarget.PIPELINE,
                     type=ValidationErrorType.INVALID_VALUE,
                 )
             # 2. inputs.str_param = group
-            if not isinstance(definition, GroupInput) and isinstance(val, _GroupAttrDict):
+            if not isinstance(definition, GroupInput) and isinstance(
+                val, _GroupAttrDict
+            ):
                 raise ValidationException(
                     message=non_group_msg % key,
                     no_personal_data_message=non_group_msg % "[key]",
@@ -461,8 +523,14 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         :return: The flattened inputs and definition
         :rtype: Tuple[Dict, Dict]
         """
-        group_input_names = [key for key, val in input_definition_dict.items() if isinstance(val, GroupInput)]
-        flattened_inputs = flatten_dict(inputs, _GroupAttrDict, allow_dict_fields=group_input_names)
+        group_input_names = [
+            key
+            for key, val in input_definition_dict.items()
+            if isinstance(val, GroupInput)
+        ]
+        flattened_inputs = flatten_dict(
+            inputs, _GroupAttrDict, allow_dict_fields=group_input_names
+        )
         flattened_definition_dict = flatten_dict(input_definition_dict, GroupInput)
         return flattened_inputs, flattened_definition_dict
 
@@ -489,11 +557,13 @@ class NodeWithGroupInputMixin(NodeIOMixin):
             self._validate_group_input_type(input_definition_dict, inputs)
 
             # Flatten inputs and definition
-            flattened_inputs, flattened_definition_dict = self._flatten_inputs_and_definition(
-                inputs, input_definition_dict
+            flattened_inputs, flattened_definition_dict = (
+                self._flatten_inputs_and_definition(inputs, input_definition_dict)
             )
             # Build: zip all flattened parameter with definition
-            inputs = super()._build_inputs_dict(flattened_inputs, input_definition_dict=flattened_definition_dict)
+            inputs = super()._build_inputs_dict(
+                flattened_inputs, input_definition_dict=flattened_definition_dict
+            )
             return InputsAttrDict(GroupInput.restore_flattened_inputs(inputs))
         return super()._build_inputs_dict(inputs)
 
@@ -502,11 +572,16 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
     """Provides ability to wrap pipeline job inputs/outputs and build data bindings
     dynamically."""
 
-    def _build_input(self, name: str, meta: Optional[Input], data: Any) -> "PipelineInput":
+    def _build_input(
+        self, name: str, meta: Optional[Input], data: Any
+    ) -> "PipelineInput":
         return PipelineInput(name=name, meta=meta, data=data, owner=self)
 
     def _build_output(
-        self, name: str, meta: Optional[Union[Input, Output]], data: Optional[Union[Output, str]]
+        self,
+        name: str,
+        meta: Optional[Union[Input, Output]],
+        data: Optional[Union[Output, str]],
     ) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
         result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
@@ -527,14 +602,18 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         :return: Built input attribute dict.
         :rtype: InputsAttrDict
         """
-        input_dict = super()._build_inputs_dict(inputs, input_definition_dict=input_definition_dict)
+        input_dict = super()._build_inputs_dict(
+            inputs, input_definition_dict=input_definition_dict
+        )
         # TODO: should we do this when input_definition_dict is not None?
         # TODO: should we put this in super()._build_inputs_dict?
         if input_definition_dict is None:
             return InputsAttrDict(GroupInput.restore_flattened_inputs(input_dict))
         return input_dict
 
-    def _build_output_for_pipeline(self, name: str, data: Optional[Union[Output, NodeOutput]]) -> "PipelineOutput":
+    def _build_output_for_pipeline(
+        self, name: str, data: Optional[Union[Output, NodeOutput]]
+    ) -> "PipelineOutput":
         """Build an output object for pipeline and copy settings from source output.
 
         :param name: Output name.

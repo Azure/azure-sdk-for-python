@@ -44,6 +44,8 @@ from azure.ai.ml.entities import (
 )
 from test_utilities.utils import parse_local_path
 
+from azure.core.serialization import as_attribute_dict
+
 from .._utils import (
     DATA_VERSION,
     PARAMETERS_TO_TEST,
@@ -54,7 +56,9 @@ from .._utils import (
 )
 
 
-@pytest.mark.usefixtures("enable_internal_components", "enable_pipeline_private_preview_features")
+@pytest.mark.usefixtures(
+    "enable_internal_components", "enable_pipeline_private_preview_features"
+)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestPipelineJob:
@@ -103,14 +107,19 @@ class TestPipelineJob:
 
         # check if node's runsettings are set correctly
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
-        del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
+        del node_rest_dict[
+            "componentId"
+        ]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
         for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
-        assert not mismatched_runsettings, "Current value:\n{}\nMismatched fields:\n{}".format(
-            json.dumps(node_rest_dict, indent=2), json.dumps(mismatched_runsettings, indent=2)
+        assert (
+            not mismatched_runsettings
+        ), "Current value:\n{}\nMismatched fields:\n{}".format(
+            json.dumps(node_rest_dict, indent=2),
+            json.dumps(mismatched_runsettings, indent=2),
         )
 
         pipeline_dict = dsl_pipeline._to_dict()
@@ -121,7 +130,9 @@ class TestPipelineJob:
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_data_as_node_inputs(self, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict):
+    def test_data_as_node_inputs(
+        self, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict
+    ):
         node_func: InternalComponent = load_component(yaml_path)
 
         input_data_names = {}
@@ -131,7 +142,9 @@ class TestPipelineJob:
                 if "spark" in yaml_path:
                     input_data_names[input_name] = input_obj
                 else:
-                    inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
+                    inputs[input_name] = Data(
+                        name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE
+                    )
                     input_data_names[input_name] = data_name
         if len(input_data_names) == 0:
             return
@@ -149,7 +162,11 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
             if "spark" in yaml_path:
-                expected_rest_obj = {"job_input_type": AssetTypes.MLTABLE, "uri": dataset_name.path, "mode": "Direct"}
+                expected_rest_obj = {
+                    "job_input_type": AssetTypes.MLTABLE,
+                    "uri": dataset_name.path,
+                    "mode": "Direct",
+                }
             else:
                 expected_rest_obj = {
                     "job_input_type": AssetTypes.MLTABLE,
@@ -162,11 +179,14 @@ class TestPipelineJob:
         [
             "test:" + DATA_VERSION,
             "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
-            "Microsoft.MachineLearningServices/workspaces/ws/datasets/test/versions/" + DATA_VERSION,
+            "Microsoft.MachineLearningServices/workspaces/ws/datasets/test/versions/"
+            + DATA_VERSION,
         ],
     )
     def test_data_as_pipeline_inputs(self, input_path):
-        yaml_path = "./tests/test_configs/internal/distribution-component/component_spec.yaml"
+        yaml_path = (
+            "./tests/test_configs/internal/distribution-component/component_spec.yaml"
+        )
         node_func: InternalComponent = load_component(yaml_path)
 
         @pipeline()
@@ -174,10 +194,14 @@ class TestPipelineJob:
             node = node_func(input_path=pipeline_input)
             node.compute = "cpu-cluster"
 
-        dsl_pipeline: PipelineJob = pipeline_func(pipeline_input=Input(path=input_path, type=AssetTypes.MLTABLE))
+        dsl_pipeline: PipelineJob = pipeline_func(
+            pipeline_input=Input(path=input_path, type=AssetTypes.MLTABLE)
+        )
         if input_path.startswith("test:"):
             dsl_pipeline_with_data_input: PipelineJob = pipeline_func(
-                pipeline_input=Data(name="test", version=DATA_VERSION, type=AssetTypes.MLTABLE)
+                pipeline_input=Data(
+                    name="test", version=DATA_VERSION, type=AssetTypes.MLTABLE
+                )
             )
         else:
             dsl_pipeline_with_data_input: PipelineJob = pipeline_func(
@@ -197,13 +221,18 @@ class TestPipelineJob:
             "job_input_type": AssetTypes.MLTABLE,
             "uri": input_path,
         }
-        assert pipeline_rest_dict.inputs["pipeline_input"].as_dict() == expected_rest_obj
+        assert (
+            as_attribute_dict(pipeline_rest_dict.inputs["pipeline_input"])
+            == expected_rest_obj
+        )
 
         expected_rest_obj = {
             "job_input_type": "literal",
             "value": "${{parent.inputs.pipeline_input}}",
         }
-        assert pipeline_rest_dict.jobs["node"]["inputs"]["input_path"] == expected_rest_obj
+        assert (
+            pipeline_rest_dict.jobs["node"]["inputs"]["input_path"] == expected_rest_obj
+        )
 
     def test_internal_component_node_output_type(self):
         from azure.ai.ml._utils.utils import try_enable_internal_components
@@ -220,7 +249,7 @@ class TestPipelineJob:
             node.outputs.data_any_file.mode = "mount"
 
         pipeline_job = pipeline_func()
-        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        rest_pipeline_job_dict = as_attribute_dict(pipeline_job._to_rest_object())
         assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
             "data_any_file": {"mode": "ReadWriteMount", "job_output_type": "uri_file"}
         }
@@ -256,7 +285,9 @@ class TestPipelineJob:
         assert dsl_pipeline._validate().passed
         dsl_pipeline._to_rest_object()
         pipeline_component = dsl_pipeline.jobs["sub_pipeline_func"].component
-        assert pipeline_component._to_rest_object().properties.component_spec["outputs"] == {
+        assert pipeline_component._to_rest_object().properties.component_spec[
+            "outputs"
+        ] == {
             "data_any_directory": {"type": "uri_folder"},
             "data_any_file": {"type": "uri_file"},  # AnyFile => uri_file
             "data_azureml_dataset": {"type": "uri_folder"},
@@ -293,7 +324,9 @@ class TestPipelineJob:
 
         ts = TargetSelector(
             compute_type="AMLK8s",  # runsettings.target_selector.compute_type
-            instance_types=["STANDARD_D2_V2"],  # runsettings.target_selector.instance_types
+            instance_types=[
+                "STANDARD_D2_V2"
+            ],  # runsettings.target_selector.instance_types
             regions=["eastus2euap"],  # runsettings.target_selector.regions
             my_resource_only=True,  # runsettings.target_selector.my_resource_only
             allow_spot_vm=True,  # runsettings.target_selector.allow_spot_vm
@@ -397,7 +430,9 @@ class TestPipelineJob:
             user_alias="user_alias",
         )
         # what if key is not in lower case?
-        node.resources.properties[JobComputePropertyFields.SINGULARITY.lower()] = configuration
+        node.resources.properties[JobComputePropertyFields.SINGULARITY.lower()] = (
+            configuration
+        )
         properties_rest_dict = node._to_rest_object()["resources"]["properties"]
         assert properties_rest_dict == {
             JobComputePropertyFields.AISUPERCOMPUTER: {
@@ -429,18 +464,26 @@ class TestPipelineJob:
         }
 
     def test_load_pipeline_job_with_internal_components_as_node(self):
-        yaml_path = Path("./tests/test_configs/internal/helloworld/helloworld_component_scope.yml")
+        yaml_path = Path(
+            "./tests/test_configs/internal/helloworld/helloworld_component_scope.yml"
+        )
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
 
-        yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
+        yaml_dict["code"] = parse_local_path(
+            yaml_dict["code"], scope_internal_func.base_path
+        )
 
-        command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
+        command_func = load_component(
+            "./tests/test_configs/components/helloworld_component.yml"
+        )
 
         @pipeline()
         def pipeline_func():
-            node = command_func(component_in_path=Input(path="./tests/test_configs/data"))
+            node = command_func(
+                component_in_path=Input(path="./tests/test_configs/data")
+            )
             node.compute = "cpu-cluster"
 
             node_internal: Scope = scope_internal_func(
@@ -482,7 +525,10 @@ class TestPipelineJob:
             "custom_job_name_suffix": "component_sdk_test",
             "scope_param": "-tokens 50",
             "inputs": {
-                "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
+                "ExtractionClause": {
+                    "job_input_type": "literal",
+                    "value": "column1:string, column2:int",
+                },
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
             "type": "ScopeComponent",
@@ -494,7 +540,10 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
+                "jobs": {
+                    "node": dsl_pipeline.jobs["node"]._to_dict(),
+                    "node_internal": scope_node._to_dict(),
+                },
                 "type": "pipeline",
             },
             *omit_fields,
@@ -509,12 +558,18 @@ class TestPipelineJob:
         }
 
     def test_components_in_registry(self):
-        command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
-        registry_code_id = "azureml://feeds/testFeed/codes/hello_component/versions/0.0.1"
+        command_func = load_component(
+            "./tests/test_configs/components/helloworld_component.yml"
+        )
+        registry_code_id = (
+            "azureml://feeds/testFeed/codes/hello_component/versions/0.0.1"
+        )
 
         @pipeline()
         def pipeline_func():
-            node = command_func(component_in_path=Input(path="./tests/test_configs/data"))
+            node = command_func(
+                component_in_path=Input(path="./tests/test_configs/data")
+            )
 
             # can't create a component from azureml-components in ci workspace
             # so just use a local test
@@ -523,7 +578,9 @@ class TestPipelineJob:
 
         dsl_pipeline: PipelineJob = pipeline_func()
         assert dsl_pipeline._validate().passed
-        regenerated_pipeline_job = PipelineJob._from_rest_object(dsl_pipeline._to_rest_object())
+        regenerated_pipeline_job = PipelineJob._from_rest_object(
+            dsl_pipeline._to_rest_object()
+        )
         assert dsl_pipeline._to_dict() == regenerated_pipeline_job._to_dict()
 
     def test_components_input_output(self):
@@ -580,16 +637,22 @@ class TestPipelineJob:
         }
         for key in inputs:
             if key.startswith("data_"):
-                expected_inputs[key] = {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"}
+                expected_inputs[key] = {
+                    "job_input_type": "mltable",
+                    "uri": "azureml:scope_tsv:1",
+                }
         assert rest_obj.properties.jobs["node"]["inputs"] == expected_inputs
 
     def test_data_binding_on_node_runsettings(self):
-        test_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        test_path = (
+            "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        )
         component: InternalComponent = load_component(test_path)
 
         @pipeline()
         def pipeline_func(
-            compute_name: str = "cpu-cluster", environment_name: str = "AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8"
+            compute_name: str = "cpu-cluster",
+            environment_name: str = "AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8",
         ):
             node = component(
                 training_data=Input(path="./tests/test_configs/data"),
@@ -605,7 +668,12 @@ class TestPipelineJob:
         assert str(rest_object["environment"]) == "${{parent.inputs.environment_name}}"
 
     def test_pipeline_with_setting_node_output_directly(self) -> None:
-        component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
+        component_dir = (
+            Path(__file__).parent.parent.parent
+            / "test_configs"
+            / "internal"
+            / "command-component"
+        )
         copy_func = load_component(component_dir / "command-linux/copy/component.yaml")
 
         copy_file = copy_func(
@@ -623,7 +691,9 @@ class TestPipelineJob:
         )
         pipeline_dict = pipeline_job._to_dict()
         rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
-        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert pipeline_dict["properties"] == {
+            "AZURE_ML_PathOnCompute_input_data": "/tmp/test"
+        }
         assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
         for name, node_dict in pipeline_dict["jobs"].items():
             rest_node_dict = rest_pipeline_dict["jobs"][name]
@@ -637,7 +707,9 @@ class TestPipelineJob:
             pytest.param(
                 "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
                 {
-                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "resources.instance_count": JobResourceConfiguration(
+                        instance_count=1
+                    ),
                     "limits.timeout": CommandJobLimits(timeout=100),
                 },
                 {},
@@ -646,30 +718,49 @@ class TestPipelineJob:
             pytest.param(
                 "./tests/test_configs/internal/batch_inference/batch_score.yaml",
                 {
-                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "resources.instance_count": JobResourceConfiguration(
+                        instance_count=1
+                    ),
                     "limits.timeout": CommandJobLimits(timeout=100),
                 },
                 {
-                    "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
-                    "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+                    "model_path": Input(
+                        type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"
+                    ),
+                    "images_to_score": Input(
+                        type=AssetTypes.MLTABLE, path="mltable_mnist@latest"
+                    ),
                 },
                 id="parallel.resources",
             ),
             pytest.param(
                 "tests/test_configs/internal/spark-component/spec.yaml",
                 {
-                    "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
+                    "resources.runtime_version": SparkResourceConfiguration(
+                        runtime_version="2.4"
+                    ),
                 },
                 {
-                    "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
-                    "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                    "file_input1": Input(
+                        type=AssetTypes.MLTABLE,
+                        path="mltable_mnist@latest",
+                        mode="direct",
+                    ),
+                    "file_input2": Input(
+                        type=AssetTypes.MLTABLE,
+                        path="mltable_mnist@latest",
+                        mode="direct",
+                    ),
                 },
                 id="spark",
             ),
         ],
     )
     def test_data_binding_expression_on_node_runsettings(
-        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+        self,
+        component_path: str,
+        fields_to_test: Dict[str, Any],
+        fake_inputs: Dict[str, Input],
     ):
         component = load_component(component_path)
 
@@ -699,7 +790,9 @@ class TestPipelineJob:
         pipeline_job.component._get_anonymous_hash()
 
     def test_node_output_type_promotion(self):
-        test_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        test_path = (
+            "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        )
         component: InternalComponent = load_component(test_path)
 
         @pipeline()
@@ -712,7 +805,7 @@ class TestPipelineJob:
             return node.outputs
 
         pipeline_job = pipeline_func()
-        pipeline_dict = pipeline_job._to_rest_object().as_dict()
+        pipeline_dict = as_attribute_dict(pipeline_job._to_rest_object())
         # type will be preserved & mode will be promoted to pipeline level
         assert pipeline_dict["properties"]["outputs"]["model_output"] == {
             "job_output_type": "uri_folder",
