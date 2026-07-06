@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b1 (2026-07-06)
+## 3.0.0b1 (2026-07-03)
 
 ### Features Added
 
@@ -37,28 +37,22 @@
   - Added model `SreAgentConfigurationListResponse`
   - Added model `SreAgentConnectorRequest`
   - Added model `TrackedResource`
-  - Model `MonitorsOperations` added method `get_default_application_key`
-  - Model `MonitorsOperations` added method `manage_sre_agent_connectors`
-  - Added model `BillingInfoOperations`
-  - Added model `DatadogMonitorResourcesOperations`
-  - Added model `OrganizationsOperations`
-  - Added model `SaaSOperationGroupOperations`
+  - Operation group `MonitorsOperations` added method `get_default_application_key`
+  - Operation group `MonitorsOperations` added method `manage_sre_agent_connectors`
+  - Added operation group `BillingInfoOperations`
+  - Added operation group `DatadogMonitorResourcesOperations`
+  - Added operation group `OrganizationsOperations`
+  - Added operation group `SaaSOperationGroupOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `CreateResourceSupportedResponseList`
-  - Deleted or renamed model `DatadogAgreementResourceListResponse`
-  - Deleted or renamed model `DatadogApiKeyListResponse`
-  - Deleted or renamed model `DatadogHostListResponse`
-  - Deleted or renamed model `DatadogMonitorResourceListResponse`
-  - Deleted or renamed model `DatadogSingleSignOnResourceListResponse`
-  - Deleted or renamed model `LinkedResourceListResponse`
-  - Deleted or renamed model `MonitoredResourceListResponse`
-  - Deleted or renamed model `MonitoredSubscriptionPropertiesList`
-  - Deleted or renamed model `MonitoringTagRulesListResponse`
-  - Deleted or renamed model `OperationListResult`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Method `CreationSupportedOperations.get` changed its parameter `datadog_organization_id` from `positional_or_keyword` to `keyword_only`
   - Method `CreationSupportedOperations.list` changed its parameter `datadog_organization_id` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `CreateResourceSupportedResponseList`/`DatadogAgreementResourceListResponse`/`DatadogApiKeyListResponse`/`DatadogHostListResponse`/`DatadogMonitorResourceListResponse`/`DatadogSingleSignOnResourceListResponse`/`LinkedResourceListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`MonitoringTagRulesListResponse`/`OperationListResult` which actually were not used by SDK users
 
 ## 2.1.0 (2023-10-23)
 
