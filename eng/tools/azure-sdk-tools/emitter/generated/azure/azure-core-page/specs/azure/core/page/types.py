@@ -9,17 +9,6 @@
 from typing_extensions import Required, TypedDict
 
 
-class FirstItem(TypedDict, total=False):
-    """First item.
-
-    :ivar id: The id of the item. Required.
-    :vartype id: int
-    """
-
-    id: Required[int]
-    """The id of the item. Required."""
-
-
 class ListItemInputBody(TypedDict, total=False):
     """The body of the input.
 
@@ -29,56 +18,3 @@ class ListItemInputBody(TypedDict, total=False):
 
     inputName: Required[str]
     """The name of the input. Required."""
-
-
-class SecondItem(TypedDict, total=False):
-    """Second item.
-
-    :ivar name: The name of the item. Required.
-    :vartype name: str
-    """
-
-    name: Required[str]
-    """The name of the item. Required."""
-
-
-class User(TypedDict, total=False):
-    """Details about a user.
-
-    :ivar id: The user's id. Required.
-    :vartype id: int
-    :ivar name: The user's name. Required.
-    :vartype name: str
-    :ivar orders: The user's order list.
-    :vartype orders: list["UserOrder"]
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
-    """
-
-    id: Required[int]
-    """The user's id. Required."""
-    name: Required[str]
-    """The user's name. Required."""
-    orders: list["UserOrder"]
-    """The user's order list."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
-
-
-class UserOrder(TypedDict, total=False):
-    """UserOrder for testing list with expand.
-
-    :ivar id: The user's id. Required.
-    :vartype id: int
-    :ivar user_id: The user's id. Required.
-    :vartype user_id: int
-    :ivar detail: The user's order detail. Required.
-    :vartype detail: str
-    """
-
-    id: Required[int]
-    """The user's id. Required."""
-    userId: Required[int]
-    """The user's id. Required."""
-    detail: Required[str]
-    """The user's order detail. Required."""
