@@ -21,7 +21,13 @@ from ._operations import (
 def _apply_if_none_match(kwargs: Any, if_none_match: Optional[str]) -> None:
     """Restore the 1.0.0 ``if_none_match`` behavior by sending the raw
     ``If-None-Match`` header value as-is (the generated client instead exposes the
-    ``etag`` / ``match_condition`` pattern)."""
+    ``etag`` / ``match_condition`` pattern).
+
+    :param kwargs: The keyword arguments forwarded to the generated operation.
+    :type kwargs: any
+    :param if_none_match: The raw ``If-None-Match`` header value, or ``None``.
+    :type if_none_match: str or None
+    """
     if if_none_match is not None:
         headers = kwargs.setdefault("headers", {})
         headers.setdefault("If-None-Match", if_none_match)

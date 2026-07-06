@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, List, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ._client import DeviceUpdateClient as DeviceUpdateClientGenerated
 
@@ -30,9 +30,22 @@ class DeviceUpdateClient(DeviceUpdateClientGenerated):
     :type instance_id: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2026-06-01".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, instance_id: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        instance_id: str,
+        credential: "AsyncTokenCredential",
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        if api_version is not None:
+            kwargs["api_version"] = api_version
         super().__init__(endpoint=endpoint, credential=credential, instance_id=instance_id, **kwargs)
 
 

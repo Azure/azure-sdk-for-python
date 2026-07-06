@@ -8,6 +8,8 @@ namespace azure.iot.deviceupdate
                 endpoint: str, 
                 instance_id: str, 
                 credential: TokenCredential, 
+                *, 
+                api_version: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -31,6 +33,8 @@ namespace azure.iot.deviceupdate.aio
                 endpoint: str, 
                 instance_id: str, 
                 credential: AsyncTokenCredential, 
+                *, 
+                api_version: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
