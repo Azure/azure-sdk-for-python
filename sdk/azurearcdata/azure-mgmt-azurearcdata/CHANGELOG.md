@@ -1,5 +1,249 @@
 # Release History
 
+## 2.0.0b3 (2026-07-06)
+
+### Features Added
+
+  - Client `AzureArcDataManagementClient` added method `send_request`
+  - Client `AzureArcDataManagementClient` added operation group `sql_server_licenses`
+  - Client `AzureArcDataManagementClient` added operation group `sql_server_esu_licenses`
+  - Client `AzureArcDataManagementClient` added operation group `failover_groups`
+  - Client `AzureArcDataManagementClient` added operation group `sql_server_availability_groups`
+  - Client `AzureArcDataManagementClient` added operation group `sql_server_databases`
+  - Enum `ArcSqlServerLicenseType` added member `FABRIC_CAPACITY`
+  - Enum `ConnectionStatus` added member `DISCOVERED`
+  - Enum `EditionType` added member `BUSINESS_INTELLIGENCE`
+  - Enum `EditionType` added member `STANDARD_DEVELOPER`
+  - Enum `EditionType` added member `UNKNOWN`
+  - Enum `HostType` added member `HYPER_V_VIRTUAL_MACHINE`
+  - Model `SqlManagedInstanceK8SSpec` added property `security`
+  - Model `SqlManagedInstanceK8SSpec` added property `settings`
+  - Model `SqlManagedInstanceSku` added property `name`
+  - Model `SqlServerInstanceProperties` added property `vm_id`
+  - Model `SqlServerInstanceProperties` added property `cores`
+  - Model `SqlServerInstanceProperties` added property `discovery_source`
+  - Model `SqlServerInstanceProperties` added property `db_master_key_exists`
+  - Model `SqlServerInstanceProperties` added property `is_hadr_enabled`
+  - Model `SqlServerInstanceProperties` added property `trace_flags`
+  - Model `SqlServerInstanceProperties` added property `last_inventory_upload_time`
+  - Model `SqlServerInstanceProperties` added property `last_usage_upload_time`
+  - Model `SqlServerInstanceProperties` added property `always_on_role`
+  - Model `SqlServerInstanceProperties` added property `database_mirroring_endpoint`
+  - Model `SqlServerInstanceProperties` added property `failover_cluster`
+  - Model `SqlServerInstanceProperties` added property `backup_policy`
+  - Model `SqlServerInstanceProperties` added property `upgrade_locked_until`
+  - Model `SqlServerInstanceProperties` added property `monitoring`
+  - Model `SqlServerInstanceProperties` added property `migration`
+  - Model `SqlServerInstanceProperties` added property `best_practices_assessment`
+  - Model `SqlServerInstanceProperties` added property `client_connection`
+  - Model `SqlServerInstanceProperties` added property `service_type`
+  - Model `SqlServerInstanceProperties` added property `max_server_memory_mb`
+  - Model `SqlServerInstanceProperties` added property `is_microsoft_pki_cert_trust_configured`
+  - Model `SqlServerInstanceProperties` added property `is_digi_cert_pki_cert_trust_configured`
+  - Model `SqlServerInstanceProperties` added property `authentication`
+  - Model `SqlServerInstanceUpdate` added property `properties`
+  - Enum `SqlVersion` added member `SQL_SERVER2025`
+  - Added enum `ActivationState`
+  - Added model `AdditionalMigrationJobAttributes`
+  - Added enum `AggregationType`
+  - Added enum `AlwaysOnRole`
+  - Added enum `ArcSqlServerAvailabilityGroupTypeFilter`
+  - Added enum `ArcSqlServerAvailabilityMode`
+  - Added enum `ArcSqlServerFailoverMode`
+  - Added enum `AssessmentStatus`
+  - Added model `Authentication`
+  - Added enum `AutomatedBackupPreference`
+  - Added model `AvailabilityGroupConfigure`
+  - Added model `AvailabilityGroupCreateUpdateConfiguration`
+  - Added model `AvailabilityGroupCreateUpdateReplicaConfiguration`
+  - Added model `AvailabilityGroupInfo`
+  - Added model `AvailabilityGroupRetrievalFilters`
+  - Added model `AvailabilityGroupState`
+  - Added enum `AzureManagedInstanceRole`
+  - Added model `BackgroundJob`
+  - Added model `BackupPolicy`
+  - Added model `BestPracticesAssessment`
+  - Added enum `BillingPlan`
+  - Added model `ClientConnection`
+  - Added enum `ClusterType`
+  - Added enum `ConnectionAuth`
+  - Added model `CostOptionSelectedValues`
+  - Added model `CostTypeValues`
+  - Added model `CronTrigger`
+  - Added model `DBMEndpoint`
+  - Added model `DataBaseMigration`
+  - Added model `DataBaseMigrationAssessment`
+  - Added model `DatabaseAssessmentsItem`
+  - Added enum `DatabaseCreateMode`
+  - Added model `DatabaseMigrationJobsItem`
+  - Added enum `DatabaseState`
+  - Added model `Databases`
+  - Added enum `DbFailover`
+  - Added enum `DifferentialBackupHours`
+  - Added enum `DiscoverySource`
+  - Added model `DiskSizes`
+  - Added model `DistributedAvailabilityGroupCreateUpdateAvailabilityGroupCertificateConfiguration`
+  - Added model `DistributedAvailabilityGroupCreateUpdateAvailabilityGroupConfiguration`
+  - Added model `DistributedAvailabilityGroupCreateUpdateConfiguration`
+  - Added enum `DtcSupport`
+  - Added enum `EncryptionAlgorithm`
+  - Added model `EntraAuthentication`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added enum `ExecutionState`
+  - Added model `FailoverCluster`
+  - Added enum `FailoverGroupPartnerSyncMode`
+  - Added model `FailoverGroupProperties`
+  - Added model `FailoverGroupResource`
+  - Added model `FailoverGroupSpec`
+  - Added model `FailoverMiLinkResourceId`
+  - Added enum `FailureConditionLevel`
+  - Added model `HostIPAddressInformation`
+  - Added enum `IdentityType`
+  - Added model `ImpactedObjectsInfo`
+  - Added model `ImpactedObjectsSuitabilitySummary`
+  - Added enum `InitiatedFrom`
+  - Added enum `InstanceFailoverGroupRole`
+  - Added enum `JobStatus`
+  - Added model `K8SActiveDirectory`
+  - Added model `K8SActiveDirectoryConnector`
+  - Added model `K8SNetworkSettings`
+  - Added model `K8SSecurity`
+  - Added model `K8SSettings`
+  - Added model `K8StransparentDataEncryption`
+  - Added enum `LastExecutionStatus`
+  - Added enum `LicenseCategory`
+  - Added model `ManagedInstanceLinkCreateUpdateConfiguration`
+  - Added enum `MiLinkAssessmentCategory`
+  - Added model `MiLinkCreateUpdateConfiguration`
+  - Added model `Migration`
+  - Added model `MigrationAssessment`
+  - Added model `MigrationAssessmentSettings`
+  - Added enum `MigrationMode`
+  - Added enum `MigrationStatus`
+  - Added enum `Mode`
+  - Added model `Monitoring`
+  - Added enum `PrimaryAllowConnections`
+  - Added enum `ProvisioningState`
+  - Added enum `RecommendationStatus`
+  - Added enum `RecoveryMode`
+  - Added enum `ReplicationPartnerType`
+  - Added enum `ResourceUpdateMode`
+  - Added enum `Result`
+  - Added enum `Role`
+  - Added model `Schedule`
+  - Added enum `ScopeType`
+  - Added enum `SecondaryAllowConnections`
+  - Added enum `SeedingMode`
+  - Added model `SequencerAction`
+  - Added enum `SequencerState`
+  - Added model `ServerAssessmentsItem`
+  - Added model `ServerAssessmentsPropertiesItemsItem`
+  - Added enum `ServiceType`
+  - Added model `SkuRecommendationResults`
+  - Added model `SkuRecommendationResultsAzureSqlDatabase`
+  - Added model `SkuRecommendationResultsAzureSqlDatabaseTargetSku`
+  - Added model `SkuRecommendationResultsAzureSqlDatabaseTargetSkuCategory`
+  - Added model `SkuRecommendationResultsAzureSqlManagedInstance`
+  - Added model `SkuRecommendationResultsAzureSqlManagedInstanceTargetSku`
+  - Added model `SkuRecommendationResultsAzureSqlManagedInstanceTargetSkuCategory`
+  - Added model `SkuRecommendationResultsAzureSqlVirtualMachine`
+  - Added model `SkuRecommendationResultsAzureSqlVirtualMachineTargetSku`
+  - Added model `SkuRecommendationResultsAzureSqlVirtualMachineTargetSkuCategory`
+  - Added model `SkuRecommendationResultsAzureSqlVirtualMachineTargetSkuVirtualMachineSize`
+  - Added model `SkuRecommendationResultsMonthlyCost`
+  - Added model `SkuRecommendationResultsMonthlyCostOptionItem`
+  - Added model `SkuRecommendationSummary`
+  - Added model `SkuRecommendationSummaryTargetSku`
+  - Added model `SkuRecommendationSummaryTargetSkuCategory`
+  - Added model `SqlAvailabilityGroupDatabaseReplicaResourceProperties`
+  - Added model `SqlAvailabilityGroupIpV4AddressesAndMasksPropertiesItem`
+  - Added model `SqlAvailabilityGroupReplicaResourceProperties`
+  - Added model `SqlAvailabilityGroupStaticIPListenerProperties`
+  - Added model `SqlServerAvailabilityGroupResource`
+  - Added model `SqlServerAvailabilityGroupResourceProperties`
+  - Added model `SqlServerAvailabilityGroupResourcePropertiesDatabases`
+  - Added model `SqlServerAvailabilityGroupResourcePropertiesReplicas`
+  - Added model `SqlServerAvailabilityGroupUpdate`
+  - Added model `SqlServerDatabaseResource`
+  - Added model `SqlServerDatabaseResourceProperties`
+  - Added model `SqlServerDatabaseResourcePropertiesBackupInformation`
+  - Added model `SqlServerDatabaseResourcePropertiesDatabaseOptions`
+  - Added model `SqlServerDatabaseUpdate`
+  - Added model `SqlServerEsuLicense`
+  - Added model `SqlServerEsuLicenseProperties`
+  - Added model `SqlServerEsuLicenseUpdate`
+  - Added model `SqlServerEsuLicenseUpdateProperties`
+  - Added model `SqlServerInstanceBpaColumn`
+  - Added enum `SqlServerInstanceBpaColumnType`
+  - Added enum `SqlServerInstanceBpaQueryType`
+  - Added enum `SqlServerInstanceBpaReportType`
+  - Added model `SqlServerInstanceBpaRequest`
+  - Added model `SqlServerInstanceJob`
+  - Added model `SqlServerInstanceJobStatus`
+  - Added model `SqlServerInstanceJobsRequest`
+  - Added model `SqlServerInstanceJobsResponse`
+  - Added model `SqlServerInstanceJobsStatusRequest`
+  - Added model `SqlServerInstanceJobsStatusResponse`
+  - Added model `SqlServerInstanceManagedInstanceLinkAssessment`
+  - Added model `SqlServerInstanceManagedInstanceLinkAssessmentRequest`
+  - Added model `SqlServerInstanceManagedInstanceLinkAssessmentResponse`
+  - Added model `SqlServerInstanceMigrationReadinessReportResponse`
+  - Added model `SqlServerInstanceRunBestPracticesAssessmentResponse`
+  - Added model `SqlServerInstanceRunMigrationAssessmentResponse`
+  - Added model `SqlServerInstanceRunMigrationReadinessAssessmentResponse`
+  - Added model `SqlServerInstanceRunTargetRecommendationJobRequest`
+  - Added model `SqlServerInstanceRunTargetRecommendationJobResponse`
+  - Added model `SqlServerInstanceTargetRecommendationReport`
+  - Added model `SqlServerInstanceTargetRecommendationReportSection`
+  - Added enum `SqlServerInstanceTargetRecommendationReportSectionType`
+  - Added model `SqlServerInstanceTargetRecommendationReportsRequest`
+  - Added model `SqlServerInstanceTargetRecommendationReportsResponse`
+  - Added model `SqlServerInstanceTelemetryColumn`
+  - Added enum `SqlServerInstanceTelemetryColumnType`
+  - Added model `SqlServerInstanceTelemetryRequest`
+  - Added model `SqlServerInstanceUpdateProperties`
+  - Added model `SqlServerLicense`
+  - Added model `SqlServerLicenseProperties`
+  - Added model `SqlServerLicenseUpdate`
+  - Added model `SqlServerLicenseUpdateProperties`
+  - Added enum `State`
+  - Added model `TargetReadiness`
+  - Added enum `TargetType`
+  - Added enum `Version`
+  - Model `SqlServerInstancesOperations` added method `begin_get_best_practices_assessment`
+  - Model `SqlServerInstancesOperations` added method `begin_get_jobs`
+  - Model `SqlServerInstancesOperations` added method `begin_get_migration_readiness_report`
+  - Model `SqlServerInstancesOperations` added method `begin_get_target_recommendation_reports`
+  - Model `SqlServerInstancesOperations` added method `begin_get_telemetry`
+  - Model `SqlServerInstancesOperations` added method `begin_run_best_practice_assessment`
+  - Model `SqlServerInstancesOperations` added method `begin_run_managed_instance_link_assessment`
+  - Model `SqlServerInstancesOperations` added method `begin_run_migration_readiness_assessment`
+  - Model `SqlServerInstancesOperations` added method `begin_run_target_recommendation_job`
+  - Model `SqlServerInstancesOperations` added method `begin_update`
+  - Model `SqlServerInstancesOperations` added method `get_all_availability_groups`
+  - Model `SqlServerInstancesOperations` added method `get_jobs_status`
+  - Model `SqlServerInstancesOperations` added method `post_upgrade`
+  - Model `SqlServerInstancesOperations` added method `pre_upgrade`
+  - Model `SqlServerInstancesOperations` added method `run_best_practices_assessment`
+  - Model `SqlServerInstancesOperations` added method `run_migration_assessment`
+  - Added model `FailoverGroupsOperations`
+  - Added model `SqlServerAvailabilityGroupsOperations`
+  - Added model `SqlServerDatabasesOperations`
+  - Added model `SqlServerEsuLicensesOperations`
+  - Added model `SqlServerLicensesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ActiveDirectoryConnectorListResult`
+  - Deleted or renamed model `ErrorResponseBody`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PageOfDataControllerResource`
+  - Deleted or renamed model `PostgresInstanceListResult`
+  - Deleted or renamed model `SqlManagedInstanceListResult`
+  - Deleted or renamed model `SqlServerInstanceListResult`
+  - Deleted or renamed method `SqlServerInstancesOperations.update`
+
 ## 2.0.0b2 (2026-05-14)
 
 ### Other Changes
