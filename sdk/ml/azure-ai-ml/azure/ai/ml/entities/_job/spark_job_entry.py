@@ -5,8 +5,10 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    SparkJobPythonEntry,
+    SparkJobScalaEntry,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -36,22 +38,44 @@ class SparkJobEntry(RestTranslatableMixin):
             :caption: Creating SparkComponent.
     """
 
-    def __init__(self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
+    def __init__(
+        self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY
+    ) -> None:
         self.entry_type = type
         self.entry = entry
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
+    def _from_rest_object(
+        cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]
+    ) -> Optional["SparkJobEntry"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
-            obj = RestSparkJobEntry.from_dict(obj)
+            # The node serializer emits a snake_case dict (``spark_job_entry_type``/``file``/``class_name``);
+            # read the discriminator and payload directly rather than round-tripping through the arm hybrid
+            # (whose ``_deserialize`` expects the camelCase wire keys).
+            entry_type = obj.get("spark_job_entry_type") or obj.get("sparkJobEntryType")
+            if entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
+                return SparkJobEntry(
+                    entry=obj.get("file", None),
+                    type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY,
+                )
+            return SparkJobEntry(
+                entry=obj.get("class_name", None),
+                type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY,
+            )
         if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
             return SparkJobEntry(
-                entry=obj.__dict__.get("file", None),
+                entry=(
+                    obj.get("file", None)
+                    if hasattr(obj, "get")
+                    else obj.__dict__.get("file", None)
+                ),
                 type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY,
             )
-        return SparkJobEntry(entry=obj.class_name, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY)
+        return SparkJobEntry(
+            entry=obj.class_name, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY
+        )
 
     def _to_rest_object(self) -> Union[SparkJobPythonEntry, SparkJobScalaEntry]:
         if self.entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
