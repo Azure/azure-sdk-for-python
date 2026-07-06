@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Restored `KnowledgeRetrievalOutputMode` and `KnowledgeRetrievalReasoningEffort` as public re-exports from `azure.search.documents.indexes.models`.
+- Restored supported public `SearchIndex.serialize()` and `SearchIndex.deserialize()` round-trip helpers.
+
 ### Other Changes
 
 ## 12.1.0b1 (2026-05-28)

@@ -8,11 +8,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
+import json
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Type, TypeVar, Union, overload
 from ._models import SearchField as _SearchField
+from ._models import SearchIndex as _SearchIndex
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._models import SearchResourceEncryptionKey as _SearchResourceEncryptionKey
+from ...knowledgebases.models._enums import KnowledgeRetrievalOutputMode
+from ...knowledgebases.models._models import KnowledgeRetrievalReasoningEffort
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
@@ -28,6 +32,27 @@ if TYPE_CHECKING:
         SearchIndexerDataIdentity,
     )
     from ._enums import SearchIndexerDataSourceType
+
+
+_T = TypeVar("_T", bound="_PublicRoundTripMixin")
+
+
+class _PublicRoundTripMixin:
+    """Restore supported public round-trip helpers for compatibility."""
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> Any:
+        """Return the JSON that would be sent to the service from this model."""
+
+        _ = kwargs
+        return self.as_dict(exclude_readonly=not keep_readonly)  # type: ignore[attr-defined]
+
+    @classmethod
+    def deserialize(cls: Type[_T], data: Any, content_type: Optional[str] = None) -> _T:
+        """Parse RestAPI-shaped data and return a model instance."""
+
+        if isinstance(data, (str, bytes, bytearray)) and content_type != "application/xml":
+            data = json.loads(data)
+        return cls(data)
 
 
 class SearchField(_SearchField):
@@ -142,6 +167,13 @@ class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndex(_PublicRoundTripMixin, _SearchIndex):
+    """Represents a search index definition with public round-trip helpers."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -451,8 +483,11 @@ def ComplexField(
 
 __all__: list[str] = [
     "KnowledgeBase",
+    "KnowledgeRetrievalOutputMode",
+    "KnowledgeRetrievalReasoningEffort",
     "SearchField",
     "SearchFieldDataType",
+    "SearchIndex",
     "SearchIndexerDataSourceConnection",
     "SearchResourceEncryptionKey",
     "SimpleField",
