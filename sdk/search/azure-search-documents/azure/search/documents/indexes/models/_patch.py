@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import json
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Type, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
 from ._models import SearchField as _SearchField
 from ._models import SearchIndex as _SearchIndex
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
@@ -32,27 +32,6 @@ if TYPE_CHECKING:
         SearchIndexerDataIdentity,
     )
     from ._enums import SearchIndexerDataSourceType
-
-
-_T = TypeVar("_T", bound="_PublicRoundTripMixin")
-
-
-class _PublicRoundTripMixin:
-    """Restore supported public round-trip helpers for compatibility."""
-
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> Any:
-        """Return the JSON that would be sent to the service from this model."""
-
-        _ = kwargs
-        return self.as_dict(exclude_readonly=not keep_readonly)  # type: ignore[attr-defined]
-
-    @classmethod
-    def deserialize(cls: Type[_T], data: Any, content_type: Optional[str] = None) -> _T:
-        """Parse RestAPI-shaped data and return a model instance."""
-
-        if isinstance(data, (str, bytes, bytearray)) and content_type != "application/xml":
-            data = json.loads(data)
-        return cls(data)
 
 
 class SearchField(_SearchField):
@@ -172,11 +151,25 @@ class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndex(_PublicRoundTripMixin, _SearchIndex):
+class SearchIndex(_SearchIndex):
     """Represents a search index definition with public round-trip helpers."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> Any:
+        """Return the JSON that would be sent to the service from this model."""
+
+        _ = kwargs
+        return self.as_dict(exclude_readonly=not keep_readonly)
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None):
+        """Parse RestAPI-shaped data and return a model instance."""
+
+        if isinstance(data, (str, bytes, bytearray)) and content_type != "application/xml":
+            data = json.loads(data)
+        return cls(data)
 
 
 class KnowledgeBase(_KnowledgeBase):
