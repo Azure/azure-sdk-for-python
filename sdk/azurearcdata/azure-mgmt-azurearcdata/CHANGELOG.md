@@ -240,7 +240,6 @@
   - Added model `TargetReadiness`
   - Added enum `TargetType`
   - Added enum `Version`
-  - Operation group `DataControllersOperations` added method `begin_patch_data_controller`
   - Operation group `SqlServerInstancesOperations` added method `begin_get_best_practices_assessment`
   - Operation group `SqlServerInstancesOperations` added method `begin_get_jobs`
   - Operation group `SqlServerInstancesOperations` added method `begin_get_migration_readiness_report`
@@ -250,7 +249,6 @@
   - Operation group `SqlServerInstancesOperations` added method `begin_run_managed_instance_link_assessment`
   - Operation group `SqlServerInstancesOperations` added method `begin_run_migration_readiness_assessment`
   - Operation group `SqlServerInstancesOperations` added method `begin_run_target_recommendation_job`
-  - Operation group `SqlServerInstancesOperations` added method `begin_update`
   - Operation group `SqlServerInstancesOperations` added method `get_all_availability_groups`
   - Operation group `SqlServerInstancesOperations` added method `get_jobs_status`
   - Operation group `SqlServerInstancesOperations` added method `post_upgrade`
@@ -267,14 +265,12 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ErrorResponseBody`
-  - Deleted or renamed model `SqlManagedInstanceSkuName`
-  - Deleted or renamed method `DataControllersOperations.patch_data_controller`
-  - Deleted or renamed method `SqlServerInstancesOperations.update`
+  - Renamed method `DataControllersOperations.patch_data_controller` to `begin_patch_data_controller`
+  - Deleted or renamed method `SqlServerInstancesOperations.update` to `begin_update`
 
 ### Other Changes
 
-  - Deleted model `OperationListResult`/`PageOfDataControllerResource`/`SqlManagedInstanceListResult`/`SqlServerInstanceListResult` which actually were not used by SDK users
+  - Deleted model `ErrorResponseBody`/`OperationListResult`/`PageOfDataControllerResource`/`SqlManagedInstanceListResult`/`SqlManagedInstanceSkuName`/`SqlServerInstanceListResult` which actually were not used by SDK users
 
 ## 2.0.0b2 (2026-05-14)
 
