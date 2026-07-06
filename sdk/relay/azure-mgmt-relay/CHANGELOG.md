@@ -17,7 +17,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Deleted or renamed model `RelayAPI`
+  - Renamed client `RelayAPI` to `RelayAPIMgmtClient`
   - Model `AuthorizationRule` moved instance variable `rights` under property `properties` whose type is `AuthorizationRuleProperties`
   - Model `HybridConnection` moved instance variable `created_at`, `updated_at`, `listener_count`, `requires_client_authorization` and `user_metadata` under property `properties` whose type is `HybridConnectionProperties`
   - Model `NetworkRuleSet` moved instance variable `default_action`, `public_network_access` and `ip_rules` under property `properties` whose type is `NetworkRuleSetProperties`
