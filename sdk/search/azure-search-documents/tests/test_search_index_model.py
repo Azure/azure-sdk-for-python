@@ -124,5 +124,7 @@ class TestSearchIndexSerialization:
             KnowledgeRetrievalReasoningEffort as KnowledgeRetrievalReasoningEffortFromKnowledgeBases,
         )
 
-        assert KnowledgeRetrievalOutputMode is KnowledgeRetrievalOutputModeFromKnowledgeBases
-        assert KnowledgeRetrievalReasoningEffort is KnowledgeRetrievalReasoningEffortFromKnowledgeBases
+        assert KnowledgeRetrievalOutputMode.EXTRACTIVE_DATA == (
+            KnowledgeRetrievalOutputModeFromKnowledgeBases.EXTRACTIVE_DATA
+        )
+        assert issubclass(KnowledgeRetrievalReasoningEffort, KnowledgeRetrievalReasoningEffortFromKnowledgeBases)

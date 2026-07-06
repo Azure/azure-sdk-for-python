@@ -9,14 +9,15 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import json
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
+from azure.core import CaseInsensitiveEnumMeta
 from ._models import SearchField as _SearchField
 from ._models import SearchIndex as _SearchIndex
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._models import SearchResourceEncryptionKey as _SearchResourceEncryptionKey
-from ...knowledgebases.models._enums import KnowledgeRetrievalOutputMode
-from ...knowledgebases.models._models import KnowledgeRetrievalReasoningEffort
+from ...knowledgebases.models._models import KnowledgeRetrievalReasoningEffort as _KnowledgeRetrievalReasoningEffort
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
@@ -158,18 +159,45 @@ class SearchIndex(_SearchIndex):
         super().__init__(*args, **kwargs)
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> Any:
-        """Return the JSON that would be sent to the service from this model."""
+        """
+        Return the JSON that would be sent to the service from this model.
+
+        :param bool keep_readonly: Whether to include readonly properties in the serialized payload.
+        :return: A JSON-serializable representation of this model.
+        :rtype: Any
+        """
 
         _ = kwargs
         return self.as_dict(exclude_readonly=not keep_readonly)
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None):
-        """Parse RestAPI-shaped data and return a model instance."""
+        """
+        Parse RestAPI-shaped data and return a model instance.
+
+        :param Any data: The serialized payload to deserialize.
+        :param str content_type: The payload content type. JSON is assumed unless XML is specified.
+        :return: A deserialized ``SearchIndex`` instance.
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
+        """
 
         if isinstance(data, (str, bytes, bytearray)) and content_type != "application/xml":
             data = json.loads(data)
         return cls(data)
+
+
+class KnowledgeRetrievalOutputMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compatibility export for knowledge retrieval output modes."""
+
+    ANSWER_SYNTHESIS = "answerSynthesis"
+    EXTRACTIVE_DATA = "extractiveData"
+
+
+class KnowledgeRetrievalReasoningEffort(_KnowledgeRetrievalReasoningEffort):
+    """Compatibility export for knowledge retrieval reasoning effort."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class KnowledgeBase(_KnowledgeBase):
