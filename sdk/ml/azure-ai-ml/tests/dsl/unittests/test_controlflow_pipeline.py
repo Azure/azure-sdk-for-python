@@ -4,6 +4,7 @@ import pytest
 from marshmallow import ValidationError
 from test_utilities.utils import omit_with_wildcard
 
+from azure.core.serialization import as_attribute_dict
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
@@ -51,7 +52,7 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             condition(condition=result.outputs.output, false_block=[node1, node2])
 
         pipeline_job = condition_pipeline()
-        rest_pipeline_job = pipeline_job._to_rest_object().as_dict()
+        rest_pipeline_job = as_attribute_dict(pipeline_job._to_rest_object())
         assert rest_pipeline_job["properties"]["jobs"]["conditionnode"] == {
             "_source": "DSL",
             "condition": "${{parent.jobs.result.outputs.output}}",
@@ -73,12 +74,19 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             node1 = hello_world_component_no_paths(component_in_number=1)
             node2 = hello_world_component_no_paths(component_in_number=2)
             # true block and false block has intersection
-            condition(condition=result.outputs.output, false_block=[node1, node2], true_block=[node1])
+            condition(
+                condition=result.outputs.output,
+                false_block=[node1, node2],
+                true_block=[node1],
+            )
 
         with pytest.raises(ValidationError) as e:
             pipeline_job = condition_pipeline()
             pipeline_job._validate(raise_error=True)
-        assert "True block and false block cannot contain same nodes: {'${{parent.jobs.node1}}'" in str(e.value)
+        assert (
+            "True block and false block cannot contain same nodes: {'${{parent.jobs.node1}}'"
+            in str(e.value)
+        )
 
         @pipeline(compute="cpu-cluster")
         def condition_pipeline():
@@ -86,7 +94,9 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             node1 = hello_world_component_no_paths()
             node2 = hello_world_component_no_paths()
             # true block and false block has intersection
-            condition(condition=result.outputs.output, false_block=[node1], true_block=[node2])
+            condition(
+                condition=result.outputs.output, false_block=[node1], true_block=[node2]
+            )
 
         # no error raise
         pipeline_job = condition_pipeline()
@@ -102,7 +112,9 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             node = condition(condition=1, true_block=basic_node)
             node._validate(raise_error=True)
 
-        assert f"must be an instance of {str}, {bool} or {InputOutputBase}" in str(e.value)
+        assert f"must be an instance of {str}, {bool} or {InputOutputBase}" in str(
+            e.value
+        )
 
         node = condition(condition=basic_node.outputs.output3, true_block=basic_node)
         node._validate(raise_error=True)
@@ -111,11 +123,15 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             node = condition(condition="${{parent.jobs.xxx.outputs.output}}")
             node._validate(raise_error=True)
 
-        assert "True block and false block cannot be empty at the same time." in str(e.value)
+        assert "True block and false block cannot be empty at the same time." in str(
+            e.value
+        )
 
         with pytest.raises(ValidationError) as e:
             node = condition(
-                condition="${{parent.jobs.xxx.outputs.output}}", true_block=basic_node, false_block=basic_node
+                condition="${{parent.jobs.xxx.outputs.output}}",
+                true_block=basic_node,
+                false_block=basic_node,
             )
             node._validate(raise_error=True)
 
@@ -136,7 +152,9 @@ class TestIfElseUT(TestControlFlowPipelineUT):
         node2 = hello_world_component_no_paths()
         node2.name = "node2"
         control_node = condition(
-            condition="${{parent.jobs.condition_predicate.outputs.output}}", false_block=node1, true_block=node2
+            condition="${{parent.jobs.condition_predicate.outputs.output}}",
+            false_block=node1,
+            true_block=node2,
         )
         assert control_node._to_rest_object() == {
             "_source": "DSL",
@@ -173,7 +191,9 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             result = basic_component()
             node1 = hello_world_component_no_paths(component_in_number=1)
             node2 = hello_world_component_no_paths(component_in_number=2)
-            condition(condition=result.outputs.output, false_block=node1, true_block=node2)
+            condition(
+                condition=result.outputs.output, false_block=node1, true_block=node2
+            )
 
         pipeline_job = condition_pipeline()
         omit_fields = [
@@ -182,7 +202,9 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             "properties.jobs.*.componentId",
             "properties.settings",
         ]
-        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        dsl_pipeline_job_dict = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object()), *omit_fields
+        )
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "conditionnode": {
                 "_source": "DSL",
@@ -193,17 +215,25 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             },
             "node1": {
                 "_source": "YAML.COMPONENT",
-                "inputs": {"component_in_number": {"job_input_type": "literal", "value": "1"}},
+                "inputs": {
+                    "component_in_number": {"job_input_type": "literal", "value": "1"}
+                },
                 "name": "node1",
                 "type": "command",
             },
             "node2": {
                 "_source": "YAML.COMPONENT",
-                "inputs": {"component_in_number": {"job_input_type": "literal", "value": "2"}},
+                "inputs": {
+                    "component_in_number": {"job_input_type": "literal", "value": "2"}
+                },
                 "name": "node2",
                 "type": "command",
             },
-            "result": {"_source": "YAML.COMPONENT", "name": "result", "type": "command"},
+            "result": {
+                "_source": "YAML.COMPONENT",
+                "name": "result",
+                "type": "command",
+            },
         }
 
     def test_condition_with_group_input(self):
@@ -226,19 +256,28 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             node1 = hello_world_component_no_paths(component_in_number=1)
             condition(condition=group_input.input_group.num < 100, true_block=node1)
 
-        pipeline_job = condition_pipeline(group_input=ParentGroup(input_group=SubGroup(num=10)))
+        pipeline_job = condition_pipeline(
+            group_input=ParentGroup(input_group=SubGroup(num=10))
+        )
         omit_fields = [
             "name",
             "properties.display_name",
             "properties.jobs.*.componentId",
             "properties.settings",
         ]
-        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        dsl_pipeline_job_dict = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object()), *omit_fields
+        )
         assert dsl_pipeline_job_dict["properties"]["jobs"]["expression_component"] == {
             "environment_variables": {"AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED": "true"},
             "name": "expression_component",
             "type": "command",
-            "inputs": {"num": {"job_input_type": "literal", "value": "${{parent.inputs.group_input.input_group.num}}"}},
+            "inputs": {
+                "num": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.group_input.input_group.num}}",
+                }
+            },
             "_source": "YAML.COMPONENT",
         }
 
@@ -359,8 +398,12 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
 
         def validate_error_message(expect_errors, validate_errors):
             for path, msg in expect_errors.items():
-                acture_errors = list(filter(lambda error: error["path"] == path, validate_errors))
-                assert acture_errors, f"Cannot find the error of {path} in validation results."
+                acture_errors = list(
+                    filter(lambda error: error["path"] == path, validate_errors)
+                )
+                assert (
+                    acture_errors
+                ), f"Cannot find the error of {path} in validation results."
                 for acture_error in acture_errors:
                     assert acture_error["message"] in msg
 
@@ -369,7 +412,9 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
             "jobs.out_of_max_iteration_count_range.limit.max_iteration_count": [
                 "The max iteration count cannot be less than 0 or larger than 1000."
             ],
-            "jobs.body_in_other_loop.body": ["The body of loop node cannot be promoted as another loop again."],
+            "jobs.body_in_other_loop.body": [
+                "The body of loop node cannot be promoted as another loop again."
+            ],
             "jobs.invalid_mapping.condition": [
                 "is_number_larger_than_zero is the output of do_while_body_pipeline_1, dowhile only accept output of the body: do_while_body_pipeline_3."
             ],
@@ -386,7 +431,9 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
     def test_infer_dynamic_input_type_from_mapping(self):
         # Pass None to dynamic input in do-while loop body, and provide it in mapping for next iteration,
         # which is a valid case in federated learning.
-        from test_configs.dsl_pipeline.dynamic_input_do_while.pipeline import pipeline_job
+        from test_configs.dsl_pipeline.dynamic_input_do_while.pipeline import (
+            pipeline_job,
+        )
 
         assert pipeline_job._customized_validate().passed
         # assert input type of loop body, should both have type now
@@ -416,10 +463,13 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             )
 
         with pytest.raises(ValidationException) as e:
-            invalid_pipeline(test_path1=Input(path="test_path1"), test_path2=Input(path="test_path2"))
+            invalid_pipeline(
+                test_path1=Input(path="test_path1"), test_path2=Input(path="test_path2")
+            )
         assert (
             "Expecting (<class 'azure.ai.ml.entities._builders.command.Command'>, "
-            "<class 'azure.ai.ml.entities._builders.pipeline.Pipeline'>) for body" in str(e.value)
+            "<class 'azure.ai.ml.entities._builders.pipeline.Pipeline'>) for body"
+            in str(e.value)
         )
 
         # items with invalid type
@@ -452,7 +502,10 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                 # item meta not match
-                [{"component_in_path": "test_path1"}, {"component_in_path": "test_path2", "component_in_number": 1}],
+                [
+                    {"component_in_path": "test_path1"},
+                    {"component_in_path": "test_path2", "component_in_number": 1},
+                ],
                 "Items should have same keys with body inputs, but got ",
             ),
             (
@@ -476,7 +529,13 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                 # local file input
-                [{"component_in_path": Input(path="./tests/test_configs/components/helloworld_component.yml")}],
+                [
+                    {
+                        "component_in_path": Input(
+                            path="./tests/test_configs/components/helloworld_component.yml"
+                        )
+                    }
+                ],
                 "Local file input",
             ),
             (
@@ -491,8 +550,12 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
         ],
     )
-    def test_dsl_parallel_for_pipeline_illegal_items_content(self, items, error_message):
-        basic_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+    def test_dsl_parallel_for_pipeline_illegal_items_content(
+        self, items, error_message
+    ):
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
 
         @pipeline
         def invalid_pipeline():
@@ -515,7 +578,9 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         ),
     )
     def test_dsl_parallel_for_pipeline_legal_items_content(self, items):
-        basic_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
 
         @pipeline
         def valid_pipeline():
@@ -530,8 +595,12 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
     def test_dsl_parallel_for_pipeline_items(self):
         # TODO: submit those pipelines
 
-        basic_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
-        complex_component = load_component(source="./tests/test_configs/components/input_types_component.yml")
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+        complex_component = load_component(
+            source="./tests/test_configs/components/input_types_component.yml"
+        )
 
         # binding in items
 
@@ -540,11 +609,16 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             body = basic_component()
             parallel_for(
                 body=body,
-                items=[{"component_in_path": test_path1}, {"component_in_path": test_path2}],
+                items=[
+                    {"component_in_path": test_path1},
+                    {"component_in_path": test_path2},
+                ],
             )
 
-        my_job = my_pipeline(test_path1=Input(path="test_path1"), test_path2=Input(path="test_path2"))
-        rest_job = my_job._to_rest_object().as_dict()
+        my_job = my_pipeline(
+            test_path1=Input(path="test_path1"), test_path2=Input(path="test_path2")
+        )
+        rest_job = as_attribute_dict(my_job._to_rest_object())
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert (
             rest_items == '[{"component_in_path": "${{parent.inputs.test_path1}}"}, '
@@ -555,12 +629,21 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         @pipeline
         def my_pipeline():
             body = basic_component(component_in_path=Input(path="test_path1"))
-            parallel_for(body=body, items={"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}})
+            parallel_for(
+                body=body,
+                items={
+                    "iter1": {"component_in_number": 1},
+                    "iter2": {"component_in_number": 2},
+                },
+            )
 
         my_job = my_pipeline()
-        rest_job = my_job._to_rest_object().as_dict()
+        rest_job = as_attribute_dict(my_job._to_rest_object())
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
-        assert rest_items == '{"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}'
+        assert (
+            rest_items
+            == '{"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}'
+        )
 
         # binding items
         @pipeline
@@ -568,8 +651,10 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             body = basic_component(component_in_path=Input(path="test_path1"))
             parallel_for(body=body, items=pipeline_input)
 
-        my_job = my_pipeline(pipeline_input='[{"component_in_number": 1}, {"component_in_number": 2}]')
-        rest_job = my_job._to_rest_object().as_dict()
+        my_job = my_pipeline(
+            pipeline_input='[{"component_in_number": 1}, {"component_in_number": 2}]'
+        )
+        rest_job = as_attribute_dict(my_job._to_rest_object())
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert rest_items == "${{parent.inputs.pipeline_input}}"
 
@@ -577,10 +662,13 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         @pipeline
         def my_pipeline():
             body = basic_component(component_in_path=Input(path="test_path1"))
-            parallel_for(body=body, items='[{"component_in_number": 1}, {"component_in_number": 2}]')
+            parallel_for(
+                body=body,
+                items='[{"component_in_number": 1}, {"component_in_number": 2}]',
+            )
 
         my_job = my_pipeline()
-        rest_job = my_job._to_rest_object().as_dict()
+        rest_job = as_attribute_dict(my_job._to_rest_object())
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert rest_items == '[{"component_in_number": 1}, {"component_in_number": 2}]'
 
@@ -602,7 +690,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             )
 
         my_job = my_pipeline()
-        rest_job = my_job._to_rest_object().as_dict()
+        rest_job = as_attribute_dict(my_job._to_rest_object())
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert (
             rest_items == '[{"component_in_string": "component_in_string", '
@@ -614,30 +702,70 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         @pipeline
         def my_pipeline():
             body = basic_component(component_in_path=Input(path="test_path1"))
-            parallel_for(body=body, items='[{"component_in_number": 1}, {"component_in_number": 2}]')
+            parallel_for(
+                body=body,
+                items='[{"component_in_number": 1}, {"component_in_number": 2}]',
+            )
 
         my_job = my_pipeline()
-        rest_job = my_job._to_rest_object().as_dict()
+        rest_job = as_attribute_dict(my_job._to_rest_object())
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert rest_items == '[{"component_in_number": 1}, {"component_in_number": 2}]'
 
     @pytest.mark.parametrize(
         "output_dict, pipeline_out_dict, component_out_dict, check_pipeline_job",
         [
-            ({"type": "uri_file"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
-            ({"type": "uri_folder"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
-            ({"type": "mltable"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
-            ({"type": "mlflow_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
-            ({"type": "triton_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
-            ({"type": "custom_model"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
-            ({"type": "path"}, {"job_output_type": "mltable"}, {"type": "mltable"}, True),
+            (
+                {"type": "uri_file"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
+            (
+                {"type": "uri_folder"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
+            (
+                {"type": "mltable"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
+            (
+                {"type": "mlflow_model"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
+            (
+                {"type": "triton_model"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
+            (
+                {"type": "custom_model"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
+            (
+                {"type": "path"},
+                {"job_output_type": "mltable"},
+                {"type": "mltable"},
+                True,
+            ),
             ({"type": "number"}, {}, {"type": "string"}, False),
             ({"type": "string"}, {}, {"type": "string"}, False),
             ({"type": "boolean"}, {}, {"type": "string"}, False),
             ({"type": "integer"}, {}, {"type": "string"}, False),
         ],
     )
-    def test_parallel_for_outputs(self, output_dict, pipeline_out_dict, component_out_dict, check_pipeline_job):
+    def test_parallel_for_outputs(
+        self, output_dict, pipeline_out_dict, component_out_dict, check_pipeline_job
+    ):
         basic_component = load_component(
             source="./tests/test_configs/components/helloworld_component.yml",
             params_override=[{"outputs.component_out_path": output_dict}],
@@ -648,20 +776,26 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             body = basic_component(component_in_path=Input(path="test_path1"))
 
             foreach_node = parallel_for(
-                body=body, items={"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}
+                body=body,
+                items={
+                    "iter1": {"component_in_number": 1},
+                    "iter2": {"component_in_number": 2},
+                },
             )
             return {"output": foreach_node.outputs.component_out_path}
 
         my_job = my_pipeline()
 
         if check_pipeline_job:
-            rest_job = my_job._to_rest_object().as_dict()
+            rest_job = as_attribute_dict(my_job._to_rest_object())
             rest_outputs = rest_job["properties"]["outputs"]
             assert rest_outputs == {"output": pipeline_out_dict}
 
         pipeline_component = my_job.component
         rest_component = pipeline_component._to_rest_object().as_dict()
-        assert rest_component["properties"]["componentSpec"]["outputs"] == {"output": component_out_dict}
+        assert rest_component["properties"]["componentSpec"]["outputs"] == {
+            "output": component_out_dict
+        }
 
     def test_parallel_for_source(self):
         basic_component = load_component(
@@ -673,7 +807,11 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             body = basic_component(component_in_path=Input(path="test_path1"))
 
             foreach_node = parallel_for(
-                body=body, items={"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}
+                body=body,
+                items={
+                    "iter1": {"component_in_number": 1},
+                    "iter2": {"component_in_number": 2},
+                },
             )
 
         my_job = my_pipeline()
@@ -699,7 +837,11 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             (
                 # asset input with uri
                 {
-                    "silo1": {"uri": Input(path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")},
+                    "silo1": {
+                        "uri": Input(
+                            path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
+                        )
+                    },
                 },
                 '{"silo1": {"uri": {"uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
                 '"job_input_type": "uri_folder"}}}',
@@ -707,7 +849,11 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             (
                 # asset input binding
                 {
-                    "silo1": {"binding": PipelineInput(name="input1", owner="pipeline", meta=None)},
+                    "silo1": {
+                        "binding": PipelineInput(
+                            name="input1", owner="pipeline", meta=None
+                        )
+                    },
                 },
                 '{"silo1": {"binding": "${{parent.inputs.input1}}"}}',
             ),
@@ -743,7 +889,13 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                 # local file input
-                [{"component_in_path": Input(path="./tests/test_configs/components/helloworld_component.yml")}],
+                [
+                    {
+                        "component_in_path": Input(
+                            path="./tests/test_configs/components/helloworld_component.yml"
+                        )
+                    }
+                ],
                 "Local file input",
             ),
             (

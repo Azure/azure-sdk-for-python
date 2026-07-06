@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import copy
+import json
 import os
 import shutil
 import signal
@@ -27,7 +28,9 @@ from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
-_PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
+_PYTEST_TIMEOUT_METHOD = (
+    "signal" if hasattr(signal, "SIGALRM") else "thread"
+)  # use signal when os support SIGALRM
 DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
 THREAD_WAIT_TIME_BEFORE_POLL = 60  # 1min
 
@@ -41,7 +44,9 @@ def write_script(script_path: str, content: str) -> str:
     return script_path
 
 
-def get_arm_id(ws_scope: OperationScope, entity_name: str, entity_version: str, entity_type) -> str:
+def get_arm_id(
+    ws_scope: OperationScope, entity_name: str, entity_version: str, entity_type
+) -> str:
     arm_id = (
         "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{"
         "}/{}/{}/versions/{}".format(
@@ -83,7 +88,11 @@ def omit_with_wildcard(obj, *properties: str):
 
 
 def prepare_dsl_curated(
-    pipeline: PipelineJob, job_yaml, omit_fields=None, enable_default_omit_fields=True, in_rest=False
+    pipeline: PipelineJob,
+    job_yaml,
+    omit_fields=None,
+    enable_default_omit_fields=True,
+    in_rest=False,
 ):
     """
     Prepare the dsl pipeline for curated test.
@@ -93,8 +102,19 @@ def prepare_dsl_curated(
         omit_fields = []
     pipeline_from_yaml = load_job(source=job_yaml)
     if in_rest:
-        dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()  # pylint: disable=protected-access
-        pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()  # pylint: disable=protected-access
+        # ``as_dict`` produces the wire dict for the arm_ml_service hybrid rest model; the ``json``
+        # round-trip with ``default=str`` stringifies any residual data-binding expression objects
+        # (as the legacy msrest ``serialize`` did) so the two dicts compare cleanly.
+        dsl_pipeline_job_dict = json.loads(
+            json.dumps(
+                pipeline._to_rest_object().as_dict(), default=str
+            )  # pylint: disable=protected-access
+        )
+        pipeline_job_dict = json.loads(
+            json.dumps(
+                pipeline_from_yaml._to_rest_object().as_dict(), default=str
+            )  # pylint: disable=protected-access
+        )
 
         if enable_default_omit_fields:
             omit_fields.extend(
@@ -108,13 +128,25 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.componentSpec.schema",
                     "properties.jobs.*.trial.properties.isAnonymous",
                     "properties.jobs.*.trial.properties.componentSpec._source",
+                    # The arm_ml_service hybrid ``as_dict`` renders the nested sweep trial with snake_case
+                    # keys (``component_spec``/``is_anonymous``) rather than the legacy msrest camelCase;
+                    # omit both spellings so DSL-vs-YAML equivalence still holds after the client swap.
+                    "properties.jobs.*.trial.name",
+                    "properties.jobs.*.trial.properties.is_anonymous",
+                    "properties.jobs.*.trial.properties.component_spec.name",
+                    "properties.jobs.*.trial.properties.component_spec.version",
+                    "properties.jobs.*.trial.properties.component_spec.$schema",
+                    "properties.jobs.*.trial.properties.component_spec.schema",
+                    "properties.jobs.*.trial.properties.component_spec._source",
                     "properties.settings",
                     "properties.jobs.*.trial.properties.properties.client_component_hash",
                 ]
             )
     else:
         dsl_pipeline_job_dict = pipeline._to_dict()  # pylint: disable=protected-access
-        pipeline_job_dict = pipeline_from_yaml._to_dict()  # pylint: disable=protected-access
+        pipeline_job_dict = (
+            pipeline_from_yaml._to_dict()
+        )  # pylint: disable=protected-access
         if enable_default_omit_fields:
             omit_fields.extend(
                 [
@@ -132,7 +164,9 @@ def prepare_dsl_curated(
     return dsl_pipeline_job_dict, pipeline_job_dict
 
 
-def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = "Completed") -> PipelineJob:
+def submit_and_wait(
+    ml_client, pipeline_job: PipelineJob, expected_state: str = "Completed"
+) -> PipelineJob:
     created_job = ml_client.jobs.create_or_update(pipeline_job)
     terminal_states = ["Completed", "Failed", "Canceled", "NotResponding"]
     assert created_job is not None
@@ -152,12 +186,18 @@ def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = 
 
 
 def assert_final_job_status(
-    job, client: MLClient, job_type: Job, expected_terminal_status: str, deadline: int = DEFAULT_TASK_TIMEOUT
+    job,
+    client: MLClient,
+    job_type: Job,
+    expected_terminal_status: str,
+    deadline: int = DEFAULT_TASK_TIMEOUT,
 ) -> None:
     assert isinstance(job, job_type)
 
     poll_start_time = time.time()
-    while job.status not in RunHistoryConstants.TERMINAL_STATUSES and time.time() < (poll_start_time + deadline):
+    while job.status not in RunHistoryConstants.TERMINAL_STATUSES and time.time() < (
+        poll_start_time + deadline
+    ):
         sleep_if_live(THREAD_WAIT_TIME_BEFORE_POLL)
         job = client.jobs.get(job.name)
 
@@ -166,7 +206,9 @@ def assert_final_job_status(
         assert isinstance(cancel_poller, LROPoller)
         assert cancel_poller.result() is None
 
-    assert job.status == expected_terminal_status, f"Job status mismatch. Job created: {job}"
+    assert (
+        job.status == expected_terminal_status
+    ), f"Job status mismatch. Job created: {job}"
 
 
 def get_automl_job_properties() -> Dict:
@@ -215,7 +257,9 @@ def verify_entity_load_and_dump(
     with StringIO() as stream:
         stream.write(file_contents)
         stream.seek(0)
-        stream_entity = load_function(source=stream, relative_origin=test_load_file_path, **load_kwargs)
+        stream_entity = load_function(
+            source=stream, relative_origin=test_load_file_path, **load_kwargs
+        )
 
     assert file_entity is not None
     assert stream_entity is not None
@@ -302,12 +346,15 @@ def assert_job_cancel(
         cancel_job(client, created_job)
     elif wait_for_completion is True:
         assert wait_until_done(client, created_job) == JobStatus.COMPLETED, (
-            "Job failed. Please check it on studio for more details: %s" % created_job.studio_url
+            "Job failed. Please check it on studio for more details: %s"
+            % created_job.studio_url
         )
     return created_job
 
 
-def submit_and_cancel_new_dsl_pipeline(pipeline_func, client, default_compute="cpu-cluster", **kwargs):
+def submit_and_cancel_new_dsl_pipeline(
+    pipeline_func, client, default_compute="cpu-cluster", **kwargs
+):
     pipeline_job: PipelineJob = pipeline_func(**kwargs)
     pipeline_job.settings.default_compute = default_compute
     return assert_job_cancel(pipeline_job, client)
@@ -420,7 +467,9 @@ def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
     # Update the node types in pipeline jobs to include the private preview node types
     from azure.ai.ml._schema.pipeline import pipeline_job
 
-    declared_fields = pipeline_job.PipelineJobSchema._declared_fields  # pylint: disable=protected-access, no-member
+    declared_fields = (
+        pipeline_job.PipelineJobSchema._declared_fields
+    )  # pylint: disable=protected-access, no-member
     original_jobs = declared_fields["jobs"]
     declared_fields["jobs"] = pipeline_job.PipelineJobsField()
 
@@ -446,5 +495,8 @@ def mock_artifact_download_to_temp_directory():
             (artifact / f"file_{version}").touch(exist_ok=True)
             return str(artifact)
 
-        with patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.get", side_effect=mock_get_artifacts):
+        with patch(
+            "azure.ai.ml._utils._artifact_utils.ArtifactCache.get",
+            side_effect=mock_get_artifacts,
+        ):
             yield temp_dir

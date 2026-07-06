@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
+import json
 import logging
 import typing
 from os import PathLike
@@ -14,24 +15,49 @@ from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJobBase
 from azure.ai.ml._restclient.arm_ml_service.models import JobScheduleAction
 from azure.ai.ml._restclient.arm_ml_service.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.arm_ml_service.models import ScheduleActionType as RestScheduleActionType
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ScheduleActionType as RestScheduleActionType,
+)
 from azure.ai.ml._restclient.arm_ml_service.models import ScheduleProperties
-from azure.ai.ml._restclient.v2024_01_01_preview.models import TriggerRunSubmissionDto as RestTriggerRunSubmissionDto
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    TriggerRunSubmissionDto as RestTriggerRunSubmissionDto,
+)
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
-from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    dump_yaml_to_file,
+    is_private_preview_enabled,
+)
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ScheduleType,
+)
 from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._job.spark_job import SparkJob
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from azure.ai.ml.entities._mixins import (
+    RestTranslatableMixin,
+    TelemetryMixin,
+    YamlTranslatableMixin,
+)
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
+from azure.ai.ml.entities._validation import (
+    MutableValidationResult,
+    PathAwareSchemaValidatableMixin,
+)
 
-from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from ...exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ScheduleException,
+    ValidationException,
+)
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
@@ -70,7 +96,13 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
     ) -> None:
         is_enabled = kwargs.pop("is_enabled", None)
         provisioning_state = kwargs.pop("provisioning_state", None)
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
         self.trigger = trigger
         self.display_name = display_name
         self._is_enabled: bool = is_enabled
@@ -89,10 +121,14 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     @classmethod
-    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
+    def _create_validation_error(
+        cls, message: str, no_personal_data_message: str
+    ) -> ValidationException:
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -100,7 +136,9 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         )
 
     @classmethod
-    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
+    def _resolve_cls_and_type(
+        cls, data: Dict, params_override: Optional[List[Dict]] = None
+    ) -> Tuple:
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
@@ -113,7 +151,9 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
     @property
     def create_job(self) -> Any:  # pylint: disable=useless-return
         """The create_job entity associated with the schedule if exists."""
-        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+        module_logger.warning(
+            "create_job is not a valid property of %s", str(type(self))
+        )
         # return None here just to be explicit
         return None
 
@@ -124,7 +164,9 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         :param value: The create_job entity associated with the schedule if exists.
         :type value: Any
         """
-        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+        module_logger.warning(
+            "create_job is not a valid property of %s", str(type(self))
+        )
 
     @property
     def is_enabled(self) -> bool:
@@ -388,7 +430,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
-        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND, JobType.SPARK]:
+        if camel_to_snake(action.job_definition.job_type) not in [
+            JobType.PIPELINE,
+            JobType.COMMAND,
+            JobType.SPARK,
+        ]:
             msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
             raise ScheduleException(
                 message=msg.format(obj.name),
@@ -438,7 +484,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             # TODO: Update this after source job id move to JobBaseProperties
             # Rest pipeline job will hold a 'Default' as experiment_name,
             # MFE will add default if None, so pass an empty string here.
-            job_definition = RestPipelineJob(source_job_id=self.create_job, experiment_name="")
+            job_definition = RestPipelineJob(
+                source_job_id=self.create_job, experiment_name=""
+            )
             job_definition["isArchived"] = False
         else:
             msg = "Unsupported job type '{}' in schedule {}."
@@ -452,8 +500,18 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         # branch builds a msrest RestPipelineJob; CommandJob already builds the shared arm_ml_service hybrid.
         # Convert any msrest job_definition to its camelCase wire dict so it fits inside the arm_ml_service
         # schedule envelope without changing the wire body.
-        if getattr(job_definition, "_is_model", False) is not True:
+        if getattr(job_definition, "_is_model", False) is not True and hasattr(
+            job_definition, "serialize"
+        ):
             job_definition = job_definition.serialize()
+        elif isinstance(self.create_job, PipelineJob):
+            # The arm_ml_service PipelineJob may still carry unresolved inline components in ``jobs``
+            # (e.g. an offline entity whose component id has not been uploaded yet). The legacy msrest
+            # ``serialize`` stringified those; reproduce that with an ``as_dict`` + ``json`` round-trip
+            # using ``default=str`` so the arm hybrid ``SdkJSONEncoder`` never sees a non-model object.
+            job_definition = json.loads(
+                json.dumps(job_definition.as_dict(), default=str)
+            )
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
@@ -462,7 +520,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                 action=JobScheduleAction(job_definition=job_definition),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
-                trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
+                trigger=(
+                    self.trigger._to_rest_object() if self.trigger is not None else None
+                ),
             )
         )
 
@@ -475,7 +535,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             return res_jobSchedule
 
     # pylint: disable-next=docstring-missing-param
-    def _get_telemetry_values(self, *args: Any, **kwargs: Any) -> Dict[Literal["trigger_type"], str]:
+    def _get_telemetry_values(
+        self, *args: Any, **kwargs: Any
+    ) -> Dict[Literal["trigger_type"], str]:
         """Return the telemetry values of schedule.
 
         :return: A dictionary with telemetry values
@@ -498,7 +560,9 @@ class ScheduleTriggerResult:
         self.schedule_action_type = kwargs.get("schedule_action_type", None)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestTriggerRunSubmissionDto) -> "ScheduleTriggerResult":
+    def _from_rest_object(
+        cls, obj: RestTriggerRunSubmissionDto
+    ) -> "ScheduleTriggerResult":
         """Construct a ScheduleJob from a rest object.
 
         :param obj: The rest object to construct from.
