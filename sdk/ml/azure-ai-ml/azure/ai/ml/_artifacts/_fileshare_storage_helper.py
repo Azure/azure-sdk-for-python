@@ -424,7 +424,7 @@ def recursive_download(
                     f"Directory name contains a path traversal entry and cannot be downloaded safely: {f['name']}"
                 )
             sub_client = client.get_subdirectory_client(f["name"])
-            recursive_download(sub_client, destination=sub_destination, max_concurrency=max_concurrency)
+            recursive_download(sub_client, destination=str(sub_destination), max_concurrency=max_concurrency)
     except Exception as e:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
         raise MlException(
