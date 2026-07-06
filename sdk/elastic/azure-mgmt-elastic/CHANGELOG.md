@@ -9,30 +9,22 @@
   - Added model `ProxyResource`
   - Added model `Resource`
   - Added model `TrackedResource`
-  - Added model `createAndAssociateIPFilterOperations`
-  - Added model `createAndAssociatePLFilterOperations`
-  - Added model `listAssociatedTrafficFiltersOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `MicrosoftElastic`
-  - Deleted or renamed model `ConnectedPartnerResourcesListResponse`
-  - Deleted or renamed model `ElasticMonitorResourceListResponse`
-  - Deleted or renamed model `ElasticVersionsListResponse`
-  - Deleted or renamed model `MonitoredResourceListResponse`
-  - Deleted or renamed model `MonitoredSubscriptionPropertiesList`
-  - Deleted or renamed model `MonitoringTagRulesListResponse`
-  - Deleted or renamed model `OpenAIIntegrationRPModelListResponse`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `VMHostListResponse`
+  - Renamed client `MicrosoftElastic` to `ElasticMgmtClient`
   - Method `AssociateTrafficFilterOperations.begin_associate` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
   - Method `DetachAndDeleteTrafficFilterOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
   - Method `DetachTrafficFilterOperations.begin_update` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
   - Method `ElasticVersionsOperations.list` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
   - Method `TrafficFiltersOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `CreateAndAssociateIPFilterOperations`
-  - Deleted or renamed model `CreateAndAssociatePLFilterOperations`
-  - Deleted or renamed model `ListAssociatedTrafficFiltersOperations`
+  - Renamed operation group `CreateAndAssociateIPFilterOperations` to `createAndAssociateIPFilterOperations`
+  - Renamed operation group `CreateAndAssociatePLFilterOperations` to `createAndAssociatePLFilterOperations`
+  - Renamed operation group `ListAssociatedTrafficFiltersOperations` to `listAssociatedTrafficFiltersOperations`
+
+### Other Changes
+
+  - Deleted model `ConnectedPartnerResourcesListResponse`/`ElasticMonitorResourceListResponse`/`ElasticVersionsListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`MonitoringTagRulesListResponse`/`OpenAIIntegrationRPModelListResponse`/`OperationListResult`/`VMHostListResponse` which actually were not used by SDK users
 
 ## 2.0.0 (2025-11-17)
 
