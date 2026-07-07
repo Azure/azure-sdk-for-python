@@ -34,6 +34,14 @@ class MockHandler(logging.Handler):
     def emit(self, record):
         self.messages.append(record.msg)
 
+
+def _select_primary_and_failover_region(write_locations, read_locations):
+    region_1 = write_locations[0]
+    unique_locations = write_locations + [loc for loc in read_locations if loc not in write_locations]
+    region_2 = next((loc for loc in unique_locations if loc != region_1), None)
+    return region_1, region_2
+
+
 @pytest_asyncio.fixture()
 async def setup():
     # Set up logging
@@ -47,17 +55,23 @@ async def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = CosmosClient(config.host, config.masterKey)
+    test_client = test_config.TestConfig.create_data_client_async()
     database_account = await test_client._get_database_account()
     write_locations = [loc["name"] for loc in database_account._WritableLocations]
     read_locations = [loc["name"] for loc in database_account._ReadableLocations]
+    region_1, region_2 = _select_primary_and_failover_region(write_locations, read_locations)
+
+    if region_2 is None:
+        await test_client.close()
+        logger.removeHandler(TestAsyncAvailabilityStrategy.MOCK_HANDLER)
+        raise RuntimeError("Availability strategy tests require at least two distinct account regions.")
 
     # Use first writable location as primary region and second as failover
     account_location_with_client = {
         "write_locations": write_locations,
         "read_locations": read_locations,
-        "region_1": write_locations[0],
-        "region_2": write_locations[1] if len(write_locations) > 1 else read_locations[0],
+        "region_1": region_1,
+        "region_2": region_2,
         "client_without_fault": test_client
     }
 
@@ -282,6 +296,7 @@ def _get_operation_type(test_operation_type: str) -> str:
     raise ValueError("invalid operationType")
 
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAADMultiRegion
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestAsyncAvailabilityStrategy:
@@ -309,8 +324,7 @@ class TestAsyncAvailabilityStrategy:
             retry_write=False,
             **kwargs):
         """Initialize test client with optional custom transport and endpoint"""
-        if default_endpoint is None:
-            default_endpoint = self.host
+        endpoint = default_endpoint or self.host
 
         # Set preferred locations with write locations first
         preferred_locations = write_locations + [loc for loc in read_locations if loc not in write_locations]
@@ -319,14 +333,13 @@ class TestAsyncAvailabilityStrategy:
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
 
-        client = CosmosClient(
-            default_endpoint, 
-            self.master_key,
-            preferred_locations=preferred_locations,
-            transport=custom_transport,
-            retry_write=retry_write,
-            **kwargs
-        )
+        client_kwargs = {
+            "preferred_locations": preferred_locations,
+            "transport": custom_transport,
+            "retry_write": retry_write,
+            **kwargs,
+        }
+        client = test_config.TestConfig.create_data_client_async_for_endpoint(endpoint, **client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
@@ -1036,6 +1049,61 @@ class TestAsyncAvailabilityStrategy:
         await setup_without_fault['client'].close()
         await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id,
                                        setup_with_transport['col'].id)
+
+    # When the async client is built with a hedging strategy and a
+    # per-call surface explicitly passes ``availability_strategy=None``,
+    # the request must still hedge per the client's strategy.
+    @pytest.mark.asyncio
+    async def test_per_request_none_falls_back_to_client_strategy_async(self, setup):
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
+
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, OperationType.Read) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
+            1000,
+            CosmosHttpResponseError(status_code=400, message="Injected Error"),
+        )
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+
+        client_strategy = {'threshold_ms': 150, 'threshold_steps_ms': 50}
+        setup_with_transport = await self._setup_method_with_custom_transport(
+            setup['write_locations'],
+            setup['read_locations'],
+            custom_transport,
+            multiple_write_locations=True,
+            availability_strategy=client_strategy,
+        )
+        setup_without_fault = await self._setup_method_with_custom_transport(
+            setup['write_locations'],
+            setup['read_locations'],
+            None,
+        )
+
+        doc = _create_doc()
+        await setup_without_fault['col'].create_item(doc)
+
+        # Exercise the explicit per-request None path directly; helper
+        # utilities omit the kwarg when the value is None.
+        await setup_with_transport['col'].read_item(
+            item=doc['id'],
+            partition_key=doc['pk'],
+            availability_strategy=None,
+        )
+        _validate_response_uris(
+            [uri_down, failed_over_uri],
+            [],
+            operation_type=OperationType.Read,
+            resource_type=ResourceType.Document,
+        )
+        await setup_with_transport['client'].close()
+        await setup_without_fault['client'].close()
+        await self._clean_up_container(
+            setup['client_without_fault'],
+            setup_with_transport['db'].id,
+            setup_with_transport['col'].id,
+        )
 
 if __name__ == '__main__':
     unittest.main()

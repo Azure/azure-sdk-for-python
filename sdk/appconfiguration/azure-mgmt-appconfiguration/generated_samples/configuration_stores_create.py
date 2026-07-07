@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/ConfigurationStoresCreate.json
+# x-ms-original-file: 2025-08-01-preview/ConfigurationStoresCreate.json
 if __name__ == "__main__":
     main()

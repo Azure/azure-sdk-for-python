@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any, Dict, Optional, Union, List
 
 from ._generated import models
+from ._generated.models import PlatformManaged
 from ._shared import parse_key_vault_id
 from ._enums import (
     CertificatePolicyAction,
@@ -742,6 +743,9 @@ class CertificatePolicy(object):
     :keyword certificate_transparency: Indicates if the certificates generated under this policy should be
         published to certificate transparency logs.
     :paramtype certificate_transparency: bool or None
+    :keyword platform_managed: Experimental property for Azure Key Vault internal usage. Any calls using this
+        property will fail and it is not recommended to be used at this point.
+    :paramtype platform_managed: ~azure.keyvault.certificates.PlatformManaged or None
     """
 
     # pylint:disable=too-many-instance-attributes
@@ -770,6 +774,7 @@ class CertificatePolicy(object):
         self._san_user_principal_names = kwargs.pop("san_user_principal_names", None) or None
         self._san_ip_addresses = kwargs.pop("san_ip_addresses", None) or None
         self._san_uris = kwargs.pop("san_uris", None) or None
+        self._platform_managed = kwargs.pop("platform_managed", None)
 
     @classmethod
     def get_default(cls) -> "CertificatePolicy":
@@ -874,6 +879,7 @@ class CertificatePolicy(object):
             lifetime_actions=lifetime_actions,
             issuer_parameters=issuer_parameters,
             attributes=attributes,
+            platform_managed=self._platform_managed,
         )
         return policy_bundle
 
@@ -955,6 +961,7 @@ class CertificatePolicy(object):
             validity_in_months=(
                 x509_certificate_properties.validity_in_months if x509_certificate_properties else None
             ),
+            platform_managed=getattr(certificate_policy_bundle, "platform_managed", None),
         )
 
     @property
@@ -1154,6 +1161,17 @@ class CertificatePolicy(object):
         :rtype: ~datetime.datetime or None
         """
         return self._attributes.updated if self._attributes else None
+
+    @property
+    def platform_managed(self) -> Optional[PlatformManaged]:
+        """Experimental property for Azure Key Vault internal usage.
+
+        Any calls using this property will fail and it is not recommended to be used at this point.
+
+        :returns: The platform-managed certificate details.
+        :rtype: ~azure.keyvault.certificates.PlatformManaged or None
+        """
+        return self._platform_managed
 
 
 class CertificateContact(object):

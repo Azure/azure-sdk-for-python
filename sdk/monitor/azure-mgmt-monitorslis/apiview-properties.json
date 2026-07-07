@@ -43,5 +43,6 @@
         "azure.mgmt.monitorslis.aio.operations.SlisOperations.delete": "Microsoft.Monitor.Slis.delete",
         "azure.mgmt.monitorslis.operations.SlisOperations.list_by_parent": "Microsoft.Monitor.Slis.listByParent",
         "azure.mgmt.monitorslis.aio.operations.SlisOperations.list_by_parent": "Microsoft.Monitor.Slis.listByParent"
-    }
+    },
+    "CrossLanguageVersion": "42338712126b"
 }

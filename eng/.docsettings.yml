@@ -7,6 +7,7 @@ omitted_paths:
   - sdk/keyvault/azure-keyvault/*
   - doc/*
   - sdk/**/samples/*
+  - sdk/**/.github/skills/*
   - sdk/identity/azure-identity/tests/*
   - sdk/**/tests/perfstress_tests/*
   - sdk/**/tests/perf_tests/*
@@ -110,7 +111,6 @@ known_content_issues:
   - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.rst', '#4554']
   - ['sdk/core/corehttp/tests/testserver_tests/coretestserver/README.rst', '#4554']
   - ['sdk/media/azure-media-analytics-edge/README.md', '#4554']
-  - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
   - ['sdk/openai/azure-openai/README.md', '#4554']
   - ['sdk/ai/azure-ai-generative/README.md', 'Deprecated package.']

@@ -215,7 +215,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
-            if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+            # Prefer the vendor property 'com.microsoft:max-message-batch-size'
+            # which correctly reports the batch size limit independent of the
+            # per-entity max-message-size (which can be up to 100 MB on Premium
+            # large-message entities).
+            vendor_batch_size = self._amqp_transport.get_remote_max_message_batch_size(self._handler)
+            if vendor_batch_size is not None:
+                self._max_batch_size_on_link = vendor_batch_size
+            elif self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
@@ -405,14 +412,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             obj_message = transform_outbound_messages(  # type: ignore
                 message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
             )
-            try:
+            # transform_outbound_messages returns a list for list/generator input and a single
+            # ServiceBusMessage otherwise. Discriminate explicitly rather than catching TypeError,
+            # which would also swallow a genuine TypeError raised while building the batch.
+            if isinstance(obj_message, list):
                 batch = await self.create_message_batch()
                 batch._from_list(obj_message)  # type: ignore # pylint: disable=protected-access
                 obj_message = batch
-            except TypeError:  # Message was not a list or generator.
-                # pylint: disable=protected-access
-                obj_message._message = trace_message(
-                    obj_message._message,
+            else:
+                obj_message._message = trace_message(  # pylint: disable=protected-access
+                    obj_message._message,  # pylint: disable=protected-access
                     amqp_transport=self._amqp_transport,
                     additional_attributes={
                         TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,

@@ -1,5 +1,7 @@
 {
     "ignoreWords": [
+        "keyvaultekmclient",
+        "kwpad",
         "spiffe"
     ]
 }

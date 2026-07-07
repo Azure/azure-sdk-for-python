@@ -14,6 +14,7 @@ from azure.ai.evaluation._exceptions import (
 )
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._common.utils import _log_safe_summary, _stringify_tool_result
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -166,7 +167,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -212,29 +213,27 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
-            success = llm_output.get("success", False)
-            details = llm_output.get("details", {})
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
 
-            if "success" not in llm_output and "success" in details:
-                success = details.get("success", False)
+            llm_properties = llm_output.get("properties", {}) or {}
 
-            if isinstance(success, str):
-                success = success.upper() == "TRUE"
-
-            success_result = "pass" if success else "fail"
-            reason = llm_output.get("explanation", "")
+            score = float(llm_output.get("score", 0))
+            success_result = "pass" if score >= 1.0 else "fail"
+            reason = llm_output.get("reason", "")
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
             return {
-                f"{self._result_key}": success * 1.0,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": success_result == "pass",
                 f"{self._result_key}_result": success_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": f"{reason} {details or ''}",
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
         raise EvaluationException(
             message="Evaluator returned invalid output.",
@@ -285,7 +284,7 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
                 if content.get("type") == "tool_result":
                     result = content.get("tool_result")
-                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -322,18 +321,23 @@ def _reformat_tool_calls_results(response, logger=None):
             # fallback to the original response in that case
             if logger:
                 logger.warning(
-                    f"Empty agent response extracted, likely due to input schema change. "
-                    f"Falling back to using the original response: {response}"
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to using the original response. %s",
+                    _log_safe_summary(response),
                 )
             return response
         return "\n".join(agent_response)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the agent response cannot be parsed for whatever
         # reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
         return response
 
 
@@ -347,12 +351,14 @@ def _reformat_tool_definitions(tool_definitions, logger=None):
             param_names = ", ".join(params.keys()) if params else "no parameters"
             output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
         return "\n".join(output_lines)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
             logger.warning(
-                f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}"
+                "Tool definitions could not be parsed; falling back to raw definitions. Input shape: %s. Error: %s",
+                _log_safe_summary(tool_definitions),
+                e,
             )
         return tool_definitions

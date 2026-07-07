@@ -9,9 +9,10 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import AdditionalAuthenticationType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -46,6 +47,42 @@ class Actor(_Model):
         self,
         *,
         name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdditionalAuthenticationProperties(_Model):
+    """Authentication configuration used by a cache rule to access an upstream registry.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GarAuthenticationProperties
+
+    :ivar authentication_type: Authentication type discriminator. Required.
+     "GoogleArtifactRegistry"
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    authentication_type: str = rest_discriminator(
+        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication type discriminator. Required. \"GoogleArtifactRegistry\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authentication_type: str,
     ) -> None: ...
 
     @overload
@@ -554,6 +591,7 @@ class CacheRule(ProxyResource):
 
     __flattened_items = [
         "credential_set_resource_id",
+        "additional_authentication_properties",
         "source_repository",
         "target_repository",
         "creation_date",
@@ -603,6 +641,10 @@ class CacheRuleProperties(_Model):
     :ivar credential_set_resource_id: The ARM resource ID of the credential store which is
      associated with the cache rule.
     :vartype credential_set_resource_id: str
+    :ivar additional_authentication_properties: Authentication configuration used by the cache rule
+     to access the upstream source repository.
+    :vartype additional_authentication_properties:
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationProperties
     :ivar source_repository: Source repository pulled from upstream.
     :vartype source_repository: str
     :ivar target_repository: Target repository specified in docker pull command. Eg: docker pull
@@ -619,6 +661,10 @@ class CacheRuleProperties(_Model):
         name="credentialSetResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The ARM resource ID of the credential store which is associated with the cache rule."""
+    additional_authentication_properties: Optional["_models.AdditionalAuthenticationProperties"] = rest_field(
+        name="additionalAuthenticationProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication configuration used by the cache rule to access the upstream source repository."""
     source_repository: Optional[str] = rest_field(
         name="sourceRepository", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -641,6 +687,7 @@ class CacheRuleProperties(_Model):
         self,
         *,
         credential_set_resource_id: Optional[str] = None,
+        additional_authentication_properties: Optional["_models.AdditionalAuthenticationProperties"] = None,
         source_repository: Optional[str] = None,
         target_repository: Optional[str] = None,
     ) -> None: ...
@@ -674,7 +721,7 @@ class CacheRuleUpdateParameters(_Model):
     )
     """The identity of the cache rule."""
 
-    __flattened_items = ["credential_set_resource_id"]
+    __flattened_items = ["credential_set_resource_id", "additional_authentication_properties"]
 
     @overload
     def __init__(
@@ -719,18 +766,27 @@ class CacheRuleUpdateProperties(_Model):
     :ivar credential_set_resource_id: The ARM resource ID of the credential store which is
      associated with the Cache rule.
     :vartype credential_set_resource_id: str
+    :ivar additional_authentication_properties: Authentication configuration used by the cache rule
+     to access the upstream source repository.
+    :vartype additional_authentication_properties:
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationProperties
     """
 
     credential_set_resource_id: Optional[str] = rest_field(
         name="credentialSetResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The ARM resource ID of the credential store which is associated with the Cache rule."""
+    additional_authentication_properties: Optional["_models.AdditionalAuthenticationProperties"] = rest_field(
+        name="additionalAuthenticationProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication configuration used by the cache rule to access the upstream source repository."""
 
     @overload
     def __init__(
         self,
         *,
         credential_set_resource_id: Optional[str] = None,
+        additional_authentication_properties: Optional["_models.AdditionalAuthenticationProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1888,6 +1944,63 @@ class ExportPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
+class GarAuthenticationProperties(AdditionalAuthenticationProperties, discriminator="GoogleArtifactRegistry"):
+    """Google Artifact Registry (GAR) authentication configuration.
+
+    :ivar authentication_type: Required. Google Artifact Registry (GAR) authentication via workload
+     identity federation.
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.GOOGLE_ARTIFACT_REGISTRY
+    :ivar project_number: The Google Cloud Platform project that is configured for authentication
+     Permissions should be granted to
+     principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}.
+     Required.
+    :vartype project_number: str
+    :ivar workload_identity_pool: The Google Cloud platform workload identity pool used for
+     authentication. Required.
+    :vartype workload_identity_pool: str
+    :ivar workload_identity_provider: The Google Cloud Platform workload identity provider used for
+     authentication. Required.
+    :vartype workload_identity_provider: str
+    """
+
+    authentication_type: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY] = rest_discriminator(name="authenticationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Google Artifact Registry (GAR) authentication via workload identity federation."""
+    project_number: str = rest_field(name="projectNumber", visibility=["read", "create", "update", "delete", "query"])
+    """The Google Cloud Platform project that is configured for authentication Permissions should be
+     granted to
+     principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}.
+     Required."""
+    workload_identity_pool: str = rest_field(
+        name="workloadIdentityPool", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Google Cloud platform workload identity pool used for authentication. Required."""
+    workload_identity_provider: str = rest_field(
+        name="workloadIdentityProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Google Cloud Platform workload identity provider used for authentication. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_number: str,
+        workload_identity_pool: str,
+        workload_identity_provider: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.authentication_type = AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY  # type: ignore
+
+
 class GarbageCollectionProperties(_Model):
     """The garbage collection properties of the connected registry.
 
@@ -2535,6 +2648,8 @@ class NetworkRuleSet(_Model):
     :ivar default_action: The default action of allow or deny when no other rules match. Required.
      Known values are: "Allow" and "Deny".
     :vartype default_action: str or ~azure.mgmt.containerregistry.models.DefaultAction
+    :ivar virtual_network_rules: The virtual network rules.
+    :vartype virtual_network_rules: list[~azure.mgmt.containerregistry.models.VirtualNetworkRule]
     :ivar ip_rules: The IP ACL rules.
     :vartype ip_rules: list[~azure.mgmt.containerregistry.models.IPRule]
     """
@@ -2544,6 +2659,10 @@ class NetworkRuleSet(_Model):
     )
     """The default action of allow or deny when no other rules match. Required. Known values are:
      \"Allow\" and \"Deny\"."""
+    virtual_network_rules: Optional[list["_models.VirtualNetworkRule"]] = rest_field(
+        name="virtualNetworkRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The virtual network rules."""
     ip_rules: Optional[list["_models.IPRule"]] = rest_field(
         name="ipRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2554,6 +2673,7 @@ class NetworkRuleSet(_Model):
         self,
         *,
         default_action: Union[str, "_models.DefaultAction"],
+        virtual_network_rules: Optional[list["_models.VirtualNetworkRule"]] = None,
         ip_rules: Optional[list["_models.IPRule"]] = None,
     ) -> None: ...
 
@@ -3898,6 +4018,7 @@ class Registry(TrackedResource):
         "anonymous_pull_enabled",
         "metadata_search",
         "auto_generated_domain_name_label_scope",
+        "writable_cache_repos",
         "role_assignment_mode",
     ]
 
@@ -4181,6 +4302,9 @@ class RegistryProperties(_Model):
      "NoReuse".
     :vartype auto_generated_domain_name_label_scope: str or
      ~azure.mgmt.containerregistry.models.AutoGeneratedDomainNameLabelScope
+    :ivar writable_cache_repos: Whether to allow cache operations that write to repositories in
+     this registry. Known values are: "Enabled" and "Disabled".
+    :vartype writable_cache_repos: str or ~azure.mgmt.containerregistry.models.WritableCacheRepos
     :ivar role_assignment_mode: Determines registry role assignment mode. Known values are:
      "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
     :vartype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
@@ -4269,6 +4393,11 @@ class RegistryProperties(_Model):
     )
     """Determines the domain name label reuse scope. Known values are: \"Unsecure\", \"TenantReuse\",
      \"SubscriptionReuse\", \"ResourceGroupReuse\", and \"NoReuse\"."""
+    writable_cache_repos: Optional[Union[str, "_models.WritableCacheRepos"]] = rest_field(
+        name="writableCacheRepos", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to allow cache operations that write to repositories in this registry. Known values
+     are: \"Enabled\" and \"Disabled\"."""
     role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = rest_field(
         name="roleAssignmentMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4295,6 +4424,7 @@ class RegistryProperties(_Model):
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
+        writable_cache_repos: Optional[Union[str, "_models.WritableCacheRepos"]] = None,
         role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = None,
     ) -> None: ...
 
@@ -4343,6 +4473,9 @@ class RegistryPropertiesUpdateParameters(_Model):
     :ivar metadata_search: Determines whether registry artifacts are indexed for metadata search.
      Known values are: "Enabled" and "Disabled".
     :vartype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
+    :ivar writable_cache_repos: Whether to allow cache operations that write to repositories in
+     this registry. Known values are: "Enabled" and "Disabled".
+    :vartype writable_cache_repos: str or ~azure.mgmt.containerregistry.models.WritableCacheRepos
     :ivar role_assignment_mode: Determines registry role assignment mode. Known values are:
      "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
     :vartype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
@@ -4399,6 +4532,11 @@ class RegistryPropertiesUpdateParameters(_Model):
     )
     """Determines whether registry artifacts are indexed for metadata search. Known values are:
      \"Enabled\" and \"Disabled\"."""
+    writable_cache_repos: Optional[Union[str, "_models.WritableCacheRepos"]] = rest_field(
+        name="writableCacheRepos", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to allow cache operations that write to repositories in this registry. Known values
+     are: \"Enabled\" and \"Disabled\"."""
     role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = rest_field(
         name="roleAssignmentMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4421,6 +4559,7 @@ class RegistryPropertiesUpdateParameters(_Model):
         network_rule_bypass_allowed_for_tasks: Optional[bool] = None,
         anonymous_pull_enabled: Optional[bool] = None,
         metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = None,
+        writable_cache_repos: Optional[Union[str, "_models.WritableCacheRepos"]] = None,
         role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = None,
     ) -> None: ...
 
@@ -4531,6 +4670,7 @@ class RegistryUpdateParameters(_Model):
         "network_rule_bypass_allowed_for_tasks",
         "anonymous_pull_enabled",
         "metadata_search",
+        "writable_cache_repos",
         "role_assignment_mode",
     ]
 
@@ -6008,6 +6148,47 @@ class UserIdentityProperties(_Model):
     """The principal id of user assigned identity."""
     client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
     """The client id of user assigned identity."""
+
+
+class VirtualNetworkRule(_Model):
+    """Virtual network rule.
+
+    :ivar action: The action of virtual network rule. "Allow"
+    :vartype action: str or ~azure.mgmt.containerregistry.models.Action
+    :ivar virtual_network_subnet_resource_id: Resource ID of a subnet, for example:
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+     Required.
+    :vartype virtual_network_subnet_resource_id: str
+    """
+
+    action: Optional[Union[str, "_models.Action"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action of virtual network rule. \"Allow\""""
+    virtual_network_subnet_resource_id: str = rest_field(
+        name="virtualNetworkSubnetResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID of a subnet, for example:
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        virtual_network_subnet_resource_id: str,
+        action: Optional[Union[str, "_models.Action"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Webhook(TrackedResource):

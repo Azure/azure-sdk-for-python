@@ -21,11 +21,11 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
     """Tests for change feed response headers functionality.
 
     These tests verify that ``query_items_change_feed()`` returns a
-    ``CosmosItemPaged`` exposing thread-safe ``get_response_headers()`` and
-    ``get_last_response_headers()`` methods, mirroring the contract added to
-    ``query_items()``. The captured ``etag`` header on the last page is the
-    continuation token customers should use to checkpoint their change feed
-    progress.
+    ``CosmosItemPaged`` exposing a thread-safe ``get_response_headers()``
+    method, mirroring the contract added to ``query_items()``. The method
+    returns a ``CaseInsensitiveDict`` with the most recent page's headers;
+    the captured ``etag`` header is the continuation token customers should
+    use to checkpoint their change feed progress.
     """
 
     created_db: DatabaseProxy = None
@@ -62,28 +62,22 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
             items = list(change_feed)
             self.assertEqual(len(items), 5)
 
-            # Verify response headers were captured
+            # Verify response headers for the most recent page were captured
             response_headers = change_feed.get_response_headers()
             self.assertIsNotNone(response_headers)
             self.assertGreater(len(response_headers), 0)
 
             # Verify headers contain expected fields, including the etag continuation token
-            first_page_headers = response_headers[0]
-            self.assertIn("x-ms-request-charge", first_page_headers)
-            self.assertIn("x-ms-activity-id", first_page_headers)
-            self.assertIn("etag", first_page_headers)
-
-            # Verify get_last_response_headers works and exposes the etag
-            last_headers = change_feed.get_last_response_headers()
-            self.assertIsNotNone(last_headers)
-            self.assertIn("etag", last_headers)
-            self.assertTrue(last_headers["etag"])
+            self.assertIn("x-ms-request-charge", response_headers)
+            self.assertIn("x-ms-activity-id", response_headers)
+            self.assertIn("etag", response_headers)
+            self.assertTrue(response_headers["etag"])
 
         finally:
             self.created_db.delete_container(created_collection.id)
 
     def test_change_feed_response_headers_multiple_pages(self):
-        """Test that response headers are captured for each page in a paginated change feed read."""
+        """Test that response headers reflect the latest page across a paginated change feed read."""
         created_collection = self.created_db.create_container(
             "test_cf_headers_multi_" + str(uuid.uuid4()), PartitionKey(path="/pk")
         )
@@ -98,18 +92,20 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
                 max_item_count=5,
             )
 
-            items = list(change_feed)
-            self.assertEqual(len(items), num_items)
+            # With 15 items and max_item_count=5, we expect at least 3 pages. After each
+            # page the latest-only dict must be refreshed with that page's headers.
+            page_count = 0
+            all_items = []
+            for page in change_feed.by_page():
+                all_items.extend(list(page))
+                page_count += 1
+                headers = change_feed.get_response_headers()
+                self.assertIn("x-ms-request-charge", headers, f"Page {page_count} missing request charge header")
+                self.assertIn("x-ms-activity-id", headers, f"Page {page_count} missing activity id header")
+                self.assertIn("etag", headers, f"Page {page_count} missing etag continuation header")
 
-            response_headers = change_feed.get_response_headers()
-            self.assertIsNotNone(response_headers)
-            # With 15 items and max_item_count=5, we expect at least 3 pages
-            self.assertGreaterEqual(len(response_headers), 3)
-
-            for i, headers in enumerate(response_headers):
-                self.assertIn("x-ms-request-charge", headers, f"Page {i} missing request charge header")
-                self.assertIn("x-ms-activity-id", headers, f"Page {i} missing activity id header")
-                self.assertIn("etag", headers, f"Page {i} missing etag continuation header")
+            self.assertEqual(len(all_items), num_items)
+            self.assertGreaterEqual(page_count, 3)
 
         finally:
             self.created_db.delete_container(created_collection.id)
@@ -128,21 +124,17 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
             items = list(change_feed)
             self.assertEqual(len(items), 0)
 
-            # The methods must not raise; they may return an empty list or a list with at least
-            # one entry depending on whether the implementation made a request.
+            # The method must not raise; it returns a CaseInsensitiveDict that may be
+            # empty (no request made) or populated (an empty page was fetched).
             response_headers = change_feed.get_response_headers()
             self.assertIsNotNone(response_headers)
-
-            last_headers = change_feed.get_last_response_headers()
-            # Either None (no request made) or a CaseInsensitiveDict — both are valid here.
-            if last_headers is not None:
-                self.assertTrue(hasattr(last_headers, "get"))
+            self.assertTrue(hasattr(response_headers, "get"))
 
         finally:
             self.created_db.delete_container(created_collection.id)
 
     def test_change_feed_etag_as_checkpoint(self):
-        """Verify the etag captured via get_last_response_headers can be used as a checkpoint.
+        """Verify the etag captured via get_response_headers can be used as a checkpoint.
 
         This is the user-facing scenario raised on PR #45166: customers want to read the
         continuation token (etag) without reaching into ``client_connection.last_response_headers``,
@@ -162,7 +154,7 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
             first_items = list(first_pass)
             self.assertEqual(len(first_items), 3)
 
-            checkpoint = first_pass.get_last_response_headers()["etag"]
+            checkpoint = first_pass.get_response_headers()["etag"]
             self.assertIsNotNone(checkpoint)
             self.assertTrue(checkpoint)
 
@@ -204,20 +196,21 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
                 all_items.extend(page_items)
                 page_count += 1
 
-                last_headers = change_feed.get_last_response_headers()
-                self.assertIsNotNone(last_headers)
-                self.assertIn("etag", last_headers)
+                headers = change_feed.get_response_headers()
+                self.assertIsNotNone(headers)
+                self.assertIn("etag", headers)
 
             self.assertEqual(len(all_items), num_items)
+            self.assertGreaterEqual(page_count, 1)
 
-            response_headers = change_feed.get_response_headers()
-            self.assertGreaterEqual(len(response_headers), page_count)
+            final_headers = change_feed.get_response_headers()
+            self.assertIn("etag", final_headers)
 
         finally:
             self.created_db.delete_container(created_collection.id)
 
     def test_change_feed_response_headers_returns_copies(self):
-        """Test that get_response_headers returns copies, not references."""
+        """Test that get_response_headers returns copies, not references to the shared dict."""
         created_collection = self.created_db.create_container(
             "test_cf_headers_copies_" + str(uuid.uuid4()), PartitionKey(path="/pk")
         )
@@ -235,10 +228,12 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
             headers1 = change_feed.get_response_headers()
             headers2 = change_feed.get_response_headers()
 
+            self.assertIsNot(headers1, headers2)
             self.assertEqual(len(headers1), len(headers2))
-            if len(headers1) > 0:
-                headers1[0]["test-key"] = "test-value"
-                self.assertNotIn("test-key", headers2[0])
+
+            # Mutating one returned copy must not affect subsequent copies.
+            headers1["test-key"] = "test-value"
+            self.assertNotIn("test-key", change_feed.get_response_headers())
 
         finally:
             self.created_db.delete_container(created_collection.id)
@@ -304,21 +299,19 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
                 self.assertGreater(
                     result["header_count"], 0, f"Thread {thread_id} should have captured headers"
                 )
-                for header_dict in result["headers"]:
-                    self.assertIn(
-                        "x-ms-request-charge",
-                        header_dict,
-                        f"Thread {thread_id} headers missing x-ms-request-charge",
-                    )
+                self.assertIn(
+                    "x-ms-request-charge",
+                    result["headers"],
+                    f"Thread {thread_id} headers missing x-ms-request-charge",
+                )
 
             if len(results) >= 2:
                 thread_ids = list(results.keys())
                 headers_0 = results[thread_ids[0]]["headers"]
                 headers_1 = results[thread_ids[1]]["headers"]
 
+                # Each concurrent change feed read must own an independent headers dict.
                 self.assertIsNot(headers_0, headers_1)
-                if len(headers_0) > 0 and len(headers_1) > 0:
-                    self.assertIsNot(headers_0[0], headers_1[0])
 
         finally:
             self.created_db.delete_container(created_collection.id)
@@ -356,9 +349,7 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
                     results[thread_id] = {
                         "item_count": len(items),
                         "header_count": len(headers),
-                        "request_charges": [
-                            float(h.get("x-ms-request-charge", 0)) for h in headers
-                        ],
+                        "request_charge": float(headers.get("x-ms-request-charge", 0)),
                     }
 
             threads = []
@@ -378,10 +369,9 @@ class TestChangeFeedResponseHeaders(unittest.TestCase):
                 self.assertGreater(
                     result["header_count"], 0, f"Thread {thread_id} should have captured headers"
                 )
-                for charge in result["request_charges"]:
-                    self.assertGreater(
-                        charge, 0, f"Thread {thread_id} should have positive request charges"
-                    )
+                self.assertGreater(
+                    result["request_charge"], 0, f"Thread {thread_id} should have a positive request charge"
+                )
 
         finally:
             self.created_db.delete_container(created_collection.id)
