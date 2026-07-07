@@ -2,7 +2,9 @@
 
 ## 1.3.0 (2026-07-07)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Added `azure.mgmt.computelimit.types` module with `TypedDict` definitions (e.g. `GuestSubscription`, `SharedLimit`, `SharedLimitCap`, `MemberCapOverride`, `SetMemberCapOverridesRequest`, `FeatureEnableRequest`) that can be used in place of raw `JSON` when calling operations, providing better editor autocompletion and type checking.
 
 ## 1.2.0 (2026-06-20)
 
