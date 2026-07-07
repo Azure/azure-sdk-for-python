@@ -32,18 +32,19 @@ def main():
     )
 
     response = client.discovery_rules.begin_create_or_update(
-        resource_group_name="myResourceGroup",
-        health_model_name="myHealthModel",
-        discovery_rule_name="myDiscoveryRule",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        discovery_rule_name="discover-web-apps",
         resource={
             "properties": {
                 "addRecommendedSignals": "Enabled",
-                "authenticationSetting": "authSetting1",
+                "addResourceHealthSignal": "Enabled",
+                "authenticationSetting": "default-auth",
                 "discoverRelationships": "Enabled",
-                "displayName": "myDisplayName",
+                "displayName": "Discover web apps",
                 "specification": {
                     "kind": "ResourceGraphQuery",
-                    "resourceGraphQuery": "resources | where subscriptionId == '7ddfffd7-9b32-40df-1234-828cbd55d6f4' | where resourceGroup == 'my-rg'",
+                    "resourceGraphQuery": "resources | where type =~ 'microsoft.web/sites' and resourceGroup =~ 'online-store-rg' | project id, name, location",
                 },
             }
         },
@@ -51,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/DiscoveryRules_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01-preview/DiscoveryRules_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

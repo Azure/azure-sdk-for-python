@@ -15,7 +15,7 @@ from azure.mgmt.cloudhealth import CloudHealthMgmtClient
     pip install azure-identity
     pip install azure-mgmt-cloudhealth
 # USAGE
-    python entities_delete.py
+    python entities_get_data_annotations.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.entities.begin_delete(
+    response = client.entities.get_data_annotations(
         resource_group_name="online-store-rg",
         health_model_name="online-store",
-        entity_name="catalog-storage",
-    ).result()
+        entity_name="web-frontend",
+        body={"endAt": "2026-05-04T23:59:59Z", "startAt": "2026-05-03T00:00:00Z"},
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/Entities_Delete.json
+# x-ms-original-file: 2026-05-01-preview/Entities_GetDataAnnotations.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.cloudhealth import CloudHealthMgmtClient
     pip install azure-identity
     pip install azure-mgmt-cloudhealth
 # USAGE
-    python entities_delete.py
+    python entities_get_signal_recommendations.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.entities.begin_delete(
+    response = client.entities.get_signal_recommendations(
         resource_group_name="online-store-rg",
         health_model_name="online-store",
-        entity_name="catalog-storage",
-    ).result()
+        entity_name="orders-db",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/Entities_Delete.json
+# x-ms-original-file: 2026-05-01-preview/Entities_GetSignalRecommendations.json
 if __name__ == "__main__":
     main()

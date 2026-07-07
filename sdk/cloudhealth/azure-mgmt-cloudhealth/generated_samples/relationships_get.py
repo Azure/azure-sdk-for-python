@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.relationships.get(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        relationship_name="Ue-21-F3M12V3w-13x18F8H-7HOk--kq6tP-HB",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        relationship_name="web-frontend-to-orders-api",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/Relationships_Get.json
+# x-ms-original-file: 2026-05-01-preview/Relationships_Get.json
 if __name__ == "__main__":
     main()

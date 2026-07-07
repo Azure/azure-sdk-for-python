@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.signal_definitions.get(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        signal_definition_name="sig1",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        signal_definition_name="sql-cpu-percent",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/SignalDefinitions_Get.json
+# x-ms-original-file: 2026-05-01-preview/SignalDefinitions_Get.json
 if __name__ == "__main__":
     main()
