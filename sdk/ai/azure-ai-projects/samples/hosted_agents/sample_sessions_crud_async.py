@@ -20,14 +20,12 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
-
-    If you don't have a Hosted Agent, run `sample_create_hosted_agent_async.py` or
-    `sample_create_hosted_agent_from_code_async.py` first to create one as a prerequisite.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
 
 SDK FUNCTIONS:
-    - project_client.agents.list_versions: resolves the active version for the existing hosted agent.
+    - project_client.agents.create_version_from_code: creates a temporary hosted agent version.
     - project_client.agents.create_session: creates a session for the agent.
     - project_client.agents.get_session: retrieves a session by ID.
     - project_client.agents.list_sessions: lists sessions for an agent.
@@ -36,55 +34,85 @@ SDK FUNCTIONS:
 
 import asyncio
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import VersionRefIndicator
-from hosted_agents_util import get_latest_active_agent_version_async
+from azure.ai.projects.models import (
+    CodeConfiguration,
+    CodeDependencyResolution,
+    HostedAgentDefinition,
+    ProtocolVersionRecord,
+    VersionRefIndicator,
+)
+from hosted_agents_util import create_version_from_code_async
+from util import zip_directory
 
 load_dotenv()
 
 
 async def main():
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+    agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+    model_name = os.environ["FOUNDRY_MODEL_NAME"]
+    hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
 
-    async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-        ) as project_client,
-    ):
-        agent = await get_latest_active_agent_version_async(project_client, agent_name)
-        session = await project_client.agents.create_session(
-            agent_name=agent_name,
-            version_indicator=VersionRefIndicator(agent_version=agent.version),
-        )
-        print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
+    zip_path = zip_directory(hosted_agent_source_dir, "basic-agent.zip")[2]
 
-        # Retrieve the session by its ID
-        fetched = await project_client.agents.get_session(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-        )
-        print(f"Retrieved session (id: {fetched.agent_session_id}, status: {fetched.status})")
+    with zip_path.open("rb") as code_stream:
+        async with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+            ) as project_client,
+            create_version_from_code_async(
+                project_client=project_client,
+                agent_name=agent_name,
+                description="Sessions CRUD hosted agent uploaded from assets/basic-agent.",
+                definition=HostedAgentDefinition(
+                    cpu="0.5",
+                    memory="1Gi",
+                    code_configuration=CodeConfiguration(
+                        runtime="python_3_14",
+                        entry_point=["python", "main.py"],
+                        dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+                    ),
+                    environment_variables={
+                        "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                        "FOUNDRY_MODEL_NAME": model_name,
+                    },
+                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
+                ),
+                code=code_stream,
+            ) as created,
+        ):
+            session = await project_client.agents.create_session(
+                agent_name=agent_name,
+                version_indicator=VersionRefIndicator(agent_version=created.version),
+            )
+            print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
 
-        # List sessions for the agent
-        print("Listing sessions for the agent...")
-        sessions = project_client.agents.list_sessions(agent_name=agent_name)
-        print("Sessions:")
-        async for item in sessions:
-            print(f"  - {item.agent_session_id} (status: {item.status})")
+            fetched = await project_client.agents.get_session(
+                agent_name=agent_name,
+                session_id=session.agent_session_id,
+            )
+            print(f"Retrieved session (id: {fetched.agent_session_id}, status: {fetched.status})")
 
-        await project_client.agents.delete_session(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-        )
-        print(f"Deleted session (id: {session.agent_session_id})")
+            print("Listing sessions for the agent...")
+            sessions = project_client.agents.list_sessions(agent_name=agent_name)
+            print("Sessions:")
+            async for item in sessions:
+                print(f"  - {item.agent_session_id} (status: {item.status})")
+
+            await project_client.agents.delete_session(
+                agent_name=agent_name,
+                session_id=session.agent_session_id,
+            )
+            print(f"Deleted session (id: {session.agent_session_id})")
 
 
 if __name__ == "__main__":
