@@ -483,10 +483,10 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         if self._next_update_time and self._next_update_time > time.time():
             return
 
-        failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
-
-        if failover_endpoints is None:
-            # SRV record not found, so we should refresh after a longer interval
+        try:
+            failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
+        except TimeoutError:
+            # SRV record resolution timed out, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
             return
 
@@ -530,6 +530,12 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        # Close any replica clients that are no longer part of the failover.
+        retained_endpoints = {self._original_client.endpoint}
+        retained_endpoints.update(client.endpoint for client in discovered_clients)
+        for client in self._replica_clients:
+            if client.endpoint not in retained_endpoints:
+                client.close()
         if not self._load_balancing_enabled:
             random.shuffle(discovered_clients)
             self._replica_clients = [self._original_client] + discovered_clients
