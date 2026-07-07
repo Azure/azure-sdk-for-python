@@ -141,9 +141,9 @@ Ask the user to choose **one** of the following two options for the target topic
 
 1. **Create a new topic branch (with default branch name)**  – Create a new topic branch for the emitted changes. If selected, this default branch name will be used "<github-userid>/<emit-from-typespec-DD-MM-HH-MM>", where `github-userid` is the user's personal GitHub ID (not the Microsoft Enterprise Managed User (EMU) account!) and `DD-MM-HHMM` is the current date-time using date, month, hour and minute. For example, if the GitHub ID is "dargilco" and the current date and time is May 1st, 2026 at 8:13am, the default branch name would be `dargilco/emit-from-typespec-01-05-0813`. This should be the default option, and the default branch name should be displayed. If you press enter without typing anything, this option will be selected.
 
-2. **Create a new topic branch (branch name given by user)** - Ask the user for the branch name. Mention that a common format is "<github-userid>/<work-title>". If the user enters a branch name `feature/azure-ai-projects/2.3.0` then stop and report that they cannot emit directly to the current feature branch.
+2. **Create a new topic branch (branch name given by user)** - Ask the user for the branch name. Mention that a common format is "<github-userid>/<work-title>". If the user enters a branch name `feature/azure-ai-projects/vnext` then stop and report that they cannot emit directly to the current feature branch.
 
-3. **Emit to current branch** – Emit directly to the current branch without creating a new topic branch. This is not common, but may be necessary if the user is re-running this workflow because of a previous failure, where the topic branch was already created. If the current branch is named `feature/azure-ai-projects/2.3.0` then stop and report that they cannot emit directly to the current feature branch.
+3. **Emit to current branch** – Emit directly to the current branch without creating a new topic branch. This is not common, but may be necessary if the user is re-running this workflow because of a previous failure, where the topic branch was already created. If the current branch is named `feature/azure-ai-projects/vnext` then stop and report that they cannot emit directly to the current feature branch.
 
 ### 2b. TypeSpec source
 
