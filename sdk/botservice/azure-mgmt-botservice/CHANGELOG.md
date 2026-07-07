@@ -26,9 +26,7 @@
   - Enum `EmailChannelAuthMethod` added member `numerator`
   - Enum `EmailChannelAuthMethod` added member `to_bytes`
   - Model `ListChannelWithKeysResponse` added property `system_data`
-  - Model `PrivateEndpointConnection` added property `properties`
   - Model `PrivateEndpointConnection` added property `system_data`
-  - Model `PrivateLinkResource` added property `properties`
   - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
   - Model `Resource` added property `system_data`
   - Model `Site` added property `tenant_id`
@@ -62,8 +60,6 @@
   - Added enum `NspAccessRuleDirection`
   - Added model `NspAccessRuleProperties`
   - Added model `NspAccessRulePropertiesSubscriptionsItem`
-  - Added model `PrivateEndpointConnectionProperties`
-  - Added model `PrivateLinkResourceProperties`
   - Added model `Profile`
   - Added model `ProvisioningIssue`
   - Added model `ProvisioningIssueProperties`
@@ -72,32 +68,22 @@
   - Added model `ResourceAssociation`
   - Added enum `Severity`
   - Added model `SystemData`
-  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed model `AzureBotService`
   - Deleted or renamed enum value `EmailChannelAuthMethod.fromhex`
   - Deleted or renamed enum value `EmailChannelAuthMethod.hex`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `group_ids`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `provisioning_state` and `group_ids` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `tags`
   - Model `Resource` deleted or renamed its instance variable `sku`
   - Model `Resource` deleted or renamed its instance variable `kind`
   - Model `Resource` deleted or renamed its instance variable `etag`
   - Model `Resource` deleted or renamed its instance variable `zones`
-  - Deleted or renamed model `BotResponseList`
-  - Deleted or renamed model `ChannelResponseList`
-  - Deleted or renamed model `ConnectionItemName`
-  - Deleted or renamed model `ConnectionSettingResponseList`
-  - Deleted or renamed model `OperationEntityListResult`
-  - Deleted or renamed model `PrivateEndpointConnectionListResult`
   - Method `BotsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
   - Method `BotsOperations.update` deleted or renamed its parameter `location` of kind `positional_or_keyword`
   - Method `BotsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
@@ -112,6 +98,10 @@
   - Method `ChannelsOperations.update` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
   - Method `ChannelsOperations.update` deleted or renamed its parameter `etag` of kind `positional_or_keyword`
   - Method `ChannelsOperations.update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
+
+### Other Changes
+
+  - Deleted model `BotResponseList`/`ChannelResponseList`/`ConnectionItemName`/`ConnectionSettingResponseList`/`OperationEntityListResult`/`PrivateEndpointConnectionListResult` which actually were not used by SDK users
 
 ## 2.0.0 (2023-01-12)
 
