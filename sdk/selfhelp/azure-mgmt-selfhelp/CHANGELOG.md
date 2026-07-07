@@ -6,25 +6,72 @@
 
   - Client `SelfHelpMgmtClient` added parameter `cloud_setting` in method `__init__`
   - Client `SelfHelpMgmtClient` added method `send_request`
+  - Model `DiagnosticResource` added property `properties`
+  - Model `Filter` added property `values_property`
+  - Model `SimplifiedSolutionsResource` added property `properties`
+  - Model `SolutionMetadataResource` added property `properties`
+  - Model `SolutionNlpMetadataResource` added property `properties`
+  - Model `SolutionResource` added property `properties`
+  - Model `SolutionResourceSelfHelp` added property `properties`
+  - Model `TroubleshooterResource` added property `properties`
+  - Added model `DiagnosticResourceProperties`
   - Added model `ExtensionResource`
+  - Added model `NlpSolutions`
+  - Added model `SimplifiedSolutionsResourceProperties`
+  - Added model `SolutionResourceProperties`
+  - Added model `Solutions`
+  - Added model `SolutionsResourcePropertiesSelfHelp`
+  - Added model `TroubleshooterInstanceProperties`
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `DiagnosticResource` moved instance variable `global_parameters`, `insights`, `accepted_at`, `provisioning_state` and `diagnostics` under property `properties` whose type is `DiagnosticResourceProperties`
-  - Model `Filter` renamed its instance variable `values` to `values_property`
-  - Model `SimplifiedSolutionsResource` moved instance variable `solution_id`, `parameters`, `title`, `appendix`, `content` and `provisioning_state` under property `properties` whose type is `SimplifiedSolutionsResourceProperties`
-  - Model `SolutionMetadataResource` moved instance variable `solutions` under property `properties` whose type is `Solutions`
-  - Model `SolutionNlpMetadataResource` moved instance variable `problem_title`, `problem_description`, `service_id`, `problem_classification_id`, `solutions` and `related_services` under property `properties` whose type is `NlpSolutions`
-  - Model `SolutionPatchRequestBody` moved instance variable `trigger_criteria`, `parameters`, `solution_id`, `provisioning_state`, `title`, `content`, `replacement_maps` and `sections` under property `properties` whose type is `SolutionResourceProperties`
-  - Model `SolutionResource` moved instance variable `trigger_criteria`, `parameters`, `solution_id`, `provisioning_state`, `title`, `content`, `replacement_maps` and `sections` under property `properties` whose type is `SolutionResourceProperties`
-  - Model `SolutionResourceSelfHelp` moved instance variable `solution_id`, `title`, `content`, `replacement_maps` and `sections` under property `properties` whose type is `SolutionsResourcePropertiesSelfHelp`
-  - Model `TroubleshooterResource` moved instance variable `solution_id`, `parameters`, `provisioning_state` and `steps` under property `properties` whose type is `TroubleshooterInstanceProperties`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `global_parameters`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `insights`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `accepted_at`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `diagnostics`
+  - Model `Filter` deleted or renamed its instance variable `values`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `solution_id`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `parameters`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `title`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `appendix`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `content`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `SolutionMetadataResource` deleted or renamed its instance variable `solutions`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `problem_title`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `problem_description`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `service_id`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `problem_classification_id`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `solutions`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `related_services`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `trigger_criteria`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `parameters`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `solution_id`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `provisioning_state`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `title`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `content`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `replacement_maps`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `sections`
+  - Model `SolutionResource` deleted or renamed its instance variable `trigger_criteria`
+  - Model `SolutionResource` deleted or renamed its instance variable `parameters`
+  - Model `SolutionResource` deleted or renamed its instance variable `solution_id`
+  - Model `SolutionResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `SolutionResource` deleted or renamed its instance variable `title`
+  - Model `SolutionResource` deleted or renamed its instance variable `content`
+  - Model `SolutionResource` deleted or renamed its instance variable `replacement_maps`
+  - Model `SolutionResource` deleted or renamed its instance variable `sections`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `solution_id`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `title`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `content`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `replacement_maps`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `sections`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `solution_id`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `parameters`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `steps`
+  - Deleted or renamed model `DiscoveryResponse`
+  - Deleted or renamed model `OperationListResult`
   - Method `DiscoverySolutionOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-
-  - Deleted model `DiscoveryResponse`/`OperationListResult` which actually were not used by SDK users
 
 ## 2.0.0b4 (2024-05-27)
 
