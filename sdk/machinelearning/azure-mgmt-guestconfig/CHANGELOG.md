@@ -1,5 +1,28 @@
 # Release History
 
+## 1.0.0b3 (2026-07-07)
+
+### Features Added
+
+  - Client `GuestConfigurationClient` added parameter `cloud_setting` in method `__init__`
+  - Client `GuestConfigurationClient` added method `send_request`
+  - Client `GuestConfigurationClient` added operation group `guest_configuration_connected_vmwarev_sphere_assignments`
+  - Client `GuestConfigurationClient` added operation group `guest_configuration_connected_vmwarev_sphere_assignments_reports`
+  - Model `GuestConfigurationAssignmentReportList` added property `next_link`
+  - Model `GuestConfigurationNavigation` added property `content_managed_identity`
+  - Model `Operation` added property `properties`
+  - Added model `OperationProperties`
+  - Model `GuestConfigurationAssignmentsVMSSOperations` added method `create_or_update`
+  - Added model `GuestConfigurationConnectedVMwarevSphereAssignmentsOperations`
+  - Added model `GuestConfigurationConnectedVMwarevSphereAssignmentsReportsOperations`
+
+### Breaking Changes
+
+  - Model `Operation` deleted or renamed its instance variable `status_code`
+  - Deleted or renamed model `GuestConfigurationAssignmentList`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `Resource`
+
 ## 1.0.0b2 (2022-11-04)
 
 ### Features Added
