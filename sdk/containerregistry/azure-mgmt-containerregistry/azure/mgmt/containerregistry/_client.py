@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -37,15 +37,18 @@ from .operations import (
     WebhooksOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
 class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-attributes
-    """The Microsoft Azure Container Registry management API provides create, read, update, and delete
-    functionality for Azure Container Registry resources including registries, replications,
-    webhooks, tasks, runs, and other registry components.
+    """ContainerRegistryManagementClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerregistry.operations.Operations
@@ -89,8 +92,9 @@ class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-at
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-01-preview" and None. Default value is "2026-01-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+     "2026-03-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

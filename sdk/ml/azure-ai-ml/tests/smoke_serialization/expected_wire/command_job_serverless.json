@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "command": "echo serverless",
+    "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+    "environmentVariables": {},
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {},
+    "properties": {},
+    "resources": {
+      "instanceCount": 1,
+      "instanceType": "STANDARD_DS3_V2",
+      "properties": {}
+    },
+    "tags": {}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "description": "smoke feature set",
+    "entities": [
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/smoke-rg/providers/Microsoft.MachineLearningServices/workspaces/smoke-ws/featurestoreEntities/smoke-entity/versions/1"
+    ],
+    "properties": {},
+    "specification": {
+      "path": "azureml://datastores/workspaceblobstore/paths/smoke/spec/"
+    },
+    "stage": "Development",
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}
