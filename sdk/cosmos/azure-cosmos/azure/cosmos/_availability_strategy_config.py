@@ -21,6 +21,7 @@
 
 """Configuration types for Azure Cosmos DB availability strategies."""
 
+import os
 from typing import Optional, Any, Union
 
 # Default values for cross-region hedging strategy
@@ -36,6 +37,11 @@ DEFAULT_THRESHOLD_STEPS_MS = 100
 DEFAULT_METADATA_HEDGING_THRESHOLD_MS = 1500
 DEFAULT_METADATA_HEDGING_THRESHOLD_STEPS_MS = 500
 DEFAULT_METADATA_HEDGING_CONCURRENCY_BUDGET = 8
+
+# Operator kill-switch (parity with the .NET AZURE_COSMOS_METADATA_HEDGING_ENABLED env var).
+# When set to a recognized truthy/falsy value it overrides both the customer opt-in and the
+# account PPAF state.
+METADATA_HEDGING_ENABLED_ENV_VAR = "AZURE_COSMOS_METADATA_HEDGING_ENABLED"
 
 
 class CrossRegionHedgingStrategy:
@@ -80,6 +86,23 @@ class MetadataCrossRegionHedgingStrategy(CrossRegionHedgingStrategy):
         )
 
 
+def _parse_metadata_hedging_env_override() -> Optional[bool]:
+    """Parse the ``AZURE_COSMOS_METADATA_HEDGING_ENABLED`` env var into a tri-state bool.
+
+    :returns: ``True``/``False`` when the env var is set to a recognized value, else ``None``.
+    :rtype: Optional[bool]
+    """
+    raw = os.environ.get(METADATA_HEDGING_ENABLED_ENV_VAR)
+    if raw is None:
+        return None
+    value = raw.strip().lower()
+    if value in ("true", "1", "yes"):
+        return True
+    if value in ("false", "0", "no"):
+        return False
+    return None
+
+
 def resolve_metadata_hedging_opt_in(opt_in: Optional[bool], ppaf_enabled: bool) -> bool:
     """Resolve the tri-state cold-start metadata hedging opt-in to a concrete bool.
 
@@ -87,7 +110,9 @@ def resolve_metadata_hedging_opt_in(opt_in: Optional[bool], ppaf_enabled: bool) 
     hedging follows the account's PPAF (Per-Partition Automatic Failover) state: it is
     enabled when PPAF is enabled and disabled otherwise. An explicit ``True`` enables
     hedging even when PPAF is disabled, and an explicit ``False`` disables it regardless
-    of PPAF.
+    of PPAF. The ``AZURE_COSMOS_METADATA_HEDGING_ENABLED`` environment variable, when set to a
+    recognized truthy/falsy value, overrides both the customer opt-in and the account PPAF
+    state (operator kill-switch, parity with the .NET SDK).
 
     :param opt_in: The customer-supplied tri-state opt-in (True/False/None).
     :type opt_in: Optional[bool]
@@ -96,6 +121,9 @@ def resolve_metadata_hedging_opt_in(opt_in: Optional[bool], ppaf_enabled: bool) 
     :returns: True if cold-start metadata hedging should be applied, False otherwise.
     :rtype: bool
     """
+    env_override = _parse_metadata_hedging_env_override()
+    if env_override is not None:
+        return env_override
     if opt_in is None:
         return ppaf_enabled
     return opt_in

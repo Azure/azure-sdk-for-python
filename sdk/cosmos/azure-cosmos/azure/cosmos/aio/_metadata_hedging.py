@@ -22,7 +22,7 @@
 """Asynchronous cold-start metadata cache cross-region hedging for Azure Cosmos DB.
 
 Async port of the .NET ``MetadataHedgingStrategy`` (PR
-Azure/azure-cosmos-dotnet-v3#5923). See :mod:`azure.cosmos._metadata_hedging` for the
+Azure/azure-cosmos-dotnet-v3#5999). See :mod:`azure.cosmos._metadata_hedging` for the
 synchronous counterpart and design notes.
 """
 
@@ -136,6 +136,7 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
         request: HttpRequest,
         execute_request_fn: Callable[..., Awaitable[ResponseType]],
+        winner_sink: Optional[List[Any]] = None,
     ) -> ResponseType:
         """Execute a metadata read with bounded primary + single-hedge cross-region hedging.
 
@@ -148,6 +149,10 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :type request: ~azure.core.pipeline.transport.HttpRequest
         :param execute_request_fn: Async function that executes the actual request.
         :type execute_request_fn: Callable[..., Awaitable[Tuple[dict, dict]]]
+        :param winner_sink: Optional length-1 list to receive the winner descriptor for
+            PartitionKeyRange continuation pinning (``hedge_won`` / ``winning_region`` /
+            ``pin_excluded_locations``).
+        :type winner_sink: Optional[List[Any]]
         :returns: The winning response tuple.
         :rtype: Tuple[dict, dict]
         """
@@ -186,6 +191,7 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 
                     if self.is_acceptable_winner(result, exception, is_hedge=not is_primary):
                         completion_status.set()
+                        self._record_winner(winner_sink, is_primary, available_locations, request_params)
                         # Note: no per-region failure is recorded for the primary when the
                         # hedge wins. Metadata cache reads are account-global, not
                         # per-partition, so the circuit-breaker health tracker (keyed on
@@ -196,6 +202,7 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 
             # Neither branch produced an acceptable winner; prefer the primary's outcome.
             completion_status.set()
+            self._record_winner(winner_sink, True, available_locations, request_params)
             primary_exception = primary_task.exception()
             if primary_exception is not None:
                 raise primary_exception
@@ -215,6 +222,7 @@ async def execute_metadata_hedging(
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
     request: HttpRequest,
     execute_request_fn: Callable[..., Awaitable[ResponseType]],
+    winner_sink: Optional[List[Any]] = None,
 ) -> ResponseType:
     """Execute a metadata read with cold-start cross-region hedging.
 
@@ -229,9 +237,14 @@ async def execute_metadata_hedging(
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param execute_request_fn: Async function that executes the actual request.
     :type execute_request_fn: Callable[..., Awaitable[Tuple[dict, dict]]]
+    :param winner_sink: Optional length-1 list to receive the winner descriptor
+        (``hedge_won`` / ``winning_region`` / ``pin_excluded_locations``) so a
+        PartitionKeyRange drain can pin later pages to the winning region.
+    :type winner_sink: Optional[List[Any]]
     :returns: The winning response tuple.
     :rtype: Tuple[dict, dict]
     """
     if request_params.availability_strategy is None:
         request_params.availability_strategy = MetadataCrossRegionHedgingStrategy()
-    return await handler.execute_request(request_params, global_endpoint_manager, request, execute_request_fn)
+    return await handler.execute_request(
+        request_params, global_endpoint_manager, request, execute_request_fn, winner_sink=winner_sink)

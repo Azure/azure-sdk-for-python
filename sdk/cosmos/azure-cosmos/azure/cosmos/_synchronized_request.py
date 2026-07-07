@@ -321,6 +321,11 @@ def SynchronizedRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
+    # Sidecar (length-1 list) used by the /pkranges change-feed drain to learn which
+    # region won the first hedged page, so it can pin later pages to that region for
+    # change-feed continuation integrity. Popped here so it never reaches the pipeline.
+    hedge_winner_capture = kwargs.pop("_internal_hedge_winner_capture", None)
+
     # Cold-start metadata cache cross-region hedging (Collection / PartitionKeyRange reads).
     if _is_metadata_hedging_applicable(client, request_params, global_endpoint_manager):
         return execute_metadata_hedging(
@@ -337,7 +342,8 @@ def SynchronizedRequest(
                 pipeline_client,
                 r,
                 **kwargs
-            )
+            ),
+            winner_sink=hedge_winner_capture,
         )
 
     if request_params.availability_strategy is None:

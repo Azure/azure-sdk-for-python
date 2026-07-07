@@ -22,7 +22,7 @@
 """Cold-start metadata cache cross-region hedging for Azure Cosmos DB.
 
 This is the synchronous port of the .NET ``MetadataHedgingStrategy`` (PR
-Azure/azure-cosmos-dotnet-v3#5923). It provides bounded cross-region hedging for
+Azure/azure-cosmos-dotnet-v3#5999). It provides bounded cross-region hedging for
 cold-start metadata cache reads (container/Collection reads and PartitionKeyRange
 read-feed reads): the primary request is dispatched immediately and, if it has not
 produced an acceptable response within a fixed SDK-derived threshold, a single hedge
@@ -98,8 +98,9 @@ def is_regional_failure(
 
     A regional failure is one that should advance a metadata read to a different region
     (so it must not be accepted as a winner). This mirrors the .NET ``IsRegionalFailure``
-    classification: transport-level failures and timeouts, ``503``, ``500``, and
-    ``403`` with sub-status ``DatabaseAccountNotFound``.
+    classification: transport-level failures and timeouts, ``503``, ``500``,
+    ``403`` with sub-status ``DatabaseAccountNotFound``, and ``410`` with sub-status
+    ``LeaseNotFound`` (a regional/backend-lease failure, not a request-definitive error).
 
     :param status_code: HTTP status code from the response, or None for a transport failure.
     :type status_code: Optional[int]
@@ -119,6 +120,8 @@ def is_regional_failure(
     if status_code in (StatusCodes.SERVICE_UNAVAILABLE, StatusCodes.INTERNAL_SERVER_ERROR):
         return True
     if status_code == StatusCodes.FORBIDDEN and sub_status == SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND:
+        return True
+    if status_code == StatusCodes.GONE and sub_status == SubStatusCodes.LEASE_NOT_FOUND:
         return True
     return False
 
@@ -226,6 +229,7 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
         request: HttpRequest,
         execute_request_fn: Callable[..., ResponseType],
+        winner_sink: Optional[List[Any]] = None,
     ) -> ResponseType:
         """Execute a metadata read with bounded primary + single-hedge cross-region hedging.
 
@@ -238,6 +242,10 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :type request: ~azure.core.pipeline.transport.HttpRequest
         :param execute_request_fn: Function that executes the actual request.
         :type execute_request_fn: Callable[..., Tuple[dict, dict]]
+        :param winner_sink: Optional length-1 list to receive the winner descriptor for
+            PartitionKeyRange continuation pinning (``hedge_won`` / ``winning_region`` /
+            ``pin_excluded_locations``).
+        :type winner_sink: Optional[List[Any]]
         :returns: The winning response tuple.
         :rtype: Tuple[dict, dict]
         """
@@ -268,6 +276,7 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
 
                 if self.is_acceptable_winner(result, exception, is_hedge=not is_primary):
                     completion_status.set()
+                    self._record_winner(winner_sink, is_primary, available_locations, request_params)
                     # Note: no per-region failure is recorded for the primary when the
                     # hedge wins. Metadata cache reads are account-global, not
                     # per-partition, so the circuit-breaker health tracker (keyed on
@@ -280,6 +289,7 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             # Neither branch produced an acceptable winner; prefer the primary's outcome
             # so the metadata read fails the same way it would without hedging.
             completion_status.set()
+            self._record_winner(winner_sink, True, available_locations, request_params)
             primary_exception = primary_future.exception()
             if primary_exception is not None:
                 raise primary_exception
@@ -295,6 +305,7 @@ def execute_metadata_hedging(
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
     request: HttpRequest,
     execute_request_fn: Callable[..., ResponseType],
+    winner_sink: Optional[List[Any]] = None,
 ) -> ResponseType:
     """Execute a metadata read with cold-start cross-region hedging.
 
@@ -309,9 +320,14 @@ def execute_metadata_hedging(
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param execute_request_fn: Function that executes the actual request.
     :type execute_request_fn: Callable[..., Tuple[dict, dict]]
+    :param winner_sink: Optional length-1 list to receive the winner descriptor
+        (``hedge_won`` / ``winning_region`` / ``pin_excluded_locations``) so a
+        PartitionKeyRange drain can pin later pages to the winning region.
+    :type winner_sink: Optional[List[Any]]
     :returns: The winning response tuple.
     :rtype: Tuple[dict, dict]
     """
     if request_params.availability_strategy is None:
         request_params.availability_strategy = MetadataCrossRegionHedgingStrategy()
-    return handler.execute_request(request_params, global_endpoint_manager, request, execute_request_fn)
+    return handler.execute_request(
+        request_params, global_endpoint_manager, request, execute_request_fn, winner_sink=winner_sink)
