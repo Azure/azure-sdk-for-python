@@ -2,7 +2,9 @@
 
 ## 6.1.0b3 (2026-07-07)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Regenerated with latest code generator tool
 
 ## 6.0.1 (2026-05-15)
 
