@@ -122,7 +122,7 @@ Microsoft.AAD	domainservices
 Microsoft.Education	education
 Microsoft.HanaOnAzure	hanaonazure
 Microsoft.VirtualMachineImages	imagebuilder
-Microsoft.OffAzure	migrate/resource-manager/Microsoft.OffAzure
+Microsoft.OffAzure	migrate/resource-manager/Microsoft.OffAzure "no specs"
 Microsoft.PowerPlatform	powerplatform
 Microsoft.RedHatOpenshift	redhatopenshift
 Microsoft.SerialConsole	serialconsole
