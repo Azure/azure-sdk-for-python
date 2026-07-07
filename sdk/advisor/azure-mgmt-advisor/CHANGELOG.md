@@ -12,22 +12,21 @@
   - Client `AdvisorManagementClient` added operation group `resiliency_reviews`
   - Client `AdvisorManagementClient` added operation group `assessment_types`
   - Client `AdvisorManagementClient` added operation group `workloads`
-  - Model `ConfigData` added property `properties`
   - Model `ConfigData` added property `system_data`
-  - Model `MetadataEntity` added property `properties`
+  - Model `ConfigData` moved instance variable `exclude`, `low_cpu_threshold` and `digests` under property `properties` whose type is `ConfigDataProperties`
   - Model `MetadataEntity` added property `system_data`
+  - Model `MetadataEntity` moved instance variable `display_name`, `depends_on`, `applicable_scenarios` and `supported_values` under property `properties` whose type is `MetadataEntityProperties`
   - Model `Resource` added property `system_data`
-  - Model `ResourceRecommendationBase` added property `properties`
   - Model `ResourceRecommendationBase` added property `system_data`
-  - Model `SuppressionContract` added property `properties`
+  - Model `ResourceRecommendationBase` moved instance variable `category`, `impact`, `impacted_field`, `impacted_value`, `last_updated`, `metadata`, `recommendation_type_id`, `short_description`, `suppression_ids`, `extended_properties`, `resource_metadata`, `description`, `label`, `learn_more_link`, `potential_benefits`, `actions`, `remediation` and `exposed_metadata_properties` under property `properties` whose type is `RecommendationProperties`
   - Model `SuppressionContract` added property `system_data`
+  - Model `SuppressionContract` moved instance variable `suppression_id`, `ttl` and `expiration_time_stamp` under property `properties` whose type is `SuppressionProperties`
   - Added model `AdvisorScoreEntity`
   - Added model `AdvisorScoreEntityProperties`
   - Added enum `Aggregated`
   - Added model `AssessmentResult`
   - Added model `AssessmentResultProperties`
   - Added model `AssessmentTypeResult`
-  - Added model `ConfigDataProperties`
   - Added enum `Control`
   - Added enum `CreatedByType`
   - Added enum `Duration`
@@ -35,7 +34,6 @@
   - Added model `ErrorDetail`
   - Added model `ErrorResponse`
   - Added model `ExtensionResource`
-  - Added model `MetadataEntityProperties`
   - Added model `PredictionRequest`
   - Added model `PredictionRequestProperties`
   - Added model `PredictionResponse`
@@ -45,7 +43,6 @@
   - Added model `ProxyResource`
   - Added enum `RecommendationDismissReason`
   - Added model `RecommendationPatchPayload`
-  - Added model `RecommendationProperties`
   - Added model `RecommendationPropertiesResourceWorkload`
   - Added model `RecommendationPropertiesReview`
   - Added model `RecommendationStatePropertiesPayload`
@@ -55,55 +52,26 @@
   - Added enum `ReviewStatus`
   - Added enum `Risk`
   - Added model `ScoreEntity`
-  - Added model `SuppressionProperties`
   - Added model `SystemData`
   - Added model `TimeSeriesEntity`
   - Added model `TrackedRecommendationProperties`
   - Added model `WorkloadResult`
-  - Model `RecommendationsOperations` added method `list_by_tenant`
-  - Added model `AdvisorScoresOperations`
-  - Added model `AssessmentTypesOperations`
-  - Added model `AssessmentsOperations`
-  - Added model `WorkloadsOperations`
-  - Added model `resiliencyReviewsOperations`
+  - Operation group `RecommendationsOperations` added method `list_by_tenant`
+  - Added operation group `AdvisorScoresOperations`
+  - Added operation group `AssessmentTypesOperations`
+  - Added operation group `AssessmentsOperations`
+  - Added operation group `WorkloadsOperations`
+  - Added operation group `resiliencyReviewsOperations`
 
 ### Breaking Changes
 
-  - Model `ConfigData` deleted or renamed its instance variable `exclude`
-  - Model `ConfigData` deleted or renamed its instance variable `low_cpu_threshold`
-  - Model `ConfigData` deleted or renamed its instance variable `digests`
-  - Model `MetadataEntity` deleted or renamed its instance variable `display_name`
-  - Model `MetadataEntity` deleted or renamed its instance variable `depends_on`
-  - Model `MetadataEntity` deleted or renamed its instance variable `applicable_scenarios`
-  - Model `MetadataEntity` deleted or renamed its instance variable `supported_values`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `category`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `impact`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `impacted_field`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `impacted_value`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `last_updated`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `metadata`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `recommendation_type_id`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `short_description`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `suppression_ids`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `extended_properties`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `resource_metadata`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `description`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `label`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `learn_more_link`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `potential_benefits`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `actions`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `remediation`
-  - Model `ResourceRecommendationBase` deleted or renamed its instance variable `exposed_metadata_properties`
-  - Model `SuppressionContract` deleted or renamed its instance variable `suppression_id`
-  - Model `SuppressionContract` deleted or renamed its instance variable `ttl`
-  - Model `SuppressionContract` deleted or renamed its instance variable `expiration_time_stamp`
-  - Deleted or renamed model `ConfigurationListResult`
-  - Deleted or renamed model `MetadataEntityListResult`
-  - Deleted or renamed model `OperationEntityListResult`
-  - Deleted or renamed model `ResourceRecommendationBaseListResult`
-  - Deleted or renamed model `SuppressionContractListResult`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Method `RecommendationsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `SuppressionsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ConfigurationListResult`/`MetadataEntityListResult`/`OperationEntityListResult`/`ResourceRecommendationBaseListResult`/`SuppressionContractListResult` which actually were not used by SDK users
 
 ## 9.0.1 (2026-05-13)
 
