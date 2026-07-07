@@ -192,14 +192,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
-    :keyword Optional[bool] enable_metadata_hedging_for_cold_start:
-        Tri-state opt-in for cold-start metadata cache cross-region hedging. When ``None``
+    :keyword Optional[bool] enable_metadata_hedging:
+        Tri-state opt-in for metadata cache cross-region hedging. When ``None``
         (the default), it follows the account's Per-Partition Automatic Failover (PPAF)
-        state. When ``True``, the SDK hedges the first-time population of the container and
-        partition-key-range metadata caches across regions even when PPAF is disabled. When
-        ``False``, metadata hedging is suppressed regardless of PPAF. The threshold and other
-        tuning knobs are SDK-derived defaults and are not customer-configurable.
-    :paramtype enable_metadata_hedging_for_cold_start: Optional[bool]
+        state. When ``True``, the SDK hedges the container and partition-key-range metadata
+        cache reads (both initial population and cache refresh) across regions even when PPAF
+        is disabled. When ``False``, metadata hedging is suppressed regardless of PPAF. The
+        threshold and other tuning knobs are SDK-derived defaults and are not customer-configurable.
+    :paramtype enable_metadata_hedging: Optional[bool]
 
     .. admonition:: Example:
 
@@ -220,7 +220,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             consistency_level: Optional[str] = None,
             availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
-            enable_metadata_hedging_for_cold_start: Optional[bool] = None,
+            enable_metadata_hedging: Optional[bool] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
@@ -233,7 +233,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=availability_strategy,
             availability_strategy_max_concurrency=availability_strategy_max_concurrency,
-            enable_metadata_hedging_for_cold_start=enable_metadata_hedging_for_cold_start,
+            enable_metadata_hedging=enable_metadata_hedging,
             **kwargs
         )
 

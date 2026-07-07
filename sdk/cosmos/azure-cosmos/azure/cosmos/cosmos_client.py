@@ -215,14 +215,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
         Optional ThreadPoolExecutor for handling concurrent operations.
-    :keyword Optional[bool] enable_metadata_hedging_for_cold_start:
-        Tri-state opt-in for cold-start metadata cache cross-region hedging. When ``None``
+    :keyword Optional[bool] enable_metadata_hedging:
+        Tri-state opt-in for metadata cache cross-region hedging. When ``None``
         (the default), it follows the account's Per-Partition Automatic Failover (PPAF)
-        state. When ``True``, the SDK hedges the first-time population of the container and
-        partition-key-range metadata caches across regions even when PPAF is disabled. When
-        ``False``, metadata hedging is suppressed regardless of PPAF. The threshold and other
-        tuning knobs are SDK-derived defaults and are not customer-configurable.
-    :paramtype enable_metadata_hedging_for_cold_start: Optional[bool]
+        state. When ``True``, the SDK hedges the container and partition-key-range metadata
+        cache reads (both initial population and cache refresh) across regions even when PPAF
+        is disabled. When ``False``, metadata hedging is suppressed regardless of PPAF. The
+        threshold and other tuning knobs are SDK-derived defaults and are not customer-configurable.
+    :paramtype enable_metadata_hedging: Optional[bool]
 
     .. admonition:: Example:
 
@@ -253,7 +253,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=kwargs.pop("availability_strategy", False),
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
-            enable_metadata_hedging_for_cold_start=kwargs.pop("enable_metadata_hedging_for_cold_start", None),
+            enable_metadata_hedging=kwargs.pop("enable_metadata_hedging", None),
             **kwargs
         )
 
