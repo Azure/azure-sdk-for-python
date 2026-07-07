@@ -8,6 +8,8 @@
 
 ### Other Changes
 
+- Migrated SDK entities and their consumers off the per-version msrest REST clients onto the shared `arm_ml_service` hybrid client. This is an internal change; the on-the-wire request/response contract is unchanged.
+
 ## 1.34.0 (2026-06-11)
 
 ### Features Added
