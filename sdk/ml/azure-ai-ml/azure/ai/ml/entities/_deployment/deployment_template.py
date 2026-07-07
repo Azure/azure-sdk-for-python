@@ -20,6 +20,47 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 
 
+def _read_wire_value(source: Any, *keys: str) -> Any:
+    """Read the first non-None value for any of ``keys`` from a REST object.
+
+    Handles both mapping-style access (wire/camelCase keys such as ``createdTime``) and
+    attribute-style access (snake_case such as ``created_time``). This is needed because
+    some service fields are returned as undeclared/flattened keys that only exist on the
+    backing mapping of the generated REST model, not as typed attributes.
+    """
+    if source is None:
+        return None
+    for key in keys:
+        getter = getattr(source, "get", None)
+        if callable(getter) and not isinstance(source, str):
+            try:
+                value = source.get(key)
+            except Exception:  # pylint: disable=broad-except
+                value = None
+            if value is not None:
+                return value
+        value = getattr(source, key, None)
+        if value is not None:
+            return value
+    return None
+
+
+def _parse_iso_datetime(value: Any) -> Any:
+    """Best-effort parse of an ISO-8601 timestamp string into a ``datetime``.
+
+    Returns the original value unchanged when it is not a parseable string, so the raw
+    timestamp is still surfaced rather than dropped.
+    """
+    if not isinstance(value, str):
+        return value
+    try:
+        import isodate
+
+        return isodate.parse_datetime(value)
+    except Exception:  # pylint: disable=broad-except
+        return value
+
+
 @experimental
 class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """DeploymentTemplate entity for Azure ML deployments.
@@ -487,11 +528,31 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             except (ValueError, TypeError):
                 scoring_port = None
 
-        # Populate the creation_context (created/modified timestamps and identities) from the
-        # service's systemData, consistent with how Model and Environment entities behave.
-        # The REST object exposes it as ``system_data``; raw dict payloads use ``systemData``.
+        # Populate creation_context so DeploymentTemplate is consistent with Model and
+        # Environment. Those entities return a nested ``systemData`` block, but the
+        # deployment-template API (e.g. the azure-huggingface registry) instead returns
+        # flattened ``createdTime`` / ``modifiedTime`` / ``createdBy`` fields, so support
+        # both shapes here.
         system_data = get_value(obj, "system_data") or get_value(obj, "systemData")
-        creation_context = SystemData._from_rest_object(system_data) if system_data else None
+        if system_data is not None:
+            creation_context = SystemData._from_rest_object(system_data)
+        else:
+            created_time = _read_wire_value(obj, "createdTime", "created_time", "createdAt", "created_at")
+            modified_time = _read_wire_value(obj, "modifiedTime", "modified_time", "lastModifiedAt", "last_modified_at")
+            created_by_raw = _read_wire_value(obj, "createdBy", "created_by")
+            if created_by_raw is None or isinstance(created_by_raw, str):
+                created_by = created_by_raw
+            else:
+                # The service may return createdBy as an object (e.g. {"userName": ...}).
+                created_by = _read_wire_value(created_by_raw, "userName", "user_name", "userObjectId", "user_object_id")
+            if created_time or modified_time or created_by:
+                creation_context = SystemData(
+                    created_at=_parse_iso_datetime(created_time),
+                    created_by=created_by,
+                    last_modified_at=_parse_iso_datetime(modified_time),
+                )
+            else:
+                creation_context = None
 
         template = cls(
             name=name or "unknown",

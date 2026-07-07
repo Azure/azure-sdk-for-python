@@ -297,20 +297,41 @@ class TestDeploymentTemplate:
         # Should handle None gracefully
         assert result is not None or result is None  # Allow either behavior
 
-    def test_deployment_template_from_rest_object_populates_creation_context(self):
-        """_from_rest_object should populate creation_context from the service systemData.
+    def test_deployment_template_from_rest_object_populates_creation_context_flattened(self):
+        """Regression test for bug #5402673.
 
-        Regression test for bug #5402673, where DeploymentTemplate.creation_context was
-        always None even though Model and Environment populate it from systemData.
+        The deployment-template API returns flattened ``createdTime`` / ``modifiedTime`` /
+        ``createdBy`` fields (not a nested ``systemData`` block), so ``creation_context``
+        must surface them to stay consistent with Model and Environment.
         """
-        created_at = datetime.datetime(2026, 1, 1, 12, 0, 0)
-        last_modified_at = datetime.datetime(2026, 1, 2, 8, 30, 0)
+        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
+            models as rest_models,
+        )
 
+        rest = rest_models.DeploymentTemplate(
+            {
+                "name": "test",
+                "version": "5",
+                "createdTime": "2026-06-27T20:00:15.2050594+00:00",
+                "modifiedTime": "2026-06-27T21:31:55.5333635+00:00",
+                "createdBy": {"userName": "azure-huggingface"},
+            }
+        )
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_at is not None
+        assert template.creation_context.last_modified_at is not None
+        assert template.creation_context.created_by == "azure-huggingface"
+
+    def test_deployment_template_from_rest_object_populates_creation_context_system_data(self):
+        """creation_context is also populated from a nested systemData block when present."""
         system_data = Mock(spec=[])
-        system_data.created_at = created_at
+        system_data.created_at = datetime.datetime(2026, 1, 1, 12, 0, 0)
         system_data.created_by = "creator@microsoft.com"
         system_data.created_by_type = "User"
-        system_data.last_modified_at = last_modified_at
+        system_data.last_modified_at = datetime.datetime(2026, 1, 2, 8, 30, 0)
         system_data.last_modified_by = "modifier@microsoft.com"
         system_data.last_modified_by_type = "User"
 
@@ -323,18 +344,17 @@ class TestDeploymentTemplate:
         template = DeploymentTemplate._from_rest_object(mock_rest)
 
         assert template.creation_context is not None
-        assert template.creation_context.created_at == created_at
+        assert template.creation_context.created_at == datetime.datetime(2026, 1, 1, 12, 0, 0)
         assert template.creation_context.created_by == "creator@microsoft.com"
-        assert template.creation_context.last_modified_at == last_modified_at
-        assert template.creation_context.last_modified_by == "modifier@microsoft.com"
+        assert template.creation_context.last_modified_at == datetime.datetime(2026, 1, 2, 8, 30, 0)
 
     def test_deployment_template_from_rest_object_creation_context_none_when_absent(self):
-        """creation_context should be None when the REST object carries no systemData."""
+        """creation_context should be None when the response carries no creation metadata."""
         mock_rest = Mock(spec=[])
         mock_rest.properties = {"name": "test", "version": "1"}
         mock_rest.name = "test"
         mock_rest.id = None
-        # Intentionally no system_data / systemData attribute set.
+        # Intentionally no systemData / createdTime / modifiedTime / createdBy set.
 
         template = DeploymentTemplate._from_rest_object(mock_rest)
 
