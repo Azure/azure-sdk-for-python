@@ -5,7 +5,7 @@
 import re
 from typing import Any, Dict, List, Optional, Type, Union
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionCategory
 from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
     APIKeyConnectionSchema,
     AzureAISearchConnectionSchema,
@@ -31,7 +31,10 @@ from azure.ai.ml.constants._common import (
     CognitiveServiceKinds,
     ConnectionTypes,
 )
-from azure.ai.ml.entities._credentials import AadCredentialConfiguration, ApiKeyConfiguration
+from azure.ai.ml.entities._credentials import (
+    AadCredentialConfiguration,
+    ApiKeyConfiguration,
+)
 
 from .one_lake_artifacts import OneLakeConnectionArtifact
 from .workspace_connection import WorkspaceConnection
@@ -192,8 +195,12 @@ class MicrosoftOneLakeConnection(WorkspaceConnection):
             if endpoint is None:
                 raise ValueError("If target is unset, then endpoint must be set")
             if one_lake_workspace_name is None:
-                raise ValueError("If target is unset, then one_lake_workspace_name must be set")
-            target = MicrosoftOneLakeConnection._construct_target(endpoint, one_lake_workspace_name, artifact)
+                raise ValueError(
+                    "If target is unset, then one_lake_workspace_name must be set"
+                )
+            target = MicrosoftOneLakeConnection._construct_target(
+                endpoint, one_lake_workspace_name, artifact
+            )
         super().__init__(
             target=target,
             type=camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE),
@@ -209,7 +216,9 @@ class MicrosoftOneLakeConnection(WorkspaceConnection):
     # Target is constructed from user inputs, because it's apparently very difficult for users to
     # directly access a One Lake's target URL.
     @classmethod
-    def _construct_target(cls, endpoint: str, workspace: str, artifact: OneLakeConnectionArtifact) -> str:
+    def _construct_target(
+        cls, endpoint: str, workspace: str, artifact: OneLakeConnectionArtifact
+    ) -> str:
         artifact_name = artifact.name
         # If an id is supplied, the format is different
         if re.match(".{7}-.{4}-.{4}-.{4}.{12}", artifact_name):
@@ -253,8 +262,8 @@ class ApiOrAadConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         # See if credentials directly inputted via kwargs
-        credentials: Union[AadCredentialConfiguration, ApiKeyConfiguration] = kwargs.pop(
-            "credentials", AadCredentialConfiguration()
+        credentials: Union[AadCredentialConfiguration, ApiKeyConfiguration] = (
+            kwargs.pop("credentials", AadCredentialConfiguration())
         )
         # Replace anything that isn't an API credential with an AAD credential.
         # Importantly, this replaced the None credential default from the parent YAML schema.
@@ -353,7 +362,11 @@ class AzureOpenAIConnection(ApiOrAadConnection):
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
-        return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY, CONNECTION_RESOURCE_ID_KEY]
+        return [
+            CONNECTION_API_VERSION_KEY,
+            CONNECTION_API_TYPE_KEY,
+            CONNECTION_RESOURCE_ID_KEY,
+        ]
 
     @classmethod
     def _get_schema_class(cls) -> Type:

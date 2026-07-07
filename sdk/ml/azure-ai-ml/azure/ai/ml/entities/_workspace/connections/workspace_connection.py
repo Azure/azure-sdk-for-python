@@ -10,16 +10,18 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union, cast
 
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ConnectionCategory,
     NoneAuthTypeWorkspaceConnectionProperties,
     AADAuthTypeWorkspaceConnectionProperties,
 )
 
-from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
+from azure.ai.ml._schema.workspace.connections.workspace_connection import (
+    WorkspaceConnectionSchema,
+)
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
@@ -48,15 +50,30 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 CONNECTION_CATEGORY_TO_CREDENTIAL_MAP = {
-    ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, AadCredentialConfiguration],
+    ConnectionCategory.AZURE_BLOB: [
+        AccessKeyConfiguration,
+        SasTokenConfiguration,
+        AadCredentialConfiguration,
+    ],
     ConnectionTypes.AZURE_DATA_LAKE_GEN_2: [
         ServicePrincipalConfiguration,
         AadCredentialConfiguration,
         ManagedIdentityConfiguration,
     ],
-    ConnectionCategory.GIT: [PatTokenConfiguration, NoneCredentialConfiguration, UsernamePasswordConfiguration],
-    ConnectionCategory.PYTHON_FEED: [UsernamePasswordConfiguration, PatTokenConfiguration, NoneCredentialConfiguration],
-    ConnectionCategory.CONTAINER_REGISTRY: [ManagedIdentityConfiguration, UsernamePasswordConfiguration],
+    ConnectionCategory.GIT: [
+        PatTokenConfiguration,
+        NoneCredentialConfiguration,
+        UsernamePasswordConfiguration,
+    ],
+    ConnectionCategory.PYTHON_FEED: [
+        UsernamePasswordConfiguration,
+        PatTokenConfiguration,
+        NoneCredentialConfiguration,
+    ],
+    ConnectionCategory.CONTAINER_REGISTRY: [
+        ManagedIdentityConfiguration,
+        UsernamePasswordConfiguration,
+    ],
 }
 
 DATASTORE_CONNECTIONS = {
@@ -65,7 +82,13 @@ DATASTORE_CONNECTIONS = {
     ConnectionCategory.AZURE_ONE_LAKE,
 }
 
-CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoint", "endpoint"]
+CONNECTION_ALTERNATE_TARGET_NAMES = [
+    "target",
+    "api_base",
+    "url",
+    "azure_endpoint",
+    "endpoint",
+]
 
 
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
@@ -153,7 +176,10 @@ class WorkspaceConnection(Resource):
         target = None
         for target_name in CONNECTION_ALTERNATE_TARGET_NAMES:
             target = kwargs.pop(target_name, target)
-        if target is None and type not in {ConnectionCategory.SERP, ConnectionCategory.Open_AI}:
+        if target is None and type not in {
+            ConnectionCategory.SERP,
+            ConnectionCategory.Open_AI,
+        }:
             raise ValueError("target is a required field for Connection.")
 
         tags = kwargs.pop("tags", None)
@@ -168,7 +194,9 @@ class WorkspaceConnection(Resource):
                 )
             else:
                 metadata = tags
-                warnings.warn("Tags are a deprecated field for connections, use metadata instead.")
+                warnings.warn(
+                    "Tags are a deprecated field for connections, use metadata instead."
+                )
 
         super().__init__(**kwargs)
 
@@ -191,13 +219,17 @@ class WorkspaceConnection(Resource):
         # so I will endeavor to smooth over that inconsistency here.
         converted_type = _snake_to_camel(self.type).lower()
         if self._credentials == NoneCredentialConfiguration() and any(
-            converted_type == _snake_to_camel(item).lower() for item in DATASTORE_CONNECTIONS
+            converted_type == _snake_to_camel(item).lower()
+            for item in DATASTORE_CONNECTIONS
         ):
             self._credentials = AadCredentialConfiguration()
 
         if self.type in CONNECTION_CATEGORY_TO_CREDENTIAL_MAP:
             allowed_credentials = CONNECTION_CATEGORY_TO_CREDENTIAL_MAP[self.type]
-            if self.credentials is None and NoneCredentialConfiguration not in allowed_credentials:
+            if (
+                self.credentials is None
+                and NoneCredentialConfiguration not in allowed_credentials
+            ):
                 raise ValueError(
                     f"Cannot instantiate a Connection with a type of {self.type} and no credentials."
                     f"Please supply credentials from one of the following types: {allowed_credentials}."
@@ -387,7 +419,9 @@ class WorkspaceConnection(Resource):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     @classmethod
     def _load(
@@ -406,10 +440,14 @@ class WorkspaceConnection(Resource):
         return cls._load_from_dict(data=data, context=context, **kwargs)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "WorkspaceConnection":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, **kwargs: Any
+    ) -> "WorkspaceConnection":
         conn_type = data["type"] if "type" in data else None
         schema_class = cls._get_schema_class_from_type(conn_type)
-        loaded_data: WorkspaceConnection = load_from_dict(schema_class, data, context, **kwargs)
+        loaded_data: WorkspaceConnection = load_from_dict(
+            schema_class, data, context, **kwargs
+        )
         return loaded_data
 
     def _to_dict(self) -> Dict:
@@ -420,16 +458,26 @@ class WorkspaceConnection(Resource):
         return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspaceConnection
+    ) -> "WorkspaceConnection":
         conn_class = cls._get_entity_class_from_rest_obj(rest_obj)
 
         popped_metadata = conn_class._get_required_metadata_fields()
 
-        rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_metadata=popped_metadata)
+        rest_kwargs = cls._extract_kwargs_from_rest_obj(
+            rest_obj=rest_obj, popped_metadata=popped_metadata
+        )
         # Check for alternative name for custom connection type (added for client clarity).
-        if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower():
+        if (
+            rest_kwargs["type"].lower()
+            == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower()
+        ):
             rest_kwargs["type"] = ConnectionTypes.CUSTOM
-        if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.ADLS_GEN2).lower():
+        if (
+            rest_kwargs["type"].lower()
+            == camel_to_snake(ConnectionCategory.ADLS_GEN2).lower()
+        ):
             rest_kwargs["type"] = ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         target = rest_kwargs.get("target", "")
         # This dumb code accomplishes 2 things.
@@ -449,7 +497,9 @@ class WorkspaceConnection(Resource):
             # AI Services renames it's metadata field when surfaced to users and inputted
             # into it's initializer for clarity. ResourceId doesn't really tell much on its own.
             # No default in pop, this should fail if we somehow don't get a resource ID
-            rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
+            rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(
+                camel_to_snake(CONNECTION_RESOURCE_ID_KEY)
+            )
         connection = conn_class(**rest_kwargs)
         return cast(WorkspaceConnection, connection)
 
@@ -490,7 +540,11 @@ class WorkspaceConnection(Resource):
         else:
             properties = connection_properties_class(
                 target=self.target,
-                credentials=self.credentials._to_workspace_connection_rest_object() if self._credentials else None,
+                credentials=(
+                    self.credentials._to_workspace_connection_rest_object()
+                    if self._credentials
+                    else None
+                ),
                 metadata=self.metadata,
                 category=_snake_to_camel(conn_type),
                 is_shared_to_all=self.is_shared,
@@ -520,25 +574,39 @@ class WorkspaceConnection(Resource):
         properties = rest_obj.properties
         credentials: Any = NoneCredentialConfiguration()
 
-        credentials_class = _BaseIdentityConfiguration._get_credential_class_from_rest_type(properties.auth_type)
+        credentials_class = (
+            _BaseIdentityConfiguration._get_credential_class_from_rest_type(
+                properties.auth_type
+            )
+        )
         # None and AAD auth types have a property bag class, but no credentials inside that.
         # Thankfully they both have no inputs.
 
         if credentials_class is AadCredentialConfiguration:
             credentials = AadCredentialConfiguration()
         elif credentials_class is not NoneCredentialConfiguration:
-            credentials = credentials_class._from_workspace_connection_rest_object(properties.credentials)
+            credentials = credentials_class._from_workspace_connection_rest_object(
+                properties.credentials
+            )
 
         metadata = properties.metadata if hasattr(properties, "metadata") else {}
         rest_kwargs = {
             "id": rest_obj.id,
             "name": rest_obj.name,
             "target": properties.target,
-            "creation_context": SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
+            "creation_context": (
+                SystemData._from_rest_object(rest_obj.system_data)
+                if rest_obj.system_data
+                else None
+            ),
             "type": camel_to_snake(properties.category),
             "credentials": credentials,
             "metadata": metadata,
-            "is_shared": properties.is_shared_to_all if hasattr(properties, "is_shared_to_all") else True,
+            "is_shared": (
+                properties.is_shared_to_all
+                if hasattr(properties, "is_shared_to_all")
+                else True
+            ),
         }
 
         for name in popped_metadata:
@@ -590,11 +658,19 @@ class WorkspaceConnection(Resource):
             ConnectionCategory.OPEN_AI.lower(): OpenAIConnection,
             ConnectionCategory.SERP.lower(): SerpConnection,
             ConnectionCategory.SERVERLESS.lower(): ServerlessConnection,
-            _snake_to_camel(ConnectionTypes.AZURE_CONTENT_SAFETY).lower(): AzureContentSafetyConnection,
-            _snake_to_camel(ConnectionTypes.AZURE_SPEECH_SERVICES).lower(): AzureSpeechServicesConnection,
+            _snake_to_camel(
+                ConnectionTypes.AZURE_CONTENT_SAFETY
+            ).lower(): AzureContentSafetyConnection,
+            _snake_to_camel(
+                ConnectionTypes.AZURE_SPEECH_SERVICES
+            ).lower(): AzureSpeechServicesConnection,
             ConnectionCategory.COGNITIVE_SEARCH.lower(): AzureAISearchConnection,
-            _snake_to_camel(ConnectionTypes.AZURE_SEARCH).lower(): AzureAISearchConnection,
-            _snake_to_camel(ConnectionTypes.AZURE_AI_SERVICES).lower(): AzureAIServicesConnection,
+            _snake_to_camel(
+                ConnectionTypes.AZURE_SEARCH
+            ).lower(): AzureAISearchConnection,
+            _snake_to_camel(
+                ConnectionTypes.AZURE_AI_SERVICES
+            ).lower(): AzureAIServicesConnection,
             ConnectionTypes.AI_SERVICES_REST_PLACEHOLDER.lower(): AzureAIServicesConnection,
         }
         return CONNECTION_CATEGORY_TO_SUBCLASS_MAP.get(conn_type, WorkspaceConnection)

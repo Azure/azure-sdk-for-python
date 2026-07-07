@@ -83,7 +83,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
 # Note, this import needs to match the restclient that's imported by the
 # Connection class, otherwise some unit tests will start failing
 # Due to the mismatch between expected and received classes in WC rest conversions.
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AADAuthTypeWorkspaceConnectionProperties,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     AccountKeyAuthTypeWorkspaceConnectionProperties,
