@@ -5,8 +5,8 @@
 import copy
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
     JobOutput as RestJobOutput,
 )
 from azure.ai.ml.constants._component import ComponentJobConstants
