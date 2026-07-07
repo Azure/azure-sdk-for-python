@@ -138,7 +138,7 @@ namespace azure.ai.projects.aio.operations
         async def create_version(
                 self, 
                 agent_name: str, 
-                body: JSON, 
+                body: CreateAgentVersionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2076,7 +2076,7 @@ namespace azure.ai.projects.aio.operations
         async def create_or_update(
                 self, 
                 id: str, 
-                evaluation_rule: JSON, 
+                evaluation_rule: EvaluationRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9435,7 +9435,7 @@ namespace azure.ai.projects.operations
         def create_version(
                 self, 
                 agent_name: str, 
-                body: JSON, 
+                body: CreateAgentVersionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11375,7 +11375,7 @@ namespace azure.ai.projects.operations
         def create_or_update(
                 self, 
                 id: str, 
-                evaluation_rule: JSON, 
+                evaluation_rule: EvaluationRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
