@@ -37,9 +37,11 @@ def test_is_package_deprecated_parse_failure_returns_false():
 
 
 def test_create_vnext_issue_skips_and_closes_for_deprecated_package():
-    with mock.patch.object(vnext_issue_creator, "is_package_deprecated", return_value=True) as mock_deprecated, \
-         mock.patch.object(vnext_issue_creator, "close_vnext_issue") as mock_close, \
-         mock.patch.object(vnext_issue_creator, "Github") as mock_github:
+    with mock.patch.object(
+        vnext_issue_creator, "is_package_deprecated", return_value=True
+    ) as mock_deprecated, mock.patch.object(vnext_issue_creator, "close_vnext_issue") as mock_close, mock.patch.object(
+        vnext_issue_creator, "Github"
+    ) as mock_github:
         vnext_issue_creator.create_vnext_issue("sdk/mixedreality/azure-mgmt-mixedreality", "mypy")
 
     mock_deprecated.assert_called_once()
@@ -49,16 +51,17 @@ def test_create_vnext_issue_skips_and_closes_for_deprecated_package():
 
 
 def test_create_vnext_issue_proceeds_for_active_package():
-    with mock.patch.object(vnext_issue_creator, "is_package_deprecated", return_value=False), \
-         mock.patch.object(vnext_issue_creator, "close_vnext_issue") as mock_close, \
-         mock.patch.dict("os.environ", {"GH_TOKEN": "fake-token"}), \
-         mock.patch.object(vnext_issue_creator, "Github") as mock_github:
+    with mock.patch.object(vnext_issue_creator, "is_package_deprecated", return_value=False), mock.patch.object(
+        vnext_issue_creator, "close_vnext_issue"
+    ) as mock_close, mock.patch.dict("os.environ", {"GH_TOKEN": "fake-token"}), mock.patch.object(
+        vnext_issue_creator, "Github"
+    ) as mock_github:
         repo = mock.MagicMock()
         repo.get_issues.return_value = []
         mock_github.return_value.get_repo.return_value = repo
-        with mock.patch.object(vnext_issue_creator, "get_labels", return_value=([], [])), \
-             mock.patch.object(vnext_issue_creator, "get_build_link", return_value="http://build"), \
-             mock.patch.object(vnext_issue_creator, "get_date_for_version_bump", return_value="2026-04-13"):
+        with mock.patch.object(vnext_issue_creator, "get_labels", return_value=([], [])), mock.patch.object(
+            vnext_issue_creator, "get_build_link", return_value="http://build"
+        ), mock.patch.object(vnext_issue_creator, "get_date_for_version_bump", return_value="2026-04-13"):
             vnext_issue_creator.create_vnext_issue("sdk/fake/azure-mgmt-fake", "mypy", check_version="1.0.0")
 
     # Active package: we do not close an issue, we create one.
