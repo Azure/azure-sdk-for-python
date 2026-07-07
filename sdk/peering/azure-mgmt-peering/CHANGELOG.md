@@ -1,5 +1,158 @@
 # Release History
 
+## 2.0.0 (2026-07-07)
+
+### Features Added
+
+  - Client `PeeringManagementClient` added method `send_request`
+  - Client `PeeringManagementClient` added operation group `connection_monitor_tests`
+  - Client `PeeringManagementClient` added operation group `registered_asns`
+  - Client `PeeringManagementClient` added operation group `received_routes`
+  - Client `PeeringManagementClient` added operation group `rp_unbilled_prefixes`
+  - Client `PeeringManagementClient` added operation group `registered_prefixes`
+  - Client `PeeringManagementClient` added operation group `cdn_peering_prefixes`
+  - Client `PeeringManagementClient` added operation group `looking_glass`
+  - Client `PeeringManagementClient` added operation group `peering_service_countries`
+  - Enum `ConnectionState` added member `EXTERNAL_BLOCKER`
+  - Enum `ConnectionState` added member `TYPE_CHANGE_IN_PROGRESS`
+  - Enum `ConnectionState` added member `TYPE_CHANGE_REQUESTED`
+  - Model `DirectConnection` added property `microsoft_tracking_id`
+  - Model `DirectConnection` added property `error_message`
+  - Enum `DirectPeeringType` added member `EDGE_ZONE_FOR_OPERATORS`
+  - Enum `DirectPeeringType` added member `IX`
+  - Enum `DirectPeeringType` added member `IX_RS`
+  - Enum `DirectPeeringType` added member `PEER_PROP`
+  - Enum `DirectPeeringType` added member `VOICE`
+  - Enum `Enum0` added member `UNAVAILABLE`
+  - Model `ExchangeConnection` added property `error_message`
+  - Enum `LearnedType` added member `VIA_SERVICE_PROVIDER`
+  - Model `Operation` added property `properties`
+  - Model `PeerAsn` added property `properties`
+  - Model `PeerAsn` added property `system_data`
+  - Model `Peering` added property `properties`
+  - Model `Peering` added property `system_data`
+  - Model `PeeringLocation` added property `properties`
+  - Model `PeeringLocation` added property `system_data`
+  - Model `PeeringService` added property `properties`
+  - Model `PeeringService` added property `sku`
+  - Model `PeeringService` added property `system_data`
+  - Model `PeeringServiceLocation` added property `properties`
+  - Model `PeeringServiceLocation` added property `system_data`
+  - Model `PeeringServicePrefix` added property `properties`
+  - Model `PeeringServicePrefix` added property `system_data`
+  - Model `PeeringServiceProvider` added property `properties`
+  - Model `PeeringServiceProvider` added property `system_data`
+  - Enum `PrefixValidationState` added member `WARNING`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Model `Resource` added property `system_data`
+  - Added model `CdnPeeringPrefix`
+  - Added model `CdnPeeringPrefixProperties`
+  - Added enum `Command`
+  - Added model `ConnectionMonitorTest`
+  - Added model `ConnectionMonitorTestProperties`
+  - Added model `ConnectivityProbe`
+  - Added model `ContactDetail`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added enum `LegacyPeeringsKind`
+  - Added model `LogAnalyticsWorkspaceProperties`
+  - Added enum `LookingGlassCommand`
+  - Added model `LookingGlassOutput`
+  - Added enum `LookingGlassSourceType`
+  - Added model `MetricDimension`
+  - Added model `MetricSpecification`
+  - Added model `OperationProperties`
+  - Added model `PeerAsnProperties`
+  - Added model `PeeringLocationProperties`
+  - Added enum `PeeringLocationsDirectPeeringType`
+  - Added enum `PeeringLocationsKind`
+  - Added model `PeeringProperties`
+  - Added model `PeeringReceivedRoute`
+  - Added model `PeeringRegisteredAsn`
+  - Added model `PeeringRegisteredAsnProperties`
+  - Added model `PeeringRegisteredPrefix`
+  - Added model `PeeringRegisteredPrefixProperties`
+  - Added model `PeeringServiceCountry`
+  - Added model `PeeringServiceLocationProperties`
+  - Added model `PeeringServicePrefixEvent`
+  - Added model `PeeringServicePrefixProperties`
+  - Added model `PeeringServiceProperties`
+  - Added model `PeeringServiceProviderProperties`
+  - Added model `PeeringServiceSku`
+  - Added enum `Protocol`
+  - Added model `ProxyResource`
+  - Added enum `Role`
+  - Added model `RpUnbilledPrefix`
+  - Added model `ServiceSpecification`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+  - Model `LegacyPeeringsOperations` added parameter `asn` in method `list`
+  - Model `LegacyPeeringsOperations` added parameter `direct_peering_type` in method `list`
+  - Model `PeeringServiceLocationsOperations` added parameter `country` in method `list`
+  - Model `PeeringServicesOperations` added method `initialize_connection_monitor`
+  - Model `PrefixesOperations` added parameter `expand` in method `list_by_peering_service`
+  - Model `PrefixesOperations` added method `create_or_update`
+  - Model `PrefixesOperations` added method `delete`
+  - Added model `CdnPeeringPrefixesOperations`
+  - Added model `ConnectionMonitorTestsOperations`
+  - Added model `LookingGlassOperations`
+  - Added model `PeeringServiceCountriesOperations`
+  - Added model `ReceivedRoutesOperations`
+  - Added model `RegisteredAsnsOperations`
+  - Added model `RegisteredPrefixesOperations`
+  - Added model `RpUnbilledPrefixesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PeeringManagementClient.peering_service_prefixes`
+  - Deleted or renamed enum value `Enum0.UN_AVAILABLE`
+  - Model `ErrorResponse` deleted or renamed its instance variable `code`
+  - Model `ErrorResponse` deleted or renamed its instance variable `message`
+  - Deleted or renamed enum value `LearnedType.VIA_PARTNER`
+  - Model `PeerAsn` deleted or renamed its instance variable `peer_asn`
+  - Model `PeerAsn` deleted or renamed its instance variable `peer_contact_info`
+  - Model `PeerAsn` deleted or renamed its instance variable `peer_name`
+  - Model `PeerAsn` deleted or renamed its instance variable `validation_state`
+  - Model `Peering` deleted or renamed its instance variable `direct`
+  - Model `Peering` deleted or renamed its instance variable `exchange`
+  - Model `Peering` deleted or renamed its instance variable `peering_location`
+  - Model `Peering` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringLocation` deleted or renamed its instance variable `direct`
+  - Model `PeeringLocation` deleted or renamed its instance variable `exchange`
+  - Model `PeeringLocation` deleted or renamed its instance variable `peering_location`
+  - Model `PeeringLocation` deleted or renamed its instance variable `country`
+  - Model `PeeringLocation` deleted or renamed its instance variable `azure_region`
+  - Model `PeeringService` deleted or renamed its instance variable `peering_service_location`
+  - Model `PeeringService` deleted or renamed its instance variable `peering_service_provider`
+  - Model `PeeringService` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `country`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `state`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `azure_region`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix_validation_state`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `learned_type`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringServiceProvider` deleted or renamed its instance variable `service_provider_name`
+  - Deleted or renamed model `ContactInfo`
+  - Deleted or renamed model `Enum1`
+  - Deleted or renamed model `Enum14`
+  - Deleted or renamed model `Enum15`
+  - Deleted or renamed model `Name`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PeerAsnListResult`
+  - Deleted or renamed model `PeeringListResult`
+  - Deleted or renamed model `PeeringLocationListResult`
+  - Deleted or renamed model `PeeringServiceListResult`
+  - Deleted or renamed model `PeeringServiceLocationListResult`
+  - Deleted or renamed model `PeeringServicePrefixListResult`
+  - Deleted or renamed model `PeeringServiceProviderListResult`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `PeeringServicePrefixesOperations`
+
 ## 1.0.1 (2026-05-19)
 
 ### Other Changes
