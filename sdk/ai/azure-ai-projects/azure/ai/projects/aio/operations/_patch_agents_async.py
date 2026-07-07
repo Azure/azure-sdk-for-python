@@ -11,8 +11,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
+from ._operations import AgentsOperations as GeneratedAgentsOperations, _Unset
 from ... import models as _models
+from ... import types as _types
 from ...operations._patch_agents import _compute_sha256_from_stream
 from ...models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
@@ -86,7 +87,12 @@ class AgentsOperations(GeneratedAgentsOperations):
 
     @overload
     async def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
 
@@ -100,7 +106,7 @@ class AgentsOperations(GeneratedAgentsOperations):
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -138,7 +144,7 @@ class AgentsOperations(GeneratedAgentsOperations):
     async def create_version(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[_types.CreateAgentVersionRequest, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
@@ -158,8 +164,9 @@ class AgentsOperations(GeneratedAgentsOperations):
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: CreateAgentVersionRequest, IO[bytes]
+         Required.
+        :type body: ~azure.ai.projects.types.CreateAgentVersionRequest or IO[bytes]
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
@@ -193,14 +200,20 @@ class AgentsOperations(GeneratedAgentsOperations):
                 kwargs["headers"] = headers
 
         try:
+            if body is _Unset:
+                return await super().create_version(
+                    agent_name,
+                    definition=definition,
+                    metadata=metadata,
+                    description=description,
+                    blueprint_reference=blueprint_reference,
+                    draft=draft,
+                    **kwargs,
+                )
+
             return await super().create_version(
                 agent_name,
                 body,
-                definition=definition,
-                metadata=metadata,
-                description=description,
-                blueprint_reference=blueprint_reference,
-                draft=draft,
                 **kwargs,
             )
         except HttpResponseError as exc:
