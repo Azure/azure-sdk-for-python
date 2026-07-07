@@ -432,7 +432,7 @@ class ActivityAgentServerHost(AgentServerHost):
         self._agent_app, self._adapter = build_m365_app(
             digital_worker=self._digital_worker,
             connection_config=self._connection_config,
-            storage=self._resolve_storage(storage),
+            storage=self._resolve_storage(storage) if agent_app is None else storage,
             connection_manager=connection_manager,
             adapter=adapter,
             authorization=authorization,
@@ -486,6 +486,7 @@ class ActivityAgentServerHost(AgentServerHost):
             return storage
         # TODO: use a durable hosted store (FoundryStorage) when running in a
         # Foundry-hosted container; MemoryStorage is the local-testing default.
+        # pylint: disable=import-error,no-name-in-module
         from microsoft_agents.hosting.core import MemoryStorage
 
         return MemoryStorage()

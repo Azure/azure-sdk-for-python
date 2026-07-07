@@ -115,7 +115,7 @@ def build_m365_app(
     *,
     digital_worker: bool,
     connection_config: Mapping[str, str],
-    storage: Storage,
+    storage: Optional[Storage] = None,
     connection_manager: Optional[MsalConnectionManager] = None,
     adapter: Optional[HttpAdapterBase] = None,
     authorization: Optional[Authorization] = None,
@@ -132,10 +132,12 @@ def build_m365_app(
     :paramtype digital_worker: bool
     :keyword connection_config: The resolved M365 ``CONNECTIONS__*`` mapping.
     :paramtype connection_config: Mapping[str, str]
-    :keyword storage: The storage backend for the built stack.
-        :class:`ActivityAgentServerHost` resolves it via ``_resolve_storage``
-        (the single place the default backend is chosen) before calling this.
-    :paramtype storage: ~microsoft_agents.hosting.core.Storage
+    :keyword storage: The storage backend for the built stack. Required when
+        building (``agent_app`` not supplied); ignored on the injected-``agent_app``
+        fast path. :class:`ActivityAgentServerHost` resolves it via
+        ``_resolve_storage`` (the single place the default backend is chosen)
+        before calling this.
+    :paramtype storage: Optional[~microsoft_agents.hosting.core.Storage]
     :keyword connection_manager: Optional connection manager (defaults to
         ``MsalConnectionManager`` built from the connection settings).
     :paramtype connection_manager:
@@ -191,6 +193,11 @@ def build_m365_app(
     # parses it into its nested configuration structure before the connection
     # manager / authorization / app can consume it.
     resolved_config = load_configuration_from_env(dict(connection_config))
+    if storage is None:
+        raise ValueError(
+            "storage is required to build the M365 stack. Pass a storage backend, or "
+            "pass agent_app to host a pre-built AgentApplication as-is."
+        )
     resolved_storage: Storage = storage
     resolved_cm: MsalConnectionManager = (
         connection_manager if connection_manager is not None else MsalConnectionManager(**resolved_config)

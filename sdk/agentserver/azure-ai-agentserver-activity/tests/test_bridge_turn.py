@@ -23,6 +23,12 @@ from azure.ai.agentserver.activity import get_hosted_agent_env
 from azure.ai.agentserver.activity import _cloud_adapter as cloud
 from azure.ai.agentserver.activity import _m365_bridge as bridge
 from azure.ai.agentserver.activity._constants import ErrorCode, MsalPatch, OutboundAuth
+
+# The M365 Agents SDK is an optional dependency; skip this whole module (rather
+# than error at collection) when it is not installed, so the package's tests
+# still run in an environment without the optional extras.
+pytest.importorskip("microsoft_agents.hosting.core")
+
 from microsoft_agents.hosting.core import ClaimsIdentity
 from microsoft_agents.hosting.core.http import HttpResponse
 
