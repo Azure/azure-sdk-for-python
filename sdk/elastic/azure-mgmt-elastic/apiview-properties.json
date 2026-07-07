@@ -130,12 +130,12 @@
         "azure.mgmt.elastic.aio.operations.MonitorOperations.begin_upgrade": "Microsoft.Elastic.ElasticMonitorResources.upgrade",
         "azure.mgmt.elastic.operations.AllTrafficFiltersOperations.list": "Microsoft.Elastic.ElasticMonitorResources.allTrafficFiltersList",
         "azure.mgmt.elastic.aio.operations.AllTrafficFiltersOperations.list": "Microsoft.Elastic.ElasticMonitorResources.allTrafficFiltersList",
-        "azure.mgmt.elastic.operations.listAssociatedTrafficFiltersOperations.list": "Microsoft.Elastic.ElasticMonitorResources.listAssociatedTrafficFiltersList",
-        "azure.mgmt.elastic.aio.operations.listAssociatedTrafficFiltersOperations.list": "Microsoft.Elastic.ElasticMonitorResources.listAssociatedTrafficFiltersList",
-        "azure.mgmt.elastic.operations.createAndAssociateIPFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociateIPFilterCreate",
-        "azure.mgmt.elastic.aio.operations.createAndAssociateIPFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociateIPFilterCreate",
-        "azure.mgmt.elastic.operations.createAndAssociatePLFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociatePLFilterCreate",
-        "azure.mgmt.elastic.aio.operations.createAndAssociatePLFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociatePLFilterCreate",
+        "azure.mgmt.elastic.operations.ListAssociatedTrafficFiltersOperations.list": "Microsoft.Elastic.ElasticMonitorResources.listAssociatedTrafficFiltersList",
+        "azure.mgmt.elastic.aio.operations.ListAssociatedTrafficFiltersOperations.list": "Microsoft.Elastic.ElasticMonitorResources.listAssociatedTrafficFiltersList",
+        "azure.mgmt.elastic.operations.CreateAndAssociateIPFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociateIPFilterCreate",
+        "azure.mgmt.elastic.aio.operations.CreateAndAssociateIPFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociateIPFilterCreate",
+        "azure.mgmt.elastic.operations.CreateAndAssociatePLFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociatePLFilterCreate",
+        "azure.mgmt.elastic.aio.operations.CreateAndAssociatePLFilterOperations.begin_create": "Microsoft.Elastic.ElasticMonitorResources.createAndAssociatePLFilterCreate",
         "azure.mgmt.elastic.operations.AssociateTrafficFilterOperations.begin_associate": "Microsoft.Elastic.ElasticMonitorResources.associate",
         "azure.mgmt.elastic.aio.operations.AssociateTrafficFilterOperations.begin_associate": "Microsoft.Elastic.ElasticMonitorResources.associate",
         "azure.mgmt.elastic.operations.DetachAndDeleteTrafficFilterOperations.delete": "Microsoft.Elastic.ElasticMonitorResources.detachAndDeleteTrafficFilterDelete",
@@ -163,5 +163,5 @@
         "azure.mgmt.elastic.operations.ElasticVersionsOperations.list": "Microsoft.Elastic.ElasticVersionsOperationGroup.list",
         "azure.mgmt.elastic.aio.operations.ElasticVersionsOperations.list": "Microsoft.Elastic.ElasticVersionsOperationGroup.list"
     },
-    "CrossLanguageVersion": "17c14004697f"
+    "CrossLanguageVersion": "40749611ebbc"
 }

@@ -24,11 +24,14 @@ from .operations import (
     AssociateTrafficFilterOperations,
     BillingInfoOperations,
     ConnectedPartnerResourcesOperations,
+    CreateAndAssociateIPFilterOperations,
+    CreateAndAssociatePLFilterOperations,
     DeploymentInfoOperations,
     DetachAndDeleteTrafficFilterOperations,
     DetachTrafficFilterOperations,
     ElasticVersionsOperations,
     ExternalUserOperations,
+    ListAssociatedTrafficFiltersOperations,
     MonitorOperations,
     MonitoredResourcesOperations,
     MonitoredSubscriptionsOperations,
@@ -42,9 +45,6 @@ from .operations import (
     VMCollectionOperations,
     VMHostOperations,
     VMIngestionOperations,
-    createAndAssociateIPFilterOperations,
-    createAndAssociatePLFilterOperations,
-    listAssociatedTrafficFiltersOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -92,15 +92,15 @@ class ElasticMgmtClient:  # pylint: disable=too-many-instance-attributes
     :vartype monitor: azure.mgmt.elastic.aio.operations.MonitorOperations
     :ivar all_traffic_filters: AllTrafficFiltersOperations operations
     :vartype all_traffic_filters: azure.mgmt.elastic.aio.operations.AllTrafficFiltersOperations
-    :ivar list_associated_traffic_filters: listAssociatedTrafficFiltersOperations operations
+    :ivar list_associated_traffic_filters: ListAssociatedTrafficFiltersOperations operations
     :vartype list_associated_traffic_filters:
-     azure.mgmt.elastic.aio.operations.listAssociatedTrafficFiltersOperations
-    :ivar create_and_associate_ip_filter: createAndAssociateIPFilterOperations operations
+     azure.mgmt.elastic.aio.operations.ListAssociatedTrafficFiltersOperations
+    :ivar create_and_associate_ip_filter: CreateAndAssociateIPFilterOperations operations
     :vartype create_and_associate_ip_filter:
-     azure.mgmt.elastic.aio.operations.createAndAssociateIPFilterOperations
-    :ivar create_and_associate_pl_filter: createAndAssociatePLFilterOperations operations
+     azure.mgmt.elastic.aio.operations.CreateAndAssociateIPFilterOperations
+    :ivar create_and_associate_pl_filter: CreateAndAssociatePLFilterOperations operations
     :vartype create_and_associate_pl_filter:
-     azure.mgmt.elastic.aio.operations.createAndAssociatePLFilterOperations
+     azure.mgmt.elastic.aio.operations.CreateAndAssociatePLFilterOperations
     :ivar associate_traffic_filter: AssociateTrafficFilterOperations operations
     :vartype associate_traffic_filter:
      azure.mgmt.elastic.aio.operations.AssociateTrafficFilterOperations
@@ -208,13 +208,13 @@ class ElasticMgmtClient:  # pylint: disable=too-many-instance-attributes
         self.all_traffic_filters = AllTrafficFiltersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.list_associated_traffic_filters = listAssociatedTrafficFiltersOperations(
+        self.list_associated_traffic_filters = ListAssociatedTrafficFiltersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.create_and_associate_ip_filter = createAndAssociateIPFilterOperations(
+        self.create_and_associate_ip_filter = CreateAndAssociateIPFilterOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.create_and_associate_pl_filter = createAndAssociatePLFilterOperations(
+        self.create_and_associate_pl_filter = CreateAndAssociatePLFilterOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.associate_traffic_filter = AssociateTrafficFilterOperations(

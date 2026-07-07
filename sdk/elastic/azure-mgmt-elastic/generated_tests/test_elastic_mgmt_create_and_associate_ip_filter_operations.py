@@ -6,27 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.elastic.aio import ElasticMgmtClient
+from azure.mgmt.elastic import ElasticMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestElasticMgmtcreateAndAssociateIPFilterOperationsAsync(AzureMgmtRecordedTestCase):
+class TestElasticMgmtCreateAndAssociateIPFilterOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ElasticMgmtClient, is_async=True)
+        self.client = self.create_mgmt_client(ElasticMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_create_and_associate_ip_filter_begin_create(self, resource_group):
-        response = await (
-            await self.client.create_and_associate_ip_filter.begin_create(
-                resource_group_name=resource_group.name,
-                monitor_name="str",
-            )
+    @recorded_by_proxy
+    def test_create_and_associate_ip_filter_begin_create(self, resource_group):
+        response = self.client.create_and_associate_ip_filter.begin_create(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -6,14 +6,14 @@ namespace azure.mgmt.elastic
         associate_traffic_filter: AssociateTrafficFilterOperations
         billing_info: BillingInfoOperations
         connected_partner_resources: ConnectedPartnerResourcesOperations
-        create_and_associate_ip_filter: createAndAssociateIPFilterOperations
-        create_and_associate_pl_filter: createAndAssociatePLFilterOperations
+        create_and_associate_ip_filter: CreateAndAssociateIPFilterOperations
+        create_and_associate_pl_filter: CreateAndAssociatePLFilterOperations
         deployment_info: DeploymentInfoOperations
         detach_and_delete_traffic_filter: DetachAndDeleteTrafficFilterOperations
         detach_traffic_filter: DetachTrafficFilterOperations
         elastic_versions: ElasticVersionsOperations
         external_user: ExternalUserOperations
-        list_associated_traffic_filters: listAssociatedTrafficFiltersOperations
+        list_associated_traffic_filters: ListAssociatedTrafficFiltersOperations
         monitor: MonitorOperations
         monitored_resources: MonitoredResourcesOperations
         monitored_subscriptions: MonitoredSubscriptionsOperations
@@ -58,14 +58,14 @@ namespace azure.mgmt.elastic.aio
         associate_traffic_filter: AssociateTrafficFilterOperations
         billing_info: BillingInfoOperations
         connected_partner_resources: ConnectedPartnerResourcesOperations
-        create_and_associate_ip_filter: createAndAssociateIPFilterOperations
-        create_and_associate_pl_filter: createAndAssociatePLFilterOperations
+        create_and_associate_ip_filter: CreateAndAssociateIPFilterOperations
+        create_and_associate_pl_filter: CreateAndAssociatePLFilterOperations
         deployment_info: DeploymentInfoOperations
         detach_and_delete_traffic_filter: DetachAndDeleteTrafficFilterOperations
         detach_traffic_filter: DetachTrafficFilterOperations
         elastic_versions: ElasticVersionsOperations
         external_user: ExternalUserOperations
-        list_associated_traffic_filters: listAssociatedTrafficFiltersOperations
+        list_associated_traffic_filters: ListAssociatedTrafficFiltersOperations
         monitor: MonitorOperations
         monitored_resources: MonitoredResourcesOperations
         monitored_subscriptions: MonitoredSubscriptionsOperations
@@ -173,6 +173,47 @@ namespace azure.mgmt.elastic.aio.operations
                 monitor_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[ConnectedPartnerResourcesListFormat]: ...
+
+
+    class azure.mgmt.elastic.aio.operations.CreateAndAssociateIPFilterOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                monitor_name: str, 
+                *, 
+                ips: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+
+    class azure.mgmt.elastic.aio.operations.CreateAndAssociatePLFilterOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                monitor_name: str, 
+                *, 
+                name: Optional[str] = ..., 
+                private_endpoint_guid: Optional[str] = ..., 
+                private_endpoint_name: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
 
 
     class azure.mgmt.elastic.aio.operations.DeploymentInfoOperations:
@@ -287,6 +328,23 @@ namespace azure.mgmt.elastic.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ExternalUserCreationResponse: ...
+
+
+    class azure.mgmt.elastic.aio.operations.ListAssociatedTrafficFiltersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def list(
+                self, 
+                resource_group_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> ElasticTrafficFilterResponse: ...
 
 
     class azure.mgmt.elastic.aio.operations.MonitorOperations:
@@ -901,64 +959,6 @@ namespace azure.mgmt.elastic.aio.operations
                 monitor_name: str, 
                 **kwargs: Any
             ) -> VMIngestionDetailsResponse: ...
-
-
-    class azure.mgmt.elastic.aio.operations.createAndAssociateIPFilterOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def begin_create(
-                self, 
-                resource_group_name: str, 
-                monitor_name: str, 
-                *, 
-                ips: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-
-    class azure.mgmt.elastic.aio.operations.createAndAssociatePLFilterOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def begin_create(
-                self, 
-                resource_group_name: str, 
-                monitor_name: str, 
-                *, 
-                name: Optional[str] = ..., 
-                private_endpoint_guid: Optional[str] = ..., 
-                private_endpoint_name: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-
-    class azure.mgmt.elastic.aio.operations.listAssociatedTrafficFiltersOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def list(
-                self, 
-                resource_group_name: str, 
-                monitor_name: str, 
-                **kwargs: Any
-            ) -> ElasticTrafficFilterResponse: ...
 
 
 namespace azure.mgmt.elastic.models
@@ -2125,6 +2125,47 @@ namespace azure.mgmt.elastic.operations
             ) -> ItemPaged[ConnectedPartnerResourcesListFormat]: ...
 
 
+    class azure.mgmt.elastic.operations.CreateAndAssociateIPFilterOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                monitor_name: str, 
+                *, 
+                ips: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+
+    class azure.mgmt.elastic.operations.CreateAndAssociatePLFilterOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                monitor_name: str, 
+                *, 
+                name: Optional[str] = ..., 
+                private_endpoint_guid: Optional[str] = ..., 
+                private_endpoint_name: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+
     class azure.mgmt.elastic.operations.DeploymentInfoOperations:
 
         def __init__(
@@ -2237,6 +2278,23 @@ namespace azure.mgmt.elastic.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ExternalUserCreationResponse: ...
+
+
+    class azure.mgmt.elastic.operations.ListAssociatedTrafficFiltersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> ElasticTrafficFilterResponse: ...
 
 
     class azure.mgmt.elastic.operations.MonitorOperations:
@@ -2851,64 +2909,6 @@ namespace azure.mgmt.elastic.operations
                 monitor_name: str, 
                 **kwargs: Any
             ) -> VMIngestionDetailsResponse: ...
-
-
-    class azure.mgmt.elastic.operations.createAndAssociateIPFilterOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def begin_create(
-                self, 
-                resource_group_name: str, 
-                monitor_name: str, 
-                *, 
-                ips: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-
-    class azure.mgmt.elastic.operations.createAndAssociatePLFilterOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def begin_create(
-                self, 
-                resource_group_name: str, 
-                monitor_name: str, 
-                *, 
-                name: Optional[str] = ..., 
-                private_endpoint_guid: Optional[str] = ..., 
-                private_endpoint_name: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-
-    class azure.mgmt.elastic.operations.listAssociatedTrafficFiltersOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                resource_group_name: str, 
-                monitor_name: str, 
-                **kwargs: Any
-            ) -> ElasticTrafficFilterResponse: ...
 
 
 namespace azure.mgmt.elastic.types

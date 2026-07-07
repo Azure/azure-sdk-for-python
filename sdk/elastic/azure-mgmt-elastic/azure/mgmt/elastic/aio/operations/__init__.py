@@ -27,9 +27,9 @@ from ._operations import VMCollectionOperations  # type: ignore
 from ._operations import UpgradableVersionsOperations  # type: ignore
 from ._operations import MonitorOperations  # type: ignore
 from ._operations import AllTrafficFiltersOperations  # type: ignore
-from ._operations import listAssociatedTrafficFiltersOperations  # type: ignore
-from ._operations import createAndAssociateIPFilterOperations  # type: ignore
-from ._operations import createAndAssociatePLFilterOperations  # type: ignore
+from ._operations import ListAssociatedTrafficFiltersOperations  # type: ignore
+from ._operations import CreateAndAssociateIPFilterOperations  # type: ignore
+from ._operations import CreateAndAssociatePLFilterOperations  # type: ignore
 from ._operations import AssociateTrafficFilterOperations  # type: ignore
 from ._operations import DetachAndDeleteTrafficFilterOperations  # type: ignore
 from ._operations import DetachTrafficFilterOperations  # type: ignore
@@ -58,9 +58,9 @@ __all__ = [
     "UpgradableVersionsOperations",
     "MonitorOperations",
     "AllTrafficFiltersOperations",
-    "listAssociatedTrafficFiltersOperations",
-    "createAndAssociateIPFilterOperations",
-    "createAndAssociatePLFilterOperations",
+    "ListAssociatedTrafficFiltersOperations",
+    "CreateAndAssociateIPFilterOperations",
+    "CreateAndAssociatePLFilterOperations",
     "AssociateTrafficFilterOperations",
     "DetachAndDeleteTrafficFilterOperations",
     "DetachTrafficFilterOperations",

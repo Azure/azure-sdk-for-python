@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b1 (2026-07-06)
+## 3.0.0b1 (2026-07-07)
 
 ### Features Added
 
@@ -12,19 +12,26 @@
 
 ### Breaking Changes
 
-  - Renamed client `MicrosoftElastic` to `ElasticMgmtClient`
+  - Deleted or renamed model `MicrosoftElastic`
+  - Deleted or renamed model `ConnectedPartnerResourcesListResponse`
+  - Deleted or renamed model `ElasticMonitorResourceListResponse`
+  - Deleted or renamed model `ElasticVersionsListResponse`
+  - Deleted or renamed model `MonitoredResourceListResponse`
+  - Deleted or renamed model `MonitoredSubscriptionPropertiesList`
+  - Deleted or renamed model `MonitoringTagRulesListResponse`
+  - Deleted or renamed model `OpenAIIntegrationRPModelListResponse`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `VMHostListResponse`
   - Method `AssociateTrafficFilterOperations.begin_associate` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociateIPFilterOperations.begin_create` changed its parameter `ips` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociateIPFilterOperations.begin_create` changed its parameter `name` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociatePLFilterOperations.begin_create` changed its parameter `name` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociatePLFilterOperations.begin_create` changed its parameter `private_endpoint_guid` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociatePLFilterOperations.begin_create` changed its parameter `private_endpoint_name` from `positional_or_keyword` to `keyword_only`
   - Method `DetachAndDeleteTrafficFilterOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
   - Method `DetachTrafficFilterOperations.begin_update` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
   - Method `ElasticVersionsOperations.list` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
   - Method `TrafficFiltersOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
-  - Renamed operation group `CreateAndAssociateIPFilterOperations` to `createAndAssociateIPFilterOperations`
-  - Renamed operation group `CreateAndAssociatePLFilterOperations` to `createAndAssociatePLFilterOperations`
-  - Renamed operation group `ListAssociatedTrafficFiltersOperations` to `listAssociatedTrafficFiltersOperations`
-
-### Other Changes
-
-  - Deleted model `ConnectedPartnerResourcesListResponse`/`ElasticMonitorResourceListResponse`/`ElasticVersionsListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`MonitoringTagRulesListResponse`/`OpenAIIntegrationRPModelListResponse`/`OperationListResult`/`VMHostListResponse` which actually were not used by SDK users
 
 ## 2.0.0 (2025-11-17)
 

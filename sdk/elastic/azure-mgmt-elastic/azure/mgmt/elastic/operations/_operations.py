@@ -5081,7 +5081,7 @@ class AllTrafficFiltersOperations:
         return deserialized  # type: ignore
 
 
-class listAssociatedTrafficFiltersOperations:
+class ListAssociatedTrafficFiltersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5171,7 +5171,7 @@ class listAssociatedTrafficFiltersOperations:
         return deserialized  # type: ignore
 
 
-class createAndAssociateIPFilterOperations:
+class CreateAndAssociateIPFilterOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5330,7 +5330,7 @@ class createAndAssociateIPFilterOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class createAndAssociatePLFilterOperations:
+class CreateAndAssociatePLFilterOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
