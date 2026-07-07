@@ -54,6 +54,7 @@ Custom handler usage — the M365 SDK is not initialized; you own the pipeline::
     host = ActivityAgentServerHost(request_handler=handle)
     host.run()
 """
+
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._activity import ActivityAgentServerHost

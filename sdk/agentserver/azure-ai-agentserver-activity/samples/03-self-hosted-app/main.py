@@ -45,6 +45,7 @@ agent_app = AgentApplication[TurnState](
 
 # ── Business logic ───────────────────────────────────────────────
 
+
 @agent_app.activity("message")
 async def on_message(context: TurnContext, state: TurnState):
     """Echo the user's message back."""

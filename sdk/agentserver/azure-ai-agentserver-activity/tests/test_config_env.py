@@ -47,11 +47,7 @@ _STATIC_KEYS = (_AUTHTYPE, _SCOPE0, _MAP_URL, _MAP_CONN)
 def _clean_env(monkeypatch):
     """Remove all inputs/outputs so each test starts from a known-empty state."""
     for key in list(os.environ):
-        if (
-            key.startswith("CONNECTIONS")
-            or key.startswith("FOUNDRY_AGENT")
-            or key.startswith("CONNECTIONSMAP")
-        ):
+        if key.startswith("CONNECTIONS") or key.startswith("FOUNDRY_AGENT") or key.startswith("CONNECTIONSMAP"):
             monkeypatch.delenv(key, raising=False)
     yield
 

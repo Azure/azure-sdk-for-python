@@ -38,12 +38,13 @@ async def handle_invocation(request: Request) -> Response:
     """Handle HTTP invocations via Invocations protocol."""
     data = await request.json()
     message = data.get("message", "")
-    return JSONResponse({
-        "reply": f"[Multi-Protocol] Echo: {message}",
-        "protocol": "invocations",
-    })
+    return JSONResponse(
+        {
+            "reply": f"[Multi-Protocol] Echo: {message}",
+            "protocol": "invocations",
+        }
+    )
 
 
 if __name__ == "__main__":
     host.run()
-

@@ -20,6 +20,7 @@ class _StubAgentApp:
         def decorator(fn):
             self.registered.append(("activity", activity_type, fn))
             return fn
+
         return decorator
 
     def error(self, fn):
@@ -77,6 +78,7 @@ def test_host_is_the_runnable_server_entrypoint():
 def test_agent_app_raises_when_custom_handler():
     """With a custom handler, M365 is not initialized, so accessing agent_app
     raises AttributeError."""
+
     async def handler(request):
         return JSONResponse({})
 
@@ -87,6 +89,7 @@ def test_agent_app_raises_when_custom_handler():
 
 def test_custom_handler_is_used():
     """A custom handler bypasses M365 init and is used as the request handler."""
+
     async def handler(request):
         return JSONResponse({})
 
@@ -97,6 +100,7 @@ def test_custom_handler_is_used():
 
 def test_request_handler_rejects_sync_handler():
     """request_handler mode requires an async handler."""
+
     def sync_handler(request):
         return JSONResponse({})
 
@@ -132,6 +136,7 @@ def test_agent_app_uses_injected_app_and_adapter():
 
 def test_agent_app_requires_app_with_adapter():
     """An injected app without an adapter surfaces the app's own adapter error."""
+
     class _NoAdapterApp:
         @property
         def adapter(self):
@@ -143,6 +148,7 @@ def test_agent_app_requires_app_with_adapter():
 
 def test_agent_app_and_request_handler_are_mutually_exclusive():
     """Passing both agent_app and request_handler raises ValueError."""
+
     async def handler(request):
         return JSONResponse({})
 
@@ -157,6 +163,7 @@ def test_agent_app_and_request_handler_are_mutually_exclusive():
 def test_request_handler_rejects_build_overrides():
     """request_handler mode does not build the M365 stack, so build overrides
     (e.g. storage) are rejected rather than silently ignored."""
+
     async def handler(request):
         return JSONResponse({})
 

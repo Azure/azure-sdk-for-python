@@ -28,10 +28,12 @@ def _ensure_real_tracer_provider():
 @pytest.mark.asyncio
 async def test_activity_sets_baggage_values_per_request():
     async def handle(_request):
-        return JSONResponse({
-            "session": get_baggage("azure.ai.agentserver.session_id") or "",
-            "conversation": get_baggage("azure.ai.agentserver.conversation_id") or "",
-        })
+        return JSONResponse(
+            {
+                "session": get_baggage("azure.ai.agentserver.session_id") or "",
+                "conversation": get_baggage("azure.ai.agentserver.conversation_id") or "",
+            }
+        )
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)

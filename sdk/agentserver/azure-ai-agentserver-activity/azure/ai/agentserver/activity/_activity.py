@@ -206,7 +206,6 @@ class _RequestMeta:
     x_request_id: str
 
 
-
 class ActivityAgentServerHost(AgentServerHost):
     """Activity protocol host for Azure AI Hosted Agents.
 
@@ -320,9 +319,7 @@ class ActivityAgentServerHost(AgentServerHost):
         # Validate the mode selection up front so an invalid combination is
         # rejected instead of silently ignoring the extra arguments.
         if agent_app is not None and request_handler is not None:
-            raise ValueError(
-                "Pass either 'agent_app' or 'request_handler', not both."
-            )
+            raise ValueError("Pass either 'agent_app' or 'request_handler', not both.")
         build_overrides = {
             "storage": storage,
             "connection_manager": connection_manager,
@@ -386,7 +383,8 @@ class ActivityAgentServerHost(AgentServerHost):
         mode = "custom-handler" if request_handler is not None else "m365"
         logger.info(
             "ActivityAgentServerHost initialized | mode=%s | digital_worker=%s",
-            mode, self._digital_worker,
+            mode,
+            self._digital_worker,
         )
 
     def _build_m365_stack(
@@ -426,7 +424,8 @@ class ActivityAgentServerHost(AgentServerHost):
         from ._m365_bridge import build_bridge_handler, build_m365_app
 
         self._connection_config = (
-            connection_config if connection_config is not None
+            connection_config
+            if connection_config is not None
             else get_hosted_agent_env(digital_worker=self._digital_worker)
         )
         bot_app_id = self._connection_config.get(ConnectionSettings.CLIENT_ID, "").strip()
@@ -626,18 +625,12 @@ class ActivityAgentServerHost(AgentServerHost):
         :return: The context token to detach when the turn completes.
         :rtype: ~contextvars.Token
         """
-        ctx = _otel_baggage.set_baggage(
-            BaggageKeys.SESSION_ID, session_id or "", context=_otel_context.get_current()
-        )
+        ctx = _otel_baggage.set_baggage(BaggageKeys.SESSION_ID, session_id or "", context=_otel_context.get_current())
         if conversation_id:
-            ctx = _otel_baggage.set_baggage(
-                BaggageKeys.CONVERSATION_ID, conversation_id, context=ctx
-            )
+            ctx = _otel_baggage.set_baggage(BaggageKeys.CONVERSATION_ID, conversation_id, context=ctx)
         return _otel_context.attach(ctx)
 
-    async def _run_handler(
-        self, request: Request, activity_id: str, conversation_id: str, session_id: str
-    ) -> Response:
+    async def _run_handler(self, request: Request, activity_id: str, conversation_id: str, session_id: str) -> Response:
         """Invoke the registered handler and classify any failure into a 500.
 
         :param request: The inbound request.
@@ -662,9 +655,11 @@ class ActivityAgentServerHost(AgentServerHost):
             response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
             self._add_required_response_headers(response, session_id)
             logger.info(
-                "Activity response sent | status_code=%s | activity_id=%s | "
-                "conversation_id=%s | session_id=%s",
-                getattr(response, "status_code", 0), activity_id, conversation_id, session_id,
+                "Activity response sent | status_code=%s | activity_id=%s | conversation_id=%s | session_id=%s",
+                getattr(response, "status_code", 0),
+                activity_id,
+                conversation_id,
+                session_id,
             )
             return response
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -672,7 +667,12 @@ class ActivityAgentServerHost(AgentServerHost):
             logger.error(
                 "Activity request failed | activity_id=%s | conversation_id=%s | "
                 "session_id=%s | error_source=%s | error=%s",
-                activity_id, conversation_id, session_id, error_source, exc, exc_info=True,
+                activity_id,
+                conversation_id,
+                session_id,
+                error_source,
+                exc,
+                exc_info=True,
             )
             response = create_error_response(
                 ErrorCode.INTERNAL_ERROR,
@@ -728,8 +728,15 @@ class ActivityAgentServerHost(AgentServerHost):
                 "Activity request received | type=%s | activity_id=%s | conversation_id=%s | "
                 "session_id=%s | from=%s | recipient=%s | channelId=%s | serviceUrl=%s | "
                 "locale=%s | x_request_id=%s",
-                meta.type, activity_id, conversation_id, session_id, meta.from_id,
-                meta.recipient_id, meta.channel_id, meta.service_url, meta.locale,
+                meta.type,
+                activity_id,
+                conversation_id,
+                session_id,
+                meta.from_id,
+                meta.recipient_id,
+                meta.channel_id,
+                meta.service_url,
+                meta.locale,
                 meta.x_request_id,
             )
 

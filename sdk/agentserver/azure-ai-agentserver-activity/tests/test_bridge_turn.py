@@ -26,7 +26,6 @@ from azure.ai.agentserver.activity._constants import ErrorCode, MsalPatch, Outbo
 from microsoft_agents.hosting.core import ClaimsIdentity
 from microsoft_agents.hosting.core.http import HttpResponse
 
-
 # ---------------------------------------------------------------------------
 # Stubs.
 # ---------------------------------------------------------------------------
@@ -76,10 +75,12 @@ def _process(agent_app, adapter, request, *, digital_worker, is_hosted, bot_app_
     from microsoft_agents.hosting.core import ClaimsIdentity
 
     request.state.claims_identity = bridge._build_outbound_claims(
-        ClaimsIdentity, digital_worker=digital_worker, is_hosted=is_hosted, bot_app_id=bot_app_id,
+        ClaimsIdentity,
+        digital_worker=digital_worker,
+        is_hosted=is_hosted,
+        bot_app_id=bot_app_id,
     )
     return cloud.StarletteCloudAdapter(adapter).process(request, agent_app)
-
 
 
 # ---------------------------------------------------------------------------
@@ -89,9 +90,7 @@ def _process(agent_app, adapter, request, *, digital_worker, is_hosted, bot_app_
 
 def test_claims_digital_worker_is_anonymous():
     """Digital-worker model uses anonymous claims (FMI patch supplies the token)."""
-    claims = bridge._build_outbound_claims(
-        ClaimsIdentity, digital_worker=True, is_hosted=True, bot_app_id="ignored"
-    )
+    claims = bridge._build_outbound_claims(ClaimsIdentity, digital_worker=True, is_hosted=True, bot_app_id="ignored")
 
     assert claims.is_authenticated is False
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_ANONYMOUS
@@ -102,9 +101,7 @@ def test_claims_simple_local_no_creds_is_anonymous(caplog):
     import logging
 
     with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver.activity.bridge"):
-        claims = bridge._build_outbound_claims(
-            ClaimsIdentity, digital_worker=False, is_hosted=False, bot_app_id=""
-        )
+        claims = bridge._build_outbound_claims(ClaimsIdentity, digital_worker=False, is_hosted=False, bot_app_id="")
 
     assert claims.is_authenticated is False
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_ANONYMOUS
@@ -138,9 +135,7 @@ def test_claims_simple_with_credential_local_is_authenticated():
 def test_claims_authenticated_with_empty_bot_app_id_has_empty_claims():
     """Authenticated path with an empty bot app id still returns Bearer claims
     but with no appid/audience entries."""
-    claims = bridge._build_outbound_claims(
-        ClaimsIdentity, digital_worker=False, is_hosted=True, bot_app_id=""
-    )
+    claims = bridge._build_outbound_claims(ClaimsIdentity, digital_worker=False, is_hosted=True, bot_app_id="")
 
     assert claims.is_authenticated is True
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_BEARER
@@ -161,8 +156,12 @@ def test_process_delegates_to_process_request():
 
     resp = _run(
         _process(
-            agent_app, adapter, request,
-            digital_worker=False, is_hosted=True, bot_app_id="client-xyz",
+            agent_app,
+            adapter,
+            request,
+            digital_worker=False,
+            is_hosted=True,
+            bot_app_id="client-xyz",
         )
     )
 
@@ -185,8 +184,12 @@ def test_process_converts_success_body():
 
     resp = _run(
         _process(
-            _FakeAgentApp(), adapter, request,
-            digital_worker=False, is_hosted=True, bot_app_id="client-xyz",
+            _FakeAgentApp(),
+            adapter,
+            request,
+            digital_worker=False,
+            is_hosted=True,
+            bot_app_id="client-xyz",
         )
     )
 
@@ -196,15 +199,17 @@ def test_process_converts_success_body():
 
 def test_process_wraps_400_in_error_envelope():
     """A 400 from the pipeline is re-wrapped into the activity error envelope."""
-    adapter = _FakeAdapter(
-        response=HttpResponse(status_code=400, body={"error": "Activity must have type"})
-    )
+    adapter = _FakeAdapter(response=HttpResponse(status_code=400, body={"error": "Activity must have type"}))
     request = _make_request({"type": "message"})
 
     resp = _run(
         _process(
-            _FakeAgentApp(), adapter, request,
-            digital_worker=False, is_hosted=False, bot_app_id="",
+            _FakeAgentApp(),
+            adapter,
+            request,
+            digital_worker=False,
+            is_hosted=False,
+            bot_app_id="",
         )
     )
 
@@ -219,8 +224,12 @@ def test_process_maps_401():
 
     resp = _run(
         _process(
-            _FakeAgentApp(), adapter, request,
-            digital_worker=False, is_hosted=True, bot_app_id="client-xyz",
+            _FakeAgentApp(),
+            adapter,
+            request,
+            digital_worker=False,
+            is_hosted=True,
+            bot_app_id="client-xyz",
         )
     )
 
@@ -289,9 +298,7 @@ def test_to_response_400_uses_invalid_request_envelope():
     """A 400 is re-wrapped into {'error': {'code': invalid_request, 'message'}}."""
     import json
 
-    resp = _to_response(
-        HttpResponse(status_code=400, body={"error": "bad activity"})
-    )
+    resp = _to_response(HttpResponse(status_code=400, body={"error": "bad activity"}))
 
     assert resp.status_code == 400
     payload = json.loads(bytes(resp.body))
@@ -312,12 +319,9 @@ def test_to_response_500_uses_internal_error_envelope():
 
 def test_to_response_preserves_headers():
     """Headers carried on the HttpResponse are preserved on the Starlette response."""
-    resp = _to_response(
-        HttpResponse(status_code=200, body={"ok": True}, headers={"x-keep": "yes"})
-    )
+    resp = _to_response(HttpResponse(status_code=200, body={"ok": True}, headers={"x-keep": "yes"}))
 
     assert resp.headers.get("x-keep") == "yes"
-
 
 
 # ---------------------------------------------------------------------------
@@ -331,9 +335,7 @@ def test_build_bridge_handler_returns_working_handler():
     adapter = _FakeAdapter(response=HttpResponse(status_code=202))
     agent_app = _FakeAgentApp()
 
-    handler = bridge.build_bridge_handler(
-        agent_app, adapter, digital_worker=True, is_hosted=False, bot_app_id="abc"
-    )
+    handler = bridge.build_bridge_handler(agent_app, adapter, digital_worker=True, is_hosted=False, bot_app_id="abc")
     resp = _run(handler(_make_request({"type": "message", "conversation": {"id": "c1"}})))
 
     assert resp.status_code == 202
@@ -342,7 +344,6 @@ def test_build_bridge_handler_returns_working_handler():
     assert passed_agent is agent_app
     # Digital-worker model -> anonymous outbound claims bound into the request.
     assert adapted_request.get_claims_identity().is_authenticated is False
-
 
 
 # ---------------------------------------------------------------------------
@@ -427,20 +428,15 @@ def test_fmi_token_exchange_success(monkeypatch, _patched_msal_auth, caplog):
     import logging
 
     import azure.identity.aio as aio
+
     monkeypatch.setattr(aio, "DefaultAzureCredential", _FakeCredential)
     _FakeCredential.last_kwargs = {}
 
     with caplog.at_level(logging.INFO, logger="azure.ai.agentserver.activity.bridge"):
-        token = _run(
-            _patched_msal_auth.get_agentic_application_token(
-                object(), "tenant-x", "agent-instance-1"
-            )
-        )
+        token = _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1"))
 
     assert token == "fmi-token-123"
-    assert _FakeCredential.last_kwargs[MsalPatch.IDENTITY_CONFIG_KEY] == {
-        MsalPatch.FMI_PATH_KEY: "agent-instance-1"
-    }
+    assert _FakeCredential.last_kwargs[MsalPatch.IDENTITY_CONFIG_KEY] == {MsalPatch.FMI_PATH_KEY: "agent-instance-1"}
     assert any("agent-instance-1" in r.message for r in caplog.records)
 
 
@@ -448,15 +444,14 @@ def test_fmi_token_exchange_includes_client_id_when_configured(monkeypatch, _pat
     """When the MSAL configuration carries a client id, it is forwarded as the
     managed identity client id."""
     import azure.identity.aio as aio
+
     monkeypatch.setattr(aio, "DefaultAzureCredential", _FakeCredential)
     _FakeCredential.last_kwargs = {}
 
     msal_config = types.SimpleNamespace(**{MsalPatch.MSAL_CLIENT_ID_ATTR: "mi-client-77"})
     fake_self = types.SimpleNamespace(**{MsalPatch.MSAL_CONFIGURATION_ATTR: msal_config})
 
-    token = _run(
-        _patched_msal_auth.get_agentic_application_token(fake_self, "tenant-x", "agent-instance-1")
-    )
+    token = _run(_patched_msal_auth.get_agentic_application_token(fake_self, "tenant-x", "agent-instance-1"))
 
     assert token == "fmi-token-123"
     assert _FakeCredential.last_kwargs[MsalPatch.MANAGED_IDENTITY_CLIENT_ID_KEY] == "mi-client-77"
@@ -471,11 +466,10 @@ def test_fmi_token_exchange_requires_instance_id(_patched_msal_auth):
 def test_fmi_token_exchange_returns_none_on_error(monkeypatch, _patched_msal_auth):
     """A credential failure is swallowed and returns None (no token minted)."""
     import azure.identity.aio as aio
+
     monkeypatch.setattr(aio, "DefaultAzureCredential", _RaisingCredential)
 
-    token = _run(
-        _patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1")
-    )
+    token = _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1"))
 
     assert token is None
 
@@ -499,6 +493,7 @@ def test_build_m365_app_builds_real_stack(monkeypatch):
     )
 
     from microsoft_agents.hosting.core import AgentApplication, HttpAdapterBase
+
     assert isinstance(app, AgentApplication)
     assert isinstance(adapter, HttpAdapterBase)
 
@@ -506,14 +501,12 @@ def test_build_m365_app_builds_real_stack(monkeypatch):
 def test_build_m365_app_fast_path_returns_injected_app():
     """When an agent_app is injected, it is returned as-is with its own adapter
     (no build, connection_config ignored)."""
+
     class _App:
         adapter = object()
 
     injected = _App()
-    app, adapter = bridge.build_m365_app(
-        digital_worker=False, connection_config={}, storage=None, agent_app=injected
-    )
+    app, adapter = bridge.build_m365_app(digital_worker=False, connection_config={}, storage=None, agent_app=injected)
 
     assert app is injected
     assert adapter is injected.adapter
-

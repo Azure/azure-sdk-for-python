@@ -63,9 +63,7 @@ def _apply_msal_patches() -> None:
     if getattr(MsalAuth, MsalPatch.PATCH_FLAG, False):
         return
 
-    async def get_token_via_dac(
-        self: object, tenant_id: str, agent_app_instance_id: str
-    ) -> Optional[str]:
+    async def get_token_via_dac(self: object, tenant_id: str, agent_app_instance_id: str) -> Optional[str]:
         # ``tenant_id`` is part of the MsalAuth.get_agentic_application_token
         # contract we are overriding (the SDK always passes it positionally), but
         # this DefaultAzureCredential/FMI flow derives the tenant from the
@@ -76,11 +74,11 @@ def _apply_msal_patches() -> None:
         if not agent_app_instance_id:
             # pylint: disable=import-error,no-name-in-module
             from microsoft_agents.authentication.msal.errors import authentication_errors
+
             raise ValueError(str(authentication_errors.AgentApplicationInstanceIdRequired))
 
         logger.info(
-            "Acquiring agentic application token via DefaultAzureCredential "
-            "for agent_app_instance_id=%s",
+            "Acquiring agentic application token via DefaultAzureCredential for agent_app_instance_id=%s",
             agent_app_instance_id,
         )
 
@@ -195,9 +193,7 @@ def build_m365_app(
     resolved_config = load_configuration_from_env(dict(connection_config))
     resolved_storage: Storage = storage
     resolved_cm: MsalConnectionManager = (
-        connection_manager
-        if connection_manager is not None
-        else MsalConnectionManager(**resolved_config)
+        connection_manager if connection_manager is not None else MsalConnectionManager(**resolved_config)
     )
     if adapter is not None:
         resolved_adapter: HttpAdapterBase = adapter
@@ -205,9 +201,7 @@ def build_m365_app(
         client_factory = RestChannelServiceClientFactory(resolved_cm)
         resolved_adapter = HttpAdapterBase(channel_service_client_factory=client_factory)
     resolved_authorization: Authorization = (
-        authorization
-        if authorization is not None
-        else Authorization(resolved_storage, resolved_cm, **resolved_config)
+        authorization if authorization is not None else Authorization(resolved_storage, resolved_cm, **resolved_config)
     )
     built_app: AgentApplication = AgentApplication[TurnState](
         storage=resolved_storage,
@@ -294,9 +288,7 @@ def _build_outbound_claims(
         # outbound token via the federated-identity exchange.
         return claims_cls({}, is_authenticated=False, authentication_type=OutboundAuth.AUTH_TYPE_ANONYMOUS)
 
-    if use_anonymous_outbound(
-        digital_worker=digital_worker, is_hosted=is_hosted, bot_app_id=bot_app_id
-    ):
+    if use_anonymous_outbound(digital_worker=digital_worker, is_hosted=is_hosted, bot_app_id=bot_app_id):
         # Simple model, running locally with no Bot Connector credential: no
         # managed identity exists off-box to mint a Bot Connector token, so use
         # anonymous claims (the adapter then skips outbound token minting). This
@@ -316,10 +308,5 @@ def _build_outbound_claims(
     # service-connection client id (the agent instance identity). This makes the
     # adapter use the real MSAL UserManagedIdentity connection for the outbound
     # reply instead of an anonymous/empty token.
-    claim_dict = (
-        {OutboundAuth.CLAIM_APP_ID: bot_app_id, OutboundAuth.CLAIM_AUDIENCE: bot_app_id}
-        if bot_app_id
-        else {}
-    )
+    claim_dict = {OutboundAuth.CLAIM_APP_ID: bot_app_id, OutboundAuth.CLAIM_AUDIENCE: bot_app_id} if bot_app_id else {}
     return claims_cls(claim_dict, is_authenticated=True, authentication_type=OutboundAuth.AUTH_TYPE_BEARER)
-

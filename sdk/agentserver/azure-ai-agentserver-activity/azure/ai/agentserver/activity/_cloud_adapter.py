@@ -110,4 +110,3 @@ class StarletteCloudAdapter:
         if body is not None:
             return JSONResponse(content=body, status_code=status_code, headers=headers)
         return Response(status_code=status_code, headers=headers)
-
