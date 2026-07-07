@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python patch_vault_with_source_scan_configuration.py
+    python put_vault_with_cost_management_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,33 +30,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.vaults.begin_update(
-        resource_group_name="HelloWorld",
+    response = client.vaults.begin_create_or_update(
+        resource_group_name="Default-RecoveryServices-ResourceGroup",
         vault_name="swaggerExample",
         vault={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi": {}
-                },
-            },
+            "identity": {"type": "SystemAssigned"},
+            "location": "West US",
             "properties": {
-                "securitySettings": {
-                    "sourceScanConfiguration": {
-                        "sourceScanIdentity": {
-                            "operationIdentityType": "UserAssigned",
-                            "userAssignedIdentity": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
-                        },
-                        "state": "Enabled",
-                    }
-                }
+                "costManagementSettings": {"granularityLevel": "ProtectedItemLevel"},
+                "publicNetworkAccess": "Enabled",
             },
-            "tags": {"PatchKey": "PatchKeyUpdated"},
+            "sku": {"name": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/PATCHVault_WithSourceScanConfiguration.json
+# x-ms-original-file: 2026-05-01/PUTVault_WithCostManagementSettings.json
 if __name__ == "__main__":
     main()
