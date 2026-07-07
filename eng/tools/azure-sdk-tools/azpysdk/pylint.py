@@ -14,7 +14,7 @@ from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "4.0.4"
-NEXT_PYLINT_VERSION = "4.0.4"
+NEXT_PYLINT_VERSION = "4.0.6"
 
 
 class pylint(Check):
