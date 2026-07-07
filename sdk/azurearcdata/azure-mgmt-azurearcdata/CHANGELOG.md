@@ -235,12 +235,11 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ErrorResponseBody`
-  - Deleted or renamed method `SqlServerInstancesOperations.update`
+  - Renamed method `SqlServerInstancesOperations.update` to `begin_update`
 
 ### Other Changes
 
-  - Deleted model `ActiveDirectoryConnectorListResult`/`OperationListResult`/`PageOfDataControllerResource`/`PostgresInstanceListResult`/`SqlManagedInstanceListResult`/`SqlServerInstanceListResult` which actually were not used by SDK users
+  - Deleted model `ErrorResponseBody`/`ActiveDirectoryConnectorListResult`/`OperationListResult`/`PageOfDataControllerResource`/`PostgresInstanceListResult`/`SqlManagedInstanceListResult`/`SqlServerInstanceListResult` which actually were not used by SDK users
 
 ## 2.0.0b2 (2026-05-14)
 
