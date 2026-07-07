@@ -1,5 +1,40 @@
 # Release History
 
+## 2.0.0b6 (2026-07-07)
+
+### Features Added
+
+  - Model `LedgerProperties` added property `scitt_configuration`
+  - Model `LedgerProperties` added property `storage_usage_bytes`
+  - Added model `ConfidentialLedgerFilesExport`
+  - Added model `ConfidentialLedgerFilesExportResponse`
+  - Model `LedgerOperations` added method `begin_files_export`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ConfidentialLedger`
+  - Deleted or renamed model `CertificateTags`
+  - Deleted or renamed model `ConfidentialLedgerBackup`
+  - Deleted or renamed model `ConfidentialLedgerBackupResponse`
+  - Deleted or renamed model `ConfidentialLedgerList`
+  - Deleted or renamed model `ConfidentialLedgerRestore`
+  - Deleted or renamed model `ConfidentialLedgerRestoreResponse`
+  - Deleted or renamed model `DeploymentType`
+  - Deleted or renamed model `LanguageRuntime`
+  - Deleted or renamed model `ManagedCCF`
+  - Deleted or renamed model `ManagedCCFBackup`
+  - Deleted or renamed model `ManagedCCFBackupResponse`
+  - Deleted or renamed model `ManagedCCFList`
+  - Deleted or renamed model `ManagedCCFProperties`
+  - Deleted or renamed model `ManagedCCFRestore`
+  - Deleted or renamed model `ManagedCCFRestoreResponse`
+  - Deleted or renamed model `MemberIdentityCertificate`
+  - Deleted or renamed model `ResourceProviderOperationList`
+  - Deleted or renamed method `LedgerOperations.begin_backup`
+  - Deleted or renamed method `LedgerOperations.begin_restore`
+  - Deleted or renamed model `ConfidentialLedgerOperationsMixin`
+  - Deleted or renamed model `ManagedCCFOperations`
+
 ## 1.0.1 (2026-05-07)
 
 ### Other Changes

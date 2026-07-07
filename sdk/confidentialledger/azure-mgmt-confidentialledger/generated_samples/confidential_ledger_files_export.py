@@ -15,7 +15,7 @@ from azure.mgmt.confidentialledger import ConfidentialLedgerMgmtClient
     pip install azure-identity
     pip install azure-mgmt-confidentialledger
 # USAGE
-    python confidential_ledger_get.py
+    python confidential_ledger_files_export.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.ledger.get(
+    response = client.ledger.begin_files_export(
         resource_group_name="DummyResourceGroupName",
         ledger_name="DummyLedgerName",
-    )
+        confidential_ledger={"restoreRegion": "EastUS", "uri": "DummySASUri"},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-22-preview/ConfidentialLedger_Get.json
+# x-ms-original-file: 2026-05-22-preview/ConfidentialLedger_FilesExport.json
 if __name__ == "__main__":
     main()
