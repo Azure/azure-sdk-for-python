@@ -22,7 +22,7 @@ DESCRIPTION:
     7. Cleans up created resources (agent version, toolbox, and skill).
 
     The hosted agent must already exist; create it first with:
-        samples/hosted_agents/sample_create_hosted_agent.py
+        samples/hosted_agents/sample_create_hosted_agent_from_image.py
 
 USAGE:
     python sample_toolbox_with_skill.py
@@ -60,9 +60,8 @@ from azure.ai.projects.models import (
     ProtocolVersionRecord,
 )
 
-from hosted_agents_util import wait_for_agent_version_active
-from rbac_util import ensure_agent_identity_rbac
-from util import zip
+from hosted_agents_util import create_version_from_code
+from util import zip_directory
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
@@ -88,9 +87,7 @@ def main() -> None:
     with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client(agent_name=agent_name) as hosted_openai_client,
     ):
-
         try:
             project_client.toolboxes.delete(TOOLBOX_NAME)
         except ResourceNotFoundError:
@@ -127,59 +124,47 @@ def main() -> None:
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
         zip_filename = "hosted-toolbox-agent.zip"
-        _, _, zip_path = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
+        _, _, zip_path = zip_directory(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
-        with zip_path.open("rb") as code_stream:
-            created = project_client.agents.create_version_from_code(
-                agent_name=agent_name,
-                description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
-                definition=HostedAgentDefinition(
-                    cpu="0.5",
-                    memory="1Gi",
-                    code_configuration=CodeConfiguration(
-                        runtime="python_3_14",
-                        entry_point=["python", "main.py"],
-                        dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+        try:
+            with (
+                zip_path.open("rb") as code_stream,
+                create_version_from_code(
+                    project_client=project_client,
+                    agent_name=agent_name,
+                    description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
+                    definition=HostedAgentDefinition(
+                        cpu="0.5",
+                        memory="1Gi",
+                        code_configuration=CodeConfiguration(
+                            runtime="python_3_14",
+                            entry_point=["python", "main.py"],
+                            dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+                        ),
+                        environment_variables={
+                            "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                            "FOUNDRY_MODEL_NAME": model_name,
+                            "MCP_SERVER_URL": toolbox_mcp_url,
+                        },
+                        protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
                     ),
-                    environment_variables={
-                        "FOUNDRY_PROJECT_ENDPOINT": endpoint,
-                        "FOUNDRY_MODEL_NAME": model_name,
-                        "MCP_SERVER_URL": toolbox_mcp_url,
-                    },
-                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
+                    code=code_stream,
                 ),
-                code=code_stream,
-            )
-        print(f"Created hosted agent version: {created.version}")
+                project_client.get_openai_client(agent_name=agent_name) as hosted_openai_client,
+            ):
 
-        if created.status != "active":
-            wait_for_agent_version_active(
-                project_client=project_client,
-                agent_name=agent_name,
-                agent_version=created.version,
-            )
+                user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
+                print(f"User: {user_input}")
+                response = hosted_openai_client.responses.create(input=user_input)
 
-        ensure_agent_identity_rbac(
-            agent=created,
-            credential=credential,
-            subscription_id=subscription_id,
-            foundry_project_endpoint=endpoint,
-        )
-
-        user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
-        print(f"User: {user_input}")
-        response = hosted_openai_client.responses.create(input=user_input)
-
-        response_text = response.output_text or ""
-        print("Response:")
-        print(response_text.encode("utf-8", errors="replace").decode("utf-8"))
-
-        project_client.agents.delete_version(agent_name=agent_name, agent_version=created.version, force=True)
-        print(f"Agent version {created.version} deleted")
-        project_client.toolboxes.delete(TOOLBOX_NAME)
-        print("Toolbox deleted")
-        project_client.beta.skills.delete(SKILL_NAME)
-        print("Skill deleted")
+                response_text = response.output_text or ""
+                print("Response:")
+                print(response_text.encode("utf-8", errors="replace").decode("utf-8"))
+        finally:
+            project_client.toolboxes.delete(TOOLBOX_NAME)
+            print("Toolbox deleted")
+            project_client.beta.skills.delete(SKILL_NAME)
+            print("Skill deleted")
 
 
 if __name__ == "__main__":
