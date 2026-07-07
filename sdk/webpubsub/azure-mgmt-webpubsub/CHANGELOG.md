@@ -7,94 +7,40 @@
   - Client `WebPubSubManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `WebPubSubManagementClient` added method `send_request`
   - Client `WebPubSubManagementClient` added operation group `web_pub_sub_persistent_storages`
-  - Model `CustomCertificate` added property `properties`
-  - Model `CustomDomain` added property `properties`
   - Model `EventHandler` added property `group_presence_events`
-  - Model `PrivateEndpointConnection` added property `properties`
-  - Model `PrivateLinkResource` added property `properties`
-  - Model `Replica` added property `properties`
-  - Model `SharedPrivateLinkResource` added property `properties`
   - Model `WebPubSubHubProperties` added property `chat`
-  - Model `WebPubSubResource` added property `properties`
   - Added model `ApplicationFirewallSettings`
   - Added model `ChatSettings`
   - Added model `ClientConnectionCountRule`
   - Added enum `ClientConnectionCountRuleDiscriminator`
   - Added model `ClientTrafficControlRule`
   - Added enum `ClientTrafficControlRuleDiscriminator`
-  - Added model `CustomCertificateProperties`
-  - Added model `CustomDomainProperties`
   - Added model `GroupPresenceEventFilters`
   - Added enum `GroupPresenceEventName`
   - Added model `PersistentStorage`
   - Added model `PersistentStorageProperties`
-  - Added model `PrivateEndpointConnectionProperties`
-  - Added model `PrivateLinkResourceProperties`
-  - Added model `ReplicaProperties`
-  - Added model `SharedPrivateLinkResourceProperties`
   - Added model `ThrottleByJwtCustomClaimRule`
   - Added model `ThrottleByJwtSignatureRule`
   - Added model `ThrottleByUserIdRule`
   - Added model `TrafficThrottleByJwtCustomClaimRule`
   - Added model `TrafficThrottleByJwtSignatureRule`
   - Added model `TrafficThrottleByUserIdRule`
-  - Added model `WebPubSubProperties`
-  - Added model `WebPubSubPersistentStoragesOperations`
+  - Added operation group `WebPubSubPersistentStoragesOperations`
 
 ### Breaking Changes
 
-  - Model `CustomCertificate` deleted or renamed its instance variable `provisioning_state`
-  - Model `CustomCertificate` deleted or renamed its instance variable `key_vault_base_uri`
-  - Model `CustomCertificate` deleted or renamed its instance variable `key_vault_secret_name`
-  - Model `CustomCertificate` deleted or renamed its instance variable `key_vault_secret_version`
-  - Model `CustomDomain` deleted or renamed its instance variable `provisioning_state`
-  - Model `CustomDomain` deleted or renamed its instance variable `domain_name`
-  - Model `CustomDomain` deleted or renamed its instance variable `custom_certificate`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `group_ids`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `shareable_private_link_resource_types`
-  - Model `Replica` deleted or renamed its instance variable `provisioning_state`
-  - Model `Replica` deleted or renamed its instance variable `region_endpoint_enabled`
-  - Model `Replica` deleted or renamed its instance variable `resource_stopped`
-  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `private_link_resource_id`
-  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `request_message`
-  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `status`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `external_ip`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `host_name`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `public_port`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `server_port`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `version`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `shared_private_link_resources`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `tls`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `host_name_prefix`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `live_trace_configuration`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `resource_log_configuration`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `network_ac_ls`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `public_network_access`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `disable_local_auth`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `disable_aad_auth`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `region_endpoint_enabled`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `resource_stopped`
-  - Model `WebPubSubResource` deleted or renamed its instance variable `socket_io`
-  - Deleted or renamed model `CustomCertificateList`
-  - Deleted or renamed model `CustomDomainList`
-  - Deleted or renamed model `OperationList`
-  - Deleted or renamed model `PrivateEndpointConnectionList`
-  - Deleted or renamed model `PrivateLinkResourceList`
-  - Deleted or renamed model `ReplicaList`
-  - Deleted or renamed model `SharedPrivateLinkResourceList`
-  - Deleted or renamed model `SignalRServiceUsageList`
-  - Deleted or renamed model `WebPubSubHubList`
-  - Deleted or renamed model `WebPubSubResourceList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `CustomCertificate` moved instance variable `provisioning_state`, `key_vault_base_uri`, `key_vault_secret_name` and `key_vault_secret_version` under property `properties` whose type is `CustomCertificateProperties`
+  - Model `CustomDomain` moved instance variable `provisioning_state`, `domain_name` and `custom_certificate` under property `properties` whose type is `CustomDomainProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `provisioning_state`, `private_endpoint`, `group_ids` and `private_link_service_connection_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members`, `required_zone_names` and `shareable_private_link_resource_types` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Replica` moved instance variable `provisioning_state`, `region_endpoint_enabled` and `resource_stopped` under property `properties` whose type is `ReplicaProperties`
+  - Model `SharedPrivateLinkResource` moved instance variable `group_id`, `private_link_resource_id`, `provisioning_state`, `request_message` and `status` under property `properties` whose type is `SharedPrivateLinkResourceProperties`
+  - Model `WebPubSubResource` moved instance variable `provisioning_state`, `external_ip`, `host_name`, `public_port`, `server_port`, `version`, `private_endpoint_connections`, `shared_private_link_resources`, `tls`, `host_name_prefix`, `live_trace_configuration`, `resource_log_configuration`, `network_ac_ls`, `public_network_access`, `disable_local_auth`, `disable_aad_auth`, `region_endpoint_enabled`, `resource_stopped` and `socket_io` under property `properties` whose type is `WebPubSubProperties`
+
+### Other Changes
+
+  - Deleted model `CustomCertificateList`/`CustomDomainList`/`OperationList`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`ReplicaList`/`SharedPrivateLinkResourceList`/`SignalRServiceUsageList`/`WebPubSubHubList`/`WebPubSubResourceList` which actually were not used by SDK users
 
 ## 2.0.0 (2024-09-23)
 
