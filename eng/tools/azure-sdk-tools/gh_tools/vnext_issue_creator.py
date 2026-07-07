@@ -20,10 +20,24 @@ from typing_extensions import Literal
 from github import Github, Auth, GithubException
 
 from ci_tools.variables import discover_repo_root
+from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import is_package_active
 
 logging.getLogger().setLevel(logging.INFO)
 
 CHECK_TYPE = Literal["mypy", "pylint", "pyright", "sphinx"]
+
+
+def is_package_deprecated(package_dir: str) -> bool:
+    """Returns True if the package is deprecated/inactive (e.g. carries the
+    'Development Status :: 7 - Inactive' classifier). Deprecated packages should
+    not have vnext issues created against them."""
+    try:
+        parsed = ParsedSetup.from_path(package_dir)
+    except Exception as e:  # pragma: no cover - defensive
+        logging.warning(f"Unable to parse metadata for {package_dir} to determine deprecation status: {e}")
+        return False
+    return not is_package_active(parsed)
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
@@ -148,6 +162,13 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
     package_path = pathlib.Path(package_dir)
     package_name = package_path.name
     service_directory = package_path.parent.name
+
+    # Deprecated/inactive packages should never have vnext issues created against them.
+    if is_package_deprecated(package_dir):
+        logging.info(f"Package {package_name} is deprecated/inactive. Skipping vnext issue creation for {check_type}.")
+        close_vnext_issue(package_name, check_type)
+        return
+
     auth = Auth.Token(os.environ["GH_TOKEN"])
     g = Github(auth=auth)
 
