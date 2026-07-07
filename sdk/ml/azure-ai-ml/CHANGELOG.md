@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed `JobOperations.download` writing outside the requested `download_path` when a job output name returned by the service contained `..` segments or an absolute path. Such outputs are now skipped instead of escaping the download directory.
 
 ### Other Changes
 
