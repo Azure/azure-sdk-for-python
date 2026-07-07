@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b8 (Unreleased)
+
+### Features Added
+
+- Introduced the keyword argument `additional_allowed_query_params` to `DistributedHttpTracingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes. [#46657](https://github.com/Azure/azure-sdk-for-python/pull/46657)
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. [#45113](https://github.com/Azure/azure-sdk-for-python/pull/45113)
+
+### Other Changes
+
+- URL attributes in HTTP tracing spans will now have query parameters sanitized by default. To add additional query parameters that should not be redacted, use the `additional_allowed_query_params` argument when constructing the `DistributedHttpTracingPolicy`. [#46657](https://github.com/Azure/azure-sdk-for-python/pull/46657)
+
 ## 1.0.0b7 (2026-02-05)
 
 ### Features Added

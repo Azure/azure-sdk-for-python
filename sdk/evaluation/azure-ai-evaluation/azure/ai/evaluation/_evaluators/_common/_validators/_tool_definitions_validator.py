@@ -18,8 +18,14 @@ class ToolDefinitionsValidator(ConversationValidator):
 
     optional_tool_definitions: bool = True
 
-    def __init__(self, error_target: ErrorTarget, requires_query: bool = True, optional_tool_definitions: bool = True):
-        super().__init__(error_target, requires_query)
+    def __init__(
+        self,
+        error_target: ErrorTarget,
+        requires_query: bool = True,
+        optional_tool_definitions: bool = True,
+        check_for_unsupported_tools: bool = False,
+    ):
+        super().__init__(error_target, requires_query, check_for_unsupported_tools)
         self.optional_tool_definitions = optional_tool_definitions
 
     def _validate_tool_definition(self, tool_definition) -> Optional[EvaluationException]:

@@ -34,13 +34,6 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Node in a Pool."""
 
 
-class BatchAccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchAccessScope enums."""
-
-    JOB = "job"
-    """Grants access to perform all operations on the Job containing the Task."""
-
-
 class BatchAllTasksCompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action the Batch service should take when all Tasks in the Job are in the completed state."""
 
@@ -674,11 +667,11 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Level code."""
 
     ERROR = "Error"
-    """Error"""
+    """Error."""
     INFO = "Info"
-    """Info"""
+    """Info."""
     WARNING = "Warning"
-    """Warning"""
+    """Warning."""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

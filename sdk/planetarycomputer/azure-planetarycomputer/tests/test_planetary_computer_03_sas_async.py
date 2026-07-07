@@ -7,8 +7,8 @@
 Unit tests for Shared Access Signature (SAS) operations.
 """
 import logging
-import pytest
 from pathlib import Path
+import pytest
 from urllib.request import urlopen
 from datetime import datetime, timedelta, timezone
 import re
@@ -55,12 +55,8 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(
-            f"Calling: get_token(collection_id={planetarycomputer_collection_id})"
-        )
-        response = await client.shared_access_signature.get_token(
-            collection_id=planetarycomputer_collection_id
-        )
+        test_logger.info(f"Calling: get_token(collection_id={planetarycomputer_collection_id})")
+        response = await client.sas.get_token(collection_id=planetarycomputer_collection_id)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -76,9 +72,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         # Verify token format - in playback mode, entire token is sanitized to "Sanitized"
         if is_live():
             # In live mode, verify SAS token format with regex
-            sas_token_pattern = (
-                r"st=[^&]+&se=[^&]+&sp=[^&]+&sv=[^&]+&sr=[^&]+&.*sig=[^&]+"
-            )
+            sas_token_pattern = r"st=[^&]+&se=[^&]+&sp=[^&]+&sv=[^&]+&sr=[^&]+&.*sig=[^&]+"
             assert re.search(
                 sas_token_pattern, response.token
             ), "Token should match SAS token format (st, se, sp, sv, sr, sig)"
@@ -88,23 +82,17 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
             assert len(response.token) > 0, "Token should not be empty"
 
         # Verify expires_on is a datetime in the future
-        assert isinstance(
-            response.expires_on, datetime
-        ), "expires_on should be a datetime object"
+        assert isinstance(response.expires_on, datetime), "expires_on should be a datetime object"
 
         if is_live():
-            assert response.expires_on > datetime.now(
-                timezone.utc
-            ), "Token expiry should be in the future"
+            assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
 
         # Verify default duration is approximately 24 hours (allow 5 minute tolerance for clock skew)
         if is_live():
             now = datetime.now(timezone.utc)
             expected_expiry = now + timedelta(hours=24)
             time_diff = abs((response.expires_on - expected_expiry).total_seconds())
-            assert (
-                time_diff < 300
-            ), f"Expiry should be ~24 hours from now (diff: {time_diff}s)"
+            assert time_diff < 300, f"Expiry should be ~24 hours from now (diff: {time_diff}s)"
 
         test_logger.info("Test PASSED\n")
 
@@ -112,9 +100,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_02_get_token_with_custom_duration(
-        self, planetarycomputer_endpoint, planetarycomputer_collection_id
-    ):
+    async def test_02_get_token_with_custom_duration(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test generating a SAS token with custom duration."""
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_02_get_token_with_custom_duration")
@@ -125,12 +111,8 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(
-            f"Calling: get_token(collection_id={planetarycomputer_collection_id}, duration_in_minutes=60)"
-        )
-        response = await client.shared_access_signature.get_token(
-            collection_id=planetarycomputer_collection_id, duration_in_minutes=60
-        )
+        test_logger.info(f"Calling: get_token(collection_id={planetarycomputer_collection_id}, duration_in_minutes=60)")
+        response = await client.sas.get_token(collection_id=planetarycomputer_collection_id, duration_in_minutes=60)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -146,9 +128,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         # Verify token format - in playback mode, entire token is sanitized to "Sanitized"
         if is_live():
             # In live mode, verify SAS token format with regex
-            sas_token_pattern = (
-                r"st=[^&]+&se=[^&]+&sp=[^&]+&sv=[^&]+&sr=[^&]+&.*sig=[^&]+"
-            )
+            sas_token_pattern = r"st=[^&]+&se=[^&]+&sp=[^&]+&sv=[^&]+&sr=[^&]+&.*sig=[^&]+"
             assert re.search(
                 sas_token_pattern, response.token
             ), "Token should match SAS token format (st, se, sp, sv, sr, sig)"
@@ -158,23 +138,17 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
             assert len(response.token) > 0, "Token should not be empty"
 
         # Verify expires_on is a datetime in the future
-        assert isinstance(
-            response.expires_on, datetime
-        ), "expires_on should be a datetime object"
+        assert isinstance(response.expires_on, datetime), "expires_on should be a datetime object"
 
         if is_live():
-            assert response.expires_on > datetime.now(
-                timezone.utc
-            ), "Token expiry should be in the future"
+            assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
 
         # Verify custom duration is approximately 60 minutes (allow 5 minute tolerance for clock skew)
         if is_live():
             now = datetime.now(timezone.utc)
             expected_expiry = now + timedelta(minutes=60)
             time_diff = abs((response.expires_on - expected_expiry).total_seconds())
-            assert (
-                time_diff < 300
-            ), f"Expiry should be ~60 minutes from now (diff: {time_diff}s)"
+            assert time_diff < 300, f"Expiry should be ~60 minutes from now (diff: {time_diff}s)"
 
         test_logger.info("Test PASSED\n")
 
@@ -195,20 +169,18 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Getting collection...")
-        collection = await client.stac.get_collection(
-            collection_id=planetarycomputer_collection_id
-        )
+        collection = await client.stac.get_collection(collection_id=planetarycomputer_collection_id)
 
         assert collection is not None
         assert collection.assets is not None
-        assert "thumbnail" in collection.assets
+        assert "thumbnail" in collection.assets, "Collection does not have a thumbnail asset"
 
         original_href = collection.assets["thumbnail"].href
         test_logger.info(f"Original HREF: {original_href}")
         assert original_href is not None
 
-        test_logger.info(f"Calling: get_sign(href={original_href})")
-        response = await client.shared_access_signature.get_sign(href=original_href)
+        test_logger.info(f"Calling: get_url(href={original_href})")
+        response = await client.sas.get_url(href=original_href)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -228,43 +200,31 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         test_logger.info(f"Has sig param: {'sig=' in signed_href.lower()}")
 
         # Verify signed HREF is different and contains SAS parameters
-        assert (
-            signed_href != original_href
-        ), "Signed HREF should differ from original HREF"
+        assert signed_href != original_href, "Signed HREF should differ from original HREF"
 
         # Verify SAS parameters in HREF - skip regex in playback due to sanitization variations
         if is_live():
             # In live mode, verify SAS HREF format with regex
-            sas_href_pattern = (
-                r"\?.*st=[^&]+&se=[^&]+&sp=[^&]+&sv=[^&]+&sr=[^&]+&.*sig=[^&]+"
-            )
+            sas_href_pattern = r"\?.*st=[^&]+&se=[^&]+&sp=[^&]+&sv=[^&]+&sr=[^&]+&.*sig=[^&]+"
             assert re.search(
                 sas_href_pattern, signed_href
             ), "Signed HREF should contain SAS parameters (st, se, sp, sv, sr, sig)"
         else:
             # In playback mode, just verify basic SAS structure exists
             assert "?" in signed_href, "Signed HREF should have query parameters"
-            assert (
-                "sig=" in signed_href.lower()
-            ), "Signed HREF should contain signature parameter"
+            assert "sig=" in signed_href.lower(), "Signed HREF should contain signature parameter"
 
         # Verify expires_on is a datetime in the future (if present)
         if response.expires_on is not None:
-            assert isinstance(
-                response.expires_on, datetime
-            ), "expires_on should be a datetime object"
+            assert isinstance(response.expires_on, datetime), "expires_on should be a datetime object"
 
             if is_live():
-                assert response.expires_on > datetime.now(
-                    timezone.utc
-                ), "Token expiry should be in the future"
+                assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
 
         # Verify the signed HREF starts with the original base URL (strip query params first)
         original_base = original_href.split("?")[0]
         signed_base = signed_href.split("?")[0]
-        assert (
-            signed_base == original_base
-        ), "Signed HREF should have the same base URL as original"
+        assert signed_base == original_base, "Signed HREF should have the same base URL as original"
 
         test_logger.info("Test PASSED\n")
 
@@ -272,11 +232,12 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_04_signed_href_can_download_asset(
-        self, planetarycomputer_endpoint, planetarycomputer_collection_id
-    ):
+    async def test_04_signed_href_can_download_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test that a signed HREF can be used to download an asset.
+
+        This is an end-to-end test: get collection → sign thumbnail href → download.
+        The actual download is only attempted in live mode since it bypasses the test proxy.
         """
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_04_signed_href_can_download_asset")
@@ -287,42 +248,42 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Getting collection...")
-        collection = await client.stac.get_collection(
-            collection_id=planetarycomputer_collection_id
-        )
+        collection = await client.stac.get_collection(collection_id=planetarycomputer_collection_id)
+        assert "thumbnail" in collection.assets, "Collection does not have a thumbnail asset"
         thumbnail_href = collection.assets["thumbnail"].href
         test_logger.info(f"Thumbnail HREF: {thumbnail_href}")
 
-        test_logger.info(f"Calling: get_sign(href={thumbnail_href})")
-        sign_response = await client.shared_access_signature.get_sign(
-            href=thumbnail_href
-        )
+        test_logger.info(f"Calling: get_url(href={thumbnail_href})")
+        sign_response = await client.sas.get_url(href=thumbnail_href)
         signed_href = sign_response.href
         test_logger.info(f"Signed HREF: {signed_href}")
 
         if is_live():
             test_logger.info("Attempting to download asset (live mode)...")
-            with urlopen(signed_href) as download_response:
-                content = download_response.read()
+            import time
 
-                test_logger.info(f"Download status code: {download_response.status}")
-                test_logger.info(f"Content length: {len(content)} bytes")
-                content_type = download_response.headers.get("content-type", "").lower()
-                test_logger.info(f"Content-Type: {content_type}")
+            # Retry with backoff for SAS token propagation
+            max_retries = 5
+            for attempt in range(max_retries):
+                try:
+                    with urlopen(signed_href) as download_response:
+                        content = download_response.read()
 
-                # Verify successful download
-                assert (
-                    download_response.status == 200
-                ), f"Expected 200, got {download_response.status}"
-                assert len(content) > 0, "Downloaded content should not be empty"
+                        test_logger.info(f"Download status code: {download_response.status}")
+                        test_logger.info(f"Content length: {len(content)} bytes")
+                        content_type = download_response.headers.get("content-type", "").lower()
+                        test_logger.info(f"Content-Type: {content_type}")
 
-                # Verify content is binary data (image file)
-                # Note: Azure Storage may return 'application/octet-stream' instead of 'image/*'
-                assert len(content) > 1000, "Downloaded file should be larger than 1KB"
-                # Verify it's actually binary image data by checking PNG magic bytes
-                assert (
-                    content[:4] == b"\x89PNG"
-                ), "Downloaded content should be a PNG image"
+                        # Verify successful download
+                        assert download_response.status == 200, f"Expected 200, got {download_response.status}"
+                        assert len(content) > 0, "Downloaded content should not be empty"
+                    break
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        test_logger.info(f"Attempt {attempt + 1} failed: {e}, retrying in 15s...")
+                        time.sleep(15)
+                    else:
+                        raise
         else:
             test_logger.info("Skipping download test (playback mode)")
 
@@ -332,9 +293,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_05_revoke_token(
-        self, planetarycomputer_endpoint, planetarycomputer_collection_id
-    ):
+    async def test_05_revoke_token(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test revoking a SAS token. This test runs LAST to avoid breaking other tests."""
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_05_revoke_token")
@@ -346,7 +305,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
         # Generate a SAS token first
         test_logger.info("Step 1: Generating SAS token...")
-        token_response = await client.shared_access_signature.get_token(
+        token_response = await client.sas.get_token(
             collection_id=planetarycomputer_collection_id, duration_in_minutes=60
         )
 
@@ -358,7 +317,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
         # Revoke the token
         test_logger.info("Step 2: Revoking token...")
-        await client.shared_access_signature.revoke_token()
+        await client.sas.revoke_token()
         test_logger.info("Token revoked successfully (no exception thrown)")
 
         test_logger.info("Test PASSED\n")

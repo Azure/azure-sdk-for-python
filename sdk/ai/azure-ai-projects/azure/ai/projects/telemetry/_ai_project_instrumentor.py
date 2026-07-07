@@ -13,10 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import urlparse
-from azure.ai.projects.models._models import (
-    Tool,
-    ItemResource,
-)
+from azure.ai.projects.models._models import Tool
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -59,7 +56,6 @@ from ._utils import (
     _get_use_message_events,
 )
 from ._responses_instrumentor import _ResponsesInstrumentorPreview
-
 
 _Unset: Any = object()
 
@@ -181,12 +177,18 @@ class AIProjectInstrumentor:
     """
     A class for managing the trace instrumentation of the AIProjectClient.
 
-    This class allows enabling or disabling tracing for AI Projects.
+    This class allows enabling or disabling tracing for AI Projects
     and provides functionality to check whether instrumentation is active.
+
+    .. warning::
+        GenAI tracing is an experimental preview feature. To use this feature, you must set the
+        environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive)
+        before calling the ``instrument()`` method. Spans, attributes, and events may be modified
+        in future versions.
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not _tracing_library_available:
             raise ModuleNotFoundError(
                 "Azure Core Tracing Opentelemetry is not installed. "
@@ -205,6 +207,13 @@ class AIProjectInstrumentor:
     ) -> None:
         """
         Enable trace instrumentation for AIProjectClient.
+
+        .. warning::
+            GenAI tracing is an experimental preview feature. To use this feature, you must set the
+            environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive).
+            If this environment variable is not set or set to any value other than "true",
+            instrumentation will not be enabled and this method will return immediately without effect.
+            Spans, attributes, and events may be modified in future versions.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -225,17 +234,32 @@ class AIProjectInstrumentor:
           spans to be correlated with client-side spans. `True` will enable it, `False` will
           disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION is used. If the environment
-          variable is not found, then the value will default to `False`.
+          variable is not found, then the value will default to `True`.
+          Note: Changing this value only affects OpenAI clients obtained via get_openai_client() after
+          the change; previously acquired clients are unaffected.
         :type enable_trace_context_propagation: bool, optional
         :param enable_baggage_propagation: Whether to include baggage headers in trace context propagation.
           Only applies when enable_trace_context_propagation is True. `True` will enable baggage propagation,
           `False` will disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the environment
           variable is not found, then the value will default to `False`.
-          Note: Baggage may contain sensitive application data.
+          Note: Baggage may contain sensitive application data. This value is evaluated dynamically on
+          each request, so changes apply immediately — but only for OpenAI clients that had the trace
+          context propagation hook registered at acquisition time (i.e. clients obtained via
+          get_openai_client() while enable_trace_context_propagation was True). Clients acquired when
+          trace context propagation was disabled will never propagate baggage regardless of this value.
         :type enable_baggage_propagation: bool, optional
 
         """
+        # Check experimental feature gate
+        experimental_enabled = os.environ.get("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "false")
+        if experimental_enabled.lower() != "true":
+            logger.warning(
+                "GenAI tracing is not enabled. Set environment variable "
+                "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable this experimental feature."
+            )
+            return
+
         self._impl.instrument(enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation)
         self._responses_impl.instrument(enable_content_recording)
 
@@ -272,8 +296,11 @@ class _AIAgentsInstrumentorPreview:
     """
     A class for managing the trace instrumentation of AI Agents.
 
-    This class allows enabling or disabling tracing for AI Agents.
+    This class allows enabling or disabling tracing for AI Agents
     and provides functionality to check whether instrumentation is active.
+
+    .. note::
+        This is a private implementation class. Use the public AIProjectInstrumentor class instead.
     """
 
     def _str_to_bool(self, s):
@@ -289,6 +316,9 @@ class _AIAgentsInstrumentorPreview:
     ):
         """
         Enable trace instrumentation for AI Agents.
+
+        .. note::
+            This is a private implementation method. Use AIProjectInstrumentor.instrument() instead.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -306,13 +336,20 @@ class _AIAgentsInstrumentorPreview:
         :param enable_trace_context_propagation: Whether to enable automatic trace context propagation.
           `True` will enable it, `False` will disable it. If no value is provided, then the
           value read from environment variable AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION
-          is used. If the environment variable is not found, then the value will default to `False`.
+          is used. If the environment variable is not found, then the value will default to `True`.
+          Note: Changing this value only affects OpenAI clients obtained via get_openai_client() after
+          the change; previously acquired clients are unaffected.
         :type enable_trace_context_propagation: bool, optional
         :param enable_baggage_propagation: Whether to include baggage in trace context propagation.
           Only applies when enable_trace_context_propagation is True. `True` will enable it, `False`
           will disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the
           environment variable is not found, then the value will default to `False`.
+          Note: This value is evaluated dynamically on each request, so changes apply immediately —
+          but only for OpenAI clients that had the trace context propagation hook registered at
+          acquisition time (i.e. clients obtained via get_openai_client() while
+          enable_trace_context_propagation was True). Clients acquired when trace context propagation
+          was disabled will never propagate baggage regardless of this value.
         :type enable_baggage_propagation: bool, optional
 
         """
@@ -323,7 +360,7 @@ class _AIAgentsInstrumentorPreview:
 
         if enable_trace_context_propagation is None:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION")
-            enable_trace_context_propagation = self._str_to_bool(var_value)
+            enable_trace_context_propagation = True if var_value is None else self._str_to_bool(var_value)
 
         if enable_baggage_propagation is None:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE")
@@ -608,7 +645,7 @@ class _AIAgentsInstrumentorPreview:
                 attribute_name = GEN_AI_INPUT_MESSAGES
 
             # Set the attribute on the span
-            if span and span.span_instance.is_recording:
+            if span and span.span_instance.is_recording():
                 span.add_attribute(attribute_name, message_json)
 
     def _get_field(self, obj: Any, field: str) -> Any:
@@ -685,7 +722,7 @@ class _AIAgentsInstrumentorPreview:
             # Use attributes for instructions tracing
             # System instructions format: array of content objects without role/parts wrapper
             message_json = json.dumps(content_array, ensure_ascii=False)
-            if span and span.span_instance.is_recording:
+            if span and span.span_instance.is_recording():
                 span.add_attribute(GEN_AI_SYSTEM_MESSAGE, message_json)
 
     def _status_to_string(self, status: Any) -> str:
@@ -715,7 +752,7 @@ class _AIAgentsInstrumentorPreview:
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         _tools: Optional[List[Tool]] = None,
-        _tool_resources: Optional[ItemResource] = None,
+        _tool_resources: Optional[Any] = None,  # TODO: Used to be: _tool_resources: Optional[ItemResource] = None,
         # _toolset: Optional["ToolSet"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -745,7 +782,7 @@ class _AIAgentsInstrumentorPreview:
             reasoning_summary=reasoning_summary,
             structured_inputs=(str(structured_inputs) if structured_inputs is not None else None),
         )
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             span.add_attribute(GEN_AI_OPERATION_NAME, OperationName.CREATE_AGENT.value)
             if name:
                 span.add_attribute(GEN_AI_AGENT_NAME, name)
@@ -805,7 +842,7 @@ class _AIAgentsInstrumentorPreview:
         # _tool_resources: Optional["ToolResources"] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, server_address=server_address, port=port)
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             for message in messages or []:
                 self.add_thread_message_event(span, message)
 
@@ -925,7 +962,7 @@ class _AIAgentsInstrumentorPreview:
         if text:
             # Handle different types of text objects
             if hasattr(text, "format"):
-                # Azure AI Agents PromptAgentDefinitionText model object
+                # Azure AI Agents PromptAgentDefinitionTextOptions model object
                 format_info = getattr(text, "format", None)
                 if format_info:
                     if hasattr(format_info, "type"):

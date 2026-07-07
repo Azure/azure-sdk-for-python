@@ -6,9 +6,18 @@
 """
 Async tests for ResponsesInstrumentor with File Search tool.
 """
+
 import os
-import pytest
 from io import BytesIO
+import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
@@ -16,29 +25,24 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
-
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
+from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
 class TestResponsesInstrumentorFileSearchAsync(TestAiAgentsInstrumentorBase):
     """Async tests for ResponsesInstrumentor with File Search tool."""
 
+    # pylint: disable=too-many-nested-blocks
+
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_file_search_non_streaming_with_content_recording(self, **kwargs):
+    async def test_async_file_search_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Test asynchronous File Search agent with non-streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -53,7 +57,7 @@ class TestResponsesInstrumentorFileSearchAsync(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -106,14 +110,14 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response.output_text is not None
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for item in items:
+                async for _ in items:
                     pass  # Just iterate to consume items
 
                 # Check spans
@@ -247,7 +251,9 @@ Return Policy: 30-day return policy with no questions asked
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_file_search_non_streaming_without_content_recording(self, **kwargs):
+    async def test_async_file_search_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Test asynchronous File Search agent with non-streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -262,7 +268,7 @@ Return Policy: 30-day return policy with no questions asked
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -315,14 +321,14 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response.output_text is not None
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for item in items:
+                async for _ in items:
                     pass  # Just iterate to consume items
 
                 # Check spans
@@ -454,7 +460,9 @@ Return Policy: 30-day return policy with no questions asked
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_file_search_streaming_with_content_recording(self, **kwargs):
+    async def test_async_file_search_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Test asynchronous File Search agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -469,7 +477,7 @@ Return Policy: 30-day return policy with no questions asked
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -522,7 +530,7 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream
@@ -531,7 +539,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for item in items:
+                async for _ in items:
                     pass
 
                 # Check spans
@@ -659,7 +667,9 @@ Return Policy: 30-day return policy with no questions asked
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_file_search_streaming_without_content_recording(self, **kwargs):
+    async def test_async_file_search_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Test asynchronous File Search agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -674,7 +684,7 @@ Return Policy: 30-day return policy with no questions asked
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -727,7 +737,7 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream
@@ -736,7 +746,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for item in items:
+                async for _ in items:
                     pass
 
                 # Check spans

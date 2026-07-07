@@ -1,0 +1,27 @@
+{
+    "CrossLanguagePackageId": "Microsoft.Management",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.servicegroups.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.servicegroups.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.servicegroups.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.servicegroups.models.ParentServiceGroupProperties": "Microsoft.Management.ParentServiceGroupProperties",
+        "azure.mgmt.servicegroups.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.servicegroups.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.servicegroups.models.ServiceGroup": "Microsoft.Management.ServiceGroup",
+        "azure.mgmt.servicegroups.models.ServiceGroupCollectionResponse": "Microsoft.Management.ServiceGroupCollectionResponse",
+        "azure.mgmt.servicegroups.models.ServiceGroupProperties": "Microsoft.Management.ServiceGroupProperties",
+        "azure.mgmt.servicegroups.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.servicegroups.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.servicegroups.models.ProvisioningState": "Microsoft.Management.ProvisioningState",
+        "azure.mgmt.servicegroups.operations.ServiceGroupsOperations.get": "Microsoft.Management.ServiceGroups.get",
+        "azure.mgmt.servicegroups.aio.operations.ServiceGroupsOperations.get": "Microsoft.Management.ServiceGroups.get",
+        "azure.mgmt.servicegroups.operations.ServiceGroupsOperations.list_ancestors": "Microsoft.Management.ServiceGroups.listAncestors",
+        "azure.mgmt.servicegroups.aio.operations.ServiceGroupsOperations.list_ancestors": "Microsoft.Management.ServiceGroups.listAncestors",
+        "azure.mgmt.servicegroups.ServiceGroupsMgmtClient.begin_create_or_update_service_group": "Microsoft.Management.ServiceGroups.createOrUpdateServiceGroup",
+        "azure.mgmt.servicegroups.aio.ServiceGroupsMgmtClient.begin_create_or_update_service_group": "Microsoft.Management.ServiceGroups.createOrUpdateServiceGroup",
+        "azure.mgmt.servicegroups.ServiceGroupsMgmtClient.begin_update_service_group": "Microsoft.Management.ServiceGroups.updateServiceGroup",
+        "azure.mgmt.servicegroups.aio.ServiceGroupsMgmtClient.begin_update_service_group": "Microsoft.Management.ServiceGroups.updateServiceGroup",
+        "azure.mgmt.servicegroups.ServiceGroupsMgmtClient.begin_delete_service_group": "Microsoft.Management.ServiceGroups.deleteServiceGroup",
+        "azure.mgmt.servicegroups.aio.ServiceGroupsMgmtClient.begin_delete_service_group": "Microsoft.Management.ServiceGroups.deleteServiceGroup"
+    }
+}

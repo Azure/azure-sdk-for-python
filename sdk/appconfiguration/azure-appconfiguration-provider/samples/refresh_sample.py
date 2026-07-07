@@ -5,18 +5,21 @@
 # -------------------------------------------------------------------------
 import os
 import time
-from sample_utilities import get_client_modifications
+import random
+from sample_utilities import get_authority, get_credential, get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
 from azure.appconfiguration.provider import load, WatchKey
 
+endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+authority = get_authority(endpoint)
+credential = get_credential(authority)
 kwargs = get_client_modifications()
-connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
 # Setting up a configuration setting with a known value
-client = AzureAppConfigurationClient.from_connection_string(connection_string)
+client = AzureAppConfigurationClient(endpoint, credential)
 
 configuration_setting = ConfigurationSetting(key="message", value="Hello World!")
 
@@ -27,21 +30,39 @@ def my_callback_on_fail(_):
     print("Refresh failed!")
 
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
-# changes
+rand = random.random()
+watch_key = WatchKey("message" + str(rand))
+
+# [START refresh_provider]
+import os
+from azure.appconfiguration.provider import load, WatchKey
+
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
 config = load(
-    connection_string=connection_string,
-    refresh_on=[WatchKey("message")],
-    refresh_interval=1,
-    on_refresh_error=my_callback_on_fail,
+    endpoint=endpoint,
+    credential=credential,
+    refresh_on=[WatchKey("Sentinel")],
+    refresh_interval=60,
     **kwargs,
 )
+# [END refresh_provider]
+
+# Reload with test-specific configuration
 
 print(config["message"])
 print(config["my_json"]["key"])
 
+# [START refresh_call]
+config.refresh()
+# [END refresh_call]
+
 # Updating the configuration setting
 configuration_setting.value = "Hello World Updated!"
+
+configuration_setting2 = ConfigurationSetting(key="message" + str(rand), value="2")
+
+client.set_configuration_setting(configuration_setting=configuration_setting2)
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
 

@@ -128,9 +128,16 @@ def test_http_request_serialization(http_request):
 
 def test_url_join():
     assert _urljoin("devstoreaccount1", "?testdir") == "devstoreaccount1?testdir"
+    assert _urljoin("devstoreaccount1", "?testdir=foo") == "devstoreaccount1?testdir=foo"
+    assert _urljoin("devstoreaccount1/api", "?a=1") == "devstoreaccount1/api?a=1"
+    assert (
+        _urljoin("devstoreaccount1", "/?restype=service&comp=properties")
+        == "devstoreaccount1/?restype=service&comp=properties"
+    )
     assert _urljoin("devstoreaccount1", "") == "devstoreaccount1"
     assert _urljoin("devstoreaccount1", "testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1/", "") == "devstoreaccount1/"
+    assert _urljoin("devstoreaccount1/", "/testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1/", "testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1?a=1", "testdir/") == "devstoreaccount1/testdir/?a=1"
     assert _urljoin("devstoreaccount1", "testdir/?b=2") == "devstoreaccount1/testdir/?b=2"

@@ -15,6 +15,7 @@ class MessageRole(str, Enum):
     ASSISTANT = "assistant"
     SYSTEM = "system"
     TOOL = "tool"
+    DEVELOPER = "developer"
 
 
 class ContentType(str, Enum):
@@ -25,3 +26,9 @@ class ContentType(str, Enum):
     OUTPUT_TEXT = "output_text"
     TOOL_CALL = "tool_call"
     TOOL_RESULT = "tool_result"
+    FUNCTION_CALL = "function_call"
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    OPENAPI_CALL = "openapi_call"
+    OPENAPI_CALL_OUTPUT = "openapi_call_output"

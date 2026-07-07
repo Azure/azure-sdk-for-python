@@ -19,6 +19,9 @@ from azure.ai.projects.models import (
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentOpenApi(TestBase):
 
     # To run this test:
@@ -48,7 +51,7 @@ class TestAgentOpenApi(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -62,7 +65,7 @@ class TestAgentOpenApi(TestBase):
             assert os.path.exists(weather_asset_file_path), f"OpenAPI spec file not found at: {weather_asset_file_path}"
             print(f"Using OpenAPI spec file: {weather_asset_file_path}")
 
-            with open(weather_asset_file_path, "r") as f:
+            with open(weather_asset_file_path, "r", encoding="utf-8") as f:
                 openapi_weather = jsonref.loads(f.read())
 
             # Create OpenAPI tool
@@ -94,7 +97,7 @@ class TestAgentOpenApi(TestBase):
 
             response = openai_client.responses.create(
                 input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 

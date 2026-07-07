@@ -23,4 +23,4 @@ class TestCognitiveServicesManagementDeletedAccountsOperations(AzureMgmtRecorded
     def test_list(self, resource_group):
         response = self.client.deleted_accounts.list()
         result = [r for r in response]
-        assert response
+        assert len(result)

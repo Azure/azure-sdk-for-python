@@ -5,7 +5,7 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient
+import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
@@ -18,7 +18,13 @@ class TestNoneOptions(unittest.TestCase):
     connectionPolicy = configs.connectionPolicy
 
     def setUp(self) -> None:
-        self.client = CosmosClient(self.host, self.masterKey)
+        # Key-auth client for control-plane operations (throughput, conflicts, etc.)
+        self.key_client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        self.key_database = self.key_client.get_database_client(self.configs.TEST_DATABASE_ID)
+        self.key_container = self.key_database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        # AAD (or key, depending on env var) client for data-plane operations
+        self.client = test_config.TestConfig.create_data_client()
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
@@ -70,6 +76,7 @@ class TestNoneOptions(unittest.TestCase):
         pager = self.container.query_items("SELECT * FROM c", continuation_token_limit=None, enable_scan_in_query=None,
                                            initial_headers=None, max_integrated_cache_staleness_in_ms=None, max_item_count=None,
                                            parameters=None, partition_key=None, populate_index_metrics=None,
+                                           populate_query_advice=None,
                                            populate_query_metrics=None, priority=None, response_hook=None, session_token=None,
                                            throughput_bucket=None, enable_cross_partition_query=True)
         items = list(pager)
@@ -115,16 +122,22 @@ class TestNoneOptions(unittest.TestCase):
                                      throughput_bucket=None)
 
     def test_get_throughput_none_options(self):
-        tp = self.container.get_throughput(response_hook=None)
+        # get_throughput reads the offer, which is a control-plane operation that may
+        # return 403 under AAD Data Contributor role. Uses key_container (key-auth) for now.
+        tp = self.key_container.get_throughput(response_hook=None)
         assert tp.offer_throughput > 0
 
     def test_list_conflicts_none_options(self):
-        pager = self.container.list_conflicts(max_item_count=None, response_hook=None)
+        # list_conflicts may be a control-plane operation. Uses key_container (key-auth)
+        # for now.
+        pager = self.key_container.list_conflicts(max_item_count=None, response_hook=None)
         conflicts = list(pager)
         assert conflicts == conflicts  # may be empty
 
     def test_query_conflicts_none_options(self):
-        pager = self.container.query_conflicts("SELECT * FROM c", parameters=None, partition_key=None,
+        # query_conflicts may be a control-plane operation. Uses key_container (key-auth)
+        # for now.
+        pager = self.key_container.query_conflicts("SELECT * FROM c", parameters=None, partition_key=None,
                                                max_item_count=None, response_hook=None, enable_cross_partition_query=True)
         conflicts = list(pager)
         assert conflicts == conflicts
@@ -141,7 +154,7 @@ class TestNoneOptions(unittest.TestCase):
         pager = self.container.query_items("SELECT * FROM c WHERE c.pk = @pk", parameters=[{"name": "@pk", "value": pk_value}],
                                            partition_key=None, continuation_token_limit=None, enable_scan_in_query=None,
                                            initial_headers=None, max_integrated_cache_staleness_in_ms=None, max_item_count=None,
-                                           populate_index_metrics=None, populate_query_metrics=None, priority=None,
+                                           populate_index_metrics=None, populate_query_advice=None, populate_query_metrics=None, priority=None,
                                            response_hook=None, session_token=None, throughput_bucket=None)
         _items = list(pager)
         assert _items == _items

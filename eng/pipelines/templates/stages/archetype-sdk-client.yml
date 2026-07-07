@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: SkipPrValidation
+    type: boolean
+    default: false
   - name: Artifacts
     type: object
     default: []
@@ -29,9 +32,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: all
   - name: InjectedPackages
     type: string
     default: ''
@@ -84,16 +84,32 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
-  - name: PythonVersionForAnalyze
-    type: string
-    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     stages:
+      - ${{ if and(eq(parameters.SkipPrValidation, true), eq(variables['Build.Reason'], 'Manual')) }}:
+        - stage: NoOp
+          displayName: No-op
+          variables:
+            - template: /eng/pipelines/templates/variables/globals.yml
+            - template: /eng/pipelines/templates/variables/image.yml
+          jobs:
+            - job: NoOp
+              displayName: No-op
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
+              steps:
+                - checkout: none
+                - pwsh: Write-Host "PR validation skipped because SkipPrValidation was set to true for a manual run."
+                  displayName: Skip PR validation
+
       - stage: Build
+        condition: not(and(eq(${{ parameters.SkipPrValidation }}, true), eq(variables['Build.Reason'], 'Manual')))
         jobs:
           - template: /eng/pipelines/templates/jobs/ci.yml
             parameters:
@@ -108,7 +124,6 @@ extends:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}
@@ -123,7 +138,6 @@ extends:
               VerifyAutorest: ${{ parameters.VerifyAutorest }}
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
-              PythonVersionForAnalyze: ${{ parameters.PythonVersionForAnalyze }}
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml

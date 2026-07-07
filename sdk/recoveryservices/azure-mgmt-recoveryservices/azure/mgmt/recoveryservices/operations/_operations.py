@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RecoveryServicesClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,7 +41,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -52,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +72,7 @@ def build_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +106,7 @@ def build_vaults_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -147,7 +146,7 @@ def build_vaults_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -180,7 +179,7 @@ def build_vaults_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}"
     path_format_arguments = {
@@ -203,7 +202,7 @@ def build_vaults_list_by_subscription_id_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,7 +228,7 @@ def build_vaults_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +257,7 @@ def build_deleted_vaults_list_by_subscription_id_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -285,7 +284,7 @@ def build_deleted_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -314,7 +313,7 @@ def build_deleted_vaults_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -344,7 +343,7 @@ def build_deleted_vaults_get_operation_status_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,7 +372,7 @@ def build_private_link_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -402,7 +401,7 @@ def build_private_link_resources_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -431,7 +430,7 @@ def build_vault_certificates_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -461,7 +460,7 @@ def build_registered_identities_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/registeredIdentities/{identityName}"
     path_format_arguments = {
@@ -485,7 +484,7 @@ def build_replication_usages_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -513,7 +512,7 @@ def build_usages_list_by_vaults_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -541,7 +540,7 @@ def build_vault_extended_info_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -570,7 +569,7 @@ def build_vault_extended_info_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -601,7 +600,7 @@ def build_vault_extended_info_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -632,7 +631,7 @@ def build_recovery_services_check_name_availability_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -663,7 +662,7 @@ def build_recovery_services_capabilities_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -692,7 +691,7 @@ def build_recovery_services_get_operation_status_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -721,7 +720,7 @@ def build_recovery_services_get_operation_result_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -809,7 +808,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -822,7 +824,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ClientDiscoveryValueForSingleApi], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ClientDiscoveryValueForSingleApi],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -838,7 +843,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -902,6 +910,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -916,11 +925,14 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Vault, response.json())
 
@@ -933,7 +945,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: Union[_models.Vault, JSON, IO[bytes]],
+        vault: Union[_models.Vault, _types.Vault, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -975,6 +987,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -988,7 +1001,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -996,7 +1012,7 @@ class VaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1039,7 +1055,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: JSON,
+        vault: _types.Vault,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -1053,7 +1069,7 @@ class VaultsOperations:
         :param vault_name: The name of the Vault. Required.
         :type vault_name: str
         :param vault: Recovery Services Vault to be created. Required.
-        :type vault: JSON
+        :type vault: ~azure.mgmt.recoveryservices.types.Vault
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1101,7 +1117,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: Union[_models.Vault, JSON, IO[bytes]],
+        vault: Union[_models.Vault, _types.Vault, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -1113,9 +1129,10 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the Vault. Required.
         :type vault_name: str
-        :param vault: Recovery Services Vault to be created. Is one of the following types: Vault,
-         JSON, IO[bytes] Required.
-        :type vault: ~azure.mgmt.recoveryservices.models.Vault or JSON or IO[bytes]
+        :param vault: Recovery Services Vault to be created. Is either a Vault type or a IO[bytes]
+         type. Required.
+        :type vault: ~azure.mgmt.recoveryservices.models.Vault or
+         ~azure.mgmt.recoveryservices.types.Vault or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns Vault. The Vault is compatible with
@@ -1180,7 +1197,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: Union[_models.PatchVault, JSON, IO[bytes]],
+        vault: Union[_models.PatchVault, _types.PatchVault, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -1222,6 +1239,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1235,7 +1253,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1243,7 +1264,7 @@ class VaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1286,7 +1307,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: JSON,
+        vault: _types.PatchVault,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -1300,7 +1321,7 @@ class VaultsOperations:
         :param vault_name: The name of the Vault. Required.
         :type vault_name: str
         :param vault: Recovery Services Vault to be created. Required.
-        :type vault: JSON
+        :type vault: ~azure.mgmt.recoveryservices.types.PatchVault
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1348,7 +1369,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        vault: Union[_models.PatchVault, JSON, IO[bytes]],
+        vault: Union[_models.PatchVault, _types.PatchVault, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -1360,9 +1381,10 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the Vault. Required.
         :type vault_name: str
-        :param vault: Recovery Services Vault to be created. Is one of the following types: PatchVault,
-         JSON, IO[bytes] Required.
-        :type vault: ~azure.mgmt.recoveryservices.models.PatchVault or JSON or IO[bytes]
+        :param vault: Recovery Services Vault to be created. Is either a PatchVault type or a IO[bytes]
+         type. Required.
+        :type vault: ~azure.mgmt.recoveryservices.models.PatchVault or
+         ~azure.mgmt.recoveryservices.types.PatchVault or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns Vault. The Vault is compatible with
@@ -1450,6 +1472,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1463,7 +1486,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1471,7 +1497,7 @@ class VaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1583,7 +1609,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1596,7 +1625,10 @@ class VaultsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Vault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Vault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1612,7 +1644,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1671,7 +1706,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1684,7 +1722,10 @@ class VaultsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Vault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Vault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1700,7 +1741,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1729,7 +1773,7 @@ class DeletedVaultsOperations:
     @api_version_validation(
         method_added_on="2025-08-01",
         params_added_on={"2025-08-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
     )
     def list_by_subscription_id(self, location: str, **kwargs: Any) -> ItemPaged["_models.DeletedVault"]:
         """List deleted vaults in a subscription.
@@ -1781,7 +1825,10 @@ class DeletedVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1794,7 +1841,10 @@ class DeletedVaultsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeletedVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DeletedVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1810,7 +1860,10 @@ class DeletedVaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1821,7 +1874,7 @@ class DeletedVaultsOperations:
     @api_version_validation(
         method_added_on="2025-08-01",
         params_added_on={"2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
     )
     def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedVault:
         """Get a specific deleted vault.
@@ -1860,6 +1913,7 @@ class DeletedVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1874,11 +1928,14 @@ class DeletedVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeletedVault, response.json())
 
@@ -1892,13 +1949,13 @@ class DeletedVaultsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "content_type", "accept"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
     )
     def _undelete_initial(
         self,
         location: str,
         deleted_vault_name: str,
-        body: Union[_models.DeletedVaultUndeleteInput, JSON, IO[bytes]],
+        body: Union[_models.DeletedVaultUndeleteInput, _types.DeletedVaultUndeleteInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1937,6 +1994,7 @@ class DeletedVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1950,7 +2008,10 @@ class DeletedVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1960,7 +2021,7 @@ class DeletedVaultsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1998,7 +2059,7 @@ class DeletedVaultsOperations:
         self,
         location: str,
         deleted_vault_name: str,
-        body: JSON,
+        body: _types.DeletedVaultUndeleteInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2010,7 +2071,7 @@ class DeletedVaultsOperations:
         :param deleted_vault_name: The name of the DeletedVault. Required.
         :type deleted_vault_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.recoveryservices.types.DeletedVaultUndeleteInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2051,13 +2112,13 @@ class DeletedVaultsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "content_type", "accept"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
     )
     def begin_undelete(
         self,
         location: str,
         deleted_vault_name: str,
-        body: Union[_models.DeletedVaultUndeleteInput, JSON, IO[bytes]],
+        body: Union[_models.DeletedVaultUndeleteInput, _types.DeletedVaultUndeleteInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Start undelete of a deleted vault.
@@ -2066,9 +2127,10 @@ class DeletedVaultsOperations:
         :type location: str
         :param deleted_vault_name: The name of the DeletedVault. Required.
         :type deleted_vault_name: str
-        :param body: The content of the action request. Is one of the following types:
-         DeletedVaultUndeleteInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.recoveryservices.models.DeletedVaultUndeleteInput or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a DeletedVaultUndeleteInput type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservices.models.DeletedVaultUndeleteInput or
+         ~azure.mgmt.recoveryservices.types.DeletedVaultUndeleteInput or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2126,7 +2188,7 @@ class DeletedVaultsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "operation_id", "accept"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
     )
     def get_operation_status(
         self, location: str, deleted_vault_name: str, operation_id: str, **kwargs: Any
@@ -2170,6 +2232,7 @@ class DeletedVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2184,11 +2247,14 @@ class DeletedVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -2259,6 +2325,7 @@ class PrivateLinkResourcesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2273,11 +2340,14 @@ class PrivateLinkResourcesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateLinkResource, response.json())
 
@@ -2343,7 +2413,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2356,7 +2429,10 @@ class PrivateLinkResourcesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateLinkResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2372,7 +2448,10 @@ class PrivateLinkResourcesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2434,7 +2513,7 @@ class VaultCertificatesOperations:
         resource_group_name: str,
         vault_name: str,
         certificate_name: str,
-        certificate_request: JSON,
+        certificate_request: _types.CertificateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2449,7 +2528,7 @@ class VaultCertificatesOperations:
         :param certificate_name: Certificate friendly name. Required.
         :type certificate_name: str
         :param certificate_request: Input parameters for uploading the vault certificate. Required.
-        :type certificate_request: JSON
+        :type certificate_request: ~azure.mgmt.recoveryservices.types.CertificateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2496,7 +2575,7 @@ class VaultCertificatesOperations:
         resource_group_name: str,
         vault_name: str,
         certificate_name: str,
-        certificate_request: Union[_models.CertificateRequest, JSON, IO[bytes]],
+        certificate_request: Union[_models.CertificateRequest, _types.CertificateRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultCertificateResponse:
         """Uploads a certificate for a resource.
@@ -2508,10 +2587,10 @@ class VaultCertificatesOperations:
         :type vault_name: str
         :param certificate_name: Certificate friendly name. Required.
         :type certificate_name: str
-        :param certificate_request: Input parameters for uploading the vault certificate. Is one of the
-         following types: CertificateRequest, JSON, IO[bytes] Required.
-        :type certificate_request: ~azure.mgmt.recoveryservices.models.CertificateRequest or JSON or
-         IO[bytes]
+        :param certificate_request: Input parameters for uploading the vault certificate. Is either a
+         CertificateRequest type or a IO[bytes] type. Required.
+        :type certificate_request: ~azure.mgmt.recoveryservices.models.CertificateRequest or
+         ~azure.mgmt.recoveryservices.types.CertificateRequest or IO[bytes]
         :return: VaultCertificateResponse. The VaultCertificateResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
@@ -2554,6 +2633,7 @@ class VaultCertificatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2568,11 +2648,14 @@ class VaultCertificatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultCertificateResponse, response.json())
 
@@ -2652,7 +2735,10 @@ class RegisteredIdentitiesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -2731,7 +2817,10 @@ class ReplicationUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2744,7 +2833,10 @@ class ReplicationUsagesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ReplicationUsage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ReplicationUsage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2760,7 +2852,10 @@ class ReplicationUsagesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2842,7 +2937,10 @@ class UsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2855,7 +2953,10 @@ class UsagesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VaultUsage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VaultUsage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2871,7 +2972,10 @@ class UsagesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2936,6 +3040,7 @@ class VaultExtendedInfoOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2950,11 +3055,14 @@ class VaultExtendedInfoOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultExtendedInfoResource, response.json())
 
@@ -2997,7 +3105,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: JSON,
+        resource_extended_info_details: _types.VaultExtendedInfoResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3010,7 +3118,8 @@ class VaultExtendedInfoOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_extended_info_details: Details of ResourceExtendedInfo. Required.
-        :type resource_extended_info_details: JSON
+        :type resource_extended_info_details:
+         ~azure.mgmt.recoveryservices.types.VaultExtendedInfoResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3053,7 +3162,9 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: Union[_models.VaultExtendedInfoResource, JSON, IO[bytes]],
+        resource_extended_info_details: Union[
+            _models.VaultExtendedInfoResource, _types.VaultExtendedInfoResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.VaultExtendedInfoResource:
         """Create vault extended info.
@@ -3063,10 +3174,11 @@ class VaultExtendedInfoOperations:
         :type resource_group_name: str
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
-        :param resource_extended_info_details: Details of ResourceExtendedInfo. Is one of the following
-         types: VaultExtendedInfoResource, JSON, IO[bytes] Required.
+        :param resource_extended_info_details: Details of ResourceExtendedInfo. Is either a
+         VaultExtendedInfoResource type or a IO[bytes] type. Required.
         :type resource_extended_info_details:
-         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or
+         ~azure.mgmt.recoveryservices.types.VaultExtendedInfoResource or IO[bytes]
         :return: VaultExtendedInfoResource. The VaultExtendedInfoResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
@@ -3108,6 +3220,7 @@ class VaultExtendedInfoOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3122,11 +3235,14 @@ class VaultExtendedInfoOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultExtendedInfoResource, response.json())
 
@@ -3169,7 +3285,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: JSON,
+        resource_extended_info_details: _types.VaultExtendedInfoResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3182,7 +3298,8 @@ class VaultExtendedInfoOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_extended_info_details: Details of ResourceExtendedInfo. Required.
-        :type resource_extended_info_details: JSON
+        :type resource_extended_info_details:
+         ~azure.mgmt.recoveryservices.types.VaultExtendedInfoResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3225,7 +3342,9 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: Union[_models.VaultExtendedInfoResource, JSON, IO[bytes]],
+        resource_extended_info_details: Union[
+            _models.VaultExtendedInfoResource, _types.VaultExtendedInfoResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.VaultExtendedInfoResource:
         """Update vault extended info.
@@ -3235,10 +3354,11 @@ class VaultExtendedInfoOperations:
         :type resource_group_name: str
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
-        :param resource_extended_info_details: Details of ResourceExtendedInfo. Is one of the following
-         types: VaultExtendedInfoResource, JSON, IO[bytes] Required.
+        :param resource_extended_info_details: Details of ResourceExtendedInfo. Is either a
+         VaultExtendedInfoResource type or a IO[bytes] type. Required.
         :type resource_extended_info_details:
-         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or
+         ~azure.mgmt.recoveryservices.types.VaultExtendedInfoResource or IO[bytes]
         :return: VaultExtendedInfoResource. The VaultExtendedInfoResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
@@ -3280,6 +3400,7 @@ class VaultExtendedInfoOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3294,11 +3415,14 @@ class VaultExtendedInfoOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultExtendedInfoResource, response.json())
 
@@ -3335,17 +3459,13 @@ class RecoveryServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3368,22 +3488,18 @@ class RecoveryServicesOperations:
         self,
         resource_group_name: str,
         location: str,
-        input: JSON,
+        input: _types.CheckNameAvailabilityParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3391,7 +3507,7 @@ class RecoveryServicesOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param input: Contains information about Resource type and Resource name. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservices.types.CheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3411,17 +3527,13 @@ class RecoveryServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3444,30 +3556,26 @@ class RecoveryServicesOperations:
         self,
         resource_group_name: str,
         location: str,
-        input: Union[_models.CheckNameAvailabilityParameters, JSON, IO[bytes]],
+        input: Union[_models.CheckNameAvailabilityParameters, _types.CheckNameAvailabilityParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param input: Contains information about Resource type and Resource name. Is one of the
-         following types: CheckNameAvailabilityParameters, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityParameters or JSON or
-         IO[bytes]
+        :param input: Contains information about Resource type and Resource name. Is either a
+         CheckNameAvailabilityParameters type or a IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityParameters or
+         ~azure.mgmt.recoveryservices.types.CheckNameAvailabilityParameters or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResult
@@ -3509,6 +3617,7 @@ class RecoveryServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3523,11 +3632,14 @@ class RecoveryServicesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckNameAvailabilityResult, response.json())
 
@@ -3563,7 +3675,12 @@ class RecoveryServicesOperations:
 
     @overload
     def capabilities(
-        self, location: str, input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        input: _types.ResourceCapabilities,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CapabilitiesResponse:
         """API to get details about capabilities provided by Microsoft.RecoveryServices RP.
 
@@ -3572,7 +3689,7 @@ class RecoveryServicesOperations:
         :param location: The location of the resource. Required.
         :type location: str
         :param input: The request body. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservices.types.ResourceCapabilities
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3603,7 +3720,10 @@ class RecoveryServicesOperations:
 
     @distributed_trace
     def capabilities(
-        self, location: str, input: Union[_models.ResourceCapabilities, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        input: Union[_models.ResourceCapabilities, _types.ResourceCapabilities, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CapabilitiesResponse:
         """API to get details about capabilities provided by Microsoft.RecoveryServices RP.
 
@@ -3611,9 +3731,10 @@ class RecoveryServicesOperations:
 
         :param location: The location of the resource. Required.
         :type location: str
-        :param input: The request body. Is one of the following types: ResourceCapabilities, JSON,
-         IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservices.models.ResourceCapabilities or JSON or IO[bytes]
+        :param input: The request body. Is either a ResourceCapabilities type or a IO[bytes] type.
+         Required.
+        :type input: ~azure.mgmt.recoveryservices.models.ResourceCapabilities or
+         ~azure.mgmt.recoveryservices.types.ResourceCapabilities or IO[bytes]
         :return: CapabilitiesResponse. The CapabilitiesResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservices.models.CapabilitiesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3653,6 +3774,7 @@ class RecoveryServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3667,11 +3789,14 @@ class RecoveryServicesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CapabilitiesResponse, response.json())
 
@@ -3729,6 +3854,7 @@ class _RecoveryServicesClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3743,11 +3869,14 @@ class _RecoveryServicesClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -3800,6 +3929,7 @@ class _RecoveryServicesClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3814,13 +3944,16 @@ class _RecoveryServicesClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
             if _stream:
-                deserialized = response.iter_bytes()
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
             else:
                 deserialized = _deserialize(_models.Vault, response.json())
 

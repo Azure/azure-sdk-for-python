@@ -9,9 +9,8 @@ parameters:
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
-  ToxTestEnv: ""
+  CheckEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
-  ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
   TestProxy: false
@@ -26,6 +25,13 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
+
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -35,11 +41,6 @@ steps:
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: set-dev-build.yml
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - pwsh: |
       Write-Host (Get-Command python).Source
@@ -54,7 +55,7 @@ steps:
     inputs:
       scriptPath: 'eng/scripts/set_checks.py'
       arguments: >-
-        --unsupported="$(UnsupportedToxEnvironments)"
+        --unsupported="$(UnsupportedChecks)"
         --override="$(ChecksOverride)"
         --team-project="$(System.TeamProject)"
 
@@ -72,7 +73,7 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
-          $env:TOX_PIP_IMPL="uv";
+          $env:AZPYSDK_PIP_IMPL="uv";
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
@@ -92,14 +93,14 @@ steps:
           ${{ parameters.CoverageArg }}
           --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
-          --checks="${{ parameters.ToxTestEnv }}"
+          --checks="${{ parameters.CheckEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
   - ${{ else }}:
     - pwsh: |
-        $env:TOX_PIP_IMPL="uv"
+        $env:AZPYSDK_PIP_IMPL="uv"
         Write-Host (Get-Command python).Source
 
         if ($env:TESTMARKARGUMENT) {
@@ -114,7 +115,7 @@ steps:
           ${{ parameters.CoverageArg }} `
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
-          --checks="${{ parameters.ToxTestEnv }}" `
+          --checks="${{ parameters.CheckEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
@@ -184,6 +185,11 @@ steps:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
+
+  - template: /eng/common/pipelines/templates/steps/upload-llm-artifacts.yml
+    parameters:
+      TestResultsGlob: '*test*.xml'
+      SearchFolder: '$(Build.SourcesDirectory)/sdk'
 
   - task: PublishCodeCoverageResults@2
     displayName: 'Publish Code Coverage to DevOps'

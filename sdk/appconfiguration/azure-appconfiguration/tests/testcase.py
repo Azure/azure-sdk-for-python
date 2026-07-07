@@ -18,16 +18,14 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting,
     ConfigurationSnapshot,
 )
-from azure.core.exceptions import ResourceExistsError
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
-    def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
+    client = None
+
+    def create_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
-
-    def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
 
     def create_config_setting(self):
         return ConfigurationSetting(
@@ -47,19 +45,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
             tags={"tag3": "value3", "tag4": "value4"},
         )
 
-    def add_for_test(self, client, config_setting):
-        try:
-            client.add_configuration_setting(config_setting)
-        except ResourceExistsError:
-            pass
-
-    def set_up(self, appconfiguration_string, is_aad=False):
-        if is_aad:
-            self.client = self.create_aad_client(appconfiguration_string)
-        else:
-            self.client = self.create_client(appconfiguration_string)
-        self.add_for_test(self.client, self.create_config_setting())
-        self.add_for_test(self.client, self.create_config_setting_no_label())
+    def set_up(self, appconfiguration_string):
+        self.client = self.create_client(appconfiguration_string)
+        self.client.set_configuration_setting(self.create_config_setting())
+        self.client.set_configuration_setting(self.create_config_setting_no_label())
 
     def tear_down(self):
         if self.client is not None:
@@ -68,7 +57,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             for snapshot in snapshots:
                 try:
                     self.client.archive_snapshot(name=snapshot.name)
-                except Exception:
+                except Exception:  # pylint:disable=broad-except
                     pass
 
             # Delete all configuration settings
@@ -98,9 +87,14 @@ class AppConfigTestCase(AzureRecordedTestCase):
             assert key1.enabled == key2.enabled
             if key1.filters and key2.filters:
                 assert len(key1.filters) == len(key2.filters)
+            # On FeatureFlagConfigurationSetting, `description` represents the
+            # feature-flag JSON description, not the KV-level description.
             assert key1.description == key2.description
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.secret_id == key2.secret_id
+            assert key1.description == key2.description
+        else:
+            assert key1.description == key2.description
 
     def _assert_snapshots(self, snapshot: ConfigurationSnapshot, expected_snapshot: ConfigurationSnapshot):
         assert snapshot.composition_type == expected_snapshot.composition_type
@@ -117,3 +111,4 @@ class AppConfigTestCase(AzureRecordedTestCase):
         assert snapshot.size == expected_snapshot.size
         assert snapshot.status == expected_snapshot.status
         assert snapshot.tags == expected_snapshot.tags
+        assert snapshot.description == expected_snapshot.description

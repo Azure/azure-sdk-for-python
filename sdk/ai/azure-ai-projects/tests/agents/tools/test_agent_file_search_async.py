@@ -19,7 +19,7 @@ class TestAgentFileSearchAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_file_search_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -67,7 +67,7 @@ class TestAgentFileSearchAsync(TestBase):
 
             response = await openai_client.responses.create(
                 input="What products are mentioned in the document?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             print(f"Response completed (id: {response.id})")
@@ -105,7 +105,7 @@ class TestAgentFileSearchAsync(TestBase):
         while using File Search to answer follow-up questions.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -162,7 +162,7 @@ Widget C:
             print("\n--- Turn 1: Initial query ---")
             response_1 = await openai_client.responses.create(
                 input="What is the price of Widget B?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -174,7 +174,7 @@ Widget C:
             response_2 = await openai_client.responses.create(
                 input="What about its stock level?",
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -188,7 +188,7 @@ Widget C:
             response_3 = await openai_client.responses.create(
                 input="How does that compare to Widget A's stock?",
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -202,7 +202,7 @@ Widget C:
             response_4 = await openai_client.responses.create(
                 input="Which widget has the highest rating?",
                 previous_response_id=response_3.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_4_text = response_4.output_text

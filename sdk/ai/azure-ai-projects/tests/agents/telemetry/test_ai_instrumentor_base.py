@@ -11,12 +11,13 @@ import pytest
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from azure.ai.projects.telemetry import AIProjectInstrumentor
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from memory_trace_exporter import MemoryTraceExporter
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
 from test_base import TestBase
+from azure.ai.projects.telemetry import AIProjectInstrumentor
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
+EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE = "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"
 
 
 # We test different ways to create a thread & message, to cover all tracing code paths
@@ -49,10 +50,12 @@ class TestAiAgentsInstrumentorBase(TestBase):
         self.cleanup()
 
     def setup_telemetry(self):
-        trace._TRACER_PROVIDER = TracerProvider()
-        self.exporter = MemoryTraceExporter()
+        os.environ[EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE] = "true"
+        tracer_provider = TracerProvider()
+        trace._TRACER_PROVIDER = tracer_provider
+        self.exporter = MemoryTraceExporter()  # pylint: disable=attribute-defined-outside-init
         span_processor = SimpleSpanProcessor(self.exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
+        tracer_provider.add_span_processor(span_processor)
         AIProjectInstrumentor().instrument()
 
     def cleanup(self):
@@ -60,6 +63,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
         AIProjectInstrumentor().uninstrument()
         trace._TRACER_PROVIDER = None
         os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
+        os.environ.pop(EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE, None)
 
     def _check_spans(
         self,
@@ -73,7 +77,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
         event_contents: List[str],
         run_step_events: Optional[List[List[Dict[str, Any]]]] = None,
         has_annotations: bool = False,
-    ):
+    ):  # pylint: disable=too-many-statements
         """Check the spans for correctness."""
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1

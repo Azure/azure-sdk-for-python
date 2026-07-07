@@ -1,14 +1,14 @@
 # Training Samples for Custom Model Building
 
-This directory contains training files for the `create_analyzer_with_labels.py` sample.
+This directory contains labeled training files for the `sample_create_analyzer_with_labels.py` sample.
 
 ## File Requirements
 
 For each training document, you need **three files**:
 
-1. **PDF file**: The actual document (e.g., `IRS_1040_1_09.pdf`)
-2. **Labels file**: Field annotations (e.g., `IRS_1040_1_09.pdf.labels.json`)
-3. **Result file**: OCR output from prebuilt-documentSearch (e.g., `IRS_1040_1_09.pdf.result.json`)
+1. **Source document**: The actual document (image, PDF, etc.) (e.g., `receipt1.jpg`)
+2. **Labels file**: Field labels and bounding box annotations (e.g., `receipt1.jpg.labels.json`)
+3. **Result file**: Pre-computed OCR results (e.g., `receipt1.jpg.result.json`, optional, speeds up training)
 
 ## Labels File Format
 
@@ -23,9 +23,9 @@ Example structure:
     "$schema": "https://schema.ai.azure.com/mmi/2025-11-01/labels.json",
     "fileId": "",
     "fieldLabels": {
-        "FieldYourFirstNameAndMiddleInitial": {
+        "MerchantName": {
             "type": "string",
-            "valueString": "Robert",
+            "valueString": "Contoso",
             ...
         }
     }
@@ -34,20 +34,27 @@ Example structure:
 
 ## Current Training Set
 
-This directory contains 2 labeled IRS 1040 forms with 5 fields:
-- `FieldYourFirstNameAndMiddleInitial`
-- `FieldYourFirstNameAndMiddleInitialLastName`
-- `CheckboxYouAsADependent`
-- `TableDependents` (with nested properties)
-- `FieldWagesSalariesTipsEtcAttachFormSW2`
+This directory contains 2 labeled receipt images with 3 fields:
+- `MerchantName` (string) — Name of the merchant
+- `Items` (array of objects) — Each item has `Quantity`, `Name`, and `Price`
+- `TotalPrice` (string) — Total amount
+
+### Files
+
+| Document | Labels | OCR Result |
+|---|---|---|
+| `receipt1.jpg` | `receipt1.jpg.labels.json` | `receipt1.jpg.result.json` |
+| `receipt2.jpg` | `receipt2.jpg.labels.json` | `receipt2.jpg.result.json` |
 
 ## Usage
 
 1. Upload all files to Azure Blob Storage
-2. Set the `CONTENTUNDERSTANDING_STORAGE_CONTAINER_SAS_URL` environment variable
-3. Set the `CONTENTUNDERSTANDING_STORAGE_PREFIX` to point to your training files
-4. Run `python create_analyzer_with_labels.py`
+2. Set environment variables (choose one option):
+   - **Option A**: Set `CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL` to a SAS URL with Read + List permissions
+   - **Option B**: Set `CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT` and `CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER` to auto-upload
+3. Optionally set `CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX` if files are in a subfolder
+4. Run `python sample_create_analyzer_with_labels.py`
 
-See `../../env.sample` for configuration details.
+See `sample_create_analyzer_with_labels.py` and `../../env.sample` for configuration details.
 
 

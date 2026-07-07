@@ -1,0 +1,14 @@
+{
+  "location": "westus",
+  "properties": {
+    "authMode": "aadToken",
+    "defaults": {
+      "deploymentName": "smoke-batch-deployment"
+    },
+    "description": "smoke batch endpoint",
+    "properties": {}
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

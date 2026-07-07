@@ -1,3 +1,6 @@
 {
-  "apiVersion": "2025-11-01"
+  "apiVersion": "2025-11-01",
+  "apiVersions": {
+    "ContentUnderstanding": "2025-11-01"
+  }
 }

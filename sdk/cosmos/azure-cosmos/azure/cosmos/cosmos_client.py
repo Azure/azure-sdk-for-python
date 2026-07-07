@@ -92,6 +92,9 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
         policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
     else:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
+
+    policy.ReadTimeout = kwargs.pop(Constants.Kwargs.READ_TIMEOUT, policy.ReadTimeout)
+
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
@@ -151,8 +154,6 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
     policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
-
-
 class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
@@ -171,6 +172,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int connection_timeout: The HTTP request timeout in seconds.
+    :keyword float read_timeout: The socket read timeout in seconds. This is the time the client will wait for a
+        response from the server after a connection has been established. If not specified, the default value of
+        65 seconds is used. This can be overridden at the request level.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
@@ -203,8 +207,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
-    :keyword dict[str, Any] availability_strategy:
-        The threshold-based availability strategy to use for this client's requests.
+    :keyword Union[bool, dict[str, Any]] availability_strategy:
+        Enables an availability strategy by using cross-region request hedging.
+        Can be True (use default values: threshold_ms=500, threshold_steps_ms=100),
+        False (disable hedging), or a dict with keys ``threshold_ms`` and ``threshold_steps_ms``.
+        Default value is False (hedging disabled).
+    :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
         Optional ThreadPoolExecutor for handling concurrent operations.
 
@@ -235,7 +243,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
-            availability_strategy=kwargs.pop("availability_strategy", None),
+            availability_strategy=kwargs.pop("availability_strategy", False),
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
             **kwargs
         )
@@ -248,7 +256,24 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     def __exit__(self, *args):
-        return self.client_connection.pipeline_client.__exit__(*args)
+        try:
+            return self.client_connection.pipeline_client.__exit__(*args)
+        finally:
+            try:
+                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+            except Exception:  # pylint: disable=broad-except
+                pass
+
+    def close(self) -> None:
+        """Close this instance of CosmosClient.
+
+        Provides a deterministic teardown path equivalent to using the client
+        as a context manager. Releases pipeline resources and decrements the
+        process-global shared partition-key-range cache refcount for this
+        endpoint (see ``_routing.routing_map_provider`` module docstring).
+        Safe to call multiple times.
+        """
+        self.__exit__(None, None, None)  # pylint: disable=specify-parameter-names-in-call
 
     @classmethod
     def from_connection_string(

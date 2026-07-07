@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-10-01-preview",
+  "apiVersions": {
+    "Microsoft.Maps": "2025-10-01-preview"
+  },
+  "commit": "4034064754d0c7a1138c518ee223bcde85170787",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/maps/resource-manager/Microsoft.Maps/Maps",
+  "emitterVersion": "0.61.2"
+}

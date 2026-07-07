@@ -45,6 +45,7 @@ from ...operations._operations import (
     build_accounts_get_request,
     build_accounts_list_by_subscription_request,
     build_accounts_list_request,
+    build_accounts_refresh_ldap_bind_password_request,
     build_accounts_renew_credentials_request,
     build_accounts_transition_to_cmk_request,
     build_accounts_update_request,
@@ -76,16 +77,19 @@ from ...operations._operations import (
     build_backups_update_request,
     build_buckets_create_or_update_request,
     build_buckets_delete_request,
+    build_buckets_generate_akv_credentials_request,
     build_buckets_generate_credentials_request,
     build_buckets_get_request,
     build_buckets_list_request,
+    build_buckets_refresh_certificate_request,
     build_buckets_update_request,
     build_caches_create_or_update_request,
     build_caches_delete_request,
     build_caches_get_request,
-    build_caches_list_by_capacity_pools_request,
     build_caches_list_peering_passphrases_request,
+    build_caches_list_request,
     build_caches_pool_change_request,
+    build_caches_reset_smb_password_request,
     build_caches_update_request,
     build_elastic_accounts_create_or_update_request,
     build_elastic_accounts_delete_request,
@@ -282,7 +286,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -295,7 +302,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -341,9 +351,9 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-08-01",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-08-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -353,11 +363,16 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
             ]
         },
         api_versions_list=[
-            "2025-07-01-preview",
             "2025-08-01",
-            "2025-08-01-preview",
             "2025-09-01",
-            "2025-09-01-preview",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
         ],
     )
     async def get(
@@ -403,6 +418,7 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -424,7 +440,7 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.QuotaItem, response.json())
 
@@ -435,16 +451,21 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-08-01",
         params_added_on={
-            "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
         api_versions_list=[
-            "2025-07-01-preview",
             "2025-08-01",
-            "2025-08-01-preview",
             "2025-09-01",
-            "2025-09-01-preview",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
         ],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncItemPaged["_models.QuotaItem"]:
@@ -502,7 +523,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -515,7 +539,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.QuotaItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.QuotaItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -603,6 +630,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -624,7 +652,7 @@ class VolumeGroupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VolumeGroupDetails, response.json())
 
@@ -678,6 +706,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -701,7 +730,7 @@ class VolumeGroupsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -914,6 +943,7 @@ class VolumeGroupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -938,7 +968,7 @@ class VolumeGroupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1064,7 +1094,10 @@ class VolumeGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1077,7 +1110,10 @@ class VolumeGroupsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VolumeGroup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VolumeGroup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1168,6 +1204,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1189,7 +1226,7 @@ class BackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Backup, response.json())
 
@@ -1245,6 +1282,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1271,7 +1309,7 @@ class BackupsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1514,6 +1552,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1538,7 +1577,7 @@ class BackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1762,6 +1801,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1786,7 +1826,7 @@ class BackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1928,7 +1968,10 @@ class BackupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1941,7 +1984,10 @@ class BackupsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Backup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Backup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2014,6 +2060,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2035,7 +2082,7 @@ class BackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupStatus, response.json())
 
@@ -2091,6 +2138,7 @@ class BackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2112,7 +2160,7 @@ class BackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RestoreStatus, response.json())
 
@@ -2186,6 +2234,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2207,7 +2256,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Volume, response.json())
 
@@ -2263,6 +2312,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2293,7 +2343,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2532,6 +2582,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2556,7 +2607,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2787,6 +2838,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2811,7 +2863,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2954,7 +3006,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2967,7 +3022,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Volume], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Volume],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3024,6 +3082,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3048,7 +3107,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3097,14 +3156,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3177,6 +3232,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3201,7 +3257,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3415,6 +3471,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3438,7 +3495,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3541,6 +3598,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3565,7 +3623,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3614,14 +3672,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3698,6 +3752,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3722,7 +3777,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3923,7 +3978,18 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _list_get_group_id_list_for_ldap_user_initial(  # pylint: disable=name-too-long
         self,
@@ -3972,6 +4038,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3999,7 +4066,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4126,7 +4193,18 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_list_get_group_id_list_for_ldap_user(  # pylint: disable=name-too-long
         self,
@@ -4182,17 +4260,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.GetGroupIdListForLDAPUserResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -4269,6 +4340,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4293,7 +4365,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4524,6 +4596,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4547,7 +4620,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4781,6 +4854,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4802,7 +4876,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ReplicationStatus, response.json())
 
@@ -4925,7 +4999,18 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     def list_replications(
         self,
@@ -5011,7 +5096,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5024,7 +5112,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Replication], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Replication],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5081,6 +5172,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5105,7 +5197,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5209,6 +5301,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5233,7 +5326,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5353,6 +5446,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5377,7 +5471,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5591,6 +5685,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5615,7 +5710,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5734,6 +5829,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5755,10 +5851,13 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5927,6 +6026,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -5989,6 +6091,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6010,10 +6113,13 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6065,6 +6171,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -6127,6 +6236,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6150,7 +6260,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6254,6 +6364,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6277,7 +6388,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6396,6 +6507,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6420,7 +6532,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6654,6 +6766,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6678,7 +6791,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6893,6 +7006,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6917,7 +7031,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7020,6 +7134,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7044,7 +7159,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7118,22 +7233,38 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
                 "account_name",
                 "pool_name",
                 "volume_name",
+                "content_type",
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _list_quota_report_initial(
-        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Optional[Union[_models.QuotaReportFilterRequest, JSON, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7143,10 +7274,22 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_volumes_list_quota_report_request(
             resource_group_name=resource_group_name,
@@ -7154,7 +7297,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             pool_name=pool_name,
             volume_name=volume_name,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -7163,6 +7308,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7190,33 +7336,26 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-07-01-preview",
-        params_added_on={
-            "2025-07-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "account_name",
-                "pool_name",
-                "volume_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01", "2025-09-01-preview"],
-    )
+    @overload
     async def begin_list_quota_report(
-        self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ListQuotaReportResponse]:
-        """A long-running resource action.
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Optional[_models.QuotaReportFilterRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ListQuotaReportResult]:
+        """Get quota report for volume (with filter support).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -7227,15 +7366,145 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :return: An instance of AsyncLROPoller that returns ListQuotaReportResponse. The
-         ListQuotaReportResponse is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ListQuotaReportResponse]
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.QuotaReportFilterRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ListQuotaReportResult. The
+         ListQuotaReportResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ListQuotaReportResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    async def begin_list_quota_report(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ListQuotaReportResult]:
+        """Get quota report for volume (with filter support).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ListQuotaReportResult. The
+         ListQuotaReportResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ListQuotaReportResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_list_quota_report(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ListQuotaReportResult]:
+        """Get quota report for volume (with filter support).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ListQuotaReportResult. The
+         ListQuotaReportResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ListQuotaReportResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01",
+        params_added_on={
+            "2025-12-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def begin_list_quota_report(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        body: Optional[Union[_models.QuotaReportFilterRequest, JSON, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ListQuotaReportResult]:
+        """Get quota report for volume (with filter support).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param body: The content of the action request. Is one of the following types:
+         QuotaReportFilterRequest, JSON, IO[bytes] Default value is None.
+        :type body: ~azure.mgmt.netapp.models.QuotaReportFilterRequest or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ListQuotaReportResult. The
+         ListQuotaReportResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ListQuotaReportResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ListQuotaReportResponse] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[_models.ListQuotaReportResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -7245,6 +7514,8 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
+                body=body,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -7262,7 +7533,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = _deserialize(_models.ListQuotaReportResponse, response.json())
+            deserialized = _deserialize(_models.ListQuotaReportResult, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -7280,13 +7551,13 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ListQuotaReportResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ListQuotaReportResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ListQuotaReportResponse](
+        return AsyncLROPoller[_models.ListQuotaReportResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -7364,6 +7635,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7385,7 +7657,7 @@ class SnapshotsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Snapshot, response.json())
 
@@ -7443,6 +7715,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7466,7 +7739,7 @@ class SnapshotsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7724,6 +7997,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7748,7 +8022,7 @@ class SnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7991,6 +8265,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8015,7 +8290,7 @@ class SnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8159,7 +8434,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8172,7 +8450,10 @@ class SnapshotsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Snapshot], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Snapshot],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8247,6 +8528,7 @@ class SnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8271,7 +8553,7 @@ class SnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8529,6 +8811,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8550,7 +8833,7 @@ class SnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SnapshotPolicy, response.json())
 
@@ -8711,6 +8994,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8732,7 +9016,7 @@ class SnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SnapshotPolicy, response.json())
 
@@ -8786,6 +9070,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8810,7 +9095,7 @@ class SnapshotPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9019,6 +9304,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9043,7 +9329,7 @@ class SnapshotPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9169,7 +9455,10 @@ class SnapshotPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9182,7 +9471,10 @@ class SnapshotPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SnapshotPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SnapshotPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9253,6 +9545,7 @@ class SnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9274,7 +9567,7 @@ class SnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SnapshotPolicyVolumeList, response.json())
 
@@ -9345,6 +9638,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9366,7 +9660,7 @@ class BackupPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupPolicy, response.json())
 
@@ -9420,6 +9714,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9450,7 +9745,7 @@ class BackupPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9674,6 +9969,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9700,7 +9996,7 @@ class BackupPoliciesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9909,6 +10205,7 @@ class BackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9933,7 +10230,7 @@ class BackupPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10059,7 +10356,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10072,7 +10372,10 @@ class BackupPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10172,6 +10475,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10193,7 +10497,7 @@ class VolumeQuotaRulesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VolumeQuotaRule, response.json())
 
@@ -10251,6 +10555,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10275,7 +10580,7 @@ class VolumeQuotaRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10529,6 +10834,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10553,7 +10859,7 @@ class VolumeQuotaRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10796,6 +11102,7 @@ class VolumeQuotaRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10820,7 +11127,7 @@ class VolumeQuotaRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10964,7 +11271,10 @@ class VolumeQuotaRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10977,7 +11287,10 @@ class VolumeQuotaRulesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VolumeQuotaRule], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VolumeQuotaRule],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11023,9 +11336,9 @@ class RansomwareReportsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11036,7 +11349,16 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def get(
         self,
@@ -11047,12 +11369,11 @@ class RansomwareReportsOperations:
         ransomware_report_name: str,
         **kwargs: Any
     ) -> _models.RansomwareReport:
-        """Get details of the specified ransomware report (ARP)
-        ARP reports are created with a list of suspected files when it detects any combination of high
-        data entropy, abnormal volume activity with data encryption, and unusual file extensions.
-        ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-        threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-        data.
+        """Get details of the specified ransomware report (ARP) ARP reports are created with a list of
+        suspected files when it detects any combination of high data entropy, abnormal volume activity
+        with data encryption, and unusual file extensions. ARP creates snapshots named
+        Anti_ransomware_backup when it detects a potential ransomware threat. You can use one of these
+        ARP snapshots or another snapshot of your volume to restore data.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -11098,6 +11419,7 @@ class RansomwareReportsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11119,7 +11441,7 @@ class RansomwareReportsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RansomwareReport, response.json())
 
@@ -11130,9 +11452,9 @@ class RansomwareReportsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11142,18 +11464,26 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.RansomwareReport"]:
-        """List all ransomware reports for the volume
-        Returns a list of the Advanced Ransomware Protection (ARP) reports for the volume.
-        ARP reports are created with a list of suspected files when it detects any combination of high
-        data entropy, abnormal volume activity with data encryption, and unusual file extensions.
-        ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-        threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-        data".
+        """List all ransomware reports for the volume Returns a list of the Advanced Ransomware Protection
+        (ARP) reports for the volume. ARP reports are created with a list of suspected files when it
+        detects any combination of high data entropy, abnormal volume activity with data encryption,
+        and unusual file extensions. ARP creates snapshots named Anti_ransomware_backup when it detects
+        a potential ransomware threat. You can use one of these ARP snapshots or another snapshot of
+        your volume to restore data".
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -11212,7 +11542,10 @@ class RansomwareReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11225,7 +11558,10 @@ class RansomwareReportsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RansomwareReport], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RansomwareReport],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11252,9 +11588,9 @@ class RansomwareReportsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11265,7 +11601,16 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _clear_suspects_initial(
         self,
@@ -11316,6 +11661,7 @@ class RansomwareReportsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11339,7 +11685,7 @@ class RansomwareReportsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11359,12 +11705,11 @@ class RansomwareReportsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """ "Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
+        """Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
         evaluate the report to determine whether the activity is acceptable (false positive) or whether
-        an attack seems malicious.
-        ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-        threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-        data",.
+        an attack seems malicious. ARP creates snapshots named Anti_ransomware_backup when it detects a
+        potential ransomware threat. You can use one of these ARP snapshots or another snapshot of your
+        volume to restore data",.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -11400,12 +11745,11 @@ class RansomwareReportsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """ "Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
+        """Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
         evaluate the report to determine whether the activity is acceptable (false positive) or whether
-        an attack seems malicious.
-        ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-        threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-        data",.
+        an attack seems malicious. ARP creates snapshots named Anti_ransomware_backup when it detects a
+        potential ransomware threat. You can use one of these ARP snapshots or another snapshot of your
+        volume to restore data",.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -11441,12 +11785,11 @@ class RansomwareReportsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """ "Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
+        """Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
         evaluate the report to determine whether the activity is acceptable (false positive) or whether
-        an attack seems malicious.
-        ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-        threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-        data",.
+        an attack seems malicious. ARP creates snapshots named Anti_ransomware_backup when it detects a
+        potential ransomware threat. You can use one of these ARP snapshots or another snapshot of your
+        volume to restore data",.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -11471,9 +11814,9 @@ class RansomwareReportsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11484,7 +11827,16 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_clear_suspects(
         self,
@@ -11496,12 +11848,11 @@ class RansomwareReportsOperations:
         body: Union[_models.RansomwareSuspectsClearRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """ "Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
+        """Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
         evaluate the report to determine whether the activity is acceptable (false positive) or whether
-        an attack seems malicious.
-        ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-        threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-        data",.
+        an attack seems malicious. ARP creates snapshots named Anti_ransomware_backup when it detects a
+        potential ransomware threat. You can use one of these ARP snapshots or another snapshot of your
+        volume to restore data",.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -11633,6 +11984,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11654,7 +12006,7 @@ class BackupVaultsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupVault, response.json())
 
@@ -11708,6 +12060,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11734,7 +12087,7 @@ class BackupVaultsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11958,6 +12311,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11982,7 +12336,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12191,6 +12545,7 @@ class BackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12215,7 +12570,7 @@ class BackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12341,7 +12696,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12354,7 +12712,10 @@ class BackupVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BackupVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BackupVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -12400,9 +12761,9 @@ class BucketsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12413,7 +12774,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def get(
         self,
@@ -12471,6 +12840,7 @@ class BucketsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12492,7 +12862,7 @@ class BucketsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Bucket, response.json())
 
@@ -12502,9 +12872,9 @@ class BucketsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12516,7 +12886,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _create_or_update_initial(
         self,
@@ -12567,6 +12945,7 @@ class BucketsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12593,7 +12972,7 @@ class BucketsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12719,9 +13098,9 @@ class BucketsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12733,7 +13112,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_create_or_update(
         self,
@@ -12823,9 +13210,9 @@ class BucketsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12837,7 +13224,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _update_initial(
         self,
@@ -12888,6 +13283,7 @@ class BucketsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12915,7 +13311,7 @@ class BucketsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13038,9 +13434,9 @@ class BucketsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13052,7 +13448,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_update(
         self,
@@ -13142,9 +13546,9 @@ class BucketsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13154,7 +13558,15 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _delete_initial(
         self,
@@ -13194,6 +13606,7 @@ class BucketsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13221,7 +13634,7 @@ class BucketsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13230,9 +13643,9 @@ class BucketsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13242,7 +13655,15 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_delete(
         self,
@@ -13319,9 +13740,9 @@ class BucketsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13331,7 +13752,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -13396,7 +13825,10 @@ class BucketsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13409,7 +13841,10 @@ class BucketsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Bucket], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Bucket],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13554,9 +13989,9 @@ class BucketsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-07-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-07-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13568,7 +14003,15 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def generate_credentials(
         self,
@@ -13642,6 +14085,7 @@ class BucketsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13663,7 +14107,7 @@ class BucketsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BucketGenerateCredentials, response.json())
 
@@ -13671,6 +14115,523 @@ class BucketsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def _generate_akv_credentials_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketCredentialsExpiry, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_buckets_generate_akv_credentials_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: _models.BucketCredentialsExpiry,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def begin_generate_akv_credentials(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        body: Union[_models.BucketCredentialsExpiry, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Generate the access key and secret key used for accessing the specified volume bucket and store
+        in Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :param body: The content of the action request. Is one of the following types:
+         BucketCredentialsExpiry, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._generate_akv_credentials_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def _refresh_certificate_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_buckets_refresh_certificate_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            bucket_name=bucket_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "volume_name",
+                "bucket_name",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def begin_refresh_certificate(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        bucket_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """This operation will fetch the certificate from Azure Key Vault and install it on the bucket
+        server.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param volume_name: The name of the volume. Required.
+        :type volume_name: str
+        :param bucket_name: The name of the bucket. Required.
+        :type bucket_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._refresh_certificate_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                bucket_name=bucket_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class CachesOperations:
@@ -13692,9 +14653,9 @@ class CachesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13704,7 +14665,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def get(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -13752,6 +14721,7 @@ class CachesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13773,7 +14743,7 @@ class CachesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Cache, response.json())
 
@@ -13783,9 +14753,9 @@ class CachesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13796,7 +14766,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _create_or_update_initial(
         self,
@@ -13845,6 +14823,7 @@ class CachesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13871,7 +14850,7 @@ class CachesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13982,9 +14961,9 @@ class CachesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13995,7 +14974,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_create_or_update(
         self,
@@ -14080,9 +15067,9 @@ class CachesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14093,7 +15080,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _update_initial(
         self,
@@ -14142,6 +15137,7 @@ class CachesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14169,7 +15165,7 @@ class CachesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14280,9 +15276,9 @@ class CachesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14293,7 +15289,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_update(
         self,
@@ -14378,9 +15382,9 @@ class CachesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14389,7 +15393,15 @@ class CachesOperations:
                 "cache_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -14422,6 +15434,7 @@ class CachesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14446,7 +15459,7 @@ class CachesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14455,9 +15468,9 @@ class CachesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14466,7 +15479,15 @@ class CachesOperations:
                 "cache_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -14534,9 +15555,9 @@ class CachesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2026-01-01",
         params_added_on={
-            "2025-09-01-preview": [
+            "2026-01-01": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14545,9 +15566,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
-    def list_by_capacity_pools(
+    def list(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Cache"]:
         """List all Caches within the Capacity Pool.
@@ -14579,7 +15607,7 @@ class CachesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_caches_list_by_capacity_pools_request(
+                _request = build_caches_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     pool_name=pool_name,
@@ -14606,7 +15634,10 @@ class CachesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14619,7 +15650,10 @@ class CachesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Cache], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Cache],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -14647,9 +15681,9 @@ class CachesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14659,7 +15693,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def list_peering_passphrases(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -14708,6 +15750,7 @@ class CachesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14729,7 +15772,7 @@ class CachesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PeeringPassphrases, response.json())
 
@@ -14739,9 +15782,9 @@ class CachesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14752,7 +15795,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def _pool_change_initial(
         self,
@@ -14801,6 +15852,7 @@ class CachesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14825,7 +15877,7 @@ class CachesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14843,7 +15895,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -14860,8 +15912,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14876,7 +15929,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -14893,8 +15946,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14909,7 +15963,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -14926,16 +15980,17 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14946,7 +16001,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
     )
     async def begin_pool_change(
         self,
@@ -14956,7 +16019,7 @@ class CachesOperations:
         cache_name: str,
         body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -14971,15 +16034,16 @@ class CachesOperations:
         :param body: Move cache to the pool supplied in the body of the operation. Is one of the
          following types: PoolChangeRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -14999,9 +16063,12 @@ class CachesOperations:
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -15016,13 +16083,195 @@ class CachesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def _reset_smb_password_initial(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_caches_reset_smb_password_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            cache_name=cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "pool_name",
+                "cache_name",
+                "accept",
+            ]
+        },
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+        ],
+    )
+    async def begin_reset_smb_password(
+        self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.Cache]:
+        """Resets the SMB password for the cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool. Required.
+        :type pool_name: str
+        :param cache_name: The name of the cache resource. Required.
+        :type cache_name: str
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._reset_smb_password_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                cache_name=cache_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Cache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class ElasticAccountsOperations:
@@ -15044,11 +16293,11 @@ class ElasticAccountsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(self, resource_group_name: str, account_name: str, **kwargs: Any) -> _models.ElasticAccount:
         """Get the NetApp Elastic Account.
@@ -15088,6 +16337,7 @@ class ElasticAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15109,7 +16359,7 @@ class ElasticAccountsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticAccount, response.json())
 
@@ -15119,9 +16369,9 @@ class ElasticAccountsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15130,7 +16380,7 @@ class ElasticAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -15175,6 +16425,7 @@ class ElasticAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15201,7 +16452,7 @@ class ElasticAccountsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15294,9 +16545,9 @@ class ElasticAccountsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15305,7 +16556,7 @@ class ElasticAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -15382,9 +16633,9 @@ class ElasticAccountsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15393,7 +16644,7 @@ class ElasticAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -15438,6 +16689,7 @@ class ElasticAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15459,10 +16711,13 @@ class ElasticAccountsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15555,9 +16810,9 @@ class ElasticAccountsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15566,7 +16821,7 @@ class ElasticAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -15643,11 +16898,11 @@ class ElasticAccountsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15676,6 +16931,7 @@ class ElasticAccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15700,7 +16956,7 @@ class ElasticAccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15709,11 +16965,11 @@ class ElasticAccountsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete the specified NetApp elastic account.
@@ -15773,9 +17029,9 @@ class ElasticAccountsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
-        params_added_on={"2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-09-01-preview"],
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -15830,7 +17086,10 @@ class ElasticAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15843,7 +17102,10 @@ class ElasticAccountsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15871,9 +17133,9 @@ class ElasticAccountsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
-        params_added_on={"2025-09-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-09-01-preview"],
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ElasticAccount"]:
         """List and describe all NetApp elastic accounts in the subscription.
@@ -15922,7 +17184,10 @@ class ElasticAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15935,7 +17200,10 @@ class ElasticAccountsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15981,9 +17249,9 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15992,7 +17260,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
@@ -16037,6 +17305,7 @@ class ElasticCapacityPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16058,7 +17327,7 @@ class ElasticCapacityPoolsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticCapacityPool, response.json())
 
@@ -16068,9 +17337,9 @@ class ElasticCapacityPoolsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -16080,7 +17349,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -16127,6 +17396,7 @@ class ElasticCapacityPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16153,7 +17423,7 @@ class ElasticCapacityPoolsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16258,9 +17528,9 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -16270,7 +17540,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -16352,9 +17622,9 @@ class ElasticCapacityPoolsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -16364,7 +17634,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -16411,6 +17681,7 @@ class ElasticCapacityPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16438,7 +17709,7 @@ class ElasticCapacityPoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16540,9 +17811,9 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -16552,7 +17823,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -16633,11 +17904,11 @@ class ElasticCapacityPoolsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "pool_name"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "pool_name"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
@@ -16669,6 +17940,7 @@ class ElasticCapacityPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16693,7 +17965,7 @@ class ElasticCapacityPoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16702,11 +17974,11 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "pool_name"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "pool_name"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
@@ -16771,11 +18043,11 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_elastic_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -16833,7 +18105,10 @@ class ElasticCapacityPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16846,7 +18121,10 @@ class ElasticCapacityPoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticCapacityPool], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticCapacityPool],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16873,9 +18151,9 @@ class ElasticCapacityPoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -16885,7 +18163,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _change_zone_initial(
         self,
@@ -16932,6 +18210,7 @@ class ElasticCapacityPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16956,7 +18235,7 @@ class ElasticCapacityPoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17058,9 +18337,9 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17070,7 +18349,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_change_zone(
         self,
@@ -17121,14 +18400,10 @@ class ElasticCapacityPoolsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ElasticCapacityPool, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -17249,9 +18524,9 @@ class ElasticCapacityPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17261,7 +18536,7 @@ class ElasticCapacityPoolsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def check_volume_file_path_availability(
         self,
@@ -17326,6 +18601,7 @@ class ElasticCapacityPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17347,7 +18623,7 @@ class ElasticCapacityPoolsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckElasticResourceAvailabilityResponse, response.json())
 
@@ -17376,9 +18652,9 @@ class ElasticVolumesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17388,7 +18664,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -17436,6 +18712,7 @@ class ElasticVolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17457,7 +18734,7 @@ class ElasticVolumesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticVolume, response.json())
 
@@ -17467,9 +18744,9 @@ class ElasticVolumesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17480,7 +18757,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -17529,6 +18806,7 @@ class ElasticVolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17555,7 +18833,7 @@ class ElasticVolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17666,9 +18944,9 @@ class ElasticVolumesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17679,7 +18957,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -17764,9 +19042,9 @@ class ElasticVolumesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17777,7 +19055,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -17826,6 +19104,7 @@ class ElasticVolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17853,7 +19132,7 @@ class ElasticVolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17964,9 +19243,9 @@ class ElasticVolumesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -17977,7 +19256,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -18062,9 +19341,9 @@ class ElasticVolumesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18073,7 +19352,7 @@ class ElasticVolumesOperations:
                 "volume_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -18106,6 +19385,7 @@ class ElasticVolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18130,7 +19410,7 @@ class ElasticVolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18139,9 +19419,9 @@ class ElasticVolumesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18150,7 +19430,7 @@ class ElasticVolumesOperations:
                 "volume_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -18218,9 +19498,9 @@ class ElasticVolumesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18229,7 +19509,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_elastic_pool(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
@@ -18290,7 +19570,10 @@ class ElasticVolumesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18303,7 +19586,10 @@ class ElasticVolumesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticVolume], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticVolume],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -18330,9 +19616,9 @@ class ElasticVolumesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18343,7 +19629,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _revert_initial(
         self,
@@ -18392,6 +19678,7 @@ class ElasticVolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18416,7 +19703,7 @@ class ElasticVolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18527,9 +19814,9 @@ class ElasticVolumesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18540,7 +19827,7 @@ class ElasticVolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_revert(
         self,
@@ -18595,14 +19882,10 @@ class ElasticVolumesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ElasticVolume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -18648,9 +19931,9 @@ class ElasticSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18661,7 +19944,7 @@ class ElasticSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self,
@@ -18718,6 +20001,7 @@ class ElasticSnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18739,7 +20023,7 @@ class ElasticSnapshotsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticSnapshot, response.json())
 
@@ -18749,9 +20033,9 @@ class ElasticSnapshotsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18763,7 +20047,7 @@ class ElasticSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -18814,6 +20098,7 @@ class ElasticSnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -18840,7 +20125,7 @@ class ElasticSnapshotsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -18960,9 +20245,9 @@ class ElasticSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -18974,7 +20259,7 @@ class ElasticSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -19063,9 +20348,9 @@ class ElasticSnapshotsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19075,7 +20360,7 @@ class ElasticSnapshotsOperations:
                 "snapshot_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self,
@@ -19115,6 +20400,7 @@ class ElasticSnapshotsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19139,7 +20425,7 @@ class ElasticSnapshotsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -19148,9 +20434,9 @@ class ElasticSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19160,7 +20446,7 @@ class ElasticSnapshotsOperations:
                 "snapshot_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self,
@@ -19237,9 +20523,9 @@ class ElasticSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19249,7 +20535,7 @@ class ElasticSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_elastic_volume(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -19313,7 +20599,10 @@ class ElasticSnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19326,7 +20615,10 @@ class ElasticSnapshotsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticSnapshot], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticSnapshot],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -19372,9 +20664,9 @@ class ElasticSnapshotPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19383,7 +20675,7 @@ class ElasticSnapshotPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
@@ -19428,6 +20720,7 @@ class ElasticSnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19449,7 +20742,7 @@ class ElasticSnapshotPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticSnapshotPolicy, response.json())
 
@@ -19459,9 +20752,9 @@ class ElasticSnapshotPoliciesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19471,7 +20764,7 @@ class ElasticSnapshotPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -19518,6 +20811,7 @@ class ElasticSnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19544,7 +20838,7 @@ class ElasticSnapshotPoliciesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -19646,9 +20940,9 @@ class ElasticSnapshotPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19658,7 +20952,7 @@ class ElasticSnapshotPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -19739,9 +21033,9 @@ class ElasticSnapshotPoliciesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19751,7 +21045,7 @@ class ElasticSnapshotPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -19798,6 +21092,7 @@ class ElasticSnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -19825,7 +21120,7 @@ class ElasticSnapshotPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -19927,9 +21222,9 @@ class ElasticSnapshotPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -19939,7 +21234,7 @@ class ElasticSnapshotPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -20020,9 +21315,9 @@ class ElasticSnapshotPoliciesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20030,7 +21325,7 @@ class ElasticSnapshotPoliciesOperations:
                 "snapshot_policy_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
@@ -20062,6 +21357,7 @@ class ElasticSnapshotPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20086,7 +21382,7 @@ class ElasticSnapshotPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -20095,9 +21391,9 @@ class ElasticSnapshotPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20105,7 +21401,7 @@ class ElasticSnapshotPoliciesOperations:
                 "snapshot_policy_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
@@ -20170,11 +21466,11 @@ class ElasticSnapshotPoliciesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_elastic_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -20233,7 +21529,10 @@ class ElasticSnapshotPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20246,7 +21545,10 @@ class ElasticSnapshotPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticSnapshotPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticSnapshotPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -20274,9 +21576,9 @@ class ElasticSnapshotPoliciesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20285,7 +21587,7 @@ class ElasticSnapshotPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_elastic_volumes(
         self, resource_group_name: str, account_name: str, snapshot_policy_name: str, **kwargs: Any
@@ -20346,7 +21648,10 @@ class ElasticSnapshotPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20359,7 +21664,10 @@ class ElasticSnapshotPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticVolume], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticVolume],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -20405,9 +21713,9 @@ class ElasticBackupVaultsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20416,7 +21724,7 @@ class ElasticBackupVaultsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
@@ -20461,6 +21769,7 @@ class ElasticBackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20482,7 +21791,7 @@ class ElasticBackupVaultsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticBackupVault, response.json())
 
@@ -20492,9 +21801,9 @@ class ElasticBackupVaultsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20504,7 +21813,7 @@ class ElasticBackupVaultsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -20551,6 +21860,7 @@ class ElasticBackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20577,7 +21887,7 @@ class ElasticBackupVaultsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -20679,9 +21989,9 @@ class ElasticBackupVaultsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20691,7 +22001,7 @@ class ElasticBackupVaultsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -20772,9 +22082,9 @@ class ElasticBackupVaultsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20784,7 +22094,7 @@ class ElasticBackupVaultsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -20831,6 +22141,7 @@ class ElasticBackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -20858,7 +22169,7 @@ class ElasticBackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -20960,9 +22271,9 @@ class ElasticBackupVaultsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -20972,7 +22283,7 @@ class ElasticBackupVaultsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -21053,9 +22364,9 @@ class ElasticBackupVaultsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21063,7 +22374,7 @@ class ElasticBackupVaultsOperations:
                 "backup_vault_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
@@ -21095,6 +22406,7 @@ class ElasticBackupVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21119,7 +22431,7 @@ class ElasticBackupVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -21128,9 +22440,9 @@ class ElasticBackupVaultsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21138,7 +22450,7 @@ class ElasticBackupVaultsOperations:
                 "backup_vault_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
@@ -21203,11 +22515,11 @@ class ElasticBackupVaultsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_elastic_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -21265,7 +22577,10 @@ class ElasticBackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -21278,7 +22593,10 @@ class ElasticBackupVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticBackupVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticBackupVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -21324,9 +22642,9 @@ class ElasticBackupPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21335,7 +22653,7 @@ class ElasticBackupPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, backup_policy_name: str, **kwargs: Any
@@ -21380,6 +22698,7 @@ class ElasticBackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21401,7 +22720,7 @@ class ElasticBackupPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticBackupPolicy, response.json())
 
@@ -21411,9 +22730,9 @@ class ElasticBackupPoliciesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21423,7 +22742,7 @@ class ElasticBackupPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -21470,6 +22789,7 @@ class ElasticBackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21496,7 +22816,7 @@ class ElasticBackupPoliciesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -21598,9 +22918,9 @@ class ElasticBackupPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21610,7 +22930,7 @@ class ElasticBackupPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -21691,9 +23011,9 @@ class ElasticBackupPoliciesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21703,7 +23023,7 @@ class ElasticBackupPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -21750,6 +23070,7 @@ class ElasticBackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21774,7 +23095,7 @@ class ElasticBackupPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -21876,9 +23197,9 @@ class ElasticBackupPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21888,7 +23209,7 @@ class ElasticBackupPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -21969,9 +23290,9 @@ class ElasticBackupPoliciesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -21979,7 +23300,7 @@ class ElasticBackupPoliciesOperations:
                 "backup_policy_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, backup_policy_name: str, **kwargs: Any
@@ -22011,6 +23332,7 @@ class ElasticBackupPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -22035,7 +23357,7 @@ class ElasticBackupPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -22044,9 +23366,9 @@ class ElasticBackupPoliciesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22054,7 +23376,7 @@ class ElasticBackupPoliciesOperations:
                 "backup_policy_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, backup_policy_name: str, **kwargs: Any
@@ -22119,11 +23441,11 @@ class ElasticBackupPoliciesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+            "2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_elastic_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -22181,7 +23503,10 @@ class ElasticBackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22194,7 +23519,10 @@ class ElasticBackupPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticBackupPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticBackupPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -22240,9 +23568,9 @@ class ElasticBackupsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22252,7 +23580,7 @@ class ElasticBackupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
@@ -22300,6 +23628,7 @@ class ElasticBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -22321,7 +23650,7 @@ class ElasticBackupsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ElasticBackup, response.json())
 
@@ -22331,9 +23660,9 @@ class ElasticBackupsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22344,7 +23673,7 @@ class ElasticBackupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -22393,6 +23722,7 @@ class ElasticBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -22419,7 +23749,7 @@ class ElasticBackupsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -22530,9 +23860,9 @@ class ElasticBackupsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22543,7 +23873,7 @@ class ElasticBackupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -22628,9 +23958,9 @@ class ElasticBackupsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22641,7 +23971,7 @@ class ElasticBackupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -22690,6 +24020,7 @@ class ElasticBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -22717,7 +24048,7 @@ class ElasticBackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -22828,9 +24159,9 @@ class ElasticBackupsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22841,7 +24172,7 @@ class ElasticBackupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -22926,9 +24257,9 @@ class ElasticBackupsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -22937,7 +24268,7 @@ class ElasticBackupsOperations:
                 "backup_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
@@ -22970,6 +24301,7 @@ class ElasticBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -22994,7 +24326,7 @@ class ElasticBackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -23003,9 +24335,9 @@ class ElasticBackupsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23014,7 +24346,7 @@ class ElasticBackupsOperations:
                 "backup_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
@@ -23082,9 +24414,9 @@ class ElasticBackupsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23093,7 +24425,7 @@ class ElasticBackupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_vault(
         self, resource_group_name: str, account_name: str, backup_vault_name: str, **kwargs: Any
@@ -23154,7 +24486,10 @@ class ElasticBackupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23167,7 +24502,10 @@ class ElasticBackupsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ElasticBackup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ElasticBackup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -23213,9 +24551,9 @@ class ActiveDirectoryConfigsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23223,7 +24561,7 @@ class ActiveDirectoryConfigsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, active_directory_config_name: str, **kwargs: Any
@@ -23265,6 +24603,7 @@ class ActiveDirectoryConfigsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -23286,7 +24625,7 @@ class ActiveDirectoryConfigsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ActiveDirectoryConfig, response.json())
 
@@ -23296,9 +24635,9 @@ class ActiveDirectoryConfigsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23307,7 +24646,7 @@ class ActiveDirectoryConfigsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -23352,6 +24691,7 @@ class ActiveDirectoryConfigsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -23378,7 +24718,7 @@ class ActiveDirectoryConfigsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -23471,9 +24811,9 @@ class ActiveDirectoryConfigsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23482,7 +24822,7 @@ class ActiveDirectoryConfigsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -23559,9 +24899,9 @@ class ActiveDirectoryConfigsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23570,7 +24910,7 @@ class ActiveDirectoryConfigsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _update_initial(
         self,
@@ -23615,6 +24955,7 @@ class ActiveDirectoryConfigsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -23642,7 +24983,7 @@ class ActiveDirectoryConfigsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -23735,9 +25076,9 @@ class ActiveDirectoryConfigsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -23746,7 +25087,7 @@ class ActiveDirectoryConfigsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_update(
         self,
@@ -23823,16 +25164,16 @@ class ActiveDirectoryConfigsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
                 "active_directory_config_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, active_directory_config_name: str, **kwargs: Any
@@ -23863,6 +25204,7 @@ class ActiveDirectoryConfigsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -23887,7 +25229,7 @@ class ActiveDirectoryConfigsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -23896,16 +25238,16 @@ class ActiveDirectoryConfigsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
+        method_added_on="2025-12-15-preview",
         params_added_on={
-            "2025-09-01-preview": [
+            "2025-12-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
                 "active_directory_config_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview"],
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, active_directory_config_name: str, **kwargs: Any
@@ -23967,9 +25309,9 @@ class ActiveDirectoryConfigsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
-        params_added_on={"2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-09-01-preview"],
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -24025,7 +25367,10 @@ class ActiveDirectoryConfigsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24038,7 +25383,10 @@ class ActiveDirectoryConfigsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ActiveDirectoryConfig], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ActiveDirectoryConfig],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -24066,9 +25414,9 @@ class ActiveDirectoryConfigsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-09-01-preview",
-        params_added_on={"2025-09-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-09-01-preview"],
+        method_added_on="2025-12-15-preview",
+        params_added_on={"2025-12-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ActiveDirectoryConfig"]:
         """List all active directory configurations within the subscription.
@@ -24118,7 +25466,10 @@ class ActiveDirectoryConfigsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24131,7 +25482,10 @@ class ActiveDirectoryConfigsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ActiveDirectoryConfig], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ActiveDirectoryConfig],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -24213,6 +25567,7 @@ class NetAppResourceQuotaLimitsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -24234,7 +25589,7 @@ class NetAppResourceQuotaLimitsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.QuotaItem, response.json())
 
@@ -24294,7 +25649,10 @@ class NetAppResourceQuotaLimitsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24307,7 +25665,10 @@ class NetAppResourceQuotaLimitsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.QuotaItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.QuotaItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -24386,6 +25747,7 @@ class NetAppResourceRegionInfosOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -24407,7 +25769,7 @@ class NetAppResourceRegionInfosOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RegionInfoResource, response.json())
 
@@ -24467,7 +25829,10 @@ class NetAppResourceRegionInfosOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24480,7 +25845,10 @@ class NetAppResourceRegionInfosOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RegionInfoResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RegionInfoResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -24563,6 +25931,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -24584,7 +25953,7 @@ class AccountsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NetAppAccount, response.json())
 
@@ -24636,6 +26005,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -24662,7 +26032,7 @@ class AccountsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -24828,6 +26198,20 @@ class AccountsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
+    )
     async def _update_initial(
         self,
         resource_group_name: str,
@@ -24871,6 +26255,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -24895,7 +26280,7 @@ class AccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -24987,6 +26372,20 @@ class AccountsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-15-preview",
+        params_added_on={
+            "2025-12-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-15-preview", "2026-01-15-preview", "2026-03-15-preview", "2026-04-15-preview"],
+    )
     async def begin_update(
         self,
         resource_group_name: str,
@@ -25088,6 +26487,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -25112,7 +26512,7 @@ class AccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -25228,7 +26628,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25241,7 +26644,10 @@ class AccountsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NetAppAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NetAppAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -25315,7 +26721,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25328,7 +26737,10 @@ class AccountsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NetAppAccount], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NetAppAccount],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -25383,6 +26795,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -25409,7 +26822,7 @@ class AccountsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -25524,6 +26937,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -25547,7 +26961,7 @@ class AccountsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -25742,6 +27156,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -25769,7 +27184,7 @@ class AccountsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -25897,6 +27312,7 @@ class AccountsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -25920,7 +27336,7 @@ class AccountsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -26082,6 +27498,142 @@ class AccountsOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-04-15-preview",
+        params_added_on={
+            "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+        },
+        api_versions_list=["2026-04-15-preview"],
+    )
+    async def _refresh_ldap_bind_password_initial(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_accounts_refresh_ldap_bind_password_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-15-preview",
+        params_added_on={
+            "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
+        },
+        api_versions_list=["2026-04-15-preview"],
+    )
+    async def begin_refresh_ldap_bind_password(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Refresh LDAP Bind DN password by fetching the latest password from Azure Key Vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account. Required.
+        :type account_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._refresh_ldap_bind_password_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
 
 class BackupsUnderAccountOperations:
     """
@@ -26143,6 +27695,7 @@ class BackupsUnderAccountOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -26166,7 +27719,7 @@ class BackupsUnderAccountOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -26388,6 +27941,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -26409,7 +27963,7 @@ class PoolsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CapacityPool, response.json())
 
@@ -26463,6 +28017,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -26487,7 +28042,7 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -26711,6 +28266,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -26735,7 +28291,7 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -26944,6 +28500,7 @@ class PoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -26968,7 +28525,7 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -27094,7 +28651,10 @@ class PoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27107,7 +28667,10 @@ class PoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CapacityPool], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CapacityPool],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -27198,6 +28761,7 @@ class BackupsUnderBackupVaultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -27221,7 +28785,7 @@ class BackupsUnderBackupVaultOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -27469,6 +29033,7 @@ class BackupsUnderVolumeOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -27492,7 +29057,7 @@ class BackupsUnderVolumeOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -27752,6 +29317,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -27773,7 +29339,7 @@ class SubvolumesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SubvolumeInfo, response.json())
 
@@ -27831,6 +29397,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -27861,7 +29428,7 @@ class SubvolumesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -28115,6 +29682,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -28141,7 +29709,7 @@ class SubvolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -28384,6 +29952,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -28410,7 +29979,7 @@ class SubvolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -28554,7 +30123,10 @@ class SubvolumesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28567,7 +30139,10 @@ class SubvolumesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SubvolumeInfo], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SubvolumeInfo],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -28631,6 +30206,7 @@ class SubvolumesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -28657,7 +30233,7 @@ class SubvolumesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -28781,7 +30357,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest
@@ -28802,7 +30378,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -28823,7 +30399,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -28844,7 +30420,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: ResourceNameAvailabilityRequest,
          JSON, IO[bytes] Required.
@@ -28889,6 +30465,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -28910,7 +30487,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckAvailabilityResponse, response.json())
 
@@ -28932,7 +30509,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest
@@ -28953,7 +30530,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -28974,7 +30551,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -28995,7 +30572,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: FilePathAvailabilityRequest,
          JSON, IO[bytes] Required.
@@ -29040,6 +30617,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -29061,7 +30639,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckAvailabilityResponse, response.json())
 
@@ -29083,7 +30661,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest
@@ -29104,7 +30682,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -29125,7 +30703,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -29146,7 +30724,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: QuotaAvailabilityRequest, JSON,
          IO[bytes] Required.
@@ -29191,6 +30769,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -29212,7 +30791,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckAvailabilityResponse, response.json())
 
@@ -29227,7 +30806,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: RegionInfo. The RegionInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.RegionInfo
@@ -29258,6 +30837,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -29279,7 +30859,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RegionInfo, response.json())
 
@@ -29301,7 +30881,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest
@@ -29321,7 +30901,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -29341,7 +30921,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -29361,7 +30941,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: QueryNetworkSiblingSetRequest,
          JSON, IO[bytes] Required.
@@ -29405,6 +30985,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -29426,7 +31007,7 @@ class NetAppResourceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NetworkSiblingSet, response.json())
 
@@ -29473,6 +31054,7 @@ class NetAppResourceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -29497,7 +31079,7 @@ class NetAppResourceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -29517,7 +31099,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest
@@ -29538,7 +31120,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -29559,7 +31141,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -29580,7 +31162,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: UpdateNetworkSiblingSetRequest,
          JSON, IO[bytes] Required.
@@ -29612,14 +31194,10 @@ class NetAppResourceOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkSiblingSet, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -29669,7 +31247,7 @@ class NetAppResourceUsagesOperations:
 
         Get current subscription usages.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: An iterator like instance of UsageResult
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.UsageResult]
@@ -29716,7 +31294,10 @@ class NetAppResourceUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -29729,7 +31310,10 @@ class NetAppResourceUsagesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UsageResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.UsageResult],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -29795,6 +31379,7 @@ class NetAppResourceUsagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -29816,7 +31401,7 @@ class NetAppResourceUsagesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UsageResult, response.json())
 

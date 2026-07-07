@@ -7,16 +7,33 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CronTrigger as RestCronTrigger
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RecurrenceSchedule as RestRecurrencePattern
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RecurrenceTrigger as RestRecurrenceTrigger
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TriggerBase as RestTriggerBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.arm_ml_service.models import CronTrigger as RestCronTrigger
+from azure.ai.ml._restclient.arm_ml_service.models import RecurrenceSchedule as RestRecurrencePattern
+from azure.ai.ml._restclient.arm_ml_service.models import RecurrenceTrigger as RestRecurrenceTrigger
+from azure.ai.ml._restclient.arm_ml_service.models import TriggerBase as RestTriggerBase
+from azure.ai.ml._restclient.arm_ml_service.models import TriggerType as RestTriggerType
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
+
+
+def _format_trigger_time(value: Optional[Union[str, datetime]]) -> Optional[Union[str, datetime]]:
+    """Match the legacy (pre-arm) wire format for trigger start/end times.
+
+    The old msrest models serialized a ``datetime`` as ``"%Y-%m-%d %H:%M:%S"`` (space-separated), while the
+    shared arm_ml_service models serialize it as ISO ``"...T...Z"``. Format datetimes to the legacy string
+    so the wire body is unchanged; strings are passed through untouched.
+
+    :param value: A start/end time as str or datetime.
+    :type value: Optional[Union[str, datetime]]
+    :return: The legacy-format string (for datetimes) or the original value.
+    :rtype: Optional[Union[str, datetime]]
+    """
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M:%S")
+    return value
 
 
 class TriggerBase(RestTranslatableMixin, ABC):
@@ -173,23 +190,23 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2022_12_01.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # v2023_04_01_preview.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
-            start_time=self.start_time,
-            end_time=self.end_time,
+            start_time=_format_trigger_time(self.start_time),
+            end_time=_format_trigger_time(self.end_time),
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # v2022_12_01_preview.models.CronTrigger
+    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # v2023_04_01_preview.models.CronTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
             module_logger.warning("'end_time' is ignored for not supported on compute schedule.")
         return RestCronTrigger(
             expression=self.expression,
-            start_time=self.start_time,
+            start_time=_format_trigger_time(self.start_time),
             time_zone=self.time_zone,
         )
 
@@ -254,18 +271,18 @@ class RecurrenceTrigger(TriggerBase):
         self.frequency = frequency
         self.interval = interval
 
-    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_12_01.models.RecurrenceTrigger
+    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2023_04_01_preview.models.RecurrenceTrigger
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
             schedule=self.schedule._to_rest_object(),
-            start_time=self.start_time,
-            end_time=self.end_time,
+            start_time=_format_trigger_time(self.start_time),
+            end_time=_format_trigger_time(self.end_time),
             time_zone=self.time_zone,
         )
 
     def _to_rest_compute_recurrence_object(self) -> RestRecurrenceTrigger:
-        # v2022_12_01_preview.models.RecurrenceTrigger
+        # v2023_04_01_preview.models.RecurrenceTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
@@ -274,7 +291,7 @@ class RecurrenceTrigger(TriggerBase):
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
             schedule=self.schedule._to_rest_compute_pattern_object(),
-            start_time=self.start_time,
+            start_time=_format_trigger_time(self.start_time),
             time_zone=self.time_zone,
         )
 

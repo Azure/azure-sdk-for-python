@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -31,35 +31,29 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import WebPubSubServiceClientConfiguration
-from .._utils.model_base import SdkJSONEncoder, _deserialize
+from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC, raise_if_not_implemented
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_web_pub_sub_service_get_service_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/health"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_add_connections_to_groups_request(  # pylint: disable=name-too-long
@@ -70,8 +64,6 @@ def build_web_pub_sub_service_add_connections_to_groups_request(  # pylint: disa
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/:addToGroups"
     path_format_arguments = {
@@ -86,20 +78,16 @@ def build_web_pub_sub_service_add_connections_to_groups_request(  # pylint: disa
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_web_pub_sub_service_close_all_connections_request(  # pylint: disable=name-too-long
-    hub: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    hub: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/:closeConnections"
     path_format_arguments = {
@@ -111,24 +99,21 @@ def build_web_pub_sub_service_close_all_connections_request(  # pylint: disable=
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if excluded is not None:
-        _params["excluded"] = _SERIALIZER.query("excluded", excluded, "[str]", div=",")
+        _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     if reason is not None:
         _params["reason"] = _SERIALIZER.query("reason", reason, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_web_pub_sub_service_get_client_access_token_request(  # pylint: disable=name-too-long
+def build_web_pub_sub_service_generate_client_token_request(  # pylint: disable=name-too-long
     hub: str,
     *,
     user_id: Optional[str] = None,
-    roles: Optional[List[str]] = None,
+    role: Optional[list[str]] = None,
     minutes_to_expire: Optional[int] = None,
-    groups: Optional[List[str]] = None,
-    client_protocol: Optional[Union[str, _models.WebPubSubClientType]] = None,
+    group: Optional[list[str]] = None,
+    client_type: Optional[Union[str, _models.WebPubSubClientType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -149,14 +134,14 @@ def build_web_pub_sub_service_get_client_access_token_request(  # pylint: disabl
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if user_id is not None:
         _params["userId"] = _SERIALIZER.query("user_id", user_id, "str")
-    if roles is not None:
-        _params["roles"] = _SERIALIZER.query("roles", roles, "[str]", div=",")
+    if role is not None:
+        _params["role"] = [_SERIALIZER.query("role", q, "str") if q is not None else "" for q in role]
     if minutes_to_expire is not None:
         _params["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int")
-    if groups is not None:
-        _params["groups"] = _SERIALIZER.query("groups", groups, "[str]", div=",")
-    if client_protocol is not None:
-        _params["clientProtocol"] = _SERIALIZER.query("client_protocol", client_protocol, "str")
+    if group is not None:
+        _params["group"] = [_SERIALIZER.query("group", q, "str") if q is not None else "" for q in group]
+    if client_type is not None:
+        _params["clientType"] = _SERIALIZER.query("client_type", client_type, "str")
 
     # Construct headers
     if accept is not None:
@@ -173,8 +158,6 @@ def build_web_pub_sub_service_remove_connections_from_groups_request(  # pylint:
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/:removeFromGroups"
     path_format_arguments = {
@@ -189,7 +172,6 @@ def build_web_pub_sub_service_remove_connections_from_groups_request(  # pylint:
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -197,12 +179,9 @@ def build_web_pub_sub_service_remove_connections_from_groups_request(  # pylint:
 def build_web_pub_sub_service_close_connection_request(  # pylint: disable=name-too-long
     connection_id: str, hub: str, *, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/connections/{connectionId}"
     path_format_arguments = {
@@ -217,21 +196,15 @@ def build_web_pub_sub_service_close_connection_request(  # pylint: disable=name-
     if reason is not None:
         _params["reason"] = _SERIALIZER.query("reason", reason, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_connection_exists_request(  # pylint: disable=name-too-long
     connection_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/connections/{connectionId}"
     path_format_arguments = {
@@ -244,21 +217,15 @@ def build_web_pub_sub_service_connection_exists_request(  # pylint: disable=name
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_remove_connection_from_all_groups_request(  # pylint: disable=name-too-long
     connection_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/connections/{connectionId}/groups"
     path_format_arguments = {
@@ -271,21 +238,15 @@ def build_web_pub_sub_service_remove_connection_from_all_groups_request(  # pyli
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_group_exists_request(  # pylint: disable=name-too-long
     group: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}"
     path_format_arguments = {
@@ -298,21 +259,15 @@ def build_web_pub_sub_service_group_exists_request(  # pylint: disable=name-too-
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_close_group_connections_request(  # pylint: disable=name-too-long
-    group: str, hub: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    group: str, hub: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}/:closeConnections"
     path_format_arguments = {
@@ -325,17 +280,14 @@ def build_web_pub_sub_service_close_group_connections_request(  # pylint: disabl
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if excluded is not None:
-        _params["excluded"] = _SERIALIZER.query("excluded", excluded, "[str]", div=",")
+        _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     if reason is not None:
         _params["reason"] = _SERIALIZER.query("reason", reason, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_web_pub_sub_service_list_connections_request(  # pylint: disable=name-too-long
+def build_web_pub_sub_service_list_connections_in_group_request(  # pylint: disable=name-too-long
     group: str,
     hub: str,
     *,
@@ -379,12 +331,9 @@ def build_web_pub_sub_service_list_connections_request(  # pylint: disable=name-
 def build_web_pub_sub_service_remove_connection_from_group_request(  # pylint: disable=name-too-long
     group: str, connection_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
     path_format_arguments = {
@@ -398,21 +347,15 @@ def build_web_pub_sub_service_remove_connection_from_group_request(  # pylint: d
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_add_connection_to_group_request(  # pylint: disable=name-too-long
     group: str, connection_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
     path_format_arguments = {
@@ -426,10 +369,7 @@ def build_web_pub_sub_service_add_connection_to_group_request(  # pylint: disabl
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_revoke_permission_request(  # pylint: disable=name-too-long
@@ -440,12 +380,9 @@ def build_web_pub_sub_service_revoke_permission_request(  # pylint: disable=name
     target_name: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
     path_format_arguments = {
@@ -461,13 +398,10 @@ def build_web_pub_sub_service_revoke_permission_request(  # pylint: disable=name
     if target_name is not None:
         _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_web_pub_sub_service_has_permission_request(  # pylint: disable=name-too-long
+def build_web_pub_sub_service_check_permission_request(  # pylint: disable=name-too-long
     permission: Union[str, _models.WebPubSubPermission],
     connection_id: str,
     hub: str,
@@ -475,12 +409,9 @@ def build_web_pub_sub_service_has_permission_request(  # pylint: disable=name-to
     target_name: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
     path_format_arguments = {
@@ -496,10 +427,7 @@ def build_web_pub_sub_service_has_permission_request(  # pylint: disable=name-to
     if target_name is not None:
         _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_grant_permission_request(  # pylint: disable=name-too-long
@@ -510,12 +438,9 @@ def build_web_pub_sub_service_grant_permission_request(  # pylint: disable=name-
     target_name: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
     path_format_arguments = {
@@ -531,21 +456,15 @@ def build_web_pub_sub_service_grant_permission_request(  # pylint: disable=name-
     if target_name is not None:
         _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_user_exists_request(  # pylint: disable=name-too-long
     user_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}"
     path_format_arguments = {
@@ -558,21 +477,15 @@ def build_web_pub_sub_service_user_exists_request(  # pylint: disable=name-too-l
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_close_user_connections_request(  # pylint: disable=name-too-long
-    user_id: str, hub: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    user_id: str, hub: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/:closeConnections"
     path_format_arguments = {
@@ -585,25 +498,19 @@ def build_web_pub_sub_service_close_user_connections_request(  # pylint: disable
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if excluded is not None:
-        _params["excluded"] = _SERIALIZER.query("excluded", excluded, "[str]", div=",")
+        _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     if reason is not None:
         _params["reason"] = _SERIALIZER.query("reason", reason, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_remove_user_from_all_groups_request(  # pylint: disable=name-too-long
     user_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/groups"
     path_format_arguments = {
@@ -616,21 +523,15 @@ def build_web_pub_sub_service_remove_user_from_all_groups_request(  # pylint: di
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_remove_user_from_group_request(  # pylint: disable=name-too-long
     group: str, user_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
     path_format_arguments = {
@@ -644,21 +545,15 @@ def build_web_pub_sub_service_remove_user_from_group_request(  # pylint: disable
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_web_pub_sub_service_add_user_to_group_request(  # pylint: disable=name-too-long
     group: str, user_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
     path_format_arguments = {
@@ -672,10 +567,7 @@ def build_web_pub_sub_service_add_user_to_group_request(  # pylint: disable=name
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, **kwargs)
 
 
 class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-instantiated,too-many-public-methods
@@ -733,9 +625,13 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -852,16 +748,20 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def close_all_connections(  # pylint: disable=inconsistent-return-statements
-        self, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+        self, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close the connections in the hub.
 
@@ -911,20 +811,24 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_client_access_token(
+    def generate_client_token(
         self,
         *,
         user_id: Optional[str] = None,
-        roles: Optional[List[str]] = None,
+        role: Optional[list[str]] = None,
         minutes_to_expire: Optional[int] = None,
-        groups: Optional[List[str]] = None,
-        client_protocol: Optional[Union[str, _models.WebPubSubClientType]] = None,
+        group: Optional[list[str]] = None,
+        client_type: Optional[Union[str, _models.WebPubSubClientType]] = None,
         **kwargs: Any
     ) -> _models.ClientTokenResponse:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -933,19 +837,17 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         :keyword user_id: User Id. Default value is None.
         :paramtype user_id: str
-        :keyword roles: Roles that the connection with the generated token will have. Default value is
+        :keyword role: Roles that the connection with the generated token will have. Default value is
          None.
-        :paramtype roles: list[str]
+        :paramtype role: list[str]
         :keyword minutes_to_expire: The expire time of the generated token. Default value is None.
         :paramtype minutes_to_expire: int
-        :keyword groups: Groups that the connection will join when it connects. Default value is None.
-        :paramtype groups: list[str]
-        :keyword client_protocol: The type of client. Case-insensitive. If not set, it's "Default". For
-         Web
-         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the
-         valid values are 'Default' and 'MQTT'. Known values are: "Default" and "mqtt". Default value
-         is None.
-        :paramtype client_protocol: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
+        :keyword group: Groups that the connection will join when it connects. Default value is None.
+        :paramtype group: list[str]
+        :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
+         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
+         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is None.
+        :paramtype client_type: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
         :return: ClientTokenResponse. The ClientTokenResponse is compatible with MutableMapping
         :rtype: ~azure.messaging.webpubsubservice.models.ClientTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -963,13 +865,13 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         cls: ClsType[_models.ClientTokenResponse] = kwargs.pop("cls", None)
 
-        _request = build_web_pub_sub_service_get_client_access_token_request(
+        _request = build_web_pub_sub_service_generate_client_token_request(
             hub=self._config.hub,
             user_id=user_id,
-            roles=roles,
+            role=role,
             minutes_to_expire=minutes_to_expire,
-            groups=groups,
-            client_protocol=client_protocol,
+            group=group,
+            client_type=client_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -979,6 +881,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -993,13 +896,17 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ClientTokenResponse, response.json())
 
@@ -1123,9 +1030,13 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1181,7 +1092,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1232,7 +1147,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1286,7 +1205,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1338,7 +1261,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1346,7 +1273,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
     @distributed_trace
     def close_group_connections(  # pylint: disable=inconsistent-return-statements
-        self, group: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+        self, group: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close connections in the specific group.
 
@@ -1400,13 +1327,17 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_connections(
+    def list_connections_in_group(
         self,
         group: str,
         *,
@@ -1425,12 +1356,10 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
          the connections in a group are returned. Default value is None.
         :paramtype top: int
         :keyword continuation_token_parameter: A token that allows the client to retrieve the next page
-         of results. This
-         parameter is provided by the service in the response of a previous request when
-         there are additional results to be fetched. Clients should include the
-         continuationToken in the next request to receive the subsequent page of data.
-         If this parameter is omitted, the server will return the first page of results. Default value
-         is None.
+         of results. This parameter is provided by the service in the response of a previous request
+         when there are additional results to be fetched. Clients should include the continuationToken
+         in the next request to receive the subsequent page of data. If this parameter is omitted, the
+         server will return the first page of results. Default value is None.
         :paramtype continuation_token_parameter: str
         :return: An iterator like instance of GroupMember
         :rtype: ~azure.core.paging.ItemPaged[~azure.messaging.webpubsubservice.models.GroupMember]
@@ -1440,7 +1369,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.GroupMember]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.GroupMember]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1453,7 +1382,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_web_pub_sub_service_list_connections_request(
+                _request = build_web_pub_sub_service_list_connections_in_group_request(
                     group=group,
                     hub=self._config.hub,
                     maxpagesize=maxpagesize,
@@ -1494,7 +1423,10 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GroupMember], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.GroupMember],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1510,7 +1442,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetail,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -1568,7 +1504,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1625,7 +1565,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1649,8 +1593,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
-         the group name. Default value is None.
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
         :paramtype target_name: str
         :return: None
         :rtype: None
@@ -1692,13 +1636,17 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def has_permission(
+    def check_permission(
         self,
         permission: Union[str, _models.WebPubSubPermission],
         connection_id: str,
@@ -1716,8 +1664,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
-         the group name. Default value is None.
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
         :paramtype target_name: str
         :return: bool
         :rtype: bool
@@ -1736,7 +1684,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_web_pub_sub_service_has_permission_request(
+        _request = build_web_pub_sub_service_check_permission_request(
             permission=permission,
             connection_id=connection_id,
             hub=self._config.hub,
@@ -1759,7 +1707,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1784,8 +1736,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
-         the group name. Default value is None.
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
         :paramtype target_name: str
         :return: None
         :rtype: None
@@ -1827,7 +1779,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1878,7 +1834,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1886,7 +1846,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
     @distributed_trace
     def close_user_connections(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+        self, user_id: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close connections for the specific user.
 
@@ -1939,7 +1899,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1992,7 +1956,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -2049,7 +2017,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -2106,7 +2078,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore

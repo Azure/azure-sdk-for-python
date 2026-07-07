@@ -1,5 +1,33 @@
 # Release History
 
+## 3.0.0b1 (2026-06-02)
+
+### Features Added
+
+  - Model `CurrentQuotaLimitBase` added property `system_data`
+  - Model `QuotaRequestDetails` added property `system_data`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Renamed client name `AzureReservationAPI` to `ReservationsMgmtClient`
+  - Model `MergeRequest` moved instance variable `sources` under property `properties` whose type is `MergeProperties`
+  - Model `Patch` moved instance variable `applied_scope_type`, `applied_scopes`, `applied_scope_properties`, `instance_flexibility`, `name`, `renew`, `renew_properties` and `review_date_time` under property `properties` whose type is `PatchProperties`
+  - Model `QuotaRequestDetails` moved instance variable `provisioning_state`, `message`, `request_submit_time` and `value` under property `properties` whose type is `QuotaRequestProperties`
+  - Model `ReservationOrderResponse` moved instance variable `display_name`, `request_date_time`, `created_date_time`, `expiry_date`, `expiry_date_time`, `benefit_start_time`, `original_quantity`, `term`, `provisioning_state`, `billing_plan`, `plan_information`, `reservations` and `review_date_time` under property `properties` whose type is `ReservationOrderProperties`
+  - Model `SkuRestriction` renamed its instance variable `values` to `values_property`
+  - Model `SplitRequest` moved instance variable `quantities` and `reservation_id` under property `properties` whose type is `SplitProperties`
+  - Method `QuotaRequestStatusOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `orderby`/`refresh_summary`/`skiptoken`/`selected_state`/`take` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOrderOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Renamed operation group `AzureReservationAPIOperationsMixin` to `_ReservationsMgmtClientOperationsMixin`
+
+### Other Changes
+
+  - Deleted model `CatalogsResult`/`CreateGenericQuotaRequestParameters`/`CurrentQuotaLimit`/`DisplayProvisioningState`/`Location`/`OperationList`/`QuotaLimits`/`QuotaLimitsResponse`/`QuotaRequestOneResourceSubmitResponse`/`QuotaRequestSubmitResponse`/`QuotaRequestSubmitResponse201`/`QuotaRequestDetailsList`/`RefundResponse`/`ReservationList`/`ReservationOrderList`/`UserFriendlyAppliedScopeType`/`UserFriendlyRenewState` which actually were not used by SDK users
+
 ## 2.3.0 (2023-03-20)
 
 ### Features Added

@@ -134,6 +134,117 @@ class ProxyResource(Resource):
     """
 
 
+class Feature(ProxyResource):
+    """Compute limit feature.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computelimit.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computelimit.models.FeatureProperties
+    """
+
+    properties: Optional["_models.FeatureProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.FeatureProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureEnableRequest(_Model):
+    """Request body for feature enable action.
+
+    :ivar service_tree_id: The Service Tree identifier associated with this feature action.
+    :vartype service_tree_id: str
+    """
+
+    service_tree_id: Optional[str] = rest_field(
+        name="serviceTreeId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Service Tree identifier associated with this feature action."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        service_tree_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureProperties(_Model):
+    """Properties of the compute limit feature.
+
+    :ivar state: The current state of the feature (for example, Enabled, Disabled). Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.computelimit.models.FeatureState
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.computelimit.models.ResourceProvisioningState
+    """
+
+    state: Optional[Union[str, "_models.FeatureState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current state of the feature (for example, Enabled, Disabled). Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.FeatureState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class GuestSubscription(ProxyResource):
     """Guest subscription that consumes shared compute limits.
 
@@ -222,6 +333,118 @@ class LimitName(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MemberCap(_Model):
+    """Per-member cap override. Pairs a member subscription with its cap value.
+
+    :ivar subscription_id: The member subscription identifier this cap applies to. Required.
+    :vartype subscription_id: str
+    :ivar cap: The cap value in count units for this member subscription. Required.
+    :vartype cap: int
+    """
+
+    subscription_id: str = rest_field(name="subscriptionId", visibility=["read", "create", "update", "delete", "query"])
+    """The member subscription identifier this cap applies to. Required."""
+    cap: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cap value in count units for this member subscription. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subscription_id: str,
+        cap: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MemberCapOverride(ProxyResource):
+    """Member cap override as a standalone child resource of ``SharedLimitCap``. Use this resource to
+    read or modify a single member's cap without resending the entire ``memberCapOverrides`` array
+    on the parent.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computelimit.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computelimit.models.MemberCapOverrideProperties
+    """
+
+    properties: Optional["_models.MemberCapOverrideProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MemberCapOverrideProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MemberCapOverrideProperties(_Model):
+    """Properties of a per-member cap override.
+
+    :ivar cap: The cap value in count units for this member subscription. Required.
+    :vartype cap: int
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.computelimit.models.ResourceProvisioningState
+    """
+
+    cap: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cap value in count units for this member subscription. Required."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cap: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Operation(_Model):
     """REST API Operation.
 
@@ -280,7 +503,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -308,6 +531,146 @@ class OperationDisplay(_Model):
     description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
+
+
+class OperationStatusResult(_Model):
+    """The current status of an async operation.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.computelimit.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.computelimit.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Fully qualified ID for the async operation."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the async operation."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Operation status. Required."""
+    percent_complete: Optional[float] = rest_field(
+        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Percent of the operation that is complete."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the operation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the operation."""
+    operations: Optional[list["_models.OperationStatusResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operations list."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SetMemberCapOverridesRequest(_Model):
+    """Request body for the ``setMemberCapOverrides`` action.
+
+    :ivar member_cap_overrides: The full set of per-member cap overrides to persist for this
+     resource. This call replaces the existing set entirely; supply an empty array (``[]``) to clear
+     all overrides. Required.
+    :vartype member_cap_overrides: list[~azure.mgmt.computelimit.models.MemberCap]
+    """
+
+    member_cap_overrides: list["_models.MemberCap"] = rest_field(
+        name="memberCapOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full set of per-member cap overrides to persist for this resource. This call replaces the
+     existing set entirely; supply an empty array (``[]``) to clear all overrides. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        member_cap_overrides: list["_models.MemberCap"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SetMemberCapOverridesResult(_Model):
+    """Response body for the ``setMemberCapOverrides`` action.
+
+    :ivar member_cap_overrides: The per-member cap overrides as persisted after the action
+     completed. Required.
+    :vartype member_cap_overrides: list[~azure.mgmt.computelimit.models.MemberCap]
+    """
+
+    member_cap_overrides: list["_models.MemberCap"] = rest_field(
+        name="memberCapOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-member cap overrides as persisted after the action completed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        member_cap_overrides: list["_models.MemberCap"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SharedLimit(ProxyResource):
@@ -338,6 +701,118 @@ class SharedLimit(ProxyResource):
         self,
         *,
         properties: Optional["_models.SharedLimitProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SharedLimitCap(ProxyResource):
+    """Shared limit cap configuration for a VM family, owned by a host subscription and propagated to
+    its member subscriptions. The same resource type is readable by host and member subscriptions,
+    but write operations (PUT/DELETE) are scoped to the caller's subscription as the host.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computelimit.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computelimit.models.SharedLimitCapProperties
+    """
+
+    properties: Optional["_models.SharedLimitCapProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SharedLimitCapProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SharedLimitCapProperties(_Model):
+    """Properties of a shared limit cap resource.
+
+    :ivar default_member_cap: The default member cap value (in count units). Set to a non-negative
+     integer to apply a cap to all member subscriptions that do not have a per-member override. Omit
+     the property to leave no default cap in effect.
+    :vartype default_member_cap: int
+    :ivar is_bounded_cap: Controls whether the service validates the aggregate cap against the
+     group limit for the VM family.
+
+     SUM(caps) is the sum of all per-member overrides' cap values plus
+     ``defaultMemberCap`` multiplied by the number of member subscriptions without an override.
+
+     When true, the service rejects any configuration where SUM(caps)
+     exceeds the group limit. When false, SUM(caps) is permitted to exceed
+     the group limit.
+
+     Enabling this flag is rejected if the current configuration already breaches the group limit;
+     reduce caps first, then enable. Required.
+    :vartype is_bounded_cap: bool
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.computelimit.models.ResourceProvisioningState
+    """
+
+    default_member_cap: Optional[int] = rest_field(
+        name="defaultMemberCap", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default member cap value (in count units). Set to a non-negative integer to apply a cap to
+     all member subscriptions that do not have a per-member override. Omit the property to leave no
+     default cap in effect."""
+    is_bounded_cap: bool = rest_field(name="isBoundedCap", visibility=["read", "create", "update", "delete", "query"])
+    """Controls whether the service validates the aggregate cap against the
+     group limit for the VM family.
+     
+     SUM(caps) is the sum of all per-member overrides' cap values plus
+     ``defaultMemberCap`` multiplied by the number of member subscriptions without an override.
+     
+     When true, the service rejects any configuration where SUM(caps)
+     exceeds the group limit. When false, SUM(caps) is permitted to exceed
+     the group limit.
+     
+     Enabling this flag is rejected if the current configuration already breaches the group limit;
+     reduce caps first, then enable. Required."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_bounded_cap: bool,
+        default_member_cap: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -432,6 +907,83 @@ class SystemData(_Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmFamily(ProxyResource):
+    """VM family resource representing a virtual machine family and its category.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computelimit.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computelimit.models.VmFamilyProperties
+    """
+
+    properties: Optional["_models.VmFamilyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VmFamilyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmFamilyProperties(_Model):
+    """Properties of a VM family resource.
+
+    :ivar category: The category of the VM family (for example, GeneralPurpose, ComputeOptimized).
+    :vartype category: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.computelimit.models.ResourceProvisioningState
+    """
+
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The category of the VM family (for example, GeneralPurpose, ComputeOptimized)."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Optional[str] = None,
     ) -> None: ...
 
     @overload

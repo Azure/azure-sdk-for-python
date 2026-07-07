@@ -9,7 +9,7 @@ from datetime import datetime
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError, HttpResponseError
 
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
     TelemetryEventData,
     RequestData,

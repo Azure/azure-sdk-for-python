@@ -8,9 +8,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import re
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
+from ... import models as _models
+from ..._utils.model_base import _deserialize
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
@@ -31,7 +34,9 @@ def _parse_operation_id(operation_location_header: str) -> str:
 
     match = re.search(regex, operation_location_header)
     if not match:
-        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+        raise ValueError(
+            f"Could not extract operation ID from: {operation_location_header}"
+        )
 
     return match.group(1)
 
@@ -59,8 +64,28 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         except (KeyError, ValueError) as e:
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
+    @property
+    def usage(self) -> Optional["_models.UsageDetails"]:
+        """Returns the usage details from the completed analyze operation.
+
+        This property is available after the operation has completed successfully.
+        It provides information about the resources consumed during analysis,
+        including document pages, contextualization tokens, and LLM token breakdown.
+
+        :return: The usage details, or None if the operation is not yet complete
+            or usage information is not available.
+        :rtype: ~azure.ai.contentunderstanding.models.UsageDetails or None
+        """
+        if not self.done():
+            return None
+        response = self.polling_method()._pipeline_response.http_response  # type: ignore # pylint: disable=protected-access
+        usage_data = response.json().get("usage")
+        if usage_data is None:
+            return None
+        return _deserialize(_models.UsageDetails, usage_data)
+
     @classmethod
-    def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]
+    def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Wrap an existing AsyncLROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
@@ -72,7 +97,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: AnalyzeAsyncLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeAsyncLROPoller[PollingReturnType_co] = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
+        instance: "AnalyzeAsyncLROPoller[PollingReturnType_co]" = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance

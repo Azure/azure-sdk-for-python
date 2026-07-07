@@ -1,11 +1,11 @@
 {
     "CrossLanguagePackageId": "ContentUnderstanding",
     "CrossLanguageDefinitionId": {
-        "azure.ai.contentunderstanding.models.AnalyzeInput": "ContentUnderstanding.AnalyzeInput",
-        "azure.ai.contentunderstanding.models.AnalyzeResult": "ContentUnderstanding.AnalyzeResult",
+        "azure.ai.contentunderstanding.models.AnalysisContent": "ContentUnderstanding.AnalysisContent",
+        "azure.ai.contentunderstanding.models.AnalysisInput": "ContentUnderstanding.AnalysisInput",
+        "azure.ai.contentunderstanding.models.AnalysisResult": "ContentUnderstanding.AnalysisResult",
         "azure.ai.contentunderstanding.models.ContentField": "ContentUnderstanding.ContentField",
         "azure.ai.contentunderstanding.models.ArrayField": "ContentUnderstanding.ArrayField",
-        "azure.ai.contentunderstanding.models.MediaContent": "ContentUnderstanding.MediaContent",
         "azure.ai.contentunderstanding.models.AudioVisualContent": "ContentUnderstanding.AudioVisualContent",
         "azure.ai.contentunderstanding.models.AudioVisualContentSegment": "ContentUnderstanding.AudioVisualContentSegment",
         "azure.ai.contentunderstanding.models.BooleanField": "ContentUnderstanding.BooleanField",
@@ -52,7 +52,7 @@
         "azure.ai.contentunderstanding.models.TranscriptPhrase": "ContentUnderstanding.TranscriptPhrase",
         "azure.ai.contentunderstanding.models.TranscriptWord": "ContentUnderstanding.TranscriptWord",
         "azure.ai.contentunderstanding.models.UsageDetails": "ContentUnderstanding.UsageDetails",
-        "azure.ai.contentunderstanding.models.MediaContentKind": "ContentUnderstanding.MediaContentKind",
+        "azure.ai.contentunderstanding.models.AnalysisContentKind": "ContentUnderstanding.AnalysisContentKind",
         "azure.ai.contentunderstanding.models.ContentFieldType": "ContentUnderstanding.ContentFieldType",
         "azure.ai.contentunderstanding.models.LengthUnit": "ContentUnderstanding.LengthUnit",
         "azure.ai.contentunderstanding.models.DocumentBarcodeKind": "ContentUnderstanding.DocumentBarcodeKind",

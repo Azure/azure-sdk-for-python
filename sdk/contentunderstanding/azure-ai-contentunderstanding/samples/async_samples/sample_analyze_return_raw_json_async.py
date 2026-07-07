@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# mypy: disable-error-code="attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,7 +15,7 @@ DESCRIPTION:
     exactly as returned by the service.
 
     The Content Understanding SDK provides a convenient object model approach (shown in
-    sample_analyze_binary_async.py) that returns AnalyzeResult objects with deeper navigation
+    sample_analyze_binary_async.py) that returns AnalysisResult objects with deeper navigation
     through the object model. However, sometimes you may need access to the raw JSON
     response for:
 
@@ -58,7 +59,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_return_raw_json]
         file_path = "sample_files/sample_invoice.pdf"
 

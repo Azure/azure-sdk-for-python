@@ -36,12 +36,13 @@ USAGE:
 """
 
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -60,25 +61,23 @@ def main() -> None:
 
     # [START analyze_and_delete_result]
     # You can replace this URL with your own invoice file URL
-    document_url = (
-        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
-    )
+    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
 
     # Step 1: Analyze and wait for completion
     analyze_operation = client.begin_analyze(
         analyzer_id="prebuilt-invoice",
-        inputs=[AnalyzeInput(url=document_url)],
+        inputs=[AnalysisInput(url=document_url)],
     )
 
     # Get the operation ID - this is needed to delete the result later
     operation_id = analyze_operation.operation_id
     print(f"Operation ID: {operation_id}")
-    result: AnalyzeResult = analyze_operation.result()
+    result: AnalysisResult = analyze_operation.result()
     print("Analysis completed successfully!")
 
     # Display some sample results
     if result.contents and len(result.contents) > 0:
-        document_content: DocumentContent = result.contents[0]  # type: ignore
+        document_content = cast(DocumentContent, result.contents[0])
         if document_content.fields:
             print(f"Total fields extracted: {len(document_content.fields)}")
 

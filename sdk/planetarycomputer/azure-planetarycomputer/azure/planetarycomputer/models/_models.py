@@ -69,6 +69,10 @@ class AssetMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AssetStatisticsResponse(_Model):
+    """Return dataset's statistics."""
+
+
 class BandStatistics(_Model):
     """Statistical information about a data band.
 
@@ -100,11 +104,9 @@ class BandStatistics(_Model):
     :vartype masked_pixels: float
     :ivar valid_pixels: Count of valid (non-masked) pixels in the band. Required.
     :vartype valid_pixels: float
-    :ivar percentile2: Percentile 2
-     The 2nd percentile value. Required.
+    :ivar percentile2: Percentile 2 The 2nd percentile value. Required.
     :vartype percentile2: float
-    :ivar percentile98: Percentile 98
-     The 98th percentile value. Required.
+    :ivar percentile98: Percentile 98 The 98th percentile value. Required.
     :vartype percentile98: float
     """
 
@@ -137,11 +139,9 @@ class BandStatistics(_Model):
     valid_pixels: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Count of valid (non-masked) pixels in the band. Required."""
     percentile2: float = rest_field(name="percentile_2", visibility=["read", "create", "update", "delete", "query"])
-    """Percentile 2
-     The 2nd percentile value. Required."""
+    """Percentile 2 The 2nd percentile value. Required."""
     percentile98: float = rest_field(name="percentile_98", visibility=["read", "create", "update", "delete", "query"])
-    """Percentile 98
-     The 98th percentile value. Required."""
+    """Percentile 98 The 98th percentile value. Required."""
 
     @overload
     def __init__(
@@ -174,6 +174,14 @@ class BandStatistics(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class BandStatisticsMap(_Model):
+    """Map of band names to their statistics."""
+
+
+class ClassMapLegendResponse(_Model):
+    """ClassMap legend response model."""
 
 
 class DefaultLocation(_Model):
@@ -327,112 +335,20 @@ class Geometry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageParameters(_Model):
-    """Parameters for requesting a rendered image from a collection.
-
-    :ivar cql: Cql. Required.
-    :vartype cql: dict[str, any]
-    :ivar zoom: Zoom.
-    :vartype zoom: float
-    :ivar geometry: Geometry.
-    :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar render_parameters: JSON-encoded visualization parameters. Required.
-    :vartype render_parameters: str
-    :ivar columns: Width of the output image in pixels. Required.
-    :vartype columns: int
-    :ivar rows: Height of the output image in pixels. Required.
-    :vartype rows: int
-    :ivar show_branding: Whether to include branding on the output image.
-    :vartype show_branding: bool
-    :ivar image_size: Image size.
-    :vartype image_size: str
-    """
-
-    cql: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Cql. Required."""
-    zoom: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Zoom."""
-    geometry: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Geometry."""
-    render_parameters: str = rest_field(
-        name="render_params", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON-encoded visualization parameters. Required."""
-    columns: int = rest_field(name="cols", visibility=["read", "create", "update", "delete", "query"])
-    """Width of the output image in pixels. Required."""
-    rows: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Height of the output image in pixels. Required."""
-    show_branding: Optional[bool] = rest_field(
-        name="showBranding", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to include branding on the output image."""
-    image_size: Optional[str] = rest_field(name="imageSize", visibility=["read", "create", "update", "delete", "query"])
-    """Image size."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        cql: dict[str, Any],
-        render_parameters: str,
-        columns: int,
-        rows: int,
-        zoom: Optional[float] = None,
-        geometry: Optional["_models.Geometry"] = None,
-        show_branding: Optional[bool] = None,
-        image_size: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ImageResponse(_Model):
-    """Response model for image exports.
-
-    :ivar url: URL of the exported image. Required.
-    :vartype url: str
-    """
-
-    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """URL of the exported image. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        url: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class IngestionDefinition(_Model):
     """Microsoft Planetary Computer Pro geo-catalog ingestion creation model.
 
     :ivar id: Ingestion id. Required.
     :vartype id: str
-    :ivar import_type: Ingestion type. Required. "StaticCatalog"
+    :ivar import_type: Ingestion type. Required. Known values are: "StaticCatalog" and
+     "StacGeoparquet".
     :vartype import_type: str or ~azure.planetarycomputer.models.IngestionType
     :ivar display_name: Ingestion name.
     :vartype display_name: str
     :ivar source_catalog_url: Source catalog URL. Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
+    :ivar stac_geoparquet_url: Parquet catalog URL. Required for StacGeoparquet ingestion type.
+    :vartype stac_geoparquet_url: str
     :ivar skip_existing_items: Skip processing existing items in the catalog.
     :vartype skip_existing_items: bool
     :ivar keep_original_assets: Keep original source assets.
@@ -448,7 +364,7 @@ class IngestionDefinition(_Model):
     import_type: Union[str, "_models.IngestionType"] = rest_field(
         name="importType", visibility=["read", "create", "update"]
     )
-    """Ingestion type. Required. \"StaticCatalog\""""
+    """Ingestion type. Required. Known values are: \"StaticCatalog\" and \"StacGeoparquet\"."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -457,6 +373,10 @@ class IngestionDefinition(_Model):
         name="sourceCatalogUrl", visibility=["read", "create", "update", "delete", "query"]
     )
     """Source catalog URL. Required for StaticCatalog ingestion type."""
+    stac_geoparquet_url: Optional[str] = rest_field(
+        name="stacGeoparquetUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parquet catalog URL. Required for StacGeoparquet ingestion type."""
     skip_existing_items: Optional[bool] = rest_field(
         name="skipExistingItems", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -477,6 +397,7 @@ class IngestionDefinition(_Model):
         import_type: Union[str, "_models.IngestionType"],
         display_name: Optional[str] = None,
         source_catalog_url: Optional[str] = None,
+        stac_geoparquet_url: Optional[str] = None,
         skip_existing_items: Optional[bool] = None,
         keep_original_assets: Optional[bool] = None,
     ) -> None: ...
@@ -668,7 +589,7 @@ class IngestionSource(_Model):
     """
 
     __mapping__: dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read", "update"])
     """Ingestion source id. Required."""
     created: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
     """Created time in UTC format."""
@@ -746,19 +667,19 @@ class LineString(Geometry, discriminator="LineString"):
     :ivar type: The type of the linestring. Required. Represents a LineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.LINE_STRING
     :ivar coordinates: The coordinates of the linestring. Required.
-    :vartype coordinates: list[float]
+    :vartype coordinates: list[list[float]]
     """
 
     type: Literal[GeometryType.LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the linestring. Required. Represents a LineString geometry."""
-    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the linestring. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: list[float],
+        coordinates: list[list[float]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -815,14 +736,14 @@ class ManagedIdentityIngestionSource(IngestionSource, discriminator="BlobManaged
     :vartype id: str
     :ivar created: Created time in UTC format.
     :vartype created: ~datetime.datetime
-    :ivar kind: Required. Azure Blob Managed Identity
+    :ivar kind: Required. Azure Blob Managed Identity.
     :vartype kind: str or ~azure.planetarycomputer.models.BLOB_MANAGED_IDENTITY
     :ivar connection_info: Managed identity connection information. Required.
     :vartype connection_info: ~azure.planetarycomputer.models.ManagedIdentityConnection
     """
 
     kind: Literal[IngestionSourceType.BLOB_MANAGED_IDENTITY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Azure Blob Managed Identity"""
+    """Required. Azure Blob Managed Identity."""
     connection_info: "_models.ManagedIdentityConnection" = rest_field(
         name="connectionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -949,19 +870,19 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
     :ivar type: The type of the multilinestring. Required. Represents a MultiLineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_LINE_STRING
     :ivar coordinates: The coordinates of the multilinestring. Required.
-    :vartype coordinates: list[list[float]]
+    :vartype coordinates: list[list[list[float]]]
     """
 
     type: Literal[GeometryType.MULTI_LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multilinestring. Required. Represents a MultiLineString geometry."""
-    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[list[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multilinestring. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: list[list[float]],
+        coordinates: list[list[list[float]]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -985,19 +906,19 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
     :ivar type: The type of the multipoint. Required. Represents a MultiPoint geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POINT
     :ivar coordinates: The coordinates of the multipoint. Required.
-    :vartype coordinates: list[float]
+    :vartype coordinates: list[list[float]]
     """
 
     type: Literal[GeometryType.MULTI_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multipoint. Required. Represents a MultiPoint geometry."""
-    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multipoint. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: list[float],
+        coordinates: list[list[float]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -1019,12 +940,12 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     :ivar bounding_box: Optional bounding box of the geometry.
     :vartype bounding_box: list[float]
     :ivar coordinates: The coordinates of the multipolygon. Required.
-    :vartype coordinates: list[list[list[float]]]
+    :vartype coordinates: list[list[list[list[float]]]]
     :ivar type: The type of the multipolygon. Required. Represents a MultiPolygon geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POLYGON
     """
 
-    coordinates: list[list[list[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[list[list[float]]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multipolygon. Required."""
     type: Literal[GeometryType.MULTI_POLYGON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multipolygon. Required. Represents a MultiPolygon geometry."""
@@ -1033,7 +954,7 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     def __init__(
         self,
         *,
-        coordinates: list[list[list[float]]],
+        coordinates: list[list[list[list[float]]]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -1231,20 +1152,20 @@ class Point(Geometry, discriminator="Point"):
      Point geometry.
     :vartype type: str or ~azure.planetarycomputer.models.POINT
     :ivar coordinates: The coordinates of the point as [longitude, latitude]. Required.
-    :vartype coordinates: str
+    :vartype coordinates: list[float]
     """
 
     type: Literal[GeometryType.POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The geometry type, always \"Point\" for Point geometries. Required. Represents a Point
      geometry."""
-    coordinates: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the point as [longitude, latitude]. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: str,
+        coordinates: list[float],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -1296,6 +1217,10 @@ class Polygon(Geometry, discriminator="Polygon"):
         self.type = GeometryType.POLYGON  # type: ignore
 
 
+class QueryableDefinitionsResponse(_Model):
+    """Queryable definitions response."""
+
+
 class RenderOption(_Model):
     """Defines visualization parameters for rendering data on a map.
 
@@ -1315,8 +1240,7 @@ class RenderOption(_Model):
      See `Query Parameters <https://developmentseed.org/titiler/endpoints/cog/#description>`_.
     :vartype options: str
     :ivar vector_options: Options for rendering vector tiles. Valid only for ``vt-polygon``  and
-     ``vt-line``
-     types.
+     ``vt-line`` types.
     :vartype vector_options: ~azure.planetarycomputer.models.RenderOptionVectorOptions
     :ivar min_zoom: Minimum zoom level at which to display this layer.
     :vartype min_zoom: int
@@ -1332,8 +1256,7 @@ class RenderOption(_Model):
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Short descriptive name for the render option. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A longer description of the render option that can be used to explain its
-     content."""
+    """A longer description of the render option that can be used to explain its content."""
     type: Optional[Union[str, "_models.RenderOptionType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1347,8 +1270,7 @@ class RenderOption(_Model):
     vector_options: Optional["_models.RenderOptionVectorOptions"] = rest_field(
         name="vectorOptions", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Options for rendering vector tiles. Valid only for ``vt-polygon``  and ``vt-line``
-     types."""
+    """Options for rendering vector tiles. Valid only for ``vt-polygon``  and ``vt-line`` types."""
     min_zoom: Optional[int] = rest_field(name="minZoom", visibility=["read", "create", "update", "delete", "query"])
     """Minimum zoom level at which to display this layer."""
     legend: Optional["_models.RenderOptionLegend"] = rest_field(
@@ -1358,8 +1280,8 @@ class RenderOption(_Model):
     conditions: Optional[list["_models.RenderOptionCondition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """A list of property/value conditions that must be in the active mosaic CQL for
-     this render option to be enabled."""
+    """A list of property/value conditions that must be in the active mosaic CQL for this render
+     option to be enabled."""
 
     @overload
     def __init__(
@@ -1423,51 +1345,41 @@ class RenderOptionCondition(_Model):
 class RenderOptionLegend(_Model):
     """Configuration for generating a data legend.
 
-    :ivar type: Legend type to make,
-     one of: ``continuous``,
-     ``classmap``,
-     ``interval`` or ``none``
+    :ivar type: Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none``
      (note, ``none`` is a string literal). Known values are: "continuous", "classmap", "interval",
      and "none".
     :vartype type: str or ~azure.planetarycomputer.models.LegendConfigType
     :ivar labels: Text labels to display on the legend.
     :vartype labels: list[str]
     :ivar trim_start: The number of items to trim from the start of the legend definition. Used if
-     there are values important for rendering (e.g. nodata) that aren't desirable in
-     the legend.
+     there are values important for rendering (e.g. nodata) that aren't desirable in the legend.
     :vartype trim_start: int
     :ivar trim_end: Number of items to trim from the end of the legend.
     :vartype trim_end: int
     :ivar scale_factor: A factor to multiply interval legend labels by. Useful for scaled rasters
-     whose
-     colormap definitions map to unscaled values, effectively showing legend labels
-     as scaled values.
+     whose colormap definitions map to unscaled values, effectively showing legend labels as scaled
+     values.
     :vartype scale_factor: float
     """
 
     type: Optional[Union[str, "_models.LegendConfigType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legend type to make,
-     one of: ``continuous``,
-     ``classmap``,
-     ``interval`` or ``none``
-     (note, ``none`` is a string literal). Known values are: \"continuous\", \"classmap\",
-     \"interval\", and \"none\"."""
+    """Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none`` (note,
+     ``none`` is a string literal). Known values are: \"continuous\", \"classmap\", \"interval\",
+     and \"none\"."""
     labels: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text labels to display on the legend."""
     trim_start: Optional[int] = rest_field(name="trimStart", visibility=["read", "create", "update", "delete", "query"])
-    """The number of items to trim from the start of the legend definition. Used if
-     there are values important for rendering (e.g. nodata) that aren't desirable in
-     the legend."""
+    """The number of items to trim from the start of the legend definition. Used if there are values
+     important for rendering (e.g. nodata) that aren't desirable in the legend."""
     trim_end: Optional[int] = rest_field(name="trimEnd", visibility=["read", "create", "update", "delete", "query"])
     """Number of items to trim from the end of the legend."""
     scale_factor: Optional[float] = rest_field(
         name="scaleFactor", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A factor to multiply interval legend labels by. Useful for scaled rasters whose
-     colormap definitions map to unscaled values, effectively showing legend labels
-     as scaled values."""
+    """A factor to multiply interval legend labels by. Useful for scaled rasters whose colormap
+     definitions map to unscaled values, effectively showing legend labels as scaled values."""
 
     @overload
     def __init__(
@@ -1703,14 +1615,14 @@ class SharedAccessSignatureTokenIngestionSource(
     :vartype id: str
     :ivar created: Created time in UTC format.
     :vartype created: ~datetime.datetime
-    :ivar kind: Required. Azure Blob Storage SAS token
+    :ivar kind: Required. Azure Blob Storage SAS token.
     :vartype kind: str or ~azure.planetarycomputer.models.SHARED_ACCESS_SIGNATURE_TOKEN
     :ivar connection_info: SAS token connection information. Required.
     :vartype connection_info: ~azure.planetarycomputer.models.SharedAccessSignatureTokenConnection
     """
 
     kind: Literal[IngestionSourceType.SHARED_ACCESS_SIGNATURE_TOKEN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Azure Blob Storage SAS token"""
+    """Required. Azure Blob Storage SAS token."""
     connection_info: "_models.SharedAccessSignatureTokenConnection" = rest_field(
         name="connectionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1911,9 +1823,9 @@ class StacCollection(_Model):
     Represents a STAC collection.
 
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -1952,12 +1864,12 @@ class StacCollection(_Model):
     :vartype summaries: dict[str, any]
     """
 
-    created_on: Optional[str] = rest_field(
-        name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
+    created_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_created", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Created."""
-    updated_on: Optional[str] = rest_field(
-        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
+    updated_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(
@@ -2014,8 +1926,8 @@ class StacCollection(_Model):
         links: list["_models.StacLink"],
         license: str,
         extent: "_models.StacExtensionExtent",
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         stac_version: Optional[str] = None,
@@ -2248,9 +2160,9 @@ class StacItemOrStacItemCollection(_Model):
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.StacLink]
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2265,12 +2177,12 @@ class StacItemOrStacItemCollection(_Model):
     """Stac Version."""
     links: Optional[list["_models.StacLink"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints."""
-    created_on: Optional[str] = rest_field(
-        name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
+    created_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_created", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Created."""
-    updated_on: Optional[str] = rest_field(
-        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
+    updated_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(
@@ -2287,8 +2199,8 @@ class StacItemOrStacItemCollection(_Model):
         type: str,
         stac_version: Optional[str] = None,
         links: Optional[list["_models.StacLink"]] = None,
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
     ) -> None: ...
@@ -2312,9 +2224,9 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.StacLink]
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2334,7 +2246,7 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     :ivar assets: Assets. Required.
     :vartype assets: dict[str, ~azure.planetarycomputer.models.StacAsset]
     :ivar timestamp: MSFT Timestamp.
-    :vartype timestamp: str
+    :vartype timestamp: ~datetime.datetime
     :ivar e_tag: MSFT ETag.
     :vartype e_tag: str
     """
@@ -2353,7 +2265,9 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     """Attributes associated with the feature. Required."""
     assets: dict[str, "_models.StacAsset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Assets. Required."""
-    timestamp: Optional[str] = rest_field(name="_msft:ts", visibility=["read", "create", "update", "delete", "query"])
+    timestamp: Optional[datetime.datetime] = rest_field(
+        name="_msft:ts", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """MSFT Timestamp."""
     e_tag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
     """MSFT ETag."""
@@ -2369,12 +2283,12 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
         assets: dict[str, "_models.StacAsset"],
         stac_version: Optional[str] = None,
         links: Optional[list["_models.StacLink"]] = None,
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         collection: Optional[str] = None,
-        timestamp: Optional[str] = None,
+        timestamp: Optional[datetime.datetime] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
 
@@ -2528,9 +2442,9 @@ class StacItemCollection(StacItemOrStacItemCollection, discriminator="FeatureCol
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.StacLink]
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2565,8 +2479,8 @@ class StacItemCollection(StacItemOrStacItemCollection, discriminator="FeatureCol
         features: list["_models.StacItem"],
         stac_version: Optional[str] = None,
         links: Optional[list["_models.StacLink"]] = None,
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         bounding_box: Optional[list[float]] = None,
@@ -2806,9 +2720,9 @@ class StacLandingPage(_Model):
     Represents the STAC API landing page with links to available resources.
 
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2829,12 +2743,12 @@ class StacLandingPage(_Model):
     :vartype type: str
     """
 
-    created_on: Optional[str] = rest_field(
-        name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
+    created_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_created", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Created."""
-    updated_on: Optional[str] = rest_field(
-        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
+    updated_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(
@@ -2866,8 +2780,8 @@ class StacLandingPage(_Model):
         description: str,
         conforms_to: list[str],
         links: list["_models.StacLink"],
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         title: Optional[str] = None,
@@ -2910,18 +2824,17 @@ class StacLink(_Model):
     :vartype hreflang: str
     :ivar length: The length of the linked resource.
     :vartype length: int
-    :ivar method: Specifies the HTTP method that the resource expects.
-     Default: GET. Is one of the following types: Literal["GET"], Literal["POST"], str
+    :ivar method: Specifies the HTTP method that the resource expects. Default: GET. Is one of the
+     following types: Literal["GET"], Literal["POST"], str
     :vartype method: str or str or str
-    :ivar headers: Object key-value pairs that map to headers.
-     Example: { "Accept": "application/json" }.
+    :ivar headers: Object key-value pairs that map to headers. Example: { "Accept":
+     "application/json" }.
     :vartype headers: dict[str, str]
     :ivar body: For POST requests, the resource can specify the HTTP body as a JSON object.
     :vartype body: dict[str, any]
     :ivar merge: Indicates whether the client is expected to merge the body value into the current
-     request body before following the link.
-     This is only valid when the server is responding to a POST request.
-     Default: false.
+     request body before following the link. This is only valid when the server is responding to a
+     POST request. Default: false.
     :vartype merge: bool
     """
 
@@ -2945,17 +2858,15 @@ class StacLink(_Model):
     method: Optional[Union[Literal["GET"], Literal["POST"], str]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the HTTP method that the resource expects.
-     Default: GET. Is one of the following types: Literal[\"GET\"], Literal[\"POST\"], str"""
+    """Specifies the HTTP method that the resource expects. Default: GET. Is one of the following
+     types: Literal[\"GET\"], Literal[\"POST\"], str"""
     headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Object key-value pairs that map to headers.
-     Example: { \"Accept\": \"application/json\" }."""
+    """Object key-value pairs that map to headers. Example: { \"Accept\": \"application/json\" }."""
     body: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """For POST requests, the resource can specify the HTTP body as a JSON object."""
     merge: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the client is expected to merge the body value into the current request body
-     before following the link.
-     This is only valid when the server is responding to a POST request.
+     before following the link. This is only valid when the server is responding to a POST request.
      Default: false."""
 
     @overload
@@ -3173,9 +3084,7 @@ class StacQueryable(_Model):
 
 
 class StacSearchParameters(_Model):
-    """Search model.
-    *
-    Defines parameters for a STAC search POST request.
+    """Search model. * Defines parameters for a STAC search POST request.
 
     :ivar collections: List of collection IDs to search within.
     :vartype collections: list[str]
@@ -3193,10 +3102,6 @@ class StacSearchParameters(_Model):
 
      Overrides datetime validation from the base request model.
     :vartype conformance_class: dict[str, any]
-    :ivar sign: Whether to sign asset URLs in the response. Known values are: "true" and "false".
-    :vartype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
-    :ivar duration_in_minutes: URL signature duration in minutes.
-    :vartype duration_in_minutes: int
     :ivar query: STAC Query
 
      See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_.
@@ -3242,14 +3147,6 @@ class StacSearchParameters(_Model):
     """Conf
      
      Overrides datetime validation from the base request model."""
-    sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to sign asset URLs in the response. Known values are: \"true\" and \"false\"."""
-    duration_in_minutes: Optional[int] = rest_field(
-        name="duration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """URL signature duration in minutes."""
     query: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """STAC Query
      
@@ -3293,8 +3190,6 @@ class StacSearchParameters(_Model):
         date_time: Optional[str] = None,
         limit: Optional[int] = None,
         conformance_class: Optional[dict[str, Any]] = None,
-        sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = None,
-        duration_in_minutes: Optional[int] = None,
         query: Optional[dict[str, Any]] = None,
         sort_by: Optional[list["_models.StacSortExtension"]] = None,
         fields: Optional[list["_models.SearchOptionsFields"]] = None,
@@ -3460,52 +3355,51 @@ class TileJsonMetadata(_Model):
 class TileMatrix(_Model):
     """Tile Matrix Definition
 
-        A tile matrix, usually corresponding to a particular zoom level of a
-        TileMatrixSet.
+    A tile matrix, usually corresponding to a particular zoom level of a
+    TileMatrixSet.
 
-        ref:
-        `https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrix.json
-        <https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrix.json>`_
+    ref:
+    `https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrix.json
+    <https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrix.json>`_
 
-        Definition of a tile matrix at a specific zoom level within a tile matrix set.
+    Definition of a tile matrix at a specific zoom level within a tile matrix set.
 
-        :ivar title: Human-readable title of the tile matrix level.
-        :vartype title: str
-        :ivar description: Human-readable description of this tile matrix level.
-        :vartype description: str
-        :ivar keywords: Unordered list of one or more commonly used or formalized word(s) or phrase(s)
-         used to describe this dataset.
-        :vartype keywords: list[str]
-        :ivar id: Unique identifier for this tile matrix level, often the zoom level. Required.
-        :vartype id: str
-        :ivar scale_denominator: Scale denominator representing the scale of this tile matrix level.
-         Required.
-        :vartype scale_denominator: float
-        :ivar cell_size: Size of a pixel in map units at this tile matrix level. Required.
-        :vartype cell_size: float
-        :ivar corner_of_origin: The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the
-         origin for numbering tile rows and columns. This corner is also a corner of the (0, 0)
-         tile. Known values are: "topLeft" and "bottomLeft".
-        :vartype corner_of_origin: str or ~azure.planetarycomputer.models.TileMatrixCornerOfOrigin
-        :ivar point_of_origin: Precise position in CRS coordinates of the corner of origin (e.g. the
-         top-left corner) for this tile matrix. This position is also a corner of the (0, 0)
-         tile. In previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did
-         not exist. Required.
-        :vartype point_of_origin: list[float]
-        :ivar tile_width: Pixel width of each tile at this level. Required.
-        :vartype tile_width: int
-        :ivar tile_height: Pixel height of each tile at this level. Required.
-        :vartype tile_height: int
-        :ivar matrix_width: Number of tiles horizontally at this matrix level. Required.
-        :vartype matrix_width: int
-        :ivar matrix_height: Number of tiles vertically at this matrix level. Required.
-        :vartype matrix_height: int
-        :ivar variable_matrix_widths: Describes the rows that has variable matrix width
+    :ivar title: Human-readable title of the tile matrix level.
+    :vartype title: str
+    :ivar description: Human-readable description of this tile matrix level.
+    :vartype description: str
+    :ivar keywords: Unordered list of one or more commonly used or formalized word(s) or phrase(s)
+     used to describe this dataset.
+    :vartype keywords: list[str]
+    :ivar id: Unique identifier for this tile matrix level, often the zoom level. Required.
+    :vartype id: str
+    :ivar scale_denominator: Scale denominator representing the scale of this tile matrix level.
+     Required.
+    :vartype scale_denominator: float
+    :ivar cell_size: Size of a pixel in map units at this tile matrix level. Required.
+    :vartype cell_size: float
+    :ivar corner_of_origin: The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the
+     origin for numbering tile rows and columns. This corner is also a corner of the (0, 0) tile.
+     Known values are: "topLeft" and "bottomLeft".
+    :vartype corner_of_origin: str or ~azure.planetarycomputer.models.TileMatrixCornerOfOrigin
+    :ivar point_of_origin: Precise position in CRS coordinates of the corner of origin (e.g. the
+     top-left corner) for this tile matrix. This position is also a corner of the (0, 0) tile. In
+     previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did not exist. Required.
+    :vartype point_of_origin: list[float]
+    :ivar tile_width: Pixel width of each tile at this level. Required.
+    :vartype tile_width: int
+    :ivar tile_height: Pixel height of each tile at this level. Required.
+    :vartype tile_height: int
+    :ivar matrix_width: Number of tiles horizontally at this matrix level. Required.
+    :vartype matrix_width: int
+    :ivar matrix_height: Number of tiles vertically at this matrix level. Required.
+    :vartype matrix_height: int
+    :ivar variable_matrix_widths: Describes the rows that has variable matrix width
 
-         ref:
-         `https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json
-         <https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json>`_.
-        :vartype variable_matrix_widths: list[~azure.planetarycomputer.models.VariableMatrixWidth]
+     ref:
+     `https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json
+     <https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json>`_.
+    :vartype variable_matrix_widths: list[~azure.planetarycomputer.models.VariableMatrixWidth]
     """
 
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3513,8 +3407,8 @@ class TileMatrix(_Model):
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable description of this tile matrix level."""
     keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unordered list of one or more commonly used or formalized word(s) or phrase(s)
-     used to describe this dataset."""
+    """Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe
+     this dataset."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for this tile matrix level, often the zoom level. Required."""
     scale_denominator: float = rest_field(
@@ -3526,16 +3420,15 @@ class TileMatrix(_Model):
     corner_of_origin: Optional[Union[str, "_models.TileMatrixCornerOfOrigin"]] = rest_field(
         name="cornerOfOrigin", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the origin
- for numbering tile rows and columns. This corner is also a corner of the (0, 0)
- tile. Known values are: \"topLeft\" and \"bottomLeft\"."""
+    """The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the origin for numbering tile
+     rows and columns. This corner is also a corner of the (0, 0) tile. Known values are:
+     \"topLeft\" and \"bottomLeft\"."""
     point_of_origin: list[float] = rest_field(
         name="pointOfOrigin", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Precise position in CRS coordinates of the corner of origin (e.g. the top-left
-     corner) for this tile matrix. This position is also a corner of the (0, 0)
-     tile. In previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did
-     not exist. Required."""
+    """Precise position in CRS coordinates of the corner of origin (e.g. the top-left corner) for this
+     tile matrix. This position is also a corner of the (0, 0) tile. In previous version, this was
+     'topLeftCorner' and 'cornerOfOrigin' did not exist. Required."""
     tile_width: int = rest_field(name="tileWidth", visibility=["read", "create", "update", "delete", "query"])
     """Pixel width of each tile at this level. Required."""
     tile_height: int = rest_field(name="tileHeight", visibility=["read", "create", "update", "delete", "query"])
@@ -3620,11 +3513,10 @@ class TileMatrixSet(_Model):
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable title of the tile matrix set."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Brief narrative description of this tile matrix set, normally available for
-     display to a human."""
+    """Brief narrative description of this tile matrix set, normally available for display to a human."""
     keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unordered list of one or more commonly used or formalized word(s) or phrase(s)
-     used to describe this tile matrix set."""
+    """Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe
+     this tile matrix set."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the tile matrix set."""
     uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3721,6 +3613,97 @@ class TileMatrixSetBoundingBox(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TileMatrixSetLimitsEntry(_Model):
+    """Limits for a specific tile matrix within a tileset, defining the valid row/column range.
+
+    :ivar tile_matrix: Identifier of the tile matrix level. Required.
+    :vartype tile_matrix: str
+    :ivar min_tile_row: Minimum tile row index at this zoom level. Required.
+    :vartype min_tile_row: int
+    :ivar max_tile_row: Maximum tile row index at this zoom level. Required.
+    :vartype max_tile_row: int
+    :ivar min_tile_col: Minimum tile column index at this zoom level. Required.
+    :vartype min_tile_col: int
+    :ivar max_tile_col: Maximum tile column index at this zoom level. Required.
+    :vartype max_tile_col: int
+    """
+
+    tile_matrix: str = rest_field(name="tileMatrix", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the tile matrix level. Required."""
+    min_tile_row: int = rest_field(name="minTileRow", visibility=["read", "create", "update", "delete", "query"])
+    """Minimum tile row index at this zoom level. Required."""
+    max_tile_row: int = rest_field(name="maxTileRow", visibility=["read", "create", "update", "delete", "query"])
+    """Maximum tile row index at this zoom level. Required."""
+    min_tile_col: int = rest_field(name="minTileCol", visibility=["read", "create", "update", "delete", "query"])
+    """Minimum tile column index at this zoom level. Required."""
+    max_tile_col: int = rest_field(name="maxTileCol", visibility=["read", "create", "update", "delete", "query"])
+    """Maximum tile column index at this zoom level. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tile_matrix: str,
+        min_tile_row: int,
+        max_tile_row: int,
+        min_tile_col: int,
+        max_tile_col: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TilerAssetGeoJson(_Model):
+    """Represents GeoJSON with feature with an asset property.
+
+    :ivar id: Unique identifier for the feature. Required.
+    :vartype id: str
+    :ivar collection: ID of the STAC collection this item belongs to.
+    :vartype collection: str
+    :ivar bounding_box: Bounding box coordinates for the feature. Required.
+    :vartype bounding_box: list[float]
+    :ivar assets: Assets. Required.
+    :vartype assets: dict[str, ~azure.planetarycomputer.models.StacAsset]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the feature. Required."""
+    collection: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the STAC collection this item belongs to."""
+    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    """Bounding box coordinates for the feature. Required."""
+    assets: dict[str, "_models.StacAsset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Assets. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bounding_box: list[float],
+        assets: dict[str, "_models.StacAsset"],
+        collection: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TilerCoreModelsResponsesPoint(_Model):
     """Response model for point query operations providing values at a specific location.
 
@@ -3734,7 +3717,9 @@ class TilerCoreModelsResponsesPoint(_Model):
 
     coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geographic coordinates [longitude, latitude] of the queried point. Required."""
-    values_property: list[float] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
+    values_property: list[float] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
     """Array of pixel values at the queried point for each band. Required."""
     band_names: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Names of each band in the raster data. Required."""
@@ -3890,7 +3875,7 @@ class TilerInfoGeoJsonFeature(_Model):
     :ivar id: Unique identifier for the feature.
     :vartype id: str
     :ivar bounding_box: Bounding box coordinates for the feature.
-    :vartype bounding_box: float
+    :vartype bounding_box: list[float]
     """
 
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3901,7 +3886,9 @@ class TilerInfoGeoJsonFeature(_Model):
     """Properties. Required."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the feature."""
-    bounding_box: Optional[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[list[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding box coordinates for the feature."""
 
     @overload
@@ -3912,7 +3899,7 @@ class TilerInfoGeoJsonFeature(_Model):
         geometry: "_models.Geometry",
         properties: dict[str, "_models.TilerInfo"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        bounding_box: Optional[float] = None,
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -3924,6 +3911,10 @@ class TilerInfoGeoJsonFeature(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TilerInfoMapResponse(_Model):
+    """Return dataset's basic info."""
 
 
 class TilerMosaicSearchRegistrationResponse(_Model):
@@ -3974,10 +3965,6 @@ class TilerStacSearchDefinition(_Model):
     :vartype hash: str
     :ivar search: Search. Required.
     :vartype search: dict[str, any]
-    :ivar where: SQL WHERE clause representing the search filters. Required.
-    :vartype where: str
-    :ivar order_by: SQL ORDER BY clause for sorting results. Required.
-    :vartype order_by: str
     :ivar last_used: Timestamp when the search was last accessed. Required.
     :vartype last_used: ~datetime.datetime
     :ivar use_count: Number of times the search has been accessed. Required.
@@ -3990,10 +3977,6 @@ class TilerStacSearchDefinition(_Model):
     """Unique hash identifier for the search query. Required."""
     search: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Search. Required."""
-    where: str = rest_field(name="_where", visibility=["read", "create", "update", "delete", "query"])
-    """SQL WHERE clause representing the search filters. Required."""
-    order_by: str = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
-    """SQL ORDER BY clause for sorting results. Required."""
     last_used: datetime.datetime = rest_field(
         name="lastused", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -4009,8 +3992,6 @@ class TilerStacSearchDefinition(_Model):
         *,
         hash: str,
         search: dict[str, Any],
-        where: str,
-        order_by: str,
         last_used: datetime.datetime,
         use_count: int,
         metadata: "_models.MosaicMetadata",
@@ -4068,13 +4049,246 @@ class TilerStacSearchRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TileSetBoundingBox(_Model):
+    """Bounding box for a tile set.
+
+    :ivar lower_left: Lower-left corner coordinates [x, y]. Required.
+    :vartype lower_left: list[float]
+    :ivar upper_right: Upper-right corner coordinates [x, y]. Required.
+    :vartype upper_right: list[float]
+    :ivar crs: Coordinate reference system identifier.
+    :vartype crs: str
+    """
+
+    lower_left: list[float] = rest_field(name="lowerLeft", visibility=["read", "create", "update", "delete", "query"])
+    """Lower-left corner coordinates [x, y]. Required."""
+    upper_right: list[float] = rest_field(name="upperRight", visibility=["read", "create", "update", "delete", "query"])
+    """Upper-right corner coordinates [x, y]. Required."""
+    crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Coordinate reference system identifier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lower_left: list[float],
+        upper_right: list[float],
+        crs: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetEntry(_Model):
+    """Summary information about a single tileset within a list of available tilesets.
+
+    :ivar title: Human-readable title of the tileset.
+    :vartype title: str
+    :ivar data_type: Type of data in the tiles (e.g., 'map', 'vector').
+    :vartype data_type: str
+    :ivar crs: Coordinate reference system identifier.
+    :vartype crs: str
+    :ivar links: Links related to this tileset.
+    :vartype links: list[~azure.planetarycomputer.models.TileSetLink]
+    :ivar bounding_box: Bounding box of the tileset.
+    :vartype bounding_box: ~azure.planetarycomputer.models.TileSetBoundingBox
+    :ivar access_constraints: Access constraints for the tileset.
+    :vartype access_constraints: str
+    """
+
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable title of the tileset."""
+    data_type: Optional[str] = rest_field(name="dataType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of data in the tiles (e.g., 'map', 'vector')."""
+    crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Coordinate reference system identifier."""
+    links: Optional[list["_models.TileSetLink"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Links related to this tileset."""
+    bounding_box: Optional["_models.TileSetBoundingBox"] = rest_field(
+        name="boundingBox", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bounding box of the tileset."""
+    access_constraints: Optional[str] = rest_field(
+        name="accessConstraints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access constraints for the tileset."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        data_type: Optional[str] = None,
+        crs: Optional[str] = None,
+        links: Optional[list["_models.TileSetLink"]] = None,
+        bounding_box: Optional["_models.TileSetBoundingBox"] = None,
+        access_constraints: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetLink(_Model):
+    """A link object used in OGC tile resources.
+
+    :ivar href: The URL target of the link. Required.
+    :vartype href: str
+    :ivar rel: The relationship type of the link. Required.
+    :vartype rel: str
+    :ivar type: The media type of the linked resource.
+    :vartype type: str
+    :ivar title: Human-readable title of the link.
+    :vartype title: str
+    """
+
+    href: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL target of the link. Required."""
+    rel: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The relationship type of the link. Required."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The media type of the linked resource."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable title of the link."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        href: str,
+        rel: str,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetList(_Model):
+    """Response containing a list of available tilesets.
+
+    :ivar tilesets: Array of available tilesets. Required.
+    :vartype tilesets: list[~azure.planetarycomputer.models.TileSetEntry]
+    """
+
+    tilesets: list["_models.TileSetEntry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of available tilesets. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tilesets: list["_models.TileSetEntry"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetMetadata(_Model):
+    """Detailed metadata about a specific tileset, including tile matrix set limits.
+
+    :ivar title: Human-readable title of the tileset.
+    :vartype title: str
+    :ivar data_type: Type of data in the tiles.
+    :vartype data_type: str
+    :ivar crs: Coordinate reference system identifier.
+    :vartype crs: str
+    :ivar links: Links related to this tileset.
+    :vartype links: list[~azure.planetarycomputer.models.TileSetLink]
+    :ivar bounding_box: Bounding box of the tileset.
+    :vartype bounding_box: ~azure.planetarycomputer.models.TileSetBoundingBox
+    :ivar access_constraints: Access constraints for the tileset.
+    :vartype access_constraints: str
+    :ivar tile_matrix_set_limits: Limits for each tile matrix level in the tileset.
+    :vartype tile_matrix_set_limits: list[~azure.planetarycomputer.models.TileMatrixSetLimitsEntry]
+    """
+
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable title of the tileset."""
+    data_type: Optional[str] = rest_field(name="dataType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of data in the tiles."""
+    crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Coordinate reference system identifier."""
+    links: Optional[list["_models.TileSetLink"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Links related to this tileset."""
+    bounding_box: Optional["_models.TileSetBoundingBox"] = rest_field(
+        name="boundingBox", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bounding box of the tileset."""
+    access_constraints: Optional[str] = rest_field(
+        name="accessConstraints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access constraints for the tileset."""
+    tile_matrix_set_limits: Optional[list["_models.TileMatrixSetLimitsEntry"]] = rest_field(
+        name="tileMatrixSetLimits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Limits for each tile matrix level in the tileset."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        data_type: Optional[str] = None,
+        crs: Optional[str] = None,
+        links: Optional[list["_models.TileSetLink"]] = None,
+        bounding_box: Optional["_models.TileSetBoundingBox"] = None,
+        access_constraints: Optional[str] = None,
+        tile_matrix_set_limits: Optional[list["_models.TileMatrixSetLimitsEntry"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TileSettings(_Model):
     """Configuration for map tile visualization.
 
     :ivar min_zoom: The minimum zoom level that can be requested for this collection. Provides a
-     hard limit for the tile servers to ensure they don't get requests for low zoom
-     levels, which would cause many files to be fetched and the tile servers to
-     hang. Required.
+     hard limit for the tile servers to ensure they don't get requests for low zoom levels, which
+     would cause many files to be fetched and the tile servers to hang. Required.
     :vartype min_zoom: int
     :ivar max_items_per_tile: Maximum number of items to include in a single tile. Required.
     :vartype max_items_per_tile: int
@@ -4083,10 +4297,9 @@ class TileSettings(_Model):
     """
 
     min_zoom: int = rest_field(name="minZoom", visibility=["read", "create", "update", "delete", "query"])
-    """The minimum zoom level that can be requested for this collection. Provides a
-     hard limit for the tile servers to ensure they don't get requests for low zoom
-     levels, which would cause many files to be fetched and the tile servers to
-     hang. Required."""
+    """The minimum zoom level that can be requested for this collection. Provides a hard limit for the
+     tile servers to ensure they don't get requests for low zoom levels, which would cause many
+     files to be fetched and the tile servers to hang. Required."""
     max_items_per_tile: int = rest_field(
         name="maxItemsPerTile", visibility=["read", "create", "update", "delete", "query"]
     )

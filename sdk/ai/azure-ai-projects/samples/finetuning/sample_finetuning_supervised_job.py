@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -18,10 +18,10 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 python-dotenv azure-mgmt-cognitiveservices
+    pip install "azure-ai-projects>=2.0.0" python-dotenv azure-mgmt-cognitiveservices
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry portal.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `gpt-4.1` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
@@ -32,24 +32,20 @@ USAGE:
 """
 
 import os
-import time
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
-from pathlib import Path
 
 load_dotenv()
 
 # For fine-tuning
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
-script_dir = Path(__file__).parent
-training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
-validation_file_path = os.environ.get(
-    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl")
-)
+training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "sft_training_set.jsonl")
+validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "sft_validation_set.jsonl")
 
 # For Deployment and inferencing on model
 subscription_id = os.environ["AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID"]

@@ -14,13 +14,14 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync, ContentUnderstandingPreparer
 from azure.ai.contentunderstanding.models import ContentAnalyzer
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput
+from azure.ai.contentunderstanding.models import AnalysisInput
 from test_helpers import (
     generate_analyzer_id,
     new_simple_content_analyzer_object,
     new_invoice_analyzer_object,
     new_marketing_video_analyzer_object,
     assert_poller_properties,
+    assert_analyze_poller_usage,
     assert_simple_content_analyzer_result,
     assert_invoice_fields,
     assert_document_properties,
@@ -225,17 +226,13 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         # Get deployment names from variables (playback) or environment (recording)
         # If not found, use defaults and record them
-        gpt_4_1_deployment = variables.setdefault(
-            "gpt_4_1_deployment",
-            os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1")
-        )
+        gpt_4_1_deployment = variables.setdefault("gpt_4_1_deployment", os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1"))
         gpt_4_1_mini_deployment = variables.setdefault(
-            "gpt_4_1_mini_deployment",
-            os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
+            "gpt_4_1_mini_deployment", os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
         )
         text_embedding_3_large_deployment = variables.setdefault(
             "text_embedding_3_large_deployment",
-            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large")
+            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large"),
         )
 
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
@@ -615,7 +612,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin analysis operation with URL
             analysis_poller = await client.begin_analyze(
-                analyzer_id=analyzer_id, inputs=[AnalyzeInput(url=invoice_url)]
+                analyzer_id=analyzer_id, inputs=[AnalysisInput(url=invoice_url)]
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
@@ -729,7 +726,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin video analysis operation using URL
             analysis_poller = await client.begin_analyze(
-                analyzer_id=analyzer_id, inputs=[AnalyzeInput(url=video_file_url)]
+                analyzer_id=analyzer_id, inputs=[AnalysisInput(url=video_file_url)]
             )
 
             # Wait for analysis completion first
@@ -982,6 +979,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -1117,6 +1115,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -1179,6 +1178,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify operation completed successfully
         assert result is not None, "Analysis result should not be null"
@@ -1220,7 +1220,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         print("\nStarting analysis operation...")
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice",
-            inputs=[AnalyzeInput(url=document_url)],
+            inputs=[AnalysisInput(url=document_url)],
         )
 
         # Wait for completion

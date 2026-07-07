@@ -18,7 +18,7 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
     def create_client(self, endpoint: str) -> ContentUnderstandingClient:
         # Normalize endpoint: remove trailing slashes to prevent double slashes in URLs
         endpoint = endpoint.rstrip("/")
-        
+
         # Try API key first (for Content Understanding service)
         # Check CONTENTUNDERSTANDING_KEY
         key = os.getenv("CONTENTUNDERSTANDING_KEY")
@@ -36,6 +36,16 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
                 polling_interval=3,  # Use 3-second polling interval for test stability
             ),
         )
+
+    def create_client_from_credential(self, client_class, *, endpoint=None, **kwargs):
+        # Mirror create_client(): strip trailing slashes so the generated URL template
+        # "{endpoint}/contentunderstanding" never produces "//contentunderstanding".
+        # Tests that build a second client for a different resource (e.g. grant_copy_auth
+        # target client) take this path with a raw env-var endpoint, so they need the same
+        # normalization the primary create_client() already performs.
+        if isinstance(endpoint, str):
+            endpoint = endpoint.rstrip("/")
+        return super().create_client_from_credential(client_class, endpoint=endpoint, **kwargs)
 
 
 ContentUnderstandingPreparer = functools.partial(

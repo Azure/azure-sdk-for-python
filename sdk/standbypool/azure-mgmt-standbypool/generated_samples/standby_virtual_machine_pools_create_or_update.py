@@ -38,7 +38,12 @@ def main():
             "location": "West US",
             "properties": {
                 "attachedVirtualMachineScaleSetId": "/subscriptions/00000000-0000-0000-0000-000000000009/resourceGroups/rgstandbypool/providers/Microsoft.Compute/virtualMachineScaleSets/myVmss",
-                "elasticityProfile": {"maxReadyCapacity": 304, "minReadyCapacity": 300},
+                "elasticityProfile": {
+                    "dynamicSizing": {"enabled": True},
+                    "maxReadyCapacity": 304,
+                    "minReadyCapacity": 300,
+                    "postProvisioningDelay": "PT2S",
+                },
                 "virtualMachineState": "Running",
             },
             "tags": {},
@@ -47,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/StandbyVirtualMachinePools_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/StandbyVirtualMachinePools_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -8,6 +8,7 @@ from typing import Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class SimilarityEvaluator(PromptyEvaluatorBase):
@@ -134,3 +135,41 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, float]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Convert keyword arguments to evaluation input, with validation."""
+        conversation = kwargs.get("conversation")
+        if conversation is not None:
+            return super()._convert_kwargs_to_eval_input(**kwargs)
+
+        query = kwargs.get("query")
+        response = kwargs.get("response")
+        ground_truth = kwargs.get("ground_truth")
+
+        # Validate required fields are not None
+        if query is None:
+            raise EvaluationException(
+                message="Either 'conversation' or individual inputs must be provided. 'query' is missing.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        if response is None:
+            raise EvaluationException(
+                message="Either 'conversation' or individual inputs must be provided. 'response' is missing.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        if ground_truth is None:
+            raise EvaluationException(
+                message="Either 'conversation' or individual inputs must be provided. 'ground_truth' is missing.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        return super()._convert_kwargs_to_eval_input(**kwargs)

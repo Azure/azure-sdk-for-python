@@ -184,6 +184,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         if "query" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
                 message="Only text conversation inputs are supported.",
@@ -192,40 +198,53 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
         if not isinstance(eval_input["query"], str):
             eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         if not isinstance(eval_input["response"], str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = result.get("llm_output")
+        llm_output = result.get("llm_output", result)
         score = math.nan
 
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
             score = float(llm_output.get("score", math.nan))
-            reason = llm_output.get("explanation", "")
-            # Parse out score and reason from evaluators known to possess them.
-            binary_result = self._get_binary_result(score)
+            reason = llm_output.get("reason", "")
+            llm_properties = llm_output.get("properties", {}) or {}
+            score_result = self._get_binary_result(score)
+            llm_properties.update(self._get_token_metadata(result))
             return {
-                self._result_key: float(score),
-                f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_result": binary_result,
-                f"{self._result_key}_threshold": self._threshold,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
-                f"{self._result_key}_model": result.get("model_id", ""),
-                f"{self._result_key}_sample_input": result.get("sample_input", ""),
-                f"{self._result_key}_sample_output": result.get("sample_output", ""),
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
 
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

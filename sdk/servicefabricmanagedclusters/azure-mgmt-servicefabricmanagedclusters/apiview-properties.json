@@ -21,6 +21,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.ApplicationUpdateParametersProperties": "Microsoft.ServiceFabric.ApplicationUpdateParametersProperties",
         "azure.mgmt.servicefabricmanagedclusters.models.ApplicationUpgradePolicy": "Microsoft.ServiceFabric.ApplicationUpgradePolicy",
         "azure.mgmt.servicefabricmanagedclusters.models.ApplicationUserAssignedIdentity": "Microsoft.ServiceFabric.ApplicationUserAssignedIdentity",
+        "azure.mgmt.servicefabricmanagedclusters.models.ApplyMaintenanceWindowRequest": "Microsoft.ServiceFabric.ApplyMaintenanceWindowRequest",
         "azure.mgmt.servicefabricmanagedclusters.models.AvailableOperationDisplay": "Microsoft.ServiceFabric.AvailableOperationDisplay",
         "azure.mgmt.servicefabricmanagedclusters.models.ScalingTrigger": "Microsoft.ServiceFabric.ScalingTrigger",
         "azure.mgmt.servicefabricmanagedclusters.models.AveragePartitionLoadScalingTrigger": "Microsoft.ServiceFabric.AveragePartitionLoadScalingTrigger",
@@ -43,8 +44,9 @@
         "azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationDetails": "Microsoft.ServiceFabric.FaultSimulationDetails",
         "azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent": "Microsoft.ServiceFabric.FaultSimulationIdContent",
         "azure.mgmt.servicefabricmanagedclusters.models.FrontendConfiguration": "Microsoft.ServiceFabric.FrontendConfiguration",
+        "azure.mgmt.servicefabricmanagedclusters.models.HostEndpointSettings": "Microsoft.ServiceFabric.HostEndpointSettings",
         "azure.mgmt.servicefabricmanagedclusters.models.IpConfiguration": "Microsoft.ServiceFabric.IpConfiguration",
-        "azure.mgmt.servicefabricmanagedclusters.models.IPConfigurationPublicIPAddressConfiguration": "Microsoft.ServiceFabric.PublicIPAddressConfiguration",
+        "azure.mgmt.servicefabricmanagedclusters.models.IpConfigurationPublicIPAddressConfiguration": "Microsoft.ServiceFabric.PublicIPAddressConfiguration",
         "azure.mgmt.servicefabricmanagedclusters.models.IpTag": "Microsoft.ServiceFabric.IpTag",
         "azure.mgmt.servicefabricmanagedclusters.models.LoadBalancingRule": "Microsoft.ServiceFabric.LoadBalancingRule",
         "azure.mgmt.servicefabricmanagedclusters.models.LongRunningOperationResult": "Microsoft.ServiceFabric.LongRunningOperationResult",
@@ -73,6 +75,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.NodeTypeUpdateParameters": "Microsoft.ServiceFabric.NodeTypeUpdateParameters",
         "azure.mgmt.servicefabricmanagedclusters.models.OperationResult": "Microsoft.ServiceFabric.OperationResult",
         "azure.mgmt.servicefabricmanagedclusters.models.PartitionInstanceCountScaleMechanism": "Microsoft.ServiceFabric.PartitionInstanceCountScaleMechanism",
+        "azure.mgmt.servicefabricmanagedclusters.models.ProxyAgentSettings": "Microsoft.ServiceFabric.ProxyAgentSettings",
         "azure.mgmt.servicefabricmanagedclusters.models.ResourceAzStatus": "Microsoft.ServiceFabric.ResourceAzStatus",
         "azure.mgmt.servicefabricmanagedclusters.models.RestartDeployedCodePackageRequest": "Microsoft.ServiceFabric.RestartDeployedCodePackageRequest",
         "azure.mgmt.servicefabricmanagedclusters.models.RestartReplicaRequest": "Microsoft.ServiceFabric.RestartReplicaRequest",
@@ -82,6 +85,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.RuntimeRollingUpgradeUpdateMonitoringPolicy": "Microsoft.ServiceFabric.RuntimeRollingUpgradeUpdateMonitoringPolicy",
         "azure.mgmt.servicefabricmanagedclusters.models.RuntimeServiceTypeHealthPolicy": "Microsoft.ServiceFabric.RuntimeServiceTypeHealthPolicy",
         "azure.mgmt.servicefabricmanagedclusters.models.RuntimeUpdateApplicationUpgradeParameters": "Microsoft.ServiceFabric.RuntimeUpdateApplicationUpgradeParameters",
+        "azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicy": "Microsoft.ServiceFabric.ScaleInPolicy",
         "azure.mgmt.servicefabricmanagedclusters.models.ScalingPolicy": "Microsoft.ServiceFabric.ScalingPolicy",
         "azure.mgmt.servicefabricmanagedclusters.models.ServiceCorrelation": "Microsoft.ServiceFabric.ServiceCorrelation",
         "azure.mgmt.servicefabricmanagedclusters.models.ServiceEndpoint": "Microsoft.ServiceFabric.ServiceEndpoint",
@@ -165,6 +169,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.SecurityEncryptionType": "Microsoft.ServiceFabric.SecurityEncryptionType",
         "azure.mgmt.servicefabricmanagedclusters.models.PrivateIPAddressVersion": "Microsoft.ServiceFabric.PrivateIPAddressVersion",
         "azure.mgmt.servicefabricmanagedclusters.models.PublicIPAddressVersion": "Microsoft.ServiceFabric.PublicIPAddressVersion",
+        "azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicyMode": "Microsoft.ServiceFabric.ScaleInPolicyMode",
         "azure.mgmt.servicefabricmanagedclusters.models.UpdateType": "Microsoft.ServiceFabric.UpdateType",
         "azure.mgmt.servicefabricmanagedclusters.models.NodeTypeSkuScaleType": "Microsoft.ServiceFabric.NodeTypeSkuScaleType",
         "azure.mgmt.servicefabricmanagedclusters.operations.Operations.list": "Microsoft.ServiceFabric.Operations.list",
@@ -297,5 +302,6 @@
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.OperationResultsOperations.get": "Microsoft.ServiceFabric.OperationResults.get",
         "azure.mgmt.servicefabricmanagedclusters.operations.OperationStatusOperations.get": "Microsoft.ServiceFabric.OperationStatus.get",
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.OperationStatusOperations.get": "Microsoft.ServiceFabric.OperationStatus.get"
-    }
+    },
+    "CrossLanguageVersion": "c14997994faa"
 }

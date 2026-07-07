@@ -1,0 +1,7 @@
+{
+  "properties": {
+    "codeUri": "azureml://datastores/workspaceblobstore/paths/smoke/code/",
+    "isAnonymous": false,
+    "properties": {}
+  }
+}

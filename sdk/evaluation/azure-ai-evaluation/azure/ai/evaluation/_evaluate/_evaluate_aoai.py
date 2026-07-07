@@ -307,10 +307,16 @@ def _get_single_run_results(
 
     LOGGER.info(f"AOAI: Eval run {run_info['eval_run_id']} completed with status: {run_results.status}")
     if run_results.status != "completed":
+        error_code = getattr(getattr(run_results, "error", None), "code", None)
+        blame = (
+            ErrorBlame.USER_ERROR
+            if isinstance(error_code, str) and error_code.lower() == "usererror"
+            else ErrorBlame.UNKNOWN
+        )
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
             + f" failed with status {run_results.status}.",
-            blame=ErrorBlame.UNKNOWN,
+            blame=blame,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
@@ -590,6 +596,7 @@ def _get_graders_and_column_mappings(
 def _build_schema_tree_from_paths(
     paths: List[str],
     force_leaf_type: str = "string",
+    leaf_type_map: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
     Build a nested JSON schema (object) from a list of dot-delimited paths.
@@ -629,13 +636,16 @@ def _build_schema_tree_from_paths(
     :param force_leaf_type: The JSON Schema ``type`` value to assign to every leaf node
         produced from the supplied paths. Defaults to ``"string"``.
     :type force_leaf_type: str
+    :param leaf_type_map: Optional mapping from leaf path to JSON Schema type. When
+        provided, overrides ``force_leaf_type`` for any path present in this map.
+    :type leaf_type_map: Optional[Dict[str, str]]
     :return: A JSON Schema fragment describing the hierarchical structure implied by
         the input paths. The returned schema root always has ``type: object`` with
         recursively nested ``properties`` / ``required`` keys.
     :rtype: Dict[str, Any]
     """
-    # Build tree where each node: {"__children__": { segment: node, ... }, "__leaf__": bool }
-    root: Dict[str, Any] = {"__children__": {}, "__leaf__": False}
+    # Build tree where each node: {"__children__": { segment: node, ... }, "__leaf__": bool, "__path__": str }
+    root: Dict[str, Any] = {"__children__": {}, "__leaf__": False, "__path__": ""}
 
     def insert(path: str):
         parts = [p for p in path.split(".") if p]
@@ -643,19 +653,23 @@ def _build_schema_tree_from_paths(
         for i, part in enumerate(parts):
             children = node["__children__"]
             if part not in children:
-                children[part] = {"__children__": {}, "__leaf__": False}
+                children[part] = {"__children__": {}, "__leaf__": False, "__path__": ""}
             node = children[part]
             if i == len(parts) - 1:
                 node["__leaf__"] = True
+                node["__path__"] = path
 
     for p in paths:
         insert(p)
 
+    _leaf_types = leaf_type_map or {}
+
     def to_schema(node: Dict[str, Any]) -> Dict[str, Any]:
         children = node["__children__"]
         if not children:
-            # Leaf node
-            return {"type": force_leaf_type}
+            # Leaf node — use per-leaf type if available, else force_leaf_type
+            leaf_type = _leaf_types.get(node["__path__"], force_leaf_type)
+            return {"type": leaf_type}
         props = {}
         required = []
         for name, child in children.items():
@@ -715,8 +729,24 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            if key in input_data_df and len(input_data_df[key]) > 0 and isinstance(input_data_df[key].iloc[0], list):
+            sample = None
+            if key in input_data_df:
+                for candidate in input_data_df[key]:
+                    # Skip null-like scalar values (None, NaN, pd.NA, NaT, etc.)
+                    if isinstance(candidate, (list, dict)):
+                        sample = candidate
+                        break
+                    try:
+                        if candidate is not None and not pd.isna(candidate):
+                            sample = candidate
+                            break
+                    except (TypeError, ValueError):
+                        sample = candidate
+                        break
+            if isinstance(sample, list):
                 props[key] = {"type": "array"}
+            elif isinstance(sample, dict):
+                props[key] = {"type": "object"}
             else:
                 props[key] = {"type": "string"}
             req.append(key)
@@ -754,7 +784,24 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
             LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {effective_paths}")
 
     LOGGER.info(f"AOAI: Building nested schema from {len(effective_paths)} effective paths...")
-    nested_schema = _build_schema_tree_from_paths(effective_paths, force_leaf_type="string")
+
+    # Infer leaf types from the DataFrame so nested schemas also get array/object types
+    leaf_type_map: Dict[str, str] = {}
+    for ref_path, eff_path in zip(referenced_paths, effective_paths if strip_wrapper else referenced_paths):
+        if ref_path in input_data_df:
+            for candidate in input_data_df[ref_path]:
+                if isinstance(candidate, (list, dict)):
+                    leaf_type_map[eff_path] = "array" if isinstance(candidate, list) else "object"
+                    break
+                try:
+                    if candidate is not None and not pd.isna(candidate):
+                        break
+                except (TypeError, ValueError):
+                    break
+
+    nested_schema = _build_schema_tree_from_paths(
+        effective_paths, force_leaf_type="string", leaf_type_map=leaf_type_map
+    )
 
     LOGGER.info(f"AOAI: Nested schema generated successfully with type '{nested_schema.get('type')}'")
     return {
@@ -816,9 +863,9 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         if isinstance(val, bool):
             return val
         # Align numerics with legacy text-only JSONL payloads by turning them into strings.
-        if isinstance(val, (int, float, list)):
+        if isinstance(val, (int, float)):
             return str(val)
-        if isinstance(val, (dict)):
+        if isinstance(val, (list, dict)):
             return val
         return str(val)
 

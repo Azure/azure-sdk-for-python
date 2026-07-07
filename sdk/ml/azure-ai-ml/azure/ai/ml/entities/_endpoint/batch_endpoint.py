@@ -7,8 +7,9 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpointProperties as RestBatchEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointDefaults as RestBatchEndpointDefaults
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._schema._endpoint import BatchEndpointSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._common import AAD_TOKEN_YAML, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -80,16 +81,28 @@ class BatchEndpoint(Endpoint):
 
     def _to_rest_batch_endpoint(self, location: str) -> BatchEndpointData:
         validate_endpoint_or_deployment_name(self.name)
+        defaults: Optional[RestBatchEndpointDefaults] = None
+        if isinstance(self.defaults, RestBatchEndpointDefaults):
+            defaults = self.defaults
+        elif isinstance(self.defaults, dict) and self.defaults:
+            normalized_defaults = {camel_to_snake(k) or k: v for k, v in self.defaults.items()}
+            defaults = RestBatchEndpointDefaults(**normalized_defaults)
         batch_endpoint = RestBatchEndpoint(
             description=self.description,
             auth_mode=snake_to_camel(self.auth_mode),
             properties=self.properties,
-            defaults=self.defaults,
+            defaults=defaults,
         )
         return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
     def _from_rest_object(cls, obj: BatchEndpointData) -> "BatchEndpoint":
+        # Pass the REST ``BatchEndpointDefaults`` object through unchanged so that
+        # ``endpoint.defaults.deployment_name`` remains gettable/settable. Callers
+        # (including the published batch-endpoint sample notebooks) rely on being
+        # able to do ``endpoint.defaults.deployment_name = <name>`` after a get().
+        # Serialization back to camelCase wire format is handled in
+        # ``_to_rest_batch_endpoint`` via the ``RestBatchEndpointDefaults`` branch.
         return BatchEndpoint(
             id=obj.id,
             name=obj.name,

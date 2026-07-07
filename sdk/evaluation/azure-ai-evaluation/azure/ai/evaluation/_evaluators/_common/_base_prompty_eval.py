@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import math
 import re
 import os
-from itertools import chain
 from typing import Dict, Optional, TypeVar, Union, List
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
@@ -32,6 +32,80 @@ except ImportError:
 
 
 T = TypeVar("T")
+
+
+def _is_intermediate_response(response):
+    """Check if response is intermediate (last content item is function_call or mcp_approval_request)."""
+    if isinstance(response, list) and len(response) > 0:
+        last_msg = response[-1]
+        if isinstance(last_msg, dict) and last_msg.get("role") == "assistant":
+            content = last_msg.get("content", [])
+            if isinstance(content, list) and len(content) > 0:
+                last_content = content[-1]
+                if isinstance(last_content, dict) and last_content.get("type") in (
+                    "function_call",
+                    "mcp_approval_request",
+                ):
+                    return True
+    return False
+
+
+def _drop_mcp_approval_messages(messages):
+    """Remove MCP approval request/response messages."""
+    if not isinstance(messages, list):
+        return messages
+    return [
+        msg
+        for msg in messages
+        if not (
+            isinstance(msg, dict)
+            and isinstance(msg.get("content"), list)
+            and (
+                (
+                    msg.get("role") == "assistant"
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"])
+                )
+                or (
+                    msg.get("role") == "tool"
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"])
+                )
+            )
+        )
+    ]
+
+
+def _normalize_function_call_types(messages):
+    """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result."""
+    if not isinstance(messages, list):
+        return messages
+    for msg in messages:
+        if isinstance(msg, dict) and isinstance(msg.get("content"), list):
+            for item in msg["content"]:
+                if not isinstance(item, dict):
+                    continue
+                item_type = item.get("type")
+                if item_type == "function_call":
+                    item["type"] = "tool_call"
+                    if "function_call" in item:
+                        item["tool_call"] = item.pop("function_call")
+                elif item_type == "function_call_output":
+                    item["type"] = "tool_result"
+                    if "function_call_output" in item:
+                        item["tool_result"] = item.pop("function_call_output")
+                elif item_type == "openapi_call":
+                    item["type"] = "tool_call"
+                elif item_type == "openapi_call_output":
+                    item["type"] = "tool_result"
+                    if "openapi_call_output" in item:
+                        item["tool_result"] = item.pop("openapi_call_output")
+    return messages
+
+
+def _preprocess_messages(messages):
+    """Drop MCP approval messages and normalize function call types."""
+    messages = _drop_mcp_approval_messages(messages)
+    messages = _normalize_function_call_types(messages)
+    return messages
 
 
 class PromptyEvaluatorBase(EvaluatorBase[T]):
@@ -133,61 +207,99 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
         # Call the prompty flow to get the evaluation result.
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
+        reason = ""
+        llm_properties = {}
+
         if prompty_output_dict:
             llm_output = prompty_output_dict.get("llm_output", "")
-            input_token_count = prompty_output_dict.get("input_token_count", 0)
-            output_token_count = prompty_output_dict.get("output_token_count", 0)
-            total_token_count = prompty_output_dict.get("total_token_count", 0)
-            finish_reason = prompty_output_dict.get("finish_reason", "")
-            model_id = prompty_output_dict.get("model_id", "")
-            sample_input = prompty_output_dict.get("sample_input", "")
-            sample_output = prompty_output_dict.get("sample_output", "")
-            # Parse out score and reason from evaluators known to possess them.
-            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
-                score, reason = parse_quality_evaluator_reason_score(llm_output)
-                binary_result = self._get_binary_result(score)
-                return {
-                    self._result_key: float(score),
-                    f"gpt_{self._result_key}": float(score),
-                    f"{self._result_key}_reason": reason,
-                    f"{self._result_key}_result": binary_result,
-                    f"{self._result_key}_threshold": self._threshold,
-                    f"{self._result_key}_prompt_tokens": input_token_count,
-                    f"{self._result_key}_completion_tokens": output_token_count,
-                    f"{self._result_key}_total_tokens": total_token_count,
-                    f"{self._result_key}_finish_reason": finish_reason,
-                    f"{self._result_key}_model": model_id,
-                    f"{self._result_key}_sample_input": sample_input,
-                    f"{self._result_key}_sample_output": sample_output,
-                }
-            match = re.search(r"\d", llm_output)
-            if match:
-                score = float(match.group())
-                binary_result = self._get_binary_result(score)
+
+            # Parse JSON output from LLM
+            parsed_output = None
+            if isinstance(llm_output, dict):
+                parsed_output = llm_output
+            elif isinstance(llm_output, str):
+                try:
+                    parsed_output = json.loads(llm_output)
+                except (json.JSONDecodeError, TypeError):
+                    parsed_output = None
+
+            if parsed_output and isinstance(parsed_output, dict):
+                # Handle skipped status from LLM
+                llm_status = parsed_output.get("status", "completed")
+                if llm_status == "skipped":
+                    skip_reason = parsed_output.get("reason", "")
+                    return self._return_not_applicable_result(skip_reason, self._threshold)
+
+                score = parsed_output.get("score", math.nan)
+                reason = parsed_output.get("reason", "")
+                llm_properties = parsed_output.get("properties", {}) or {}
+            else:
+                # Fallback: try to parse legacy XML format or extract digit
+                if isinstance(llm_output, str) and self._result_key in PROMPT_BASED_REASON_EVALUATORS:
+                    score, reason = parse_quality_evaluator_reason_score(llm_output)
+                elif isinstance(llm_output, str):
+                    match = re.search(r"\d", llm_output)
+                    if match:
+                        score = float(match.group())
+
+            score = float(score) if score is not None else math.nan
+            score_result = self._get_binary_result(score)
+
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
+
             return {
-                self._result_key: float(score),
-                f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_result": binary_result,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_prompt_tokens": input_token_count,
-                f"{self._result_key}_completion_tokens": output_token_count,
-                f"{self._result_key}_total_tokens": total_token_count,
-                f"{self._result_key}_finish_reason": finish_reason,
-                f"{self._result_key}_model": model_id,
-                f"{self._result_key}_sample_input": sample_input,
-                f"{self._result_key}_sample_output": sample_output,
+                f"{self._result_key}_properties": llm_properties,
             }
 
-        binary_result = self._get_binary_result(score)
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
+
+    @staticmethod
+    def _get_token_metadata(prompty_output: Dict) -> Dict:
+        """Extract token usage and model metadata from the prompty output dict.
+
+        :param prompty_output: The raw output dictionary from the prompty flow.
+        :type prompty_output: Dict
+        :return: A dictionary with token counts, finish reason, model, and sample I/O.
+        :rtype: Dict
+        """
         return {
-            self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
+            "prompt_tokens": prompty_output.get("input_token_count", 0),
+            "completion_tokens": prompty_output.get("output_token_count", 0),
+            "total_tokens": prompty_output.get("total_token_count", 0),
+            "finish_reason": prompty_output.get("finish_reason", ""),
+            "model": prompty_output.get("model_id", ""),
+            "sample_input": prompty_output.get("sample_input", ""),
+            "sample_output": prompty_output.get("sample_output", ""),
         }
 
     @staticmethod
@@ -266,13 +378,18 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         built_in_definitions = self._get_needed_built_in_tool_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
-        # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(
-            chain.from_iterable(
-                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
-                for tool in needed_tool_definitions
-            )
-        )
+        # An OpenAPI tool is a collection of functions. When an OpenAPI tool
+        # definition exposes its nested functions, expand it into those functions
+        # so tool calls referencing a nested function name can be matched. If an
+        # OpenAPI tool definition has no nested functions, keep the OpenAPI tool
+        # definition as is for backward compatibility.
+        tool_definitions_expanded = []
+        for tool in needed_tool_definitions:
+            openapi_functions = tool.get("functions") if tool.get("type") == "openapi" else None
+            if openapi_functions:
+                tool_definitions_expanded.extend(openapi_functions)
+            else:
+                tool_definitions_expanded.append(tool)
 
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:
@@ -322,23 +439,25 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
         return needed_tool_definitions
 
-    def _not_applicable_result(
+    def _return_not_applicable_result(
         self, error_message: str, threshold: Union[int, float]
-    ) -> Dict[str, Union[str, float, Dict]]:
-        """Return a result indicating that the evaluation is not applicable.
+    ) -> Dict[str, Union[str, float, Dict, None]]:
+        """Return a result indicating that the tool call is not applicable for evaluation.
 
-        :param error_message: The error message explaining why evaluation is not applicable.
+        :param error_message: The error message indicating why the evaluation is not applicable.
         :type error_message: str
-        :param threshold: The threshold value for the evaluator.
+        :param threshold: The threshold value for the evaluation.
         :type threshold: Union[int, float]
         :return: A dictionary containing the result of the evaluation.
-        :rtype: Dict[str, Union[str, float, Dict]]
+        :rtype: Dict[str, Union[str, float, None]]
         """
-        # If no tool calls were made or tool call type is not supported, return not applicable result
         return {
-            self._result_key: self._NOT_APPLICABLE_RESULT,
-            f"{self._result_key}_result": "pass",
+            f"{self._result_key}": None,
+            f"{self._result_key}_score": None,
+            f"{self._result_key}_passed": None,
+            f"{self._result_key}_result": "not_applicable",
+            f"{self._result_key}_reason": f"Not applicable: {error_message}",
+            f"{self._result_key}_status": "skipped",
             f"{self._result_key}_threshold": threshold,
-            f"{self._result_key}_reason": error_message,
-            f"{self._result_key}_details": {},
+            f"{self._result_key}_properties": None,
         }

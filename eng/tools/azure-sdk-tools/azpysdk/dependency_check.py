@@ -66,7 +66,13 @@ class DependencyCheck(Check):
             package_dir = parsed.folder
             package_name = parsed.name
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} using interpreter {executable}")
 
             try:
@@ -163,7 +169,7 @@ class DependencyCheck(Check):
             )
             return True
 
-        verify_script = os.path.join(REPO_ROOT, "eng/tox/verify_installed_packages.py")
+        verify_script = os.path.join(REPO_ROOT, "eng/scripts/verify_installed_packages.py")
         verify_command = [verify_script, "--packages-file", packages_file]
         verify_result = self.run_venv_command(executable, verify_command, cwd=package_dir)
 

@@ -47,6 +47,18 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "akvDetails": {
+                            "certificateAkvDetails": {
+                                "certificateKeyVaultUri": "str",
+                                "certificateName": "str",
+                                "userAssignedIdentity": "str",
+                            },
+                            "credentialsAkvDetails": {
+                                "credentialsKeyVaultUri": "str",
+                                "secretName": "str",
+                                "userAssignedIdentity": "str",
+                            },
+                        },
                         "fileSystemUser": {"cifsUser": {"username": "str"}, "nfsUser": {"groupId": 0, "userId": 0}},
                         "path": "str",
                         "permissions": "str",
@@ -57,6 +69,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                             "certificateObject": "str",
                             "fqdn": "str",
                             "ipAddress": "str",
+                            "onCertificateConflictAction": "str",
                         },
                         "status": "str",
                     },
@@ -90,11 +103,22 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "akvDetails": {
+                            "certificateAkvDetails": {
+                                "certificateKeyVaultUri": "str",
+                                "certificateName": "str",
+                                "userAssignedIdentity": "str",
+                            },
+                            "credentialsAkvDetails": {
+                                "credentialsKeyVaultUri": "str",
+                                "secretName": "str",
+                                "userAssignedIdentity": "str",
+                            },
+                        },
                         "fileSystemUser": {"cifsUser": {"username": "str"}, "nfsUser": {"groupId": 0, "userId": 0}},
-                        "path": "str",
                         "permissions": "str",
                         "provisioningState": "str",
-                        "server": {"certificateObject": "str", "fqdn": "str"},
+                        "server": {"certificateObject": "str", "fqdn": "str", "onCertificateConflictAction": "str"},
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -152,6 +176,39 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
             bucket_name="str",
             body={"keyPairExpiryDays": 0},
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_buckets_begin_generate_akv_credentials(self, resource_group):
+        response = await (
+            await self.client.buckets.begin_generate_akv_credentials(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                pool_name="str",
+                volume_name="str",
+                bucket_name="str",
+                body={"keyPairExpiryDays": 0},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_buckets_begin_refresh_certificate(self, resource_group):
+        response = await (
+            await self.client.buckets.begin_refresh_certificate(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                pool_name="str",
+                volume_name="str",
+                bucket_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
