@@ -3,6 +3,7 @@
 ### 4.16.2 (Unreleased)
 
 #### Features Added
+* Added cold-start metadata cache cross-region hedging. When enabled, the SDK hedges the first-time population of the container and partition-key-range metadata caches to a second region if the primary region is slow, returning the first acceptable response. Controlled by the new `enable_metadata_hedging_for_cold_start` client keyword (tri-state: `None` follows the account's PPAF state, `True` forces it on, `False` disables it).
 
 #### Breaking Changes
 
