@@ -304,9 +304,7 @@ class TestDeploymentTemplate:
         ``createdBy`` fields (not a nested ``systemData`` block), so ``creation_context``
         must surface them to stay consistent with Model and Environment.
         """
-        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
-            models as rest_models,
-        )
+        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import models as rest_models
 
         rest = rest_models.DeploymentTemplate(
             {
@@ -317,6 +315,33 @@ class TestDeploymentTemplate:
                 "createdBy": {"userName": "azure-huggingface"},
             }
         )
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_at is not None
+        assert template.creation_context.last_modified_at is not None
+        assert template.creation_context.created_by == "azure-huggingface"
+
+    def test_deployment_template_from_rest_object_creation_context_nested_in_properties(self):
+        """Regression test for the list() shape of bug #5402673.
+
+        In the list() response, createdTime / modifiedTime / createdBy are nested under
+        ``properties`` (not at the top level like get()). creation_context must still be
+        populated from there.
+        """
+        rest = Mock(spec=[])
+        rest.name = "test"
+        rest.id = None
+        rest.system_data = None
+        rest.properties = {
+            "name": "test",
+            "version": "5",
+            "createdTime": "2026-06-27T20:00:15.2050594+00:00",
+            "modifiedTime": "2026-06-27T21:31:55.5333635+00:00",
+            # list() returns createdBy as a stringified dict (str), not a real dict.
+            "createdBy": "{'userObjectId': '00000000-0000-0000-0000-000000000000', 'userName': 'azure-huggingface'}",
+        }
 
         template = DeploymentTemplate._from_rest_object(rest)
 

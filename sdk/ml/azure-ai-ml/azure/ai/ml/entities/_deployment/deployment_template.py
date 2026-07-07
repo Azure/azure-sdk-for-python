@@ -61,6 +61,30 @@ def _parse_iso_datetime(value: Any) -> Any:
         return value
 
 
+def _extract_created_by(value: Any) -> Any:
+    """Extract a readable ``created_by`` identity from a service ``createdBy`` value.
+
+    The value may be a plain string identity, an object/dict such as ``{"userName": ...}``
+    (get() shape), or a stringified dict such as ``"{'userName': ...}"`` (list() shape).
+    Returns the ``userName`` (or object id) when available, otherwise the value unchanged.
+    """
+    if value is None:
+        return None
+    if isinstance(value, str):
+        # list() returns createdBy as a stringified dict; parse it, else treat as a plain identity.
+        import ast
+
+        try:
+            parsed = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return value
+        if isinstance(parsed, dict):
+            value = parsed
+        else:
+            return value
+    return _read_wire_value(value, "userName", "user_name", "userObjectId", "user_object_id")
+
+
 @experimental
 class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """DeploymentTemplate entity for Azure ML deployments.
@@ -531,20 +555,22 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Populate creation_context so DeploymentTemplate is consistent with Model and
         # Environment. Those entities return a nested ``systemData`` block, but the
         # deployment-template API (e.g. the azure-huggingface registry) instead returns
-        # flattened ``createdTime`` / ``modifiedTime`` / ``createdBy`` fields, so support
-        # both shapes here.
+        # flattened ``createdTime`` / ``modifiedTime`` / ``createdBy`` fields. These live at the
+        # top level in the get() response but nested under ``properties`` in the list() response,
+        # so read properties-first with an obj fallback (matching the other fields above).
         system_data = get_value(obj, "system_data") or get_value(obj, "systemData")
         if system_data is not None:
             creation_context = SystemData._from_rest_object(system_data)
         else:
-            created_time = _read_wire_value(obj, "createdTime", "created_time", "createdAt", "created_at")
-            modified_time = _read_wire_value(obj, "modifiedTime", "modified_time", "lastModifiedAt", "last_modified_at")
-            created_by_raw = _read_wire_value(obj, "createdBy", "created_by")
-            if created_by_raw is None or isinstance(created_by_raw, str):
-                created_by = created_by_raw
-            else:
-                # The service may return createdBy as an object (e.g. {"userName": ...}).
-                created_by = _read_wire_value(created_by_raw, "userName", "user_name", "userObjectId", "user_object_id")
+            created_time = _read_wire_value(properties, "createdTime", "createdAt") or _read_wire_value(
+                obj, "createdTime", "created_time", "createdAt", "created_at"
+            )
+            modified_time = _read_wire_value(properties, "modifiedTime", "lastModifiedAt") or _read_wire_value(
+                obj, "modifiedTime", "modified_time", "lastModifiedAt", "last_modified_at"
+            )
+            created_by = _extract_created_by(
+                _read_wire_value(properties, "createdBy") or _read_wire_value(obj, "createdBy", "created_by")
+            )
             if created_time or modified_time or created_by:
                 creation_context = SystemData(
                     created_at=_parse_iso_datetime(created_time),
