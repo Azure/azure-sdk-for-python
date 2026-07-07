@@ -123,7 +123,7 @@
 | 121 | Microsoft.Education | education | azure-mgmt-education | Y | Y |
 | 122 | Microsoft.HanaOnAzure | hanaonazure | azure-mgmt-hanaonazure | Y | Y |
 | 123 | Microsoft.VirtualMachineImages | imagebuilder | azure-mgmt-imagebuilder | Y | Y |
-| 124 | Microsoft.OffAzure | migrate/resource-manager/Microsoft.OffAzure | azure-mgmt-migrate | N | N |
+| 124 | Microsoft.OffAzure | migrate/resource-manager/Microsoft.OffAzure | no specs | - | - |
 | 125 | Microsoft.PowerPlatform | powerplatform | azure-mgmt-powerplatform | Y | Y |
 | 126 | Microsoft.RedHatOpenshift | redhatopenshift | azure-mgmt-redhatopenshift | Y | Y |
 | 127 | Microsoft.SerialConsole | serialconsole | azure-mgmt-serialconsole | Y | Y |
