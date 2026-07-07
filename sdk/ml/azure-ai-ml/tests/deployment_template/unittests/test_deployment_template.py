@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import datetime
 from unittest.mock import Mock, patch
 
 import pytest
@@ -295,3 +296,46 @@ class TestDeploymentTemplate:
 
         # Should handle None gracefully
         assert result is not None or result is None  # Allow either behavior
+
+    def test_deployment_template_from_rest_object_populates_creation_context(self):
+        """_from_rest_object should populate creation_context from the service systemData.
+
+        Regression test for bug #5402673, where DeploymentTemplate.creation_context was
+        always None even though Model and Environment populate it from systemData.
+        """
+        created_at = datetime.datetime(2026, 1, 1, 12, 0, 0)
+        last_modified_at = datetime.datetime(2026, 1, 2, 8, 30, 0)
+
+        system_data = Mock(spec=[])
+        system_data.created_at = created_at
+        system_data.created_by = "creator@microsoft.com"
+        system_data.created_by_type = "User"
+        system_data.last_modified_at = last_modified_at
+        system_data.last_modified_by = "modifier@microsoft.com"
+        system_data.last_modified_by_type = "User"
+
+        mock_rest = Mock(spec=[])
+        mock_rest.properties = {"name": "test", "version": "1"}
+        mock_rest.name = "test"
+        mock_rest.id = None
+        mock_rest.system_data = system_data
+
+        template = DeploymentTemplate._from_rest_object(mock_rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_at == created_at
+        assert template.creation_context.created_by == "creator@microsoft.com"
+        assert template.creation_context.last_modified_at == last_modified_at
+        assert template.creation_context.last_modified_by == "modifier@microsoft.com"
+
+    def test_deployment_template_from_rest_object_creation_context_none_when_absent(self):
+        """creation_context should be None when the REST object carries no systemData."""
+        mock_rest = Mock(spec=[])
+        mock_rest.properties = {"name": "test", "version": "1"}
+        mock_rest.name = "test"
+        mock_rest.id = None
+        # Intentionally no system_data / systemData attribute set.
+
+        template = DeploymentTemplate._from_rest_object(mock_rest)
+
+        assert template.creation_context is None

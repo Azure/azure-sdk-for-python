@@ -17,6 +17,7 @@ from azure.ai.ml.entities._deployment.accelerator_map import AcceleratorMap
 from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._system_data import SystemData
 
 
 @experimental
@@ -486,6 +487,12 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             except (ValueError, TypeError):
                 scoring_port = None
 
+        # Populate the creation_context (created/modified timestamps and identities) from the
+        # service's systemData, consistent with how Model and Environment entities behave.
+        # The REST object exposes it as ``system_data``; raw dict payloads use ``systemData``.
+        system_data = get_value(obj, "system_data") or get_value(obj, "systemData")
+        creation_context = SystemData._from_rest_object(system_data) if system_data else None
+
         template = cls(
             name=name or "unknown",
             version=version or "1.0",
@@ -494,6 +501,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             tags=tags,  # Include tags from REST response
             properties=properties,  # Include properties from REST response
             id=get_value(obj, "id"),  # Set the ID from the REST response
+            creation_context=creation_context,  # Populate created/modified metadata from systemData
             environment=environment_id,  # Use the environment ID from API
             request_settings=request_settings_obj,  # Use proper OnlineRequestSettings object or None
             liveness_probe=liveness_probe_obj,  # Use proper ProbeSettings object or None
