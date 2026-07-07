@@ -318,7 +318,7 @@ gh pr create --draft --base <BASE_BRANCH> --head <topic-branch> --assignee @me -
 
 You must show the user the resulting PR URL on screen when done, before you continue to the next step.
 
-Open a new tab in the default browser and navigate to the PR URL.
+Open a new tab in the default operating system browser and navigate to the PR URL (do not use the built-in browser in VS Code, if running this skill in the VS Code GitHub CoPilot chat window). 
 
 ---
 
