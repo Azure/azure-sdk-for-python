@@ -10,18 +10,14 @@
   - Client `GuestConfigurationClient` added operation group `guest_configuration_connected_vmwarev_sphere_assignments_reports`
   - Model `GuestConfigurationAssignmentReportList` added property `next_link`
   - Model `GuestConfigurationNavigation` added property `content_managed_identity`
-  - Model `Operation` added property `properties`
-  - Added model `OperationProperties`
-  - Model `GuestConfigurationAssignmentsVMSSOperations` added method `create_or_update`
-  - Added model `GuestConfigurationConnectedVMwarevSphereAssignmentsOperations`
-  - Added model `GuestConfigurationConnectedVMwarevSphereAssignmentsReportsOperations`
+  - Model `Operation` moved instance variable `status_code` under property `properties` whose type is `OperationProperties`
+  - Operation group `GuestConfigurationAssignmentsVMSSOperations` added method `create_or_update`
+  - Added operation group `GuestConfigurationConnectedVMwarevSphereAssignmentsOperations`
+  - Added operation group `GuestConfigurationConnectedVMwarevSphereAssignmentsReportsOperations`
 
-### Breaking Changes
+### Other Changes
 
-  - Model `Operation` deleted or renamed its instance variable `status_code`
-  - Deleted or renamed model `GuestConfigurationAssignmentList`
-  - Deleted or renamed model `OperationList`
-  - Deleted or renamed model `Resource`
+  - Deleted model `GuestConfigurationAssignmentList`/`OperationList`/`Resource` which actually were not used by SDK users
 
 ## 1.0.0b2 (2022-11-04)
 
