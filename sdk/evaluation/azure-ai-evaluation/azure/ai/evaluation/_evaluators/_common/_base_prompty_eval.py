@@ -6,7 +6,6 @@ import json
 import math
 import re
 import os
-from itertools import chain
 from typing import Dict, Optional, TypeVar, Union, List
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
@@ -76,20 +75,29 @@ def _drop_mcp_approval_messages(messages):
 
 
 def _normalize_function_call_types(messages):
-    """Normalize function_call/function_call_output types to tool_call/tool_result."""
+    """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result."""
     if not isinstance(messages, list):
         return messages
     for msg in messages:
         if isinstance(msg, dict) and isinstance(msg.get("content"), list):
             for item in msg["content"]:
-                if isinstance(item, dict) and item.get("type") == "function_call":
+                if not isinstance(item, dict):
+                    continue
+                item_type = item.get("type")
+                if item_type == "function_call":
                     item["type"] = "tool_call"
                     if "function_call" in item:
                         item["tool_call"] = item.pop("function_call")
-                elif isinstance(item, dict) and item.get("type") == "function_call_output":
+                elif item_type == "function_call_output":
                     item["type"] = "tool_result"
                     if "function_call_output" in item:
                         item["tool_result"] = item.pop("function_call_output")
+                elif item_type == "openapi_call":
+                    item["type"] = "tool_call"
+                elif item_type == "openapi_call_output":
+                    item["type"] = "tool_result"
+                    if "openapi_call_output" in item:
+                        item["tool_result"] = item.pop("openapi_call_output")
     return messages
 
 
@@ -370,13 +378,18 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         built_in_definitions = self._get_needed_built_in_tool_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
-        # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(
-            chain.from_iterable(
-                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
-                for tool in needed_tool_definitions
-            )
-        )
+        # An OpenAPI tool is a collection of functions. When an OpenAPI tool
+        # definition exposes its nested functions, expand it into those functions
+        # so tool calls referencing a nested function name can be matched. If an
+        # OpenAPI tool definition has no nested functions, keep the OpenAPI tool
+        # definition as is for backward compatibility.
+        tool_definitions_expanded = []
+        for tool in needed_tool_definitions:
+            openapi_functions = tool.get("functions") if tool.get("type") == "openapi" else None
+            if openapi_functions:
+                tool_definitions_expanded.extend(openapi_functions)
+            else:
+                tool_definitions_expanded.append(tool)
 
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:

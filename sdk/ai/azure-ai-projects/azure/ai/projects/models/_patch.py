@@ -47,12 +47,10 @@ _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
 )
 _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
-        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.CODE_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
     ]
 )
 
@@ -65,7 +63,6 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
     "routines": _FoundryFeaturesOptInKeys.ROUTINES_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,

@@ -1,0 +1,61 @@
+name: API.md Consistency
+
+on:
+  pull_request:
+    types:
+      # default
+      - opened
+      - synchronize
+      - reopened
+      # re-run if base branch is changed, since previous merge commit may generate incorrect diff
+      - edited
+      # re-run if PR changes to/from draft
+      - converted_to_draft
+      - ready_for_review
+    paths:
+      - "sdk/**"
+
+permissions:
+  contents: read
+
+jobs:
+  consistency:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    outputs:
+      changed_count: ${{ steps.consistency.outputs.changed_count || '0' }}
+      mismatch_count: ${{ steps.consistency.outputs.mismatch_count || '0' }}
+      missing_count: ${{ steps.consistency.outputs.missing_count || '0' }}
+      issue_count: ${{ steps.consistency.outputs.issue_count || '0' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install azpysdk
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r eng/apiview_reqs.txt --index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+          python -m pip install ./eng/tools/azure-sdk-tools
+
+      - name: Run API.md consistency checks
+        id: consistency
+        uses: actions/github-script@v8
+        env:
+          API_MD_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          API_MD_CHANGED_FILE: .artifacts/changed_package_dirs.txt
+          API_MD_PACKAGES_FILE: .artifacts/affected_package_dirs.txt
+          API_MD_MISMATCHES_FILE: .artifacts/mismatched_api_files.txt
+          API_MD_MISSING_FILE: .artifacts/missing_api_files.txt
+        with:
+          script: |
+            const { default: apiMdConsistency } =
+              await import('${{ github.workspace }}/.github/workflows/src/api-md-consistency/api-md-consistency.js');
+            return await apiMdConsistency({ github, context, core });

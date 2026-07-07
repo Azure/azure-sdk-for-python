@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/RouteFilterListByResourceGroup.json
+# x-ms-original-file: 2025-07-01/RouteFilterListByResourceGroup.json
 if __name__ == "__main__":
     main()

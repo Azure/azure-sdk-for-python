@@ -16,8 +16,15 @@ from azure.ai.evaluation._common.utils import (
     reformat_agent_response,
     reformat_tool_definitions,
     construct_prompty_model_config,
+    _stringify_tool_result,
+    _log_safe_summary,
+    _coerce_bool,
+    _coerce_number,
+    _collect_failed_tool_calls,
+    _get_tool_calls_results,
+    _reformat_tool_calls_results,
 )
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage, ErrorTarget
 
 
 @pytest.mark.unittest
@@ -984,3 +991,243 @@ class TestConstructPromptyModelConfig(unittest.TestCase):
         }
         with pytest.raises(EvaluationException):
             construct_prompty_model_config(model_config, "2024-02-01", "")
+
+
+@pytest.mark.unittest
+class TestToolResultAndLoggingHelpers:
+    """Tests for helpers added for parity with azureml-assets builtin evaluators."""
+
+    # region _stringify_tool_result
+
+    def test_stringify_tool_result_none_returns_empty(self):
+        assert _stringify_tool_result(None) == ""
+
+    def test_stringify_tool_result_string_passthrough(self):
+        assert _stringify_tool_result("plain text") == "plain text"
+
+    def test_stringify_tool_result_dict_is_json(self):
+        result = _stringify_tool_result({"title": "Doc", "score": 1})
+        # Valid JSON with double quotes (not a Python repr with single quotes)
+        assert json.loads(result) == {"title": "Doc", "score": 1}
+        assert "'" not in result
+
+    def test_stringify_tool_result_list_is_json(self):
+        result = _stringify_tool_result([{"url": "https://x"}, {"url": "https://y"}])
+        assert json.loads(result) == [{"url": "https://x"}, {"url": "https://y"}]
+
+    def test_stringify_tool_result_non_serializable_falls_back_to_str(self):
+        class _Weird:
+            def __str__(self):
+                return "weird-value"
+
+        # default=str handles non-JSON-native values without raising
+        assert _stringify_tool_result({"k": _Weird()}) == '{"k": "weird-value"}'
+
+    # endregion
+
+    # region _get_agent_response uses _stringify_tool_result
+
+    def test_get_agent_response_serializes_dict_tool_result(self):
+        agent_msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "name": "search", "arguments": {"q": "hi"}, "tool_call_id": "c1"},
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": {"docs": ["a", "b"]}}],
+            },
+        ]
+        result = _get_agent_response(agent_msgs, include_tool_messages=True)
+        # tool result rendered as JSON, not python repr
+        assert '[TOOL_RESULT] {"docs": ["a", "b"]}' in result
+
+    # endregion
+
+    # region _log_safe_summary
+
+    def test_log_safe_summary_list_reports_roles(self):
+        summary = _log_safe_summary([{"role": "user"}, {"role": "assistant"}])
+        assert "type=list" in summary
+        assert "len=2" in summary
+        assert "user" in summary and "assistant" in summary
+
+    def test_log_safe_summary_dict_reports_keys_not_values(self):
+        summary = _log_safe_summary({"secret": "s3cr3t", "api_key": "abc"})
+        assert "type=dict" in summary
+        assert "api_key" in summary and "secret" in summary
+        # values must never leak
+        assert "s3cr3t" not in summary and "abc" not in summary
+
+    def test_log_safe_summary_scalar(self):
+        assert "type=int" in _log_safe_summary(42)
+
+    # endregion
+
+    # region _coerce_bool / _coerce_number
+
+    def test_coerce_bool(self):
+        assert _coerce_bool(True) is True
+        assert _coerce_bool(False) is False
+        assert _coerce_bool("true") is True
+        assert _coerce_bool("  FALSE ") is False
+        assert _coerce_bool("nonsense") is None
+        assert _coerce_bool(None) is None
+        assert _coerce_bool(1) is None
+
+    def test_coerce_number(self):
+        assert _coerce_number(3) == 3
+        assert _coerce_number(2.5) == 2.5
+        assert _coerce_number("2.5") == 2.5
+        assert _coerce_number("null") is None
+        assert _coerce_number("") is None
+        assert _coerce_number(True) is None  # bools are not numbers here
+        assert _coerce_number("abc") is None
+
+    # endregion
+
+    # region _collect_failed_tool_calls
+
+    def test_collect_failed_tool_calls_by_status_on_tool_call(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "name": "ok_tool", "tool_call_id": "c1", "status": "completed"},
+                    {"type": "tool_call", "name": "bad_tool", "tool_call_id": "c2", "status": "failed"},
+                ],
+            }
+        ]
+        assert _collect_failed_tool_calls(messages) == ["bad_tool"]
+
+    def test_collect_failed_tool_calls_by_status_on_tool_result(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "search", "tool_call_id": "c1"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": "x", "status": "incomplete"}],
+            },
+        ]
+        assert _collect_failed_tool_calls(messages) == ["search"]
+
+    def test_collect_failed_tool_calls_none_failed(self):
+        messages = [
+            {"role": "assistant", "content": [{"type": "tool_call", "name": "search", "tool_call_id": "c1"}]},
+        ]
+        assert _collect_failed_tool_calls(messages) == []
+
+    def test_collect_failed_tool_calls_non_list(self):
+        assert _collect_failed_tool_calls("not a list") == []
+
+    # endregion
+
+    # region _get_tool_calls_results / _reformat_tool_calls_results
+
+    def test_get_tool_calls_results_formats_calls_and_results(self):
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "search", "arguments": {"q": "cats"}, "tool_call_id": "c1"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": {"n": 3}}],
+            },
+        ]
+        result = _get_tool_calls_results(msgs)
+        assert result == ['[TOOL_CALL] search(q="cats")', '[TOOL_RESULT] {"n": 3}']
+
+    def test_reformat_tool_calls_results_empty(self):
+        assert _reformat_tool_calls_results([]) == ""
+        assert _reformat_tool_calls_results(None) == ""
+
+    def test_reformat_tool_calls_results_joins_lines(self):
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "t", "arguments": {}, "tool_call_id": "c"}],
+            },
+            {"role": "tool", "tool_call_id": "c", "content": [{"type": "tool_result", "tool_result": "done"}]},
+        ]
+        result = _reformat_tool_calls_results(msgs)
+        assert result == "[TOOL_CALL] t()\n[TOOL_RESULT] done"
+
+    # endregion
+
+    # region _get_conversation_history include_tool_calls
+
+    def test_get_conversation_history_with_tool_calls(self):
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "Find hotels"}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Searching"},
+                    {"type": "tool_call", "name": "search", "arguments": {"loc": "Paris"}, "tool_call_id": "c1"},
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": "Found 3"}],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "thanks"}]},
+        ]
+        result = _get_conversation_history(query, include_tool_calls=True)
+        assert result["user_queries"] == [[["Find hotels"]], [["thanks"]]]
+        # Agent turn contains inline tool call + result lines
+        agent_turn = result["agent_responses"][0]
+        assert ["Searching"] in agent_turn
+        assert '[TOOL_CALL] search(loc="Paris")' in agent_turn
+        assert "[TOOL_RESULT] Found 3" in agent_turn
+
+    def test_reformat_conversation_history_include_tool_calls_renders_inline(self):
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "Find hotels"}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "name": "search", "arguments": {"loc": "Paris"}, "tool_call_id": "c1"},
+                    {"type": "text", "text": "Found some"},
+                ],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "thanks"}]},
+        ]
+        result = reformat_conversation_history(query, include_tool_calls=True)
+        assert '[TOOL_CALL] search(loc="Paris")' in result
+
+    def test_get_conversation_history_default_path_unchanged(self):
+        """Default (include_tool_calls=False) behavior must be unchanged."""
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "hi"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "hello"}]},
+            {"role": "user", "content": [{"type": "text", "text": "bye"}]},
+        ]
+        result = _get_conversation_history(query)
+        assert result == {
+            "user_queries": [[["hi"]], [["bye"]]],
+            "agent_responses": [[["hello"]]],
+        }
+
+    # endregion
+
+    # region ErrorTarget parity members
+
+    def test_error_target_parity_members_exist(self):
+        for name in (
+            "QUALITY_GRADER_EVALUATOR",
+            "CUSTOMER_SATISFACTION_EVALUATOR",
+            "DEFLECTION_RATE_EVALUATOR",
+            "REGEX_MATCH_EVALUATOR",
+        ):
+            assert hasattr(ErrorTarget, name)
+
+    # endregion
