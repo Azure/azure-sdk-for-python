@@ -14,7 +14,7 @@ from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _unions, models as _models
 
 
 class AccessRule(_Model):
@@ -5115,7 +5115,7 @@ class ServiceExtension(_Model):
      ~azure.mgmt.hybridcompute.models.ServiceExtensionPublicNetworkAccess
     """
 
-    service_extension_type: Optional["_types.ServiceExtensionType"] = rest_field(
+    service_extension_type: Optional["_unions.ServiceExtensionType"] = rest_field(
         name="serviceExtensionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the Azure Arc Extension. Is one of the following types: str"""
@@ -5131,7 +5131,7 @@ class ServiceExtension(_Model):
     def __init__(
         self,
         *,
-        service_extension_type: Optional["_types.ServiceExtensionType"] = None,
+        service_extension_type: Optional["_unions.ServiceExtensionType"] = None,
         service_extension_public_network_access: Optional[
             Union[str, "_models.ServiceExtensionPublicNetworkAccess"]
         ] = None,
