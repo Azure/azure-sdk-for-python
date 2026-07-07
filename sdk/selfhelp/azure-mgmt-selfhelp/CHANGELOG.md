@@ -1,5 +1,78 @@
 # Release History
 
+## 2.0.0b5 (2026-07-07)
+
+### Features Added
+
+  - Client `SelfHelpMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SelfHelpMgmtClient` added method `send_request`
+  - Model `DiagnosticResource` added property `properties`
+  - Model `Filter` added property `values_property`
+  - Model `SimplifiedSolutionsResource` added property `properties`
+  - Model `SolutionMetadataResource` added property `properties`
+  - Model `SolutionNlpMetadataResource` added property `properties`
+  - Model `SolutionResource` added property `properties`
+  - Model `SolutionResourceSelfHelp` added property `properties`
+  - Model `TroubleshooterResource` added property `properties`
+  - Added model `DiagnosticResourceProperties`
+  - Added model `ExtensionResource`
+  - Added model `NlpSolutions`
+  - Added model `SimplifiedSolutionsResourceProperties`
+  - Added model `SolutionResourceProperties`
+  - Added model `Solutions`
+  - Added model `SolutionsResourcePropertiesSelfHelp`
+  - Added model `TroubleshooterInstanceProperties`
+
+### Breaking Changes
+
+  - Model `DiagnosticResource` deleted or renamed its instance variable `global_parameters`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `insights`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `accepted_at`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `DiagnosticResource` deleted or renamed its instance variable `diagnostics`
+  - Model `Filter` deleted or renamed its instance variable `values`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `solution_id`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `parameters`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `title`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `appendix`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `content`
+  - Model `SimplifiedSolutionsResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `SolutionMetadataResource` deleted or renamed its instance variable `solutions`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `problem_title`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `problem_description`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `service_id`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `problem_classification_id`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `solutions`
+  - Model `SolutionNlpMetadataResource` deleted or renamed its instance variable `related_services`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `trigger_criteria`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `parameters`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `solution_id`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `provisioning_state`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `title`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `content`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `replacement_maps`
+  - Model `SolutionPatchRequestBody` deleted or renamed its instance variable `sections`
+  - Model `SolutionResource` deleted or renamed its instance variable `trigger_criteria`
+  - Model `SolutionResource` deleted or renamed its instance variable `parameters`
+  - Model `SolutionResource` deleted or renamed its instance variable `solution_id`
+  - Model `SolutionResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `SolutionResource` deleted or renamed its instance variable `title`
+  - Model `SolutionResource` deleted or renamed its instance variable `content`
+  - Model `SolutionResource` deleted or renamed its instance variable `replacement_maps`
+  - Model `SolutionResource` deleted or renamed its instance variable `sections`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `solution_id`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `title`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `content`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `replacement_maps`
+  - Model `SolutionResourceSelfHelp` deleted or renamed its instance variable `sections`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `solution_id`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `parameters`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `TroubleshooterResource` deleted or renamed its instance variable `steps`
+  - Deleted or renamed model `DiscoveryResponse`
+  - Deleted or renamed model `OperationListResult`
+  - Method `DiscoverySolutionOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0b4 (2024-05-27)
 
 ### Features Added
