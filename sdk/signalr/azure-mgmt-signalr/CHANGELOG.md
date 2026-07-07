@@ -1,5 +1,98 @@
 # Release History
 
+## 2.0.0b3 (2026-07-07)
+
+### Features Added
+
+  - Client `SignalRManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SignalRManagementClient` added method `send_request`
+  - Client `SignalRManagementClient` added operation group `signal_rreplica_shared_private_link_resources`
+  - Model `CustomCertificate` added property `properties`
+  - Model `CustomDomain` added property `properties`
+  - Model `PrivateEndpointConnection` added property `properties`
+  - Model `PrivateLinkResource` added property `properties`
+  - Model `Replica` added property `properties`
+  - Model `ServerlessSettings` added property `keep_alive_interval_in_seconds`
+  - Model `SharedPrivateLinkResource` added property `properties`
+  - Model `SignalRResource` added property `properties`
+  - Added model `ApplicationFirewallSettings`
+  - Added model `ClientConnectionCountRule`
+  - Added enum `ClientConnectionCountRuleDiscriminator`
+  - Added model `ClientTrafficControlRule`
+  - Added enum `ClientTrafficControlRuleDiscriminator`
+  - Added model `CustomCertificateProperties`
+  - Added model `CustomDomainProperties`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `ReplicaProperties`
+  - Added model `RouteSettings`
+  - Added model `SharedPrivateLinkResourceProperties`
+  - Added model `SignalRProperties`
+  - Added model `ThrottleByJwtCustomClaimRule`
+  - Added model `ThrottleByJwtSignatureRule`
+  - Added model `ThrottleByUserIdRule`
+  - Added model `TrafficThrottleByJwtCustomClaimRule`
+  - Added model `TrafficThrottleByJwtSignatureRule`
+  - Added model `TrafficThrottleByUserIdRule`
+  - Added model `SignalRReplicaSharedPrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Model `CustomCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `CustomCertificate` deleted or renamed its instance variable `key_vault_base_uri`
+  - Model `CustomCertificate` deleted or renamed its instance variable `key_vault_secret_name`
+  - Model `CustomCertificate` deleted or renamed its instance variable `key_vault_secret_version`
+  - Model `CustomDomain` deleted or renamed its instance variable `provisioning_state`
+  - Model `CustomDomain` deleted or renamed its instance variable `domain_name`
+  - Model `CustomDomain` deleted or renamed its instance variable `custom_certificate`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `group_ids`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `shareable_private_link_resource_types`
+  - Model `Replica` deleted or renamed its instance variable `provisioning_state`
+  - Model `Replica` deleted or renamed its instance variable `region_endpoint_enabled`
+  - Model `Replica` deleted or renamed its instance variable `resource_stopped`
+  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `group_id`
+  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `private_link_resource_id`
+  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `request_message`
+  - Model `SharedPrivateLinkResource` deleted or renamed its instance variable `status`
+  - Model `SignalRResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `SignalRResource` deleted or renamed its instance variable `external_ip`
+  - Model `SignalRResource` deleted or renamed its instance variable `host_name`
+  - Model `SignalRResource` deleted or renamed its instance variable `public_port`
+  - Model `SignalRResource` deleted or renamed its instance variable `server_port`
+  - Model `SignalRResource` deleted or renamed its instance variable `version`
+  - Model `SignalRResource` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `SignalRResource` deleted or renamed its instance variable `shared_private_link_resources`
+  - Model `SignalRResource` deleted or renamed its instance variable `tls`
+  - Model `SignalRResource` deleted or renamed its instance variable `host_name_prefix`
+  - Model `SignalRResource` deleted or renamed its instance variable `features`
+  - Model `SignalRResource` deleted or renamed its instance variable `live_trace_configuration`
+  - Model `SignalRResource` deleted or renamed its instance variable `resource_log_configuration`
+  - Model `SignalRResource` deleted or renamed its instance variable `cors`
+  - Model `SignalRResource` deleted or renamed its instance variable `serverless`
+  - Model `SignalRResource` deleted or renamed its instance variable `upstream`
+  - Model `SignalRResource` deleted or renamed its instance variable `network_ac_ls`
+  - Model `SignalRResource` deleted or renamed its instance variable `public_network_access`
+  - Model `SignalRResource` deleted or renamed its instance variable `disable_local_auth`
+  - Model `SignalRResource` deleted or renamed its instance variable `disable_aad_auth`
+  - Model `SignalRResource` deleted or renamed its instance variable `region_endpoint_enabled`
+  - Model `SignalRResource` deleted or renamed its instance variable `resource_stopped`
+  - Deleted or renamed model `CustomCertificateList`
+  - Deleted or renamed model `CustomDomainList`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `PrivateEndpointConnectionList`
+  - Deleted or renamed model `PrivateLinkResourceList`
+  - Deleted or renamed model `ReplicaList`
+  - Deleted or renamed model `SharedPrivateLinkResourceList`
+  - Deleted or renamed model `SignalRResourceList`
+  - Deleted or renamed model `SignalRUsageList`
+
 ## 2.0.0b2 (2023-10-23)
 
 ### Features Added
