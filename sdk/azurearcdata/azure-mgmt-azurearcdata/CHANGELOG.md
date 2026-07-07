@@ -211,38 +211,36 @@
   - Added model `TargetReadiness`
   - Added enum `TargetType`
   - Added enum `Version`
-  - Model `SqlServerInstancesOperations` added method `begin_get_best_practices_assessment`
-  - Model `SqlServerInstancesOperations` added method `begin_get_jobs`
-  - Model `SqlServerInstancesOperations` added method `begin_get_migration_readiness_report`
-  - Model `SqlServerInstancesOperations` added method `begin_get_target_recommendation_reports`
-  - Model `SqlServerInstancesOperations` added method `begin_get_telemetry`
-  - Model `SqlServerInstancesOperations` added method `begin_run_best_practice_assessment`
-  - Model `SqlServerInstancesOperations` added method `begin_run_managed_instance_link_assessment`
-  - Model `SqlServerInstancesOperations` added method `begin_run_migration_readiness_assessment`
-  - Model `SqlServerInstancesOperations` added method `begin_run_target_recommendation_job`
-  - Model `SqlServerInstancesOperations` added method `begin_update`
-  - Model `SqlServerInstancesOperations` added method `get_all_availability_groups`
-  - Model `SqlServerInstancesOperations` added method `get_jobs_status`
-  - Model `SqlServerInstancesOperations` added method `post_upgrade`
-  - Model `SqlServerInstancesOperations` added method `pre_upgrade`
-  - Model `SqlServerInstancesOperations` added method `run_best_practices_assessment`
-  - Model `SqlServerInstancesOperations` added method `run_migration_assessment`
-  - Added model `FailoverGroupsOperations`
-  - Added model `SqlServerAvailabilityGroupsOperations`
-  - Added model `SqlServerDatabasesOperations`
-  - Added model `SqlServerEsuLicensesOperations`
-  - Added model `SqlServerLicensesOperations`
+  - Operation group `SqlServerInstancesOperations` added method `begin_get_best_practices_assessment`
+  - Operation group `SqlServerInstancesOperations` added method `begin_get_jobs`
+  - Operation group `SqlServerInstancesOperations` added method `begin_get_migration_readiness_report`
+  - Operation group `SqlServerInstancesOperations` added method `begin_get_target_recommendation_reports`
+  - Operation group `SqlServerInstancesOperations` added method `begin_get_telemetry`
+  - Operation group `SqlServerInstancesOperations` added method `begin_run_best_practice_assessment`
+  - Operation group `SqlServerInstancesOperations` added method `begin_run_managed_instance_link_assessment`
+  - Operation group `SqlServerInstancesOperations` added method `begin_run_migration_readiness_assessment`
+  - Operation group `SqlServerInstancesOperations` added method `begin_run_target_recommendation_job`
+  - Operation group `SqlServerInstancesOperations` added method `begin_update`
+  - Operation group `SqlServerInstancesOperations` added method `get_all_availability_groups`
+  - Operation group `SqlServerInstancesOperations` added method `get_jobs_status`
+  - Operation group `SqlServerInstancesOperations` added method `post_upgrade`
+  - Operation group `SqlServerInstancesOperations` added method `pre_upgrade`
+  - Operation group `SqlServerInstancesOperations` added method `run_best_practices_assessment`
+  - Operation group `SqlServerInstancesOperations` added method `run_migration_assessment`
+  - Added operation group `FailoverGroupsOperations`
+  - Added operation group `SqlServerAvailabilityGroupsOperations`
+  - Added operation group `SqlServerDatabasesOperations`
+  - Added operation group `SqlServerEsuLicensesOperations`
+  - Added operation group `SqlServerLicensesOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ActiveDirectoryConnectorListResult`
   - Deleted or renamed model `ErrorResponseBody`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `PageOfDataControllerResource`
-  - Deleted or renamed model `PostgresInstanceListResult`
-  - Deleted or renamed model `SqlManagedInstanceListResult`
-  - Deleted or renamed model `SqlServerInstanceListResult`
   - Deleted or renamed method `SqlServerInstancesOperations.update`
+
+### Other Changes
+
+  - Deleted model `ActiveDirectoryConnectorListResult`/`OperationListResult`/`PageOfDataControllerResource`/`PostgresInstanceListResult`/`SqlManagedInstanceListResult`/`SqlServerInstanceListResult` which actually were not used by SDK users
 
 ## 2.0.0b2 (2026-05-14)
 
