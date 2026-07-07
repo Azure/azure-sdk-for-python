@@ -273,7 +273,7 @@ class TestJobOperations:
         assert call_kwargs["id"] == "random_name"
         assert call_kwargs["resource_group_name"] == mock_job_operation._operation_scope.resource_group_name
         assert call_kwargs["workspace_name"] == mock_job_operation._workspace_name
-        
+    
     # -------------- jobs.update() (new public API) --------------
 
     def test_update_no_field_raises_user_error(self, mock_job_operation: JobOperations) -> None:
