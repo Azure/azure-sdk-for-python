@@ -9,21 +9,6 @@
 from typing_extensions import Required, TypedDict
 
 
-class ExportedUser(TypedDict, total=False):
-    """The exported user data.
-
-    :ivar name: The name of user. Required.
-    :vartype name: str
-    :ivar resource_uri: The exported URI. Required.
-    :vartype resource_uri: str
-    """
-
-    name: Required[str]
-    """The name of user. Required."""
-    resourceUri: Required[str]
-    """The exported URI. Required."""
-
-
 class User(TypedDict, total=False):
     """Details about a user.
 

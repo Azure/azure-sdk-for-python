@@ -23,14 +23,3 @@ class InputRecord(TypedDict, total=False):
 
     requiredProp: Required[str]
     """Required."""
-
-
-class OutputRecord(TypedDict, total=False):
-    """Record used in operation return type.
-
-    :ivar required_prop: Required.
-    :vartype required_prop: str
-    """
-
-    requiredProp: Required[str]
-    """Required."""

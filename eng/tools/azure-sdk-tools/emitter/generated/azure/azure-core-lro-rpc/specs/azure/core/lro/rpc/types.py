@@ -18,14 +18,3 @@ class GenerationOptions(TypedDict, total=False):
 
     prompt: Required[str]
     """Prompt. Required."""
-
-
-class GenerationResult(TypedDict, total=False):
-    """Result of the generation.
-
-    :ivar data: The data. Required.
-    :vartype data: str
-    """
-
-    data: Required[str]
-    """The data. Required."""

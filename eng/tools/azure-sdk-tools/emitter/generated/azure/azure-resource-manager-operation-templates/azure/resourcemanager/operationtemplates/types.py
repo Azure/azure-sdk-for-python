@@ -7,11 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
-    from .models import ActionType, CheckNameAvailabilityReason, CreatedByType, Origin
+    from .models import CreatedByType
 
 
 class ActionRequest(TypedDict, total=False):
@@ -29,17 +29,6 @@ class ActionRequest(TypedDict, total=False):
     """Additional action parameters."""
 
 
-class ActionResult(TypedDict, total=False):
-    """ActionResult.
-
-    :ivar result: The result of the action. Required.
-    :vartype result: str
-    """
-
-    result: Required[str]
-    """The result of the action. Required."""
-
-
 class ChangeAllowanceRequest(TypedDict, total=False):
     """ChangeAllowanceRequest.
 
@@ -53,21 +42,6 @@ class ChangeAllowanceRequest(TypedDict, total=False):
     """The new total allowed widgets."""
     reason: str
     """The reason for the change."""
-
-
-class ChangeAllowanceResult(TypedDict, total=False):
-    """ChangeAllowanceResult.
-
-    :ivar total_allowed: The new total allowed widgets. Required.
-    :vartype total_allowed: int
-    :ivar status: The status of the change. Required.
-    :vartype status: str
-    """
-
-    totalAllowed: Required[int]
-    """The new total allowed widgets. Required."""
-    status: Required[str]
-    """The status of the change. Required."""
 
 
 class CheckNameAvailabilityRequest(TypedDict, total=False):
@@ -85,80 +59,6 @@ class CheckNameAvailabilityRequest(TypedDict, total=False):
     """The resource type."""
 
 
-class CheckNameAvailabilityResponse(TypedDict, total=False):
-    """The check availability result.
-
-    :ivar name_available: Indicates if the resource name is available.
-    :vartype name_available: bool
-    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
-     "AlreadyExists".
-    :vartype reason: Union[str, "CheckNameAvailabilityReason"]
-    :ivar message: Detailed reason why the given name is not available.
-    :vartype message: str
-    """
-
-    nameAvailable: bool
-    """Indicates if the resource name is available."""
-    reason: Union[str, "CheckNameAvailabilityReason"]
-    """The reason why the given name is not available. Known values are: \"Invalid\" and
-     \"AlreadyExists\"."""
-    message: str
-    """Detailed reason why the given name is not available."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class ExportRequest(TypedDict, total=False):
     """ExportRequest.
 
@@ -168,86 +68,6 @@ class ExportRequest(TypedDict, total=False):
 
     format: Required[str]
     """Format of the exported order. Required."""
-
-
-class ExportResult(TypedDict, total=False):
-    """ExportResult.
-
-    :ivar content: Content of the exported order. Required.
-    :vartype content: str
-    """
-
-    content: Required[str]
-    """Content of the exported order. Required."""
-
-
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
 
 
 class Resource(TypedDict, total=False):
@@ -346,48 +166,6 @@ class OrderProperties(TypedDict, total=False):
     """The product ID of the order. Required."""
     amount: Required[int]
     """Amount of the product. Required."""
-    provisioningState: str
-    """The provisioning state of the product."""
-
-
-class Product(TrackedResource):
-    """Concrete tracked resource types can be created by aliasing this type using a specific property
-    type.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "ProductProperties"
-    """
-
-    properties: "ProductProperties"
-    """The resource-specific properties for this resource."""
-
-
-class ProductProperties(TypedDict, total=False):
-    """ProductProperties.
-
-    :ivar product_id: The product ID.
-    :vartype product_id: str
-    :ivar provisioning_state: The provisioning state of the product.
-    :vartype provisioning_state: str
-    """
-
-    productId: str
-    """The product ID."""
     provisioningState: str
     """The provisioning state of the product."""
 
