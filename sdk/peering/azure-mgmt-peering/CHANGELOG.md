@@ -90,8 +90,7 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed client operation group `PeeringManagementClient.peering_service_prefixes`
-  - Deleted or renamed enum value `Enum0.UN_AVAILABLE`
+  - Deleted enum value `Enum0.UN_AVAILABLE`
   - Model `ErrorResponse` moved instance variable `code` and `message` under property `error` whose type is `ErrorDetail`
   - Deleted or renamed enum value `LearnedType.VIA_PARTNER`
   - Model `PeerAsn` moved instance variable `peer_asn`, `peer_name` and `validation_state` under property `properties` whose type is `PeerAsnProperties`
