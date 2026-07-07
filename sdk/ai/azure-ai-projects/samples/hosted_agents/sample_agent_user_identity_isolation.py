@@ -29,9 +29,11 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
-    3) DELEGATED_USER_IDENTITY - Optional fixed delegated user identity to use
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+       `MyHostedAgent`.
+    4) DELEGATED_USER_IDENTITY - Optional fixed delegated user identity to use
         for the first request chain. If omitted, a random UUID is generated.
-    4) DELEGATED_USER_IDENTITY_2 - Optional fixed delegated user identity to
+    5) DELEGATED_USER_IDENTITY_2 - Optional fixed delegated user identity to
         use for the second user. If omitted, a random UUID is generated.
 """
 
@@ -64,7 +66,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = "MyHostedAgent"
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
 delegated_user_identity = os.environ.get("DELEGATED_USER_IDENTITY", str(uuid4()))
 delegated_user_identity_2 = os.environ.get("DELEGATED_USER_IDENTITY_2", str(uuid4()))
 hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"

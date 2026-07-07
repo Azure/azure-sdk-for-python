@@ -36,9 +36,8 @@ USAGE:
        Overview page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under
        the "Name" column in the "Models + endpoints" tab in your Foundry project.
-    3) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
-    4) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
-       and project are deployed.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`. The Hosted Agent must already exist.
 """
 
 import os
@@ -74,8 +73,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
-subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
 
 _HOSTED_AGENT_SOURCE_DIR = Path(__file__).parent / "assets" / "toolbox-agent"
 

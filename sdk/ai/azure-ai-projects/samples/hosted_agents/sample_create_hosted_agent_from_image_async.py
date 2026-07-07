@@ -21,7 +21,8 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name.
+    2) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
     3) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format
        '<registry>/<repository>[:<tag>|@<digest>]'.
        You can build a sample image from the `samples/hosted_agents/assets/echo-agent` folder.
@@ -50,7 +51,7 @@ async def main() -> None:
     load_dotenv()
 
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+    agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
     image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
 
     created = None

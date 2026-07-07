@@ -21,15 +21,9 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
-
-    If you don't have a Hosted Agent, run `sample_create_hosted_agent_from_image_async.py` or
-    `sample_create_hosted_agent_from_code_async.py` first to create one as a prerequisite.
-
-    NOTE: This sample assumes the Foundry project and Azure AI account are in the
-    same resource group.
-
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
 """
 
 import asyncio
@@ -82,7 +76,7 @@ async def _iter_sse_frames_async(stream, max_log_events: int):
 
 async def main():
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+    agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
     model_name = os.environ["FOUNDRY_MODEL_NAME"]
     hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
 

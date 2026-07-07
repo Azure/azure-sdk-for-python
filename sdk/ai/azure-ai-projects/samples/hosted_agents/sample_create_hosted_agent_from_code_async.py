@@ -32,9 +32,11 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
        Overview page of your Microsoft Foundry portal.
-     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
-     3) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `false` to use
-         BUNDLED; defaults to `true` (REMOTE_BUILD).
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
+    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `false` to use
+        BUNDLED; defaults to `true` (REMOTE_BUILD).
 """
 
 import asyncio
@@ -65,7 +67,7 @@ async def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model_name = os.environ["FOUNDRY_MODEL_NAME"]
     use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
-    agent_name = "MyHostedAgent"
+    agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
 
     dependency_resolution, code_zip_stream = select_basic_agent_code_zip(use_remote_build)
     original_agent_endpoint = None

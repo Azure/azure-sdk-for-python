@@ -21,8 +21,9 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
 """
 
 import os
@@ -43,7 +44,7 @@ from util import zip_directory
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
 
