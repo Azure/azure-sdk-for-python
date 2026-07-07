@@ -1,5 +1,76 @@
 # Release History
 
+## 1.0.0b7 (2026-07-07)
+
+### Features Added
+
+  - Client `SqlVirtualMachineManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SqlVirtualMachineManagementClient` added method `send_request`
+  - Model `AutoPatchingSettings` added property `additional_vm_patch`
+  - Model `AvailabilityGroupListener` added property `properties`
+  - Enum `IdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Enum `IdentityType` added member `USER_ASSIGNED`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SQLStorageSettings` added property `use_storage_pool`
+  - Model `SQLTempDbSettings` added property `use_storage_pool`
+  - Model `SqlVirtualMachine` added property `properties`
+  - Model `SqlVirtualMachineGroup` added property `properties`
+  - Model `StorageConfigurationSettings` added property `enable_storage_config_blade`
+  - Model `TrackedResource` added property `system_data`
+  - Model `WsfcDomainProfile` added property `is_sql_service_account_gmsa`
+  - Added enum `AdditionalOsPatch`
+  - Added enum `AdditionalVmPatch`
+  - Added model `AvailabilityGroupListenerProperties`
+  - Added model `DiskConfigAssessmentRequest`
+  - Added enum `OsType`
+  - Added model `SqlVirtualMachineGroupProperties`
+  - Added model `SqlVirtualMachineProperties`
+  - Added model `VirtualMachineIdentity`
+  - Added enum `VmIdentityType`
+  - Model `SqlVirtualMachinesOperations` added method `begin_fetch_dc_assessment`
+
+### Breaking Changes
+
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `provisioning_state`
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `availability_group_name`
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `load_balancer_configurations`
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `multi_subnet_ip_configurations`
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `create_default_availability_group_if_not_exist`
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `port`
+  - Model `AvailabilityGroupListener` deleted or renamed its instance variable `availability_group_configuration`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `virtual_machine_resource_id`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `provisioning_state`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `sql_image_offer`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `sql_server_license_type`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `sql_management`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `least_privilege_mode`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `sql_image_sku`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `sql_virtual_machine_group_resource_id`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `wsfc_domain_credentials`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `wsfc_static_ip`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `auto_patching_settings`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `auto_backup_settings`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `key_vault_credential_settings`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `server_configurations_management_settings`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `storage_configuration_settings`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `troubleshooting_status`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `assessment_settings`
+  - Model `SqlVirtualMachine` deleted or renamed its instance variable `enable_automatic_upgrade`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `sql_image_offer`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `sql_image_sku`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `scale_type`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `cluster_manager_type`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `cluster_configuration`
+  - Model `SqlVirtualMachineGroup` deleted or renamed its instance variable `wsfc_domain_profile`
+  - Deleted or renamed model `AvailabilityGroupListenerListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `SqlVirtualMachineGroupListResult`
+  - Deleted or renamed model `SqlVirtualMachineListResult`
+  - Method `AvailabilityGroupListenersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SqlVirtualMachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
 ## 1.0.0b6 (2023-06-16)
 
 ### Other Changes
