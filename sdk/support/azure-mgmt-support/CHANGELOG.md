@@ -36,6 +36,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `MicrosoftSupport` to `SupportMgmtClient`
   - Model `ChatTranscriptDetails` moved instance variable `messages` and `start_time` under property `properties` whose type is `ChatTranscriptDetailsProperties`
   - Model `CommunicationDetails` moved instance variable `communication_type`, `communication_direction`, `sender`, `subject`, `body` and `created_date` under property `properties` whose type is `CommunicationDetailsProperties`
   - Model `FileDetails` moved instance variable `created_on`, `chunk_size`, `file_size` and `number_of_chunks` under property `properties` whose type is `FileDetailsProperties`
