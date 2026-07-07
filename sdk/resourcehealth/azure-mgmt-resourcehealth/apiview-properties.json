@@ -107,5 +107,5 @@
         "azure.mgmt.resourcehealth.operations.ChildResourcesOperations.list": "Microsoft.ResourceHealth.ChildResourcesOperationGroup.list",
         "azure.mgmt.resourcehealth.aio.operations.ChildResourcesOperations.list": "Microsoft.ResourceHealth.ChildResourcesOperationGroup.list"
     },
-    "CrossLanguageVersion": "79cb00df1cca"
+    "CrossLanguageVersion": "0f8ddc79d9ea"
 }
