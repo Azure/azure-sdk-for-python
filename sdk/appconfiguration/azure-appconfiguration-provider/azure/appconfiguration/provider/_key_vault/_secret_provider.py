@@ -70,7 +70,7 @@ class SecretProvider(_SecretProviderBase):
 
     def close(self) -> None:
         """
-        Closes the connection to Azure Key Vault.
+        Closes the connection to Azure App Configuration.
         """
         for client in self._secret_clients.values():
             client.close()

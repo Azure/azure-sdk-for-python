@@ -78,7 +78,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._startup_timeout: int = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
 
         self._replica_client_manager = ConfigurationClientManager(
-            connection_string=kwargs.pop("connection_string", None),
+            connection_string=kwargs.pop("connection_string"),
             endpoint=kwargs.pop("endpoint"),
             credential=kwargs.pop("credential", None),
             user_agent=user_agent,
