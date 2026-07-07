@@ -41,11 +41,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure git author
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Resolve TypeSpec repo/ref
         id: typespec-info
         env:
@@ -114,6 +109,8 @@ jobs:
         working-directory: _typespec
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           # The checkout's "origin" points at the PR head repo (possibly a
           # fork), so add microsoft/typespec explicitly to fetch its main.
           if git remote get-url upstream >/dev/null 2>&1; then
@@ -178,19 +175,11 @@ jobs:
           else
             SOURCE_BRANCH="regen/typespec-python-main"
           fi
-          if ! git fetch --no-tags origin "$TARGET_BRANCH" 2>/dev/null; then
+          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
             echo "::error::Branch $TARGET_BRANCH not found. Initialize it from the generated-tests history before rerunning this workflow."
             exit 1
           fi
           git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
-          if [ -z "$PR_NUMBER" ]; then
-            git fetch --no-tags origin main
-            if ! git merge --no-edit origin/main; then
-              git merge --abort || true
-              echo "::error::Branch $TARGET_BRANCH conflicts with main. Please update $TARGET_BRANCH by merging the latest main and resolving conflicts, then re-run this workflow."
-              exit 1
-            fi
-          fi
 
       - name: Copy regenerated tests
         run: |
@@ -229,6 +218,8 @@ jobs:
         run: |
           set -euo pipefail
           TARGET_BRANCH="typespec-python-generated-tests"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           GENERATED_DIR="eng/tools/azure-sdk-tools/emitter/generated"
 
