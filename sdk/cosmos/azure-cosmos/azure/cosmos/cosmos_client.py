@@ -272,6 +272,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
             except Exception:  # pylint: disable=broad-except
                 pass
+            try:
+                handler = self.client_connection._metadata_hedging_handler  # pylint: disable=protected-access
+                if handler is not None:
+                    handler.close()
+            except Exception:  # pylint: disable=broad-except
+                pass
 
     def close(self) -> None:
         """Close this instance of CosmosClient.

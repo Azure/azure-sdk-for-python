@@ -29,7 +29,7 @@ synchronous counterpart and design notes.
 import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
 import logging
-from asyncio import CancelledError, Event, Task
+from asyncio import CancelledError, Event, Task  # pylint: disable=do-not-import-asyncio
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import

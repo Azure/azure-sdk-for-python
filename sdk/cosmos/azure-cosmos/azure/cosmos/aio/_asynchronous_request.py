@@ -243,6 +243,7 @@ def _is_metadata_hedging_applicable(client, request_params: RequestObject, globa
     ppaf_enabled = global_endpoint_manager.is_per_partition_automatic_failover_enabled()
     return resolve_metadata_hedging_opt_in(opt_in, ppaf_enabled)
 
+
 async def AsynchronousRequest(
     client,
     request_params,

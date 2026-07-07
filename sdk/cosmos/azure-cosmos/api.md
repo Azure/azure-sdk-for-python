@@ -1697,6 +1697,7 @@ namespace azure.cosmos.aio
                 availability_strategy: Union[bool, dict[str, Any]] = False, 
                 availability_strategy_max_concurrency: Optional[int] = ..., 
                 consistency_level: Optional[str] = ..., 
+                enable_metadata_hedging: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -3754,6 +3755,7 @@ namespace azure.cosmos.http_constants
         CROSS_PARTITION_QUERY_NOT_SERVABLE = 1004
         DATABASE_ACCOUNT_NOT_FOUND = 1008
         INSUFFICIENT_BINDABLE_PARTITIONS = 1007
+        LEASE_NOT_FOUND = 1022
         NAME_CACHE_IS_STALE = 1000
         OWNER_RESOURCE_NOT_FOUND = 1003
         PARTITION_KEY_MISMATCH = 1001
@@ -3883,6 +3885,7 @@ namespace azure.cosmos.scripts
                 consistency_level: Optional[str] = None, 
                 availability_strategy: Union[bool, dict[str, Any]] = False, 
                 availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
+                enable_metadata_hedging: Optional[bool] = None, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -4677,6 +4680,7 @@ namespace azure.cosmos.user
                 consistency_level: Optional[str] = None, 
                 availability_strategy: Union[bool, dict[str, Any]] = False, 
                 availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
+                enable_metadata_hedging: Optional[bool] = None, 
                 **kwargs: Any
             ) -> None: ...
 

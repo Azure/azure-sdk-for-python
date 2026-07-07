@@ -1678,6 +1678,7 @@
     {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
+        "PPAF",
         "colls",
         "pkranges",
         "Upserts",

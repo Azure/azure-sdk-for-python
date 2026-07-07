@@ -189,6 +189,17 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         max_workers = max(os.cpu_count() or 1, 2 * budget)
         self._executor = ThreadPoolExecutor(max_workers=max_workers)  # pylint: disable=consider-using-with
 
+    def close(self) -> None:
+        """Shut down the shared hedge executor, releasing its worker threads.
+
+        Invoked from the client/connection teardown path (``CosmosClient.__exit__`` /
+        ``close``) so a disposed client does not leak its metadata-hedge worker threads.
+        Idempotent -- safe to call multiple times.
+
+        :rtype: None
+        """
+        self._executor.shutdown(wait=False, cancel_futures=True)
+
     def _classify_future(self, future: "Future") -> str:
         """Classify a COMPLETED future into a :class:`_BranchOutcome`.
 

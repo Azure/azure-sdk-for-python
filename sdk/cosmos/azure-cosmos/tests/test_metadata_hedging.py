@@ -103,7 +103,7 @@ class TestMetadataHedgingHelpers(unittest.TestCase):
         self.assertFalse(req.is_metadata_cache_population)
         req.set_metadata_cache_population_from_options({METADATA_CACHE_POPULATION_OPTION: True})
         self.assertTrue(req.is_metadata_cache_population)
-        # Absent / falsey flag leaves it unset.
+        # Absent or false flag leaves it unset.
         req2 = RequestObject(ResourceType.Collection, _OperationType.Read, {})
         req2.set_metadata_cache_population_from_options({})
         self.assertFalse(req2.is_metadata_cache_population)
@@ -221,6 +221,13 @@ class TestMetadataHedgingHandler(unittest.TestCase):
         gem = _FakeGlobalEndpointManager(["region-1"])
         execute_metadata_hedging(self.handler, req, gem, _http_request(), execute_fn)
         self.assertIsInstance(req.availability_strategy, MetadataCrossRegionHedgingStrategy)
+
+    def test_close_shuts_down_executor_idempotently(self):
+        handler = MetadataCrossRegionHedgingHandler(concurrency_budget=2)
+        handler.close()
+        self.assertTrue(handler._executor._shutdown)  # pylint: disable=protected-access
+        # Idempotent: a second close must not raise.
+        handler.close()
 
 
 class _FakeClient:
