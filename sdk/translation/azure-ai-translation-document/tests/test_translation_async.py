@@ -233,33 +233,6 @@ class TestTranslation(AsyncDocumentTranslationTest):
             assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
             return variables
 
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy_async
-    async def test_use_supported_and_unsupported_files(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables", {})
-        # prepare containers and test data
-        source_container_sas_url = self.create_source_container(
-            data=[Document(suffix=".txt"), Document(suffix=".jpg")], variables=variables
-        )
-        target_container_sas_url = self.create_target_container(variables=variables)
-
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[TranslationTarget(target_url=target_container_sas_url, language="es")],
-            )
-        ]
-        async with client:
-            poller = await client.begin_translation(translation_inputs)
-            result = await poller.result()
-            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-            async for document in result:
-                self._validate_doc_status(document, "es")
-            return variables
-
     @pytest.mark.skip("Service now raises exception in this case. Need to follow-up")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

@@ -202,7 +202,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         docs_count = 5
         target_language = "es"
         statuses = ["Succeeded"]
-        skip = 3
+        skip = 1
 
         # submit and validate operation
         poller = await self._begin_and_validate_translation_with_multiple_docs_async(
