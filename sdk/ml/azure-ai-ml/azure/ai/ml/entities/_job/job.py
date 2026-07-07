@@ -16,11 +16,13 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase, JobService
 from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    CommonYamlFields,
+)
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin
@@ -172,7 +174,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _get_base_info_dict(self) -> OrderedDict:
         return OrderedDict(
@@ -191,7 +195,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 [
                     (
                         "Details Page",
-                        make_link(self.studio_url, "Link to Azure Machine Learning studio"),
+                        make_link(
+                            self.studio_url, "Link to Azure Machine Learning studio"
+                        ),
                     ),
                 ]
             )
@@ -203,11 +209,15 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         pass
 
     @classmethod
-    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
+    def _resolve_cls_and_type(
+        cls, data: Dict, params_override: Optional[List[Dict]] = None
+    ) -> Tuple:
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-        from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
+        from azure.ai.ml.entities._job.distillation.distillation_job import (
+            DistillationJob,
+        )
         from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
@@ -215,7 +225,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
         job_type: Optional[Type["Job"]] = None
         type_in_override = find_type_in_override(params_override)
-        type_str = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
+        type_str = type_in_override or data.get(
+            CommonYamlFields.TYPE, JobType.COMMAND
+        )  # override takes the priority
         if type_str == JobType.COMMAND:
             job_type = Command
         elif type_str == JobType.SPARK:
@@ -286,14 +298,16 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[JobBase, JobBase_2401, Run]
+        cls, obj: Union[JobBase, Run]
     ) -> "Job":
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
-        from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
+        from azure.ai.ml.entities._job.distillation.distillation_job import (
+            DistillationJob,
+        )
         from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
@@ -307,7 +321,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
-                if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
+                if obj.properties.compute_id and obj.properties.compute_id.endswith(
+                    "/" + ComputeType.ADF
+                ):
                     return ImportJob._load_from_rest(obj)
 
                 res_command: Job = Command._load_from_rest_job(obj)
@@ -323,7 +339,11 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 return SweepJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
-            if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
+            # The shared arm_ml_service JobType enum has no FINE_TUNING member, but the wire discriminator
+            # for fine-tuning jobs is the literal string "FineTuning" (emitted by both the arm and v2024_01
+            # FineTuningJob models). Compare against the literal so this works regardless of which client
+            # deserialized the object.
+            if obj.properties.job_type == "FineTuning":
                 if obj.properties.properties.get("azureml.enable_distillation", False):
                     return DistillationJob._load_from_rest(obj)
                 return FineTuningJob._load_from_rest(obj)
@@ -360,5 +380,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "Job":
         pass
