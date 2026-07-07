@@ -15,7 +15,7 @@ async def test_session_resolution_prefers_query_param():
     async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -33,7 +33,7 @@ async def test_session_resolution_uses_header_when_query_missing():
     async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(

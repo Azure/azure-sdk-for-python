@@ -16,7 +16,7 @@ async def test_post_activity_returns_200():
         activity = request.state.activity
         return JSONResponse({"ok": True, "type": activity.get("type")})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -36,7 +36,7 @@ async def test_post_activity_requires_json_object():
     async def handle(_request):
         return None
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -53,7 +53,7 @@ async def test_default_non_invoke_flow_returns_202_when_handler_returns_none():
     async def handle(_request):
         return Response(status_code=202)
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -70,7 +70,7 @@ async def test_invoke_response_path_returns_200_with_body():
     async def handle(_request):
         return JSONResponse({"status": 200, "body": {"message": "approved"}})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(

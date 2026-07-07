@@ -13,6 +13,7 @@ import pytest
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 from azure.ai.agentserver.activity import _m365_bridge as bridge
+from azure.ai.agentserver.activity._config import get_hosted_agent_env, use_anonymous_outbound
 
 _CONN_PREFIX = "CONNECTIONS"
 _FOUNDRY_PREFIX = "FOUNDRY_AGENT"
@@ -62,8 +63,8 @@ def _make_host(monkeypatch, *, digital_worker):
     monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
     # Inject a stub AgentApplication so construction does not require a live
     # M365 SDK build; we only assert env-seeding / mode selection here.
-    return ActivityAgentServerHost.from_agent_application(
-        _StubAgentApp(),
+    return ActivityAgentServerHost(
+        agent_app=_StubAgentApp(),
         digital_worker=digital_worker,
         configure_observability=None,
     )
@@ -92,7 +93,7 @@ def test_digital_worker_opt_in(monkeypatch):
 
 def test_default_keyword_matches_explicit_false(monkeypatch):
     # No digital_worker kwarg at all -> must behave exactly like False.
-    host = ActivityAgentServerHost.from_agent_application(_StubAgentApp(), configure_observability=None)
+    host = ActivityAgentServerHost(agent_app=_StubAgentApp(), configure_observability=None)
 
     assert host._digital_worker is False
 
@@ -105,7 +106,9 @@ def test_simple_mode_does_not_apply_fmi_patch(monkeypatch):
         applied["called"] = True
 
     monkeypatch.setattr(bridge, "_apply_msal_patches", _fake_patch)
-    bridge.build_m365_app(digital_worker=False, agent_app=_StubAgentApp())
+    bridge.build_m365_app(
+        digital_worker=False, connection_config={}, storage=None, agent_app=_StubAgentApp()
+    )
 
     assert applied["called"] is False
 
@@ -118,53 +121,127 @@ def test_digital_worker_applies_fmi_patch(monkeypatch):
         applied["called"] = True
 
     monkeypatch.setattr(bridge, "_apply_msal_patches", _fake_patch)
-    bridge.build_m365_app(digital_worker=True, agent_app=_StubAgentApp())
+    bridge.build_m365_app(
+        digital_worker=True, connection_config={}, storage=None, agent_app=_StubAgentApp()
+    )
 
     assert applied["called"] is True
 
 
-def test_build_m365_app_rejects_conflicting_kwargs():
-    """Injecting agent_app= alongside component kwargs raises ValueError."""
-    with pytest.raises(ValueError, match="agent_app="):
-        bridge.build_m365_app(agent_app=_StubAgentApp(), storage=object())
-
-
-def test_seed_connection_env_public_helper(monkeypatch):
-    """seed_connection_env populates CLIENTID from the Foundry instance identity."""
+def test_get_hosted_agent_env_public_helper(monkeypatch):
+    """get_hosted_agent_env derives CLIENTID from the Foundry instance identity
+    and returns it in a NEW mapping without mutating os.environ."""
     import os
+
+    from azure.ai.agentserver.activity import get_hosted_agent_env
 
     monkeypatch.setenv("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "instance-aaa")
     monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
 
-    ActivityAgentServerHost.seed_connection_env()
+    env = get_hosted_agent_env()
 
-    assert os.environ[_AUTHTYPE] == "UserManagedIdentity"
-    assert os.environ[_CLIENTID] == "instance-aaa"
-    assert os.environ[_SCOPE0] == _BOTFRAMEWORK_SCOPE
-    assert os.environ[_TENANTID] == "tenant-ccc"
-    assert os.environ[_AUTHORITY] == "https://login.microsoftonline.com/tenant-ccc"
+    assert env[_AUTHTYPE] == "UserManagedIdentity"
+    assert env[_CLIENTID] == "instance-aaa"
+    assert env[_SCOPE0] == _BOTFRAMEWORK_SCOPE
+    assert env[_TENANTID] == "tenant-ccc"
+    assert env[_AUTHORITY] == "https://login.microsoftonline.com/tenant-ccc"
+    # os.environ must NOT be mutated by the helper.
+    assert _CLIENTID not in os.environ
+    assert _AUTHTYPE not in os.environ
 
 
-def test_seed_connection_env_digital_worker(monkeypatch):
-    """seed_connection_env(digital_worker=True) uses the blueprint identity + scope."""
-    import os
+def test_get_hosted_agent_env_digital_worker(monkeypatch):
+    """get_hosted_agent_env(digital_worker=True) uses the blueprint identity + scope."""
+    from azure.ai.agentserver.activity import get_hosted_agent_env
 
     monkeypatch.setenv("FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID", "blueprint-bbb")
     monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
 
-    ActivityAgentServerHost.seed_connection_env(digital_worker=True)
+    env = get_hosted_agent_env(digital_worker=True)
 
-    assert os.environ[_CLIENTID] == "blueprint-bbb"
-    assert os.environ[_SCOPE0] == _AGENTIC_SCOPE
+    assert env[_CLIENTID] == "blueprint-bbb"
+    assert env[_SCOPE0] == _AGENTIC_SCOPE
 
 
-def test_seed_connection_env_does_not_overwrite(monkeypatch):
-    """seed_connection_env never overwrites an explicitly-set value."""
-    import os
-
+def test_get_hosted_agent_env_does_not_overwrite(monkeypatch):
+    """get_hosted_agent_env never overwrites an explicitly-set value."""
     monkeypatch.setenv(_CLIENTID, "preset-client")
     monkeypatch.setenv("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "instance-aaa")
 
-    ActivityAgentServerHost.seed_connection_env()
+    from azure.ai.agentserver.activity import get_hosted_agent_env
 
-    assert os.environ[_CLIENTID] == "preset-client"
+    env = get_hosted_agent_env()
+
+    assert env[_CLIENTID] == "preset-client"
+
+
+# ---------------------------------------------------------------------------
+# Local anonymous-outbound auto-detection (simple model only).
+#
+# Simple model + not hosted + no Bot Connector credential -> anonymous outbound
+# (so local runs round-trip via the M365 Agents Playground). A hosted container
+# OR a configured credential keeps the real authenticated Bearer path. The
+# decision is a pure function over values resolved once at build time.
+# ---------------------------------------------------------------------------
+
+_HOSTING = "FOUNDRY_HOSTING_ENVIRONMENT"
+
+
+@pytest.fixture(autouse=True)
+def _clean_hosting_env(monkeypatch):
+    """Ensure FOUNDRY_HOSTING_ENVIRONMENT starts unset for these tests."""
+    monkeypatch.delenv(_HOSTING, raising=False)
+    yield
+
+
+def test_local_no_creds_uses_anonymous():
+    """Simple model, local (not hosted), no credential -> anonymous."""
+    assert use_anonymous_outbound(
+        digital_worker=False, bot_app_id="", is_hosted=False
+    ) is True
+
+
+def test_hosted_uses_authenticated():
+    """Hosted container -> authenticated path (even with no credential)."""
+    assert use_anonymous_outbound(
+        digital_worker=False, bot_app_id="", is_hosted=True
+    ) is False
+
+
+def test_local_with_credential_uses_authenticated():
+    """Local but a Bot Connector credential is configured -> authenticated path."""
+    assert use_anonymous_outbound(
+        digital_worker=False, bot_app_id="some-client-id", is_hosted=False
+    ) is False
+
+
+def test_digital_worker_never_uses_anonymous_fallback():
+    """Digital-worker model must never take the local anonymous fallback path
+    (its FMI patch supplies the outbound token)."""
+    assert use_anonymous_outbound(
+        digital_worker=True, bot_app_id="", is_hosted=False
+    ) is False
+
+
+def test_outbound_bot_app_id_derived_from_env(monkeypatch):
+    """get_hosted_agent_env derives the client id without mutating env."""
+    import os
+
+    monkeypatch.setenv("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "instance-aaa")
+
+    settings = get_hosted_agent_env(digital_worker=False)
+
+    assert settings[_CLIENTID] == "instance-aaa"
+    assert _CLIENTID not in os.environ
+
+
+def test_user_connection_config_drives_outbound_bot_app_id():
+    """A caller-supplied connection config drives the outbound client id, so the
+    outbound auth stays consistent with the stack the caller configured."""
+    bot_app_id = {_CLIENTID: "custom-xyz"}.get(_CLIENTID, "").strip()
+
+    assert bot_app_id == "custom-xyz"
+    assert use_anonymous_outbound(
+        digital_worker=False, is_hosted=True, bot_app_id=bot_app_id
+    ) is False
+

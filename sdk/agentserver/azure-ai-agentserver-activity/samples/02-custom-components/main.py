@@ -4,14 +4,14 @@
 
 Same echo behavior as ``01-echo``, but overrides one of the M365 components the
 host would otherwise build itself. Any of ``storage`` / ``connection_manager`` /
-``adapter`` / ``authorization`` / ``config`` can be passed; the host builds the
+``adapter`` / ``authorization`` / ``connection_config`` can be passed; the host builds the
 rest from the environment. This sample overrides ``storage`` as the concrete
 example.
 
-Because the host still builds the connection manager itself, it seeds the
-``CONNECTIONS__*`` env internally — no ``seed_connection_env()`` call is needed
-here. (You only seed it yourself when you build the connection manager — see
-``03-self-hosted-app``.)
+Because the host still builds the connection manager itself, it derives the
+``CONNECTIONS__*`` settings internally — no ``get_hosted_agent_env()`` call is
+needed here. (You only resolve those yourself when you build the connection
+manager — see ``03-self-hosted-app``.)
 
 Swap ``MemoryStorage`` for a durable M365 ``Storage`` implementation (e.g.
 Cosmos DB / Blob) to persist ``TurnState`` across restarts.
@@ -24,7 +24,8 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 # Override one component (storage here); everything else is built from the environment.
 storage = MemoryStorage()
 
-app = ActivityAgentServerHost(storage=storage)
+host = ActivityAgentServerHost(storage=storage)
+app = host.agent_app
 
 
 @app.activity("message")
@@ -50,4 +51,4 @@ async def on_error(context, error):
 
 
 if __name__ == "__main__":
-    app.run()
+    host.run()

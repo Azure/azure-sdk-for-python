@@ -2,7 +2,7 @@
 
 """Echo activity protocol agent with a fully custom request handler.
 
-Demonstrates ``from_request_handler``: you own the request pipeline entirely.
+Demonstrates ``request_handler``: you own the request pipeline entirely.
 The M365 Agents SDK is **not** initialized — your ``async`` handler receives the
 raw Starlette ``Request`` (with the parsed activity dict on
 ``request.state.activity``) and returns a Starlette ``Response``.
@@ -85,7 +85,7 @@ async def handle(request: Request) -> Response:
     return Response(status_code=202)
 
 
-app = ActivityAgentServerHost.from_request_handler(handle)
+app = ActivityAgentServerHost(request_handler=handle)
 
 
 if __name__ == "__main__":

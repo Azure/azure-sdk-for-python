@@ -2,13 +2,14 @@
 
 """Echo activity protocol agent.
 
-The simplest activity protocol agent: register handlers directly on the host
-and echo the user's message back.
+The simplest activity protocol agent: register handlers on the host's
+``agent_app`` and echo the user's message back.
 """
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
-app = ActivityAgentServerHost()
+host = ActivityAgentServerHost()
+app = host.agent_app
 
 
 @app.activity("message")
@@ -35,4 +36,4 @@ async def on_error(context, error):
 
 
 if __name__ == "__main__":
-    app.run()
+    host.run()

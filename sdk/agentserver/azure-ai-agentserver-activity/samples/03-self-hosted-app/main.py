@@ -4,7 +4,7 @@
 
 The developer constructs the full M365 Agents SDK stack (``MsalConnectionManager``,
 ``HttpAdapterBase``, ``AgentApplication``) and hands the pre-built app to the host
-via :meth:`ActivityAgentServerHost.from_agent_application`. The host drives it
+via ``ActivityAgentServerHost(agent_app=...)``. The host drives it
 through the Foundry activity turn pipeline (claims, parsing, delivery) for you.
 
 Use this pattern when you need full control over how the ``AgentApplication`` is
@@ -12,9 +12,7 @@ built (custom storage / connection manager / authorization) but still want the
 Activity-protocol host to run it.
 """
 
-from os import environ
-
-from azure.ai.agentserver.activity import ActivityAgentServerHost
+from azure.ai.agentserver.activity import ActivityAgentServerHost, get_hosted_agent_env
 
 from microsoft_agents.activity import Activity, load_configuration_from_env
 from microsoft_agents.authentication.msal import MsalConnectionManager
@@ -28,13 +26,10 @@ from microsoft_agents.hosting.core import (
     TurnState,
 )
 
-# Seed the CONNECTIONS__* env the M365 connection manager needs before building
-# it (the default host constructor does this for you; here we build the stack
-# ourselves, so we call the helper first).
-ActivityAgentServerHost.seed_connection_env()
-
-# M365 SDK setup
-config = load_configuration_from_env(environ)
+# Resolve the config the M365 connection manager needs. get_hosted_agent_env()
+# returns a mapping (os.environ overlaid with the derived CONNECTIONS__* settings)
+# WITHOUT mutating the process environment — pass it straight to the SDK loader.
+config = load_configuration_from_env(get_hosted_agent_env())
 storage = MemoryStorage()
 connection_manager = MsalConnectionManager(**config)
 client_factory = RestChannelServiceClientFactory(connection_manager)
@@ -75,7 +70,7 @@ async def on_error(context: TurnContext, error: Exception):
 
 # ── Foundry host with the pre-built AgentApplication ─────────────
 
-app = ActivityAgentServerHost.from_agent_application(agent_app)
+app = ActivityAgentServerHost(agent_app=agent_app)
 
 if __name__ == "__main__":
     app.run()

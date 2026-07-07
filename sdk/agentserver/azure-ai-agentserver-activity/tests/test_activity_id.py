@@ -17,7 +17,7 @@ async def test_provided_activity_id_is_used():
     async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -35,7 +35,7 @@ async def test_missing_activity_id_generates_uuid():
     async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -55,7 +55,7 @@ async def test_oversized_activity_id_falls_back_to_uuid():
     async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -75,7 +75,7 @@ async def test_malformed_activity_id_falls_back_to_uuid():
     async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(

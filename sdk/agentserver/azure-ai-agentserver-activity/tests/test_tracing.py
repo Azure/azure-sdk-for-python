@@ -33,7 +33,7 @@ async def test_activity_sets_baggage_values_per_request():
             "conversation": get_baggage("azure.ai.agentserver.conversation_id") or "",
         })
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -60,7 +60,7 @@ async def test_traceparent_is_propagated_to_handler_child_span():
             observed["parent_span_id"] = format(span.parent.span_id, "016x") if span.parent else ""
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
 
     caller_tracer = trace.get_tracer("test.activity.caller")
     with caller_tracer.start_as_current_span("CallerOperation") as caller_span:

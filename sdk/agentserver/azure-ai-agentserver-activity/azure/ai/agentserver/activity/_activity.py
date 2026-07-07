@@ -3,20 +3,32 @@
 # ---------------------------------------------------------
 """Activity protocol host for Azure AI Hosted Agents.
 
-Provides the activity protocol endpoint as a
-:class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
+Home of :class:`ActivityAgentServerHost` — an
+:class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds the
+activity protocol endpoint (``POST /activity/messages``).
+
+This module wires the endpoint end to end: request parsing and validation,
+session / correlation resolution, log-record enrichment, OpenTelemetry baggage,
+error-source classification, and dispatch to one of the three construction modes
+(built M365 stack, injected ``AgentApplication``, or custom request handler). The
+M365 stack build lives in :mod:`._m365_bridge` and the Starlette turn adapter in
+:mod:`._cloud_adapter`.
 """
+
+from __future__ import annotations
 
 import inspect
 import logging
-import os
 import re
 import uuid
-from collections.abc import Awaitable, Callable
-from typing import Any, Optional
+from collections.abc import Awaitable, Callable, Mapping
+from contextvars import Token
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Optional
 
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
+from opentelemetry.context import Context
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
@@ -29,7 +41,7 @@ from azure.ai.agentserver.core import (
     reset_request_context,
     set_request_context,
 )
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     ERROR_DETAIL,
     ERROR_SOURCE,
     FOUNDRY_CALL_ID,
@@ -38,16 +50,31 @@ from azure.ai.agentserver.core._platform_headers import (
     USER_ID,
 )
 
-from ._constants import ActivityConstants
+from ._config import get_hosted_agent_env
+from ._constants import (
+    MAX_ID_LENGTH,
+    VALID_ID_PATTERN,
+    ActivityConstants,
+    ActivityFields,
+    BaggageKeys,
+    ConnectionSettings,
+    ErrorCode,
+    ErrorSource,
+    LogRecordFields,
+)
 
-logger = logging.getLogger("azure.ai.agentserver")
+if TYPE_CHECKING:  # pragma: no cover - type-only imports (M365 SDK is optional)
+    from microsoft_agents.hosting.core import (
+        AgentApplication,
+        Authorization,
+        HttpAdapterBase,
+        Storage,
+    )
+    from microsoft_agents.authentication.msal import MsalConnectionManager
 
-_ERROR_SOURCE_UPSTREAM: str = "upstream"
-_ERROR_SOURCE_PLATFORM: str = "platform"
+logger = logging.getLogger("azure.ai.agentserver.activity.host")
 
-# Maximum length and allowed characters for user-provided IDs (defense in depth).
-_MAX_ID_LENGTH = 256
-_VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
+_VALID_ID_RE = re.compile(VALID_ID_PATTERN)
 
 
 def _sanitize_id(value: str, fallback: str) -> str:
@@ -64,7 +91,7 @@ def _sanitize_id(value: str, fallback: str) -> str:
     :return: The validated ID or the fallback.
     :rtype: str
     """
-    if not value or len(value) > _MAX_ID_LENGTH or not _VALID_ID_RE.match(value):
+    if not value or len(value) > MAX_ID_LENGTH or not _VALID_ID_RE.match(value):
         return fallback
     return value
 
@@ -76,29 +103,29 @@ def _enrich_record(record: logging.LogRecord) -> None:
     :type record: logging.LogRecord
     """
     ctx = get_request_context()
-    if not hasattr(record, "SessionId"):
-        setattr(record, "SessionId", ctx.session_id or "")
-    if not hasattr(record, "UserId"):
-        setattr(record, "UserId", ctx.user_id or "")
-    if not hasattr(record, "CallId"):
-        setattr(record, "CallId", ctx.call_id or "")
-    if not hasattr(record, "Protocol"):
-        setattr(record, "Protocol", ActivityConstants.PROTOCOL)
+    if not hasattr(record, LogRecordFields.SESSION_ID):
+        setattr(record, LogRecordFields.SESSION_ID, ctx.session_id or "")
+    if not hasattr(record, LogRecordFields.USER_ID):
+        setattr(record, LogRecordFields.USER_ID, ctx.user_id or "")
+    if not hasattr(record, LogRecordFields.CALL_ID):
+        setattr(record, LogRecordFields.CALL_ID, ctx.call_id or "")
+    if not hasattr(record, LogRecordFields.PROTOCOL):
+        setattr(record, LogRecordFields.PROTOCOL, ActivityConstants.PROTOCOL)
 
 
 def _install_log_enrichment() -> None:
     """Install a log-record factory that enriches records with scope fields."""
     base_factory = logging.getLogRecordFactory()
-    if getattr(base_factory, "_activity_enricher", False):
+    if getattr(base_factory, LogRecordFields.ENRICHER_FLAG, False):
         return
 
-    def _factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
+    def factory(*args: object, **kwargs: object) -> logging.LogRecord:
         record = base_factory(*args, **kwargs)
         _enrich_record(record)
         return record
 
-    setattr(_factory, "_activity_enricher", True)
-    logging.setLogRecordFactory(_factory)
+    setattr(factory, LogRecordFields.ENRICHER_FLAG, True)
+    logging.setLogRecordFactory(factory)
 
 
 def _apply_error_source_headers(
@@ -136,52 +163,87 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
         if len(detail) > MAX_ERROR_DETAIL_LENGTH:
             suffix = "...[truncated]"
             detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
-        return _ERROR_SOURCE_PLATFORM, detail
-    return _ERROR_SOURCE_UPSTREAM, None
+        return ErrorSource.PLATFORM, detail
+    return ErrorSource.UPSTREAM, None
+
+
+@dataclass(frozen=True)
+class _RequestMeta:
+    """Activity fields extracted for state, logging, and correlation.
+
+    A typed, immutable view of the fields the host reads from an inbound activity
+    (rather than a loose ``dict``), so downstream logging / correlation access
+    named attributes.
+
+    :ivar activity_id: The sanitized activity id (a generated UUID when absent).
+    :vartype activity_id: str
+    :ivar conversation_id: The conversation id (falls back to the request header).
+    :vartype conversation_id: str
+    :ivar type: The activity type.
+    :vartype type: str
+    :ivar from_id: The ``from`` account id.
+    :vartype from_id: str
+    :ivar recipient_id: The ``recipient`` account id.
+    :vartype recipient_id: str
+    :ivar channel_id: The channel id.
+    :vartype channel_id: str
+    :ivar service_url: The service URL.
+    :vartype service_url: str
+    :ivar locale: The activity locale.
+    :vartype locale: str
+    :ivar x_request_id: The inbound ``x-request-id`` correlation header.
+    :vartype x_request_id: str
+    """
+
+    activity_id: str
+    conversation_id: str
+    type: str
+    from_id: str
+    recipient_id: str
+    channel_id: str
+    service_url: str
+    locale: str
+    x_request_id: str
+
 
 
 class ActivityAgentServerHost(AgentServerHost):
     """Activity protocol host for Azure AI Hosted Agents.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
-    the activity protocol endpoint at ``POST /activity/messages``. There are
-    three, mutually-exclusive ways to construct a host — each maps to a distinct
-    construction path, so an invalid combination cannot be expressed:
+    the activity protocol endpoint at ``POST /activity/messages``. A single
+    constructor selects one of three mutually-exclusive modes from the arguments
+    you pass (an invalid combination raises ``ValueError``):
 
-    1. **Build the M365 stack (default).** Construct directly. The M365 Agents
-       SDK is initialized eagerly from the environment (optionally overriding
-       ``storage`` / ``connection_manager`` / ``adapter`` / ``authorization`` /
-       ``config``). The host then acts as the underlying ``AgentApplication``
-       itself — register handlers with ``@app.activity(...)`` / ``@app.error``
-       and reach the rest of the M365 surface (``message``/``proactive``/``auth``
-       ...) directly on the host.
-    2. **Inject a pre-built ``AgentApplication``.** Use
-       :meth:`from_agent_application` to host an ``AgentApplication`` you built
-       yourself, as-is.
-    3. **Custom request handler.** Use :meth:`from_request_handler` to own the
-       request pipeline entirely; the M365 SDK is not initialized and the
-       handler receives the raw Starlette ``Request`` with
-       ``request.state.activity`` set to the parsed dict.
+    1. **Build the M365 stack (default).** Pass neither ``agent_app`` nor
+       ``request_handler``. The M365 Agents SDK is initialized eagerly from the
+       environment (optionally overriding ``storage`` / ``connection_manager`` /
+       ``adapter`` / ``authorization`` / ``connection_config``). The built
+       ``AgentApplication`` is exposed as the :attr:`agent_app` property —
+       capture it (``app = host.agent_app``) and register handlers with
+       ``@app.activity(...)`` / ``@app.error``, reaching the rest of the M365
+       surface (``message`` / ``proactive`` / ``auth`` ...) the same way.
+    2. **Inject a pre-built ``AgentApplication``.** Pass ``agent_app=<app>`` to
+       host an ``AgentApplication`` you built yourself, as-is. It is exposed as
+       :attr:`agent_app`.
+    3. **Custom request handler.** Pass ``request_handler=<fn>`` to own the
+       request pipeline entirely; the M365 SDK is not initialized, :attr:`agent_app`
+       is unavailable, and the handler receives the raw Starlette ``Request``
+       with ``request.state.activity`` set to the parsed dict.
 
-    By default the host uses the **simple** agent auth model, suitable for a
-    Microsoft Teams bot whose ``msaAppId`` is the agent instance
-    identity. Pass ``digital_worker=True`` to switch to the digital-worker
-    (blueprint + federated-identity) model. ``digital_worker`` applies to the
-    two M365 modes (default and :meth:`from_agent_application`); it has no effect
-    in custom-handler mode, where no outbound auth is performed by the host.
+    See the package overview (:mod:`azure.ai.agentserver.activity`) for runnable
+    usage examples of all three construction modes.
 
-    Usage::
-
-        from azure.ai.agentserver.activity import ActivityAgentServerHost
-
-        app = ActivityAgentServerHost()  # simple Teams agent (default)
-
-        @app.activity("message")
-        async def on_message(context, state):
-            await context.send_activity(f"Echo: {context.activity.text}")
-
-        app.run()
-
+    :keyword agent_app: A pre-built M365 ``AgentApplication`` to host as-is
+        (mode 2). Mutually exclusive with ``request_handler`` and with the
+        M365-build overrides. Defaults to ``None`` (build the stack).
+    :paramtype agent_app: Optional[~microsoft_agents.hosting.core.AgentApplication]
+    :keyword request_handler: A custom ``async def handler(request) -> Response``
+        that owns the pipeline (mode 3). Mutually exclusive with ``agent_app``
+        and the M365-build overrides. Defaults to ``None``.
+    :paramtype request_handler:
+        Optional[Callable[[~starlette.requests.Request],
+        Awaitable[~starlette.responses.Response]]]
     :keyword digital_worker: Selects the outbound-auth model. ``False`` (the
         default) is the **simple** model: the agent *instance* identity mints
         the Bot Connector token directly. ``True`` is the **digital-worker**
@@ -189,255 +251,297 @@ class ActivityAgentServerHost(AgentServerHost):
         token exchange.
     :paramtype digital_worker: bool
     :keyword storage: Optional storage backend for the built M365 stack.
-    :paramtype storage: object or None
+    :paramtype storage: Optional[~microsoft_agents.hosting.core.Storage]
     :keyword connection_manager: Optional M365 connection manager.
-    :paramtype connection_manager: object or None
+    :paramtype connection_manager:
+        Optional[~microsoft_agents.authentication.msal.MsalConnectionManager]
     :keyword adapter: Optional channel adapter.
-    :paramtype adapter: object or None
+    :paramtype adapter: Optional[~microsoft_agents.hosting.core.HttpAdapterBase]
     :keyword authorization: Optional M365 ``Authorization`` instance.
-    :paramtype authorization: object or None
-    :keyword config: Optional configuration mapping for the built M365 stack.
-    :paramtype config: dict or None
+    :paramtype authorization: Optional[~microsoft_agents.hosting.core.Authorization]
+    :keyword connection_config: Optional connection config (the M365
+        ``CONNECTIONS__*`` mapping) for the built M365 stack. When supplied it
+        also drives the outbound-auth client id, and it is exposed after
+        construction as :attr:`connection_config`.
+    :paramtype connection_config: Optional[Mapping[str, str]]
     """
 
     def __init__(
         self,
         *,
+        agent_app: Optional[AgentApplication] = None,
+        request_handler: Optional[Callable[[Request], Awaitable[Response]]] = None,
         digital_worker: bool = False,
-        storage: Optional[Any] = None,
-        connection_manager: Optional[Any] = None,
-        adapter: Optional[Any] = None,
-        authorization: Optional[Any] = None,
-        config: Optional[dict] = None,
-        _handler: Optional[Callable[[Request], Awaitable[Response]]] = None,
-        _agent_app: Optional[Any] = None,
+        storage: Optional[Storage] = None,
+        connection_manager: Optional[MsalConnectionManager] = None,
+        adapter: Optional[HttpAdapterBase] = None,
+        authorization: Optional[Authorization] = None,
+        connection_config: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> None:
-        self._digital_worker = bool(digital_worker)
+        """Initialize the host, selecting the construction mode from the arguments.
 
-        self._agent_app: Any = None
-        self._adapter: Any = None
+        The mode is inferred from which of ``agent_app`` / ``request_handler`` is
+        supplied (see the class docstring); passing an invalid combination raises
+        ``ValueError`` so a bad configuration cannot be expressed.
 
-        if _handler is not None:
-            # Custom-handler mode (see from_request_handler): the caller owns the
-            # pipeline; the M365 SDK is not initialized and no connection env is
-            # seeded (none of it would be used).
-            if not inspect.iscoroutinefunction(_handler):
-                raise TypeError(
-                    f"handler must be an async function, got {type(_handler).__name__}. "
-                    "Use 'async def' to define your handler."
+        :keyword agent_app: A pre-built ``AgentApplication`` to host as-is, or
+            ``None`` to build the M365 stack. Mutually exclusive with
+            ``request_handler`` and the M365-build overrides.
+        :paramtype agent_app: Optional[~microsoft_agents.hosting.core.AgentApplication]
+        :keyword request_handler: A custom async request handler that owns the
+            pipeline, or ``None``. Mutually exclusive with ``agent_app`` and the
+            M365-build overrides.
+        :paramtype request_handler:
+            Optional[Callable[[~starlette.requests.Request],
+            Awaitable[~starlette.responses.Response]]]
+        :keyword digital_worker: Selects the outbound-auth model (see the class
+            docstring). Defaults to the simple model.
+        :paramtype digital_worker: bool
+        :keyword storage: Optional storage backend for the built M365 stack.
+        :paramtype storage: Optional[~microsoft_agents.hosting.core.Storage]
+        :keyword connection_manager: Optional M365 connection manager.
+        :paramtype connection_manager:
+            Optional[~microsoft_agents.authentication.msal.MsalConnectionManager]
+        :keyword adapter: Optional channel adapter.
+        :paramtype adapter: Optional[~microsoft_agents.hosting.core.HttpAdapterBase]
+        :keyword authorization: Optional M365 ``Authorization`` instance.
+        :paramtype authorization: Optional[~microsoft_agents.hosting.core.Authorization]
+        :keyword connection_config: Optional connection config (the M365
+            ``CONNECTIONS__*`` mapping) for the built M365 stack. When supplied it
+            also drives the outbound-auth client id, and it is exposed after
+            construction as :attr:`connection_config`.
+        :paramtype connection_config: Optional[Mapping[str, str]]
+        :raises ValueError: If ``agent_app`` and ``request_handler`` are both
+            supplied, or if either is combined with an M365-build override.
+        :return: None.
+        :rtype: None
+        """
+        # Validate the mode selection up front so an invalid combination is
+        # rejected instead of silently ignoring the extra arguments.
+        if agent_app is not None and request_handler is not None:
+            raise ValueError(
+                "Pass either 'agent_app' or 'request_handler', not both."
+            )
+        build_overrides = {
+            "storage": storage,
+            "connection_manager": connection_manager,
+            "adapter": adapter,
+            "authorization": authorization,
+            "connection_config": connection_config,
+        }
+        if request_handler is not None:
+            supplied = [name for name, value in build_overrides.items() if value is not None]
+            if supplied:
+                raise ValueError(
+                    "request_handler mode does not build the M365 stack; remove the "
+                    f"M365-build override(s): {', '.join(supplied)}."
                 )
-            self._handler = _handler
+        elif agent_app is not None:
+            supplied = [name for name, value in build_overrides.items() if value is not None]
+            if supplied:
+                raise ValueError(
+                    "agent_app is hosted as-is; the M365-build override(s) "
+                    f"{', '.join(supplied)} would be ignored. Remove them, or drop "
+                    "agent_app to let the host build the stack."
+                )
+
+        self._digital_worker: bool = bool(digital_worker)
+        self._agent_app: Optional[AgentApplication] = None
+        self._adapter: Optional[HttpAdapterBase] = None
+        self._handler: Optional[Callable[[Request], Awaitable[Response]]] = None
+        self._connection_config: Optional[Mapping[str, str]] = None
+
+        # Register the activity routes and initialize the base host first, so the
+        # core-resolved configuration (``self.config``, resolved once) is available
+        # to the M365 build below.
+        activity_routes: list[Route] = self._build_activity_routes()
+        existing_routes: list[Route] = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing_routes + activity_routes, **kwargs)
+
+        if request_handler is not None:
+            # Custom-handler mode: the caller owns the pipeline; the M365 SDK is
+            # not initialized and agent_app stays unavailable.
+            if not inspect.iscoroutinefunction(request_handler):
+                raise TypeError(
+                    f"request_handler must be an async function, got "
+                    f"{type(request_handler).__name__}. Use 'async def' to define it."
+                )
+            self._handler = request_handler
         else:
-            # Build the M365 stack (default), or use the injected _agent_app as-is
-            # (see from_agent_application). The host then delegates to it (__getattr__).
-            # Connection env is seeded inside build_m365_app, and only when it
-            # reads the configuration from the environment itself (config=None) —
-            # callers who bring their own config/connection_manager seed themselves.
-            from ._m365_bridge import build_m365_app, make_bridge_handler
-            self._agent_app, self._adapter = build_m365_app(
-                digital_worker=self._digital_worker,
+            # Build the M365 stack (default) or host the injected agent_app as-is.
+            self._build_m365_stack(
+                agent_app=agent_app,
                 storage=storage,
                 connection_manager=connection_manager,
                 adapter=adapter,
                 authorization=authorization,
-                config=config,
-                agent_app=_agent_app,
+                connection_config=connection_config,
             )
-            self._handler = make_bridge_handler(
-                self._agent_app, self._adapter, digital_worker=self._digital_worker
-            )
-
-        activity_routes: list[Any] = [
-            Route(
-                "/activity/messages",
-                self._create_activity_endpoint,
-                methods=["POST"],
-                name="create_activity",
-            ),
-            Route(
-                "/api/messages",
-                self._create_activity_endpoint,
-                methods=["POST"],
-                name="create_activity_api_messages",
-            ),
-        ]
-
-        existing = list(kwargs.pop("routes", None) or [])
-        super().__init__(routes=existing + activity_routes, **kwargs)
 
         # Install logging enrichment for this host. The core observability stack
         # promotes session_id / conversation_id baggage onto spans and logs.
         _install_log_enrichment()
 
-        mode = "custom-handler" if _handler is not None else "m365"
+        mode = "custom-handler" if request_handler is not None else "m365"
         logger.info(
             "ActivityAgentServerHost initialized | mode=%s | digital_worker=%s",
             mode, self._digital_worker,
         )
 
-    @classmethod
-    def from_agent_application(
-        cls,
-        agent_app: Any,
+    def _build_m365_stack(
+        self,
         *,
-        digital_worker: bool = False,
-        **kwargs: Any,
-    ) -> "ActivityAgentServerHost":
-        """Host a pre-built M365 ``AgentApplication`` as-is.
+        agent_app: Optional[AgentApplication],
+        storage: Optional[Storage],
+        connection_manager: Optional[MsalConnectionManager],
+        adapter: Optional[HttpAdapterBase],
+        authorization: Optional[Authorization],
+        connection_config: Optional[Mapping[str, str]],
+    ) -> None:
+        """Build the M365 stack (default) or host the injected ``agent_app`` as-is.
 
-        Use this when you have already constructed an ``AgentApplication`` (with
-        your own storage / connection manager / authorization / adapter) and want
-        the host to drive it through the activity turn pipeline without rebuilding
-        it. The channel adapter is taken from ``agent_app.adapter`` (every
-        ``AgentApplication`` is built with one).
+        Resolves the connection config ONCE (caller-supplied ``connection_config``
+        or the values derived from the Foundry-native identity), then reads the
+        outbound-auth inputs from that single mapping so per-request auth never
+        re-reads process-global state. Sets :attr:`_connection_config`,
+        :attr:`_agent_app`, :attr:`_adapter` and :attr:`_handler`.
 
-        :param agent_app: A fully-built M365 ``AgentApplication`` to host. It must
-            have been constructed with an adapter
-            (``AgentApplication[TurnState](..., adapter=ADAPTER)``).
-        :type agent_app: ~microsoft_agents.hosting.core.AgentApplication
-        :keyword digital_worker: Selects the outbound-auth model (see the class
-            docstring). Defaults to the simple model.
-        :paramtype digital_worker: bool
-        :return: A host bound to the injected ``AgentApplication``.
-        :rtype: ActivityAgentServerHost
+        :keyword agent_app: The pre-built ``AgentApplication`` to inject, or ``None``.
+        :paramtype agent_app: Optional[~microsoft_agents.hosting.core.AgentApplication]
+        :keyword storage: Optional storage backend for the built M365 stack.
+        :paramtype storage: Optional[~microsoft_agents.hosting.core.Storage]
+        :keyword connection_manager: Optional M365 connection manager.
+        :paramtype connection_manager:
+            Optional[~microsoft_agents.authentication.msal.MsalConnectionManager]
+        :keyword adapter: Optional channel adapter.
+        :paramtype adapter: Optional[~microsoft_agents.hosting.core.HttpAdapterBase]
+        :keyword authorization: Optional M365 ``Authorization`` instance.
+        :paramtype authorization: Optional[~microsoft_agents.hosting.core.Authorization]
+        :keyword connection_config: Optional connection config for the built stack.
+        :paramtype connection_config: Optional[Mapping[str, str]]
+        :return: None.
+        :rtype: None
         """
-        return cls(
-            digital_worker=digital_worker,
-            _agent_app=agent_app,
-            **kwargs,
+        from ._m365_bridge import build_bridge_handler, build_m365_app
+
+        self._connection_config = (
+            connection_config if connection_config is not None
+            else get_hosted_agent_env(digital_worker=self._digital_worker)
+        )
+        bot_app_id = self._connection_config.get(ConnectionSettings.CLIENT_ID, "").strip()
+        self._agent_app, self._adapter = build_m365_app(
+            digital_worker=self._digital_worker,
+            connection_config=self._connection_config,
+            storage=self._resolve_storage(storage),
+            connection_manager=connection_manager,
+            adapter=adapter,
+            authorization=authorization,
+            agent_app=agent_app,
+        )
+        self._handler = build_bridge_handler(
+            self._agent_app,
+            self._adapter,
+            digital_worker=self._digital_worker,
+            is_hosted=self.config.is_hosted,
+            bot_app_id=bot_app_id,
         )
 
-    @classmethod
-    def from_request_handler(
-        cls,
-        handler: Callable[[Request], Awaitable[Response]],
-        **kwargs: Any,
-    ) -> "ActivityAgentServerHost":
-        """Host a custom async request handler and own the pipeline yourself.
+    def _build_activity_routes(self) -> list[Route]:
+        """Build the activity protocol routes registered on the host.
 
-        The handler receives the raw Starlette ``Request`` with ``request.state.activity`` set
-        to the parsed activity dict, and must return a Starlette ``Response``.
+        Override in a subclass to customize or extend the activity endpoints
+        (for example, to add an alternate path or change the HTTP methods).
 
-        :param handler: An ``async def`` callable ``handler(request) -> Response``.
-        :type handler: Callable[[~starlette.requests.Request], Awaitable[~starlette.responses.Response]]
-        :return: A host that dispatches every request to ``handler``.
-        :rtype: ActivityAgentServerHost
+        :return: The routes to register for the activity protocol endpoint.
+        :rtype: list[~starlette.routing.Route]
         """
-        return cls(
-            _handler=handler,
-            **kwargs,
-        )
+        return [
+            Route(
+                ActivityConstants.ACTIVITY_MESSAGES_PATH,
+                self._create_activity_endpoint,
+                methods=["POST"],
+                name=ActivityConstants.ACTIVITY_ROUTE_NAME,
+            ),
+            Route(
+                ActivityConstants.API_MESSAGES_PATH,
+                self._create_activity_endpoint,
+                methods=["POST"],
+                name=ActivityConstants.API_MESSAGES_ROUTE_NAME,
+            ),
+        ]
+
+    def _resolve_storage(self, storage: Optional[Storage]) -> Storage:
+        """Resolve the storage backend for the built M365 stack.
+
+        Resolution order: the caller-supplied ``storage`` if provided, otherwise
+        an in-memory store suitable for local testing. Override in a subclass to
+        plug a durable backend (for example a hosted persistent store).
+
+        :param storage: The caller-supplied storage backend, or ``None``.
+        :type storage: Optional[~microsoft_agents.hosting.core.Storage]
+        :return: The storage backend to use.
+        :rtype: ~microsoft_agents.hosting.core.Storage
+        """
+        if storage is not None:
+            return storage
+        # TODO: use a durable hosted store (FoundryStorage) when running in a
+        # Foundry-hosted container; MemoryStorage is the local-testing default.
+        from microsoft_agents.hosting.core import MemoryStorage
+
+        return MemoryStorage()
 
     @property
-    def adapter(self) -> Any:
+    def connection_config(self) -> Optional[Mapping[str, str]]:
+        """The resolved M365 ``CONNECTIONS__*`` mapping used to build the stack.
+
+        Exposes the connection config the host resolved (the caller-supplied
+        ``connection_config`` keyword, or the values derived from the
+        Foundry-native identity) so callers can inspect the exact settings the
+        M365 stack was built from. Distinct from :attr:`config` (the core Foundry
+        ``AgentConfig``). ``None`` when the host was created with a custom
+        ``request_handler`` (the M365 stack is not built in that mode).
+
+        :return: The resolved connection config, or ``None`` in custom-handler mode.
+        :rtype: Optional[Mapping[str, str]]
+        """
+        return self._connection_config
+
+    @property
+    def agent_app(self) -> AgentApplication:
+        """The underlying M365 ``AgentApplication`` for handler registration.
+
+        Capture it (``app = host.agent_app``) and register handlers on it, for
+        example ``@app.activity("message")`` / ``@app.error``, or use it
+        standalone.
+
+        :return: The hosted ``AgentApplication``.
+        :rtype: ~microsoft_agents.hosting.core.AgentApplication
+        :raises AttributeError: When the host was created with a custom
+            ``request_handler`` (custom-handler mode), where no
+            ``AgentApplication`` is initialized.
+        """
+        agent_app = self._agent_app
+        if agent_app is None:
+            raise AttributeError(
+                "The M365 AgentApplication is not initialized because the host was "
+                "created with a custom request_handler. Construct the host without "
+                "request_handler (optionally passing agent_app=<app>) to use agent_app."
+            )
+        return agent_app
+
+    @property
+    def adapter(self) -> Optional[HttpAdapterBase]:
         """The channel adapter for the underlying ``AgentApplication``.
 
-        :return: The adapter, or ``None`` when the host was created via
-            :meth:`from_request_handler`.
-        :rtype: object
+        :return: The adapter, or ``None`` when the host was created with a custom
+            ``request_handler``.
+        :rtype: Optional[~microsoft_agents.hosting.core.HttpAdapterBase]
         """
         return self._adapter
 
-    def __getattr__(self, name: str) -> Any:
-        """Delegate attribute access to the underlying ``AgentApplication``
-        so handlers register directly on the host (``@app.activity`` / ``@app.error``).
-
-        :param name: The attribute name being accessed.
-        :type name: str
-        :return: The corresponding attribute from the ``AgentApplication``.
-        :rtype: object
-        :raises AttributeError: If the M365 ``AgentApplication`` is not
-            initialized (the host was created via
-            :meth:`from_request_handler`) or has no such attribute.
-        """
-        # Use __dict__ to avoid recursing through __getattr__ before _agent_app exists.
-        agent_app = self.__dict__.get("_agent_app")
-        if agent_app is not None:
-            return getattr(agent_app, name)
-        raise AttributeError(
-            f"'{type(self).__name__}' object has no attribute '{name}'. The M365 "
-            "AgentApplication is not initialized because the host was created via "
-            "from_request_handler()."
-        )
-
-    @staticmethod
-    def seed_connection_env(*, digital_worker: bool = False) -> None:
-        """Seed the ``CONNECTIONS__*`` env vars the M365 SDK needs, in place.
-
-        The default construction path calls this for you before it reads the
-        configuration from the environment. Call it yourself **only** when you
-        build the ``MsalConnectionManager`` (or the configuration) manually —
-        whether to inject them into the constructor or to host a pre-built
-        ``AgentApplication`` via :meth:`from_agent_application`. Do so
-        **before** constructing the connection manager, otherwise it cannot
-        mint the Bot Connector token.
-
-        Existing values are never overwritten. The identity values are derived
-        from the ``FOUNDRY_AGENT_*`` env vars Foundry injects into the container.
-
-        Precedence order is:
-
-        1. Existing explicit connection env vars
-        2. Values derived from Foundry-native env vars
-        3. Static defaults for non-critical options
-
-        The defaults differ by auth model:
-
-        * **Simple** (``digital_worker=False``, default): the *instance*
-          identity (``FOUNDRY_AGENT_INSTANCE_CLIENT_ID``) mints the Bot
-          Connector token directly, scoped to
-          ``https://api.botframework.com/.default``.
-        * **Digital worker** (``digital_worker=True``): the *blueprint*
-          identity (``FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID``) is used with the
-          federated-identity exchange, scoped to the agentic resource.
-
-        :keyword digital_worker: Selects the outbound-auth model to seed for.
-            Defaults to the simple model.
-        :paramtype digital_worker: bool
-        """
-
-        def _get_nonempty(name: str) -> str:
-            return os.environ.get(name, "").strip()
-
-        def _set_if_missing(name: str, value: str) -> None:
-            if value and not _get_nonempty(name):
-                os.environ[name] = value
-
-        if digital_worker:
-            scope = "5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default"
-            client_id_env = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
-        else:
-            scope = "https://api.botframework.com/.default"
-            client_id_env = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
-
-        defaults = {
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__AUTHTYPE": "UserManagedIdentity",
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__SCOPES__0": scope,
-            "CONNECTIONSMAP__0__SERVICEURL": "*",
-            "CONNECTIONSMAP__0__CONNECTION": "SERVICE_CONNECTION",
-        }
-        for key, value in defaults.items():
-            _set_if_missing(key, value)
-
-        foundry_client_id = _get_nonempty(client_id_env)
-        foundry_tenant_id = _get_nonempty("FOUNDRY_AGENT_TENANT_ID")
-
-        _set_if_missing(
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID",
-            foundry_client_id,
-        )
-        _set_if_missing(
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID",
-            foundry_tenant_id,
-        )
-        _set_if_missing(
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__AUTHORITY",
-            f"https://login.microsoftonline.com/{foundry_tenant_id}" if foundry_tenant_id else "",
-        )
-
     def _resolve_session_id(self, request: Request) -> str:
-        query_session_id = request.query_params.get("agent_session_id")
+        query_session_id = request.query_params.get(ActivityConstants.SESSION_ID_QUERY_PARAM)
         if query_session_id and query_session_id.strip():
             return query_session_id.strip()
 
@@ -453,7 +557,7 @@ class ActivityAgentServerHost(AgentServerHost):
     def _add_required_response_headers(self, response: Response, session_id: str) -> None:
         response.headers[ActivityConstants.SESSION_ID_HEADER] = session_id
 
-    def _bad_request(self, message: str, session_id: str, reason: str) -> Response:
+    def _build_bad_request(self, message: str, session_id: str, reason: str) -> Response:
         """Build a 400 invalid_request response and stamp the session header.
 
         :param message: The human-readable error message for the response body.
@@ -467,50 +571,52 @@ class ActivityAgentServerHost(AgentServerHost):
         """
         logger.warning("Activity request rejected | reason=%s | session_id=%s", reason, session_id)
         response = create_error_response(
-            "invalid_request",
+            ErrorCode.INVALID_REQUEST,
             message,
             status_code=400,
-            headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+            headers=_apply_error_source_headers({}, ErrorSource.UPSTREAM),
         )
         self._add_required_response_headers(response, session_id)
         return response
 
     @staticmethod
-    def _extract_request_meta(request: Request, payload: dict) -> dict[str, str]:
+    def _extract_request_meta(request: Request, payload: Mapping[str, object]) -> _RequestMeta:
         """Extract the activity fields used for state, logging, and correlation.
 
         :param request: The inbound request (for the conversation fallback header).
-        :type request: Request
+        :type request: ~starlette.requests.Request
         :param payload: The parsed activity dict.
-        :type payload: dict
-        :return: A mapping of sanitized/normalized activity fields.
-        :rtype: dict[str, str]
+        :type payload: Mapping[str, object]
+        :return: The typed activity metadata.
+        :rtype: _RequestMeta
         """
-        raw_id = payload.get("id", "") if isinstance(payload.get("id"), str) else ""
-        activity_id = _sanitize_id(raw_id, str(uuid.uuid4()))
 
-        conversation_obj = payload.get("conversation", {})
-        conversation_id = conversation_obj.get("id", "") if isinstance(conversation_obj, dict) else ""
-        conversation_id = conversation_id.strip() if isinstance(conversation_id, str) else ""
+        def as_str(value: object) -> str:
+            return value if isinstance(value, str) else ""
+
+        def nested_id(value: object) -> str:
+            return as_str(value.get(ActivityFields.ID)) if isinstance(value, dict) else ""
+
+        activity_id = _sanitize_id(as_str(payload.get(ActivityFields.ID)), str(uuid.uuid4()))
+
+        conversation_id = nested_id(payload.get(ActivityFields.CONVERSATION)).strip()
         if not conversation_id:
             conversation_id = request.headers.get(ActivityConstants.CONVERSATION_ID_HEADER, "").strip()
 
-        from_obj = payload.get("from", {})
-        recipient_obj = payload.get("recipient", {})
-        return {
-            "activity_id": activity_id,
-            "conversation_id": conversation_id,
-            "type": payload.get("type", "") or "",
-            "from_id": from_obj.get("id", "") if isinstance(from_obj, dict) else "",
-            "recipient_id": recipient_obj.get("id", "") if isinstance(recipient_obj, dict) else "",
-            "channel_id": payload.get("channelId", "") or "",
-            "service_url": payload.get("serviceUrl", "") or "",
-            "locale": payload.get("locale", "") or "",
-            "x_request_id": request.headers.get("x-request-id", "").strip(),
-        }
+        return _RequestMeta(
+            activity_id=activity_id,
+            conversation_id=conversation_id,
+            type=as_str(payload.get(ActivityFields.TYPE)),
+            from_id=nested_id(payload.get(ActivityFields.FROM)),
+            recipient_id=nested_id(payload.get(ActivityFields.RECIPIENT)),
+            channel_id=as_str(payload.get(ActivityFields.CHANNEL_ID)),
+            service_url=as_str(payload.get(ActivityFields.SERVICE_URL)),
+            locale=as_str(payload.get(ActivityFields.LOCALE)),
+            x_request_id=request.headers.get(ActivityConstants.REQUEST_ID_HEADER, "").strip(),
+        )
 
     @staticmethod
-    def _set_correlation_baggage(session_id: str, conversation_id: str) -> Any:
+    def _set_correlation_baggage(session_id: str, conversation_id: str) -> Token[Context]:
         """Attach the correlation baggage keys the core stack promotes onto spans/logs.
 
         :param session_id: The resolved session ID.
@@ -518,14 +624,14 @@ class ActivityAgentServerHost(AgentServerHost):
         :param conversation_id: The resolved conversation ID (may be empty).
         :type conversation_id: str
         :return: The context token to detach when the turn completes.
-        :rtype: object
+        :rtype: ~contextvars.Token
         """
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", session_id or "", context=_otel_context.get_current()
+            BaggageKeys.SESSION_ID, session_id or "", context=_otel_context.get_current()
         )
         if conversation_id:
             ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.conversation_id", conversation_id, context=ctx
+                BaggageKeys.CONVERSATION_ID, conversation_id, context=ctx
             )
         return _otel_context.attach(ctx)
 
@@ -548,9 +654,9 @@ class ActivityAgentServerHost(AgentServerHost):
         try:
             if self._handler is None:
                 raise NotImplementedError(
-                    "No activity handler registered. Register handlers via "
-                    "app.activity(...), or create the host with "
-                    "ActivityAgentServerHost.from_request_handler(fn)."
+                    "No activity handler registered. Register handlers on the"
+                    " agent app (app = host.agent_app; @app.activity(...)), or"
+                    " create the host with ActivityAgentServerHost(request_handler=fn)."
                 )
             response = await self._handler(request)
             response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
@@ -569,7 +675,7 @@ class ActivityAgentServerHost(AgentServerHost):
                 activity_id, conversation_id, session_id, error_source, exc, exc_info=True,
             )
             response = create_error_response(
-                "internal_error",
+                ErrorCode.INTERNAL_ERROR,
                 "Internal server error",
                 status_code=500,
                 headers=_apply_error_source_headers(
@@ -582,7 +688,7 @@ class ActivityAgentServerHost(AgentServerHost):
             return response
 
     async def _create_activity_endpoint(self, request: Request) -> Response:
-        """Handle inbound POST to ``/activity/messages`` or ``/api/messages``.
+        """Handle inbound POST to ``/activity/messages``.
 
         :param request: The inbound HTTP request.
         :type request: Request
@@ -602,30 +708,29 @@ class ActivityAgentServerHost(AgentServerHost):
                 session_id=session_id,
             )
         )
-        baggage_token: Optional[Any] = None
+        baggage_token: Optional[Token[Context]] = None
         try:
             try:
                 payload = await request.json()
             except Exception:  # pylint: disable=broad-exception-caught
-                return self._bad_request("Request body must be valid JSON", session_id, "invalid_json")
+                return self._build_bad_request("Request body must be valid JSON", session_id, "invalid_json")
             if not isinstance(payload, dict):
-                return self._bad_request(
+                return self._build_bad_request(
                     "Activity payload must be a JSON object", session_id, "non_object_payload"
                 )
 
             meta = self._extract_request_meta(request, payload)
-            activity_id = meta["activity_id"]
-            conversation_id = meta["conversation_id"]
+            activity_id = meta.activity_id
+            conversation_id = meta.conversation_id
 
             request.state.activity = payload
-
             logger.info(
                 "Activity request received | type=%s | activity_id=%s | conversation_id=%s | "
                 "session_id=%s | from=%s | recipient=%s | channelId=%s | serviceUrl=%s | "
                 "locale=%s | x_request_id=%s",
-                meta["type"], activity_id, conversation_id, session_id, meta["from_id"],
-                meta["recipient_id"], meta["channel_id"], meta["service_url"], meta["locale"],
-                meta["x_request_id"],
+                meta.type, activity_id, conversation_id, session_id, meta.from_id,
+                meta.recipient_id, meta.channel_id, meta.service_url, meta.locale,
+                meta.x_request_id,
             )
 
             baggage_token = self._set_correlation_baggage(session_id, conversation_id)

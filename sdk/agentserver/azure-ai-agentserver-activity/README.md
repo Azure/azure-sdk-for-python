@@ -24,18 +24,18 @@ pip install azure-ai-agentserver-activity
 
 ### Usage patterns
 
-**Build the M365 stack (default)** — the host acts as the M365 `AgentApplication`:
+**Build the M365 stack (default)** — register handlers on the host's `agent_app`:
 
 ```python
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 app = ActivityAgentServerHost()
 
-@app.activity("message")
+@app.agent_app.activity("message")
 async def on_message(context, state):
     await context.send_activity(f"Echo: {context.activity.text}")
 
-@app.error
+@app.agent_app.error
 async def on_error(context, error):
     await context.send_activity(f"Error: {error}")
 
@@ -100,11 +100,12 @@ app.run()
   M365 `AgentApplication` (the adapter is taken from `agent_app.adapter`).
 - `ActivityAgentServerHost.from_request_handler(handler)` — host a custom async
   request handler; the M365 SDK is not initialized.
-- `ActivityAgentServerHost.seed_connection_env(*, digital_worker=False)` — seed the
-  `CONNECTIONS__*` env the M365 connection manager reads from the Foundry-native
-  `FOUNDRY_AGENT_*` env. The default constructor calls it for you; call it yourself
-  only when you build the `MsalConnectionManager` (or a pre-built
-  `AgentApplication`) manually — see the `03-self-hosted-app` sample.
+- `get_hosted_agent_env(*, digital_worker=False)` — return a config mapping
+  (`os.environ` overlaid with the derived `CONNECTIONS__*` settings from the
+  Foundry-native `FOUNDRY_AGENT_*` env) **without mutating the environment**. The
+  default constructor derives this for you; call it yourself only when you build
+  the `MsalConnectionManager` (or a pre-built `AgentApplication`) manually — see
+  the `03-self-hosted-app` sample.
 - `ActivityAgentServerHost.adapter` — the channel adapter for the underlying
   `AgentApplication`.
 
@@ -137,12 +138,12 @@ not initialize the M365 SDK.
 `from_request_handler(...)` requires an `async def` handler
 (`async def handle(request) -> Response`). A plain `def` is rejected.
 
-### `AttributeError` when registering handlers
+### `AttributeError` when accessing `agent_app`
 
-`@app.activity(...)` / `@app.error` are only available when the host builds or is
-given an M365 `AgentApplication` (the default constructor or
-`from_agent_application`). A host created with `from_request_handler(...)` does not
-expose the M365 surface.
+`app.agent_app` (and handler registration via `@app.agent_app.activity(...)` /
+`@app.agent_app.error`) is only available when the host builds or is given an M365
+`AgentApplication` (the default constructor or `from_agent_application`). A host
+created with `from_request_handler(...)` does not expose the M365 surface.
 
 ## Next steps
 

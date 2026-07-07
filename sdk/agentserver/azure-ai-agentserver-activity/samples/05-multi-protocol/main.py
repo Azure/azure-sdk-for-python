@@ -21,7 +21,8 @@ class MultiProtocolHost(ActivityAgentServerHost, InvocationAgentServerHost):
     pass
 
 
-app = MultiProtocolHost()
+host = MultiProtocolHost()
+app = host.agent_app
 
 
 @app.activity("message")
@@ -32,7 +33,7 @@ async def on_teams_message(context, state):
         await context.send_activity(f"[Multi-Protocol] Echo: {user_text}")
 
 
-@app.invoke_handler
+@host.invoke_handler
 async def handle_invocation(request: Request) -> Response:
     """Handle HTTP invocations via Invocations protocol."""
     data = await request.json()
@@ -44,5 +45,5 @@ async def handle_invocation(request: Request) -> Response:
 
 
 if __name__ == "__main__":
-    app.run()
+    host.run()
 
