@@ -1,5 +1,27 @@
 # Release History
 
+## 1.1.0b2 (2026-07-06)
+
+### Features Added
+
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `PowerBIDedicated` to `PowerBIDedicatedMgmtClient`
+  - Model `AutoScaleVCore` moved instance variable `capacity_limit`, `capacity_object_id` and `provisioning_state` under property `properties` whose type is `AutoScaleVCoreProperties`
+  - Model `AutoScaleVCoreUpdateParameters` moved instance variable `capacity_limit` under property `properties` whose type is `AutoScaleVCoreMutableProperties`
+  - Model `DedicatedCapacity` moved instance variable `administration`, `mode`, `tenant_id`, `friendly_name`, `state` and `provisioning_state` under property `properties` whose type is `DedicatedCapacityProperties`
+  - Model `DedicatedCapacityUpdateParameters` moved instance variable `administration`, `mode`, `tenant_id` and `friendly_name` under property `properties` whose type is `DedicatedCapacityMutableProperties`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Renamed enum `IdentityType` to `CreatedByType`
+
+### Other Changes
+
+  - Deleted model `AutoScaleVCoreListResult`/`DedicatedCapacities`/`OperationListResult` which actually were not used by SDK users
+
 ## 1.0.1 (2026-05-19)
 
 ### Other Changes
