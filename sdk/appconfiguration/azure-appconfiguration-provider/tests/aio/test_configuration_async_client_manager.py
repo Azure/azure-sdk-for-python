@@ -27,9 +27,6 @@ class MockClient:
         self.retry_total = retry_total
         self.retry_backoff = retry_backoff
 
-    async def close(self):
-        pass
-
 
 @pytest.mark.usefixtures("caplog")
 class TestAsyncConfigurationClientManager:
