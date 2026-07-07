@@ -32,17 +32,6 @@ class User(TypedDict, total=False):
     """The entity tag for this resource. Required."""
 
 
-class UserList(TypedDict, total=False):
-    """UserList.
-
-    :ivar users: Required.
-    :vartype users: list["User"]
-    """
-
-    users: Required[list["User"]]
-    """Required."""
-
-
 class UserOrder(TypedDict, total=False):
     """UserOrder for testing list with expand.
 

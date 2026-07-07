@@ -7,57 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import CreatedByType, ManagedServiceIdentityType, ResourceProvisioningState
-
-
-class ApiError(TypedDict, total=False):
-    """Api error.
-
-    :ivar details: The Api error details.
-    :vartype details: list["ApiErrorBase"]
-    :ivar innererror: The Api inner error.
-    :vartype innererror: "InnerError"
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar target: The target of the particular error.
-    :vartype target: str
-    :ivar message: The error message.
-    :vartype message: str
-    """
-
-    details: list["ApiErrorBase"]
-    """The Api error details."""
-    innererror: "InnerError"
-    """The Api inner error."""
-    code: str
-    """The error code."""
-    target: str
-    """The target of the particular error."""
-    message: str
-    """The error message."""
-
-
-class ApiErrorBase(TypedDict, total=False):
-    """Api error base.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar target: The target of the particular error.
-    :vartype target: str
-    :ivar message: The error message.
-    :vartype message: str
-    """
-
-    code: str
-    """The error code."""
-    target: str
-    """The target of the particular error."""
-    message: str
-    """The error message."""
 
 
 class Resource(TypedDict, total=False):
@@ -170,17 +124,6 @@ class ArmResourceIdentifierResourceProperties(TypedDict, total=False):
     """An ARM resource identifier with all scopes. Required."""
 
 
-class CloudError(TypedDict, total=False):
-    """An error response.
-
-    :ivar error: Api error.
-    :vartype error: "ApiError"
-    """
-
-    error: "ApiError"
-    """Api error."""
-
-
 class ConfidentialResource(TrackedResource):
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
@@ -221,74 +164,6 @@ class ConfidentialResourceProperties(TypedDict, total=False):
     """The status of the last operation. Required."""
     username: Required[str]
     """Required."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
-class InnerError(TypedDict, total=False):
-    """Inner error details.
-
-    :ivar exceptiontype: The exception type.
-    :vartype exceptiontype: str
-    :ivar errordetail: The internal error message or exception dump.
-    :vartype errordetail: str
-    """
-
-    exceptiontype: str
-    """The exception type."""
-    errordetail: str
-    """The internal error message or exception dump."""
 
 
 class ManagedIdentityTrackedResource(TrackedResource):
