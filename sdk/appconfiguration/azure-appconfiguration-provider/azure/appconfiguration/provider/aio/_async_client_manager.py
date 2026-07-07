@@ -134,7 +134,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     self.LOGGER.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
-                raise e
+                raise
         return False, None
 
     @distributed_trace
@@ -345,7 +345,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             if e.status_code == 404:
                 self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
                 return False
-            raise e
+            raise
         if snapshot.composition_type != SnapshotComposition.KEY:
             raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
         return True
