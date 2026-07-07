@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ComputeLimitMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -923,7 +922,7 @@ class GuestSubscriptionsOperations:
         self,
         location: str,
         guest_subscription_id: str,
-        resource: JSON,
+        resource: _types.GuestSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -935,7 +934,7 @@ class GuestSubscriptionsOperations:
         :param guest_subscription_id: The name of the GuestSubscription. Required.
         :type guest_subscription_id: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.GuestSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -975,7 +974,7 @@ class GuestSubscriptionsOperations:
         self,
         location: str,
         guest_subscription_id: str,
-        resource: Union[_models.GuestSubscription, JSON, IO[bytes]],
+        resource: Union[_models.GuestSubscription, _types.GuestSubscription, IO[bytes]],
         **kwargs: Any
     ) -> _models.GuestSubscription:
         """Adds a subscription as a guest to consume the compute limits shared by the host subscription.
@@ -984,9 +983,10 @@ class GuestSubscriptionsOperations:
         :type location: str
         :param guest_subscription_id: The name of the GuestSubscription. Required.
         :type guest_subscription_id: str
-        :param resource: Resource create parameters. Is one of the following types: GuestSubscription,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.GuestSubscription or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a GuestSubscription type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.GuestSubscription or
+         ~azure.mgmt.computelimit.types.GuestSubscription or IO[bytes]
         :return: GuestSubscription. The GuestSubscription is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.GuestSubscription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1331,7 +1331,13 @@ class SharedLimitsOperations:
 
     @overload
     def create(
-        self, location: str, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        name: str,
+        resource: _types.SharedLimit,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SharedLimit:
         """Enables sharing of a compute limit by the host subscription with its guest subscriptions.
 
@@ -1340,7 +1346,7 @@ class SharedLimitsOperations:
         :param name: The name of the SharedLimit. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.SharedLimit
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1371,7 +1377,11 @@ class SharedLimitsOperations:
 
     @distributed_trace
     def create(
-        self, location: str, name: str, resource: Union[_models.SharedLimit, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        name: str,
+        resource: Union[_models.SharedLimit, _types.SharedLimit, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SharedLimit:
         """Enables sharing of a compute limit by the host subscription with its guest subscriptions.
 
@@ -1379,9 +1389,10 @@ class SharedLimitsOperations:
         :type location: str
         :param name: The name of the SharedLimit. Required.
         :type name: str
-        :param resource: Resource create parameters. Is one of the following types: SharedLimit, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.SharedLimit or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SharedLimit type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimit or
+         ~azure.mgmt.computelimit.types.SharedLimit or IO[bytes]
         :return: SharedLimit. The SharedLimit is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SharedLimit
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1809,7 +1820,7 @@ class FeaturesOperations:
         self,
         location: str,
         feature_name: str,
-        body: Optional[Union[_models.FeatureEnableRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.FeatureEnableRequest, _types.FeatureEnableRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1894,7 +1905,8 @@ class FeaturesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1916,19 +1928,20 @@ class FeaturesOperations:
         self,
         location: str,
         feature_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.FeatureEnableRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param feature_name: The name of the Feature. Required.
         :type feature_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.computelimit.types.FeatureEnableRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1948,7 +1961,8 @@ class FeaturesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1977,18 +1991,20 @@ class FeaturesOperations:
         self,
         location: str,
         feature_name: str,
-        body: Optional[Union[_models.FeatureEnableRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.FeatureEnableRequest, _types.FeatureEnableRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param feature_name: The name of the Feature. Required.
         :type feature_name: str
-        :param body: The content of the action request. Is one of the following types:
-         FeatureEnableRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.computelimit.models.FeatureEnableRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a FeatureEnableRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.computelimit.models.FeatureEnableRequest or
+         ~azure.mgmt.computelimit.types.FeatureEnableRequest or IO[bytes]
         :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computelimit.models.OperationStatusResult]
@@ -2120,7 +2136,8 @@ class FeaturesOperations:
     def begin_disable(
         self, location: str, feature_name: str, **kwargs: Any
     ) -> LROPoller[_models.OperationStatusResult]:
-        """Disables a compute limit feature for the subscription at the specified location.
+        """Disables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -2504,7 +2521,7 @@ class SharedLimitCapsOperations:
         self,
         location: str,
         vm_family_name: str,
-        resource: JSON,
+        resource: _types.SharedLimitCap,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2516,7 +2533,7 @@ class SharedLimitCapsOperations:
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.SharedLimitCap
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2563,7 +2580,7 @@ class SharedLimitCapsOperations:
         self,
         location: str,
         vm_family_name: str,
-        resource: Union[_models.SharedLimitCap, JSON, IO[bytes]],
+        resource: Union[_models.SharedLimitCap, _types.SharedLimitCap, IO[bytes]],
         **kwargs: Any
     ) -> _models.SharedLimitCap:
         """Creates or replaces the shared limit cap configuration for a VM family.
@@ -2572,9 +2589,10 @@ class SharedLimitCapsOperations:
         :type location: str
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
-        :param resource: Resource create parameters. Is one of the following types: SharedLimitCap,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.SharedLimitCap or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SharedLimitCap type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimitCap or
+         ~azure.mgmt.computelimit.types.SharedLimitCap or IO[bytes]
         :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2844,7 +2862,13 @@ class SharedLimitCapsOperations:
 
     @overload
     def set_member_cap_overrides(
-        self, location: str, vm_family_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        vm_family_name: str,
+        body: _types.SetMemberCapOverridesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SetMemberCapOverridesResult:
         """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
         becomes the new complete set of overrides; supplying an empty array clears all existing
@@ -2855,7 +2879,7 @@ class SharedLimitCapsOperations:
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.computelimit.types.SetMemberCapOverridesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2906,7 +2930,7 @@ class SharedLimitCapsOperations:
         self,
         location: str,
         vm_family_name: str,
-        body: Union[_models.SetMemberCapOverridesRequest, JSON, IO[bytes]],
+        body: Union[_models.SetMemberCapOverridesRequest, _types.SetMemberCapOverridesRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.SetMemberCapOverridesResult:
         """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
@@ -2917,9 +2941,10 @@ class SharedLimitCapsOperations:
         :type location: str
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SetMemberCapOverridesRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.computelimit.models.SetMemberCapOverridesRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a SetMemberCapOverridesRequest type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.computelimit.models.SetMemberCapOverridesRequest or
+         ~azure.mgmt.computelimit.types.SetMemberCapOverridesRequest or IO[bytes]
         :return: SetMemberCapOverridesResult. The SetMemberCapOverridesResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SetMemberCapOverridesResult
@@ -3133,7 +3158,7 @@ class MemberCapOverridesOperations:
         location: str,
         vm_family_name: str,
         member_subscription_id: str,
-        resource: JSON,
+        resource: _types.MemberCapOverride,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3147,7 +3172,7 @@ class MemberCapOverridesOperations:
         :param member_subscription_id: The name of the MemberCapOverride. Required.
         :type member_subscription_id: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.MemberCapOverride
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3206,7 +3231,7 @@ class MemberCapOverridesOperations:
         location: str,
         vm_family_name: str,
         member_subscription_id: str,
-        resource: Union[_models.MemberCapOverride, JSON, IO[bytes]],
+        resource: Union[_models.MemberCapOverride, _types.MemberCapOverride, IO[bytes]],
         **kwargs: Any
     ) -> _models.MemberCapOverride:
         """Creates or replaces the cap override for a single member subscription.
@@ -3217,9 +3242,10 @@ class MemberCapOverridesOperations:
         :type vm_family_name: str
         :param member_subscription_id: The name of the MemberCapOverride. Required.
         :type member_subscription_id: str
-        :param resource: Resource create parameters. Is one of the following types: MemberCapOverride,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.MemberCapOverride or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a MemberCapOverride type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.MemberCapOverride or
+         ~azure.mgmt.computelimit.types.MemberCapOverride or IO[bytes]
         :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -102,7 +102,7 @@ namespace azure.mgmt.computelimit.aio.operations
                 self, 
                 location: str, 
                 feature_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[FeatureEnableRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -161,7 +161,7 @@ namespace azure.mgmt.computelimit.aio.operations
                 self, 
                 location: str, 
                 guest_subscription_id: str, 
-                resource: JSON, 
+                resource: GuestSubscription, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -228,7 +228,7 @@ namespace azure.mgmt.computelimit.aio.operations
                 location: str, 
                 vm_family_name: str, 
                 member_subscription_id: str, 
-                resource: JSON, 
+                resource: MemberCapOverride, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -312,7 +312,7 @@ namespace azure.mgmt.computelimit.aio.operations
                 self, 
                 location: str, 
                 vm_family_name: str, 
-                resource: JSON, 
+                resource: SharedLimitCap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -371,7 +371,7 @@ namespace azure.mgmt.computelimit.aio.operations
                 self, 
                 location: str, 
                 vm_family_name: str, 
-                body: JSON, 
+                body: SetMemberCapOverridesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -413,7 +413,7 @@ namespace azure.mgmt.computelimit.aio.operations
                 self, 
                 location: str, 
                 name: str, 
-                resource: JSON, 
+                resource: SharedLimit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -920,7 +920,7 @@ namespace azure.mgmt.computelimit.operations
                 self, 
                 location: str, 
                 feature_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[FeatureEnableRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -979,7 +979,7 @@ namespace azure.mgmt.computelimit.operations
                 self, 
                 location: str, 
                 guest_subscription_id: str, 
-                resource: JSON, 
+                resource: GuestSubscription, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1046,7 +1046,7 @@ namespace azure.mgmt.computelimit.operations
                 location: str, 
                 vm_family_name: str, 
                 member_subscription_id: str, 
-                resource: JSON, 
+                resource: MemberCapOverride, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1130,7 +1130,7 @@ namespace azure.mgmt.computelimit.operations
                 self, 
                 location: str, 
                 vm_family_name: str, 
-                resource: JSON, 
+                resource: SharedLimitCap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1189,7 +1189,7 @@ namespace azure.mgmt.computelimit.operations
                 self, 
                 location: str, 
                 vm_family_name: str, 
-                body: JSON, 
+                body: SetMemberCapOverridesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1231,7 +1231,7 @@ namespace azure.mgmt.computelimit.operations
                 self, 
                 location: str, 
                 name: str, 
-                resource: JSON, 
+                resource: SharedLimit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1298,6 +1298,153 @@ namespace azure.mgmt.computelimit.operations
                 filter: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[VmFamily]: ...
+
+
+namespace azure.mgmt.computelimit.types
+
+    class azure.mgmt.computelimit.types.FeatureEnableRequest(TypedDict, total=False):
+        key "serviceTreeId": str
+        service_tree_id: str
+
+
+    class azure.mgmt.computelimit.types.GuestSubscription(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GuestSubscriptionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GuestSubscriptionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.computelimit.types.GuestSubscriptionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        provisioning_state: Union[str, ResourceProvisioningState]
+
+
+    class azure.mgmt.computelimit.types.LimitName(TypedDict, total=False):
+        key "localizedValue": str
+        key "value": Required[str]
+        localized_value: str
+        value: str
+
+
+    class azure.mgmt.computelimit.types.MemberCap(TypedDict, total=False):
+        key "cap": Required[int]
+        key "subscriptionId": Required[str]
+        cap: int
+        subscription_id: str
+
+
+    class azure.mgmt.computelimit.types.MemberCapOverride(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('MemberCapOverrideProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: MemberCapOverrideProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.computelimit.types.MemberCapOverrideProperties(TypedDict, total=False):
+        key "cap": Required[int]
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        cap: int
+        provisioning_state: Union[str, ResourceProvisioningState]
+
+
+    class azure.mgmt.computelimit.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.computelimit.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.computelimit.types.SetMemberCapOverridesRequest(TypedDict, total=False):
+        key "memberCapOverrides": Required[list[MemberCap]]
+        member_cap_overrides: list[MemberCap]
+
+
+    class azure.mgmt.computelimit.types.SharedLimit(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SharedLimitProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SharedLimitProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.computelimit.types.SharedLimitCap(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SharedLimitCapProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SharedLimitCapProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.computelimit.types.SharedLimitCapProperties(TypedDict, total=False):
+        key "defaultMemberCap": int
+        key "isBoundedCap": Required[bool]
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        default_member_cap: int
+        is_bounded_cap: bool
+        provisioning_state: Union[str, ResourceProvisioningState]
+
+
+    class azure.mgmt.computelimit.types.SharedLimitProperties(TypedDict, total=False):
+        key "limit": int
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        key "resourceName": ForwardRef('LimitName', module='types')
+        key "unit": str
+        limit: int
+        provisioning_state: Union[str, ResourceProvisioningState]
+        resource_name: LimitName
+        unit: str
+
+
+    class azure.mgmt.computelimit.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
 
 
 ```
