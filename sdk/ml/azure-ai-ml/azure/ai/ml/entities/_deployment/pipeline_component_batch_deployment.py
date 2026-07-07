@@ -6,8 +6,10 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Literal, Optional, Union
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    BatchDeployment as RestBatchDeployment,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
     BatchDeploymentProperties,
     BatchPipelineComponentDeploymentConfiguration,
     IdAssetReference,
@@ -62,7 +64,12 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         # Get type from kwargs if present, otherwise use the default type defined above
         _type = kwargs.pop("type", type)
         super().__init__(
-            name=name, _type=_type, endpoint_name=endpoint_name, tags=tags, description=description, **kwargs
+            name=name,
+            _type=_type,
+            endpoint_name=endpoint_name,
+            tags=tags,
+            description=description,
+            **kwargs,
         )
         self.component = component
         self.settings = settings
@@ -89,6 +96,13 @@ class PipelineComponentBatchDeployment(BatchDeployment):
             properties=BatchDeploymentProperties(
                 deployment_configuration=batch_pipeline_config,
                 description=self.description,
+                # The v2024_01 msrest BatchDeploymentProperties model defaulted these fields and always
+                # emitted them on the wire even when unset here. The shared arm_ml_service model does not
+                # default them, so set them explicitly to the same values to keep the body byte-identical.
+                error_threshold=-1,
+                max_concurrency_per_instance=1,
+                mini_batch_size=10,
+                output_file_name="predictions.csv",
             ),
         )
 
@@ -114,12 +128,18 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         return res
 
     @classmethod
-    def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
+    def _from_rest_object(
+        cls, deployment: RestBatchDeployment
+    ) -> "PipelineComponentBatchDeployment":
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
-            component=deployment.properties.additional_properties["deploymentConfiguration"]["componentId"]["assetId"],
-            settings=deployment.properties.additional_properties["deploymentConfiguration"]["settings"],
+            component=deployment.properties.additional_properties[
+                "deploymentConfiguration"
+            ]["componentId"]["assetId"],
+            settings=deployment.properties.additional_properties[
+                "deploymentConfiguration"
+            ]["settings"],
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 
@@ -136,9 +156,13 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+        dump_yaml_to_file(
+            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
+        )
 
     def _to_dict(self) -> Dict:
-        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = PipelineComponentBatchDeploymentSchema(
+            context={BASE_PATH_CONTEXT_KEY: "./"}
+        ).dump(self)
 
         return res
