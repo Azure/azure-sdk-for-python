@@ -15,7 +15,7 @@ from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-newrelicobservability
 # USAGE
-    python monitors_get_maximum_set_gen.py
+    python tag_rules_update_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,29 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.monitors.get(
-        resource_group_name="rgNewRelic",
-        monitor_name="cdlymktqw",
+    response = client.tag_rules.update(
+        resource_group_name="rgopenapi",
+        monitor_name="ipxmlcbonyxtolzejcjshkmlron",
+        rule_set_name="bxcantgzggsepbhqmedjqyrqeezmfb",
+        properties={
+            "properties": {
+                "logRules": {
+                    "filteringTags": [{"action": "str", "name": "str", "value": "str"}],
+                    "sendAadLogs": "str",
+                    "sendActivityLogs": "str",
+                    "sendSubscriptionLogs": "str",
+                },
+                "metricRules": {
+                    "filteringTags": [{"action": "str", "name": "str", "value": "str"}],
+                    "sendMetrics": "str",
+                    "userEmail": "str",
+                },
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/Monitors_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2025-05-01-preview/TagRules_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
