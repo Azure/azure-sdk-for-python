@@ -143,7 +143,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             return EvaluationException(
                 message="'ground_truth' parameter is required and cannot be None or empty.",
                 blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.MISSING_FIELD,
+                category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
 
