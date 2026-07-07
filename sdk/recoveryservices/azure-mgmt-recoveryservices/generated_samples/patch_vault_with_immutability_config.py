@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python patch_vault_with_source_scan_configuration.py
+    python patch_vault_with_immutability_config.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,21 +34,9 @@ def main():
         resource_group_name="HelloWorld",
         vault_name="swaggerExample",
         vault={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi": {}
-                },
-            },
             "properties": {
                 "securitySettings": {
-                    "sourceScanConfiguration": {
-                        "sourceScanIdentity": {
-                            "operationIdentityType": "UserAssigned",
-                            "userAssignedIdentity": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
-                        },
-                        "state": "Enabled",
-                    }
+                    "immutabilitySettings": {"configuration": {"durationInDays": 30, "type": "TimeBased"}}
                 }
             },
             "tags": {"PatchKey": "PatchKeyUpdated"},
@@ -58,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/PATCHVault_WithSourceScanConfiguration.json
+# x-ms-original-file: 2026-05-01/PATCHVault_WithImmutabilityConfig.json
 if __name__ == "__main__":
     main()
