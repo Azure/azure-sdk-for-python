@@ -2,7 +2,9 @@
 
 ## 1.0.0 (2026-07-07)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+- First stable release of the Azure Resource Health Management client library.
 
 ## 1.0.0b7 (2026-05-28)
 
