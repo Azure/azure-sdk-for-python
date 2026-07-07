@@ -1077,10 +1077,10 @@ mod tests {
     use super::{
         extract_item_id, extract_op_modifiers, is_intentionally_ignored_option_key,
         json_value_to_pk_component, parse_container_link, parse_partition_key_header,
-        response_body_to_vec,
+        response_body_to_vec, write_response_headers,
     };
     use azure_core::Bytes;
-    use azure_data_cosmos_driver::models::ResponseBody;
+    use azure_data_cosmos_driver::models::{CosmosResponseHeaders, ResponseBody};
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
 
@@ -1239,6 +1239,77 @@ mod tests {
                     );
                 }
             }
+        });
+    }
+
+    #[test]
+    fn write_response_headers_maps_present_fields_and_skips_missing() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let out = PyDict::new_bound(py);
+            let mut headers = CosmosResponseHeaders::new();
+            headers.continuation = Some("ct-1".to_string());
+            headers.item_count = Some(7);
+            headers.server_duration_ms = Some(12.5);
+            headers.lsn = Some(42);
+            headers.retry_after_ms = Some(250);
+            headers.gateway_version = Some("gateway/1".to_string());
+            headers.service_version = Some("2026-07-01".to_string());
+            headers.has_tentative_writes = Some(true);
+            headers.partition_key_range_id = Some("3".to_string());
+            headers.internal_partition_id = Some("p-1".to_string());
+            headers.collection_index_transformation_progress = Some(88);
+            headers.collection_lazy_indexing_progress = Some(91);
+
+            write_response_headers(&out, &headers).expect("header copy should succeed");
+
+            assert_eq!(
+                out.get_item("x-ms-continuation")
+                    .expect("dict lookup should succeed")
+                    .expect("continuation should be present")
+                    .extract::<String>()
+                    .expect("continuation must be string"),
+                "ct-1"
+            );
+            assert_eq!(
+                out.get_item("x-ms-item-count")
+                    .expect("dict lookup should succeed")
+                    .expect("item count should be present")
+                    .extract::<u32>()
+                    .expect("item count must be u32"),
+                7
+            );
+            assert_eq!(
+                out.get_item("x-ms-request-duration-ms")
+                    .expect("dict lookup should succeed")
+                    .expect("request duration should be present")
+                    .extract::<f64>()
+                    .expect("request duration must be f64"),
+                12.5
+            );
+            assert_eq!(
+                out.get_item("x-ms-cosmos-allow-tentative-writes")
+                    .expect("dict lookup should succeed")
+                    .expect("tentative writes should be present")
+                    .extract::<bool>()
+                    .expect("tentative writes must be bool"),
+                true
+            );
+            assert_eq!(
+                out.get_item("x-ms-documentdb-collection-index-transformation-progress")
+                    .expect("dict lookup should succeed")
+                    .expect("index transformation progress should be present")
+                    .extract::<i64>()
+                    .expect("index transformation progress must be i64"),
+                88
+            );
+
+            assert!(
+                out.get_item("x-ms-activity-id")
+                    .expect("dict lookup should succeed")
+                    .is_none(),
+                "missing driver fields must not be emitted"
+            );
         });
     }
 
