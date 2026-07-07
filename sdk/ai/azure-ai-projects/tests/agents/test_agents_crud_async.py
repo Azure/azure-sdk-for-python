@@ -235,7 +235,7 @@ class TestAgentCrudAsync(TestBase):
         assert model is not None
         agent_name = "PromptAgentEndpointTestAgent"
 
-        project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
+        project_client = self.create_async_client(operation_group="agents", **kwargs)
 
         async with project_client:
             agent = await project_client.agents.create_version(

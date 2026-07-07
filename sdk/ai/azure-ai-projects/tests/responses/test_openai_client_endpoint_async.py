@@ -57,12 +57,11 @@ class TestGetOpenaiClientAsync:
         assert str(openai_client.base_url).rstrip("/") == expected_base_url
 
     @pytest.mark.asyncio
-    async def test_get_openai_client_with_agent_name_and_allow_preview_async(self):
-        """Verify that the async OpenAI client base_url includes the agent endpoint when allow_preview=True."""
+    async def test_get_openai_client_with_agent_name(self):
+        """Verify that the async OpenAI client base_url includes the agent endpoint."""
         project_client = AIProjectClient(
             endpoint=FAKE_ENDPOINT,
             credential=FakeAsyncCredential(),  # type: ignore[arg-type]
-            allow_preview=True,
         )
         openai_client = project_client.get_openai_client(agent_name=AGENT_NAME)
 

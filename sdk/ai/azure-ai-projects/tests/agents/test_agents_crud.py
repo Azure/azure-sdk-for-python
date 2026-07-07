@@ -243,7 +243,7 @@ class TestAgentCrud(TestBase):
         assert model is not None
         agent_name = "PromptAgentEndpointTestAgent"
 
-        project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
+        project_client = self.create_client(operation_group="agents", **kwargs)
         agent = project_client.agents.create_version(
             agent_name=agent_name,
             definition=PromptAgentDefinition(

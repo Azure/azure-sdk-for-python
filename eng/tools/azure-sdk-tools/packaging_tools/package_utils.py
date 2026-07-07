@@ -232,7 +232,7 @@ class CheckFile:
                 toml_data = toml.load(fd)
             if "packaging" not in toml_data:
                 toml_data["packaging"] = {}
-            if title and not toml_data["packaging"].get("title"):
+            if title:
                 toml_data["packaging"]["title"] = title
             toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:

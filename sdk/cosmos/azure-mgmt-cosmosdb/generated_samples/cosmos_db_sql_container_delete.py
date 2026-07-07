@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBSqlContainerDelete.json
+# x-ms-original-file: 2026-03-15/CosmosDBSqlContainerDelete.json
 if __name__ == "__main__":
     main()
