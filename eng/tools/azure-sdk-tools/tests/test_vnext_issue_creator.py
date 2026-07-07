@@ -16,6 +16,16 @@ class _FakeParsedSetup:
         self.classifiers = classifiers
 
 
+class _FakeIssue:
+    def __init__(self, number, title, login):
+        self.number = number
+        self.title = title
+        self.user = mock.MagicMock()
+        self.user.login = login
+        self.edit = mock.MagicMock()
+        self.add_to_assignees = mock.MagicMock()
+
+
 @pytest.mark.parametrize(
     "classifiers, expected_deprecated",
     [
@@ -67,3 +77,67 @@ def test_create_vnext_issue_proceeds_for_active_package():
     # Active package: we do not close an issue, we create one.
     mock_close.assert_not_called()
     repo.create_issue.assert_called_once()
+
+
+def test_find_vnext_issues_matches_all_automation_creators_and_ignores_others():
+    repo = mock.MagicMock()
+    repo.get_issues.return_value = [
+        _FakeIssue(100, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "azure-sdk"),
+        _FakeIssue(
+            200, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "azure-sdk-automation[bot]"
+        ),
+        # Same title but opened by a human -> must be ignored.
+        _FakeIssue(300, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "some-human"),
+        # Different package -> must be ignored.
+        _FakeIssue(400, "azure-core needs typing updates for mypy version 1.19.1", "azure-sdk"),
+    ]
+
+    result = vnext_issue_creator.find_vnext_issues(repo, "mypy", "azure-ai-textanalytics")
+
+    assert [issue.number for issue in result] == [100, 200]
+
+
+def test_close_vnext_issue_closes_all_duplicates():
+    dup_a = _FakeIssue(100, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "azure-sdk")
+    dup_b = _FakeIssue(
+        200, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "azure-sdk-automation[bot]"
+    )
+    repo = mock.MagicMock()
+    with mock.patch.dict("os.environ", {"GH_TOKEN": "fake-token"}), mock.patch.object(
+        vnext_issue_creator, "Github"
+    ) as mock_github, mock.patch.object(vnext_issue_creator, "find_vnext_issues", return_value=[dup_a, dup_b]):
+        mock_github.return_value.get_repo.return_value = repo
+        vnext_issue_creator.close_vnext_issue("azure-ai-textanalytics", "mypy")
+
+    dup_a.edit.assert_called_once_with(state="closed")
+    dup_b.edit.assert_called_once_with(state="closed")
+
+
+def test_create_vnext_issue_updates_newest_and_closes_older_duplicates():
+    dup_a = _FakeIssue(100, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "azure-sdk")
+    dup_b = _FakeIssue(
+        200, "azure-ai-textanalytics needs typing updates for mypy version 1.19.1", "azure-sdk-automation[bot]"
+    )
+    repo = mock.MagicMock()
+    with mock.patch.object(vnext_issue_creator, "is_package_deprecated", return_value=False), mock.patch.dict(
+        "os.environ", {"GH_TOKEN": "fake-token"}
+    ), mock.patch.object(vnext_issue_creator, "Github") as mock_github, mock.patch.object(
+        vnext_issue_creator, "find_vnext_issues", return_value=[dup_a, dup_b]
+    ), mock.patch.object(
+        vnext_issue_creator, "get_labels", return_value=([], [])
+    ), mock.patch.object(
+        vnext_issue_creator, "get_build_link", return_value="http://build"
+    ), mock.patch.object(
+        vnext_issue_creator, "get_date_for_version_bump", return_value="2026-04-13"
+    ):
+        mock_github.return_value.get_repo.return_value = repo
+        vnext_issue_creator.create_vnext_issue(
+            "sdk/textanalytics/azure-ai-textanalytics", "mypy", check_version="1.19.1"
+        )
+
+    # No new issue created when duplicates already exist.
+    repo.create_issue.assert_not_called()
+    # Older duplicate is closed; newest is updated (edited but not closed).
+    dup_a.edit.assert_called_once_with(state="closed")
+    dup_b.edit.assert_called_once()
+    assert dup_b.edit.call_args.kwargs.get("state") != "closed"
