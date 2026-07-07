@@ -132,6 +132,43 @@ def _status_codes_from_exception(exception: BaseException) -> Tuple[Optional[int
     return None, None
 
 
+class _BranchOutcome:
+    """Classification of a settled hedging branch (parity with the .NET ``BranchOutcome``).
+
+    Keeping the primary authoritative depends on this split: only a ``REGIONAL_FAILURE`` is
+    worth hedging, and a hedge can win *only* by producing a ``SUCCESS`` -- it can never
+    override a primary ``SUCCESS`` or ``DEFINITIVE`` outcome.
+    """
+    SUCCESS = "Success"
+    REGIONAL_FAILURE = "RegionalFailure"
+    DEFINITIVE = "Definitive"
+    CANCELLED = "Cancelled"
+
+
+def classify_branch_outcome(exception: Optional[BaseException]) -> str:
+    """Classify a settled (non-cancelled) branch outcome.
+
+    A missing exception is a ``SUCCESS`` (these metadata reads throw for every status
+    ``>= 400``, so an exceptionless return is always a good response). A regional-failure
+    exception is ``REGIONAL_FAILURE`` -- the region, not the request, is at fault, so
+    another region is worth trying. Any other terminal error -- a non-regional definitive
+    error such as ``404`` / ``409`` / ``412`` or an auth failure -- is ``DEFINITIVE`` and
+    authoritative; a hedge must never win with it. Internal loser cancellation is handled
+    by the caller (which knows its own ``CancelledError`` type) and never reaches here.
+
+    :param exception: The exception raised by the branch, or None on success.
+    :type exception: Optional[BaseException]
+    :returns: One of the :class:`_BranchOutcome` string constants.
+    :rtype: str
+    """
+    if exception is None:
+        return _BranchOutcome.SUCCESS
+    status_code, sub_status = _status_codes_from_exception(exception)
+    if is_regional_failure(status_code, sub_status, exception):
+        return _BranchOutcome.REGIONAL_FAILURE
+    return _BranchOutcome.DEFINITIVE
+
+
 class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
     """Bounded cross-region hedging handler for cold-start metadata cache reads.
 
@@ -152,43 +189,68 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         max_workers = max(os.cpu_count() or 1, 2 * budget)
         self._executor = ThreadPoolExecutor(max_workers=max_workers)  # pylint: disable=consider-using-with
 
-    def is_acceptable_winner(  # pylint: disable=unused-argument
-        self,
-        result: Optional[ResponseType],
-        exception: Optional[BaseException],
-        is_hedge: bool,
-    ) -> bool:
-        """Return True if a settled branch is an acceptable winner.
+    def _classify_future(self, future: "Future") -> str:
+        """Classify a COMPLETED future into a :class:`_BranchOutcome`.
 
-        A successful response is always acceptable. A regional-failure exception is never
-        acceptable (the other branch should win). A hedge-branch ``401``/``403`` response
-        is rejected so a hedge auth failure can never win over the primary.
-
-        :param result: The successful response tuple, or None if the branch raised.
-        :type result: Optional[Tuple[dict, dict]]
-        :param exception: The exception raised by the branch, or None on success.
-        :type exception: Optional[BaseException]
-        :param is_hedge: Whether the branch is the hedge (non-primary) branch.
-        :type is_hedge: bool
-        :returns: True if the branch is an acceptable winner.
-        :rtype: bool
+        :param future: A future that is guaranteed to be done.
+        :type future: ~concurrent.futures.Future
+        :returns: One of the :class:`_BranchOutcome` string constants.
+        :rtype: str
         """
-        if exception is None:
-            return True
-
+        if future.cancelled():
+            return _BranchOutcome.CANCELLED
+        exception = future.exception()
         if isinstance(exception, CancelledError):
-            return False
+            return _BranchOutcome.CANCELLED
+        return classify_branch_outcome(exception)
 
-        status_code, sub_status = _status_codes_from_exception(exception)
+    @staticmethod
+    def _wait_settled(future: "Future") -> None:
+        """Block until ``future`` settles, swallowing its outcome (classified separately).
 
-        if is_regional_failure(status_code, sub_status, exception):
-            return False
+        :param future: The future to wait for.
+        :type future: ~concurrent.futures.Future
+        :rtype: None
+        """
+        try:
+            future.exception()
+        except CancelledError:
+            pass
 
-        if is_hedge and status_code in (StatusCodes.UNAUTHORIZED, StatusCodes.FORBIDDEN):
-            return False
+    def _finish(
+        self,
+        future: "Future",
+        winner_sink: Optional[List[Any]],
+        is_primary: bool,
+        available_locations: List[str],
+        request_params: RequestObject,
+        completion_status: Event,
+    ) -> ResponseType:
+        """Signal completion, record the winner, and return/raise the winning branch's outcome.
 
-        # A non-regional, non-auth definitive error (e.g. 404) is a real answer; surface it.
-        return True
+        :param future: The winning (completed) future whose outcome is returned.
+        :type future: ~concurrent.futures.Future
+        :param winner_sink: Optional length-1 sink for the winner descriptor.
+        :type winner_sink: Optional[List[Any]]
+        :param is_primary: Whether the winning branch is the primary.
+        :type is_primary: bool
+        :param available_locations: Ordered applicable region names (index 0 = primary).
+        :type available_locations: List[str]
+        :param request_params: The originating request parameters.
+        :type request_params: ~azure.cosmos._request_object.RequestObject
+        :param completion_status: The shared completion event to signal the loser.
+        :type completion_status: ~threading.Event
+        :returns: The winning response tuple.
+        :rtype: Tuple[dict, dict]
+        """
+        completion_status.set()
+        self._record_winner(winner_sink, is_primary, available_locations, request_params)
+        if future.cancelled():
+            raise CancelledError("The request has been cancelled")
+        exception = future.exception()
+        if exception is not None:
+            raise exception
+        return future.result()  # type: ignore[return-value]
 
     def _send_with_delay(
         self,
@@ -222,6 +284,52 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             raise CancelledError("The request has been cancelled")
 
         return execute_request_fn(params, req)
+
+    def _resolve_winner(
+        self,
+        first_future: "Future",
+        primary_future: "Future",
+        hedge_future: "Future",
+    ) -> Tuple["Future", bool]:
+        """Resolve which settled branch wins, keeping the primary authoritative.
+
+        A hedge can win only by settling first with a ``SUCCESS``, and even then never over
+        a primary that has already produced a definitive (non-regional) outcome. A primary
+        regional failure yields to a successful hedge; otherwise the primary's outcome (its
+        exception rethrown by :meth:`_finish`) is authoritative. Mirrors the .NET
+        ``ResolveWinnerAsync``.
+
+        :param first_future: The branch that settled first.
+        :type first_future: ~concurrent.futures.Future
+        :param primary_future: The primary branch future.
+        :type primary_future: ~concurrent.futures.Future
+        :param hedge_future: The hedge branch future.
+        :type hedge_future: ~concurrent.futures.Future
+        :returns: The winning future and whether it is the primary branch.
+        :rtype: Tuple[~concurrent.futures.Future, bool]
+        """
+        if first_future is hedge_future:
+            if self._classify_future(hedge_future) == _BranchOutcome.SUCCESS:
+                # A successful hedge wins unless the primary has ALREADY settled with a
+                # definitive (non-regional) outcome, which the hedge must never override.
+                if primary_future.done() and \
+                        self._classify_future(primary_future) != _BranchOutcome.REGIONAL_FAILURE:
+                    return primary_future, True
+                return hedge_future, False
+            # A non-success hedge can never win; wait for the primary's authoritative outcome.
+            self._wait_settled(primary_future)
+            return primary_future, True
+
+        # Primary settled first. Success or a definitive error is authoritative.
+        if self._classify_future(primary_future) != _BranchOutcome.REGIONAL_FAILURE:
+            return primary_future, True
+
+        # Primary regional failure -> a successful hedge may now win; otherwise the primary's
+        # (authoritative) regional failure is returned.
+        self._wait_settled(hedge_future)
+        if self._classify_future(hedge_future) == _BranchOutcome.SUCCESS:
+            return hedge_future, False
+        return primary_future, True
 
     def execute_request(
         self,
@@ -267,33 +375,22 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             hedge_future = self._executor.submit(
                 self._send_with_delay, request_params, request, execute_request_fn,
                 1, available_locations, completion_status)
-            futures: List[Future] = [primary_future, hedge_future]
 
-            for completed_future in as_completed(futures):
-                is_primary = completed_future is primary_future
-                exception = completed_future.exception()
-                result = None if exception is not None else completed_future.result()
-
-                if self.is_acceptable_winner(result, exception, is_hedge=not is_primary):
-                    completion_status.set()
-                    self._record_winner(winner_sink, is_primary, available_locations, request_params)
-                    # Note: no per-region failure is recorded for the primary when the
-                    # hedge wins. Metadata cache reads are account-global, not
-                    # per-partition, so the circuit-breaker health tracker (keyed on
-                    # partition-key ranges) does not apply here; a slow primary is not
-                    # necessarily an unhealthy one.
-                    if exception is not None:
-                        raise exception
-                    return result  # type: ignore[return-value]
-
-            # Neither branch produced an acceptable winner; prefer the primary's outcome
-            # so the metadata read fails the same way it would without hedging.
-            completion_status.set()
-            self._record_winner(winner_sink, True, available_locations, request_params)
-            primary_exception = primary_future.exception()
-            if primary_exception is not None:
-                raise primary_exception
-            return primary_future.result()
+            # Resolve the primary-vs-hedge race, keeping the primary authoritative: a hedge
+            # can win only by settling first with a SUCCESS, and even then only while the
+            # primary has not already produced a definitive (non-regional) answer. Mirrors
+            # the .NET ``ResolveWinnerAsync``.
+            #
+            # Note: no per-region failure is recorded when the hedge wins. Metadata cache
+            # reads are account-global, not per-partition, so the circuit-breaker health
+            # tracker (keyed on partition-key ranges) does not apply here; a slow primary is
+            # not necessarily an unhealthy one.
+            first_future = next(as_completed([primary_future, hedge_future]))
+            winner_future, is_primary = self._resolve_winner(
+                first_future, primary_future, hedge_future)
+            return self._finish(
+                winner_future, winner_sink, is_primary,
+                available_locations, request_params, completion_status)
         finally:
             completion_status.set()
             self._budget.release()

@@ -39,9 +39,8 @@ from .._availability_strategy_config import (
     MetadataCrossRegionHedgingStrategy,
 )
 from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
-from .._metadata_hedging import _status_codes_from_exception, is_regional_failure
+from .._metadata_hedging import _BranchOutcome, classify_branch_outcome
 from .._request_object import RequestObject
-from ..http_constants import StatusCodes
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 
@@ -64,38 +63,61 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
     def __init__(self, concurrency_budget: int = DEFAULT_METADATA_HEDGING_CONCURRENCY_BUDGET) -> None:
         self._budget = asyncio.Semaphore(max(1, concurrency_budget))
 
-    def is_acceptable_winner(  # pylint: disable=unused-argument
-        self,
-        result: Optional[ResponseType],
-        exception: Optional[BaseException],
-        is_hedge: bool,
-    ) -> bool:
-        """Return True if a settled branch is an acceptable winner.
+    def _classify_task(self, task: Task) -> str:
+        """Classify a COMPLETED task into a :class:`_BranchOutcome`.
 
-        :param result: The successful response tuple, or None if the branch raised.
-        :type result: Optional[Tuple[dict, dict]]
-        :param exception: The exception raised by the branch, or None on success.
-        :type exception: Optional[BaseException]
-        :param is_hedge: Whether the branch is the hedge (non-primary) branch.
-        :type is_hedge: bool
-        :returns: True if the branch is an acceptable winner.
-        :rtype: bool
+        :param task: A task that is guaranteed to be done.
+        :type task: ~asyncio.Task
+        :returns: One of the :class:`_BranchOutcome` string constants.
+        :rtype: str
         """
-        if exception is None:
-            return True
-
+        if task.cancelled():
+            return _BranchOutcome.CANCELLED
+        exception = task.exception()
         if isinstance(exception, CancelledError):
-            return False
+            return _BranchOutcome.CANCELLED
+        return classify_branch_outcome(exception)
 
-        status_code, sub_status = _status_codes_from_exception(exception)
+    @staticmethod
+    async def _wait_settled(task: Task) -> None:
+        """Wait until ``task`` settles, without propagating its outcome (classified separately).
 
-        if is_regional_failure(status_code, sub_status, exception):
-            return False
+        :param task: The task to wait for.
+        :type task: ~asyncio.Task
+        :rtype: None
+        """
+        await asyncio.wait({task})
 
-        if is_hedge and status_code in (StatusCodes.UNAUTHORIZED, StatusCodes.FORBIDDEN):
-            return False
+    def _finish(
+        self,
+        task: Task,
+        winner_sink: Optional[List[Any]],
+        is_primary: bool,
+        available_locations: List[str],
+        request_params: RequestObject,
+    ) -> ResponseType:
+        """Record the winner and return/raise the winning branch's outcome.
 
-        return True
+        :param task: The winning (completed) task whose outcome is returned.
+        :type task: ~asyncio.Task
+        :param winner_sink: Optional length-1 sink for the winner descriptor.
+        :type winner_sink: Optional[List[Any]]
+        :param is_primary: Whether the winning branch is the primary.
+        :type is_primary: bool
+        :param available_locations: Ordered applicable region names (index 0 = primary).
+        :type available_locations: List[str]
+        :param request_params: The originating request parameters.
+        :type request_params: ~azure.cosmos._request_object.RequestObject
+        :returns: The winning response tuple.
+        :rtype: Tuple[dict, dict]
+        """
+        self._record_winner(winner_sink, is_primary, available_locations, request_params)
+        if task.cancelled():
+            raise CancelledError("The request has been cancelled")
+        exception = task.exception()
+        if exception is not None:
+            raise exception
+        return task.result()  # type: ignore[return-value]
 
     async def _send_with_delay(
         self,
@@ -129,6 +151,53 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             raise CancelledError("The request has been cancelled")
 
         return await execute_request_fn(params, req)
+
+    async def _resolve_winner(
+        self,
+        done: set,
+        primary_task: Task,
+        hedge_task: Task,
+    ) -> Tuple[Task, bool]:
+        """Resolve which settled branch wins, keeping the primary authoritative.
+
+        A hedge can win only by settling first with a ``SUCCESS``, and even then never over
+        a primary that has already produced a definitive (non-regional) outcome. A primary
+        regional failure yields to a successful hedge; otherwise the primary's outcome (its
+        exception rethrown by :meth:`_finish`) is authoritative. Mirrors the .NET
+        ``ResolveWinnerAsync``.
+
+        :param done: The set of tasks completed by the first ``asyncio.wait``.
+        :type done: set
+        :param primary_task: The primary branch task.
+        :type primary_task: ~asyncio.Task
+        :param hedge_task: The hedge branch task.
+        :type hedge_task: ~asyncio.Task
+        :returns: The winning task and whether it is the primary branch.
+        :rtype: Tuple[~asyncio.Task, bool]
+        """
+        # If both settled together, treat the primary as first so it stays authoritative.
+        if primary_task in done:
+            if self._classify_task(primary_task) != _BranchOutcome.REGIONAL_FAILURE:
+                # Success or a definitive error -> authoritative; never overridden.
+                return primary_task, True
+            # Primary regional failure -> a successful hedge may now win; otherwise the
+            # primary's (authoritative) regional failure is returned.
+            await self._wait_settled(hedge_task)
+            if self._classify_task(hedge_task) == _BranchOutcome.SUCCESS:
+                return hedge_task, False
+            return primary_task, True
+
+        # Hedge settled first.
+        if self._classify_task(hedge_task) == _BranchOutcome.SUCCESS:
+            # A successful hedge wins unless the primary has ALREADY settled with a
+            # definitive (non-regional) outcome, which the hedge must never override.
+            if primary_task.done() and \
+                    self._classify_task(primary_task) != _BranchOutcome.REGIONAL_FAILURE:
+                return primary_task, True
+            return hedge_task, False
+        # A non-success hedge can never win; wait for the primary's authoritative outcome.
+        await self._wait_settled(primary_task)
+        return primary_task, True
 
     async def execute_request(
         self,
@@ -181,32 +250,19 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                 1, available_locations, completion_status))
             active_tasks = [primary_task, hedge_task]
 
-            pending = set(active_tasks)
-            while pending:
-                done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
-                for completed_task in done:
-                    is_primary = completed_task is primary_task
-                    exception = completed_task.exception()
-                    result = None if exception is not None else completed_task.result()
-
-                    if self.is_acceptable_winner(result, exception, is_hedge=not is_primary):
-                        completion_status.set()
-                        self._record_winner(winner_sink, is_primary, available_locations, request_params)
-                        # Note: no per-region failure is recorded for the primary when the
-                        # hedge wins. Metadata cache reads are account-global, not
-                        # per-partition, so the circuit-breaker health tracker (keyed on
-                        # partition-key ranges) does not apply here.
-                        if exception is not None:
-                            raise exception
-                        return result  # type: ignore[return-value]
-
-            # Neither branch produced an acceptable winner; prefer the primary's outcome.
-            completion_status.set()
-            self._record_winner(winner_sink, True, available_locations, request_params)
-            primary_exception = primary_task.exception()
-            if primary_exception is not None:
-                raise primary_exception
-            return primary_task.result()
+            # Resolve the primary-vs-hedge race, keeping the primary authoritative: a hedge
+            # can win only by settling first with a SUCCESS, and even then only while the
+            # primary has not already produced a definitive (non-regional) answer. Mirrors
+            # the .NET ``ResolveWinnerAsync``.
+            #
+            # Note: no per-region failure is recorded when the hedge wins. Metadata cache
+            # reads are account-global, not per-partition, so the circuit-breaker health
+            # tracker (keyed on partition-key ranges) does not apply here.
+            done, _pending = await asyncio.wait(
+                {primary_task, hedge_task}, return_when=asyncio.FIRST_COMPLETED)
+            winner_task, is_primary = await self._resolve_winner(done, primary_task, hedge_task)
+            return self._finish(
+                winner_task, winner_sink, is_primary, available_locations, request_params)
         finally:
             completion_status.set()
             for task in active_tasks:

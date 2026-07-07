@@ -24,6 +24,7 @@ from azure.cosmos._metadata_hedging import (
 )
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos.documents import ConnectionPolicy, _OperationType
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType, StatusCodes, SubStatusCodes
 
 
@@ -163,6 +164,87 @@ class TestWinnerPinning(unittest.TestCase):
         result, _ = self.handler.execute_request(
             _metadata_request(), self.gem, _http_request(), execute_fn)
         self.assertEqual(result["source"], "hedge")
+
+
+class TestHedgePrimaryAuthoritative(unittest.TestCase):
+    """SE-004: the primary is authoritative. A hedge may win ONLY by settling first with a
+    2xx success, and even then never over a primary that has already produced a definitive
+    (non-regional) answer. A hedge definitive error (e.g. 404) must never win. This is the
+    core .NET ``ResolveWinnerAsync`` invariant; the previous symmetric acceptance let a
+    hedge win with a non-2xx definitive response."""
+
+    def setUp(self):
+        self.handler = MetadataCrossRegionHedgingHandler(concurrency_budget=8)
+        self.gem = _FakeGlobalEndpointManager(["region-1", "region-2"])
+
+    def test_hedge_definitive_error_does_not_win_over_slow_primary_success(self):
+        # Hedge settles first with a definitive 404; the primary is slower but succeeds.
+        # The hedge must NOT win -- the primary's success is authoritative.
+        def execute_fn(params, _req):
+            if params.is_hedging_request:
+                raise CosmosHttpResponseError(status_code=StatusCodes.NOT_FOUND, message="hedge-404")
+            time.sleep(0.4)
+            return ({"source": "primary"}, {})
+
+        result, _ = self.handler.execute_request(
+            _metadata_request(), self.gem, _http_request(), execute_fn)
+        self.assertEqual(result["source"], "primary")
+
+    def test_hedge_definitive_error_defers_to_primary_definitive(self):
+        # Hedge 404 settles first; the primary is slower and returns a DIFFERENT definitive
+        # error (409). The primary's authoritative outcome is surfaced, not the hedge's.
+        def execute_fn(params, _req):
+            if params.is_hedging_request:
+                raise CosmosHttpResponseError(status_code=StatusCodes.NOT_FOUND, message="hedge-404")
+            time.sleep(0.4)
+            raise CosmosHttpResponseError(status_code=StatusCodes.CONFLICT, message="primary-409")
+
+        with self.assertRaises(CosmosHttpResponseError) as ctx:
+            self.handler.execute_request(
+                _metadata_request(), self.gem, _http_request(), execute_fn)
+        self.assertEqual(ctx.exception.status_code, StatusCodes.CONFLICT)
+        self.assertIn("primary-409", str(ctx.exception))
+
+    def test_primary_regional_failure_hedge_definitive_returns_primary(self):
+        # Primary region is at fault (503) and the hedge returns a definitive 404. Only a
+        # SUCCESSFUL hedge may win, so the primary's authoritative regional failure is
+        # returned (the retry policy then classifies the real failure).
+        def execute_fn(params, _req):
+            if params.is_hedging_request:
+                raise CosmosHttpResponseError(status_code=StatusCodes.NOT_FOUND, message="hedge-404")
+            raise CosmosHttpResponseError(
+                status_code=StatusCodes.SERVICE_UNAVAILABLE, message="primary-503")
+
+        with self.assertRaises(CosmosHttpResponseError) as ctx:
+            self.handler.execute_request(
+                _metadata_request(), self.gem, _http_request(), execute_fn)
+        self.assertEqual(ctx.exception.status_code, StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertIn("primary-503", str(ctx.exception))
+
+    def test_primary_regional_failure_hedge_success_hedge_wins(self):
+        # Primary regional failure (503) + a successful hedge -> the hedge legitimately wins.
+        def execute_fn(params, _req):
+            if params.is_hedging_request:
+                return ({"source": "hedge"}, {})
+            raise CosmosHttpResponseError(
+                status_code=StatusCodes.SERVICE_UNAVAILABLE, message="primary-503")
+
+        result, _ = self.handler.execute_request(
+            _metadata_request(), self.gem, _http_request(), execute_fn)
+        self.assertEqual(result["source"], "hedge")
+
+    def test_primary_definitive_wins_over_pending_hedge_success(self):
+        # The primary returns a definitive 404 immediately; a hedge success would arrive
+        # later. The definitive primary is authoritative and is returned without override.
+        def execute_fn(params, _req):
+            if params.is_hedging_request:
+                return ({"source": "hedge"}, {})
+            raise CosmosHttpResponseError(status_code=StatusCodes.NOT_FOUND, message="primary-404")
+
+        with self.assertRaises(CosmosHttpResponseError) as ctx:
+            self.handler.execute_request(
+                _metadata_request(), self.gem, _http_request(), execute_fn)
+        self.assertEqual(ctx.exception.status_code, StatusCodes.NOT_FOUND)
 
 
 if __name__ == "__main__":

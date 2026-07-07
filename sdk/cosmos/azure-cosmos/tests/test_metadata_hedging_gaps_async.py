@@ -13,7 +13,8 @@ from azure.cosmos._availability_strategy_config import MetadataCrossRegionHedgin
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos.aio._metadata_hedging import MetadataCrossRegionAsyncHedgingHandler
 from azure.cosmos.documents import _OperationType
-from azure.cosmos.http_constants import ResourceType
+from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos.http_constants import ResourceType, StatusCodes
 
 
 class _FakeContext:
@@ -100,6 +101,60 @@ class TestWinnerPinningAsync(unittest.TestCase):
                     return ({"source": "hedge"}, {})
                 await asyncio.sleep(5)
                 return ({"source": "primary"}, {})
+
+            result, _ = await self.handler.execute_request(
+                _metadata_request(), self.gem, _http_request(), execute_fn)
+            self.assertEqual(result["source"], "hedge")
+
+        asyncio.run(run())
+
+
+class TestHedgePrimaryAuthoritativeAsync(unittest.TestCase):
+    """SE-004 (async): the primary is authoritative. A hedge may win ONLY by settling first
+    with a 2xx success; a hedge definitive error (e.g. 404) must never win over the
+    primary. Mirrors the .NET ``ResolveWinnerAsync`` invariant."""
+
+    def setUp(self):
+        self.handler = MetadataCrossRegionAsyncHedgingHandler(concurrency_budget=8)
+        self.gem = _FakeGlobalEndpointManagerAsync(["region-1", "region-2"])
+
+    def test_hedge_definitive_error_does_not_win_over_slow_primary_success(self):
+        async def run():
+            async def execute_fn(params, _req):
+                if params.is_hedging_request:
+                    raise CosmosHttpResponseError(status_code=StatusCodes.NOT_FOUND, message="hedge-404")
+                await asyncio.sleep(0.4)
+                return ({"source": "primary"}, {})
+
+            result, _ = await self.handler.execute_request(
+                _metadata_request(), self.gem, _http_request(), execute_fn)
+            self.assertEqual(result["source"], "primary")
+
+        asyncio.run(run())
+
+    def test_primary_regional_failure_hedge_definitive_returns_primary(self):
+        async def run():
+            async def execute_fn(params, _req):
+                if params.is_hedging_request:
+                    raise CosmosHttpResponseError(status_code=StatusCodes.NOT_FOUND, message="hedge-404")
+                raise CosmosHttpResponseError(
+                    status_code=StatusCodes.SERVICE_UNAVAILABLE, message="primary-503")
+
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await self.handler.execute_request(
+                    _metadata_request(), self.gem, _http_request(), execute_fn)
+            self.assertEqual(ctx.exception.status_code, StatusCodes.SERVICE_UNAVAILABLE)
+            self.assertIn("primary-503", str(ctx.exception))
+
+        asyncio.run(run())
+
+    def test_primary_regional_failure_hedge_success_hedge_wins(self):
+        async def run():
+            async def execute_fn(params, _req):
+                if params.is_hedging_request:
+                    return ({"source": "hedge"}, {})
+                raise CosmosHttpResponseError(
+                    status_code=StatusCodes.SERVICE_UNAVAILABLE, message="primary-503")
 
             result, _ = await self.handler.execute_request(
                 _metadata_request(), self.gem, _http_request(), execute_fn)
