@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import SupportClientConfiguration
+from ._configuration import SupportMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ChatTranscriptsNoSubscriptionOperations,
@@ -49,7 +49,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SupportClient:  # pylint: disable=too-many-instance-attributes
+class SupportMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Microsoft Azure Support Resource Provider.
 
     :ivar operations: Operations operations
@@ -125,7 +125,7 @@ class SupportClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = SupportClientConfiguration(
+        self._config = SupportMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

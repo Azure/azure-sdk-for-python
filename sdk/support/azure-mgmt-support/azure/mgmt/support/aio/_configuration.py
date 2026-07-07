@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SupportClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for SupportClient.
+class SupportMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for SupportMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

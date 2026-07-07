@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.support
 
-    class azure.mgmt.support.SupportClient: implements ContextManager 
+    class azure.mgmt.support.SupportMgmtClient: implements ContextManager 
         chat_transcripts: ChatTranscriptsOperations
         chat_transcripts_no_subscription: ChatTranscriptsNoSubscriptionOperations
         classify_problems: ClassifyProblemsOperations
@@ -45,7 +45,7 @@ namespace azure.mgmt.support
 
 namespace azure.mgmt.support.aio
 
-    class azure.mgmt.support.aio.SupportClient: implements AsyncContextManager 
+    class azure.mgmt.support.aio.SupportMgmtClient: implements AsyncContextManager 
         chat_transcripts: ChatTranscriptsOperations
         chat_transcripts_no_subscription: ChatTranscriptsNoSubscriptionOperations
         classify_problems: ClassifyProblemsOperations

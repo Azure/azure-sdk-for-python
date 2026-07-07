@@ -83,7 +83,7 @@ from ...operations._operations import (
     build_support_tickets_no_subscription_update_request,
     build_support_tickets_update_request,
 )
-from .._configuration import SupportClientConfiguration
+from .._configuration import SupportMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -96,14 +96,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -206,14 +206,14 @@ class ServicesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`services` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -387,14 +387,14 @@ class ClassifyServicesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`classify_services` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -553,14 +553,14 @@ class ClassifyServicesNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`classify_services_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -718,14 +718,14 @@ class ClassifyProblemsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`classify_problems` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -912,14 +912,14 @@ class ClassifyProblemsNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`classify_problems_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1103,14 +1103,14 @@ class ProblemClassificationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`problem_classifications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1289,14 +1289,14 @@ class CommunicationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`communications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1888,14 +1888,14 @@ class SupportTicketsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`support_tickets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2833,14 +2833,14 @@ class CommunicationsNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`communications_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3428,14 +3428,14 @@ class SupportTicketsNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`support_tickets_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4199,14 +4199,14 @@ class ChatTranscriptsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`chat_transcripts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4385,14 +4385,14 @@ class ChatTranscriptsNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`chat_transcripts_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4569,14 +4569,14 @@ class FileWorkspacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`file_workspaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4719,14 +4719,14 @@ class FileWorkspacesNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`file_workspaces_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4867,14 +4867,14 @@ class FilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`files` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5371,14 +5371,14 @@ class FilesNoSubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.support.aio.SupportClient`'s
+        :class:`~azure.mgmt.support.aio.SupportMgmtClient`'s
         :attr:`files_no_subscription` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SupportClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: SupportMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

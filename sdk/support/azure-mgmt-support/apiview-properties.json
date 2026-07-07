@@ -151,5 +151,5 @@
         "azure.mgmt.support.operations.FilesNoSubscriptionOperations.upload": "Microsoft.Support.FilesNoSubscription.upload",
         "azure.mgmt.support.aio.operations.FilesNoSubscriptionOperations.upload": "Microsoft.Support.FilesNoSubscription.upload"
     },
-    "CrossLanguageVersion": "a59d2396bde2"
+    "CrossLanguageVersion": "6eb0661461a0"
 }

@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.support import SupportClient
+from azure.mgmt.support import SupportMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.support import SupportClient
 
 
 def main():
-    client = SupportClient(
+    client = SupportMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

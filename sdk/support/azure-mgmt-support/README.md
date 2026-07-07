@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.support import SupportClient
+from azure.mgmt.support import SupportMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = SupportClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = SupportMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
