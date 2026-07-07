@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-01-01-preview/CacheRuleList.json
+# x-ms-original-file: 2026-03-01-preview/CacheRuleList.json
 if __name__ == "__main__":
     main()

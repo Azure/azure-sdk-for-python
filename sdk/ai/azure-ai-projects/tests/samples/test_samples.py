@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
 import os
+import pytest
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer, fineTuningServicePreparer, modelsServicePreparer
 from sample_executor import (
@@ -41,8 +41,8 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_file_search_structured_inputs.py",  # No issue to run. Just posepone recording.
-                "sample_agent_code_interpreter_structured_inputs.py",  # No issue to run. Just posepone recording.
+                "sample_agent_file_search_structured_inputs.py",  # No issue to run. Just postpone recording.
+                "sample_agent_code_interpreter_structured_inputs.py",  # No issue to run. Just postpone recording.
                 "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
                 "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
@@ -265,6 +265,16 @@ class TestSamples(AzureRecordedTestCase):
                     "SKIP_RBAC": "true",
                 },
             ),
+            AdditionalSampleTestDetail(
+                test_id="sample_agent_user_identity_isolation",
+                sample_filename="sample_agent_user_identity_isolation.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
+                    "DELEGATED_USER_IDENTITY": "86636782-5c1b-455e-b25f-91fc467ac05d",
+                    "DELEGATED_USER_IDENTITY_2": "340fcd8b-b87e-41d5-b4d5-fc02df14e807",
+                    "SKIP_RBAC": "true",
+                },
+            ),
         ]
     )
     @pytest.mark.parametrize(
@@ -275,6 +285,7 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_create_hosted_agent.py",  # Specified through AdditionalSampleTestDetail
                 "sample_toolbox_with_skill.py",  # Specified through AdditionalSampleTestDetail
                 "sample_create_hosted_agent_from_code.py",  # Specified through AdditionalSampleTestDetail
+                "sample_agent_user_identity_isolation.py",  # Specified through AdditionalSampleTestDetail
             ],
         ),
     )
@@ -285,6 +296,13 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
+
+        if os.path.basename(sample_path) == "sample_agent_user_identity_isolation.py":
+            # This sample intentionally exercises a wrong-user 404 branch to
+            # prove response-chain isolation, so execution success is the
+            # authoritative validation signal for this case.
+            return
+
         executor.validate_print_calls_by_llm()
 
     @additionalSampleTests(
