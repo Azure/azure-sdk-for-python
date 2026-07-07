@@ -6,14 +6,20 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ModelProvider as RestModelProvider,
     CustomModelFineTuning as RestCustomModelFineTuningVertical,
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
+    JobOutput as RestJobOutput,
+    JobResourceConfiguration as RestJobResourceConfiguration,
+    MLFlowModelJobInput,
+    QueueSettings as RestQueueSettings,
+    UriFileJobInput,
 )
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
+    to_hybrid_rest_model,
     to_rest_data_outputs,
 )
 from azure.ai.ml.entities._job.job_resources import JobResources
@@ -75,15 +81,27 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: REST object representation of this object.
         :rtype: JobBase
         """
+        # TSP rest models coerce SDK Input entities to dicts at construction, so
+        # convert to TSP JobInput types up front rather than mutating after.
+        model = MLFlowModelJobInput(uri=self._model.path) if isinstance(self._model, Input) else self._model
+        training_data = (
+            UriFileJobInput(uri=self._training_data.path)
+            if isinstance(self._training_data, Input)
+            else self._training_data
+        )
+        validation_data = (
+            UriFileJobInput(uri=self._validation_data.path)
+            if isinstance(self._validation_data, Input)
+            else self._validation_data
+        )
         custom_finetuning_vertical = RestCustomModelFineTuningVertical(
             task_type=self._task,
-            model=self._model,
+            model=model,
             model_provider=self._model_provider,
-            training_data=self._training_data,
-            validation_data=self._validation_data,
+            training_data=training_data,
+            validation_data=validation_data,
             hyper_parameters=self._hyperparameters,
         )
-        self._resolve_inputs(custom_finetuning_vertical)
 
         finetuning_job = RestFineTuningJob(
             display_name=self.display_name,
@@ -94,12 +112,22 @@ class CustomModelFineTuningJob(FineTuningVertical):
             properties=self.properties,
             compute_id=self.compute,
             fine_tuning_details=custom_finetuning_vertical,
-            outputs=to_rest_data_outputs(self.outputs),
+            # The shared arm_ml_service model defaults is_archived to None (omitted on the wire), but
+            # the legacy msrest model serialized isArchived=false on create. Set it explicitly to keep
+            # the wire body identical.
+            is_archived=False,
+            # The shared ``to_rest_data_outputs`` helper emits msrest models; convert to the
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
         )
         if self.resources:
-            finetuning_job.resources = self.resources._to_rest_object()
+            finetuning_job.resources = to_hybrid_rest_model(
+                self.resources._to_rest_object(), RestJobResourceConfiguration
+            )
         if self.queue_settings:
-            finetuning_job.queue_settings = self.queue_settings._to_rest_object()
+            finetuning_job.queue_settings = to_hybrid_rest_model(
+                self.queue_settings._to_rest_object(), RestQueueSettings
+            )
 
         result = RestJobBase(properties=finetuning_job)
         result.name = self.name

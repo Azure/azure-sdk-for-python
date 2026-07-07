@@ -20,7 +20,7 @@ class TestDevTestLabsGalleryImagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_gallery_images_list(self, resource_group):
         response = self.client.gallery_images.list(
             resource_group_name=resource_group.name,
             lab_name="str",

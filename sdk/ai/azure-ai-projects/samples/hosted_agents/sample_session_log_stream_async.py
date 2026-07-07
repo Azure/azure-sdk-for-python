@@ -7,56 +7,45 @@
 """
 DESCRIPTION:
     This sample demonstrates how to stream hosted agent session logs
-    using `project_client.beta.agents.get_session_log_stream` with the
+    using `project_client.agents.get_session_log_stream` with the
     asynchronous AIProjectClient.
 
     Sessions only work with Hosted Agents.
-
-    Session and log stream operations are currently preview features.
-    In the Python SDK, you access these operations via
-    `project_client.beta.agents`.
 
 USAGE:
     python sample_session_log_stream_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.3.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
-
-    You can build and push an example image from
-    `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-    for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
 """
 
 import asyncio
 import os
-
+from pathlib import Path
 from dotenv import load_dotenv
-
 from azure.identity.aio import DefaultAzureCredential
-
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentEndpoint,
-    AgentEndpointProtocol,
-    FixedRatioVersionSelectionRule,
-    VersionSelector,
+    CodeConfiguration,
+    CodeDependencyResolution,
+    HostedAgentDefinition,
+    ProtocolVersionRecord,
+    VersionRefIndicator,
 )
-from hosted_agents_util import create_agent_and_session_async
+from hosted_agents_util import create_version_from_code_async
+from util import zip_directory
 
 load_dotenv()
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
-agent_name = "MySessionHostedAgent"
 
-
-async def _iter_sse_frames(stream, max_log_events: int):
+async def _iter_sse_frames_async(stream, max_log_events: int):
     event_count = 0
     buffer = ""
 
@@ -85,51 +74,74 @@ async def _iter_sse_frames(stream, max_log_events: int):
                     return
 
 
-async def main() -> None:
-    async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-            allow_preview=True,
-        ) as project_client,
-        create_agent_and_session_async(project_client, agent_name, image) as (agent_version, session_id),
-    ):
-        endpoint_config = AgentEndpoint(
-            version_selector=VersionSelector(
-                version_selection_rules=[
-                    FixedRatioVersionSelectionRule(agent_version=agent_version, traffic_percentage=100),
-                ]
-            ),
-            protocols=[AgentEndpointProtocol.RESPONSES],
-        )
+async def main():
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+    agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+    model_name = os.environ["FOUNDRY_MODEL_NAME"]
+    hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
 
-        await project_client.beta.agents.patch_agent_details(
-            agent_name=agent_name,
-            agent_endpoint=endpoint_config,
-        )
-        print(f"Agent endpoint configured for agent: {agent_name}")
-        input_text = "Say hello in one short sentence."
+    zip_path = zip_directory(hosted_agent_source_dir, "basic-agent.zip")[2]
 
-        async with project_client.get_openai_client(agent_name=agent_name) as openai_client:
-            response = await openai_client.responses.create(
-                input=input_text,
-                extra_body={
-                    "agent_session_id": session_id,
-                },
+    with zip_path.open("rb") as code_stream:
+        async with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+            ) as project_client,
+            create_version_from_code_async(
+                project_client=project_client,
+                agent_name=agent_name,
+                description="Session log stream hosted agent uploaded from assets/basic-agent.",
+                definition=HostedAgentDefinition(
+                    cpu="0.5",
+                    memory="1Gi",
+                    code_configuration=CodeConfiguration(
+                        runtime="python_3_14",
+                        entry_point=["python", "main.py"],
+                        dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+                    ),
+                    environment_variables={
+                        "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                        "FOUNDRY_MODEL_NAME": model_name,
+                    },
+                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
+                ),
+                code=code_stream,
+            ) as created,
+        ):
+            session = await project_client.agents.create_session(
+                agent_name=agent_name,
+                version_indicator=VersionRefIndicator(agent_version=created.version),
             )
-            print(f"Response output: {response.output_text}")
+            print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+            try:
+                input_text = "Say hello in one short sentence."
 
-        print("Streaming session logs...")
-        raw_stream = await project_client.beta.agents.get_session_log_stream(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            session_id=session_id,
-        )
+                openai_client = project_client.get_openai_client(agent_name=agent_name)
+                response = await openai_client.responses.create(
+                    input=input_text,
+                    extra_body={
+                        "agent_session_id": session.agent_session_id,
+                    },
+                )
+                print(f"Response output: {response.output_text}")
 
-        async for frame in _iter_sse_frames(raw_stream, max_log_events=30):
-            print(f"SSE event: {frame.get('event')}")
-            print(f"SSE data: {frame.get('data')}\n")
+                print("Streaming session logs...")
+                raw_stream = await project_client.agents.get_session_log_stream(
+                    agent_name=agent_name,
+                    agent_version=created.version,
+                    session_id=session.agent_session_id,
+                )
+                async for frame in _iter_sse_frames_async(raw_stream, max_log_events=30):
+                    print(f"SSE event: {frame.get('event')}")
+                    print(f"SSE data: {frame.get('data')}\n")
+            finally:
+                await project_client.agents.delete_session(
+                    agent_name=agent_name,
+                    session_id=session.agent_session_id,
+                )
+                print(f"Session deleted (id: {session.agent_session_id})")
 
 
 if __name__ == "__main__":

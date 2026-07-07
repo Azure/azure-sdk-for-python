@@ -1,0 +1,4 @@
+directory: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB
+commit: 9ee5902c9557817bc4a859ebc13f757515aac5d7
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

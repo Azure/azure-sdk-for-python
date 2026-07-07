@@ -242,9 +242,15 @@ class BaseSampleExecutor:
         """Capture logger DEBUG output into the same array used for print capture."""
 
         bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
+        # Matches raw JWT-like tokens assigned to an "authorization" JSON field
+        # (e.g., when a sample passes `authorization=token` to MCPTool, the request
+        # body is logged as `"authorization": "eyJ..."` without a "Bearer " prefix).
+        json_authorization_pattern = re.compile(r"(?i)(\"authorization\"\s*:\s*\")([^\"]+)(\")")
 
         def _sanitize_log_message(message: str) -> str:
-            return bearer_token_pattern.sub(r"\1<REDACTED>", message)
+            message = bearer_token_pattern.sub(r"\1<REDACTED>", message)
+            message = json_authorization_pattern.sub(r"\1<REDACTED>\3", message)
+            return message
 
         class _PrintCaptureLogHandler(logging.Handler):
             def __init__(self, sink: list[str]):
@@ -1035,6 +1041,26 @@ def _normalize_sample_filename(sample_file: str) -> str:
     return os.path.basename(sample_file)
 
 
+def _resolve_sample_path_from_filename(sample_filename: str) -> str:
+    """Resolve a sample filename to its unique path under the package samples tree."""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    samples_root = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir, "samples"))
+
+    matches: list[str] = []
+    for root, _, files in os.walk(samples_root):
+        if sample_filename in files:
+            matches.append(os.path.join(root, sample_filename))
+
+    if not matches:
+        raise ValueError(f"Could not resolve sample file under samples/: {sample_filename}")
+
+    if len(matches) > 1:
+        matches_text = ", ".join(sorted(matches))
+        raise ValueError(f"Sample filename matched multiple files under samples/: {sample_filename} -> {matches_text}")
+
+    return matches[0]
+
+
 def _resolve_additional_env_vars(
     *,
     sample_path: str,
@@ -1044,13 +1070,11 @@ def _resolve_additional_env_vars(
 
     resolved: dict[str, str] = {}
     if _is_live_mode():
-        for env_key, _ in playback_values.items():
+        for env_key, playback_value in playback_values.items():
             live_value = os.environ.get(env_key)
             if not live_value:
-                raise ValueError(
-                    f"Missing required environment variable '{env_key}' for live recording of sample '{sample_filename}'. "
-                    "Either set it in your environment/.env file or run in playback mode."
-                )
+                resolved[env_key] = playback_value
+                continue
             resolved[env_key] = live_value
     else:
         resolved.update(playback_values)
@@ -1218,13 +1242,21 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
 
             # If a sample was excluded from discovery (e.g., via samples_to_skip), it won't appear in argvalues.
             # In that case, still synthesize *variant-only* cases for any configured env-var sets.
-            if inferred_sample_dir and template_values is not None:
+            if env_var_sets_by_sample:
                 for sample_filename, playback_sets in env_var_sets_by_sample.items():
                     if sample_filename in seen_sample_filenames:
                         continue
 
-                    synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
-                    synthetic_values = list(template_values)
+                    if inferred_sample_dir is not None:
+                        synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
+                    else:
+                        synthetic_sample_path = _resolve_sample_path_from_filename(sample_filename)
+
+                    if template_values is not None:
+                        synthetic_values: list[object] = list(template_values)
+                    else:
+                        synthetic_values = [None] * len(argnames)
+
                     synthetic_values[sample_path_index] = synthetic_sample_path
 
                     for detail in playback_sets:
@@ -1272,14 +1304,14 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
             @functools.wraps(fn)
             async def _wrapper_async(test_class, sample_path: str, *args, **kwargs):
                 _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
-                return await fn(test_class, sample_path, *args, **kwargs)
+                return await fn(test_class, *args, sample_path=sample_path, **kwargs)
 
             return _wrapper_async
 
         @functools.wraps(fn)
         def _wrapper_sync(test_class, sample_path: str, *args, **kwargs):
             _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
-            return fn(test_class, sample_path, *args, **kwargs)
+            return fn(test_class, *args, sample_path=sample_path, **kwargs)
 
         return _wrapper_sync
 

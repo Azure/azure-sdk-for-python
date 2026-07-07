@@ -10,16 +10,16 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from azure.ai.agentserver.core._platform_headers import (
+    FOUNDRY_CALL_ID as _CALL_ID_HEADER,
+    USER_ID as _USER_ID_HEADER,
+)
 
-from azure.ai.agentserver.responses._response_context import IsolationContext
+from azure.ai.agentserver.responses._response_context import PlatformContext
 from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryApiError,
     FoundryBadRequestError,
     FoundryResourceNotFoundError,
-)
-from azure.ai.agentserver.responses._platform_headers import (
-    CHAT_ISOLATION_KEY as _CHAT_ISOLATION_HEADER,
-    USER_ISOLATION_KEY as _USER_ISOLATION_HEADER,
 )
 from azure.ai.agentserver.responses.store._foundry_provider import (
     FoundryStorageProvider,
@@ -459,121 +459,136 @@ async def test_get_history_item_ids__omits_optional_params_when_none(
 
 
 # ===========================================================================
-# Isolation headers (S-018)
+# Platform identity headers (S-018)
 # ===========================================================================
 
 
 @pytest.mark.asyncio
-async def test_create_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_create_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    isolation = IsolationContext(user_key="u_key_1", chat_key="c_key_1")
-    await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None, isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_1", call_id="c_key_1")
+    await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_1"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_1"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_1"
 
 
 @pytest.mark.asyncio
-async def test_get_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    isolation = IsolationContext(user_key="u_key_2", chat_key="c_key_2")
-    await provider.get_response("resp_abc123", isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_2", call_id="c_key_2")
+    await provider.get_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_2"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_2"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_2"
 
 
 @pytest.mark.asyncio
-async def test_update_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_update_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    isolation = IsolationContext(user_key="u_key_3", chat_key="c_key_3")
-    await provider.update_response(ResponseObject(_RESPONSE_DICT), isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_3", call_id="c_key_3")
+    await provider.update_response(ResponseObject(_RESPONSE_DICT), context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_3"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_3"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_3"
 
 
 @pytest.mark.asyncio
-async def test_delete_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_delete_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
 
-    isolation = IsolationContext(user_key="u_key_4", chat_key="c_key_4")
-    await provider.delete_response("resp_abc123", isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_4", call_id="c_key_4")
+    await provider.delete_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_4"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_4"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_4"
 
 
 @pytest.mark.asyncio
-async def test_get_input_items__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": []}))
 
-    isolation = IsolationContext(user_key="u_key_5", chat_key="c_key_5")
-    await provider.get_input_items("resp_abc123", isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_5", call_id="c_key_5")
+    await provider.get_input_items("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_5"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_5"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_5"
 
 
 @pytest.mark.asyncio
-async def test_get_items__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_items__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, [_OUTPUT_ITEM_DICT]))
 
-    isolation = IsolationContext(user_key="u_key_6", chat_key="c_key_6")
-    await provider.get_items(["item_out_001"], isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_6", call_id="c_key_6")
+    await provider.get_items(["item_out_001"], context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_6"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_6"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_6"
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, []))
 
-    isolation = IsolationContext(user_key="u_key_7", chat_key="c_key_7")
-    await provider.get_history_item_ids(None, None, limit=10, isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_key_7", call_id="c_key_7")
+    await provider.get_history_item_ids(None, None, limit=10, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_7"
-    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_7"
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_7"
 
 
 @pytest.mark.asyncio
-async def test_isolation_headers__omitted_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
-    """When isolation=None (default), no isolation headers are sent."""
+async def test_platform_headers__omitted_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
+    """When context=None (default), no platform headers are sent."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
     await provider.get_response("resp_abc123")
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ISOLATION_HEADER not in request.headers
-    assert _CHAT_ISOLATION_HEADER not in request.headers
+    assert _USER_ID_HEADER not in request.headers
+    assert _CALL_ID_HEADER not in request.headers
 
 
 @pytest.mark.asyncio
-async def test_isolation_headers__partial_keys_only_sends_present(
+async def test_platform_headers__user_id_alone_sends_nothing(
     credential: Any, settings: FoundryStorageSettings
 ) -> None:
-    """When only user_key is set, only user header is added."""
+    """user_id is never forwarded to 1P; with only user_id_key set, no headers are sent."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    isolation = IsolationContext(user_key="u_only")
-    await provider.get_response("resp_abc123", isolation=isolation)
+    isolation = PlatformContext(user_id_key="u_only")
+    await provider.get_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ISOLATION_HEADER] == "u_only"
-    assert _CHAT_ISOLATION_HEADER not in request.headers
+    assert _USER_ID_HEADER not in request.headers
+    assert _CALL_ID_HEADER not in request.headers
+
+
+@pytest.mark.asyncio
+async def test_platform_headers__call_id_alone_sends_call_id(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
+    """With only call_id set, only the call-id header is forwarded."""
+    provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
+
+    isolation = PlatformContext(call_id="c_only")
+    await provider.get_response("resp_abc123", context=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_CALL_ID_HEADER] == "c_only"
+    assert _USER_ID_HEADER not in request.headers
 
 
 # ===========================================================================
@@ -616,6 +631,188 @@ async def test_error_mapping__error_message_falls_back_for_non_json_body(
         await provider.get_response("any_id")
 
     assert "502" in exc_info.value.message
+
+
+@pytest.mark.asyncio
+async def test_error_mapping__error_message_falls_back_for_binary_body(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
+    """A non-2xx response with a binary/non-UTF-8 body must NOT crash.
+
+    Regression test: a Foundry storage backend (or an intermediary
+    gateway) can return a gzip-compressed or otherwise binary body on
+    error responses.  Our code must not propagate ``UnicodeDecodeError``;
+    instead it should map to a :class:`FoundryApiError` with a generic
+    fallback message.
+    """
+    raw = MagicMock()
+    raw.status_code = 502
+    # Simulate the exact failure mode reported in production:
+    # ``response.text()`` raises ``UnicodeDecodeError`` because the
+    # backend returned a gzip / binary payload with a JSON content-type.
+    raw.text = MagicMock(side_effect=UnicodeDecodeError("utf-8", b"\x8b\x00", 0, 1, "invalid start byte"))
+    provider = _make_provider(credential, settings, raw)
+
+    with pytest.raises(FoundryApiError) as exc_info:
+        await provider.get_response("any_id")
+
+    assert "502" in exc_info.value.message
+
+
+# ===========================================================================
+# Pipeline composition — ContentDecodePolicy must NOT be present
+# ===========================================================================
+
+
+@pytest.mark.asyncio
+async def test_pipeline__does_not_include_content_decode_policy(credential: Any) -> None:
+    """``ContentDecodePolicy`` is intentionally excluded from the pipeline.
+
+    Regression test for a production crash where ``ContentDecodePolicy``
+    eagerly decoded a binary / gzip-compressed response body as UTF-8 JSON
+    and raised ``UnicodeDecodeError`` before any of our error-handling
+    code could see the response status.  Our pipeline reads
+    ``http_resp.text()`` lazily with defensive ``try/except`` blocks and
+    therefore never needs the eager content-decode behaviour.
+    """
+    from azure.core.pipeline.policies import ContentDecodePolicy
+
+    provider = FoundryStorageProvider(credential=credential, settings=_SETTINGS)
+    try:
+        # Walk the policy chain attached to the pipeline client.
+        pipeline = provider._client._pipeline  # pylint: disable=protected-access
+        policies_in_chain: list[Any] = []
+        # Some azure-core versions expose the policy list directly:
+        for attr in ("_impl_policies", "policies"):
+            chain = getattr(pipeline, attr, None)
+            if chain:
+                policies_in_chain = list(chain)
+                break
+
+        assert policies_in_chain, (
+            "Could not find policy list on the pipeline; azure-core internals may have changed."
+        )
+
+        # Each chain entry wraps a policy via ``._policy`` or is the policy itself.
+        policy_classes = []
+        for entry in policies_in_chain:
+            policy = getattr(entry, "_policy", entry)
+            policy_classes.append(type(policy))
+
+        assert ContentDecodePolicy not in policy_classes, (
+            "ContentDecodePolicy must not be in the Foundry storage pipeline; "
+            "it crashes on binary response bodies."
+        )
+    finally:
+        await provider.aclose()
+
+
+@pytest.mark.asyncio
+async def test_pipeline__handles_gzip_error_body_end_to_end(credential: Any) -> None:
+    """End-to-end regression test: a gzip-encoded error body must NOT crash.
+
+    Reproduces the production failure mode where a gateway/load-balancer
+    returned a status >= 400 with a gzip-compressed body and a JSON
+    content-type header.  With ``ContentDecodePolicy`` removed from the
+    pipeline, the response must propagate cleanly to our error handler
+    where it is mapped to :class:`FoundryApiError` and tagged as a
+    platform error.
+
+    This test exercises a *real* :class:`AsyncPipelineClient` with a fake
+    transport returning gzip bytes, validating the fix at the layer where
+    the original bug occurred.
+    """
+    import gzip
+    import json as _json
+
+    from azure.core.pipeline.transport import AsyncHttpTransport
+
+    plain = _json.dumps({"error": {"message": "Bad Gateway"}}).encode()
+    gzipped = gzip.compress(plain)
+    # Sanity-check our test setup: the second byte 0x8b is the exact
+    # byte mentioned in the production traceback.
+    assert gzipped[:2] == b"\x1f\x8b"
+
+    class _FakeAsyncTransport(AsyncHttpTransport):
+        async def open(self) -> None:
+            pass
+
+        async def close(self) -> None:
+            pass
+
+        async def __aenter__(self) -> "_FakeAsyncTransport":
+            return self
+
+        async def __aexit__(self, *_args: Any) -> None:
+            pass
+
+        async def send(self, request: Any, **_kwargs: Any) -> Any:  # noqa: ARG002
+            resp = MagicMock()
+            resp.status_code = 502
+            resp.reason = "Bad Gateway"
+            resp.headers = {"Content-Type": "application/json", "Content-Encoding": "gzip"}
+            resp.content = gzipped
+            resp.encoding = "utf-8"
+
+            def _text(encoding: Any = None) -> str:
+                # Mirror what azure.core.rest does: decode raw bytes with
+                # the given encoding.  On gzip bytes this raises
+                # UnicodeDecodeError just like in production.
+                return gzipped.decode(encoding or "utf-8")
+
+            resp.text = _text
+            resp.context = {}
+            resp.request = request
+            return resp
+
+    # Build a real provider whose pipeline client uses our gzip-returning
+    # transport.  We rebuild the AsyncPipelineClient with the same policy
+    # list as the production constructor but plug in our transport.
+    # Use a real AccessToken (NamedTuple) rather than a MagicMock — the
+    # bearer-token policy compares ``expires_on`` to ``time.time()`` and
+    # MagicMock attributes don't satisfy the numeric comparison.
+    import time as _time
+
+    from azure.core import AsyncPipelineClient
+    from azure.core.credentials import AccessToken
+    from azure.core.pipeline import policies as _core_policies
+
+    real_token = AccessToken("tok_test", int(_time.time()) + 3600)
+
+    class _RealCred:
+        async def get_token(self, *_scopes: str, **_kw: Any) -> AccessToken:
+            return real_token
+
+        async def get_token_info(self, *_scopes: str, **_kw: Any) -> AccessToken:
+            return real_token
+
+        async def close(self) -> None:
+            pass
+
+    real_credential = _RealCred()
+
+    provider = FoundryStorageProvider.__new__(FoundryStorageProvider)
+    provider._settings = _SETTINGS
+    provider._client = AsyncPipelineClient(
+        base_url=_SETTINGS.storage_base_url,
+        transport=_FakeAsyncTransport(),
+        policies=[
+            _core_policies.RequestIdPolicy(),
+            _core_policies.HeadersPolicy(),
+            _core_policies.UserAgentPolicy(sdk_moniker="test/1.0"),
+            _core_policies.AsyncRetryPolicy(),
+            _core_policies.AsyncBearerTokenCredentialPolicy(real_credential, "https://test/.default"),
+            _core_policies.DistributedTracingPolicy(),
+        ],
+    )
+
+    try:
+        with pytest.raises(FoundryApiError) as exc_info:
+            await provider.get_response("any_id")
+        # Generic fallback message because the body could not be parsed.
+        assert "502" in exc_info.value.message
+    finally:
+        await provider.aclose()
 
 
 # ===========================================================================

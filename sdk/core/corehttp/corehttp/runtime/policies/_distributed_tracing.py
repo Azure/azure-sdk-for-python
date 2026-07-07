@@ -5,15 +5,17 @@
 from __future__ import annotations
 import logging
 import urllib.parse
-from typing import Any, Optional, Tuple, Union, Type, Mapping, Dict, TYPE_CHECKING
+from typing import Any, Iterable, MutableSet, Optional, Tuple, Union, Type, Mapping, Dict, TYPE_CHECKING
 from types import TracebackType
 
 from ...rest import HttpRequest
 from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 from ._base import SansIOHTTPPolicy
+from ._utils import sanitize_url
 from ...settings import settings
 from ...instrumentation.tracing._models import SpanKind, TracingOptions
 from ...instrumentation.tracing._tracer import get_tracer
+from ...utils._utils import CaseInsensitiveSet
 
 if TYPE_CHECKING:
     from ..pipeline import PipelineRequest, PipelineResponse
@@ -31,10 +33,16 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
 
     :keyword instrumentation_config: Configuration for the instrumentation providers.
     :type instrumentation_config: dict[str, Any]
+    :keyword additional_allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+        These are added to the default set which includes "api-version".
+    :type additional_allowed_query_params: Iterable[str]
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _SUPPRESSION_TOKEN = "SUPPRESSION_TOKEN"
+
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: frozenset[str] = frozenset(["api-version"])
+    _REDACTED_PLACEHOLDER = "REDACTED"
 
     # Attribute names
     _HTTP_RESEND_COUNT = "http.request.resend_count"
@@ -50,9 +58,13 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
         self,
         *,
         instrumentation_config: Optional[Mapping[str, Any]] = None,
+        additional_allowed_query_params: Optional[Iterable[str]] = None,
         **kwargs: Any,
     ) -> None:
         self._instrumentation_config = instrumentation_config
+        self.allowed_query_params: MutableSet[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
+        if additional_allowed_query_params:
+            self.allowed_query_params.update(additional_allowed_query_params)
 
     def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
         """Starts a span for the network call.
@@ -149,7 +161,7 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
         """
         attributes: Dict[str, Any] = {
             self._HTTP_REQUEST_METHOD: request.method,
-            self._URL_FULL: request.url,
+            self._URL_FULL: sanitize_url(request.url, self.allowed_query_params, self._REDACTED_PLACEHOLDER),
         }
 
         parsed_url = urllib.parse.urlparse(request.url)

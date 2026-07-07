@@ -9,12 +9,12 @@ from __future__ import annotations
 import time
 import warnings
 import datetime
+import struct
 import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
 
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.message import Message as pyamqp_Message
-from .._pyamqp.utils import set_message_properties, set_message_annotations
 from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (
@@ -276,7 +276,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.group_id
 
     @session_id.setter
-    def session_id(self, value: str) -> None:
+    def session_id(self, value: Optional[str]) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError("session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
@@ -294,7 +294,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return self._raw_amqp_message.application_properties
 
     @application_properties.setter
-    def application_properties(self, value: Dict[Union[str, bytes], Any]) -> None:
+    def application_properties(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._raw_amqp_message.application_properties = value
 
     @property
@@ -320,7 +320,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     @partition_key.setter
-    def partition_key(self, value: str) -> None:
+    def partition_key(self, value: Optional[str]) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError("partition_key cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
@@ -349,7 +349,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     @time_to_live.setter
-    def time_to_live(self, value: Union[datetime.timedelta, int]) -> None:
+    def time_to_live(self, value: Optional[Union[datetime.timedelta, int]]) -> None:
         if not self._raw_amqp_message.header:
             self._raw_amqp_message.header = AmqpMessageHeader()
         if value is None:
@@ -395,7 +395,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     @scheduled_enqueue_time_utc.setter
-    def scheduled_enqueue_time_utc(self, value: datetime.datetime) -> None:
+    def scheduled_enqueue_time_utc(self, value: Optional[datetime.datetime]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         if not self._raw_amqp_message.properties.message_id:
@@ -442,7 +442,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
-    def content_type(self, value: str) -> None:
+    def content_type(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.content_type = value
@@ -468,7 +468,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, value: str) -> None:
+    def correlation_id(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.correlation_id = value
@@ -490,7 +490,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.subject
 
     @subject.setter
-    def subject(self, value: str) -> None:
+    def subject(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.subject = value
@@ -515,7 +515,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
-    def message_id(self, value: str) -> None:
+    def message_id(self, value: Optional[str]) -> None:
         if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError("message_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
         if not self._raw_amqp_message.properties:
@@ -544,7 +544,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.reply_to
 
     @reply_to.setter
-    def reply_to(self, value: str) -> None:
+    def reply_to(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.reply_to = value
@@ -570,7 +570,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.reply_to_group_id
 
     @reply_to_session_id.setter
-    def reply_to_session_id(self, value: str) -> None:
+    def reply_to_session_id(self, value: Optional[str]) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
                 "reply_to_session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH)
@@ -600,7 +600,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.to
 
     @to.setter
-    def to(self, value: str) -> None:
+    def to(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.to = value
@@ -678,14 +678,12 @@ class ServiceBusMessageBatch(object):
         self._messages.append(outgoing_sb_message)
 
         if self._count == 1:  # Populate properties on the batch envelope from the first message
-            if outgoing_sb_message.message_id or outgoing_sb_message.session_id:
-                properties: List[Optional[str]] = [None] * 13
-                properties[0] = outgoing_sb_message.message_id
-                properties[10] = outgoing_sb_message.session_id
-                set_message_properties(self._message, properties)
-
-            if outgoing_sb_message.partition_key:
-                set_message_annotations(self._message, {_X_OPT_PARTITION_KEY: outgoing_sb_message.partition_key})
+            self._amqp_transport.set_batch_envelope_properties(
+                self._message,
+                outgoing_sb_message.message_id,
+                outgoing_sb_message.session_id,
+                outgoing_sb_message.partition_key,
+            )
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
@@ -787,6 +785,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._delivery_tag = self._amqp_transport.get_message_delivery_tag(message, frame)
         self._delivery_id = self._amqp_transport.get_message_delivery_id(message, frame)  # only used by pyamqp
+        self._received_lock_token = kwargs.get("lock_token", None)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
@@ -809,6 +808,54 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
+
+    @classmethod
+    def from_bytes(cls, message: bytes) -> "ServiceBusReceivedMessage":
+        """Constructs a ServiceBusReceivedMessage from the raw bytes of an AMQP message payload.
+
+        The message payload should adhere to the Message Format specification
+        outlined in the AMQP v1.0 standard:
+        http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
+
+        The returned message has no associated receiver. It is intended for reading
+        message content and metadata, and cannot be used to settle the message
+        (e.g., complete, abandon, defer, dead_letter) or renew its lock, because those
+        operations require a live receiver.
+
+        Broker metadata carried in the payload is preserved. When the encoded message
+        contains the corresponding sections, properties such as ``lock_token``,
+        ``locked_until_utc``, ``sequence_number``, and ``enqueued_time_utc`` are
+        populated; when a section is absent, the corresponding property returns ``None``.
+
+        Note that AMQP value and sequence body sections, as well as some string-typed
+        properties, are surfaced as ``bytes`` after decoding (for example, a value body
+        of ``{"key": "value"}`` decodes to ``{b"key": b"value"}``). This reflects the
+        raw AMQP wire encoding and is not converted to ``str``.
+
+        :param bytes message: The raw bytes representing the AMQP message payload.
+        :return: A ServiceBusReceivedMessage created from the provided message payload.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
+        :raises TypeError: If ``message`` is not a ``bytes`` object.
+        :raises ValueError: If ``message`` is empty, or is not a valid AMQP 1.0
+         message payload (decode failures are wrapped and chained).
+        """
+        from .._pyamqp._decode import decode_payload
+
+        if not isinstance(message, bytes):
+            raise TypeError("message must be bytes.")
+        if not message:
+            raise ValueError("message cannot be empty.")
+
+        try:
+            amqp_message = decode_payload(memoryview(message))
+        except (ValueError, KeyError, IndexError, TypeError, EOFError, struct.error) as exc:
+            raise ValueError("message is not a valid AMQP 1.0 message payload.") from exc
+
+        received_msg = cls(
+            message=amqp_message,
+            receiver=None,
+        )
+        return received_msg
 
     @property
     def _lock_expired(self) -> bool:
@@ -1089,6 +1136,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
         """
         if self._settled:
             return None
+
+        if self._received_lock_token:
+            # this will already be a uuid.UUID
+            return self._received_lock_token
 
         if self._delivery_tag:
             return uuid.UUID(bytes_le=self._delivery_tag)

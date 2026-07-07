@@ -215,6 +215,8 @@ class TestCommandJobEntity:
         )
         job_prop = command_job._to_job()._to_rest_object().properties
         from_rest_job = Job._from_rest_object(command_job._to_job()._to_rest_object())
+        # The list form of docker_args routes to the 2025-01 resources model, which does not carry
+        # ``locations`` (neither as an attribute nor on the wire).
         assert hasattr(job_prop.resources, "locations") == False
         assert job_prop.resources.docker_args_list == ["--shm-size=1g", "--ipc=host"]
         assert isinstance(job_prop.resources.docker_args_list, list)
@@ -240,6 +242,9 @@ class TestCommandJobEntity:
         )
         job_prop = command_job._to_job()._to_rest_object().properties
         from_rest_job = Job._from_rest_object(command_job._to_job()._to_rest_object())
-        assert job_prop.resources.locations == ["westus"]
-        assert hasattr(job_prop.resources, "docker_args_list") == False
+        # The rest resources model is the shared arm_ml_service hybrid model (a mapping); ``locations``
+        # is carried on the wire as a dict key, and the string form of docker_args serializes to
+        # ``dockerArgs`` (not the list-only ``dockerArgsList``).
+        assert job_prop.resources["locations"] == ["westus"]
+        assert "dockerArgsList" not in job_prop.resources
         assert from_rest_job.resources.docker_args == "--shm-size=1g"

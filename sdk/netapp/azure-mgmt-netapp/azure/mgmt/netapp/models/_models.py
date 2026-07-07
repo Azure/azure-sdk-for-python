@@ -143,20 +143,17 @@ class AccountProperties(_Model):
 
 
 class AccountPropertiesPatch(_Model):
-    """NetApp account properties for PATCH operations.
+    """NetApp account patch properties.
 
     :ivar active_directories: Active Directories.
     :vartype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
-    :ivar entra_id_config: Entra ID configuration for the account.
-    :vartype entra_id_config: ~azure.mgmt.netapp.models.EntraIdConfigPatch
     :ivar encryption: Encryption settings.
     :vartype encryption: ~azure.mgmt.netapp.models.AccountEncryption
     :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
      NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
     :vartype nfs_v4_id_domain: str
-    :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
-     "Enabled".
-    :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: ~azure.mgmt.netapp.models.EntraIdConfigPatch
     :ivar ldap_configuration: LDAP Configuration for the account.
     :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfigurationPatch
     """
@@ -165,10 +162,6 @@ class AccountPropertiesPatch(_Model):
         name="activeDirectories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Active Directories."""
-    entra_id_config: Optional["_models.EntraIdConfigPatch"] = rest_field(
-        name="entraIdConfig", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Entra ID configuration for the account."""
     encryption: Optional["_models.AccountEncryption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -178,10 +171,10 @@ class AccountPropertiesPatch(_Model):
     )
     """Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the
      subscription and region and only affect non ldap NFSv4 volumes."""
-    multi_ad_status: Optional[Union[str, "_models.MultiAdStatus"]] = rest_field(
-        name="multiAdStatus", visibility=["read", "create", "update", "delete", "query"]
+    entra_id_config: Optional["_models.EntraIdConfigPatch"] = rest_field(
+        name="entraIdConfig", visibility=["read", "create", "update", "delete", "query"]
     )
-    """MultiAD Status for the account. Known values are: \"Disabled\" and \"Enabled\"."""
+    """Entra ID configuration for the account."""
     ldap_configuration: Optional["_models.LdapConfigurationPatch"] = rest_field(
         name="ldapConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -192,10 +185,9 @@ class AccountPropertiesPatch(_Model):
         self,
         *,
         active_directories: Optional[list["_models.ActiveDirectory"]] = None,
-        entra_id_config: Optional["_models.EntraIdConfigPatch"] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
-        multi_ad_status: Optional[Union[str, "_models.MultiAdStatus"]] = None,
+        entra_id_config: Optional["_models.EntraIdConfigPatch"] = None,
         ldap_configuration: Optional["_models.LdapConfigurationPatch"] = None,
     ) -> None: ...
 
@@ -547,6 +539,7 @@ class ActiveDirectoryConfigProperties(_Model):
     :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
     :vartype organizational_unit: str
     :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+     Required.
     :vartype site: str
     :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
      group. A list of unique usernames without domain specifier.
@@ -584,8 +577,8 @@ class ActiveDirectoryConfigProperties(_Model):
         name="organizationalUnit", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Organizational Unit (OU) within the Windows Active Directory."""
-    site: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Active Directory site the service will limit Domain Controller discovery to."""
+    site: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Active Directory site the service will limit Domain Controller discovery to. Required."""
     backup_operators: Optional[list[str]] = rest_field(
         name="backupOperators", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -620,13 +613,13 @@ class ActiveDirectoryConfigProperties(_Model):
     def __init__(
         self,
         *,
+        site: str,
         domain: str,
         secret_password: "_models.SecretPassword",
         user_name: Optional[str] = None,
         dns: Optional[list[str]] = None,
         smb_server_name: Optional[str] = None,
         organizational_unit: Optional[str] = None,
-        site: Optional[str] = None,
         backup_operators: Optional[list[str]] = None,
         administrators: Optional[list[str]] = None,
         security_operators: Optional[list[str]] = None,
@@ -1580,6 +1573,99 @@ class BackupVaultProperties(_Model):
     """Azure lifecycle management."""
 
 
+class BindPasswordAkvConfig(_Model):
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+    stored.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Bind DN user password is stored.
+     Required.
+    :vartype azure_key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault that contains the Bind DN user
+     password. Required.
+    :vartype secret_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: str = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Bind DN user password is stored. Required."""
+    secret_name: str = rest_field(name="secretName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the secret in Azure Key Vault that contains the Bind DN user password. Required."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: str,
+        secret_name: str,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BindPasswordAkvConfigPatch(_Model):
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+    stored.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Bind DN user password is stored.
+    :vartype azure_key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault that contains the Bind DN user
+     password.
+    :vartype secret_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: Optional[str] = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Bind DN user password is stored."""
+    secret_name: Optional[str] = rest_field(
+        name="secretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret in Azure Key Vault that contains the Bind DN user password."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: Optional[str] = None,
+        secret_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BreakFileLocksRequest(_Model):
     """Break file locks request.
 
@@ -2310,6 +2396,10 @@ class CacheProperties(_Model):
     :ivar write_back: Flag indicating whether writeback is enabled for the cache. Known values are:
      "Disabled" and "Enabled".
     :vartype write_back: str or ~azure.mgmt.netapp.models.EnableWriteBackState
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the Cache,
+     based on active diagnostic settings present on the Cache. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.CacheFileAccessLogs
     """
 
     file_path: str = rest_field(name="filePath", visibility=["read", "create"])
@@ -2413,6 +2503,11 @@ class CacheProperties(_Model):
     )
     """Flag indicating whether writeback is enabled for the cache. Known values are: \"Disabled\" and
      \"Enabled\"."""
+    file_access_logs: Optional[Union[str, "_models.CacheFileAccessLogs"]] = rest_field(
+        name="fileAccessLogs", visibility=["read"]
+    )
+    """Flag indicating whether file access logs are enabled for the Cache, based on active diagnostic
+     settings present on the Cache. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -2769,6 +2864,11 @@ class CertificateAkvDetails(_Model):
     :ivar certificate_name: The name of the bucket server certificate stored in the Azure Key
      Vault.
     :vartype certificate_name: str
+    :ivar user_assigned_identity: Optional resource ID of the managed identity that has access to
+     the Azure Key Vault (AKV) secret. If a value is provided, it is used to find a matching entry
+     in the account's collection of user-assigned managed identities. If no match is found, an
+     exception is thrown. If no value is provided, the system-assigned managed identity is used.
+    :vartype user_assigned_identity: str
     """
 
     certificate_key_vault_uri: Optional[str] = rest_field(
@@ -2779,6 +2879,13 @@ class CertificateAkvDetails(_Model):
         name="certificateName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the bucket server certificate stored in the Azure Key Vault."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional resource ID of the managed identity that has access to the Azure Key Vault (AKV)
+     secret. If a value is provided, it is used to find a matching entry in the account's collection
+     of user-assigned managed identities. If no match is found, an exception is thrown. If no value
+     is provided, the system-assigned managed identity is used."""
 
     @overload
     def __init__(
@@ -2786,6 +2893,7 @@ class CertificateAkvDetails(_Model):
         *,
         certificate_key_vault_uri: Optional[str] = None,
         certificate_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3049,23 +3157,57 @@ class CifsUser(_Model):
 class ClusterPeerCommandResponse(_Model):
     """Information about cluster peering process.
 
-    :ivar peer_accept_command: A command that needs to be run on the external ONTAP to accept
-     cluster peering.  Will only be present if <code>clusterPeeringStatus</code> is
-     <code>pending</code>.
-    :vartype peer_accept_command: str
+    :ivar properties: Represents the properties of the cluster peer command response.
+    :vartype properties: ~azure.mgmt.netapp.models.ClusterPeerCommandResponseProperties
     """
 
-    peer_accept_command: Optional[str] = rest_field(
-        name="peerAcceptCommand", visibility=["read", "create", "update", "delete", "query"]
+    properties: Optional["_models.ClusterPeerCommandResponseProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """A command that needs to be run on the external ONTAP to accept cluster peering.  Will only be
-     present if <code>clusterPeeringStatus</code> is <code>pending</code>."""
+    """Represents the properties of the cluster peer command response."""
 
     @overload
     def __init__(
         self,
         *,
-        peer_accept_command: Optional[str] = None,
+        properties: Optional["_models.ClusterPeerCommandResponseProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterPeerCommandResponseProperties(_Model):
+    """Properties of the cluster peer command response.
+
+    :ivar cluster_peering_command: ClusterPeeringCommand to run to accept cluster peer. Will only
+     be present if <code>clusterPeeringStatus</code> is <code>pending</code>.
+    :vartype cluster_peering_command: str
+    :ivar passphrase: Passphrase for use with cluster peer command.
+    :vartype passphrase: str
+    """
+
+    cluster_peering_command: Optional[str] = rest_field(
+        name="clusterPeeringCommand", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClusterPeeringCommand to run to accept cluster peer. Will only be present if
+     <code>clusterPeeringStatus</code> is <code>pending</code>."""
+    passphrase: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Passphrase for use with cluster peer command."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_peering_command: Optional[str] = None,
+        passphrase: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3093,6 +3235,11 @@ class CredentialsAkvDetails(_Model):
      "secret_access_key": "<REDACTED>"
      }.
     :vartype secret_name: str
+    :ivar user_assigned_identity: Optional resource ID of the managed identity that has access to
+     the Azure Key Vault (AKV) secret. If a value is provided, it is used to find a matching entry
+     in the account's collection of user-assigned managed identities. If no match is found, an
+     exception is thrown. If no value is provided, the system-assigned managed identity is used.
+    :vartype user_assigned_identity: str
     """
 
     credentials_key_vault_uri: Optional[str] = rest_field(
@@ -3109,6 +3256,13 @@ class CredentialsAkvDetails(_Model):
      \"access_key_id\": \"<REDACTED>\",
      \"secret_access_key\": \"<REDACTED>\"
      }."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional resource ID of the managed identity that has access to the Azure Key Vault (AKV)
+     secret. If a value is provided, it is used to find a matching entry in the account's collection
+     of user-assigned managed identities. If no match is found, an exception is thrown. If no value
+     is provided, the system-assigned managed identity is used."""
 
     @overload
     def __init__(
@@ -3116,6 +3270,7 @@ class CredentialsAkvDetails(_Model):
         *,
         credentials_key_vault_uri: Optional[str] = None,
         secret_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5536,9 +5691,7 @@ class EntraIdAkvConfig(_Model):
 
 
 class EntraIdAkvConfigPatch(_Model):
-    """Using AKV config, certificate will be fetched, which will contain private key & public
-    certificate, that correspond to the public certificate which is uploaded on the application
-    created by customer. This will be used further for authentication.
+    """Entra ID Patch configuration for the account.
 
     :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
     :vartype azure_key_vault_uri: str
@@ -6289,6 +6442,14 @@ class LdapConfiguration(_Model):
     :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
      TLS requires the CN host name to create DNS host entry.
     :vartype certificate_cn_host: str
+    :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
+     server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
+    :vartype bind_authentication_level: str or ~azure.mgmt.netapp.models.BindAuthenticationLevel
+    :ivar bind_dn: The distinguished name (DN) to bind as when performing LDAP operations.
+    :vartype bind_dn: str
+    :ivar bind_password_akv_config: The Azure Key Vault configuration where the Bind DN
+     (Distinguished Name) user password is stored.
+    :vartype bind_password_akv_config: ~azure.mgmt.netapp.models.BindPasswordAkvConfig
     """
 
     domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6311,6 +6472,18 @@ class LdapConfiguration(_Model):
     )
     """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
      to create DNS host entry."""
+    bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = rest_field(
+        name="bindAuthenticationLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication level to use when binding to the LDAP server, defaults to Anonymous. Known
+     values are: \"Anonymous\" and \"Simple\"."""
+    bind_dn: Optional[str] = rest_field(name="bindDN", visibility=["read", "create", "update", "delete", "query"])
+    """The distinguished name (DN) to bind as when performing LDAP operations."""
+    bind_password_akv_config: Optional["_models.BindPasswordAkvConfig"] = rest_field(
+        name="bindPasswordAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+     stored."""
 
     @overload
     def __init__(
@@ -6321,6 +6494,9 @@ class LdapConfiguration(_Model):
         ldap_over_tls: Optional[bool] = None,
         server_ca_certificate: Optional[str] = None,
         certificate_cn_host: Optional[str] = None,
+        bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = None,
+        bind_dn: Optional[str] = None,
+        bind_password_akv_config: Optional["_models.BindPasswordAkvConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -6349,6 +6525,14 @@ class LdapConfigurationPatch(_Model):
     :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
      TLS requires the CN host name to create DNS host entry.
     :vartype certificate_cn_host: str
+    :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
+     server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
+    :vartype bind_authentication_level: str or ~azure.mgmt.netapp.models.BindAuthenticationLevel
+    :ivar bind_dn: The distinguished name (DN) to bind as when performing LDAP operations.
+    :vartype bind_dn: str
+    :ivar bind_password_akv_config: The Azure Key Vault configuration where the Bind DN
+     (Distinguished Name) user password is stored.
+    :vartype bind_password_akv_config: ~azure.mgmt.netapp.models.BindPasswordAkvConfigPatch
     """
 
     domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6371,6 +6555,18 @@ class LdapConfigurationPatch(_Model):
     )
     """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
      to create DNS host entry."""
+    bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = rest_field(
+        name="bindAuthenticationLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication level to use when binding to the LDAP server, defaults to Anonymous. Known
+     values are: \"Anonymous\" and \"Simple\"."""
+    bind_dn: Optional[str] = rest_field(name="bindDN", visibility=["read", "create", "update", "delete", "query"])
+    """The distinguished name (DN) to bind as when performing LDAP operations."""
+    bind_password_akv_config: Optional["_models.BindPasswordAkvConfigPatch"] = rest_field(
+        name="bindPasswordAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+     stored."""
 
     @overload
     def __init__(
@@ -6381,6 +6577,9 @@ class LdapConfigurationPatch(_Model):
         ldap_over_tls: Optional[bool] = None,
         server_ca_certificate: Optional[str] = None,
         certificate_cn_host: Optional[str] = None,
+        bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = None,
+        bind_dn: Optional[str] = None,
+        bind_password_akv_config: Optional["_models.BindPasswordAkvConfigPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -6939,47 +7138,30 @@ class NetAppAccount(TrackedResource):
 class NetAppAccountPatch(_Model):
     """NetApp account patch resource.
 
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: NetApp Account properties.
     :vartype properties: ~azure.mgmt.netapp.models.AccountPropertiesPatch
-    :ivar identity: The identity used for the resource.
-    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
     """
 
-    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource location."""
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Resource Id."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """Resource name."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Resource type."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.AccountPropertiesPatch"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """NetApp Account properties."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identity used for the resource."""
 
     __flattened_items = [
         "active_directories",
-        "entra_id_config",
         "encryption",
         "nfs_v4_id_domain",
-        "multi_ad_status",
+        "entra_id_config",
         "ldap_configuration",
     ]
 
@@ -6987,10 +7169,9 @@ class NetAppAccountPatch(_Model):
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AccountPropertiesPatch"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -7305,8 +7486,8 @@ class OperationProperties(_Model):
 class OriginClusterInformation(_Model):
     """Stores the origin cluster information associated to a cache.
 
-    :ivar peer_cluster_name: ONTAP cluster name of external cluster hosting the origin volume.
-     Required.
+    :ivar peer_cluster_name: ONTAP cluster name of external cluster hosting the origin volume. Must
+     match the exact cluster name. Required.
     :vartype peer_cluster_name: str
     :ivar peer_addresses: ONTAP Intercluster LIF IP addresses. One IP address per cluster node is
      required. Required.
@@ -7321,7 +7502,8 @@ class OriginClusterInformation(_Model):
     peer_cluster_name: str = rest_field(
         name="peerClusterName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """ONTAP cluster name of external cluster hosting the origin volume. Required."""
+    """ONTAP cluster name of external cluster hosting the origin volume. Must match the exact cluster
+     name. Required."""
     peer_addresses: list[str] = rest_field(
         name="peerAddresses", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9704,6 +9886,36 @@ class SuspectFile(_Model):
 class SvmPeerCommandResponse(_Model):
     """Information about svm peering process.
 
+    :ivar properties: Represents the properties of the SVM peer command response.
+    :vartype properties: ~azure.mgmt.netapp.models.SvmPeerCommandResponseProperties
+    """
+
+    properties: Optional["_models.SvmPeerCommandResponseProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the properties of the SVM peer command response."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SvmPeerCommandResponseProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SvmPeerCommandResponseProperties(_Model):
+    """Properties of the SVM peer command response.
+
     :ivar svm_peering_command: A command that needs to be run on the external ONTAP to accept svm
      peering.  Will only be present if <code>svmPeeringStatus</code> is <code>pending</code>.
     :vartype svm_peering_command: str
@@ -11459,7 +11671,7 @@ class VolumeProperties(_Model):
      \"es\", \"es.utf-8\", \"sv\", \"sv.utf-8\", \"tr\", \"tr.utf-8\", \"en-us\", and
      \"en-us.utf-8\"."""
     breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
-        name="breakthroughMode", visibility=["read", "create", "update", "delete", "query"]
+        name="breakthroughMode", visibility=["read", "create"]
     )
     """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
      \"Disabled\"."""
