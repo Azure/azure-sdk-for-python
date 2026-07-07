@@ -449,7 +449,7 @@ class TestGetSessionTokenWithoutPartitionKeyVersion(unittest.TestCase):
         )
         self.assertEqual(actual_epk.max, expected_epk.max)
 
-    def test_v1_and_v2_produce_different_epks(self):
+    def test_v1_and_v2_produce_different_effective_partition_keys(self):
         """Sanity check: V1 and V2 hashing produce distinct EPKs for the same
         pk_value. If this ever regresses to equal, the V1-EPK assertion in
         test_missing_version_produces_v1_hash_epk_not_raw_binary becomes vacuous."""
