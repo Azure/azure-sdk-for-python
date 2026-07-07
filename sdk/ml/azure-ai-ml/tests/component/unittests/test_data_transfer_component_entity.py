@@ -8,16 +8,22 @@ from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferExportComponent,
     DataTransferImportComponent,
 )
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
-from .test_component_schema import load_component_entity_from_rest_json, load_component_entity_from_yaml
+from .test_component_schema import (
+    load_component_entity_from_rest_json,
+    load_component_entity_from_yaml,
+)
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestDataTransferComponentEntity:
-    def test_serialize_deserialize_copy_task_component(self, mock_machinelearning_client: MLClient):
+    def test_serialize_deserialize_copy_task_component(
+        self, mock_machinelearning_client: MLClient
+    ):
         test_path = "./tests/test_configs/components/data_transfer/copy_files.yaml"
         component_entity = load_component_entity_from_yaml(
             test_path, mock_machinelearning_client, _type="data_transfer"
@@ -47,11 +53,15 @@ class TestDataTransferComponentEntity:
         ]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
         rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
-        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(
+            dict(data_transfer_copy_component._to_dict()), *omit_fields
+        )
         assert yaml_dict == rest_dict
         assert sdk_dict == yaml_dict
 
-    def test_serialize_deserialize_merge_task_component(self, mock_machinelearning_client: MLClient):
+    def test_serialize_deserialize_merge_task_component(
+        self, mock_machinelearning_client: MLClient
+    ):
         test_path = "./tests/test_configs/components/data_transfer/merge_files.yaml"
         component_entity = load_component_entity_from_yaml(
             test_path, mock_machinelearning_client, _type="data_transfer"
@@ -85,12 +95,18 @@ class TestDataTransferComponentEntity:
         ]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
         rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
-        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(
+            dict(data_transfer_copy_component._to_dict()), *omit_fields
+        )
         assert yaml_dict == rest_dict
         assert sdk_dict == yaml_dict
 
-    def test_serialize_deserialize_import_task_component(self, mock_machinelearning_client: MLClient):
-        test_path = "./tests/test_configs/components/data_transfer/import_file_to_blob.yaml"
+    def test_serialize_deserialize_import_task_component(
+        self, mock_machinelearning_client: MLClient
+    ):
+        test_path = (
+            "./tests/test_configs/components/data_transfer/import_file_to_blob.yaml"
+        )
         component_entity = load_component_entity_from_yaml(
             test_path, mock_machinelearning_client, _type="data_transfer"
         )
@@ -106,11 +122,17 @@ class TestDataTransferComponentEntity:
 
         omit_fields = ["name", "id", "$schema"]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
-        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(
+            dict(data_transfer_copy_component._to_dict()), *omit_fields
+        )
         assert sdk_dict == yaml_dict
 
-    def test_serialize_deserialize_export_task_component(self, mock_machinelearning_client: MLClient):
-        test_path = "./tests/test_configs/components/data_transfer/export_blob_to_database.yaml"
+    def test_serialize_deserialize_export_task_component(
+        self, mock_machinelearning_client: MLClient
+    ):
+        test_path = (
+            "./tests/test_configs/components/data_transfer/export_blob_to_database.yaml"
+        )
         component_entity = load_component_entity_from_yaml(
             test_path, mock_machinelearning_client, _type="data_transfer"
         )
@@ -126,7 +148,9 @@ class TestDataTransferComponentEntity:
 
         omit_fields = ["name", "id", "$schema"]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
-        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(
+            dict(data_transfer_copy_component._to_dict()), *omit_fields
+        )
         assert sdk_dict == yaml_dict
 
     def test_copy_task_component_entity(self):
@@ -148,12 +172,12 @@ class TestDataTransferComponentEntity:
             "properties.properties.client_component_hash",
         ]
         component._validate()
-        component_dict = component._to_rest_object().as_dict()
+        component_dict = as_attribute_dict(component._to_rest_object())
         component_dict = pydash.omit(component_dict, *omit_fields)
 
         yaml_path = "./tests/test_configs/components/data_transfer/copy_files.yaml"
         yaml_component = load_component(yaml_path)
-        yaml_component_dict = yaml_component._to_rest_object().as_dict()
+        yaml_component_dict = as_attribute_dict(yaml_component._to_rest_object())
         yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
 
         assert component_dict == yaml_component_dict

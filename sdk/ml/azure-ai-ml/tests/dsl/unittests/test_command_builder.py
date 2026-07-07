@@ -36,6 +36,7 @@ from azure.ai.ml.entities._job.pipeline._component_translatable import (
     ComponentTranslatableMixin,
 )
 from azure.ai.ml.exceptions import JobException, ValidationException
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -209,7 +210,7 @@ class TestCommandFunction:
             }
         }
         actual_component = pydash.omit(
-            test_command._component._to_rest_object().as_dict(),
+            as_attribute_dict(test_command._component._to_rest_object()),
             "name",
             "properties.component_spec.name",
             "properties.properties.client_component_hash",
@@ -254,7 +255,9 @@ class TestCommandFunction:
             }
         }
         actual_component = pydash.omit(
-            test_no_deterministic_command._component._to_rest_object().as_dict(),
+            as_attribute_dict(
+                test_no_deterministic_command._component._to_rest_object()
+            ),
             "name",
             "properties.component_spec.name",
             "properties.properties.client_component_hash",
@@ -455,7 +458,7 @@ class TestCommandFunction:
 
         # node1's component stores proper inputs & outputs
         actual_component = pydash.omit(
-            node1._component._to_rest_object().as_dict(),
+            as_attribute_dict(node1._component._to_rest_object()),
             "name",
             "properties.component_spec.name",
             "properties.properties.client_component_hash",
@@ -679,7 +682,7 @@ class TestCommandFunction:
         node1 = command(**test_command_params)
 
         actual_component = pydash.omit(
-            node1._component._to_rest_object().as_dict(),
+            as_attribute_dict(node1._component._to_rest_object()),
             "name",
             "properties.component_spec.name",
             "properties.properties.client_component_hash",

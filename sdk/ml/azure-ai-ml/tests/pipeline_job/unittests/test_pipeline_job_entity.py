@@ -1960,7 +1960,9 @@ class TestPipelineJobEntity:
 
         # check component of pipeline job is expected
         for name, expected_dict in expected_components.items():
-            actual_dict = pipeline_job.jobs[name].component._to_rest_object().as_dict()
+            actual_dict = as_attribute_dict(
+                pipeline_job.jobs[name].component._to_rest_object()
+            )
             omit_fields = [
                 "name",
             ]
