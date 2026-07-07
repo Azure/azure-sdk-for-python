@@ -1,10 +1,35 @@
 # Release History
 
-## 1.0.0b6 (2026-05-15)
+## 1.0.0b8 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests and exposed on `ResponseContext.platform_context`. The per-request call ID is forwarded on all outbound Foundry Storage calls and bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it; `x-agent-user-id` is used only for container-side partitioning and is not forwarded to 1P services.
+
+### Breaking Changes
+
+- Renamed the public `IsolationContext` type to `PlatformContext`. Its fields are now `user_id_key` (from `x-agent-user-id`) and `call_id` (from `x-agent-foundry-call-id`), replacing `user_key` / `chat_key`.
+- `ResponseContext.isolation` is now `ResponseContext.platform_context`.
+- Response provider protocol methods now accept a `context` keyword argument (previously `isolation`).
+- In-process partition enforcement is now keyed on the user ID (`x-agent-user-id`) instead of the chat isolation key.
+
+## 1.0.0b7 (2026-05-25)
+
+### Features Added
+
+- Added MCP output item builder enhancements for hosted MCP relay scenarios: `ResponseEventStream.add_output_item_mcp_call()` now supports caller-supplied item IDs, and MCP call `emit_done()` supports optional `output` and `error` payloads for canonical `mcp_call` persistence and replay.
+
+## 1.0.0b6 (2026-05-21)
 
 ### Features Added
 
 - Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Client validation errors (400/404) are classified as `user`, Foundry storage infrastructure errors (transport failures, 5xx) as `platform`, and developer handler exceptions as `upstream`. Platform errors additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics. Matches the container image specification §8 error source classification.
+
+### Breaking Changes
+
+- Removed the automatic `invoke_agent` server span that was created on each response creation request. Trace context propagation is now handled by the core `TraceContextMiddleware`, and user-created spans inside handlers are correctly parented without framework-generated spans.
+- Removed `_safe_set_attrs`, `_wrap_streaming_response`, and `_classify_error_code` internal helpers (no longer needed without framework-level span management).
+- Removed OTel error tagging attributes (`azure.ai.agentserver.responses.error.code`, `azure.ai.agentserver.responses.error.message`) that were set on the framework span.
 
 ### Bugs Fixed
 
@@ -13,6 +38,7 @@
 ### Other Changes
 
 - Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module). Error source classification helpers remain internal to this package.
+- Simplified request handling: baggage entries (`response_id`, `conversation_id`, `streaming`, `x-request-id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
 
 ## 1.0.0b5 (2026-04-22)
 

@@ -1,0 +1,4 @@
+directory: specification/powerplatform/resource-manager/Microsoft.PowerPlatform/PowerPlatform
+commit: 91f575a1998fa202e1d5c79e52138c4e1819a5ba
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

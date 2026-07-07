@@ -54,6 +54,8 @@ servicePreparer = functools.partial(
     mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
     browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
     sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    fabric_iq_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-fabric-iq-connection",
+    work_iq_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-work-iq-connection",
     bing_custom_search_instance_name="sanitized-bing-custom-search-instance",
     completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
@@ -68,9 +70,12 @@ servicePreparer = functools.partial(
     fabric_user_input="List all customers!",
     a2a_user_input="What can the secondary agent do?",
     bing_custom_user_input="Tell me more about foundry agent service",
+    fabric_iq_user_input="Tell me weather history in London, Ohio",
+    work_iq_user_input="What is the Work IQ?",
     memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
     foundry_agent_container_image="sanitizedregistry.azurecr.io/sanitized/sessions-agent:latest",
+    foundry_hosted_agent_name="sanitized-hosted-agent-name",
 )
 
 fineTuningServicePreparer = functools.partial(
@@ -82,6 +87,16 @@ fineTuningServicePreparer = functools.partial(
     azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
     azure_ai_projects_azure_resource_group="sanitized-resource-group",
     azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
+)
+
+# Slim preparer for `.beta.models` samples/tests. These exercise local-file
+# upload + ModelVersion registration; they only need a Foundry project endpoint
+# and the LLM-validation endpoint used by sample tests.
+modelsServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
 )
 
 # Fine-tuning job type constants
@@ -201,6 +216,12 @@ class TestBase(AzureRecordedTestCase):
         "dataset_name_4": f"test-dataset-name-{random.randint(0, 99999):05d}",
         "dataset_version": 1,
         "connection_name": "balapvbyostoragecanary",
+    }
+
+    test_models_params = {
+        "model_name_1": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_name_2": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_version": "1",
     }
 
     test_files_params = {

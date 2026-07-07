@@ -4967,7 +4967,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client:
-            deployment_name = kwargs.get("foundry_model_name")
+            deployment_name: str = kwargs["foundry_model_name"]
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent
@@ -5288,7 +5288,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client:
-            deployment_name = kwargs.get("foundry_model_name")
+            deployment_name: str = kwargs["foundry_model_name"]
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent

@@ -172,5 +172,6 @@
         "azure.mgmt.peering.aio.operations.PeeringServiceProvidersOperations.list": "Microsoft.Peering.PeeringServiceProvidersOperationGroup.list",
         "azure.mgmt.peering.PeeringManagementClient.check_service_provider_availability": "Microsoft.Peering.checkServiceProviderAvailability",
         "azure.mgmt.peering.aio.PeeringManagementClient.check_service_provider_availability": "Microsoft.Peering.checkServiceProviderAvailability"
-    }
+    },
+    "CrossLanguageVersion": "bc4e50992750"
 }

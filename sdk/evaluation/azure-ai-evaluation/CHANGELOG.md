@@ -1,6 +1,72 @@
 # Release History
 
-## 1.16.7 (Unreleased)
+## 1.18.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.18.0 (2026-07-06)
+
+### Bugs Fixed
+
+- Evaluators now raise `EvaluationException` (instead of bare `ValueError`/`TypeError`) for input and
+  configuration validation failures, and consistently set `blame=ErrorBlame.USER_ERROR` with an
+  appropriate `category` and `target`. Affected evaluators include `ContentSafetyEvaluator`,
+  `QAEvaluator`, `RougeScoreEvaluator`, `DocumentRetrievalEvaluator`, the task navigation efficiency
+  evaluator, and the shared evaluator base (conversation/tool-call input validation).
+
+- Fixed OpenAPI tool-call validation in tool evaluators (e.g. `ToolCallAccuracyEvaluator`). OpenAPI
+  tool definitions are expanded into their nested functions when present, so tool calls referencing a
+  nested function name validate correctly, while OpenAPI tool definitions without nested functions are
+  kept as is so tool calls referencing the top-level tool name continue to validate.
+
+- Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
+  encoded payload for converter-based attack strategies (Base64, Flip,
+  Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The
+  persisted `conversation[].content` for user turns now reflects what the
+  target actually received (`converted_value`). The pre-converter
+  adversarial objective is additionally retained as an `original_value`
+  field on user messages in the intermediate per-strategy `.jsonl`
+  artifacts (it is not surfaced in the customer-facing `results.json`,
+  which continues to expose only `role`/`content`/`name`). Baseline
+  (non-encoded) strategies are unaffected.
+  Resolves [#47228](https://github.com/Azure/azure-sdk-for-python/issues/47228).
+
+### Other Changes
+
+- Conversation/tool message preprocessing now normalizes `openapi_call` / `openapi_call_output` content
+  items to `tool_call` / `tool_result` (previously only `function_call` / `function_call_output` were
+  normalized), so evaluators correctly handle OpenAPI-tool agent transcripts.
+- Tool results are now serialized as JSON when rendering agent responses for LLM-judge evaluators, so
+  list/dict outputs from grounding tools (Azure AI Search, SharePoint, Fabric) are readable instead of a
+  Python `repr`. Plain string tool results are unchanged.
+- Evaluators no longer log raw customer payloads in fallback/debug paths. `reformat_agent_response`,
+  `reformat_conversation_history`, `reformat_tool_definitions`, the tool-call-success reformat helpers,
+  and Groundedness context extraction now emit structural summaries only (via `_log_safe_summary`),
+  never raw query/response/tool payloads.
+
+## 1.17.0 (2026-06-03)
+
+### Breaking Changes
+
+- Updated `EVALUATOR_NAME_METRICS_MAPPINGS` so `document_retrieval` and `rouge_score` report single primary metrics (`document_retrieval`, `rouge`), with previous sub-metrics now represented in each evaluator's `*_properties` payload.
+
+### Bugs Fixed
+
+- Fixed `format_llm_response` raising `UnboundLocalError` when `inputs` was not provided by ensuring `sample_input` is always initialized.
+
+## 1.16.8 (2026-05-19)
+
+### Features Added
+
+- App Insights logging now forwards arbitrary evaluator-specific keys from each event's `properties` payload as a single `gen_ai.evaluation.properties` JSON attribute (carried inside `internal_properties`). Previously only the four red-team keys (`attack_success`, `attack_technique`, `attack_complexity`, `attack_success_threshold`) were forwarded; structured outputs such as rubric `dimension_scores` were silently dropped. Payloads larger than 7500 characters are replaced with a valid JSON marker (`{"truncated": true, "original_size_bytes": <n>}`) so consumers can always `json.loads` the value. Non-dict `properties` payloads are now safely ignored instead of raising in the red-team forwarder.
+
+## 1.16.7 (2026-05-07)
 
 ### Features Added
 
@@ -9,11 +75,6 @@
 - Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
 - Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
 - Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
-- App Insights logging now forwards arbitrary evaluator-specific keys from each event's `properties` payload as a single `gen_ai.evaluation.properties` JSON attribute (carried inside `internal_properties`). Previously only the four red-team keys (`attack_success`, `attack_technique`, `attack_complexity`, `attack_success_threshold`) were forwarded; structured outputs such as rubric `dimension_scores` were silently dropped. Payloads larger than 7500 characters are replaced with a valid JSON marker (`{"truncated": true, "original_size_bytes": <n>}`) so consumers can always `json.loads` the value. Non-dict `properties` payloads are now safely ignored instead of raising in the red-team forwarder.
-
-### Breaking Changes
-
-- Updated `EVALUATOR_NAME_METRICS_MAPPINGS` so `document_retrieval` and `rouge_score` report single primary metrics (`document_retrieval`, `rouge`), with previous sub-metrics now represented in each evaluator's `*_properties` payload.
 
 ### Bugs Fixed
 

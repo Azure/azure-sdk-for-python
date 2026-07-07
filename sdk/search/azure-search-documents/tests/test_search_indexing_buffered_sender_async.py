@@ -84,8 +84,7 @@ class TestSearchIndexingBufferedSenderConstructorAsync:
         assert sender._auto_flush is False
         assert sender._client._config.api_version == API_VERSION
         assert repr(sender) == (
-            "<SearchIndexingBufferedSender "
-            f"[endpoint='{SEARCH_ENDPOINT}', index='{INDEX_NAME}']>"
+            "<SearchIndexingBufferedSender " f"[endpoint='{SEARCH_ENDPOINT}', index='{INDEX_NAME}']>"
         )
 
     def test_constructor_rejects_non_positive_auto_flush_interval(self):

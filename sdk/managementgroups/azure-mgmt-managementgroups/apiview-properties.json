@@ -90,5 +90,6 @@
         "azure.mgmt.managementgroups.aio.ManagementGroupsMgmtClient.start_tenant_backfill": "Microsoft.Management.startTenantBackfill",
         "azure.mgmt.managementgroups.ManagementGroupsMgmtClient.tenant_backfill_status": "Microsoft.Management.tenantBackfillStatus",
         "azure.mgmt.managementgroups.aio.ManagementGroupsMgmtClient.tenant_backfill_status": "Microsoft.Management.tenantBackfillStatus"
-    }
+    },
+    "CrossLanguageVersion": "4ab4ad93a3ec"
 }

@@ -1,0 +1,100 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateMonitor",
+      "monitorDefinition": {
+        "alertNotificationSetting": {
+          "alertNotificationType": "Email",
+          "emailNotificationSetting": {
+            "emailOn": [
+              "JobFailed",
+              "JobCompleted"
+            ],
+            "emails": [
+              "test@example.com"
+            ]
+          }
+        },
+        "computeConfiguration": {
+          "computeIdentity": {
+            "computeIdentityType": "AmlToken"
+          },
+          "computeType": "ServerlessSpark",
+          "instanceType": "standard_e8s_v3",
+          "runtimeVersion": "3.4"
+        },
+        "monitoringTarget": {
+          "deploymentId": "fake_endpoint_id",
+          "taskType": "classification"
+        },
+        "signals": {
+          "testSignal": {
+            "metricThresholds": [
+              {
+                "dataType": "Numerical",
+                "metric": "jensenShannonDistance",
+                "threshold": {
+                  "value": 0.5
+                }
+              },
+              {
+                "dataType": "Categorical",
+                "metric": "pearsonsChiSquaredTest",
+                "threshold": {
+                  "value": 0.2
+                }
+              }
+            ],
+            "mode": "Enabled",
+            "productionData": {
+              "dataContext": "test",
+              "inputDataType": "Trailing",
+              "jobInputType": "mltable",
+              "uri": "Direct:1",
+              "windowOffset": "P0D",
+              "windowSize": "P60D"
+            },
+            "referenceData": {
+              "dataContext": "test",
+              "inputDataType": "Trailing",
+              "jobInputType": "mltable",
+              "uri": "Direct:1",
+              "windowOffset": "P30D",
+              "windowSize": "P30D"
+            },
+            "signalType": "DataDrift"
+          }
+        }
+      }
+    },
+    "properties": {
+      "prop1": "value"
+    },
+    "tags": {
+      "tag1": "value"
+    },
+    "trigger": {
+      "frequency": "week",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          22,
+          20
+        ],
+        "minutes": [
+          0,
+          30
+        ],
+        "weekDays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ]
+      },
+      "timeZone": "utc",
+      "triggerType": "Recurrence"
+    }
+  }
+}

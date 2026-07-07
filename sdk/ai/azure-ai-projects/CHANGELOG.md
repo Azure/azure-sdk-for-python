@@ -1,9 +1,140 @@
 # Release History
 
+## 2.3.0 (2026-07-01)
+
+### Features Added
+
+* Hosted Agent methods are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted Agent.
+* Session and Session Files methods are now stable. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
+* Agent code methods are now stable. This includes `.agents.create_version_from_code` and `.agents.download_code` methods. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
+* Toolboxes methods are now stable. They have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
+* Two new methods `.agents.enable` and `.agents.disable`.
+* New toolbox tool `ReminderPreviewToolboxTool`.
+* New concept of Draft Agent Version:
+  * Optional boolean argument `draft` added to method `.agents.create_version`.
+  * Optional boolean property `draft` added to class `AgentVersionDetails`.
+  * Optional boolean argument `include_drafts` added to method `.agents.list_versions`.
+* Optional property `defer_loading` added to a few Agent tool classes.
+* Optional property `supported_evaluation_levels` added to class `EvaluatorVersion`.
+* Class `BotServiceTenantAuthorizationScheme` added (derived from `AgentEndpointAuthorizationScheme`).
+* Class `EndpointBasedEvaluatorDefinition` added (derived from `EvaluatorDefinition`).
+
+### Breaking Changes
+
+All breaking changes are associated with beta features, or beta features that are being promoted to stable.
+
+* Toolbox method `create_version` now defines `tools` of type `List[ToolboxTool]` instead of `List[Tool]`. A new set of Toolbox tools classes,
+all derived from `ToolboxTool`, have been defined. 
+* Input argument structure for method `create_version_from_code` has been simplified. The same information is passed in, but in a modified way. Also, the `code` type has changed from `FileType` to `IO[bytes]`, and the `code_zip_sha256` was made optional (it will be calculated by the method if not provided by the caller).
+* Agent Optimization methods `.beta.agents.*optimization*` were re-written to better align with Foundry job guidelines and platform standards. The old version accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The new version removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
+* Argument `agent_session_id` on Session Files methods was renamed to `session_id`.
+* Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
+* Method `.agents.patch_agent_details` was renamed to `.agents.update_details`.
+* Optional property `default_ttl_seconds` on class `MemoryStoreDefaultOptions` has changed from type `int` to type `datetime.timedelta`.
+* Optional properties `description`, `name` and `tool_configs` have been removed from preview tools (classes derived from class `Tool`, with name ending in `PreviewTool`).
+* Optional properties `description`, `name` and `tool_configs` are now documented as deprecated in stable Agent tools, to be removed in a future version (classes derived from class `Tool` with names not ending with `PreviewTool`).
+* Optional property `protocols` on class `AgentEndpointConfig` was renamed to `protocol_configuration`.
+* Optional property `tools` removed from `HostedAgentDefinition`.
+* Optional property `system_data` removed from `ModelVersion`.
+* `AgentProtocol` class was removed. The `protocol` property in class `ProtocolVersionRecord` is now of type `Union[str, AgentEndpointProtocol]`. 
+
+### Sample updates
+
+* Added agent optimization samples under `samples/agents/optimization/`:
+  * `sample_optimization_job_basic.py` demonstrating how to create an optimization job, poll it to completion, and read the results.
+  * `sample_optimization_job_cancel.py` demonstrating how to create and immediately cancel an optimization job.
+  * `sample_optimization_job_list_get_delete.py` demonstrating how to list optimization jobs with filters, get a job by ID, and delete a job.
+* Added `sample_routines_crud.py` to demonstrate routines CRUD operations.
+* Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
+* Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring Cron schedule via `ScheduleRoutineTrigger`.
+* Added `sample_routines_with_dispatch.py` to demonstrate manually firing a routine on demand via `routines.dispatch(...)` using a `CustomRoutineTrigger`.
+* Added new Hosted Agent sample `sample_toolbox_with_skill.py` under `samples/hosted_agents/`, demonstrating a code-based Hosted Agent that uses Toolbox MCP skills.
+* Updated `sample_dataset_generation_job_traces_for_evaluation.py` and `sample_dataset_generation_job_traces_for_finetuning.py` to create a temporary agent, seed conversations, retry the data generation job over the trace window, and clean up all created resources.
+* Updated the rubric evaluator generation samples (`sample_rubric_evaluator_generation_basic.py`, `sample_rubric_evaluator_generation_iterate.py`, `sample_rubric_evaluator_generation_lifecycle.py`, `sample_rubric_evaluator_generation_all_sources.py`) to use the typed `EvaluatorGenerationJob` / `EvaluatorGenerationInputs` / `*EvaluatorGenerationJobSource` models. The job inputs are now nested under `inputs` per the service contract, and the traces source uses `datetime` values for `start_time` / `end_time`.
+* Updated Hosted Agent code-upload samples (`sample_create_hosted_agent_from_code.py`, `sample_create_hosted_agent_from_code_async.py`) to target runtime `python_3_14`, since `python_3_12` is no longer supported.
+* Updated Hosted Agent echo-agent assets (`samples/hosted_agents/assets/echo-agent/main.py`, `echo-agent-prebuilt.zip`) to use `@app.response_handler`, resolving a response-handling issue. The remote-build code-upload sample now builds the echo-agent zip from `samples/hosted_agents/assets/echo-agent/` at runtime instead of relying on a checked-in `echo-agent.zip`, so users can update the agent code and rerun the sample with their changes.
+* Updated Skills upload/download samples (`sample_skills_upload_and_download.py`, `sample_skills_upload_and_download_async.py`) to build the `team-status-update.zip` package from `samples/skills/assets/team-status-update/` at runtime instead of relying on a checked-in zip archive, so users can update the skill content and rerun the sample with their changes.
+* Updated scheduled evaluation samples (`sample_scheduled_evaluations.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to import `ResourceManagementClient` from `azure.mgmt.resource.resources`.
+* Relocated and renamed `sample_skill_in_toolbox.py` (from `samples/hosted_agents/`) to `samples/agents/tools/sample_agent_toolbox_skill.py`.
+* Relocated Skills samples from `samples/hosted_agents/` to `samples/skills/`:
+  * `sample_skills_crud.py`.
+  * `sample_skills_upload_and_download.py`.
+* Relocated Toolbox sample from `samples/hosted_agents/` to `samples/toolboxes/sample_toolboxes_crud.py`.
+
+## 2.2.0 (2026-05-29)
+
+### Features Added
+
+* Support integration of external Agents (in preview). See new `ExternalAgentDefinition` class.
+* New Agent tool in preview `FabricIQPreviewTool`.
+* New Agent tool in preview `ToolboxSearchPreviewTool`.
+* New methods on `.beta.agents` for 
+  * Code-based hosted agents: `create_version_from_code`, `download_code`.
+  * Optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
+  * Optimization candidate management: `list_optimization_candidates`, `get_optimization_candidate`, `get_optimization_candidate_config`, `get_optimization_candidate_results`, `get_candidate_file`, `promote_candidate`.
+  * `stop_session` to stop a running agent session.
+* New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New `.beta.models` sub-client to handle AI model weights: `create`, `list_versions`, `list`, `get`, `delete`, `update`, `pending_create_version`, `pending_upload`, `get_credentials`.
+* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch`.
+* New methods on `.beta.evaluators` for evaluator generation jobs: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New methods on `.beta.memory_stores` to handle individual memory items: `create_memory`, `update_memory`, `list_memories`, `get_memory`, `delete_memory`.
+* New methods on `.beta.skills` for versioned skill management: `create`, `list_versions`, `get_version`, `download_version`, `delete_version`.
+* New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
+* New optional `tool_configs` added to Agent tool classes.
+* New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
+* New optional `blueprint_reference` parameters on `agents.create_version` method.
+
+
+### Breaking Changes
+
+Breaking changes in beta methods:
+* Argument `isolation_key` in methods `.beta.agents.create_session()` and `.beta.agents.delete_session()` renamed to `user_isolation_key`.
+* Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
+* Argument `body` in method `.beta.skills.create_from_files()` renamed to `content`.
+* Method `.beta.agents.get_session_files` renamed to `.beta.agents.list_session_files`.
+* Method `.beta.skills.create` signature changed — now takes `name` and keyword `inline_content: SkillInlineContent`; returns `SkillVersion`.
+* Method `.beta.skills.create_from_package` renamed to `.beta.skills.create_from_files`.
+* Method `.beta.skills.create_from_files` signature changed — now takes `name` and `content: CreateSkillVersionFromFilesBody`; returns `SkillVersion`.
+* Method `.beta.skills.update` signature changed — now only accepts keyword `default_version`; returns `SkillDetails`.
+
+Breaking changes in beta classes:
+* Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
+* Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
+* Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
+* Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
+* Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
+* Renamed class `SkillObject` to `SkillDetails`. Property `skill_id` renamed to `id`. Properties `has_blob` and `metadata` were removed.
+* Renamed class `Target` to `EvaluationTarget`.
+* Renamed class `TargetConfig` to `RedTeamTargetConfig`.
+
+### Bugs Fixed
+
+* Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
+
+### Sample updates
+
+* Added new Agent tool samples `sample_agent_work_iq.py` and `sample_agent_work_iq_async.py` demonstrating use of `WorkIQPreviewTool`.
+* Added new Agent tool samples `sample_agent_fabric_iq.py` and `sample_agent_fabric_iq_async.py` demonstrating use of `FabricIQPreviewTool`.
+* Hosted Agents:
+  * Added Hosted Agent creation samples `sample_create_hosted_agent.py` and `sample_create_hosted_agent_async.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+  * Added Hosted Agent code-upload samples `sample_create_hosted_agent_from_code.py` and `sample_create_hosted_agent_from_code_async.py`, demonstrating uploading a code package (zip) as a new hosted agent version.
+  * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
+  * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
+* Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
+* Added `.beta.models` samples under `samples/models/`:
+  * `sample_models_basic.py` — synchronous end-to-end registration via the `create` helper (uses `azcopy`), followed by `get`, `list_versions`, `list`, `get_credentials`, `update`, and `delete`.
+  * `sample_models_create_and_poll.py` — alternative synchronous registration that hand-rolls the spec's three-step flow (`pending_upload` → upload via `azure-storage-blob` → `pending_create_version` + poll), without taking a dependency on `azcopy`.
+  * `sample_models_basic_async.py` — asynchronous version of the same three-step flow using `azure.ai.projects.aio.AIProjectClient` and `azure.storage.blob.aio.ContainerClient`.
+* Added new evaluation sample `sample_model_evaluation_instant_model.py` demonstrating model evaluation with an instant model.
+* Refreshed evaluation samples under `samples/evaluations/` and `samples/evaluations/agentic_evaluators/` (including `sample_agent_evaluation`, `sample_agent_response_evaluation`, `sample_eval_catalog_prompt_based_evaluators`, `sample_evaluations_ai_assisted`, `sample_evaluations_builtin_with_csv`, `sample_evaluations_builtin_with_dataset_id`, `sample_evaluations_builtin_with_inline_data`, `sample_evaluations_builtin_with_inline_data_oai`, `sample_scheduled_evaluations`, `sample_coherence`, `sample_fluency`, `sample_intent_resolution`, `sample_relevance`, `sample_response_completeness`, `sample_tool_call_accuracy`, `sample_tool_call_success`, `sample_tool_input_accuracy`, `sample_tool_output_utilization`, `sample_tool_selection`, and `sample_generic_agentic_evaluator`).
+* New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added
 
+* New `WorkIQPreviewTool`.
 * `get_openai_client()` on `AIProjectClient` now takes an optional input argument `agent_name`. If provided, the returned OpenAI
 client will use a base URL of Agent endpoint instead of Foundry Project endpoint. As Agent endpoints are a preview feature, you
 need to set `allow_preview=True` on the `AIProjectClient` constructor.

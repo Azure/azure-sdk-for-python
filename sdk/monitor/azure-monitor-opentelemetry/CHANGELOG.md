@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.9 (Unreleased)
+## 1.8.10 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.9 (2026-07-01)
+
+### Bugs Fixed
+- Enforce size limits on browser SDK snippet injection to guard against decompression bombs and oversized HTML response bodies (1 MiB compressed / 5 MiB decompressed caps).
+  ([#47233](https://github.com/Azure/azure-sdk-for-python/pull/47233))
+
+### Other Changes
+- Track live metrics disabling in feature SDKstats
+  ([#47141](https://github.com/Azure/azure-sdk-for-python/pull/47141))
 
 ## 1.8.8 (2026-05-14)
 
