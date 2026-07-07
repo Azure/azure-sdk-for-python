@@ -47,7 +47,7 @@
 
 ### Other Changes
 
-  - Deleted model `ChatTranscriptsListResult`/`CommunicationsListResult`/`FilesListResult`/`MicrosoftSupport`/`OperationsListResult`/`ProblemClassificationsListResult`/`ServicesListResult`/`SupportTicketsListResult`/`TranscriptContentType` which actually were not used by SDK users
+  - Deleted model `ChatTranscriptsListResult`/`CommunicationsListResult`/`FilesListResult`/`OperationsListResult`/`ProblemClassificationsListResult`/`ServicesListResult`/`SupportTicketsListResult`/`TranscriptContentType` which actually were not used by SDK users
 
 ## 7.0.0 (2024-04-22)
 
