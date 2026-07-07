@@ -14,16 +14,15 @@
 
 ### Skill Prerequisite
 
-1. Windows machine with PowerShell (Windows PowerShell 5.1+ or PowerShell 7+)<br>Install: `winget install --id Microsoft.PowerShell --source winget`
+1. Windows machine with PowerShell (Windows PowerShell 5.1+)<br>Install: `winget install --id Microsoft.PowerShell --source winget`
 1. Git CLI, configured user identity, and authenticated access to GitHub remote<br>Install: `winget install --id Git.Git --source winget`<br>Configure: `git config --global user.name "<your-name>"` and `git config --global user.email "<your-email>"`
 1. GitHub CLI (gh), authenticated (for PR creation)<br>Install: `winget install --id GitHub.cli --source winget`<br>Login: `gh auth login`
 1. Python 3.9 or newer (matches pyproject.toml requires-python >=3.9)<br>Install: `winget install --id Python.Python.3 --source winget`
-1. pip for that Python installation<br>Setup/upgrade: `python -m ensurepip --upgrade` and `python -m pip install --upgrade pip`
+1. `pip` installed<br>Setup/upgrade: `python -m ensurepip --upgrade` and `python -m pip install --upgrade pip`
 1. TypeSpec tsp-client command available in PATH (used by skill Step 4)<br>Install: `npm install -g @azure-tools/typespec-client-generator-cli`
 1. Node.js + npm (typically required to install/use tsp-client)<br>Install: `winget install --id OpenJS.NodeJS.LTS --source winget`
-1. Development Python dependencies from dev_requirements.txt (this covers tools such as black and azpysdk support)<br>Install: `python -m pip install -r dev_requirements.txt`
+1. Dependencies for developing azure-ai-projects, per dev_requirements.txt (this covers tools such as black and azpysdk support)<br>Install: `python -m pip install -r dev_requirements.txt`
 1. Local clone of Azure/azure-rest-api-specs only if using the local TypeSpec source option<br>Setup: `git clone https://github.com/Azure/azure-rest-api-specs.git`
-1. Azure CLI with az login only if running optional live/local tests in Step 15<br>Install: `winget install --id Microsoft.AzureCLI --source winget`<br>Login: `az login`
 
 ### Using GitHub CoPilot in VSCode
 
