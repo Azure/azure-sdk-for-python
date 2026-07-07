@@ -94,7 +94,6 @@ class TestBackupClientTests(KeyVaultTestCase):
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy_async
     async def test_selective_key_restore(self, client, **kwargs):
-        set_bodiless_matcher()
         # create a key to selectively restore
         managed_hsm_url = kwargs.pop("managed_hsm_url")
         key_client = self.create_key_client(managed_hsm_url, is_async=True)
