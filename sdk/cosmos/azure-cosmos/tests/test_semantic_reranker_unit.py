@@ -10,17 +10,24 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.transport import HttpRequest
 
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection as _SyncCosmosClientConnection
+from azure.cosmos._inference_auth_policy import InferenceServiceBearerTokenPolicy
 from azure.cosmos._inference_service import _InferenceService as _SyncInferenceService
 from azure.cosmos.aio._cosmos_client_connection_async import (
     CosmosClientConnection as _AsyncCosmosClientConnection,
 )
+from azure.cosmos.aio._inference_auth_policy_async import AsyncInferenceServiceBearerTokenPolicy
 from azure.cosmos.aio._inference_service_async import _InferenceService as _AsyncInferenceService
 from azure.cosmos.documents import ConnectionPolicy
 
 _INFERENCE_ENDPOINT_ENV_VAR = "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"
+_INFERENCE_KEY_ENV_VAR = "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_KEY"
+_INFERENCE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 _MALFORMED_INPUT_ENV_VAR = "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
 
 
@@ -33,6 +40,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         os.environ[_INFERENCE_ENDPOINT_ENV_VAR] = "https://example.com"
         self._saved_malformed = os.environ.get(_MALFORMED_INPUT_ENV_VAR)
         os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
+        self._saved_key = os.environ.get(_INFERENCE_KEY_ENV_VAR)
+        os.environ.pop(_INFERENCE_KEY_ENV_VAR, None)
 
     def tearDown(self):
         """Restore the inference endpoint env var after each test."""
@@ -44,6 +53,10 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             os.environ[_MALFORMED_INPUT_ENV_VAR] = self._saved_malformed
         else:
             os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
+        if self._saved_key is not None:
+            os.environ[_INFERENCE_KEY_ENV_VAR] = self._saved_key
+        else:
+            os.environ.pop(_INFERENCE_KEY_ENV_VAR, None)
 
     def _create_mock_connection(self, inference_request_timeout=5):
         """Create a mock cosmos client connection with configurable inference timeout."""
@@ -588,6 +601,66 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         second = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
         self.assertIsNotNone(first)
         self.assertIs(first, second)
+
+    # ── key-based authentication tests ──
+
+    def test_sync_inference_uses_key_auth_policy_when_key_env_var_set(self):
+        """Test that the sync inference service uses key-based auth when the key env var is set."""
+        os.environ[_INFERENCE_KEY_ENV_VAR] = "test-key"
+        service = _SyncInferenceService(self._create_mock_connection())
+        self.assertIsInstance(service._create_auth_policy(), AzureKeyCredentialPolicy)
+
+    def test_async_inference_uses_key_auth_policy_when_key_env_var_set(self):
+        """Test that the async inference service uses key-based auth when the key env var is set."""
+        os.environ[_INFERENCE_KEY_ENV_VAR] = "test-key"
+        mock_connection = self._create_mock_connection()
+        mock_connection.connection_policy.DisableSSLVerification = False
+        service = _AsyncInferenceService(mock_connection)
+        self.assertIsInstance(service._create_auth_policy(), AzureKeyCredentialPolicy)
+
+    def test_sync_inference_uses_bearer_auth_policy_without_key_env_var(self):
+        """Test that the sync inference service falls back to AAD bearer auth without the key env var."""
+        service = _SyncInferenceService(self._create_mock_connection())
+        self.assertIsInstance(service._create_auth_policy(), InferenceServiceBearerTokenPolicy)
+
+    def test_async_inference_uses_bearer_auth_policy_without_key_env_var(self):
+        """Test that the async inference service falls back to AAD bearer auth without the key env var."""
+        mock_connection = self._create_mock_connection()
+        mock_connection.connection_policy.DisableSSLVerification = False
+        service = _AsyncInferenceService(mock_connection)
+        self.assertIsInstance(service._create_auth_policy(), AsyncInferenceServiceBearerTokenPolicy)
+
+    def test_key_auth_policy_sets_subscription_key_header(self):
+        """Test that key-based auth injects the key into the Ocp-Apim-Subscription-Key header."""
+        os.environ[_INFERENCE_KEY_ENV_VAR] = "super-secret-key"
+        service = _SyncInferenceService(self._create_mock_connection())
+        request = PipelineRequest(HttpRequest("POST", "https://example.com"), PipelineContext(None))
+        service._create_auth_policy().on_request(request)
+        self.assertEqual(request.http_request.headers.get(_INFERENCE_KEY_HEADER), "super-secret-key")
+
+    def test_sync_get_inference_service_returns_service_with_key_and_no_aad(self):
+        """Test that _get_inference_service() creates a service via key auth when no AAD
+        credentials are present but the key env var is set."""
+        os.environ[_INFERENCE_KEY_ENV_VAR] = "test-key"
+        mock_conn = self._create_mock_connection()
+        mock_conn.aad_credentials = None
+        mock_conn._inference_service = None
+        mock_conn._inference_service_lock = threading.Lock()
+
+        result = _SyncCosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNotNone(result)
+
+    def test_async_get_inference_service_returns_service_with_key_and_no_aad(self):
+        """Test that async _get_inference_service() creates a service via key auth when no AAD
+        credentials are present but the key env var is set."""
+        os.environ[_INFERENCE_KEY_ENV_VAR] = "test-key"
+        mock_conn = self._create_mock_connection()
+        mock_conn.aad_credentials = None
+        mock_conn._inference_service = None
+        mock_conn.connection_policy.DisableSSLVerification = False
+
+        result = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNotNone(result)
 
 
 if __name__ == "__main__":

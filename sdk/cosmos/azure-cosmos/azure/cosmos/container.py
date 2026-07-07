@@ -1140,7 +1140,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         inference_service = self.client_connection._get_inference_service()
         if inference_service is None:
             raise CosmosHttpResponseError(
-                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                message="Semantic reranking requires AAD credentials or the "
+                        "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_KEY environment variable "
+                        "(inference service not initialized).",
                 response=None
             )
 
