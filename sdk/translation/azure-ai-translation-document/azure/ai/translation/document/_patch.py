@@ -85,8 +85,16 @@ def get_translation_input(args, kwargs, continuation_token):
         request = inputs
     # backcompatibility
     elif len(inputs) > 0 and isinstance(inputs[0], DocumentTranslationInput):
+        translate_text_within_image = kwargs.pop("translate_text_within_image", None)
         # pylint: disable=protected-access
-        request = StartTranslationDetails(inputs=[input._to_generated() for input in inputs])
+        request = StartTranslationDetails(
+            inputs=[input._to_generated() for input in inputs],
+            options=(
+                BatchOptions(translate_text_within_image=translate_text_within_image)
+                if translate_text_within_image is not None
+                else None
+            ),
+        )
     else:
         try:
             source_url = kwargs.pop("source_url", None)

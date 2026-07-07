@@ -64,7 +64,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
         # list translations - unable to assert skip!!
         all_translations = client.list_translation_statuses()
-        all_operations_count = 2
+        all_operations_count = 0
         async for translation in all_translations:
             all_operations_count += 1
 

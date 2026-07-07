@@ -278,6 +278,25 @@ class TestModelUpdates(DocumentTranslationTest):
             assert batch.targets[0].target_url == "https://target"
             assert batch.targets[0].language == "es"
 
+    def test_begin_translation_list_inputs_translate_text_within_image(self):
+        # Regression: translate_text_within_image must be honored for the List[DocumentTranslationInput]
+        # batch form (it was previously read only on the single-URL form and silently dropped here).
+        inputs = [
+            DocumentTranslationInput(
+                source_url="https://source",
+                targets=[TranslationTarget(target_url="https://target", language="es")],
+            )
+        ]
+
+        request = get_translation_input((inputs,), {"translate_text_within_image": True}, None)
+        assert isinstance(request, StartTranslationDetails)
+        assert request.options is not None
+        assert request.options.translate_text_within_image is True
+
+        # When the option is not provided, no BatchOptions is attached.
+        request_without = get_translation_input((inputs,), {}, None)
+        assert request_without.options is None
+
     def test_begin_translation_single_input_dispatch(self):
         # The single-input convenience form accepts source/target/language positionally or by
         # keyword; both build an equivalent StartTranslationDetails.
