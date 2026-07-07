@@ -14,7 +14,7 @@ SAMPLES_DIR = Path(__file__).resolve().parents[2] / "samples"
 sys.path.insert(0, str(SAMPLES_DIR.resolve()))
 
 import util
-from util import zip as zip_directory
+from util import zip_directory
 
 
 def test_zip_writes_zip_to_temp_folder(tmp_path, monkeypatch):
