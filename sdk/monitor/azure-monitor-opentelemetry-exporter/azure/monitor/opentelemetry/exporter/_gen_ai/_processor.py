@@ -64,15 +64,16 @@ class _GenAIMainAgentSpanProcessor(SpanProcessor):
                 span.set_attribute(target, value)
 
     def on_end(self, span: ReadableSpan) -> None:
-        attributes = span.attributes
-        if attributes is None:
-            return
-
-        # Retrieve and drop the stored parent reference for this span.
+        # Retrieve and drop the stored parent reference first, before any early
+        # return below, so cleanup is guaranteed for every ended span.
         parent_span = None
         span_context = span.context
         if span_context is not None:
             parent_span = self._parent_spans.pop(span_context.span_id, None)
+
+        attributes = span.attributes
+        if attributes is None:
+            return
 
         # If span already has any microsoft.gen_ai.main_agent.* attribute, return
         for key in attributes:

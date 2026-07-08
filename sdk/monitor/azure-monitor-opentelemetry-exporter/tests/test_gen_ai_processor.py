@@ -241,6 +241,21 @@ class TestGenAIMainAgentSpanProcessorOnEnd(unittest.TestCase):
         span.attributes = None
         self.processor.on_end(span)
 
+    def test_on_end_cleans_up_parent_ref_even_without_attributes(self):
+        """on_end must drop the stored parent reference even on the early-return
+        path where span.attributes is None, so the map does not leak entries."""
+        span_id = 12345
+        parent_span = MagicMock()
+        self.processor._parent_spans[span_id] = parent_span
+
+        span = MagicMock()
+        span.attributes = None
+        span.context.span_id = span_id
+
+        self.processor.on_end(span)
+
+        self.assertNotIn(span_id, self.processor._parent_spans)
+
     def test_on_end_not_invoke_agent(self):
         """on_end should no-op when gen_ai.operation.name is not invoke_agent."""
         span = MagicMock()
@@ -559,6 +574,7 @@ class TestGenAIMainAgentSpanProcessorSDKPropagation(unittest.TestCase):
 class TestGenAIMainAgentLogRecordProcessor(unittest.TestCase):
     def setUp(self):
         self.processor = _GenAIMainAgentLogRecordProcessor()
+
     def test_on_emit_no_current_span(self):
         """on_emit should no-op when there is no valid current span."""
         log_record = MagicMock()
