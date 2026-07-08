@@ -18,7 +18,6 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_CHANGE_VERSION_KEY,
 )
 
 
@@ -82,7 +81,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
-        self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.has_exception)
 
@@ -90,13 +88,12 @@ class TestOneSettingsResponse(unittest.TestCase):
         """Test OneSettingsResponse with custom values."""
         settings = {"key": "value"}
         response = OneSettingsResponse(
-            etag="test-etag", refresh_interval=3600, settings=settings, version=5, status_code=304
+            etag="test-etag", refresh_interval=3600, settings=settings, status_code=304
         )
 
         self.assertEqual(response.etag, "test-etag")
         self.assertEqual(response.refresh_interval, 3600)
         self.assertEqual(response.settings, settings)
-        self.assertEqual(response.version, 5)
         self.assertEqual(response.status_code, 304)
         self.assertFalse(response.has_exception)
 
@@ -107,7 +104,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
-        self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 500)
         self.assertTrue(response.has_exception)
 
@@ -118,7 +114,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
-        self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.has_exception)
 
@@ -144,7 +139,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         mock_response.status_code = 200
         mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "30"}
         mock_response.content = json.dumps(
-            {"settings": {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"}}
+            {"settings": {"key": "value", "FEATURE_X": "enabled"}}
         ).encode("utf-8")
         mock_get.return_value = mock_response
 
@@ -159,8 +154,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         # Verify response
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 1800)  # 30 minutes * 60
-        self.assertEqual(result.settings, {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"})
-        self.assertEqual(result.version, 5)
+        self.assertEqual(result.settings, {"key": "value", "FEATURE_X": "enabled"})
         self.assertEqual(result.status_code, 200)
         self.assertFalse(result.has_exception)
 
@@ -175,7 +169,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -190,7 +183,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -205,7 +197,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -220,7 +211,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -246,7 +236,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -280,7 +269,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -294,15 +282,14 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         mock_response.status_code = 200
         mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "45"}
         mock_response.content = json.dumps(
-            {"settings": {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"}}
+            {"settings": {"feature": "enabled", "CHANGE_VERSION": "10"}}
         ).encode("utf-8")
 
         result = _parse_onesettings_response(mock_response)
 
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 2700)  # 45 minutes * 60
-        self.assertEqual(result.settings, {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"})
-        self.assertEqual(result.version, 10)
+        self.assertEqual(result.settings, {"feature": "enabled", "CHANGE_VERSION": "10"})
         self.assertEqual(result.status_code, 200)
 
     def test_parse_304_response(self):
@@ -317,7 +304,6 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         self.assertEqual(result.etag, "cached-etag")
         self.assertEqual(result.refresh_interval, 3600)  # 60 minutes * 60
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 304)
 
     def test_parse_invalid_json(self):
@@ -332,7 +318,6 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
 
 
