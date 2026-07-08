@@ -52,9 +52,7 @@ class _ConfigurationWorker:
         self._lock = threading.Lock()  # Single lock for all worker state
 
         self._shutdown_event = threading.Event()
-        self._refresh_thread = threading.Thread(
-            target=self._get_configuration, name="ConfigurationWorker", daemon=True
-        )
+        self._refresh_thread = threading.Thread(target=self._get_configuration, name="ConfigurationWorker", daemon=True)
         self._refresh_interval = refresh_interval or self._default_refresh_interval
         self._shutdown_event.clear()
         self._refresh_thread.start()

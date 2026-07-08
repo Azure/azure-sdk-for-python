@@ -86,9 +86,7 @@ class TestOneSettingsResponse(unittest.TestCase):
         response = OneSettingsResponse()
 
         self.assertIsNone(response.etag)
-        self.assertEqual(
-            response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.has_exception)
@@ -96,9 +94,7 @@ class TestOneSettingsResponse(unittest.TestCase):
     def test_custom_initialization(self):
         """Test OneSettingsResponse with custom values."""
         settings = {"key": "value"}
-        response = OneSettingsResponse(
-            etag="test-etag", refresh_interval=3600, settings=settings, status_code=304
-        )
+        response = OneSettingsResponse(etag="test-etag", refresh_interval=3600, settings=settings, status_code=304)
 
         self.assertEqual(response.etag, "test-etag")
         self.assertEqual(response.refresh_interval, 3600)
@@ -111,9 +107,7 @@ class TestOneSettingsResponse(unittest.TestCase):
         response = OneSettingsResponse(has_exception=True, status_code=500)
 
         self.assertIsNone(response.etag)
-        self.assertEqual(
-            response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertEqual(response.status_code, 500)
         self.assertTrue(response.has_exception)
@@ -123,9 +117,7 @@ class TestOneSettingsResponse(unittest.TestCase):
         response = OneSettingsResponse(has_exception=True)
 
         self.assertIsNone(response.etag)
-        self.assertEqual(
-            response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.has_exception)
@@ -151,15 +143,11 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "30"}
-        mock_response.content = json.dumps(
-            {"settings": {"key": "value", "FEATURE_X": "enabled"}}
-        ).encode("utf-8")
+        mock_response.content = json.dumps({"settings": {"key": "value", "FEATURE_X": "enabled"}}).encode("utf-8")
         mock_get.return_value = mock_response
 
         # Make request
-        result = make_onesettings_request(
-            "http://test.com", {"param": "value"}, {"header": "value"}
-        )
+        result = make_onesettings_request("http://test.com", {"param": "value"}, {"header": "value"})
 
         # Verify request was made correctly
         mock_get.assert_called_once_with(
@@ -185,9 +173,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with timeout and exception indicators
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -201,9 +187,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator but no timeout
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -217,9 +201,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -233,17 +215,13 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
-    @patch(
-        "azure.monitor.opentelemetry.exporter._configuration._utils._parse_onesettings_response"
-    )
+    @patch("azure.monitor.opentelemetry.exporter._configuration._utils._parse_onesettings_response")
     def test_json_decode_exception(self, mock_parse, mock_get):
         """Test OneSettings request with JSON decode exception."""
         # Setup mock response
@@ -256,17 +234,13 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         # Mock _parse_onesettings_response to raise JSONDecodeError
         from json import JSONDecodeError
 
-        mock_parse.side_effect = JSONDecodeError(
-            "Expecting value", "invalid json content", 0
-        )
+        mock_parse.side_effect = JSONDecodeError("Expecting value", "invalid json content", 0)
 
         result = make_onesettings_request("http://test.com")
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -281,18 +255,14 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
             with self.subTest(status_code=status_code):
                 mock_response = Mock()
                 mock_response.status_code = status_code
-                mock_response.raise_for_status.side_effect = (
-                    requests.exceptions.HTTPError(f"HTTP {status_code}")
-                )
+                mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(f"HTTP {status_code}")
                 mock_get.return_value = mock_response
 
                 result = make_onesettings_request("http://test.com")
 
                 # Should return response with exception indicator
                 self.assertTrue(result.has_exception)
-                self.assertEqual(
-                    result.status_code, 200
-                )  # Default status when exception occurs
+                self.assertEqual(result.status_code, 200)  # Default status when exception occurs
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_exception_legacy(self, mock_get):
@@ -303,9 +273,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -319,17 +287,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "45"}
-        mock_response.content = json.dumps(
-            {"settings": {"feature": "enabled", "CHANGE_VERSION": "10"}}
-        ).encode("utf-8")
+        mock_response.content = json.dumps({"settings": {"feature": "enabled", "CHANGE_VERSION": "10"}}).encode("utf-8")
 
         result = _parse_onesettings_response(mock_response)
 
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 2700)  # 45 minutes * 60
-        self.assertEqual(
-            result.settings, {"feature": "enabled", "CHANGE_VERSION": "10"}
-        )
+        self.assertEqual(result.settings, {"feature": "enabled", "CHANGE_VERSION": "10"})
         self.assertEqual(result.status_code, 200)
 
     def test_parse_304_response(self):
@@ -356,9 +320,7 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         result = _parse_onesettings_response(mock_response)
 
         self.assertIsNone(result.etag)
-        self.assertEqual(
-            result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        )
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
 
@@ -642,9 +604,7 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
 
         for _has_timeout, has_exception, status_code, description in test_cases:
             with self.subTest(description=description):
-                response = OneSettingsResponse(
-                    has_exception=has_exception, status_code=status_code
-                )
+                response = OneSettingsResponse(has_exception=has_exception, status_code=status_code)
                 self.assertEqual(response.has_exception, has_exception)
                 self.assertEqual(response.status_code, status_code)
 
