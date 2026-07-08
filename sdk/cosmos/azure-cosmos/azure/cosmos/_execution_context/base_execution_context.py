@@ -27,7 +27,6 @@ from collections import deque
 import copy
 import logging
 from .. import _retry_utility, http_constants, exceptions, _base
-from .._constants import _Constants as Constants
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +50,9 @@ class _QueryExecutionContextBase(object):
         self._has_finished = False
         self._buffer = deque()
         self._resource_link = None
+        # Per-query mutable capture used by __QueryFeed to report response
+        # headers (including failure checkpoints) without crossing requests.
+        self._internal_response_headers_capture = {}
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -118,8 +120,15 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         new_options = copy.deepcopy(self._options)
+        # Clear stale values from prior pages before issuing a new fetch.
+        self._internal_response_headers_capture.clear()
         while self._continuation or not self._has_started:
             new_options["continuation"] = self._continuation
+            # Reattach on every iteration: __QueryFeed pops this key off
+            # `options`, so without re-setting it here later loop iterations
+            # (empty-page-with-continuation case) would lose the capture and
+            # the 410 retry layer would resume from stale headers.
+            new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
 
             response_headers = {}
             (fetched_items, response_headers) = fetch_function(new_options)
@@ -183,45 +192,48 @@ class _QueryExecutionContextBase(object):
                     )
 
                     # Refresh routing map to get new partition key ranges.
-                    # When resource_link is available, do a targeted refresh for just this collection
-                    # instead of the global refresh of all collections' cached routing maps.
-                    if self._resource_link:
-                        collection_id = _base.GetResourceIdOrFullNameFromLink(self._resource_link)
-                        previous_map = self._client._routing_map_provider._collection_routing_map_by_item.get(
-                            collection_id)
-                        _LOGGER.debug(
-                            "Partition split retry: Targeted refresh for collection %s (has_previous_map=%s)",
-                            self._resource_link,
-                            previous_map is not None,
-                        )
-                        refresh_feed_options = {}
-                        if Constants.ContainerRID in self._options:
-                            refresh_feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
-                        if "excludedLocations" in self._options:
-                            refresh_feed_options["excludedLocations"] = self._options["excludedLocations"]
+                    collection_link = self._resource_link
+                    if collection_link:
+                        previous_routing_map = None
+                        routing_map_provider = getattr(self._client, "_routing_map_provider", None)
+                        if routing_map_provider is not None:
+                            routing_map_cache = getattr(routing_map_provider, "_collection_routing_map_by_item", {})
+                            if isinstance(routing_map_cache, dict):
+                                # The cache is keyed by the normalized resource id,
+                                # not the raw collection_link. Normalize via
+                                # _base.GetResourceIdOrFullNameFromLink and fall back
+                                # to the raw link only if normalization throws.
+                                # Without this the .get() almost always returns None
+                                # and the refresh below silently degrades to a full
+                                # repopulation on every 410.
+                                lookup_key = collection_link
+                                try:
+                                    lookup_key = _base.GetResourceIdOrFullNameFromLink(collection_link)
+                                except (AttributeError, IndexError, TypeError, ValueError):
+                                    _LOGGER.debug(
+                                        "Partition split retry: could not normalize collection_link "
+                                        "'%s'; using raw value for previous-routing-map lookup.",
+                                        collection_link,
+                                    )
+                                previous_routing_map = routing_map_cache.get(lookup_key)
                         self._client.refresh_routing_map_provider(
-                            self._resource_link,
-                            previous_map,
-                            refresh_feed_options if refresh_feed_options else None,
+                            collection_link,
+                            previous_routing_map,
+                            self._options,
                         )
                     else:
-                        # No resource_link available — defensive fallback to global nuke.
-                        # This branch should not be reached in practice since all callers now pass resource_link.
-                        _LOGGER.debug("Partition split retry: No resource_link available, using global refresh")
                         self._client.refresh_routing_map_provider()
-
-                    # Reset execution context state to allow retry from the beginning
+                    # Reset execution context state for retry. If __QueryFeed already
+                    # stamped a checkpoint continuation on failure, resume from it.
+                    continuation_key = http_constants.HttpHeaders.Continuation
+                    checkpoint_continuation = self._internal_response_headers_capture.get(continuation_key)
                     self._has_started = False
-                    self._continuation = None
+                    self._continuation = checkpoint_continuation
                     # Retry immediately (no backoff needed for partition splits)
                     continue
                 raise  # Not a partition split error, propagate immediately
 
         # This should never be reached, but added for safety
-        _LOGGER.warning(
-            "Partition split retry: Unexpectedly exited retry loop without returning results. "
-            "This indicates a potential logic error."
-        )
         return []
     next = __next__  # Python 2 compatibility.
 
@@ -238,9 +250,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         :param method fetch_function:
             Will be invoked for retrieving each page
         :param str resource_link:
-            Optional collection link used for targeted routing map refresh on 410 partition split.
-            When provided, the 410 retry loop refreshes only this collection's cached routing map
-            instead of destroying all collections' cached maps.
+            Optional collection link associated with this execution context.
 
             Example of `fetch_function`:
 

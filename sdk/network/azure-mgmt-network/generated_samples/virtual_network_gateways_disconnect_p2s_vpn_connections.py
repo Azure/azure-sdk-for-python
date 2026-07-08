@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-05-01/VirtualNetworkGatewaysDisconnectP2sVpnConnections.json
+# x-ms-original-file: 2025-07-01/VirtualNetworkGatewaysDisconnectP2sVpnConnections.json
 if __name__ == "__main__":
     main()

@@ -47,6 +47,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                     "managedResourceGroupConfiguration": {"location": "str", "name": "str"},
                     "managerExtendedLocation": {"name": "str", "type": "str"},
                     "provisioningState": "str",
+                    "relayConfiguration": {"relayNamespaceId": "str"},
                     "vmSize": "str",
                 },
                 "etag": "str",
@@ -57,6 +58,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "kind": "str",
                 "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -111,5 +113,16 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
     def test_cluster_managers_list_by_subscription(self, resource_group):
         response = self.client.cluster_managers.list_by_subscription()
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_cluster_managers_begin_update_relay_private_endpoint_connection(self, resource_group):
+        response = self.client.cluster_managers.begin_update_relay_private_endpoint_connection(
+            resource_group_name=resource_group.name,
+            cluster_manager_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

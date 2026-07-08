@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VirtualNetworkGetServiceAssociationLinks.json
+# x-ms-original-file: 2025-07-01/VirtualNetworkGetServiceAssociationLinks.json
 if __name__ == "__main__":
     main()

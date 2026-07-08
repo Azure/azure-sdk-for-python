@@ -78,6 +78,7 @@ class TestNetAppManagementCachesOperations(AzureMgmtRecordedTestCase):
                             }
                         ]
                     },
+                    "fileAccessLogs": "str",
                     "globalFileLocking": "str",
                     "kerberos": "str",
                     "keyVaultPrivateEndpointResourceId": "str",

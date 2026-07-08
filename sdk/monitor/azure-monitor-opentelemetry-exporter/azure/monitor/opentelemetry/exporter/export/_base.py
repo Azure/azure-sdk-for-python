@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _INVALID_STATUS_CODES,
@@ -51,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _get_sha256_hash,
+    _get_retry_delay_from_headers,
 )
 from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
     _TokenBucketRateLimiter,
@@ -162,6 +164,7 @@ class BaseExporter:
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
+        self._retry_after_delay_seconds: Optional[int] = None
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -271,9 +274,15 @@ class BaseExporter:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
-                result_from_storage_put = self.storage.put(envelopes_to_store)
+                if self._retry_after_delay_seconds is not None:
+                    result_from_storage_put = self.storage.put(
+                        envelopes_to_store, lease_period=self._retry_after_delay_seconds
+                    )
+                else:
+                    result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)
+                self._retry_after_delay_seconds = None
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
@@ -286,6 +295,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-locals
     def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
@@ -346,8 +356,20 @@ class BaseExporter:
             reach_ingestion = False
             start_time = time.time()
             final_result = None
+            retry_after_delay_seconds = None
             try:
-                track_response = self.client.track(envelopes)
+                track_result = self.client.track(
+                    envelopes,
+                    cls=lambda pipeline_response, deserialized, _: (
+                        deserialized,
+                        pipeline_response.http_response.headers,
+                    ),
+                )
+                response_headers: Any = {}
+                if isinstance(track_result, tuple) and len(track_result) == 2:
+                    track_response, response_headers = track_result
+                else:
+                    track_response = track_result
                 if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
                     if not self._is_stats_exporter():
@@ -378,6 +400,11 @@ class BaseExporter:
                                     (envelopes[error.index] if error.index is not None else ""),
                                 )
                         elif _is_retryable_code(error.status_code):
+                            if error.status_code == 429 and response_headers != {}:
+                                delay = _get_retry_delay_from_headers(response_headers)
+                                if delay is not None and delay > 0:
+                                    retry_after_delay_seconds = delay
+
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
                             # Track retried items in customer sdkstats
                             if self._should_collect_customer_sdkstats():
@@ -401,7 +428,12 @@ class BaseExporter:
                                 )
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
-                        result_from_storage = self.storage.put(envelopes_to_store, 0)
+                        lease_period = (
+                            retry_after_delay_seconds
+                            if retry_after_delay_seconds is not None
+                            else self._storage_min_retry_interval
+                        )
+                        result_from_storage = self.storage.put(envelopes_to_store, lease_period)
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
@@ -439,6 +471,11 @@ class BaseExporter:
                                 "has the correct `Monitoring Metrics Publisher` role assigned.",
                                 response_error.message,
                             )
+                        elif response_error.status_code == 429:
+                            headers = None
+                            if response_error.response and response_error.response.headers:  # type: ignore
+                                headers = response_error.response.headers  # type: ignore
+                            retry_after_delay_seconds = _get_retry_delay_from_headers(headers)
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
@@ -458,10 +495,32 @@ class BaseExporter:
                         else:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
-                            # Change the host to the new redirected host
-                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
-                            # Attempt to export again
-                            result = self._transmit(envelopes, _skip_rate_limit=True)
+                            current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
+                            # Refuse cross-origin redirects so an attacker-controlled
+                            # `Location` header cannot cause the auth policy to attach
+                            # a freshly-signed Authorization header for a foreign host
+                            # on the recursive _transmit call.
+                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                                if not self._is_stats_exporter():
+                                    if self._should_collect_customer_sdkstats():
+                                        track_dropped_items(
+                                            envelopes,
+                                            DropCode.CLIENT_EXCEPTION,
+                                            _exception_categories.CLIENT_EXCEPTION.value,
+                                        )
+                                    logger.error(
+                                        "Refusing cross-origin redirect to %s://%s.",
+                                        url.scheme,
+                                        url.netloc,
+                                    )
+                                result = ExportResult.FAILED_NOT_RETRYABLE
+                            else:
+                                # Change the host to the new redirected host
+                                self.client._config.host = "{}://{}".format(
+                                    url.scheme, url.netloc
+                                )  # pylint: disable=W0212
+                                # Attempt to export again
+                                result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
@@ -574,6 +633,10 @@ class BaseExporter:
 
                 if final_result is None:
                     final_result = result
+                if final_result == ExportResult.FAILED_RETRYABLE:
+                    self._retry_after_delay_seconds = retry_after_delay_seconds
+                else:
+                    self._retry_after_delay_seconds = None
             return final_result
 
         # No spans to export
@@ -610,6 +673,46 @@ class BaseExporter:
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
+
+    def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
+        """Return True if the redirect target is safe to follow.
+
+        Used to gate redirects so an attacker-controlled ``Location`` header
+        cannot cause the exporter (and its credential-bearing pipeline) to
+        send telemetry and the Authorization header to an unrelated host.
+
+        A redirect is permitted only when the target equals the currently
+        configured host exactly, or when both the current host and the
+        redirect target are under one of the known Azure Monitor ingestion
+        host suffixes (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIXES``). Customers
+        with a custom (non-Azure) ingestion host will therefore not have
+        server-issued cross-host redirects followed; such deployments should
+        configure their proxy to terminate redirects locally.
+
+        :param str current_netloc: The netloc of the currently-configured ingestion endpoint.
+        :param str redirect_netloc: The netloc of the redirect target from the server's location header.
+        :return: True if the redirect target is considered safe to follow.
+        :rtype: bool
+        """
+
+        def _host(netloc: str) -> str:
+            return netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
+
+        if not current_netloc or not redirect_netloc:
+            return False
+        current_host = _host(current_netloc)
+        redirect_host = _host(redirect_netloc)
+        if not current_host or not redirect_host:
+            return False
+        # Exact host match is always safe.
+        if current_host == redirect_host:
+            return True
+        # Otherwise both hosts must live under the same trusted Azure Monitor
+        # ingestion suffix.
+        for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES:
+            if current_host.endswith(suffix) and redirect_host.endswith(suffix):
+                return True
+        return False
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
