@@ -38,12 +38,13 @@
   - Added enum `ResourceHealthReasonChronicity`
   - Added enum `ResourceHealthReasonType`
   - Added model `SignalConfiguration`
-  - Model `EntitiesOperations` added method `add_data_annotation`
-  - Model `EntitiesOperations` added method `get_data_annotations`
-  - Model `EntitiesOperations` added method `get_signal_recommendations`
+  - Operation group `EntitiesOperations` added method `add_data_annotation`
+  - Operation group `EntitiesOperations` added method `get_data_annotations`
+  - Operation group `EntitiesOperations` added method `get_signal_recommendations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `AzureResourceSignal` deleted or renamed its instance variable `dimension`
   - Deleted or renamed enum value `RefreshInterval.PT10M`
   - Deleted or renamed enum value `RefreshInterval.PT1H`
