@@ -112,6 +112,10 @@ ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_v
 # the arm client). The separate v2024_04_01_preview msrest client is still required by the compute
 # (update_sso_settings) and Azure OpenAI deployment (.connection group) operations, which have no arm equivalent.
 ServiceClient042024PreviewArm = partial(MachineLearningServicesMgmtClient, api_version="2024-04-01-preview")
+# arm_ml_service-backed client pinned to the 2024-01-01-preview wire api-version. Operations whose entities now
+# build arm_ml_service bodies are being repointed onto this shared arm client (marketplace subscriptions,
+# serverless endpoints, ...) so their responses deserialize into the arm_ml_service models.
+ServiceClient012024PreviewArm = partial(MachineLearningServicesMgmtClient, api_version="2024-01-01-preview")
 
 module_logger = logging.getLogger(__name__)
 
@@ -511,6 +515,20 @@ class MLClient:
             **kwargs,
         )
 
+        # arm_ml_service-backed client at the 2024-01-01-preview wire api-version. Operations whose entities now
+        # build arm_ml_service bodies (marketplace subscriptions, serverless endpoints, ...) use this so their
+        # responses deserialize into the arm_ml_service models.
+        self._service_client_01_2024_preview_arm = ServiceClient012024PreviewArm(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_10_2024_preview_tsp,
@@ -789,13 +807,13 @@ class MLClient:
         self._serverless_endpoints = ServerlessEndpointOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_01_2024_preview,
+            self._service_client_01_2024_preview_arm,
             self._operation_container,
         )
         self._marketplace_subscriptions = MarketplaceSubscriptionOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_01_2024_preview,
+            self._service_client_01_2024_preview_arm,
         )
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)

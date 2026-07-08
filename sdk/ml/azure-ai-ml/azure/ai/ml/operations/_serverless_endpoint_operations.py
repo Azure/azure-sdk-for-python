@@ -7,10 +7,10 @@
 import re
 from typing import Iterable
 
-from azure.ai.ml._restclient.v2024_01_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient202401Preview,
+from azure.ai.ml._restclient.arm_ml_service import (
+    MachineLearningServicesMgmtClient as ServiceClient202401Preview,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     KeyType,
     RegenerateEndpointKeysRequest,
 )

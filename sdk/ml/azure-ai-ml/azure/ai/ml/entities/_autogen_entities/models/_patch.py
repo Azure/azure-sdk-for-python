@@ -12,16 +12,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import MarketplaceSubscription as RestMarketplaceSubscription
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import MarketplaceSubscription as RestMarketplaceSubscription
+from azure.ai.ml._restclient.arm_ml_service.models import (
     MarketplaceSubscriptionProperties as RestMarketplaceSubscriptionProperties,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelSettings as RestModelSettings
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ServerlessEndpoint as RestServerlessEndpoint
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ModelSettings as RestModelSettings
+from azure.ai.ml._restclient.arm_ml_service.models import ServerlessEndpoint as RestServerlessEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServerlessEndpointProperties as RestServerlessEndpointProperties,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models import Sku as RestSku
+from azure.ai.ml._restclient.arm_ml_service.models import Sku as RestSku
 from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     EndpointDeploymentResourcePropertiesBasicResource,
     OpenAIEndpointDeploymentResourceProperties,
@@ -136,7 +136,6 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
             properties=RestServerlessEndpointProperties(
                 model_settings=RestModelSettings(model_id=self.model_id),
             ),
-            auth_mode="key",  # only key is supported for now
             tags=self.tags,
             sku=RestSku(name="Consumption"),
             location=self.location,
