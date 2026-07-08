@@ -715,7 +715,11 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview),
+            (
+                self._service_client_10_2021_dataplanepreview
+                if registry_name
+                else self._service_client_01_2024_preview_arm
+            ),
             self._operation_container,
             self._preflight,
             **ops_kwargs,  # type: ignore[arg-type]
