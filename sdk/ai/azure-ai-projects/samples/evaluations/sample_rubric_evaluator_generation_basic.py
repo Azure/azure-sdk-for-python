@@ -47,8 +47,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import cast
-
+from typing import cast, Union
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
@@ -56,6 +55,8 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -171,7 +172,7 @@ with (
     )
 
     # 3. Run the evaluation against inline JSONL sample data.
-    eval_run = openai_client.evals.runs.create(
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name=f"{evaluator.name}-run",
         metadata={"sample": "rubric_evaluator_generation_basic"},

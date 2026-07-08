@@ -42,6 +42,7 @@ USAGE:
 
 import os
 import time
+from typing import Union
 
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
@@ -51,6 +52,8 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     InputMessagesTemplateTemplateEvalItem,
     SourceFileID,
 )
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from openai.types.responses.response_input_text_param import ResponseInputTextParam
 
 from azure.identity import DefaultAzureCredential
@@ -231,7 +234,7 @@ def main() -> None:
             input_messages=input_message,
             model=model_name,
         )
-        eval_run = openai_client.evals.runs.create(
+        eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
             eval_id=eval_object.id,
             name="generated-qna-evaluation-run",
             data_source=data_source,

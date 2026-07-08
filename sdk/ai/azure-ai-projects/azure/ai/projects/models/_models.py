@@ -58,7 +58,7 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _unions, models as _models
 
 
 class _CreateAgentVersionFromCodeContent(_Model):
@@ -161,17 +161,16 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebSearchTool,
+    WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
-     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
-     "openapi".
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
+     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -7332,7 +7331,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Deprecated. This property is deprecated and will be removed in a future version."""
@@ -7350,7 +7349,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         vector_store_ids: list[str],
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_types.Filters"] = None,
+        filters: Optional["_unions.Filters"] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
@@ -7401,7 +7400,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     vector_store_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The IDs of the vector stores to search."""
@@ -7415,7 +7414,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_types.Filters"] = None,
+        filters: Optional["_unions.Filters"] = None,
         vector_store_ids: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -9170,12 +9169,13 @@ class MCPTool(Tool, discriminator="mcp"):
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
-    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
-     provided.
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
-     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
+     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9190,6 +9190,9 @@ class MCPTool(Tool, discriminator="mcp"):
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
+    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
+    :vartype tunnel_id: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -9219,7 +9222,8 @@ class MCPTool(Tool, discriminator="mcp"):
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9232,8 +9236,8 @@ class MCPTool(Tool, discriminator="mcp"):
             "connector_sharepoint",
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
-      ``connector_id`` must be provided. Learn more about service connectors `here
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
+      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
@@ -9248,6 +9252,9 @@ class MCPTool(Tool, discriminator="mcp"):
         Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
         Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
+    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
+     ``connector_id``, or ``tunnel_id`` must be provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -9291,6 +9298,7 @@ class MCPTool(Tool, discriminator="mcp"):
                 "connector_sharepoint",
             ]
         ] = None,
+        tunnel_id: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -9328,12 +9336,13 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
-    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
-     provided.
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
-     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
+     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9348,6 +9357,9 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
+    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
+    :vartype tunnel_id: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -9374,7 +9386,8 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9387,8 +9400,8 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
             "connector_sharepoint",
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
-      ``connector_id`` must be provided. Learn more about service connectors `here
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
+      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
@@ -9403,6 +9416,9 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
         Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
         Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
+    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
+     ``connector_id``, or ``tunnel_id`` must be provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -9445,6 +9461,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
                 "connector_sharepoint",
             ]
         ] = None,
+        tunnel_id: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -12437,6 +12454,9 @@ class Reasoning(_Model):
     :ivar summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype summary: str or str or str
+    :ivar context: Is one of the following types: Literal["auto"], Literal["current_turn"],
+     Literal["all_turns"]
+    :vartype context: str or str or str
     :ivar generate_summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype generate_summary: str or str or str
@@ -12451,6 +12471,11 @@ class Reasoning(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Is one of the following types: Literal[\"auto\"], Literal[\"concise\"], Literal[\"detailed\"]"""
+    context: Optional[Literal["auto", "current_turn", "all_turns"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is one of the following types: Literal[\"auto\"], Literal[\"current_turn\"],
+     Literal[\"all_turns\"]"""
     generate_summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12462,6 +12487,7 @@ class Reasoning(_Model):
         *,
         effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]] = None,
         summary: Optional[Literal["auto", "concise", "detailed"]] = None,
+        context: Optional[Literal["auto", "current_turn", "all_turns"]] = None,
         generate_summary: Optional[Literal["auto", "concise", "detailed"]] = None,
     ) -> None: ...
 
@@ -12849,7 +12875,9 @@ class RoutineRun(_Model):
 
     id: str = rest_field(visibility=["read"])
     """The unique run identifier for the routine attempt. Required."""
-    status: Optional["_types.RoutineRunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Optional["_unions.RoutineRunStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The run status. Is one of the following types: str"""
     phase: Optional[Union[str, "_models.RoutineRunPhase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -12920,7 +12948,7 @@ class RoutineRun(_Model):
     def __init__(
         self,
         *,
-        status: Optional["_types.RoutineRunStatus"] = None,
+        status: Optional["_unions.RoutineRunStatus"] = None,
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,

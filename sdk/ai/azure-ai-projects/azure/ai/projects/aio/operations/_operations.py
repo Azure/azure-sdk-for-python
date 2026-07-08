@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
@@ -522,7 +522,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
 
@@ -536,7 +541,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -574,7 +579,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def create_version(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionRequest, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
@@ -594,8 +599,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateAgentVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionRequest or IO[bytes]
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
@@ -742,7 +748,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_version_from_manifest(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionFromManifestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version from manifest.
 
@@ -756,7 +767,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionFromManifestRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -794,7 +805,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def create_version_from_manifest(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionFromManifestRequest, IO[bytes]] = _Unset,
         *,
         manifest_id: str = _Unset,
         parameter_values: dict[str, Any] = _Unset,
@@ -813,8 +824,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateAgentVersionFromManifestRequest,
+         IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionFromManifestRequest or IO[bytes]
         :keyword manifest_id: The manifest ID to import the agent version from. Required.
         :paramtype manifest_id: str
         :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
@@ -1193,7 +1205,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_details(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.PatchAgentObjectRequest,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
 
@@ -1202,7 +1219,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.PatchAgentObjectRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1235,7 +1252,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def update_details(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.PatchAgentObjectRequest, IO[bytes]] = _Unset,
         *,
         agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
         agent_card: Optional[_models.AgentCard] = None,
@@ -1247,8 +1264,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, PatchAgentObjectRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.PatchAgentObjectRequest or IO[bytes]
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
         :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
@@ -1336,14 +1353,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.AgentVersionDetails: ...
     @overload
     async def _create_version_from_code(
-        self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
+        self,
+        agent_name: str,
+        content: _types._CreateAgentVersionFromCodeContent,
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
     ) -> _models.AgentVersionDetails: ...
 
     @distributed_trace_async
     async def _create_version_from_code(
         self,
         agent_name: str,
-        content: Union[_models._models._CreateAgentVersionFromCodeContent, JSON],
+        content: Union[_models._models._CreateAgentVersionFromCodeContent, _types._CreateAgentVersionFromCodeContent],
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -1362,8 +1384,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: Is either a _CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or JSON
+        :param content: Is one of the following types: _CreateAgentVersionFromCodeContent Required.
+        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or
+         ~azure.ai.projects.types._CreateAgentVersionFromCodeContent
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
@@ -1660,7 +1683,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_session(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateSessionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentSessionResource:
         """Create a session.
 
@@ -1671,7 +1699,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateSessionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1706,7 +1734,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def create_session(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateSessionRequest, IO[bytes]] = _Unset,
         *,
         version_indicator: _models.VersionIndicator = _Unset,
         agent_session_id: Optional[str] = None,
@@ -1720,8 +1748,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateSessionRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateSessionRequest or IO[bytes]
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
@@ -2673,7 +2701,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, evaluation_rule: _types.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -2682,7 +2710,7 @@ class EvaluationRulesOperations:
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: JSON
+        :type evaluation_rule: ~azure.ai.projects.types.EvaluationRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2713,7 +2741,7 @@ class EvaluationRulesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, _types.EvaluationRule, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -2721,9 +2749,10 @@ class EvaluationRulesOperations:
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :param evaluation_rule: Evaluation rule resource. Is one of the following types:
-         EvaluationRule, JSON, IO[bytes] Required.
-        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
+        :param evaluation_rule: Evaluation rule resource. Is either a EvaluationRule type or a
+         IO[bytes] type. Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or
+         ~azure.ai.projects.types.EvaluationRule or IO[bytes]
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3513,7 +3542,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        dataset_version: JSON,
+        dataset_version: _types.DatasetVersion,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -3527,7 +3556,7 @@ class DatasetsOperations:
         :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
         :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: JSON
+        :type dataset_version: ~azure.ai.projects.types.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -3566,7 +3595,11 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, name: str, version: str, dataset_version: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        dataset_version: Union[_models.DatasetVersion, _types.DatasetVersion, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create or update a version.
 
@@ -3576,9 +3609,10 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Is one of the following types:
-         DatasetVersion, JSON, IO[bytes] Required.
-        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or JSON or IO[bytes]
+        :param dataset_version: The DatasetVersion to create or update. Is either a DatasetVersion type
+         or a IO[bytes] type. Required.
+        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or
+         ~azure.ai.projects.types.DatasetVersion or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3678,7 +3712,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        pending_upload_request: JSON,
+        pending_upload_request: _types.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3692,7 +3726,7 @@ class DatasetsOperations:
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
         :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: JSON
+        :type pending_upload_request: ~azure.ai.projects.types.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3734,7 +3768,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.PendingUploadRequest, _types.PendingUploadRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a pending upload.
@@ -3745,10 +3779,10 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is one of the following
-         types: PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
-         IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Is either a
+         PendingUploadRequest type or a IO[bytes] type. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or
+         ~azure.ai.projects.types.PendingUploadRequest or IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4428,7 +4462,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, version: str, index: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        index: _types.Index,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create or update a version.
 
@@ -4439,7 +4479,7 @@ class IndexesOperations:
         :param version: The specific version id of the Index to create or update. Required.
         :type version: str
         :param index: The Index to create or update. Required.
-        :type index: JSON
+        :type index: ~azure.ai.projects.types.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -4478,7 +4518,7 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, name: str, version: str, index: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, version: str, index: Union[_models.Index, _types.Index, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
         """Create or update a version.
 
@@ -4488,9 +4528,9 @@ class IndexesOperations:
         :type name: str
         :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param index: The Index to create or update. Is one of the following types: Index, JSON,
-         IO[bytes] Required.
-        :type index: ~azure.ai.projects.models.Index or JSON or IO[bytes]
+        :param index: The Index to create or update. Is either a Index type or a IO[bytes] type.
+         Required.
+        :type index: ~azure.ai.projects.models.Index or ~azure.ai.projects.types.Index or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4618,7 +4658,12 @@ class ToolboxesOperations:
 
     @overload
     async def create_version(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types.CreateToolboxVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox.
 
@@ -4628,7 +4673,7 @@ class ToolboxesOperations:
          Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateToolboxVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4662,7 +4707,7 @@ class ToolboxesOperations:
     async def create_version(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateToolboxVersionRequest, IO[bytes]] = _Unset,
         *,
         tools: List[_models.ToolboxTool] = _Unset,
         description: Optional[str] = None,
@@ -4678,8 +4723,9 @@ class ToolboxesOperations:
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateToolboxVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateToolboxVersionRequest or IO[bytes]
         :keyword tools: The list of tools to include in this version. Required.
         :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
         :keyword description: A human-readable description of the toolbox. Default value is None.
@@ -5121,7 +5167,7 @@ class ToolboxesOperations:
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateToolboxRequest1, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
@@ -5130,7 +5176,7 @@ class ToolboxesOperations:
         :param name: The name of the toolbox to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateToolboxRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5161,7 +5207,12 @@ class ToolboxesOperations:
 
     @distributed_trace_async
     async def update(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.UpdateToolboxRequest1, IO[bytes]] = _Unset,
+        *,
+        default_version: str = _Unset,
+        **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
@@ -5169,8 +5220,8 @@ class ToolboxesOperations:
 
         :param name: The name of the toolbox to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateToolboxRequest1, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateToolboxRequest1 or IO[bytes]
         :keyword default_version: The version identifier that the toolbox should point to. When set,
          the toolbox's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
@@ -5611,7 +5662,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: _types.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5620,7 +5671,7 @@ class BetaEvaluationTaxonomiesOperations:
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: JSON
+        :type taxonomy: ~azure.ai.projects.types.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5651,7 +5702,10 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def create(
-        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        taxonomy: Union[_models.EvaluationTaxonomy, _types.EvaluationTaxonomy, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5659,9 +5713,10 @@ class BetaEvaluationTaxonomiesOperations:
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
-         JSON, IO[bytes] Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Is either a EvaluationTaxonomy type or a IO[bytes]
+         type. Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or
+         ~azure.ai.projects.types.EvaluationTaxonomy or IO[bytes]
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5749,7 +5804,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: _types.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5758,7 +5813,7 @@ class BetaEvaluationTaxonomiesOperations:
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: JSON
+        :type taxonomy: ~azure.ai.projects.types.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5789,7 +5844,10 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def update(
-        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        taxonomy: Union[_models.EvaluationTaxonomy, _types.EvaluationTaxonomy, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5797,9 +5855,10 @@ class BetaEvaluationTaxonomiesOperations:
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
-         JSON, IO[bytes] Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Is either a EvaluationTaxonomy type or a IO[bytes]
+         type. Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or
+         ~azure.ai.projects.types.EvaluationTaxonomy or IO[bytes]
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6243,7 +6302,12 @@ class BetaEvaluatorsOperations:
 
     @overload
     async def create_version(
-        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        evaluator_version: _types.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create an evaluator version.
 
@@ -6252,7 +6316,7 @@ class BetaEvaluatorsOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :param evaluator_version: Required.
-        :type evaluator_version: JSON
+        :type evaluator_version: ~azure.ai.projects.types.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6283,7 +6347,10 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def create_version(
-        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        evaluator_version: Union[_models.EvaluatorVersion, _types.EvaluatorVersion, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create an evaluator version.
 
@@ -6291,9 +6358,9 @@ class BetaEvaluatorsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
-         Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :param evaluator_version: Is either a EvaluatorVersion type or a IO[bytes] type. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or
+         ~azure.ai.projects.types.EvaluatorVersion or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6389,7 +6456,13 @@ class BetaEvaluatorsOperations:
 
     @overload
     async def update_version(
-        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        evaluator_version: _types.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an evaluator version.
 
@@ -6400,7 +6473,7 @@ class BetaEvaluatorsOperations:
         :param version: The version of the EvaluatorVersion to update. Required.
         :type version: str
         :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: JSON
+        :type evaluator_version: ~azure.ai.projects.types.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6442,7 +6515,7 @@ class BetaEvaluatorsOperations:
         self,
         name: str,
         version: str,
-        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
+        evaluator_version: Union[_models.EvaluatorVersion, _types.EvaluatorVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an evaluator version.
@@ -6453,9 +6526,10 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The version of the EvaluatorVersion to update. Required.
         :type version: str
-        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
-         JSON, IO[bytes] Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :param evaluator_version: Evaluator resource. Is either a EvaluatorVersion type or a IO[bytes]
+         type. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or
+         ~azure.ai.projects.types.EvaluatorVersion or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6556,7 +6630,7 @@ class BetaEvaluatorsOperations:
         self,
         name: str,
         version: str,
-        pending_upload_request: JSON,
+        pending_upload_request: _types.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6571,7 +6645,7 @@ class BetaEvaluatorsOperations:
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
         :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: JSON
+        :type pending_upload_request: ~azure.ai.projects.types.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6614,7 +6688,7 @@ class BetaEvaluatorsOperations:
         self,
         name: str,
         version: str,
-        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.PendingUploadRequest, _types.PendingUploadRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a pending upload.
@@ -6626,10 +6700,10 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is one of the following
-         types: PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
-         IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Is either a
+         PendingUploadRequest type or a IO[bytes] type. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or
+         ~azure.ai.projects.types.PendingUploadRequest or IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6734,7 +6808,7 @@ class BetaEvaluatorsOperations:
         self,
         name: str,
         version: str,
-        credential_request: JSON,
+        credential_request: _types.EvaluatorCredentialRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6749,7 +6823,7 @@ class BetaEvaluatorsOperations:
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
         :param credential_request: The credential request parameters. Required.
-        :type credential_request: JSON
+        :type credential_request: ~azure.ai.projects.types.EvaluatorCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6792,7 +6866,7 @@ class BetaEvaluatorsOperations:
         self,
         name: str,
         version: str,
-        credential_request: Union[_models.EvaluatorCredentialRequest, JSON, IO[bytes]],
+        credential_request: Union[_models.EvaluatorCredentialRequest, _types.EvaluatorCredentialRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get evaluator credentials.
@@ -6804,10 +6878,10 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
-        :param credential_request: The credential request parameters. Is one of the following types:
-         EvaluatorCredentialRequest, JSON, IO[bytes] Required.
-        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest or JSON or
-         IO[bytes]
+        :param credential_request: The credential request parameters. Is either a
+         EvaluatorCredentialRequest type or a IO[bytes] type. Required.
+        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest or
+         ~azure.ai.projects.types.EvaluatorCredentialRequest or IO[bytes]
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6907,7 +6981,12 @@ class BetaEvaluatorsOperations:
 
     @overload
     async def create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        job: _types.EvaluatorGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluatorGenerationJob:
         """Create an evaluator generation job.
 
@@ -6915,7 +6994,7 @@ class BetaEvaluatorsOperations:
         from the provided source materials asynchronously.
 
         :param job: The job to create. Required.
-        :type job: JSON
+        :type job: ~azure.ai.projects.types.EvaluatorGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -6957,7 +7036,7 @@ class BetaEvaluatorsOperations:
     @distributed_trace_async
     async def create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationJob, _types.EvaluatorGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -6967,9 +7046,10 @@ class BetaEvaluatorsOperations:
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Is either a EvaluatorGenerationJob type or a IO[bytes] type.
+         Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or
+         ~azure.ai.projects.types.EvaluatorGenerationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -7372,7 +7452,7 @@ class BetaInsightsOperations:
 
     @overload
     async def generate(
-        self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, insight: _types.Insight, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
         """Generate insights.
 
@@ -7380,7 +7460,7 @@ class BetaInsightsOperations:
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
-        :type insight: JSON
+        :type insight: ~azure.ai.projects.types.Insight
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7409,14 +7489,17 @@ class BetaInsightsOperations:
         """
 
     @distributed_trace_async
-    async def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
+    async def generate(
+        self, insight: Union[_models.Insight, _types.Insight, IO[bytes]], **kwargs: Any
+    ) -> _models.Insight:
         """Generate insights.
 
         Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
-        :type insight: ~azure.ai.projects.models.Insight or JSON or IO[bytes]
+         settings. Is either a Insight type or a IO[bytes] type. Required.
+        :type insight: ~azure.ai.projects.models.Insight or ~azure.ai.projects.types.Insight or
+         IO[bytes]
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7730,14 +7813,14 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CreateMemoryStoreRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         Creates a memory store resource with the provided configuration.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateMemoryStoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7767,7 +7850,7 @@ class BetaMemoryStoresOperations:
     @distributed_trace_async
     async def create(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateMemoryStoreRequest, IO[bytes]] = _Unset,
         *,
         name: str = _Unset,
         definition: _models.MemoryStoreDefinition = _Unset,
@@ -7779,8 +7862,8 @@ class BetaMemoryStoresOperations:
 
         Creates a memory store resource with the provided configuration.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateMemoryStoreRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateMemoryStoreRequest or IO[bytes]
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -7896,7 +7979,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateMemoryStoreRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
@@ -7905,7 +7988,7 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateMemoryStoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7938,7 +8021,7 @@ class BetaMemoryStoresOperations:
     async def update(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoryStoreRequest, IO[bytes]] = _Unset,
         *,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -7950,8 +8033,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateMemoryStoreRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoryStoreRequest or IO[bytes]
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
@@ -8269,7 +8352,7 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreSearchResult: ...
     @overload
     async def _search_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.SearchMemoriesRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
     @overload
     async def _search_memories(
@@ -8280,7 +8363,7 @@ class BetaMemoryStoresOperations:
     async def _search_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SearchMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -8294,8 +8377,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store to search. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SearchMemoriesRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.SearchMemoriesRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -8383,7 +8466,7 @@ class BetaMemoryStoresOperations:
     async def _update_memories_initial(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -8479,7 +8562,7 @@ class BetaMemoryStoresOperations:
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     async def _begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateMemoriesRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     async def _begin_update_memories(
@@ -8490,7 +8573,7 @@ class BetaMemoryStoresOperations:
     async def _begin_update_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -8505,8 +8588,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateMemoriesRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoriesRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -8612,7 +8695,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def delete_scope(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.DeleteScopeRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
@@ -8621,7 +8704,7 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.DeleteScopeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8654,7 +8737,12 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace_async
     async def delete_scope(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.DeleteScopeRequest, IO[bytes]] = _Unset,
+        *,
+        scope: str = _Unset,
+        **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
@@ -8662,8 +8750,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, DeleteScopeRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.DeleteScopeRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
@@ -8777,7 +8865,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def create_memory(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.CreateMemoryRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
         """Create a memory item.
 
@@ -8786,7 +8874,7 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateMemoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8819,7 +8907,7 @@ class BetaMemoryStoresOperations:
     async def create_memory(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateMemoryRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         content: str = _Unset,
@@ -8832,8 +8920,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateMemoryRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateMemoryRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -8944,7 +9032,13 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def update_memory(
-        self, name: str, memory_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        memory_id: str,
+        body: _types.UpdateMemoryRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.MemoryItem:
         """Update a memory item.
 
@@ -8955,7 +9049,7 @@ class BetaMemoryStoresOperations:
         :param memory_id: The ID of the memory item to update. Required.
         :type memory_id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateMemoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8988,7 +9082,13 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace_async
     async def update_memory(
-        self, name: str, memory_id: str, body: Union[JSON, IO[bytes]] = _Unset, *, content: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        memory_id: str,
+        body: Union[JSON, _types.UpdateMemoryRequest, IO[bytes]] = _Unset,
+        *,
+        content: str = _Unset,
+        **kwargs: Any
     ) -> _models.MemoryItem:
         """Update a memory item.
 
@@ -8998,8 +9098,8 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param memory_id: The ID of the memory item to update. Required.
         :type memory_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateMemoryRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoryRequest or IO[bytes]
         :keyword content: The updated content of the memory. Required.
         :paramtype content: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
@@ -9198,7 +9298,7 @@ class BetaMemoryStoresOperations:
     def list_memories(
         self,
         name: str,
-        body: JSON,
+        body: _types.ListMemoriesRequest,
         *,
         kind: Optional[Union[str, _models.MemoryItemKind]] = None,
         limit: Optional[int] = None,
@@ -9214,7 +9314,7 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.ListMemoriesRequest
         :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
          and "procedural". Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
@@ -9290,7 +9390,7 @@ class BetaMemoryStoresOperations:
     def list_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.ListMemoriesRequest, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
         kind: Optional[Union[str, _models.MemoryItemKind]] = None,
@@ -9305,8 +9405,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, ListMemoriesRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.ListMemoriesRequest or IO[bytes]
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -9833,7 +9933,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        model_version_update: JSON,
+        model_version_update: _types.UpdateModelVersionRequest,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -9848,7 +9948,7 @@ class BetaModelsOperations:
          Required.
         :type version: str
         :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
-        :type model_version_update: JSON
+        :type model_version_update: ~azure.ai.projects.types.UpdateModelVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9891,7 +9991,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        model_version_update: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]],
+        model_version_update: Union[_models.UpdateModelVersionRequest, _types.UpdateModelVersionRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ModelVersion:
         """Update a model version.
@@ -9903,10 +10003,10 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param model_version_update: The UpdateModelVersionRequest to create or update. Is one of the
-         following types: UpdateModelVersionRequest, JSON, IO[bytes] Required.
-        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or
-         IO[bytes]
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Is either a
+         UpdateModelVersionRequest type or a IO[bytes] type. Required.
+        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or
+         ~azure.ai.projects.types.UpdateModelVersionRequest or IO[bytes]
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10004,7 +10104,13 @@ class BetaModelsOperations:
 
     @overload
     async def pending_create_version(
-        self, name: str, version: str, model_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        model_version: _types.ModelVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Create a model version async.
 
@@ -10016,7 +10122,7 @@ class BetaModelsOperations:
         :param version: Version of the model. Required.
         :type version: str
         :param model_version: Model version to create. Required.
-        :type model_version: JSON
+        :type model_version: ~azure.ai.projects.types.ModelVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10056,7 +10162,11 @@ class BetaModelsOperations:
 
     @distributed_trace_async
     async def pending_create_version(
-        self, name: str, version: str, model_version: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        model_version: Union[_models.ModelVersion, _types.ModelVersion, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Create a model version async.
 
@@ -10067,9 +10177,10 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param model_version: Model version to create. Is one of the following types: ModelVersion,
-         JSON, IO[bytes] Required.
-        :type model_version: ~azure.ai.projects.models.ModelVersion or JSON or IO[bytes]
+        :param model_version: Model version to create. Is either a ModelVersion type or a IO[bytes]
+         type. Required.
+        :type model_version: ~azure.ai.projects.models.ModelVersion or
+         ~azure.ai.projects.types.ModelVersion or IO[bytes]
         :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.CreateAsyncResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10173,7 +10284,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        pending_upload_request: JSON,
+        pending_upload_request: _types.ModelPendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10187,7 +10298,7 @@ class BetaModelsOperations:
         :param version: Version of the model. Required.
         :type version: str
         :param pending_upload_request: Required.
-        :type pending_upload_request: JSON
+        :type pending_upload_request: ~azure.ai.projects.types.ModelPendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10231,7 +10342,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        pending_upload_request: Union[_models.ModelPendingUploadRequest, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.ModelPendingUploadRequest, _types.ModelPendingUploadRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
         """Start a pending upload.
@@ -10242,10 +10353,10 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: Is one of the following types: ModelPendingUploadRequest, JSON,
-         IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or JSON or
-         IO[bytes]
+        :param pending_upload_request: Is either a ModelPendingUploadRequest type or a IO[bytes] type.
+         Required.
+        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or
+         ~azure.ai.projects.types.ModelPendingUploadRequest or IO[bytes]
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
@@ -10346,7 +10457,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        credential_request: JSON,
+        credential_request: _types.ModelCredentialRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10360,7 +10471,7 @@ class BetaModelsOperations:
         :param version: Version of the model. Required.
         :type version: str
         :param credential_request: Required.
-        :type credential_request: JSON
+        :type credential_request: ~azure.ai.projects.types.ModelCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10402,7 +10513,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        credential_request: Union[_models.ModelCredentialRequest, JSON, IO[bytes]],
+        credential_request: Union[_models.ModelCredentialRequest, _types.ModelCredentialRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get model asset credentials.
@@ -10413,9 +10524,10 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: Is one of the following types: ModelCredentialRequest, JSON,
-         IO[bytes] Required.
-        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
+        :param credential_request: Is either a ModelCredentialRequest type or a IO[bytes] type.
+         Required.
+        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or
+         ~azure.ai.projects.types.ModelCredentialRequest or IO[bytes]
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10672,13 +10784,15 @@ class BetaRedTeamsOperations:
         """
 
     @overload
-    async def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
+    async def create(
+        self, red_team: _types.RedTeam, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.RedTeam:
         """Create a redteam run.
 
         Submits a new redteam run for execution with the provided configuration.
 
         :param red_team: Redteam to be run. Required.
-        :type red_team: JSON
+        :type red_team: ~azure.ai.projects.types.RedTeam
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10706,14 +10820,16 @@ class BetaRedTeamsOperations:
         """
 
     @distributed_trace_async
-    async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
+    async def create(
+        self, red_team: Union[_models.RedTeam, _types.RedTeam, IO[bytes]], **kwargs: Any
+    ) -> _models.RedTeam:
         """Create a redteam run.
 
         Submits a new redteam run for execution with the provided configuration.
 
-        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
-         Required.
-        :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
+        :param red_team: Redteam to be run. Is either a RedTeam type or a IO[bytes] type. Required.
+        :type red_team: ~azure.ai.projects.models.RedTeam or ~azure.ai.projects.types.RedTeam or
+         IO[bytes]
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10837,7 +10953,12 @@ class BetaRoutinesOperations:
 
     @overload
     async def create_or_update(
-        self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        routine_name: str,
+        body: _types.CreateOrUpdateRoutineRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Routine:
         """Create or update a routine.
 
@@ -10846,7 +10967,7 @@ class BetaRoutinesOperations:
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateOrUpdateRoutineRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10879,7 +11000,7 @@ class BetaRoutinesOperations:
     async def create_or_update(
         self,
         routine_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateOrUpdateRoutineRequest, IO[bytes]] = _Unset,
         *,
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
@@ -10893,8 +11014,9 @@ class BetaRoutinesOperations:
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateOrUpdateRoutineRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateOrUpdateRoutineRequest or IO[bytes]
         :keyword description: A human-readable description of the routine. Default value is None.
         :paramtype description: str
         :keyword enabled: Whether the routine is enabled. Default value is None.
@@ -11435,7 +11557,12 @@ class BetaRoutinesOperations:
 
     @overload
     async def dispatch(
-        self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        routine_name: str,
+        body: _types.DispatchRoutineAsyncRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
@@ -11444,7 +11571,7 @@ class BetaRoutinesOperations:
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.DispatchRoutineAsyncRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11477,7 +11604,7 @@ class BetaRoutinesOperations:
     async def dispatch(
         self,
         routine_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.DispatchRoutineAsyncRequest, IO[bytes]] = _Unset,
         *,
         payload: Optional[_models.RoutineDispatchPayload] = None,
         **kwargs: Any
@@ -11488,8 +11615,9 @@ class BetaRoutinesOperations:
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, DispatchRoutineAsyncRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.DispatchRoutineAsyncRequest or IO[bytes]
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
         :paramtype payload: ~azure.ai.projects.models.RoutineDispatchPayload
@@ -11821,7 +11949,7 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: _types.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update a schedule.
 
@@ -11830,7 +11958,7 @@ class BetaSchedulesOperations:
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
         :param schedule: The resource instance. Required.
-        :type schedule: JSON
+        :type schedule: ~azure.ai.projects.types.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11861,7 +11989,7 @@ class BetaSchedulesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
+        self, schedule_id: str, schedule: Union[_models.Schedule, _types.Schedule, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update a schedule.
 
@@ -11869,9 +11997,10 @@ class BetaSchedulesOperations:
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
-         IO[bytes] Required.
-        :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
+        :param schedule: The resource instance. Is either a Schedule type or a IO[bytes] type.
+         Required.
+        :type schedule: ~azure.ai.projects.models.Schedule or ~azure.ai.projects.types.Schedule or
+         IO[bytes]
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12314,7 +12443,7 @@ class BetaSkillsOperations:
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _types.UpdateSkillRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillDetails:
         """Update a skill.
 
@@ -12323,7 +12452,7 @@ class BetaSkillsOperations:
         :param name: The name of the skill to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateSkillRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12354,7 +12483,12 @@ class BetaSkillsOperations:
 
     @distributed_trace_async
     async def update(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.UpdateSkillRequest, IO[bytes]] = _Unset,
+        *,
+        default_version: str = _Unset,
+        **kwargs: Any
     ) -> _models.SkillDetails:
         """Update a skill.
 
@@ -12362,8 +12496,8 @@ class BetaSkillsOperations:
 
         :param name: The name of the skill to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, UpdateSkillRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateSkillRequest or IO[bytes]
         :keyword default_version: The version identifier that the skill should point to. When set, the
          skill's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
@@ -12539,7 +12673,12 @@ class BetaSkillsOperations:
 
     @overload
     async def create(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types.CreateSkillVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SkillVersion:
         """Create a new version of a skill.
 
@@ -12548,7 +12687,7 @@ class BetaSkillsOperations:
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateSkillVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12581,7 +12720,7 @@ class BetaSkillsOperations:
     async def create(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateSkillVersionRequest, IO[bytes]] = _Unset,
         *,
         inline_content: Optional[_models.SkillInlineContent] = None,
         default: Optional[bool] = None,
@@ -12593,8 +12732,9 @@ class BetaSkillsOperations:
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateSkillVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateSkillVersionRequest or IO[bytes]
         :keyword inline_content: Inline skill content for simple skills without file uploads.
          Foundry-specific extension. Default value is None.
         :paramtype inline_content: ~azure.ai.projects.models.SkillInlineContent
@@ -12690,23 +12830,8 @@ class BetaSkillsOperations:
         """
 
     @overload
-    async def create_from_files(self, name: str, content: JSON, **kwargs: Any) -> _models.SkillVersion:
-        """Create a skill version from uploaded files.
-
-        Creates a new version of a skill from uploaded files via multipart form data.
-
-        :param name: The name of the skill. Required.
-        :type name: str
-        :param content: Required.
-        :type content: JSON
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
     async def create_from_files(
-        self, name: str, content: Union[_models.CreateSkillVersionFromFilesBody, JSON], **kwargs: Any
+        self, name: str, content: _types.CreateSkillVersionFromFilesBody, **kwargs: Any
     ) -> _models.SkillVersion:
         """Create a skill version from uploaded files.
 
@@ -12714,8 +12839,29 @@ class BetaSkillsOperations:
 
         :param name: The name of the skill. Required.
         :type name: str
-        :param content: Is either a CreateSkillVersionFromFilesBody type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody or JSON
+        :param content: Required.
+        :type content: ~azure.ai.projects.types.CreateSkillVersionFromFilesBody
+        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_from_files(
+        self,
+        name: str,
+        content: Union[_models.CreateSkillVersionFromFilesBody, _types.CreateSkillVersionFromFilesBody],
+        **kwargs: Any
+    ) -> _models.SkillVersion:
+        """Create a skill version from uploaded files.
+
+        Creates a new version of a skill from uploaded files via multipart form data.
+
+        :param name: The name of the skill. Required.
+        :type name: str
+        :param content: Is one of the following types: CreateSkillVersionFromFilesBody Required.
+        :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody or
+         ~azure.ai.projects.types.CreateSkillVersionFromFilesBody
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13363,14 +13509,19 @@ class BetaDatasetsOperations:
 
     @overload
     async def create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        job: _types.DataGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DataGenerationJob:
         """Create a data generation job.
 
         Submits a new data generation job for asynchronous execution.
 
         :param job: The job to create. Required.
-        :type job: JSON
+        :type job: ~azure.ai.projects.types.DataGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -13411,7 +13562,7 @@ class BetaDatasetsOperations:
     @distributed_trace_async
     async def create_generation_job(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJob, _types.DataGenerationJob, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -13420,9 +13571,10 @@ class BetaDatasetsOperations:
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Is either a DataGenerationJob type or a IO[bytes] type.
+         Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJob or
+         ~azure.ai.projects.types.DataGenerationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -13667,7 +13819,12 @@ class BetaAgentsOperations:
 
     @overload
     async def create_optimization_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self,
+        job: _types.OptimizationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.OptimizationJob:
         """Creates an agent optimization job.
 
@@ -13675,7 +13832,7 @@ class BetaAgentsOperations:
         idempotent retry.
 
         :param job: The job to create. Required.
-        :type job: JSON
+        :type job: ~azure.ai.projects.types.OptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -13716,16 +13873,20 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def create_optimization_job(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
+        self,
+        job: Union[_models.OptimizationJob, _types.OptimizationJob, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.OptimizationJob:
         """Creates an agent optimization job.
 
         Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
         idempotent retry.
 
-        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
-         Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :param job: The job to create. Is either a OptimizationJob type or a IO[bytes] type. Required.
+        :type job: ~azure.ai.projects.models.OptimizationJob or
+         ~azure.ai.projects.types.OptimizationJob or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
