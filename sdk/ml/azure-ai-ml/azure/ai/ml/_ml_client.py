@@ -107,6 +107,11 @@ ServiceClient042023Preview = partial(MachineLearningServicesMgmtClient, api_vers
 ServiceClient062023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-06-01-preview")
 ServiceClient012025Preview = partial(MachineLearningServicesMgmtClient, api_version="2025-01-01-preview")
 ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_version="2024-10-01-preview")
+# arm_ml_service-backed client pinned to the 2024-04-01-preview wire api-version, used only by the workspace
+# connections operation (whose entity already builds arm_ml_service bodies and whose operation methods all match
+# the arm client). The separate v2024_04_01_preview msrest client is still required by the compute
+# (update_sso_settings) and Azure OpenAI deployment (.connection group) operations, which have no arm equivalent.
+ServiceClient042024PreviewArm = partial(MachineLearningServicesMgmtClient, api_version="2024-04-01-preview")
 
 module_logger = logging.getLogger(__name__)
 
@@ -493,6 +498,19 @@ class MLClient:
             **kwargs,
         )
 
+        # arm_ml_service-backed client at the 2024-04-01-preview wire api-version, used only by the workspace
+        # connections operation so it deserializes responses into the shared arm_ml_service models it now builds.
+        self._service_client_04_2024_preview_arm = ServiceClient042024PreviewArm(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_10_2024_preview_tsp,
@@ -523,7 +541,7 @@ class MLClient:
         self._connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2024_preview,
+            self._service_client_04_2024_preview_arm,
             self._operation_container,
             self._credential,
         )
