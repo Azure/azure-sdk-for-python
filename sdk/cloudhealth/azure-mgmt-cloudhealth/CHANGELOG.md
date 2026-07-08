@@ -44,14 +44,13 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `AzureResourceSignal` deleted or renamed its instance variable `dimension`
   - Deleted or renamed enum value `RefreshInterval.PT10M`
   - Deleted or renamed enum value `RefreshInterval.PT1H`
   - Deleted or renamed enum value `RefreshInterval.PT1M`
   - Deleted or renamed enum value `RefreshInterval.PT2H`
   - Deleted or renamed enum value `RefreshInterval.PT30M`
   - Deleted or renamed enum value `RefreshInterval.PT5M`
+  - Model `AzureResourceSignal` deleted or renamed its instance variable `dimension`
   - Model `ResourceMetricSignalDefinitionProperties` deleted or renamed its instance variable `dimension`
 
 ## 1.0.0b2 (2026-04-24)
