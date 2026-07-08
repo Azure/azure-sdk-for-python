@@ -84,9 +84,9 @@ with (
 
     print("Creating a single evaluator version - Prompt based (json style)")
     # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
-    prompt_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]
+    prompt_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name="my_custom_evaluator_prompt",
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": "my_custom_evaluator_prompt",
             "categories": [EvaluatorCategory.QUALITY],
             "display_name": "my_custom_evaluator_prompt",

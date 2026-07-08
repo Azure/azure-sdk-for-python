@@ -164,9 +164,9 @@ with (
 
     # 3. Save the edited definition as v2.
     # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
-    v2 = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]
+    v2 = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name=evaluator_name,
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": evaluator_name,
             # Narrow each category to its enum value (the categories list is Union[str, EvaluatorCategory]).
             "categories": [c.value if isinstance(c, EvaluatorCategory) else c for c in v1.categories],

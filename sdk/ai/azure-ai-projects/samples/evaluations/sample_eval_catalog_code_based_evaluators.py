@@ -51,9 +51,9 @@ with (
 
     print("Creating a single evaluator version - Code based (json style)")
     # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
-    code_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]
+    code_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name="my_custom_evaluator_code",
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": "my_custom_evaluator_code",
             "categories": [EvaluatorCategory.QUALITY],
             "display_name": "my_custom_evaluator_code",
