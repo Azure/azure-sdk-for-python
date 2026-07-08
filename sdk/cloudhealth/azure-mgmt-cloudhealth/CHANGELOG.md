@@ -1,5 +1,58 @@
 # Release History
 
+## 1.0.0b3 (2026-07-07)
+
+### Features Added
+
+  - Model `AzureResourceSignals` added property `resource_health`
+  - Model `DiscoveryRuleProperties` added property `add_resource_health_signal`
+  - Model `EntityHistoryRequest` added property `top`
+  - Model `EntityHistoryRequest` added property `next_marker`
+  - Model `EntityHistoryResponse` added property `next_marker`
+  - Enum `RefreshInterval` added member `PT10_M`
+  - Enum `RefreshInterval` added member `PT15_M`
+  - Enum `RefreshInterval` added member `PT1_H`
+  - Enum `RefreshInterval` added member `PT1_M`
+  - Enum `RefreshInterval` added member `PT2_H`
+  - Enum `RefreshInterval` added member `PT30_M`
+  - Enum `RefreshInterval` added member `PT5_M`
+  - Model `SignalHistoryRequest` added property `top`
+  - Model `SignalHistoryRequest` added property `next_marker`
+  - Model `SignalHistoryResponse` added property `next_marker`
+  - Enum `SignalOperator` added member `DYNAMIC`
+  - Model `SignalStatus` added property `additional_context`
+  - Model `ThresholdRuleV2` added property `sensitivity`
+  - Model `ThresholdRuleV2` added property `look_back_window`
+  - Added model `AddDataAnnotationRequest`
+  - Added model `AzureResourceHealthSignal`
+  - Added model `AzureResourceHealthSignalStatus`
+  - Added model `DataAnnotation`
+  - Added enum `DynamicThresholdSensitivity`
+  - Added model `GetDataAnnotationsRequest`
+  - Added model `GetDataAnnotationsResponse`
+  - Added model `GetSignalRecommendationsResponse`
+  - Added enum `LookBackWindow`
+  - Added enum `ResourceHealthAvailabilityState`
+  - Added enum `ResourceHealthAvailabilityStateSignalBehavior`
+  - Added enum `ResourceHealthCategory`
+  - Added enum `ResourceHealthReasonChronicity`
+  - Added enum `ResourceHealthReasonType`
+  - Added model `SignalConfiguration`
+  - Operation group `EntitiesOperations` added method `add_data_annotation`
+  - Operation group `EntitiesOperations` added method `get_data_annotations`
+  - Operation group `EntitiesOperations` added method `get_signal_recommendations`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `RefreshInterval.PT10M`
+  - Deleted or renamed enum value `RefreshInterval.PT1H`
+  - Deleted or renamed enum value `RefreshInterval.PT1M`
+  - Deleted or renamed enum value `RefreshInterval.PT2H`
+  - Deleted or renamed enum value `RefreshInterval.PT30M`
+  - Deleted or renamed enum value `RefreshInterval.PT5M`
+  - Model `AzureResourceSignal` deleted or renamed its instance variable `dimension`
+  - Model `ResourceMetricSignalDefinitionProperties` deleted or renamed its instance variable `dimension`
+
 ## 1.0.0b2 (2026-04-24)
 
 ### Features Added

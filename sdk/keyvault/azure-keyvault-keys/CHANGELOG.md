@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+- Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
+
 ### Other Changes
 
 ## 4.12.0b2 (2026-05-29)
