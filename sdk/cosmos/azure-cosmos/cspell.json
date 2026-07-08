@@ -1,5 +1,7 @@
 {
     "ignoreWords": [
+        "acked",
+        "activityid",
         "hdrh",
         "hdrhistogram",
         "dedup",
@@ -7,12 +9,16 @@
         "deduping",
         "dedupe",
         "dedups",
+        "llsn",
         "perfdb",
         "perfresults",
         "pkrange",
         "ppcb",
         "reindexing",
+        "rerank",
         "reranker",
-        "toctou"
+        "responsecontinuationtokenlimitinkb",
+        "toctou",
+        "ufffd"
     ]
 }

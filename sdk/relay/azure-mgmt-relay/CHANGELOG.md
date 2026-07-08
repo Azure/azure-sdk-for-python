@@ -1,5 +1,38 @@
 # Release History
 
+## 2.0.0b2 (2026-07-06)
+
+### Features Added
+
+  - Model `Operation` added property `action_type`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `RelayUpdateParameters` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceNamespacePatch` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added enum `Origin`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `RelayAPI` to `RelayAPIMgmtClient`
+  - Model `AuthorizationRule` moved instance variable `rights` under property `properties` whose type is `AuthorizationRuleProperties`
+  - Model `HybridConnection` moved instance variable `created_at`, `updated_at`, `listener_count`, `requires_client_authorization` and `user_metadata` under property `properties` whose type is `HybridConnectionProperties`
+  - Model `NetworkRuleSet` moved instance variable `default_action`, `public_network_access` and `ip_rules` under property `properties` whose type is `NetworkRuleSetProperties`
+  - Model `Operation` deleted or renamed its instance variable `properties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `RelayNamespace` moved instance variable `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `private_endpoint_connections` and `public_network_access` under property `properties` whose type is `RelayNamespaceProperties`
+  - Model `RelayUpdateParameters` moved instance variable `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `private_endpoint_connections` and `public_network_access` under property `properties` whose type is `RelayNamespaceProperties`
+  - Model `WcfRelay` moved instance variable `is_dynamic`, `created_at`, `updated_at`, `listener_count`, `relay_type`, `requires_client_authorization`, `requires_transport_security` and `user_metadata` under property `properties` whose type is `WcfRelayProperties`
+
+### Other Changes
+
+  - Deleted model `AuthorizationRuleListResult`/`HybridConnectionListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`RelayNamespaceListResult`/`WcfRelaysListResult` which actually were not used by SDK users
+
 ## 1.1.1 (2026-05-09)
 
 ### Other Changes

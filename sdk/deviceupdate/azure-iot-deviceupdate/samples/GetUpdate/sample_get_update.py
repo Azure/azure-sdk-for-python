@@ -23,8 +23,10 @@ try:
     update_name = os.environ["DEVICEUPDATE_UPDATE_NAME"]
     update_version = os.environ["DEVICEUPDATE_UPDATE_VERSION"]
 except KeyError:
-    print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
-          "DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION")
+    print(
+        "Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
+        "DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION"
+    )
     exit()
 
 # Build a client through AAD
@@ -42,18 +44,18 @@ try:
     print(response)
 
     print(f"\nEnumerate update files:")
-    response = client.device_update.list_files(update_provider, update_name, update_version)
+    files = client.device_update.list_files(update_provider, update_name, update_version)
     file_ids = []
-    for item in response:
+    for item in files:
         file_ids.append(item)
         print(item)
 
     for file_id in file_ids:
-        response = client.device_update.get_file(update_provider, update_name, update_version, file_id)
+        file_metadata = client.device_update.get_file(update_provider, update_name, update_version, file_id)
         print("\nFile:")
-        print(f"  FileId: {response['fileId']}")
+        print(f"  FileId: {file_metadata['fileId']}")
         print("Metadata:")
-        print(response)
+        print(file_metadata)
 
 except HttpResponseError as e:
-    print('Failed to get update: {}'.format(e))
+    print("Failed to get update: {}".format(e))

@@ -653,6 +653,38 @@ class CmkKeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class CostManagementSettings(_Model):
+    """Cost Management Settings of the vault.
+
+    :ivar granularity_level: Settings for granularity level. Known values are: "VaultLevel",
+     "ProtectedItemLevel", and "ProtectedItemWithParentTag".
+    :vartype granularity_level: str or ~azure.mgmt.recoveryservices.models.GranularityLevel
+    """
+
+    granularity_level: Optional[Union[str, "_models.GranularityLevel"]] = rest_field(
+        name="granularityLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for granularity level. Known values are: \"VaultLevel\", \"ProtectedItemLevel\", and
+     \"ProtectedItemWithParentTag\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        granularity_level: Optional[Union[str, "_models.GranularityLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CrossSubscriptionRestoreSettings(_Model):
     """Settings for Cross Subscription Restore Settings.
 
@@ -1076,23 +1108,72 @@ class IdentityData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ImmutabilityConfiguration(_Model):
+    """Immutability configuration of vault.
+
+    :ivar type: Immutability type. 'AsPerPolicy' inherits duration from backup policy; 'TimeBased'
+     requires explicit durationInDays. Known values are: "AsPerPolicy" and "TimeBased".
+    :vartype type: str or ~azure.mgmt.recoveryservices.models.ImmutabilityType
+    :ivar duration_in_days: Duration in days. Required when type is TimeBased, omitted when
+     AsPerPolicy.
+    :vartype duration_in_days: int
+    """
+
+    type: Optional[Union[str, "_models.ImmutabilityType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Immutability type. 'AsPerPolicy' inherits duration from backup policy; 'TimeBased' requires
+     explicit durationInDays. Known values are: \"AsPerPolicy\" and \"TimeBased\"."""
+    duration_in_days: Optional[int] = rest_field(
+        name="durationInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration in days. Required when type is TimeBased, omitted when AsPerPolicy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ImmutabilityType"]] = None,
+        duration_in_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ImmutabilitySettings(_Model):
     """Immutability Settings of vault.
 
     :ivar state: Known values are: "Disabled", "Unlocked", and "Locked".
     :vartype state: str or ~azure.mgmt.recoveryservices.models.ImmutabilityState
+    :ivar configuration: Immutability configuration of the vault — selects whether immutability is
+     inherited from the backup policy (AsPerPolicy) or fixed for a specific duration (TimeBased).
+    :vartype configuration: ~azure.mgmt.recoveryservices.models.ImmutabilityConfiguration
     """
 
     state: Optional[Union[str, "_models.ImmutabilityState"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Known values are: \"Disabled\", \"Unlocked\", and \"Locked\"."""
+    configuration: Optional["_models.ImmutabilityConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Immutability configuration of the vault — selects whether immutability is inherited from the
+     backup policy (AsPerPolicy) or fixed for a specific duration (TimeBased)."""
 
     @overload
     def __init__(
         self,
         *,
         state: Optional[Union[str, "_models.ImmutabilityState"]] = None,
+        configuration: Optional["_models.ImmutabilityConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -2700,6 +2781,8 @@ class VaultProperties(_Model):
     :vartype public_network_access: str or ~azure.mgmt.recoveryservices.models.PublicNetworkAccess
     :ivar monitoring_settings: Monitoring Settings of the vault.
     :vartype monitoring_settings: ~azure.mgmt.recoveryservices.models.MonitoringSettings
+    :ivar cost_management_settings: Cost Management Settings of the vault.
+    :vartype cost_management_settings: ~azure.mgmt.recoveryservices.models.CostManagementSettings
     :ivar restore_settings: Restore Settings of the vault.
     :vartype restore_settings: ~azure.mgmt.recoveryservices.models.RestoreSettings
     :ivar redundancy_settings: The redundancy Settings of a Vault.
@@ -2761,6 +2844,10 @@ class VaultProperties(_Model):
         name="monitoringSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Monitoring Settings of the vault."""
+    cost_management_settings: Optional["_models.CostManagementSettings"] = rest_field(
+        name="costManagementSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cost Management Settings of the vault."""
     restore_settings: Optional["_models.RestoreSettings"] = rest_field(
         name="restoreSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2795,6 +2882,7 @@ class VaultProperties(_Model):
         move_details: Optional["_models.VaultPropertiesMoveDetails"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
+        cost_management_settings: Optional["_models.CostManagementSettings"] = None,
         restore_settings: Optional["_models.RestoreSettings"] = None,
         redundancy_settings: Optional["_models.VaultPropertiesRedundancySettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,

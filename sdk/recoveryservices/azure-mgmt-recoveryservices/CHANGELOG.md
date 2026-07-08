@@ -1,5 +1,16 @@
 # Release History
 
+## 4.1.0 (2026-07-07)
+
+### Features Added
+
+  - Model `ImmutabilitySettings` added property `configuration`
+  - Model `VaultProperties` added property `cost_management_settings`
+  - Added model `CostManagementSettings`
+  - Added enum `GranularityLevel`
+  - Added model `ImmutabilityConfiguration`
+  - Added enum `ImmutabilityType`
+
 ## 4.0.1 (2026-05-19)
 
 ### Other Changes

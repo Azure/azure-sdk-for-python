@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/NetworkManagerDefaultAdminRuleGet.json
+# x-ms-original-file: 2025-07-01/NetworkManagerDefaultAdminRuleGet.json
 if __name__ == "__main__":
     main()
