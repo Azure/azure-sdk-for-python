@@ -49,6 +49,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -123,6 +124,34 @@ def _parse_inner_arg(values: List[str]) -> Dict[str, Path]:
     return result
 
 
+def _version_sort_key(stem: str, alias: str) -> Tuple[int, int, str]:
+    """Sort key for ``<alias>[_suffix]`` filename stems. Higher tuple = newer.
+
+    * Group 0: bare ``<alias>`` (no suffix) — oldest baseline.
+    * Group 1: numeric suffix ``<alias>_v<N>`` or ``<alias>_<N>`` — sorted
+      by N as an integer, so ``v10`` beats ``v9``.
+    * Group 2: any other suffix ``<alias>_<suffix>`` — lexicographic tiebreaker.
+
+    Public (module-level) so tests can exercise the key extractor directly.
+    """
+
+    if stem == alias:
+        return (0, 0, "")
+    # We only get here for stems that already matched the ``<alias>_`` filter,
+    # so the underscore is guaranteed to be at index len(alias).
+    suffix = stem[len(alias) + 1:]
+    m = _VERSION_SUFFIX.fullmatch(suffix)
+    if m is not None:
+        try:
+            return (1, int(m.group(1)), "")
+        except ValueError:
+            pass  # fall through to group 2
+    return (2, 0, suffix)
+
+
+_VERSION_SUFFIX = re.compile(r"v?(\d+)")
+
+
 def _discover_inner_from_dir(
     outer_schema: Dict[str, Any], schema_dir: Path
 ) -> Dict[str, Path]:
@@ -131,8 +160,9 @@ def _discover_inner_from_dir(
     For every category in the outer schema whose ``analyzerId`` is a non-
     prebuilt alias, find a matching JSON file in ``schema_dir``. The
     matching rule is: filename stem == alias, or stem startswith
-    ``<alias>_`` (picks the alphabetically last match, so ``invoice_v2.json``
-    wins over ``invoice_v1.json``).
+    ``<alias>_``. When multiple files match, pick the highest version — so
+    ``invoice_v10.json`` beats ``invoice_v9.json`` (plain alphabetical
+    sort broke as soon as version numbers hit two digits).
     """
 
     if not schema_dir.is_dir():
@@ -148,7 +178,7 @@ def _discover_inner_from_dir(
             continue
         aliases.append(alias)
 
-    json_files = sorted(schema_dir.glob("*.json"))
+    json_files = list(schema_dir.glob("*.json"))
     resolved: Dict[str, Path] = {}
     missing: List[str] = []
     for alias in aliases:
@@ -159,7 +189,9 @@ def _discover_inner_from_dir(
         if not matches:
             missing.append(alias)
             continue
-        resolved[alias] = matches[-1]  # alphabetically last → newest version
+        # Highest version key wins: v10 > v9 > bare baseline.
+        matches.sort(key=lambda p: _version_sort_key(p.stem, alias))
+        resolved[alias] = matches[-1]
 
     if missing:
         raise SystemExit(

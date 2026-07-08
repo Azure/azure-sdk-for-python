@@ -178,5 +178,160 @@ def test_parse_inner_arg_rejects_missing_equals():
         router._parse_inner_arg(["invoice/tmp/inv.json"])
 
 
+# ---------------------------------------------------------------------------
+# _version_sort_key — pure key extractor
+# ---------------------------------------------------------------------------
+
+
+def test_version_sort_key_bare_alias_returns_group_zero():
+    key = router._version_sort_key("invoice", "invoice")
+    assert key == (0, 0, "")
+
+
+def test_version_sort_key_v_prefixed_numeric_returns_group_one():
+    v9 = router._version_sort_key("invoice_v9", "invoice")
+    v10 = router._version_sort_key("invoice_v10", "invoice")
+    assert v9 == (1, 9, "")
+    assert v10 == (1, 10, "")
+    # The whole point of the fix.
+    assert v10 > v9, "v10 must sort higher than v9 by numeric version"
+
+
+def test_version_sort_key_bare_numeric_returns_group_one():
+    """`<alias>_<N>` (no `v` prefix) is also a numeric version."""
+    assert router._version_sort_key("invoice_42", "invoice") == (1, 42, "")
+
+
+def test_version_sort_key_non_numeric_suffix_returns_group_two():
+    assert router._version_sort_key("invoice_draft", "invoice") == (2, 0, "draft")
+
+
+# ---------------------------------------------------------------------------
+# _discover_inner_from_dir — filesystem-touching resolution
+# ---------------------------------------------------------------------------
+
+
+def _outer_with_aliases(*aliases):
+    """Build an outer classifier schema whose category_i has analyzerId=aliases[i].
+
+    ``None`` in the list produces a category with no ``analyzerId`` at all
+    (classification-only bucket).
+    """
+    categories = {}
+    for i, alias in enumerate(aliases):
+        entry = {"description": f"d{i}"}
+        if alias is not None:
+            entry["analyzerId"] = alias
+        categories[f"cat_{i}"] = entry
+    return {
+        "baseAnalyzerId": "prebuilt-document",
+        "config": {"enableSegment": True, "contentCategories": categories},
+    }
+
+
+def test_discover_inner_from_dir_resolves_exact_match_stem(tmp_path):
+    (tmp_path / "invoice.json").write_text("{}")
+    (tmp_path / "bank_statement.json").write_text("{}")
+
+    resolved = router._discover_inner_from_dir(
+        _outer_with_aliases("invoice", "bank_statement"), tmp_path
+    )
+
+    assert resolved == {
+        "invoice": tmp_path / "invoice.json",
+        "bank_statement": tmp_path / "bank_statement.json",
+    }
+
+
+def test_discover_inner_from_dir_picks_natural_version_max_not_alphabetical(tmp_path):
+    """Regression: the previous impl did ``sorted(schema_dir.glob("*.json"))``
+    and took the last element as "newest". But ``'1' < '9'`` char-by-char,
+    so ``invoice_v10.json`` sorted BEFORE ``invoice_v9.json`` and
+    "alphabetical last" silently picked v9 — the older schema. Copilot
+    flagged this on the sibling .NET PR (azure-sdk-for-net#60394); the
+    natural version sort fix brings all four languages back in lockstep.
+    """
+    for name in ("invoice_v1", "invoice_v2", "invoice_v9", "invoice_v10"):
+        (tmp_path / f"{name}.json").write_text("{}")
+
+    resolved = router._discover_inner_from_dir(
+        _outer_with_aliases("invoice"), tmp_path
+    )
+
+    assert resolved == {"invoice": tmp_path / "invoice_v10.json"}, (
+        "v10 must beat v9 (natural version order, not alphabetical)"
+    )
+
+
+def test_discover_inner_from_dir_prefers_versioned_over_bare_alias(tmp_path):
+    """A bare ``<alias>.json`` is group 0 (baseline); any versioned file
+    is group 1 or 2 and beats the baseline as "newer".
+    """
+    (tmp_path / "invoice.json").write_text("{}")
+    (tmp_path / "invoice_v1.json").write_text("{}")
+
+    resolved = router._discover_inner_from_dir(
+        _outer_with_aliases("invoice"), tmp_path
+    )
+
+    assert resolved == {"invoice": tmp_path / "invoice_v1.json"}
+
+
+def test_discover_inner_from_dir_skips_prebuilt_aliases(tmp_path):
+    """``prebuilt-invoice`` is a service alias; no local file required."""
+    (tmp_path / "invoice.json").write_text("{}")
+
+    resolved = router._discover_inner_from_dir(
+        _outer_with_aliases("invoice", "prebuilt-invoice"), tmp_path
+    )
+
+    assert list(resolved) == ["invoice"]
+
+
+def test_discover_inner_from_dir_skips_categories_without_analyzer_id(tmp_path):
+    """A category without ``analyzerId`` is a classification-only bucket."""
+    (tmp_path / "invoice.json").write_text("{}")
+
+    resolved = router._discover_inner_from_dir(
+        _outer_with_aliases("invoice", None), tmp_path
+    )
+
+    assert list(resolved) == ["invoice"]
+
+
+def test_discover_inner_from_dir_missing_aliases_raises(tmp_path):
+    """Every unresolved alias must appear in the SystemExit message."""
+    (tmp_path / "invoice.json").write_text("{}")
+
+    with pytest.raises(SystemExit) as excinfo:
+        router._discover_inner_from_dir(
+            _outer_with_aliases("invoice", "bank_statement", "loan_application"),
+            tmp_path,
+        )
+
+    msg = str(excinfo.value)
+    assert "bank_statement" in msg
+    assert "loan_application" in msg
+
+
+def test_discover_inner_from_dir_unrelated_json_files_ignored(tmp_path):
+    (tmp_path / "invoice.json").write_text("{}")
+    (tmp_path / "notes.json").write_text("{}")
+    (tmp_path / "settings.json").write_text("{}")
+
+    resolved = router._discover_inner_from_dir(
+        _outer_with_aliases("invoice"), tmp_path
+    )
+
+    assert resolved == {"invoice": tmp_path / "invoice.json"}
+
+
+def test_discover_inner_from_dir_non_existent_dir_raises(tmp_path):
+    missing = tmp_path / "definitely-not-there"
+    with pytest.raises(SystemExit) as excinfo:
+        router._discover_inner_from_dir(_outer_with_aliases("invoice"), missing)
+    assert "--schema-dir is not a directory" in str(excinfo.value)
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-v"]))
