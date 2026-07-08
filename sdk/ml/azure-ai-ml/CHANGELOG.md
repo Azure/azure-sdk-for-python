@@ -5,6 +5,8 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.
+- Fixed `DeploymentTemplate.creation_context` always being `None` when retrieved via `get()` or `list()`. The created/modified timestamps and identity returned by the service (as `createdTime` / `modifiedTime` / `createdBy`) are now populated on `creation_context`, making `DeploymentTemplate` consistent with `Model` and `Environment`.
 
 ### Other Changes
 
@@ -20,6 +22,7 @@
 ### Bugs Fixed
 
 
+- Fixed `datastore create` failing with `TypeError: Object of type Datastore is not JSON serializable`. The datastore operation was migrated to the TypeSpec client while the datastore entity still produced a legacy msrest model; the request body is now serialized to its wire form before being sent, keeping the on-the-wire request unchanged.
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
 
