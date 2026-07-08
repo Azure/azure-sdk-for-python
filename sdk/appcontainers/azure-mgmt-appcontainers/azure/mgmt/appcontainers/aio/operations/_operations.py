@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -179,7 +179,6 @@ from .._configuration import ContainerAppsAPIClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -387,7 +386,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPool, JSON, IO[bytes]],
+        session_pool_envelope: Union[_models.SessionPool, _types.SessionPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -495,7 +494,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: JSON,
+        session_pool_envelope: _types.SessionPool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -510,7 +509,7 @@ class ContainerAppsSessionPoolsOperations:
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
         :param session_pool_envelope: Properties used to create a session pool. Required.
-        :type session_pool_envelope: JSON
+        :type session_pool_envelope: ~azure.mgmt.appcontainers.types.SessionPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -555,7 +554,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPool, JSON, IO[bytes]],
+        session_pool_envelope: Union[_models.SessionPool, _types.SessionPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SessionPool]:
         """Create or update a session pool.
@@ -567,9 +566,10 @@ class ContainerAppsSessionPoolsOperations:
         :type resource_group_name: str
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
-        :param session_pool_envelope: Properties used to create a session pool. Is one of the following
-         types: SessionPool, JSON, IO[bytes] Required.
-        :type session_pool_envelope: ~azure.mgmt.appcontainers.models.SessionPool or JSON or IO[bytes]
+        :param session_pool_envelope: Properties used to create a session pool. Is either a SessionPool
+         type or a IO[bytes] type. Required.
+        :type session_pool_envelope: ~azure.mgmt.appcontainers.models.SessionPool or
+         ~azure.mgmt.appcontainers.types.SessionPool or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SessionPool. The SessionPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SessionPool]
@@ -631,7 +631,9 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPoolUpdatableProperties, JSON, IO[bytes]],
+        session_pool_envelope: Union[
+            _models.SessionPoolUpdatableProperties, _types.SessionPoolUpdatableProperties, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -740,7 +742,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: JSON,
+        session_pool_envelope: _types.SessionPoolUpdatableProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -755,7 +757,7 @@ class ContainerAppsSessionPoolsOperations:
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
         :param session_pool_envelope: Properties used to create a session pool. Required.
-        :type session_pool_envelope: JSON
+        :type session_pool_envelope: ~azure.mgmt.appcontainers.types.SessionPoolUpdatableProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -800,7 +802,9 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPoolUpdatableProperties, JSON, IO[bytes]],
+        session_pool_envelope: Union[
+            _models.SessionPoolUpdatableProperties, _types.SessionPoolUpdatableProperties, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SessionPool]:
         """Update properties of a session pool.
@@ -812,10 +816,10 @@ class ContainerAppsSessionPoolsOperations:
         :type resource_group_name: str
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
-        :param session_pool_envelope: Properties used to create a session pool. Is one of the following
-         types: SessionPoolUpdatableProperties, JSON, IO[bytes] Required.
+        :param session_pool_envelope: Properties used to create a session pool. Is either a
+         SessionPoolUpdatableProperties type or a IO[bytes] type. Required.
         :type session_pool_envelope: ~azure.mgmt.appcontainers.models.SessionPoolUpdatableProperties or
-         JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.types.SessionPoolUpdatableProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SessionPool. The SessionPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SessionPool]
@@ -1289,7 +1293,7 @@ class ContainerAppsSourceControlsOperations:
         resource_group_name: str,
         container_app_name: str,
         source_control_name: str,
-        source_control_envelope: Union[_models.SourceControl, JSON, IO[bytes]],
+        source_control_envelope: Union[_models.SourceControl, _types.SourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1401,7 +1405,7 @@ class ContainerAppsSourceControlsOperations:
         resource_group_name: str,
         container_app_name: str,
         source_control_name: str,
-        source_control_envelope: JSON,
+        source_control_envelope: _types.SourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1419,7 +1423,7 @@ class ContainerAppsSourceControlsOperations:
         :type source_control_name: str
         :param source_control_envelope: Properties used to create a Container App SourceControl.
          Required.
-        :type source_control_envelope: JSON
+        :type source_control_envelope: ~azure.mgmt.appcontainers.types.SourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1469,7 +1473,7 @@ class ContainerAppsSourceControlsOperations:
         resource_group_name: str,
         container_app_name: str,
         source_control_name: str,
-        source_control_envelope: Union[_models.SourceControl, JSON, IO[bytes]],
+        source_control_envelope: Union[_models.SourceControl, _types.SourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SourceControl]:
         """Create or update the SourceControl for a Container App.
@@ -1483,10 +1487,10 @@ class ContainerAppsSourceControlsOperations:
         :type container_app_name: str
         :param source_control_name: Name of the Container App SourceControl. Required.
         :type source_control_name: str
-        :param source_control_envelope: Properties used to create a Container App SourceControl. Is one
-         of the following types: SourceControl, JSON, IO[bytes] Required.
-        :type source_control_envelope: ~azure.mgmt.appcontainers.models.SourceControl or JSON or
-         IO[bytes]
+        :param source_control_envelope: Properties used to create a Container App SourceControl. Is
+         either a SourceControl type or a IO[bytes] type. Required.
+        :type source_control_envelope: ~azure.mgmt.appcontainers.models.SourceControl or
+         ~azure.mgmt.appcontainers.types.SourceControl or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SourceControl. The SourceControl is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SourceControl]
@@ -1869,7 +1873,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1977,7 +1981,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: JSON,
+        container_app_envelope: _types.ContainerApp,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1992,7 +1996,7 @@ class ContainerAppsOperations:
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
         :param container_app_envelope: Properties used to create a container app. Required.
-        :type container_app_envelope: JSON
+        :type container_app_envelope: ~azure.mgmt.appcontainers.types.ContainerApp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2037,7 +2041,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ContainerApp]:
         """Create or update a Container App.
@@ -2049,10 +2053,10 @@ class ContainerAppsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param container_app_envelope: Properties used to create a container app. Is one of the
-         following types: ContainerApp, JSON, IO[bytes] Required.
-        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or JSON or
-         IO[bytes]
+        :param container_app_envelope: Properties used to create a container app. Is either a
+         ContainerApp type or a IO[bytes] type. Required.
+        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or
+         ~azure.mgmt.appcontainers.types.ContainerApp or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ContainerApp. The ContainerApp is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ContainerApp]
@@ -2114,7 +2118,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2220,7 +2224,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: JSON,
+        container_app_envelope: _types.ContainerApp,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2235,7 +2239,7 @@ class ContainerAppsOperations:
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
         :param container_app_envelope: Properties of a Container App that need to be updated. Required.
-        :type container_app_envelope: JSON
+        :type container_app_envelope: ~azure.mgmt.appcontainers.types.ContainerApp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2280,7 +2284,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ContainerApp]:
         """Update properties of a Container App.
@@ -2292,10 +2296,10 @@ class ContainerAppsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param container_app_envelope: Properties of a Container App that need to be updated. Is one of
-         the following types: ContainerApp, JSON, IO[bytes] Required.
-        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or JSON or
-         IO[bytes]
+        :param container_app_envelope: Properties of a Container App that need to be updated. Is either
+         a ContainerApp type or a IO[bytes] type. Required.
+        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or
+         ~azure.mgmt.appcontainers.types.ContainerApp or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ContainerApp. The ContainerApp is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ContainerApp]
@@ -3820,7 +3824,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3933,7 +3937,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: JSON,
+        java_component_envelope: _types.JavaComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3950,7 +3954,7 @@ class JavaComponentsOperations:
         :param name: Name of the Java Component. Required.
         :type name: str
         :param java_component_envelope: Configuration details of the Java Component. Required.
-        :type java_component_envelope: JSON
+        :type java_component_envelope: ~azure.mgmt.appcontainers.types.JavaComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3999,7 +4003,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JavaComponent]:
         """Creates or updates a Java Component.
@@ -4013,10 +4017,10 @@ class JavaComponentsOperations:
         :type environment_name: str
         :param name: Name of the Java Component. Required.
         :type name: str
-        :param java_component_envelope: Configuration details of the Java Component. Is one of the
-         following types: JavaComponent, JSON, IO[bytes] Required.
-        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or JSON or
-         IO[bytes]
+        :param java_component_envelope: Configuration details of the Java Component. Is either a
+         JavaComponent type or a IO[bytes] type. Required.
+        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or
+         ~azure.mgmt.appcontainers.types.JavaComponent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JavaComponent. The JavaComponent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JavaComponent]
@@ -4080,7 +4084,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4191,7 +4195,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: JSON,
+        java_component_envelope: _types.JavaComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4208,7 +4212,7 @@ class JavaComponentsOperations:
         :param name: Name of the Java Component. Required.
         :type name: str
         :param java_component_envelope: Configuration details of the Java Component. Required.
-        :type java_component_envelope: JSON
+        :type java_component_envelope: ~azure.mgmt.appcontainers.types.JavaComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4257,7 +4261,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JavaComponent]:
         """Update properties of a Java Component.
@@ -4271,10 +4275,10 @@ class JavaComponentsOperations:
         :type environment_name: str
         :param name: Name of the Java Component. Required.
         :type name: str
-        :param java_component_envelope: Configuration details of the Java Component. Is one of the
-         following types: JavaComponent, JSON, IO[bytes] Required.
-        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or JSON or
-         IO[bytes]
+        :param java_component_envelope: Configuration details of the Java Component. Is either a
+         JavaComponent type or a IO[bytes] type. Required.
+        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or
+         ~azure.mgmt.appcontainers.types.JavaComponent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JavaComponent. The JavaComponent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JavaComponent]
@@ -4694,7 +4698,7 @@ class LogicAppsOperations:
         resource_group_name: str,
         container_app_name: str,
         logic_app_name: str,
-        resource: Optional[JSON] = None,
+        resource: Optional[_types.LogicApp] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4709,7 +4713,7 @@ class LogicAppsOperations:
         :param logic_app_name: Name of the Logic App, the extension resource. Required.
         :type logic_app_name: str
         :param resource: Resource create parameters. Default value is None.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.appcontainers.types.LogicApp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4769,7 +4773,7 @@ class LogicAppsOperations:
         resource_group_name: str,
         container_app_name: str,
         logic_app_name: str,
-        resource: Optional[Union[_models.LogicApp, JSON, IO[bytes]]] = None,
+        resource: Optional[Union[_models.LogicApp, _types.LogicApp, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.LogicApp:
         """Create or update a Logic App extension resource.
@@ -4781,9 +4785,10 @@ class LogicAppsOperations:
         :type container_app_name: str
         :param logic_app_name: Name of the Logic App, the extension resource. Required.
         :type logic_app_name: str
-        :param resource: Resource create parameters. Is one of the following types: LogicApp, JSON,
-         IO[bytes] Default value is None.
-        :type resource: ~azure.mgmt.appcontainers.models.LogicApp or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a LogicApp type or a IO[bytes] type.
+         Default value is None.
+        :type resource: ~azure.mgmt.appcontainers.models.LogicApp or
+         ~azure.mgmt.appcontainers.types.LogicApp or IO[bytes]
         :return: LogicApp. The LogicApp is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.LogicApp
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5320,7 +5325,7 @@ class ContainerAppsAuthConfigsOperations:
         resource_group_name: str,
         container_app_name: str,
         auth_config_name: str,
-        auth_config_envelope: JSON,
+        auth_config_envelope: _types.AuthConfig,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5337,7 +5342,7 @@ class ContainerAppsAuthConfigsOperations:
         :param auth_config_name: Name of the Container App AuthConfig. Required.
         :type auth_config_name: str
         :param auth_config_envelope: Properties used to create a Container App AuthConfig. Required.
-        :type auth_config_envelope: JSON
+        :type auth_config_envelope: ~azure.mgmt.appcontainers.types.AuthConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5384,7 +5389,7 @@ class ContainerAppsAuthConfigsOperations:
         resource_group_name: str,
         container_app_name: str,
         auth_config_name: str,
-        auth_config_envelope: Union[_models.AuthConfig, JSON, IO[bytes]],
+        auth_config_envelope: Union[_models.AuthConfig, _types.AuthConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.AuthConfig:
         """Create or update the AuthConfig for a Container App.
@@ -5398,9 +5403,10 @@ class ContainerAppsAuthConfigsOperations:
         :type container_app_name: str
         :param auth_config_name: Name of the Container App AuthConfig. Required.
         :type auth_config_name: str
-        :param auth_config_envelope: Properties used to create a Container App AuthConfig. Is one of
-         the following types: AuthConfig, JSON, IO[bytes] Required.
-        :type auth_config_envelope: ~azure.mgmt.appcontainers.models.AuthConfig or JSON or IO[bytes]
+        :param auth_config_envelope: Properties used to create a Container App AuthConfig. Is either a
+         AuthConfig type or a IO[bytes] type. Required.
+        :type auth_config_envelope: ~azure.mgmt.appcontainers.models.AuthConfig or
+         ~azure.mgmt.appcontainers.types.AuthConfig or IO[bytes]
         :return: AuthConfig. The AuthConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.AuthConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5735,7 +5741,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: Union[_models.ConnectedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ConnectedEnvironment, _types.ConnectedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5842,7 +5848,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ConnectedEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5855,7 +5861,7 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param environment_envelope: Configuration details of the connectedEnvironment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ConnectedEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5900,7 +5906,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: Union[_models.ConnectedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ConnectedEnvironment, _types.ConnectedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectedEnvironment]:
         """Creates or updates an connectedEnvironment.
@@ -5910,10 +5916,10 @@ class ConnectedEnvironmentsOperations:
         :type resource_group_name: str
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
-        :param environment_envelope: Configuration details of the connectedEnvironment. Is one of the
-         following types: ConnectedEnvironment, JSON, IO[bytes] Required.
-        :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironment or JSON or
-         IO[bytes]
+        :param environment_envelope: Configuration details of the connectedEnvironment. Is either a
+         ConnectedEnvironment type or a IO[bytes] type. Required.
+        :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironment or
+         ~azure.mgmt.appcontainers.types.ConnectedEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectedEnvironment. The
          ConnectedEnvironment is compatible with MutableMapping
         :rtype:
@@ -6006,7 +6012,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ConnectedEnvironmentPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6021,7 +6027,7 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param environment_envelope: Configuration details of the connectedEnvironment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ConnectedEnvironmentPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6064,7 +6070,9 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: Union[_models.ConnectedEnvironmentPatchResource, JSON, IO[bytes]],
+        environment_envelope: Union[
+            _models.ConnectedEnvironmentPatchResource, _types.ConnectedEnvironmentPatchResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ConnectedEnvironment:
         """Update connected Environment's properties.
@@ -6076,10 +6084,10 @@ class ConnectedEnvironmentsOperations:
         :type resource_group_name: str
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
-        :param environment_envelope: Configuration details of the connectedEnvironment. Is one of the
-         following types: ConnectedEnvironmentPatchResource, JSON, IO[bytes] Required.
+        :param environment_envelope: Configuration details of the connectedEnvironment. Is either a
+         ConnectedEnvironmentPatchResource type or a IO[bytes] type. Required.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentPatchResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.appcontainers.types.ConnectedEnvironmentPatchResource or IO[bytes]
         :return: ConnectedEnvironment. The ConnectedEnvironment is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.ConnectedEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6506,7 +6514,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        check_name_availability_request: JSON,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6522,7 +6530,8 @@ class ConnectedEnvironmentsOperations:
         :type connected_environment_name: str
         :param check_name_availability_request: The check connectedEnvironmentName availability
          request. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request:
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6568,7 +6577,9 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks the resource connectedEnvironmentName availability.
@@ -6581,9 +6592,10 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param check_name_availability_request: The check connectedEnvironmentName availability
-         request. Is one of the following types: CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+         request. Is either a CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
-         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.CheckNameAvailabilityResponse
@@ -6789,7 +6801,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[JSON] = None,
+        certificate_envelope: Optional[_types.Certificate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6806,7 +6818,7 @@ class CertificatesOperations:
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Certificate to be created or updated. Default value is None.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6853,7 +6865,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[Union[_models.Certificate, JSON, IO[bytes]]] = None,
+        certificate_envelope: Optional[Union[_models.Certificate, _types.Certificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or Update a Certificate.
@@ -6867,9 +6879,10 @@ class CertificatesOperations:
         :type environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Certificate to be created or updated. Is one of the following
-         types: Certificate, JSON, IO[bytes] Default value is None.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Certificate to be created or updated. Is either a Certificate type
+         or a IO[bytes] type. Default value is None.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or
+         ~azure.mgmt.appcontainers.types.Certificate or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6984,7 +6997,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7001,7 +7014,7 @@ class CertificatesOperations:
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Properties of a certificate that need to be updated. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.CertificatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7048,7 +7061,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatch, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatch, _types.CertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Update properties of a certificate.
@@ -7062,10 +7075,10 @@ class CertificatesOperations:
         :type environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Properties of a certificate that need to be updated. Is one of the
-         following types: CertificatePatch, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or JSON or
-         IO[bytes]
+        :param certificate_envelope: Properties of a certificate that need to be updated. Is either a
+         CertificatePatch type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or
+         ~azure.mgmt.appcontainers.types.CertificatePatch or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7400,7 +7413,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7506,7 +7519,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ManagedEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7521,7 +7534,7 @@ class ManagedEnvironmentsOperations:
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
         :param environment_envelope: Configuration details of the Environment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ManagedEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7566,7 +7579,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedEnvironment]:
         """Creates or updates a Managed Environment.
@@ -7578,10 +7591,10 @@ class ManagedEnvironmentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param environment_envelope: Configuration details of the Environment. Is one of the following
-         types: ManagedEnvironment, JSON, IO[bytes] Required.
-        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or JSON or
-         IO[bytes]
+        :param environment_envelope: Configuration details of the Environment. Is either a
+         ManagedEnvironment type or a IO[bytes] type. Required.
+        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or
+         ~azure.mgmt.appcontainers.types.ManagedEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedEnvironment. The ManagedEnvironment
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ManagedEnvironment]
@@ -7643,7 +7656,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7749,7 +7762,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ManagedEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7764,7 +7777,7 @@ class ManagedEnvironmentsOperations:
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
         :param environment_envelope: Configuration details of the Environment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ManagedEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7809,7 +7822,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedEnvironment]:
         """Update Managed Environment's properties.
@@ -7821,10 +7834,10 @@ class ManagedEnvironmentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param environment_envelope: Configuration details of the Environment. Is one of the following
-         types: ManagedEnvironment, JSON, IO[bytes] Required.
-        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or JSON or
-         IO[bytes]
+        :param environment_envelope: Configuration details of the Environment. Is either a
+         ManagedEnvironment type or a IO[bytes] type. Required.
+        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or
+         ~azure.mgmt.appcontainers.types.ManagedEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedEnvironment. The ManagedEnvironment
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ManagedEnvironment]
@@ -8481,7 +8494,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         connected_environment_name: str,
         component_name: str,
-        dapr_component_envelope: Union[_models.DaprComponent, JSON, IO[bytes]],
+        dapr_component_envelope: Union[_models.DaprComponent, _types.DaprComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8594,7 +8607,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         connected_environment_name: str,
         component_name: str,
-        dapr_component_envelope: JSON,
+        dapr_component_envelope: _types.DaprComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8611,7 +8624,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Required.
-        :type dapr_component_envelope: JSON
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.types.DaprComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8660,7 +8673,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         connected_environment_name: str,
         component_name: str,
-        dapr_component_envelope: Union[_models.DaprComponent, JSON, IO[bytes]],
+        dapr_component_envelope: Union[_models.DaprComponent, _types.DaprComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DaprComponent]:
         """Creates or updates a Dapr Component.
@@ -8674,10 +8687,10 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
-        :param dapr_component_envelope: Configuration details of the Dapr Component. Is one of the
-         following types: DaprComponent, JSON, IO[bytes] Required.
-        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or JSON or
-         IO[bytes]
+        :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a
+         DaprComponent type or a IO[bytes] type. Required.
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or
+         ~azure.mgmt.appcontainers.types.DaprComponent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DaprComponent. The DaprComponent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DaprComponent]
@@ -9176,7 +9189,7 @@ class DaprComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         component_name: str,
-        dapr_component_envelope: JSON,
+        dapr_component_envelope: _types.DaprComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9193,7 +9206,7 @@ class DaprComponentsOperations:
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Required.
-        :type dapr_component_envelope: JSON
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.types.DaprComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9240,7 +9253,7 @@ class DaprComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         component_name: str,
-        dapr_component_envelope: Union[_models.DaprComponent, JSON, IO[bytes]],
+        dapr_component_envelope: Union[_models.DaprComponent, _types.DaprComponent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DaprComponent:
         """Creates or updates a Dapr Component.
@@ -9254,10 +9267,10 @@ class DaprComponentsOperations:
         :type environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
-        :param dapr_component_envelope: Configuration details of the Dapr Component. Is one of the
-         following types: DaprComponent, JSON, IO[bytes] Required.
-        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or JSON or
-         IO[bytes]
+        :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a
+         DaprComponent type or a IO[bytes] type. Required.
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or
+         ~azure.mgmt.appcontainers.types.DaprComponent or IO[bytes]
         :return: DaprComponent. The DaprComponent is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.DaprComponent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9674,7 +9687,7 @@ class ConnectedEnvironmentsStoragesOperations:
         resource_group_name: str,
         connected_environment_name: str,
         storage_name: str,
-        storage_envelope: Union[_models.ConnectedEnvironmentStorage, JSON, IO[bytes]],
+        storage_envelope: Union[_models.ConnectedEnvironmentStorage, _types.ConnectedEnvironmentStorage, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9788,7 +9801,7 @@ class ConnectedEnvironmentsStoragesOperations:
         resource_group_name: str,
         connected_environment_name: str,
         storage_name: str,
-        storage_envelope: JSON,
+        storage_envelope: _types.ConnectedEnvironmentStorage,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9805,7 +9818,7 @@ class ConnectedEnvironmentsStoragesOperations:
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
         :param storage_envelope: Configuration details of storage. Required.
-        :type storage_envelope: JSON
+        :type storage_envelope: ~azure.mgmt.appcontainers.types.ConnectedEnvironmentStorage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9856,7 +9869,7 @@ class ConnectedEnvironmentsStoragesOperations:
         resource_group_name: str,
         connected_environment_name: str,
         storage_name: str,
-        storage_envelope: Union[_models.ConnectedEnvironmentStorage, JSON, IO[bytes]],
+        storage_envelope: Union[_models.ConnectedEnvironmentStorage, _types.ConnectedEnvironmentStorage, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectedEnvironmentStorage]:
         """Create or update storage for a connectedEnvironment.
@@ -9870,10 +9883,10 @@ class ConnectedEnvironmentsStoragesOperations:
         :type connected_environment_name: str
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
-        :param storage_envelope: Configuration details of storage. Is one of the following types:
-         ConnectedEnvironmentStorage, JSON, IO[bytes] Required.
-        :type storage_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentStorage or JSON or
-         IO[bytes]
+        :param storage_envelope: Configuration details of storage. Is either a
+         ConnectedEnvironmentStorage type or a IO[bytes] type. Required.
+        :type storage_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentStorage or
+         ~azure.mgmt.appcontainers.types.ConnectedEnvironmentStorage or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectedEnvironmentStorage. The
          ConnectedEnvironmentStorage is compatible with MutableMapping
         :rtype:
@@ -10234,7 +10247,9 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Optional[Union[_models.ManagedCertificate, JSON, IO[bytes]]] = None,
+        managed_certificate_envelope: Optional[
+            Union[_models.ManagedCertificate, _types.ManagedCertificate, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10352,7 +10367,7 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Optional[JSON] = None,
+        managed_certificate_envelope: Optional[_types.ManagedCertificate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10370,7 +10385,7 @@ class ManagedCertificatesOperations:
         :type managed_certificate_name: str
         :param managed_certificate_envelope: Managed Certificate to be created or updated. Default
          value is None.
-        :type managed_certificate_envelope: JSON
+        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.types.ManagedCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10420,7 +10435,9 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Optional[Union[_models.ManagedCertificate, JSON, IO[bytes]]] = None,
+        managed_certificate_envelope: Optional[
+            Union[_models.ManagedCertificate, _types.ManagedCertificate, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedCertificate]:
         """Create or Update a Managed Certificate.
@@ -10434,10 +10451,10 @@ class ManagedCertificatesOperations:
         :type environment_name: str
         :param managed_certificate_name: Name of the Managed Certificate. Required.
         :type managed_certificate_name: str
-        :param managed_certificate_envelope: Managed Certificate to be created or updated. Is one of
-         the following types: ManagedCertificate, JSON, IO[bytes] Default value is None.
-        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.models.ManagedCertificate or JSON
-         or IO[bytes]
+        :param managed_certificate_envelope: Managed Certificate to be created or updated. Is either a
+         ManagedCertificate type or a IO[bytes] type. Default value is None.
+        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.models.ManagedCertificate or
+         ~azure.mgmt.appcontainers.types.ManagedCertificate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedCertificate. The ManagedCertificate
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ManagedCertificate]
@@ -10536,7 +10553,7 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: JSON,
+        managed_certificate_envelope: _types.ManagedCertificatePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10554,7 +10571,7 @@ class ManagedCertificatesOperations:
         :type managed_certificate_name: str
         :param managed_certificate_envelope: Properties of a managed certificate that need to be
          updated. Required.
-        :type managed_certificate_envelope: JSON
+        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.types.ManagedCertificatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10602,7 +10619,7 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Union[_models.ManagedCertificatePatch, JSON, IO[bytes]],
+        managed_certificate_envelope: Union[_models.ManagedCertificatePatch, _types.ManagedCertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedCertificate:
         """Update tags of a managed certificate.
@@ -10617,9 +10634,9 @@ class ManagedCertificatesOperations:
         :param managed_certificate_name: Name of the Managed Certificate. Required.
         :type managed_certificate_name: str
         :param managed_certificate_envelope: Properties of a managed certificate that need to be
-         updated. Is one of the following types: ManagedCertificatePatch, JSON, IO[bytes] Required.
+         updated. Is either a ManagedCertificatePatch type or a IO[bytes] type. Required.
         :type managed_certificate_envelope: ~azure.mgmt.appcontainers.models.ManagedCertificatePatch or
-         JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.types.ManagedCertificatePatch or IO[bytes]
         :return: ManagedCertificate. The ManagedCertificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.ManagedCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10994,7 +11011,7 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         environment_name: str,
         config_name: str,
-        maintenance_configuration_envelope: JSON,
+        maintenance_configuration_envelope: _types.MaintenanceConfigurationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11010,7 +11027,8 @@ class MaintenanceConfigurationsOperations:
         :type config_name: str
         :param maintenance_configuration_envelope: Parameters to set the maintenance configuration for
          ManagedEnvironment . Required.
-        :type maintenance_configuration_envelope: JSON
+        :type maintenance_configuration_envelope:
+         ~azure.mgmt.appcontainers.types.MaintenanceConfigurationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11058,7 +11076,9 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         environment_name: str,
         config_name: str,
-        maintenance_configuration_envelope: Union[_models.MaintenanceConfigurationResource, JSON, IO[bytes]],
+        maintenance_configuration_envelope: Union[
+            _models.MaintenanceConfigurationResource, _types.MaintenanceConfigurationResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.MaintenanceConfigurationResource:
         """Create or update the maintenance configuration for Managed Environment.
@@ -11071,10 +11091,11 @@ class MaintenanceConfigurationsOperations:
         :param config_name: Name of the Maintenance Configuration. Required.
         :type config_name: str
         :param maintenance_configuration_envelope: Parameters to set the maintenance configuration for
-         ManagedEnvironment . Is one of the following types: MaintenanceConfigurationResource, JSON,
-         IO[bytes] Required.
+         ManagedEnvironment . Is either a MaintenanceConfigurationResource type or a IO[bytes] type.
+         Required.
         :type maintenance_configuration_envelope:
-         ~azure.mgmt.appcontainers.models.MaintenanceConfigurationResource or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.MaintenanceConfigurationResource or
+         ~azure.mgmt.appcontainers.types.MaintenanceConfigurationResource or IO[bytes]
         :return: MaintenanceConfigurationResource. The MaintenanceConfigurationResource is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.MaintenanceConfigurationResource
@@ -11446,7 +11467,7 @@ class ManagedEnvironmentsStoragesOperations:
         resource_group_name: str,
         environment_name: str,
         storage_name: str,
-        storage_envelope: JSON,
+        storage_envelope: _types.ManagedEnvironmentStorage,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11463,7 +11484,7 @@ class ManagedEnvironmentsStoragesOperations:
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
         :param storage_envelope: Configuration details of storage. Required.
-        :type storage_envelope: JSON
+        :type storage_envelope: ~azure.mgmt.appcontainers.types.ManagedEnvironmentStorage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11512,7 +11533,7 @@ class ManagedEnvironmentsStoragesOperations:
         resource_group_name: str,
         environment_name: str,
         storage_name: str,
-        storage_envelope: Union[_models.ManagedEnvironmentStorage, JSON, IO[bytes]],
+        storage_envelope: Union[_models.ManagedEnvironmentStorage, _types.ManagedEnvironmentStorage, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedEnvironmentStorage:
         """Create or update storage for a managedEnvironment.
@@ -11526,10 +11547,10 @@ class ManagedEnvironmentsStoragesOperations:
         :type environment_name: str
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
-        :param storage_envelope: Configuration details of storage. Is one of the following types:
-         ManagedEnvironmentStorage, JSON, IO[bytes] Required.
-        :type storage_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage or JSON or
-         IO[bytes]
+        :param storage_envelope: Configuration details of storage. Is either a
+         ManagedEnvironmentStorage type or a IO[bytes] type. Required.
+        :type storage_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage or
+         ~azure.mgmt.appcontainers.types.ManagedEnvironmentStorage or IO[bytes]
         :return: ManagedEnvironmentStorage. The ManagedEnvironmentStorage is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage
@@ -11831,7 +11852,11 @@ class JobsOperations:
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        job_name: str,
+        job_envelope: Union[_models.Job, _types.Job, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11938,7 +11963,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: JSON,
+        job_envelope: _types.Job,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11953,7 +11978,7 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Required.
-        :type job_envelope: JSON
+        :type job_envelope: ~azure.mgmt.appcontainers.types.Job
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11995,7 +12020,11 @@ class JobsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        job_name: str,
+        job_envelope: Union[_models.Job, _types.Job, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Job]:
         """Create or Update a Container Apps Job.
 
@@ -12006,9 +12035,10 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :param job_envelope: Properties used to create a container apps job. Is one of the following
-         types: Job, JSON, IO[bytes] Required.
-        :type job_envelope: ~azure.mgmt.appcontainers.models.Job or JSON or IO[bytes]
+        :param job_envelope: Properties used to create a container apps job. Is either a Job type or a
+         IO[bytes] type. Required.
+        :type job_envelope: ~azure.mgmt.appcontainers.models.Job or ~azure.mgmt.appcontainers.types.Job
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Job. The Job is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
@@ -12070,7 +12100,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: Union[_models.JobPatchProperties, JSON, IO[bytes]],
+        job_envelope: Union[_models.JobPatchProperties, _types.JobPatchProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12176,7 +12206,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: JSON,
+        job_envelope: _types.JobPatchProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12191,7 +12221,7 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Required.
-        :type job_envelope: JSON
+        :type job_envelope: ~azure.mgmt.appcontainers.types.JobPatchProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12236,7 +12266,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: Union[_models.JobPatchProperties, JSON, IO[bytes]],
+        job_envelope: Union[_models.JobPatchProperties, _types.JobPatchProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Job]:
         """Update properties of a Container Apps Job.
@@ -12248,9 +12278,10 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :param job_envelope: Properties used to create a container apps job. Is one of the following
-         types: JobPatchProperties, JSON, IO[bytes] Required.
-        :type job_envelope: ~azure.mgmt.appcontainers.models.JobPatchProperties or JSON or IO[bytes]
+        :param job_envelope: Properties used to create a container apps job. Is either a
+         JobPatchProperties type or a IO[bytes] type. Required.
+        :type job_envelope: ~azure.mgmt.appcontainers.models.JobPatchProperties or
+         ~azure.mgmt.appcontainers.types.JobPatchProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Job. The Job is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
@@ -12624,7 +12655,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[Union[_models.JobExecutionTemplate, JSON, IO[bytes]]] = None,
+        template: Optional[Union[_models.JobExecutionTemplate, _types.JobExecutionTemplate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12734,7 +12765,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[JSON] = None,
+        template: Optional[_types.JobExecutionTemplate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12749,7 +12780,7 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param template: Properties used to start a job execution. Default value is None.
-        :type template: JSON
+        :type template: ~azure.mgmt.appcontainers.types.JobExecutionTemplate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12794,7 +12825,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[Union[_models.JobExecutionTemplate, JSON, IO[bytes]]] = None,
+        template: Optional[Union[_models.JobExecutionTemplate, _types.JobExecutionTemplate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JobExecutionBase]:
         """Start a Container Apps Job.
@@ -12806,9 +12837,10 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :param template: Properties used to start a job execution. Is one of the following types:
-         JobExecutionTemplate, JSON, IO[bytes] Default value is None.
-        :type template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate or JSON or IO[bytes]
+        :param template: Properties used to start a job execution. Is either a JobExecutionTemplate
+         type or a IO[bytes] type. Default value is None.
+        :type template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate or
+         ~azure.mgmt.appcontainers.types.JobExecutionTemplate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JobExecutionBase. The JobExecutionBase is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JobExecutionBase]
@@ -14099,7 +14131,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[Union[_models.Certificate, JSON, IO[bytes]]] = None,
+        certificate_envelope: Optional[Union[_models.Certificate, _types.Certificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14216,7 +14248,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[JSON] = None,
+        certificate_envelope: Optional[_types.Certificate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14233,7 +14265,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Certificate to be created or updated. Default value is None.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14282,7 +14314,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[Union[_models.Certificate, JSON, IO[bytes]]] = None,
+        certificate_envelope: Optional[Union[_models.Certificate, _types.Certificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Certificate]:
         """Create or Update a Certificate.
@@ -14296,9 +14328,10 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :type connected_environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Certificate to be created or updated. Is one of the following
-         types: Certificate, JSON, IO[bytes] Default value is None.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Certificate to be created or updated. Is either a Certificate type
+         or a IO[bytes] type. Default value is None.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or
+         ~azure.mgmt.appcontainers.types.Certificate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Certificate. The Certificate is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Certificate]
@@ -14363,7 +14396,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatch, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatch, _types.CertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14474,7 +14507,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14491,7 +14524,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Properties of a certificate that need to be updated. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.CertificatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14540,7 +14573,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatch, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatch, _types.CertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Certificate]:
         """Update properties of a certificate.
@@ -14554,10 +14587,10 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :type connected_environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Properties of a certificate that need to be updated. Is one of the
-         following types: CertificatePatch, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or JSON or
-         IO[bytes]
+        :param certificate_envelope: Properties of a certificate that need to be updated. Is either a
+         CertificatePatch type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or
+         ~azure.mgmt.appcontainers.types.CertificatePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Certificate. The Certificate is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Certificate]
@@ -14900,7 +14933,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        check_name_availability_request: JSON,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14915,7 +14948,8 @@ class NamespacesOperations:
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
         :param check_name_availability_request: The check name availability request. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request:
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14960,7 +14994,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks the resource name availability.
@@ -14972,10 +15008,11 @@ class NamespacesOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param check_name_availability_request: The check name availability request. Is one of the
-         following types: CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param check_name_availability_request: The check name availability request. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
-         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.CheckNameAvailabilityResponse
@@ -15272,7 +15309,9 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         environment_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_envelope: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection_envelope: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15386,7 +15425,7 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         environment_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_envelope: JSON,
+        private_endpoint_connection_envelope: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15404,7 +15443,8 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection_envelope: The resource of private endpoint and its
          properties. Required.
-        :type private_endpoint_connection_envelope: JSON
+        :type private_endpoint_connection_envelope:
+         ~azure.mgmt.appcontainers.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15456,7 +15496,9 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         environment_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_envelope: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection_envelope: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of a private endpoint connection for a given managed environment.
@@ -15471,9 +15513,10 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection_envelope: The resource of private endpoint and its
-         properties. Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+         properties. Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type private_endpoint_connection_envelope:
-         ~azure.mgmt.appcontainers.models.PrivateEndpointConnection or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.PrivateEndpointConnection or
+         ~azure.mgmt.appcontainers.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -15898,7 +15941,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: Optional[JSON] = None,
+        http_route_config_envelope: Optional[_types.HttpRouteConfig] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15916,7 +15959,7 @@ class HttpRouteConfigOperations:
         :type http_route_name: str
         :param http_route_config_envelope: Http Route config to be created or updated. Default value is
          None.
-        :type http_route_config_envelope: JSON
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.types.HttpRouteConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15964,7 +16007,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: Optional[Union[_models.HttpRouteConfig, JSON, IO[bytes]]] = None,
+        http_route_config_envelope: Optional[Union[_models.HttpRouteConfig, _types.HttpRouteConfig, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
         """Create or Update a Http Route Config.
@@ -15978,10 +16021,10 @@ class HttpRouteConfigOperations:
         :type environment_name: str
         :param http_route_name: Name of the Http Route Config. Required.
         :type http_route_name: str
-        :param http_route_config_envelope: Http Route config to be created or updated. Is one of the
-         following types: HttpRouteConfig, JSON, IO[bytes] Default value is None.
-        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or JSON or
-         IO[bytes]
+        :param http_route_config_envelope: Http Route config to be created or updated. Is either a
+         HttpRouteConfig type or a IO[bytes] type. Default value is None.
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or
+         ~azure.mgmt.appcontainers.types.HttpRouteConfig or IO[bytes]
         :return: HttpRouteConfig. The HttpRouteConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.HttpRouteConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16097,7 +16140,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: JSON,
+        http_route_config_envelope: _types.HttpRouteConfig,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16115,7 +16158,7 @@ class HttpRouteConfigOperations:
         :type http_route_name: str
         :param http_route_config_envelope: Properties of http route config that need to be updated.
          Required.
-        :type http_route_config_envelope: JSON
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.types.HttpRouteConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16163,7 +16206,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: Union[_models.HttpRouteConfig, JSON, IO[bytes]],
+        http_route_config_envelope: Union[_models.HttpRouteConfig, _types.HttpRouteConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
         """Update tags of a Http Route Config object.
@@ -16178,9 +16221,9 @@ class HttpRouteConfigOperations:
         :param http_route_name: Name of the Http Route Config Resource. Required.
         :type http_route_name: str
         :param http_route_config_envelope: Properties of http route config that need to be updated. Is
-         one of the following types: HttpRouteConfig, JSON, IO[bytes] Required.
-        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or JSON or
-         IO[bytes]
+         either a HttpRouteConfig type or a IO[bytes] type. Required.
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or
+         ~azure.mgmt.appcontainers.types.HttpRouteConfig or IO[bytes]
         :return: HttpRouteConfig. The HttpRouteConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.HttpRouteConfig
         :raises ~azure.core.exceptions.HttpResponseError:
