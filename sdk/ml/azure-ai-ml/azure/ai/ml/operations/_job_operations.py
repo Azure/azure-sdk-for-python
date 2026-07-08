@@ -239,6 +239,7 @@ class JobOperations(_ScopeDependentOperations):
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_01_2024_preview_arm = kwargs.pop("service_client_01_2024_preview_arm", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
         self._kwargs = kwargs
@@ -811,11 +812,16 @@ class JobOperations(_ScopeDependentOperations):
             # (the local-run re-submit path passes a msrest JobBase fetched via GET).
             rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+            # The 2024-01 arm_ml_service client preserves the pipeline wire api-version while using the
+            # shared hybrid client; ensure the body is a hybrid model (SdkJSONEncoder only serializes those).
+            service_client_operation = self.service_client_01_2024_preview_arm.jobs
+            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview_arm.jobs
+            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+            service_client_operation = self.service_client_01_2024_preview_arm.jobs
+            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.COMMAND:
             service_client_operation = self.service_client_01_2025_preview.jobs
             # The 2025 client is the shared arm_ml_service client; ensure the body is a hybrid model
