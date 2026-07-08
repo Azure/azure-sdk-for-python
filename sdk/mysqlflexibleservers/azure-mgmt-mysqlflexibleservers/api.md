@@ -4847,49 +4847,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         target_details: BackupStoreDetails
 
 
-    class azure.mgmt.mysqlflexibleservers.types.BackupAndExportResponse(ProxyResource):
-        key "endTime": str
-        key "error": ForwardRef('ErrorDetail', module='types')
-        key "id": str
-        key "name": Required[str]
-        key "percentComplete": float
-        key "properties": ForwardRef('BackupAndExportResponseProperties', module='types')
-        key "startTime": str
-        key "status": Union[str, OperationStatus]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        end_time: str
-        error: ErrorDetail
-        id: str
-        name: str
-        percent_complete: float
-        properties: BackupAndExportResponseProperties
-        start_time: str
-        status: Union[str, OperationStatus]
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.BackupAndExportResponseProperties(TypedDict, total=False):
-        key "backupMetadata": str
-        key "dataTransferredInBytes": int
-        key "datasourceSizeInBytes": int
-        backup_metadata: str
-        data_transferred_in_bytes: int
-        datasource_size_in_bytes: int
-
-
-    class azure.mgmt.mysqlflexibleservers.types.BackupAndExportResponseType(TypedDict, total=False):
-        key "backupMetadata": str
-        key "dataTransferredInBytes": int
-        key "datasourceSizeInBytes": int
-        key "objectType": Required[Literal[ObjectType.BACKUP_AND_EXPORT_RESPONSE]]
-        backup_metadata: str
-        data_transferred_in_bytes: int
-        datasource_size_in_bytes: int
-        object_type: Literal[ObjectType.BACKUP_AND_EXPORT_RESPONSE]
-
-
     class azure.mgmt.mysqlflexibleservers.types.BackupRequestBase(TypedDict, total=False):
         key "backupSettings": Required[BackupSettings]
         backup_settings: BackupSettings
@@ -4907,41 +4864,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "sasUriList": Required[list[str]]
         object_type: Literal[FullBackupStoreDetails]
         sas_uri_list: list[str]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.Capability(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('CapabilityPropertiesV2', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: CapabilityPropertiesV2
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.CapabilityProperties(TypedDict, total=False):
-        key "zone": str
-        supportedFlexibleServerEditions: list[ServerEditionCapability]
-        supportedGeoBackupRegions: list[str]
-        supportedHAMode: list[str]
-        supported_flexible_server_editions: list[ServerEditionCapability]
-        supported_geo_backup_regions: list[str]
-        supported_ha_mode: list[str]
-        zone: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.CapabilityPropertiesV2(TypedDict, total=False):
-        supportedFeatures: list[FeatureProperty]
-        supportedFlexibleServerEditions: list[ServerEditionCapabilityV2]
-        supportedGeoBackupRegions: list[str]
-        supportedServerVersions: list[ServerVersionCapabilityV2]
-        supported_features: list[FeatureProperty]
-        supported_flexible_server_editions: list[ServerEditionCapabilityV2]
-        supported_geo_backup_regions: list[str]
-        supported_server_versions: list[ServerVersionCapabilityV2]
 
 
     class azure.mgmt.mysqlflexibleservers.types.Configuration(ProxyResource):
@@ -4975,12 +4897,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         key "resetAllToDefault": Union[str, ResetAllToDefault]
         reset_all_to_default: Union[str, ResetAllToDefault]
         value: list[ConfigurationForBatchUpdate]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ConfigurationListResult(TypedDict, total=False):
-        key "nextLink": str
-        next_link: str
-        value: list[Configuration]
 
 
     class azure.mgmt.mysqlflexibleservers.types.ConfigurationProperties(TypedDict, total=False):
@@ -5041,37 +4957,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         collation: str
 
 
-    class azure.mgmt.mysqlflexibleservers.types.DelegatedSubnetUsage(TypedDict, total=False):
-        key "subnetName": str
-        key "usage": int
-        subnet_name: str
-        usage: int
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
     class azure.mgmt.mysqlflexibleservers.types.FabricMirroringSetting(ProxyResource):
         key "id": str
         key "name": str
@@ -5085,13 +4970,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         type: str
 
 
-    class azure.mgmt.mysqlflexibleservers.types.FabricMirroringSettingListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[FabricMirroringSetting]]
-        next_link: str
-        value: list[FabricMirroringSetting]
-
-
     class azure.mgmt.mysqlflexibleservers.types.FabricMirroringSettingsProperties(TypedDict, total=False):
         key "identityResourceId": str
         key "provisioningState": Union[str, FabricMirroringProvisioningState]
@@ -5099,13 +4977,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         identity_resource_id: str
         provisioning_state: Union[str, FabricMirroringProvisioningState]
         state: Union[str, FabricMirroringState]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.FeatureProperty(TypedDict, total=False):
-        key "featureName": str
-        key "featureValue": str
-        feature_name: str
-        feature_value: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.FirewallRule(ProxyResource):
@@ -5135,11 +5006,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         sas_uri_list: list[str]
 
 
-    class azure.mgmt.mysqlflexibleservers.types.GetPrivateDnsZoneSuffixResponse(TypedDict, total=False):
-        key "privateDnsZoneSuffix": str
-        private_dns_zone_suffix: str
-
-
     class azure.mgmt.mysqlflexibleservers.types.HighAvailability(TypedDict, total=False):
         key "mode": Union[str, HighAvailabilityMode]
         key "replicationMode": Union[str, ReplicationMode]
@@ -5160,13 +5026,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         scheduled_standby_availability_zone: str
 
 
-    class azure.mgmt.mysqlflexibleservers.types.ImportFromStorageResponseType(TypedDict, total=False):
-        key "estimatedCompletionTime": str
-        key "objectType": Required[Literal[ObjectType.IMPORT_FROM_STORAGE_RESPONSE]]
-        estimated_completion_time: str
-        object_type: Literal[ObjectType.IMPORT_FROM_STORAGE_RESPONSE]
-
-
     class azure.mgmt.mysqlflexibleservers.types.ImportSourceProperties(TypedDict, total=False):
         key "dataDirPath": str
         key "sasToken": str
@@ -5178,73 +5037,9 @@ namespace azure.mgmt.mysqlflexibleservers.types
         storage_url: str
 
 
-    class azure.mgmt.mysqlflexibleservers.types.LogFile(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('LogFileProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: LogFileProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.LogFileProperties(TypedDict, total=False):
-        key "createdTime": str
-        key "lastModifiedTime": str
-        key "sizeInKB": int
-        key "type": str
-        key "url": str
-        created_time: str
-        last_modified_time: str
-        size_in_kb: int
-        type: str
-        url: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.Maintenance(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": Required[MaintenanceProperties]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: MaintenanceProperties
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.mysqlflexibleservers.types.MaintenancePolicy(TypedDict, total=False):
         key "patchStrategy": Union[str, PatchStrategy]
         patch_strategy: Union[str, PatchStrategy]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.MaintenanceProperties(TypedDict, total=False):
-        key "maintenanceAvailableScheduleMaxTime": str
-        key "maintenanceAvailableScheduleMinTime": str
-        key "maintenanceDescription": str
-        key "maintenanceEndTime": str
-        key "maintenanceExecutionEndTime": str
-        key "maintenanceExecutionStartTime": str
-        key "maintenanceStartTime": str
-        key "maintenanceState": Union[str, MaintenanceState]
-        key "maintenanceTitle": str
-        key "maintenanceType": Union[str, MaintenanceType]
-        key "provisioningState": Union[str, MaintenanceProvisioningState]
-        maintenance_available_schedule_max_time: str
-        maintenance_available_schedule_min_time: str
-        maintenance_description: str
-        maintenance_end_time: str
-        maintenance_execution_end_time: str
-        maintenance_execution_start_time: str
-        maintenance_start_time: str
-        maintenance_state: Union[str, MaintenanceState]
-        maintenance_title: str
-        maintenance_type: Union[str, MaintenanceType]
-        provisioning_state: Union[str, MaintenanceProvisioningState]
 
 
     class azure.mgmt.mysqlflexibleservers.types.MaintenancePropertiesForUpdate(TypedDict, total=False):
@@ -5288,15 +5083,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         tier: Union[str, ServerSkuTier]
 
 
-    class azure.mgmt.mysqlflexibleservers.types.NameAvailability(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": str
-        message: str
-        name_available: bool
-        reason: str
-
-
     class azure.mgmt.mysqlflexibleservers.types.NameAvailabilityRequest(TypedDict, total=False):
         key "name": Required[str]
         key "type": str
@@ -5311,95 +5097,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         delegated_subnet_resource_id: str
         private_dns_zone_resource_id: str
         public_network_access: Union[str, EnableStatusEnum]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BACKUP_AND_EXPORT_RESPONSE = "BackupAndExportResponse"
-        IMPORT_FROM_STORAGE_RESPONSE = "ImportFromStorageResponse"
-
-
-    class azure.mgmt.mysqlflexibleservers.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "name": str
-        key "origin": Union[str, Origin]
-        display: OperationDisplay
-        name: str
-        origin: Union[str, Origin]
-        properties: dict[str, Any]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.OperationProgressResult(OperationStatusResult):
-        key "endTime": str
-        key "error": ForwardRef('ErrorDetail', module='types')
-        key "id": str
-        key "name": str
-        key "percentComplete": float
-        key "properties": ForwardRef('OperationProgressResponseType', module='types')
-        key "resourceId": str
-        key "startTime": str
-        key "status": Required[str]
-        end_time: str
-        error: ErrorDetail
-        id: str
-        name: str
-        operations: list[OperationStatusResult]
-        percent_complete: float
-        properties: OperationProgressResponseType
-        resource_id: str
-        start_time: str
-        status: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.OperationStatusExtendedResult(OperationStatusResult):
-        key "endTime": str
-        key "error": ForwardRef('ErrorDetail', module='types')
-        key "id": str
-        key "name": str
-        key "percentComplete": float
-        key "resourceId": str
-        key "startTime": str
-        key "status": Required[str]
-        end_time: str
-        error: ErrorDetail
-        id: str
-        name: str
-        operations: list[OperationStatusResult]
-        percent_complete: float
-        properties: dict[str, Any]
-        resource_id: str
-        start_time: str
-        status: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.OperationStatusResult(TypedDict, total=False):
-        key "endTime": str
-        key "error": ForwardRef('ErrorDetail', module='types')
-        key "id": str
-        key "name": str
-        key "percentComplete": float
-        key "resourceId": str
-        key "startTime": str
-        key "status": Required[str]
-        end_time: str
-        error: ErrorDetail
-        id: str
-        name: str
-        operations: list[OperationStatusResult]
-        percent_complete: float
-        resource_id: str
-        start_time: str
-        status: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.PrivateEndpoint(TypedDict, total=False):
@@ -5429,28 +5126,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: PrivateLinkServiceConnectionState
         provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.PrivateLinkResource(Resource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
 
 
     class azure.mgmt.mysqlflexibleservers.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
@@ -5504,28 +5179,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         type: str
 
 
-    class azure.mgmt.mysqlflexibleservers.types.ServerBackup(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ServerBackupProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ServerBackupProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ServerBackupProperties(TypedDict, total=False):
-        key "backupType": str
-        key "completedTime": str
-        key "source": str
-        backup_type: str
-        completed_time: str
-        source: str
-
-
     class azure.mgmt.mysqlflexibleservers.types.ServerBackupPropertiesV2(TypedDict, total=False):
         key "backupNameV2": str
         key "backupType": Union[str, BackupType]
@@ -5555,28 +5208,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
     class azure.mgmt.mysqlflexibleservers.types.ServerDetachVNetParameter(TypedDict, total=False):
         key "publicNetworkAccess": Union[str, EnableStatusEnum]
         public_network_access: Union[str, EnableStatusEnum]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ServerEditionCapability(TypedDict, total=False):
-        key "name": str
-        name: str
-        supportedServerVersions: list[ServerVersionCapability]
-        supportedStorageEditions: list[StorageEditionCapability]
-        supported_server_versions: list[ServerVersionCapability]
-        supported_storage_editions: list[StorageEditionCapability]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ServerEditionCapabilityV2(TypedDict, total=False):
-        key "defaultSku": str
-        key "defaultStorageSize": int
-        key "name": str
-        default_sku: str
-        default_storage_size: int
-        name: str
-        supportedSkus: list[SkuCapabilityV2]
-        supportedStorageEditions: list[StorageEditionCapability]
-        supported_skus: list[SkuCapabilityV2]
-        supported_storage_editions: list[StorageEditionCapability]
 
 
     class azure.mgmt.mysqlflexibleservers.types.ServerForUpdate(TypedDict, total=False):
@@ -5673,44 +5304,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         restart_with_failover: Union[str, EnableStatusEnum]
 
 
-    class azure.mgmt.mysqlflexibleservers.types.ServerVersionCapability(TypedDict, total=False):
-        key "name": str
-        name: str
-        supportedSkus: list[SkuCapability]
-        supported_skus: list[SkuCapability]
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ServerVersionCapabilityV2(TypedDict, total=False):
-        key "name": str
-        name: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.SkuCapability(TypedDict, total=False):
-        key "name": str
-        key "supportedIops": int
-        key "supportedMemoryPerVCoreMB": int
-        key "vCores": int
-        name: str
-        supported_iops: int
-        supported_memory_per_v_core_mb: int
-        v_cores: int
-
-
-    class azure.mgmt.mysqlflexibleservers.types.SkuCapabilityV2(TypedDict, total=False):
-        key "name": str
-        key "supportedIops": int
-        key "supportedMemoryPerVCoreMB": int
-        key "vCores": int
-        name: str
-        supportedHAMode: list[str]
-        supportedZones: list[str]
-        supported_ha_mode: list[str]
-        supported_iops: int
-        supported_memory_per_v_core_mb: int
-        supported_zones: list[str]
-        v_cores: int
-
-
     class azure.mgmt.mysqlflexibleservers.types.Storage(TypedDict, total=False):
         key "autoGrow": Union[str, EnableStatusEnum]
         key "autoIoScaling": Union[str, EnableStatusEnum]
@@ -5726,23 +5319,6 @@ namespace azure.mgmt.mysqlflexibleservers.types
         storage_redundancy: Union[str, StorageRedundancyEnum]
         storage_size_gb: int
         storage_sku: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.StorageEditionCapability(TypedDict, total=False):
-        key "maxBackupIntervalHours": int
-        key "maxBackupRetentionDays": int
-        key "maxStorageSize": int
-        key "minBackupIntervalHours": int
-        key "minBackupRetentionDays": int
-        key "minStorageSize": int
-        key "name": str
-        max_backup_interval_hours: int
-        max_backup_retention_days: int
-        max_storage_size: int
-        min_backup_interval_hours: int
-        min_backup_retention_days: int
-        min_storage_size: int
-        name: str
 
 
     class azure.mgmt.mysqlflexibleservers.types.SystemData(TypedDict, total=False):
@@ -5781,28 +5357,9 @@ namespace azure.mgmt.mysqlflexibleservers.types
         principal_id: str
 
 
-    class azure.mgmt.mysqlflexibleservers.types.ValidateBackupResponse(TypedDict, total=False):
-        key "properties": ForwardRef('ValidateBackupResponseProperties', module='types')
-        properties: ValidateBackupResponseProperties
-
-
-    class azure.mgmt.mysqlflexibleservers.types.ValidateBackupResponseProperties(TypedDict, total=False):
-        key "numberOfContainers": int
-        number_of_containers: int
-
-
     class azure.mgmt.mysqlflexibleservers.types.VirtualNetworkSubnetUsageParameter(TypedDict, total=False):
         key "virtualNetworkResourceId": str
         virtual_network_resource_id: str
-
-
-    class azure.mgmt.mysqlflexibleservers.types.VirtualNetworkSubnetUsageResult(TypedDict, total=False):
-        key "location": str
-        key "subscriptionId": str
-        delegatedSubnetsUsage: list[DelegatedSubnetUsage]
-        delegated_subnets_usage: list[DelegatedSubnetUsage]
-        location: str
-        subscription_id: str
 
 
 ```

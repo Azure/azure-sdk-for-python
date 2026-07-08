@@ -10,8 +10,6 @@
 from typing import Any, Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import ObjectType
-
 if TYPE_CHECKING:
     from .models import (
         AdministratorType,
@@ -33,12 +31,7 @@ if TYPE_CHECKING:
         IsConfigPendingRestart,
         IsDynamicConfig,
         IsReadOnly,
-        MaintenanceProvisioningState,
-        MaintenanceState,
-        MaintenanceType,
         ManagedServiceIdentityType,
-        OperationStatus,
-        Origin,
         PatchStrategy,
         PrivateEndpointConnectionProvisioningState,
         PrivateEndpointServiceConnectionStatus,
@@ -268,97 +261,6 @@ class BackupAndExportRequest(BackupRequestBase):
     """Backup Target Store Details. Required."""
 
 
-class BackupAndExportResponse(ProxyResource):
-    """Represents BackupAndExportAPI Response.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "BackupAndExportResponseProperties"
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    :ivar name: The name of the backup and export response. Required.
-    :vartype name: str
-    :ivar status: The operation status. Known values are: "Pending", "InProgress", "Succeeded",
-     "Failed", "CancelInProgress", and "Canceled".
-    :vartype status: Union[str, "OperationStatus"]
-    :ivar start_time: Start time.
-    :vartype start_time: str
-    :ivar end_time: End time.
-    :vartype end_time: str
-    :ivar percent_complete: Operation progress (0-100).
-    :vartype percent_complete: float
-    """
-
-    properties: "BackupAndExportResponseProperties"
-    """The resource-specific properties for this resource."""
-    error: "ErrorDetail"
-    """The error object."""
-    name: Required[str]
-    """The name of the backup and export response. Required."""
-    status: Union[str, "OperationStatus"]
-    """The operation status. Known values are: \"Pending\", \"InProgress\", \"Succeeded\", \"Failed\",
-     \"CancelInProgress\", and \"Canceled\"."""
-    startTime: str
-    """Start time."""
-    endTime: str
-    """End time."""
-    percentComplete: float
-    """Operation progress (0-100)."""
-
-
-class BackupAndExportResponseProperties(TypedDict, total=False):
-    """BackupAndExport Response Properties.
-
-    :ivar datasource_size_in_bytes: Size of datasource in bytes.
-    :vartype datasource_size_in_bytes: int
-    :ivar data_transferred_in_bytes: Data transferred in bytes.
-    :vartype data_transferred_in_bytes: int
-    :ivar backup_metadata: Metadata related to backup to be stored for restoring resource in
-     key-value pairs.
-    :vartype backup_metadata: str
-    """
-
-    datasourceSizeInBytes: int
-    """Size of datasource in bytes."""
-    dataTransferredInBytes: int
-    """Data transferred in bytes."""
-    backupMetadata: str
-    """Metadata related to backup to be stored for restoring resource in key-value pairs."""
-
-
-class BackupAndExportResponseType(TypedDict, total=False):
-    """BackupAndExport Response Properties.
-
-    :ivar datasource_size_in_bytes: Size of datasource in bytes.
-    :vartype datasource_size_in_bytes: int
-    :ivar data_transferred_in_bytes: Data transferred in bytes.
-    :vartype data_transferred_in_bytes: int
-    :ivar backup_metadata: Metadata related to backup to be stored for restoring resource in
-     key-value pairs.
-    :vartype backup_metadata: str
-    :ivar object_type: Identifies the type of source operation. Required.
-     BACKUP_AND_EXPORT_RESPONSE.
-    :vartype object_type: Literal[ObjectType.BACKUP_AND_EXPORT_RESPONSE]
-    """
-
-    datasourceSizeInBytes: int
-    """Size of datasource in bytes."""
-    dataTransferredInBytes: int
-    """Data transferred in bytes."""
-    backupMetadata: str
-    """Metadata related to backup to be stored for restoring resource in key-value pairs."""
-    objectType: Required[Literal[ObjectType.BACKUP_AND_EXPORT_RESPONSE]]
-    """Identifies the type of source operation. Required. BACKUP_AND_EXPORT_RESPONSE."""
-
-
 class BackupSettings(TypedDict, total=False):
     """Backup Settings.
 
@@ -374,74 +276,6 @@ class BackupSettings(TypedDict, total=False):
     backupFormat: Union[str, "BackupFormat"]
     """Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT USE). Known values
      are: \"CollatedFormat\" and \"Raw\"."""
-
-
-class Capability(ProxyResource):
-    """Represents a location capability set.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of a location capability set.
-    :vartype properties: "CapabilityPropertiesV2"
-    """
-
-    properties: "CapabilityPropertiesV2"
-    """The properties of a location capability set."""
-
-
-class CapabilityProperties(TypedDict, total=False):
-    """Location capabilities.
-
-    :ivar zone: zone name.
-    :vartype zone: str
-    :ivar supported_ha_mode: Supported high availability mode.
-    :vartype supported_ha_mode: list[str]
-    :ivar supported_geo_backup_regions: supported geo backup regions.
-    :vartype supported_geo_backup_regions: list[str]
-    :ivar supported_flexible_server_editions: A list of supported flexible server editions.
-    :vartype supported_flexible_server_editions: list["ServerEditionCapability"]
-    """
-
-    zone: str
-    """zone name."""
-    supportedHAMode: list[str]
-    """Supported high availability mode."""
-    supportedGeoBackupRegions: list[str]
-    """supported geo backup regions."""
-    supportedFlexibleServerEditions: list["ServerEditionCapability"]
-    """A list of supported flexible server editions."""
-
-
-class CapabilityPropertiesV2(TypedDict, total=False):
-    """Location capability.
-
-    :ivar supported_geo_backup_regions: supported geo backup regions.
-    :vartype supported_geo_backup_regions: list[str]
-    :ivar supported_flexible_server_editions: A list of supported flexible server editions.
-    :vartype supported_flexible_server_editions: list["ServerEditionCapabilityV2"]
-    :ivar supported_server_versions: A list of supported server versions.
-    :vartype supported_server_versions: list["ServerVersionCapabilityV2"]
-    :ivar supported_features: A list of supported features.
-    :vartype supported_features: list["FeatureProperty"]
-    """
-
-    supportedGeoBackupRegions: list[str]
-    """supported geo backup regions."""
-    supportedFlexibleServerEditions: list["ServerEditionCapabilityV2"]
-    """A list of supported flexible server editions."""
-    supportedServerVersions: list["ServerVersionCapabilityV2"]
-    """A list of supported server versions."""
-    supportedFeatures: list["FeatureProperty"]
-    """A list of supported features."""
 
 
 class Configuration(ProxyResource):
@@ -510,21 +344,6 @@ class ConfigurationListForBatchUpdate(TypedDict, total=False):
     """The list of server configurations."""
     resetAllToDefault: Union[str, "ResetAllToDefault"]
     """Whether to reset all server parameters to default. Known values are: \"True\" and \"False\"."""
-
-
-class ConfigurationListResult(TypedDict, total=False):
-    """The response of a Configuration list operation.
-
-    :ivar value: The Configuration items on this page.
-    :vartype value: list["Configuration"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["Configuration"]
-    """The Configuration items on this page."""
-    nextLink: str
-    """The link to the next page of items."""
 
 
 class ConfigurationProperties(TypedDict, total=False):
@@ -649,74 +468,6 @@ class DataEncryption(TypedDict, total=False):
      \"AzureKeyVault\" and \"SystemManaged\"."""
 
 
-class DelegatedSubnetUsage(TypedDict, total=False):
-    """Delegated subnet usage data.
-
-    :ivar subnet_name: name of the subnet.
-    :vartype subnet_name: str
-    :ivar usage: Number of used delegated subnets.
-    :vartype usage: int
-    """
-
-    subnetName: str
-    """name of the subnet."""
-    usage: int
-    """Number of used delegated subnets."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class FabricMirroringSetting(ProxyResource):
     """Fabric Mirroring settings proxy resource.
 
@@ -737,21 +488,6 @@ class FabricMirroringSetting(ProxyResource):
 
     properties: "FabricMirroringSettingsProperties"
     """The resource-specific properties for this resource."""
-
-
-class FabricMirroringSettingListResult(TypedDict, total=False):
-    """The response of a FabricMirroringSetting list operation.
-
-    :ivar value: The FabricMirroringSetting items on this page. Required.
-    :vartype value: list["FabricMirroringSetting"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: Required[list["FabricMirroringSetting"]]
-    """The FabricMirroringSetting items on this page. Required."""
-    nextLink: str
-    """The link to the next page of items."""
 
 
 class FabricMirroringSettingsProperties(TypedDict, total=False):
@@ -777,21 +513,6 @@ class FabricMirroringSettingsProperties(TypedDict, total=False):
     provisioningState: Union[str, "FabricMirroringProvisioningState"]
     """Provisioning state of Fabric Mirroring. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", and \"Updating\"."""
-
-
-class FeatureProperty(TypedDict, total=False):
-    """Server version capabilities.
-
-    :ivar feature_name: feature name.
-    :vartype feature_name: str
-    :ivar feature_value: feature value.
-    :vartype feature_value: str
-    """
-
-    featureName: str
-    """feature name."""
-    featureValue: str
-    """feature value."""
 
 
 class FirewallRule(ProxyResource):
@@ -852,17 +573,6 @@ class FullBackupStoreDetails(TypedDict, total=False):
      \"FullBackupStoreDetails\"."""
 
 
-class GetPrivateDnsZoneSuffixResponse(TypedDict, total=False):
-    """The response of get private dns zone suffix.
-
-    :ivar private_dns_zone_suffix: Represents the private DNS zone suffix.
-    :vartype private_dns_zone_suffix: str
-    """
-
-    privateDnsZoneSuffix: str
-    """Represents the private DNS zone suffix."""
-
-
 class HighAvailability(TypedDict, total=False):
     """High availability properties of a server.
 
@@ -910,22 +620,6 @@ class HighAvailabilityValidationEstimation(TypedDict, total=False):
     """Expected Availability zone of the standby server."""
 
 
-class ImportFromStorageResponseType(TypedDict, total=False):
-    """ImportFromStorage Response Properties.
-
-    :ivar estimated_completion_time: The estimated time of operation completion.
-    :vartype estimated_completion_time: str
-    :ivar object_type: Identifies the type of source operation. Required.
-     IMPORT_FROM_STORAGE_RESPONSE.
-    :vartype object_type: Literal[ObjectType.IMPORT_FROM_STORAGE_RESPONSE]
-    """
-
-    estimatedCompletionTime: str
-    """The estimated time of operation completion."""
-    objectType: Required[Literal[ObjectType.IMPORT_FROM_STORAGE_RESPONSE]]
-    """Identifies the type of source operation. Required. IMPORT_FROM_STORAGE_RESPONSE."""
-
-
 class ImportSourceProperties(TypedDict, total=False):
     """Import source related properties.
 
@@ -950,77 +644,6 @@ class ImportSourceProperties(TypedDict, total=False):
     """Relative path of data directory in storage."""
 
 
-class LogFile(ProxyResource):
-    """Represents a logFile.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of a logFile.
-    :vartype properties: "LogFileProperties"
-    """
-
-    properties: "LogFileProperties"
-    """The properties of a logFile."""
-
-
-class LogFileProperties(TypedDict, total=False):
-    """The properties of a logFile.
-
-    :ivar size_in_kb: The size in kb of the logFile.
-    :vartype size_in_kb: int
-    :ivar created_time: Creation timestamp of the log file.
-    :vartype created_time: str
-    :ivar type: Type of the log file.
-    :vartype type: str
-    :ivar last_modified_time: Last modified timestamp of the log file.
-    :vartype last_modified_time: str
-    :ivar url: The url to download the log file from.
-    :vartype url: str
-    """
-
-    sizeInKB: int
-    """The size in kb of the logFile."""
-    createdTime: str
-    """Creation timestamp of the log file."""
-    type: str
-    """Type of the log file."""
-    lastModifiedTime: str
-    """Last modified timestamp of the log file."""
-    url: str
-    """The url to download the log file from."""
-
-
-class Maintenance(ProxyResource):
-    """Represents a maintenance.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of a maintenance. Required.
-    :vartype properties: "MaintenanceProperties"
-    """
-
-    properties: Required["MaintenanceProperties"]
-    """The properties of a maintenance. Required."""
-
-
 class MaintenancePolicy(TypedDict, total=False):
     """Maintenance policy of a server.
 
@@ -1031,63 +654,6 @@ class MaintenancePolicy(TypedDict, total=False):
 
     patchStrategy: Union[str, "PatchStrategy"]
     """The patch strategy of this server. Known values are: \"Regular\" and \"VirtualCanary\"."""
-
-
-class MaintenanceProperties(TypedDict, total=False):
-    """The properties of a maintenance resource.
-
-    :ivar maintenance_type: A string defines maintenance type. Known values are:
-     "RoutineMaintenance", "MinorVersionUpgrade", "SecurityPatches", and "HotFixes".
-    :vartype maintenance_type: Union[str, "MaintenanceType"]
-    :ivar maintenance_state: A string describes the maintenance status. Known values are:
-     "Scheduled", "ReScheduled", "InPreparation", "Processing", "Completed", and "Canceled".
-    :vartype maintenance_state: Union[str, "MaintenanceState"]
-    :ivar maintenance_start_time: The start time for a maintenance.
-    :vartype maintenance_start_time: str
-    :ivar maintenance_end_time: The end time for a maintenance.
-    :vartype maintenance_end_time: str
-    :ivar maintenance_execution_start_time: The start time for a maintenance execution.
-    :vartype maintenance_execution_start_time: str
-    :ivar maintenance_execution_end_time: The end time for a maintenance execution.
-    :vartype maintenance_execution_end_time: str
-    :ivar maintenance_available_schedule_min_time: The min time the maintenance can be rescheduled.
-    :vartype maintenance_available_schedule_min_time: str
-    :ivar maintenance_available_schedule_max_time: The max time the maintenance can be rescheduled.
-    :vartype maintenance_available_schedule_max_time: str
-    :ivar maintenance_title: The maintenance title.
-    :vartype maintenance_title: str
-    :ivar maintenance_description: The maintenance description.
-    :vartype maintenance_description: str
-    :ivar provisioning_state: Provisioning state of the Maintenance. Known values are: "Succeeded",
-     "Creating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "MaintenanceProvisioningState"]
-    """
-
-    maintenanceType: Union[str, "MaintenanceType"]
-    """A string defines maintenance type. Known values are: \"RoutineMaintenance\",
-     \"MinorVersionUpgrade\", \"SecurityPatches\", and \"HotFixes\"."""
-    maintenanceState: Union[str, "MaintenanceState"]
-    """A string describes the maintenance status. Known values are: \"Scheduled\", \"ReScheduled\",
-     \"InPreparation\", \"Processing\", \"Completed\", and \"Canceled\"."""
-    maintenanceStartTime: str
-    """The start time for a maintenance."""
-    maintenanceEndTime: str
-    """The end time for a maintenance."""
-    maintenanceExecutionStartTime: str
-    """The start time for a maintenance execution."""
-    maintenanceExecutionEndTime: str
-    """The end time for a maintenance execution."""
-    maintenanceAvailableScheduleMinTime: str
-    """The min time the maintenance can be rescheduled."""
-    maintenanceAvailableScheduleMaxTime: str
-    """The max time the maintenance can be rescheduled."""
-    maintenanceTitle: str
-    """The maintenance title."""
-    maintenanceDescription: str
-    """The maintenance description."""
-    provisioningState: Union[str, "MaintenanceProvisioningState"]
-    """Provisioning state of the Maintenance. Known values are: \"Succeeded\", \"Creating\",
-     \"Deleting\", and \"Failed\"."""
 
 
 class MaintenancePropertiesForUpdate(TypedDict, total=False):
@@ -1181,25 +747,6 @@ class MySQLServerSku(TypedDict, total=False):
      \"GeneralPurpose\", and \"MemoryOptimized\"."""
 
 
-class NameAvailability(TypedDict, total=False):
-    """Represents a resource name availability.
-
-    :ivar message: Error Message.
-    :vartype message: str
-    :ivar name_available: Indicates whether the resource name is available.
-    :vartype name_available: bool
-    :ivar reason: Reason for name being unavailable.
-    :vartype reason: str
-    """
-
-    message: str
-    """Error Message."""
-    nameAvailable: bool
-    """Indicates whether the resource name is available."""
-    reason: str
-    """Reason for name being unavailable."""
-
-
 class NameAvailabilityRequest(TypedDict, total=False):
     """Request from client to check resource name availability.
 
@@ -1236,171 +783,6 @@ class Network(TypedDict, total=False):
     """Delegated subnet resource id used to setup vnet for a server."""
     privateDnsZoneResourceId: str
     """Private DNS zone resource id."""
-
-
-class Operation(TypedDict, total=False):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, Any]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    properties: dict[str, Any]
-    """Additional descriptions for the operation."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Display metadata associated with the operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
-
-
-class OperationStatusResult(TypedDict, total=False):
-    """The current status of an async operation.
-
-    :ivar id: Fully qualified ID for the async operation.
-    :vartype id: str
-    :ivar name: Name of the async operation.
-    :vartype name: str
-    :ivar status: Operation status. Required.
-    :vartype status: str
-    :ivar percent_complete: Percent of the operation that is complete.
-    :vartype percent_complete: float
-    :ivar start_time: The start time of the operation.
-    :vartype start_time: str
-    :ivar end_time: The end time of the operation.
-    :vartype end_time: str
-    :ivar operations: The operations list.
-    :vartype operations: list["OperationStatusResult"]
-    :ivar error: If present, details of the operation error.
-    :vartype error: "ErrorDetail"
-    :ivar resource_id: Fully qualified ID of the resource against which the original async
-     operation was started.
-    :vartype resource_id: str
-    """
-
-    id: str
-    """Fully qualified ID for the async operation."""
-    name: str
-    """Name of the async operation."""
-    status: Required[str]
-    """Operation status. Required."""
-    percentComplete: float
-    """Percent of the operation that is complete."""
-    startTime: str
-    """The start time of the operation."""
-    endTime: str
-    """The end time of the operation."""
-    operations: list["OperationStatusResult"]
-    """The operations list."""
-    error: "ErrorDetail"
-    """If present, details of the operation error."""
-    resourceId: str
-    """Fully qualified ID of the resource against which the original async operation was started."""
-
-
-class OperationProgressResult(OperationStatusResult):
-    """Represents Operation Results API Response.
-
-    :ivar id: Fully qualified ID for the async operation.
-    :vartype id: str
-    :ivar name: Name of the async operation.
-    :vartype name: str
-    :ivar status: Operation status. Required.
-    :vartype status: str
-    :ivar percent_complete: Percent of the operation that is complete.
-    :vartype percent_complete: float
-    :ivar start_time: The start time of the operation.
-    :vartype start_time: str
-    :ivar end_time: The end time of the operation.
-    :vartype end_time: str
-    :ivar operations: The operations list.
-    :vartype operations: list["OperationStatusResult"]
-    :ivar error: If present, details of the operation error.
-    :vartype error: "ErrorDetail"
-    :ivar resource_id: Fully qualified ID of the resource against which the original async
-     operation was started.
-    :vartype resource_id: str
-    :ivar properties: The response properties specific to the operation.
-    :vartype properties: "OperationProgressResponseType"
-    """
-
-    properties: "OperationProgressResponseType"
-    """The response properties specific to the operation."""
-
-
-class OperationStatusExtendedResult(OperationStatusResult):
-    """Represents Operation Results API Response.
-
-    :ivar id: Fully qualified ID for the async operation.
-    :vartype id: str
-    :ivar name: Name of the async operation.
-    :vartype name: str
-    :ivar status: Operation status. Required.
-    :vartype status: str
-    :ivar percent_complete: Percent of the operation that is complete.
-    :vartype percent_complete: float
-    :ivar start_time: The start time of the operation.
-    :vartype start_time: str
-    :ivar end_time: The end time of the operation.
-    :vartype end_time: str
-    :ivar operations: The operations list.
-    :vartype operations: list["OperationStatusResult"]
-    :ivar error: If present, details of the operation error.
-    :vartype error: "ErrorDetail"
-    :ivar resource_id: Fully qualified ID of the resource against which the original async
-     operation was started.
-    :vartype resource_id: str
-    :ivar properties: The extended properties of Operation Results.
-    :vartype properties: dict[str, Any]
-    """
-
-    properties: dict[str, Any]
-    """The extended properties of Operation Results."""
 
 
 class PrivateEndpoint(TypedDict, total=False):
@@ -1461,47 +843,6 @@ class PrivateEndpointConnectionProperties(TypedDict, total=False):
     provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
     """The provisioning state of the private endpoint connection resource. Known values are:
      \"Succeeded\", \"Creating\", \"Deleting\", and \"Failed\"."""
-
-
-class PrivateLinkResource(Resource):
-    """A private link resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Resource properties.
-    :vartype properties: "PrivateLinkResourceProperties"
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """Resource properties."""
-
-
-class PrivateLinkResourceProperties(TypedDict, total=False):
-    """Properties of a private link resource.
-
-    :ivar group_id: The private link resource group id.
-    :vartype group_id: str
-    :ivar required_members: The private link resource required member names.
-    :vartype required_members: list[str]
-    :ivar required_zone_names: The private link resource private link DNS zone name.
-    :vartype required_zone_names: list[str]
-    """
-
-    groupId: str
-    """The private link resource group id."""
-    requiredMembers: list[str]
-    """The private link resource required member names."""
-    requiredZoneNames: list[str]
-    """The private link resource private link DNS zone name."""
 
 
 class PrivateLinkServiceConnectionState(TypedDict, total=False):
@@ -1587,47 +928,6 @@ class Server(TrackedResource):
     """The SKU (pricing tier) of the server."""
 
 
-class ServerBackup(ProxyResource):
-    """Server backup properties.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of a server backup.
-    :vartype properties: "ServerBackupProperties"
-    """
-
-    properties: "ServerBackupProperties"
-    """The properties of a server backup."""
-
-
-class ServerBackupProperties(TypedDict, total=False):
-    """The properties of a server backup.
-
-    :ivar backup_type: Backup type.
-    :vartype backup_type: str
-    :ivar completed_time: Backup completed time (ISO8601 format).
-    :vartype completed_time: str
-    :ivar source: Backup source.
-    :vartype source: str
-    """
-
-    backupType: str
-    """Backup type."""
-    completedTime: str
-    """Backup completed time (ISO8601 format)."""
-    source: str
-    """Backup source."""
-
-
 class ServerBackupPropertiesV2(TypedDict, total=False):
     """The properties of a server backup.
 
@@ -1691,52 +991,6 @@ class ServerDetachVNetParameter(TypedDict, total=False):
     publicNetworkAccess: Union[str, "EnableStatusEnum"]
     """Whether or not public network access is allowed for this server. Value is 'Disabled' when
      server has VNet integration. Known values are: \"Enabled\" and \"Disabled\"."""
-
-
-class ServerEditionCapability(TypedDict, total=False):
-    """Server edition capabilities.
-
-    :ivar name: Server edition name.
-    :vartype name: str
-    :ivar supported_storage_editions: A list of supported storage editions.
-    :vartype supported_storage_editions: list["StorageEditionCapability"]
-    :ivar supported_server_versions: A list of supported server versions.
-    :vartype supported_server_versions: list["ServerVersionCapability"]
-    """
-
-    name: str
-    """Server edition name."""
-    supportedStorageEditions: list["StorageEditionCapability"]
-    """A list of supported storage editions."""
-    supportedServerVersions: list["ServerVersionCapability"]
-    """A list of supported server versions."""
-
-
-class ServerEditionCapabilityV2(TypedDict, total=False):
-    """Server edition capabilities.
-
-    :ivar name: Server edition name.
-    :vartype name: str
-    :ivar default_sku: Default Sku name.
-    :vartype default_sku: str
-    :ivar default_storage_size: Default storage size.
-    :vartype default_storage_size: int
-    :ivar supported_storage_editions: A list of supported storage editions.
-    :vartype supported_storage_editions: list["StorageEditionCapability"]
-    :ivar supported_skus: A list of supported Skus.
-    :vartype supported_skus: list["SkuCapabilityV2"]
-    """
-
-    name: str
-    """Server edition name."""
-    defaultSku: str
-    """Default Sku name."""
-    defaultStorageSize: int
-    """Default storage size."""
-    supportedStorageEditions: list["StorageEditionCapability"]
-    """A list of supported storage editions."""
-    supportedSkus: list["SkuCapabilityV2"]
-    """A list of supported Skus."""
 
 
 class ServerForUpdate(TypedDict, total=False):
@@ -1954,86 +1208,6 @@ class ServerRestartParameter(TypedDict, total=False):
     """The maximum allowed failover time in seconds."""
 
 
-class ServerVersionCapability(TypedDict, total=False):
-    """Server version capabilities.
-
-    :ivar name: server version.
-    :vartype name: str
-    :ivar supported_skus: A list of supported Skus.
-    :vartype supported_skus: list["SkuCapability"]
-    """
-
-    name: str
-    """server version."""
-    supportedSkus: list["SkuCapability"]
-    """A list of supported Skus."""
-
-
-class ServerVersionCapabilityV2(TypedDict, total=False):
-    """Server version capabilities.
-
-    :ivar name: server version.
-    :vartype name: str
-    """
-
-    name: str
-    """server version."""
-
-
-class SkuCapability(TypedDict, total=False):
-    """Sku capability.
-
-    :ivar name: vCore name.
-    :vartype name: str
-    :ivar v_cores: supported vCores.
-    :vartype v_cores: int
-    :ivar supported_iops: supported IOPS.
-    :vartype supported_iops: int
-    :ivar supported_memory_per_v_core_mb: supported memory per vCore in MB.
-    :vartype supported_memory_per_v_core_mb: int
-    """
-
-    name: str
-    """vCore name."""
-    vCores: int
-    """supported vCores."""
-    supportedIops: int
-    """supported IOPS."""
-    supportedMemoryPerVCoreMB: int
-    """supported memory per vCore in MB."""
-
-
-class SkuCapabilityV2(TypedDict, total=False):
-    """Sku capability.
-
-    :ivar name: vCore name.
-    :vartype name: str
-    :ivar v_cores: supported vCores.
-    :vartype v_cores: int
-    :ivar supported_iops: supported IOPS.
-    :vartype supported_iops: int
-    :ivar supported_memory_per_v_core_mb: supported memory per vCore in MB.
-    :vartype supported_memory_per_v_core_mb: int
-    :ivar supported_zones: Supported zones.
-    :vartype supported_zones: list[str]
-    :ivar supported_ha_mode: Supported high availability mode.
-    :vartype supported_ha_mode: list[str]
-    """
-
-    name: str
-    """vCore name."""
-    vCores: int
-    """supported vCores."""
-    supportedIops: int
-    """supported IOPS."""
-    supportedMemoryPerVCoreMB: int
-    """supported memory per vCore in MB."""
-    supportedZones: list[str]
-    """Supported zones."""
-    supportedHAMode: list[str]
-    """Supported high availability mode."""
-
-
 class Storage(TypedDict, total=False):
     """Storage Profile properties of a server.
 
@@ -2070,41 +1244,6 @@ class Storage(TypedDict, total=False):
     storageRedundancy: Union[str, "StorageRedundancyEnum"]
     """The redundant type of the server storage. The parameter is used for server creation. Known
      values are: \"LocalRedundancy\" and \"ZoneRedundancy\"."""
-
-
-class StorageEditionCapability(TypedDict, total=False):
-    """storage edition capability.
-
-    :ivar name: storage edition name.
-    :vartype name: str
-    :ivar min_storage_size: The minimal supported storage size.
-    :vartype min_storage_size: int
-    :ivar max_storage_size: The maximum supported storage size.
-    :vartype max_storage_size: int
-    :ivar min_backup_retention_days: Minimal backup retention days.
-    :vartype min_backup_retention_days: int
-    :ivar max_backup_retention_days: Maximum backup retention days.
-    :vartype max_backup_retention_days: int
-    :ivar min_backup_interval_hours: Minimal backup interval hours.
-    :vartype min_backup_interval_hours: int
-    :ivar max_backup_interval_hours: Maximum backup interval hours.
-    :vartype max_backup_interval_hours: int
-    """
-
-    name: str
-    """storage edition name."""
-    minStorageSize: int
-    """The minimal supported storage size."""
-    maxStorageSize: int
-    """The maximum supported storage size."""
-    minBackupRetentionDays: int
-    """Minimal backup retention days."""
-    maxBackupRetentionDays: int
-    """Maximum backup retention days."""
-    minBackupIntervalHours: int
-    """Minimal backup interval hours."""
-    maxBackupIntervalHours: int
-    """Maximum backup interval hours."""
 
 
 class SystemData(TypedDict, total=False):
@@ -2157,29 +1296,6 @@ class UserAssignedIdentity(TypedDict, total=False):
     """Client Id of user assigned identity."""
 
 
-class ValidateBackupResponse(TypedDict, total=False):
-    """Represents ValidateBackup API Response.
-
-    :ivar properties: The response properties of a pre backup operation.
-    :vartype properties: "ValidateBackupResponseProperties"
-    """
-
-    properties: "ValidateBackupResponseProperties"
-    """The response properties of a pre backup operation."""
-
-
-class ValidateBackupResponseProperties(TypedDict, total=False):
-    """ValidateBackup Response Properties.
-
-    :ivar number_of_containers: Estimated no of storage containers required for resource data to be
-     backed up.
-    :vartype number_of_containers: int
-    """
-
-    numberOfContainers: int
-    """Estimated no of storage containers required for resource data to be backed up."""
-
-
 class VirtualNetworkSubnetUsageParameter(TypedDict, total=False):
     """Virtual network subnet usage parameter.
 
@@ -2191,24 +1307,4 @@ class VirtualNetworkSubnetUsageParameter(TypedDict, total=False):
     """Virtual network resource id."""
 
 
-class VirtualNetworkSubnetUsageResult(TypedDict, total=False):
-    """Virtual network subnet usage data.
-
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar subscription_id: The subscription id.
-    :vartype subscription_id: str
-    :ivar delegated_subnets_usage: A list of delegated subnet usage.
-    :vartype delegated_subnets_usage: list["DelegatedSubnetUsage"]
-    """
-
-    location: str
-    """The location name."""
-    subscriptionId: str
-    """The subscription id."""
-    delegatedSubnetsUsage: list["DelegatedSubnetUsage"]
-    """A list of delegated subnet usage."""
-
-
-OperationProgressResponseType = Union[BackupAndExportResponseType, ImportFromStorageResponseType]
 BackupStoreDetails = Union[FullBackupStoreDetails]

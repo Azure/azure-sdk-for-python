@@ -2617,7 +2617,13 @@ class AzureADAdministratorsOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "location"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -3408,7 +3414,13 @@ class ServersOperations:  # pylint: disable=too-many-public-methods
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -4588,7 +4600,13 @@ class ServersOperations:  # pylint: disable=too-many-public-methods
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -4829,7 +4847,13 @@ class ServersOperations:  # pylint: disable=too-many-public-methods
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -5089,7 +5113,13 @@ class BackupAndExportOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "location"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -5430,7 +5460,13 @@ class ServersMigrationOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -6168,7 +6204,13 @@ class LongRunningBackupOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -7274,7 +7316,13 @@ class ConfigurationsOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -8784,7 +8832,13 @@ class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-lo
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "location"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -9050,7 +9104,13 @@ class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-lo
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                ARMPolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "location"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
