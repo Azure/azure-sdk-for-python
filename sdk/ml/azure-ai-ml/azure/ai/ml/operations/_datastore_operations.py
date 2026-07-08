@@ -7,12 +7,11 @@
 import time
 import uuid
 from typing import Dict, Iterable, Optional, cast
+from urllib.parse import quote
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
@@ -27,6 +26,8 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.exceptions import MlException, ValidationException
+from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpRequest
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -56,14 +57,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        serviceclient_2024_01_01_preview: ServiceClient012024Preview,
         serviceclient_2024_10_01_preview: ServiceClient102024Preview,
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
         self._operation = serviceclient_2024_10_01_preview.datastores
-        self._compute_operation = serviceclient_2024_01_01_preview.compute
+        self._service_client = serviceclient_2024_10_01_preview
         self._credential = serviceclient_2024_10_01_preview._config.credential
         self._init_kwargs = kwargs
 
@@ -293,38 +293,62 @@ class DatastoreOperations(_ScopeDependentOperations):
         )
         if persistent and ci_name is not None:
             mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
-            self._compute_operation.update_data_mounts(
-                self._resource_group_name,
-                self._workspace_name,
-                ci_name,
-                [
-                    ComputeInstanceDataMount(
-                        source=uri,
-                        source_type="URI",
-                        mount_name=mount_name,
-                        mount_action="Mount",
-                        mount_path=mount_point or "",
-                    )
-                ],
-                api_version="2021-01-01",
-                **kwargs,
+            # The shared arm_ml_service client has no generated ``compute.update_data_mounts`` method
+            # (update-data-mounts is only modeled on the pinned 2021-01-01 data-plane api-version), so the
+            # request is issued directly via ``send_request``. The URL/body match the generated
+            # 2024-01-01-preview ``build_update_data_mounts_request`` byte-for-byte.
+            compute_url = (
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/"
+                "Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}"
+            ).format(
+                subscriptionId=quote(self._operation_scope._subscription_id, safe=""),
+                resourceGroupName=quote(self._resource_group_name, safe=""),
+                workspaceName=quote(self._workspace_name, safe=""),
+                computeName=quote(ci_name, safe=""),
             )
+            update_request = HttpRequest(
+                method="POST",
+                url=compute_url + "/updateDataMounts",
+                params={"api-version": "2021-01-01"},
+                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                json=[
+                    {
+                        "source": uri,
+                        "sourceType": "URI",
+                        "mountName": mount_name,
+                        "mountAction": "Mount",
+                        "mountPath": mount_point or "",
+                    }
+                ],
+            )
+            update_response = self._service_client.send_request(update_request, **kwargs)
+            if update_response.status_code != 200:
+                raise HttpResponseError(response=update_response)
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:
-                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
-                mounts = compute.properties.properties.data_mounts
+                get_request = HttpRequest(
+                    method="GET",
+                    url=compute_url,
+                    params={"api-version": "2024-01-01-preview"},
+                    headers={"Accept": "application/json"},
+                )
+                get_response = self._service_client.send_request(get_request)
+                if get_response.status_code != 200:
+                    raise HttpResponseError(response=get_response)
+                mounts = ((get_response.json().get("properties") or {}).get("properties") or {}).get("dataMounts") or []
                 try:
-                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
-                    if mount.mount_state == "Mounted":
+                    mount = [mount for mount in mounts if mount.get("mountName") == mount_name][0]
+                    mount_state = mount.get("mountState")
+                    if mount_state == "Mounted":
                         print(f"Mounted [name: {mount_name}].")
                         break
-                    if mount.mount_state == "MountRequested":
+                    if mount_state == "MountRequested":
                         pass
-                    elif mount.mount_state == "MountFailed":
-                        msg = f"Mount failed [name: {mount_name}]: {mount.error}"
+                    elif mount_state == "MountFailed":
+                        msg = f"Mount failed [name: {mount_name}]: {mount.get('error')}"
                         raise MlException(message=msg, no_personal_data_message=msg)
                     else:
-                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount_state}"
                         raise MlException(message=msg, no_personal_data_message=msg)
                 except IndexError:
                     pass

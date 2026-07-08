@@ -10,6 +10,7 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, Union, cast
+from urllib.parse import quote
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -25,8 +26,6 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023_preview
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024_preview
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -82,6 +81,7 @@ from azure.ai.ml.exceptions import (
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
+from azure.core.rest import HttpRequest
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -113,7 +113,6 @@ class DataOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
-        service_client_012024_preview: ServiceClient012024_preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Any,
     ):
@@ -122,7 +121,6 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
-        self._compute_operation = service_client_012024_preview.compute
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -796,38 +794,62 @@ class DataOperations(_ScopeDependentOperations):
         )
         if persistent and ci_name is not None:
             mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
-            self._compute_operation.update_data_mounts(
-                self._resource_group_name,
-                self._workspace_name,
-                ci_name,
-                [
-                    ComputeInstanceDataMount(
-                        source=uri,
-                        source_type="URI",
-                        mount_name=mount_name,
-                        mount_action="Mount",
-                        mount_path=mount_point or "",
-                    )
-                ],
-                api_version="2021-01-01",
-                **kwargs,
+            # The shared arm_ml_service client has no generated ``compute.update_data_mounts`` method
+            # (update-data-mounts is only modeled on the pinned 2021-01-01 data-plane api-version), so the
+            # request is issued directly via ``send_request``. The URL/body match the generated
+            # 2024-01-01-preview ``build_update_data_mounts_request`` byte-for-byte.
+            compute_url = (
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/"
+                "Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}"
+            ).format(
+                subscriptionId=quote(self._operation_scope._subscription_id, safe=""),
+                resourceGroupName=quote(self._resource_group_name, safe=""),
+                workspaceName=quote(self._workspace_name, safe=""),
+                computeName=quote(ci_name, safe=""),
             )
+            update_request = HttpRequest(
+                method="POST",
+                url=compute_url + "/updateDataMounts",
+                params={"api-version": "2021-01-01"},
+                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                json=[
+                    {
+                        "source": uri,
+                        "sourceType": "URI",
+                        "mountName": mount_name,
+                        "mountAction": "Mount",
+                        "mountPath": mount_point or "",
+                    }
+                ],
+            )
+            update_response = self._service_client.send_request(update_request, **kwargs)
+            if update_response.status_code != 200:
+                raise HttpResponseError(response=update_response)
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:
-                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
-                mounts = compute.properties.properties.data_mounts
+                get_request = HttpRequest(
+                    method="GET",
+                    url=compute_url,
+                    params={"api-version": "2024-01-01-preview"},
+                    headers={"Accept": "application/json"},
+                )
+                get_response = self._service_client.send_request(get_request)
+                if get_response.status_code != 200:
+                    raise HttpResponseError(response=get_response)
+                mounts = ((get_response.json().get("properties") or {}).get("properties") or {}).get("dataMounts") or []
                 try:
-                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
-                    if mount.mount_state == "Mounted":
+                    mount = [mount for mount in mounts if mount.get("mountName") == mount_name][0]
+                    mount_state = mount.get("mountState")
+                    if mount_state == "Mounted":
                         print(f"Mounted [name: {mount_name}].")
                         break
-                    if mount.mount_state == "MountRequested":
+                    if mount_state == "MountRequested":
                         pass
-                    elif mount.mount_state == "MountFailed":
-                        msg = f"Mount failed [name: {mount_name}]: {mount.error}"
+                    elif mount_state == "MountFailed":
+                        msg = f"Mount failed [name: {mount_name}]: {mount.get('error')}"
                         raise MlException(message=msg, no_personal_data_message=msg)
                     else:
-                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount_state}"
                         raise MlException(message=msg, no_personal_data_message=msg)
                 except IndexError:
                     pass

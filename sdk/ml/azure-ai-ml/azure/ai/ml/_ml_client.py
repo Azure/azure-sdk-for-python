@@ -590,7 +590,6 @@ class MLClient:
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
             serviceclient_2024_10_01_preview=self._service_client_10_2024_preview_tsp,
-            serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -705,7 +704,6 @@ class MLClient:
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
-            self._service_client_01_2024_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,

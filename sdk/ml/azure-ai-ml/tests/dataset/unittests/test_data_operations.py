@@ -60,7 +60,6 @@ def mock_data_operations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
-        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
@@ -80,7 +79,6 @@ def mock_data_operations_in_registry(
         operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
-        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
@@ -589,11 +587,14 @@ class TestDataOperations:
         self,
         mock_data_operations: DataOperations,
     ):
-        mock_data_operations._compute_operation.get.return_value = Mock(
-            properties=Mock(
-                properties=Mock(data_mounts=[Mock(mount_name="unified_mount_random_uuid", mount_state="Mounted")])
-            )
-        )
+        update_response = Mock(status_code=200)
+        get_response = Mock(status_code=200)
+        get_response.json.return_value = {
+            "properties": {
+                "properties": {"dataMounts": [{"mountName": "unified_mount_random_uuid", "mountState": "Mounted"}]}
+            }
+        }
+        mock_data_operations._service_client.send_request.side_effect = [update_response, get_response]
         with patch("uuid.uuid4", return_value="random_uuid"), patch(
             "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_data_asset_uri"
         ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
@@ -603,7 +604,7 @@ class TestDataOperations:
                 persistent=True,
             )
             mock_build_uri.assert_called_once()
-            mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
+            assert mock_data_operations._service_client.send_request.call_count == 2
 
     @pytest.mark.skipif(
         (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
