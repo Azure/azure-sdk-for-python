@@ -1243,7 +1243,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Optional[Mapping[str, Any]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Queries documents change feed in a collection.
 
         :param str collection_link: The link to the document collection.
@@ -1252,9 +1252,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type response_hook: Callable[[dict[str, str], dict[str, Any]]
 
         :return:
-            Query Iterable of Documents.
+            A pageable of documents from the change feed. In addition to iteration, it exposes
+            get_response_headers() for thread-safe access to the response headers of the most
+            recent page fetch (including the change feed continuation token, ``etag``).
         :rtype:
-            query_iterable.QueryIterable
+            ~azure.cosmos.CosmosItemPaged
 
         """
 
@@ -1272,7 +1274,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_range_id: Optional[str] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Queries change feed of a resource in a collection.
 
         :param str collection_link: The link to the document collection.
@@ -1282,9 +1284,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type response_hook: Callable[[dict[str, str], dict[str, Any]]
 
         :return:
-            Query Iterable of Documents.
+            A pageable of documents from the change feed. In addition to iteration, it exposes
+            get_response_headers() for thread-safe access to the response headers of the most
+            recent page fetch (including the change feed continuation token, ``etag``).
         :rtype:
-            query_iterable.QueryIterable
+            ~azure.cosmos.CosmosItemPaged
 
         """
         if options is None:
@@ -1294,6 +1298,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # Shared dict for header capture — overwritten each page fetch
+        response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
@@ -1311,14 +1318,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options,
                 partition_key_range_id,
                 response_hook=response_hook,
+                response_headers=response_headers,
                 **kwargs)
 
-        return ItemPaged(
+        return CosmosItemPaged(
             self,
             options,
             fetch_function=fetch_fn,
             collection_link=collection_link,
-            page_iterator_class=ChangeFeedIterable
+            page_iterator_class=ChangeFeedIterable,
+            response_headers=response_headers
         )
 
     def _ReadPartitionKeyRanges(

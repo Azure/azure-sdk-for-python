@@ -3,6 +3,7 @@
 ### 4.16.2 (Unreleased)
 
 #### Features Added
+* `query_items_change_feed()` now returns a `CosmosItemPaged` (sync) / `CosmosAsyncItemPaged` (async), matching `query_items()`. This exposes the thread-safe public `get_response_headers()` API, allowing users to read the change feed continuation token (`etag`) from the latest page's response headers instead of relying on the non-thread-safe internal `client_connection.last_response_headers`. See [PR 47947](https://github.com/Azure/azure-sdk-for-python/pull/47947).
 
 #### Breaking Changes
 

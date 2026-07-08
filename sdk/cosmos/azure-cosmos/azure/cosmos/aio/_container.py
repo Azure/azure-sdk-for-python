@@ -985,7 +985,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -1020,8 +1020,8 @@ class ContainerProxy:
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosAsyncItemPaged
         """
         ...
 
@@ -1037,7 +1037,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -1068,8 +1068,8 @@ class ContainerProxy:
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosAsyncItemPaged
         """
         ...
 
@@ -1083,7 +1083,7 @@ class ContainerProxy:
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -1104,8 +1104,8 @@ class ContainerProxy:
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosAsyncItemPaged
         """
         # pylint: enable=line-too-long
         ...
@@ -1121,7 +1121,7 @@ class ContainerProxy:
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified.
 
@@ -1152,8 +1152,8 @@ class ContainerProxy:
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosAsyncItemPaged
         """
         ...
 
@@ -1161,7 +1161,7 @@ class ContainerProxy:
     def query_items_change_feed(  # pylint: disable=unused-argument
             self,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -1197,8 +1197,8 @@ class ContainerProxy:
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosAsyncItemPaged
         """
         # pylint: disable=too-many-statements
         validate_kwargs(kwargs)
