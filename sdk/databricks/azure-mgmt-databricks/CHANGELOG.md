@@ -27,7 +27,7 @@
   - Added model `ProxyResource`
   - Added model `WorkspaceNoPublicIPBooleanParameter`
   - Added model `WorkspacePropertiesAccessConnector`
-  - Model `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
+  - Operation group `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
 
 ### Breaking Changes
 
