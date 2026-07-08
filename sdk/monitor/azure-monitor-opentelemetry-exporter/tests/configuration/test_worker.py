@@ -181,9 +181,9 @@ class TestConfigurationWorker(unittest.TestCase):
 
                 # Error should be logged
                 mock_logger.debug.assert_called()
-                warning_call = mock_logger.debug.call_args[0]
-                self.assertIn("Configuration refresh failed", warning_call[0])
-                self.assertIn("Test error", str(warning_call[1]))
+                debug_call = mock_logger.debug.call_args[0]
+                self.assertIn("Configuration refresh failed", debug_call[0])
+                self.assertIn("Test error", str(debug_call[1]))
 
             finally:
                 worker.shutdown()
