@@ -4,8 +4,12 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+from opentelemetry import trace as trace_api
 from opentelemetry.attributes import BoundedAttributes
 from opentelemetry.context import Context
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.trace import INVALID_SPAN_CONTEXT, SpanContext, TraceFlags
 
 from azure.monitor.opentelemetry.exporter._gen_ai._processor import (
@@ -151,6 +155,81 @@ class TestGenAIMainAgentSpanProcessorOnStart(unittest.TestCase):
 
         span.set_attribute.assert_not_called()
 
+    def test_on_start_propagates_to_child_with_none_parent_context(self):
+        """Regression: child spans start with parent_context=None and must still
+        inherit main_agent context from the active parent.
+
+        Child LLM/chat spans are created with parent_context=None and rely on
+        get_current_span(None) resolving the active invoke_agent span. Propagation
+        must not be gated on parent_context being non-None.
+        """
+        span = MagicMock()
+        parent_span = MagicMock()
+        parent_span.get_span_context.return_value = SpanContext(
+            trace_id=1, span_id=2, is_remote=False, trace_flags=TraceFlags(1)
+        )
+        parent_span.attributes = {
+            "microsoft.gen_ai.main_agent.name": "MainAgent",
+            "microsoft.gen_ai.main_agent.id": "agent-123",
+        }
+
+        with patch(
+            "azure.monitor.opentelemetry.exporter._gen_ai._processor.get_current_span",
+            return_value=parent_span,
+        ) as get_current_span_mock:
+            self.processor.on_start(span, parent_context=None)
+
+        # get_current_span(None) is used to resolve the active parent.
+        get_current_span_mock.assert_called_once_with(None)
+        span.set_attribute.assert_any_call("microsoft.gen_ai.main_agent.name", "MainAgent")
+        span.set_attribute.assert_any_call("microsoft.gen_ai.main_agent.id", "agent-123")
+
+    def test_on_start_propagation_cascades_through_subtree(self):
+        """main_agent context should cascade to every span in the subtree.
+
+        Because on_start copies the parent's microsoft.gen_ai.main_agent.* onto the
+        child, a grandchild resolving its (already-attributed) parent inherits the
+        same main-agent identity, keeping the whole subtree attributed to the root.
+        """
+        # Level 1: child resolves the root invoke_agent span (self-attributed).
+        root_span = MagicMock()
+        root_span.get_span_context.return_value = SpanContext(
+            trace_id=1, span_id=1, is_remote=False, trace_flags=TraceFlags(1)
+        )
+        root_span.attributes = {
+            "microsoft.gen_ai.main_agent.name": "MainAgent",
+            "microsoft.gen_ai.main_agent.id": "agent-123",
+        }
+
+        child_span = MagicMock()
+        child_attrs = {}
+        child_span.set_attribute.side_effect = lambda k, v: child_attrs.__setitem__(k, v)
+
+        with patch(
+            "azure.monitor.opentelemetry.exporter._gen_ai._processor.get_current_span",
+            return_value=root_span,
+        ):
+            self.processor.on_start(child_span, parent_context=None)
+
+        self.assertEqual(child_attrs["microsoft.gen_ai.main_agent.name"], "MainAgent")
+        self.assertEqual(child_attrs["microsoft.gen_ai.main_agent.id"], "agent-123")
+
+        # Level 2: grandchild resolves the now-attributed child span and inherits
+        # the same main-agent identity.
+        child_span.attributes = child_attrs
+        grandchild_span = MagicMock()
+        grandchild_attrs = {}
+        grandchild_span.set_attribute.side_effect = lambda k, v: grandchild_attrs.__setitem__(k, v)
+
+        with patch(
+            "azure.monitor.opentelemetry.exporter._gen_ai._processor.get_current_span",
+            return_value=child_span,
+        ):
+            self.processor.on_start(grandchild_span, parent_context=None)
+
+        self.assertEqual(grandchild_attrs["microsoft.gen_ai.main_agent.name"], "MainAgent")
+        self.assertEqual(grandchild_attrs["microsoft.gen_ai.main_agent.id"], "agent-123")
+
 
 class TestGenAIMainAgentSpanProcessorOnEnd(unittest.TestCase):
     def setUp(self):
@@ -161,6 +240,21 @@ class TestGenAIMainAgentSpanProcessorOnEnd(unittest.TestCase):
         span = MagicMock()
         span.attributes = None
         self.processor.on_end(span)
+
+    def test_on_end_cleans_up_parent_ref_even_without_attributes(self):
+        """on_end must drop the stored parent reference even on the early-return
+        path where span.attributes is None, so the map does not leak entries."""
+        span_id = 12345
+        parent_span = MagicMock()
+        self.processor._parent_spans[span_id] = parent_span
+
+        span = MagicMock()
+        span.attributes = None
+        span.context.span_id = span_id
+
+        self.processor.on_end(span)
+
+        self.assertNotIn(span_id, self.processor._parent_spans)
 
     def test_on_end_not_invoke_agent(self):
         """on_end should no-op when gen_ai.operation.name is not invoke_agent."""
@@ -266,6 +360,213 @@ class TestGenAIMainAgentSpanProcessorOnEnd(unittest.TestCase):
         attributes._immutable = True
         with self.assertRaises(TypeError):
             attributes["microsoft.gen_ai.main_agent.name"] = "RootAgent"
+
+
+class TestGenAIMainAgentSpanProcessorSDKPropagation(unittest.TestCase):
+    """Real-SDK propagation tests using a TracerProvider + InMemorySpanExporter.
+
+    These exercise the full on_start/on_end flow against real OTel SDK spans
+    (with frozen attributes on end), catching timing and immutability issues
+    that mock-based tests cannot detect.
+    """
+
+    def setUp(self):
+        self.exporter = InMemorySpanExporter()
+        self.provider = TracerProvider()
+        # Main-agent processor FIRST so on_start enriches before export.
+        self.provider.add_span_processor(_GenAIMainAgentSpanProcessor())
+        self.provider.add_span_processor(SimpleSpanProcessor(self.exporter))
+        self.tracer = self.provider.get_tracer("test")
+
+    def tearDown(self):
+        self.provider.shutdown()
+
+    def _get_exported_spans(self):
+        return {s.name: s for s in self.exporter.get_finished_spans()}
+
+    def test_invoke_agent_propagates_to_chat_span(self):
+        """invoke_agent (with gen_ai.agent.*) -> chat child:
+        child must have microsoft.gen_ai.main_agent.* attrs."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        agent_span = self.tracer.start_span("invoke_agent TravelBot", context=root_ctx)
+        agent_span.set_attribute("gen_ai.operation.name", "invoke_agent")
+        agent_span.set_attribute("gen_ai.agent.name", "TravelBot")
+        agent_span.set_attribute("gen_ai.agent.id", "agent-1")
+        agent_span.set_attribute("gen_ai.agent.version", "2.0")
+        agent_span.set_attribute("gen_ai.conversation.id", "conv-1")
+
+        chat_ctx = trace_api.set_span_in_context(agent_span)
+        chat_span = self.tracer.start_span("chat gpt-4", context=chat_ctx)
+        chat_span.end()
+        agent_span.end()
+
+        spans = self._get_exported_spans()
+        chat = spans["chat gpt-4"]
+        self.assertEqual(chat.attributes.get("microsoft.gen_ai.main_agent.name"), "TravelBot")
+        self.assertEqual(chat.attributes.get("microsoft.gen_ai.main_agent.id"), "agent-1")
+        self.assertEqual(chat.attributes.get("microsoft.gen_ai.main_agent.version"), "2.0")
+        self.assertEqual(chat.attributes.get("microsoft.gen_ai.main_agent.conversation_id"), "conv-1")
+
+    def test_invoke_agent_propagates_to_tool_span(self):
+        """invoke_agent -> execute_tool child:
+        tool span must have microsoft.gen_ai.main_agent.* attrs."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        agent_span = self.tracer.start_span("invoke_agent TravelBot", context=root_ctx)
+        agent_span.set_attribute("gen_ai.operation.name", "invoke_agent")
+        agent_span.set_attribute("gen_ai.agent.name", "TravelBot")
+        agent_span.set_attribute("gen_ai.agent.id", "agent-1")
+
+        tool_ctx = trace_api.set_span_in_context(agent_span)
+        tool_span = self.tracer.start_span("execute_tool get_weather", context=tool_ctx)
+        tool_span.end()
+        agent_span.end()
+
+        spans = self._get_exported_spans()
+        tool = spans["execute_tool get_weather"]
+        self.assertEqual(tool.attributes.get("microsoft.gen_ai.main_agent.name"), "TravelBot")
+        self.assertEqual(tool.attributes.get("microsoft.gen_ai.main_agent.id"), "agent-1")
+
+    def test_propagation_cascades_through_nested_subtree(self):
+        """invoke_agent -> wrapper -> inner -> chat:
+        main_agent attrs must propagate through the entire chain."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        agent_span = self.tracer.start_span("invoke_agent TravelBot", context=root_ctx)
+        agent_span.set_attribute("gen_ai.operation.name", "invoke_agent")
+        agent_span.set_attribute("gen_ai.agent.name", "TravelBot")
+        agent_span.set_attribute("gen_ai.agent.id", "agent-1")
+
+        wrapper = self.tracer.start_span("wrapper", context=trace_api.set_span_in_context(agent_span))
+        inner = self.tracer.start_span("inner", context=trace_api.set_span_in_context(wrapper))
+        chat = self.tracer.start_span("chat gpt-4", context=trace_api.set_span_in_context(inner))
+        chat.end()
+        inner.end()
+        wrapper.end()
+        agent_span.end()
+
+        spans = self._get_exported_spans()
+        for name in ("wrapper", "inner", "chat gpt-4"):
+            self.assertEqual(
+                spans[name].attributes.get("microsoft.gen_ai.main_agent.name"),
+                "TravelBot",
+                f"{name} should inherit main_agent.name",
+            )
+            self.assertEqual(spans[name].attributes.get("microsoft.gen_ai.main_agent.id"), "agent-1")
+
+    def test_multi_agent_preserves_main_agent_over_sub_agent(self):
+        """main_agent -> sub_agent -> chat:
+        sub_agent has its own gen_ai.agent.* but the MAIN agent's
+        microsoft.gen_ai.main_agent.* must be preserved on the grandchild."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        main_agent = self.tracer.start_span("invoke_agent MainAgent", context=root_ctx)
+        main_agent.set_attribute("gen_ai.operation.name", "invoke_agent")
+        main_agent.set_attribute("gen_ai.agent.name", "MainAgent")
+        main_agent.set_attribute("gen_ai.agent.id", "main-1")
+
+        sub_agent = self.tracer.start_span("invoke_agent SubAgent", context=trace_api.set_span_in_context(main_agent))
+        sub_agent.set_attribute("gen_ai.operation.name", "invoke_agent")
+        sub_agent.set_attribute("gen_ai.agent.name", "SubAgent")
+        sub_agent.set_attribute("gen_ai.agent.id", "sub-1")
+
+        chat = self.tracer.start_span("chat gpt-4", context=trace_api.set_span_in_context(sub_agent))
+        chat.end()
+        sub_agent.end()
+        main_agent.end()
+
+        spans = self._get_exported_spans()
+        # The grandchild is attributed to the MAIN agent, not the sub-agent.
+        self.assertEqual(spans["chat gpt-4"].attributes.get("microsoft.gen_ai.main_agent.name"), "MainAgent")
+        self.assertEqual(spans["chat gpt-4"].attributes.get("microsoft.gen_ai.main_agent.id"), "main-1")
+
+    def test_propagation_to_sibling_spans(self):
+        """invoke_agent -> [chat, tool]: both siblings get main_agent attrs."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        agent_span = self.tracer.start_span("invoke_agent TravelBot", context=root_ctx)
+        agent_span.set_attribute("gen_ai.operation.name", "invoke_agent")
+        agent_span.set_attribute("gen_ai.agent.name", "TravelBot")
+        agent_span.set_attribute("gen_ai.agent.id", "agent-1")
+
+        agent_ctx = trace_api.set_span_in_context(agent_span)
+        chat = self.tracer.start_span("chat gpt-4", context=agent_ctx)
+        chat.end()
+        tool = self.tracer.start_span("execute_tool get_weather", context=agent_ctx)
+        tool.end()
+        agent_span.end()
+
+        spans = self._get_exported_spans()
+        for name in ("chat gpt-4", "execute_tool get_weather"):
+            self.assertEqual(spans[name].attributes.get("microsoft.gen_ai.main_agent.name"), "TravelBot")
+            self.assertEqual(spans[name].attributes.get("microsoft.gen_ai.main_agent.id"), "agent-1")
+
+    def test_non_agent_parent_does_not_propagate(self):
+        """A chat span without gen_ai.agent.* on the parent should not inject main_agent attrs."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        parent = self.tracer.start_span("chat gpt-4", context=root_ctx)
+        parent.set_attribute("gen_ai.operation.name", "chat")
+
+        child = self.tracer.start_span("chat child", context=trace_api.set_span_in_context(parent))
+        child.end()
+        parent.end()
+
+        spans = self._get_exported_spans()
+        for key in spans["chat child"].attributes:
+            self.assertFalse(key.startswith("microsoft.gen_ai.main_agent."))
+
+    def test_attrs_set_after_child_creation_recovered_on_end(self):
+        """If agent attributes are set AFTER creating the child span, on_start
+        cannot propagate them -- but on_end fallback re-reads from the (now
+        enriched) parent and fills in the gap."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        agent_span = self.tracer.start_span("invoke_agent TravelBot", context=root_ctx)
+        agent_span.set_attribute("gen_ai.operation.name", "invoke_agent")
+
+        # Create the child BEFORE the parent's agent attributes are set.
+        chat_span = self.tracer.start_span("chat gpt-4", context=trace_api.set_span_in_context(agent_span))
+
+        # Now populate the parent's agent attributes (missed by on_start).
+        agent_span.set_attribute("gen_ai.agent.name", "TravelBot")
+        agent_span.set_attribute("gen_ai.agent.id", "agent-1")
+
+        chat_span.end()
+        agent_span.end()
+
+        spans = self._get_exported_spans()
+        self.assertEqual(
+            spans["chat gpt-4"].attributes.get("microsoft.gen_ai.main_agent.name"),
+            "TravelBot",
+            "on_end fallback should recover propagation from the parent",
+        )
+        self.assertEqual(spans["chat gpt-4"].attributes.get("microsoft.gen_ai.main_agent.id"), "agent-1")
+
+    def test_root_invoke_agent_self_promotes_on_end(self):
+        """A root invoke_agent span with no parent must self-promote its
+        gen_ai.agent.* to microsoft.gen_ai.main_agent.* on end."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        agent = self.tracer.start_span("invoke_agent TravelBot", context=root_ctx)
+        agent.set_attribute("gen_ai.operation.name", "invoke_agent")
+        agent.set_attribute("gen_ai.agent.name", "TravelBot")
+        agent.set_attribute("gen_ai.agent.id", "agent-1")
+        agent.set_attribute("gen_ai.agent.version", "2.0")
+        agent.set_attribute("gen_ai.conversation.id", "conv-1")
+        agent.end()
+
+        spans = self._get_exported_spans()
+        exported = spans["invoke_agent TravelBot"]
+        self.assertEqual(exported.attributes.get("microsoft.gen_ai.main_agent.name"), "TravelBot")
+        self.assertEqual(exported.attributes.get("microsoft.gen_ai.main_agent.id"), "agent-1")
+        self.assertEqual(exported.attributes.get("microsoft.gen_ai.main_agent.version"), "2.0")
+        self.assertEqual(exported.attributes.get("microsoft.gen_ai.main_agent.conversation_id"), "conv-1")
+
+    def test_self_promotion_only_for_invoke_agent(self):
+        """Non-invoke_agent root spans must NOT self-promote."""
+        root_ctx = trace_api.set_span_in_context(trace_api.INVALID_SPAN)
+        chat = self.tracer.start_span("chat gpt-4", context=root_ctx)
+        chat.set_attribute("gen_ai.operation.name", "chat")
+        chat.set_attribute("gen_ai.agent.name", "SomeAgent")
+        chat.end()
+
+        spans = self._get_exported_spans()
+        for key in spans["chat gpt-4"].attributes:
+            self.assertFalse(key.startswith("microsoft.gen_ai.main_agent."))
 
 
 class TestGenAIMainAgentLogRecordProcessor(unittest.TestCase):
