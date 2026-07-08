@@ -301,7 +301,6 @@ _INSTRUMENTATIONS_LIST = [
     "tornado",
     "urllib",
     "urllib3",
-    "httpx",
     _AZURE_SDK_OPENTELEMETRY_NAME,
     "cassandra",
     "tortoiseorm",

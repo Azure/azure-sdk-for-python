@@ -3,8 +3,6 @@
 ## 1.0.0b56 (Unreleased)
 
 ### Features Added
-- Add httpx instrumentation support
-  ([#47953](https://github.com/Azure/azure-sdk-for-python/pull/47953))
 
 ### Breaking Changes
 
