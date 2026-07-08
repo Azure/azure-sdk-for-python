@@ -28,7 +28,20 @@
 | 23 | azure-mgmt-recoveryservicessiterecovery | 2025-08-01 | 2.0.0b1 | [#46275](https://github.com/Azure/azure-sdk-for-python/pull/46275) | 2026-04-27 | Done | [47667](https://github.com/Azure/azure-sdk-for-python/pull/47667) |
 | 24 | azure-mgmt-managementgroups | 2023-04-01 | 2.0.0b1 | [#46074](https://github.com/Azure/azure-sdk-for-python/pull/46074) | 2026-04-02 | Done | [47665](https://github.com/Azure/azure-sdk-for-python/pull/47665) |
 | 25 | azure-mgmt-networkcloud | 2025-09-01 | 3.0.0b1 | [#46048](https://github.com/Azure/azure-sdk-for-python/pull/46048) | 2026-04-02 | Not Started | |
-| 26 | azure-mgmt-frontdoor | 2025-10-01 | 2.0.0b1 | [#45874](https://github.com/Azure/azure-sdk-for-python/pull/45874) | 2026-03-24 | Done | [47639](https://github.com/Azure/azure-sdk-for-python/pull/47639) |
-| 27 | azure-mgmt-kubernetesconfiguration-fluxconfigurations | 2025-04-01 | 1.0.0b2 | [#45714](https://github.com/Azure/azure-sdk-for-python/pull/45714) | 2026-03-18 | Done | [47638](https://github.com/Azure/azure-sdk-for-python/pull/47638) |
-| 28 | azure-mgmt-networkfunction | 2022-11-01 | 1.0.0b2 | [#45641](https://github.com/Azure/azure-sdk-for-python/pull/45641) | 2026-03-16 | Done | [47636](https://github.com/Azure/azure-sdk-for-python/pull/47636) |
-| 29 | azure-mgmt-communication | 2025-09-01 | 3.0.0b1 | [#45767](https://github.com/Azure/azure-sdk-for-python/pull/45767) | 2026-03-10 | Done | [47635](https://github.com/Azure/azure-sdk-for-python/pull/47635) |
+| 30 | azure-mgmt-sqlvirtualmachine | 2023-10-01 | 1.0.0b7 |  | 2026-07-07 | Not Started |  |
+| 31 | azure-mgmt-servicebus | 2026-01-01 | 10.0.0b2 |  | 2026-07-07 | Not Started |  |
+| 32 | azure-mgmt-peering | 2025-05-01 | 2.0.0 |  | 2026-07-07 | Done | [#47907](https://github.com/Azure/azure-sdk-for-python/pull/47907) |
+| 33 | azure-mgmt-guestconfig | 2024-04-05 | 1.0.0b3 |  | 2026-07-07 | Not Started |  |
+| 34 | azure-mgmt-eventhub | 2026-01-01 | 12.0.0b2 |  | 2026-07-07 | Not Started |  |
+| 35 | azure-mgmt-elastic | 2025-06-01 | 3.0.0b1 |  | 2026-07-07 | Not Started |  |
+| 36 | azure-mgmt-storagesync | 2022-09-01 | 2.0.0b2 |  | 2026-07-06 | Not Started |  |
+| 37 | azure-mgmt-relay | 2024-01-01 | 2.0.0b2 |  | 2026-07-06 | Not Started |  |
+| 38 | azure-mgmt-privatedns | 2024-06-01 | 2.0.0b1 |  | 2026-07-06 | Not Started |  |
+| 39 | azure-mgmt-powerbidedicated | 2021-01-01 | 1.1.0b2 |  | 2026-07-06 | Not Started |  |
+| 40 | azure-mgmt-edgeorder | 2024-02-01 | 3.0.0b1 |  | 2026-07-06 | Not Started |  |
+| 41 | azure-mgmt-dynatrace | 2024-04-24 | 3.0.0b1 |  | 2026-07-06 | Not Started |  |
+| 42 | azure-mgmt-databox | 2025-07-01 | 4.0.0b1 |  | 2026-07-06 | Not Started |  |
+| 43 | azure-mgmt-reservations | 2020-10-25, 2022-11-01 | 3.0.0b1 |  | 2026-06-02 | Not Started |  |
+| 44 | azure-mgmt-automation | 2024-10-23 | 1.1.0b5 |  | 2026-05-27 | Not Started |  |
+| 45 | azure-mgmt-dataprotection | 2026-03-01 | 2.1.0b1 |  | 2026-04-07 | Not Started |  |
+| 46 | azure-mgmt-computerecommender | 2025-06-05 | 1.0.0b1 |  | 2025-09-04 | Not Started |  |
