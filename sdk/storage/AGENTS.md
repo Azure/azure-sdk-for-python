@@ -61,7 +61,7 @@ Introduce new abstractions only when an existing pattern genuinely cannot accomm
 Azure Storage services are case-sensitive for many identifiers (container names, blob names, metadata keys, SAS parameters). Avoid hardcoding raw string literals for:
 
 - HTTP header names — use constants from `azure.storage.blob._shared.constants` or equivalent.
-- Service version strings — reference the `SERVICE_VERSION` constant rather than inline strings.
+- Service version strings — reference the `X_MS_VERSION` constant (from `azure.storage.blob._shared.constants`) rather than inline strings.
 - SAS permission characters — use the typed permission classes (e.g., `BlobSasPermissions`, `QueueSasPermissions`) instead of raw character strings.
 - Error codes — compare against named constants, not literal strings.
 
@@ -78,7 +78,7 @@ Agents modifying service-specific logic should be aware of the following behavio
 ### Queue Storage
 
 - **Visibility timeout**: A dequeued message is hidden from other consumers for the duration of the visibility timeout (default 30 seconds, max 7 days). If processing takes longer than the timeout, extend it with `update_message` before it expires, or the message will reappear and be processed again.
-- **Message encoding**: Messages are Base64-encoded by default. This is controlled by `message_encode_policy` on the `QueueClient`. Changing the policy on an existing queue with existing messages is a breaking change.
+- **Message encoding**: Messages are **not** encoded by default (`NoEncodePolicy`). Base64 encoding is opt-in via `message_encode_policy` (e.g., `TextBase64EncodePolicy` or `BinaryBase64EncodePolicy`) on the `QueueClient`. Changing the policy on an existing queue that already contains messages can make previously written messages undecodable.
 
 ### Azure Files (File Share)
 
