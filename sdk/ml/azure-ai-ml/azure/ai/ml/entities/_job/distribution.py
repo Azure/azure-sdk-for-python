@@ -107,9 +107,7 @@ class MpiDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with an MpiDistribution.
     """
 
-    def __init__(
-        self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.MPI
         self.process_count_per_instance = process_count_per_instance
@@ -136,9 +134,7 @@ class PyTorchDistribution(DistributionConfiguration):
             :caption: Configuring a CommandComponent with a PyTorchDistribution.
     """
 
-    def __init__(
-        self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, process_count_per_instance: Optional[int] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.PYTORCH
         self.process_count_per_instance = process_count_per_instance
@@ -173,11 +169,7 @@ class TensorFlowDistribution(DistributionConfiguration):
     """
 
     def __init__(
-        self,
-        *,
-        parameter_server_count: Optional[int] = 0,
-        worker_count: Optional[int] = None,
-        **kwargs: Any
+        self, *, parameter_server_count: Optional[int] = 0, worker_count: Optional[int] = None, **kwargs: Any
     ) -> None:
         super().__init__(**kwargs)
         self.type = DistributionType.TENSORFLOW

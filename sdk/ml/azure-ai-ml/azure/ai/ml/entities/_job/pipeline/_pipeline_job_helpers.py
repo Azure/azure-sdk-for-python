@@ -64,13 +64,9 @@ def process_sdk_component_job_io(
                 # add mode to literal value for binding input
                 if mode:
                     if isinstance(io_value, Input):
-                        io_bindings[io_name].update(
-                            {"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]}
-                        )
+                        io_bindings[io_name].update({"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]})
                     else:
-                        io_bindings[io_name].update(
-                            {"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]}
-                        )
+                        io_bindings[io_name].update({"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]})
                 if name or version:
                     assert isinstance(io_value, Output)
                     if name:
@@ -86,9 +82,7 @@ def process_sdk_component_job_io(
                 msg = "{} has changed to {}, please change to use new format."
                 raise ValidationException(
                     message=msg.format(path, new_format),
-                    no_personal_data_message=msg.format(
-                        "[io_value]", "[io_value_new_format]"
-                    ),
+                    no_personal_data_message=msg.format("[io_value]", "[io_value_new_format]"),
                     target=ErrorTarget.PIPELINE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
@@ -143,13 +137,9 @@ def from_dict_to_rest_io(
                         io_mode = DIRTY_MODE_MAPPING[io_mode]
                         val["mode"] = io_mode
                     if io_mode in OUTPUT_MOUNT_MAPPING_FROM_REST:
-                        io_bindings[key].update(
-                            {"mode": OUTPUT_MOUNT_MAPPING_FROM_REST[io_mode]}
-                        )
+                        io_bindings[key].update({"mode": OUTPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
                     else:
-                        io_bindings[key].update(
-                            {"mode": INPUT_MOUNT_MAPPING_FROM_REST[io_mode]}
-                        )
+                        io_bindings[key].update({"mode": INPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
                 # add name and version for binding input
                 if io_name or io_version:
                     assert rest_object_class.__name__ == "JobOutput"
@@ -177,9 +167,7 @@ def from_dict_to_rest_io(
                     # camelCase wire keys, so convert the snake_case ``val`` first. This rebuilds the
                     # correct discriminated subtype (e.g. UriFileJobInput) just like msrest did.
                     camel_val = {snake_to_camel(k): v for k, v in val.items()}
-                    rest_obj = rest_object_class._deserialize(
-                        camel_val, []
-                    )  # pylint: disable=protected-access
+                    rest_obj = rest_object_class._deserialize(camel_val, [])  # pylint: disable=protected-access
                 rest_io_objects[key] = rest_obj
         else:
             msg = "Got unsupported type of input/output: {}:" + f"{type(val)}"
@@ -204,9 +192,7 @@ def from_dict_to_rest_distribution(
         return TensorFlow(**distribution_dict)
     if target_type == "ray":
         return Ray(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(
-        target_type
-    )
+    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
     raise ValidationException(
         message=msg,
         no_personal_data_message=msg,

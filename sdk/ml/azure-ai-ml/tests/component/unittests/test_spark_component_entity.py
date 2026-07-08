@@ -21,10 +21,7 @@ class TestSparkComponentEntity:
             component_yaml,
         )
 
-        assert (
-            isinstance(spark_component.py_files, list)
-            and spark_component.py_files[0] == "utils.zip"
-        )
+        assert isinstance(spark_component.py_files, list) and spark_component.py_files[0] == "utils.zip"
         assert spark_component.code == "./src"
         assert as_attribute_dict(spark_component.entry._to_rest_object()) == {
             "spark_job_entry_type": "SparkJobPythonEntry",
@@ -50,10 +47,7 @@ class TestSparkComponentEntity:
         yaml_dict = load_yaml(yaml_path)
         yaml_dict["mock_option_param"] = {"mock_key": "mock_val"}
         spark_component = SparkComponent._load(data=yaml_dict, yaml_path=yaml_path)
-        assert (
-            spark_component._other_parameter.get("mock_option_param")
-            == yaml_dict["mock_option_param"]
-        )
+        assert spark_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
 
     def test_spark_component_to_dict_additional_include(self):
         # Test optional params exists in component dict
@@ -61,10 +55,7 @@ class TestSparkComponentEntity:
         yaml_dict = load_yaml(yaml_path)
         yaml_dict["additional_includes"] = ["common_src"]
         spark_component = SparkComponent._load(data=yaml_dict, yaml_path=yaml_path)
-        assert (
-            spark_component.additional_includes[0]
-            == yaml_dict["additional_includes"][0]
-        )
+        assert spark_component.additional_includes[0] == yaml_dict["additional_includes"][0]
 
     def test_spark_component_entity(self):
         component = SparkComponent(
@@ -168,9 +159,7 @@ class TestSparkComponentEntity:
         }
         yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         yaml_component_version = load_component(yaml_path)
-        pipeline_input = PipelineInput(
-            name="pipeline_input", owner="pipeline", meta=None
-        )
+        pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(file_input=pipeline_input)
         yaml_component.resources = {
             "instance_type": "Standard_E8S_V3",

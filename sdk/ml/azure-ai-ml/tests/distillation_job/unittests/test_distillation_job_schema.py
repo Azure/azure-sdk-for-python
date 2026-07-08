@@ -43,25 +43,17 @@ class TestDistillationJobSchema:
                 type="mlflow_model",
                 path="azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1",
             ),
-            training_data=Input(
-                type="uri_file", path="./samsum_dataset/small_train.jsonl"
-            ),
-            validation_data=Input(
-                type="uri_file", path="./samsum_dataset/small_validation.jsonl"
-            ),
+            training_data=Input(type="uri_file", path="./samsum_dataset/small_train.jsonl"),
+            validation_data=Input(type="uri_file", path="./samsum_dataset/small_validation.jsonl"),
             teacher_model_settings=TeacherModelSettings(
                 inference_parameters={
                     "temperature": 0.1,
                     "max_tokens": 100,
                     "top_p": 0.95,
                 },
-                endpoint_request_settings=EndpointRequestSettings(
-                    request_batch_size=5, min_endpoint_success_ratio=0.7
-                ),
+                endpoint_request_settings=EndpointRequestSettings(request_batch_size=5, min_endpoint_success_ratio=0.7),
             ),
-            prompt_settings=PromptSettings(
-                enable_chain_of_thought=False, enable_chain_of_density=False
-            ),
+            prompt_settings=PromptSettings(enable_chain_of_thought=False, enable_chain_of_density=False),
             hyperparameters={
                 "learning_rate": "0.00002",
                 "num_train_epochs": "1",
@@ -70,11 +62,7 @@ class TestDistillationJobSchema:
             experiment_name="Distillation-Math-Test-1234",
             name="distillation_job_test",
             description="Distill Llama 3.1 8b model using Llama 3.1 405B teacher model",
-            outputs={
-                "registered_model": Output(
-                    type="mlflow_model", name="llama-3-1-8b-distilled-1234"
-                )
-            },
+            outputs={"registered_model": Output(type="mlflow_model", name="llama-3-1-8b-distilled-1234")},
             resources=ResourceConfiguration(instance_type="Standard_D2_v2"),
         )
         sdk_rest_object = DistillationJob._to_rest_object(distillation_job)
@@ -100,9 +88,7 @@ class TestDistillationJobSchema:
             validation_data=Input(type="uri_file", path="validation_data:1"),
             teacher_model_settings=TeacherModelSettings(
                 inference_parameters={"frequency_penalty": 1, "presence_penalty": 1},
-                endpoint_request_settings=EndpointRequestSettings(
-                    min_endpoint_success_ratio=0.9
-                ),
+                endpoint_request_settings=EndpointRequestSettings(min_endpoint_success_ratio=0.9),
             ),
             prompt_settings=PromptSettings(
                 enable_chain_of_thought=False,
@@ -113,11 +99,7 @@ class TestDistillationJobSchema:
             experiment_name="Distillation-Math-Test-1234",
             name="distillation_job_test",
             description="Distill Llama 3.1 8b model using Llama 3.1 405B teacher model",
-            outputs={
-                "registered_model": Output(
-                    type="mlflow_model", name="llama-3-1-8b-distilled-1234"
-                )
-            },
+            outputs={"registered_model": Output(type="mlflow_model", name="llama-3-1-8b-distilled-1234")},
             resources=ResourceConfiguration(instance_type="Standard_D2_v3"),
         )
         sdk_rest_object = DistillationJob._to_rest_object(distillation_job)

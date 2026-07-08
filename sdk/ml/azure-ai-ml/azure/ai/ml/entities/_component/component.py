@@ -130,9 +130,7 @@ class Component(
         self._auto_increment_version = kwargs.pop("auto_increment", False)
         # Get source from id first, then kwargs.
         self._source = (
-            self._resolve_component_source_from_id(id)
-            if id
-            else kwargs.pop("_source", ComponentSource.CLASS)
+            self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
         )
         # use ANONYMOUS_COMPONENT_NAME instead of guid
         is_anonymous = kwargs.pop("is_anonymous", False)
@@ -280,9 +278,7 @@ class Component(
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(
-            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
-        )
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
     def _resolve_component_source_from_id(  # pylint: disable=docstring-type-do-not-use-class
@@ -311,9 +307,7 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(
-        cls, io_names: Iterable[str], raise_error: bool = False
-    ) -> MutableValidationResult:
+    def _validate_io_names(cls, io_names: Iterable[str], raise_error: bool = False) -> MutableValidationResult:
         """Validate input/output names, raise exception if invalid.
 
         :param io_names: The names to validate
@@ -329,9 +323,7 @@ class Component(
         for name in io_names:
             if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
-                validation_result.append_error(
-                    message=msg.format(name), yaml_path=f"inputs.{name}"
-                )
+                validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
             # validate name conflict
             lower_key = name.lower()
             if lower_key in lower2original_kwargs:
@@ -351,9 +343,7 @@ class Component(
             if is_input:
                 component_io[name] = port if isinstance(port, Input) else Input(**port)
             else:
-                component_io[name] = (
-                    port if isinstance(port, Output) else Output(**port)
-                )
+                component_io[name] = port if isinstance(port, Output) else Output(**port)
 
         if is_input:
             # Restore flattened parameters to group
@@ -366,9 +356,7 @@ class Component(
         return ComponentSchema(context=context)
 
     @classmethod
-    def _create_validation_error(
-        cls, message: str, no_personal_data_message: str
-    ) -> ValidationException:
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -444,19 +432,13 @@ class Component(
         return new_instance
 
     @classmethod
-    def _from_container_rest_object(
-        cls, component_container_rest_object: ComponentContainer
-    ) -> "Component":
-        component_container_details: ComponentContainerProperties = (
-            component_container_rest_object.properties
-        )
+    def _from_container_rest_object(cls, component_container_rest_object: ComponentContainer) -> "Component":
+        component_container_details: ComponentContainerProperties = component_container_rest_object.properties
         component = Component(
             id=component_container_rest_object.id,
             name=component_container_rest_object.name,
             description=component_container_details.description,
-            creation_context=SystemData._from_rest_object(
-                component_container_rest_object.system_data
-            ),
+            creation_context=SystemData._from_rest_object(component_container_rest_object.system_data),
             tags=component_container_details.tags,
             properties=component_container_details.properties,
             type=NodeType._CONTAINER,
@@ -471,10 +453,7 @@ class Component(
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert command component back to import component private preview
         component_spec = obj.properties.component_spec
-        if (
-            component_spec[CommonYamlFields.TYPE] == NodeType.COMMAND
-            and component_spec["command"] == NodeType.IMPORT
-        ):
+        if component_spec[CommonYamlFields.TYPE] == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
             component_spec[CommonYamlFields.TYPE] = NodeType.IMPORT
             component_spec["source"] = component_spec.pop("inputs")
             component_spec["output"] = component_spec.pop("outputs")["output"]
@@ -483,9 +462,7 @@ class Component(
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        create_instance_func, _ = component_factory.get_create_funcs(
-            obj.properties.component_spec, for_load=True
-        )
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec, for_load=True)
 
         instance: Component = create_instance_func()
         # TODO: Bug Item number: 2883415
@@ -509,9 +486,7 @@ class Component(
         outputs = rest_component_version.component_spec.pop("outputs", {})
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
-        rest_component_version.component_spec[CommonYamlFields.NAME] = (
-            ANONYMOUS_COMPONENT_NAME
-        )
+        rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(
             rest_component_version.component_spec,
             context={BASE_PATH_CONTEXT_KEY: Path.cwd()},
@@ -530,11 +505,7 @@ class Component(
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
         # note that there is an issue that environment == {} will always be true, so use isinstance here
-        return {
-            k: v
-            for k, v in init_kwargs.items()
-            if v is not None and not (isinstance(v, dict) and not v)
-        }
+        return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
     def _get_anonymous_hash(self) -> str:
         """Return the hash of anonymous component.
@@ -586,12 +557,8 @@ class Component(
         validation_result = super(Component, self)._customized_validate()
 
         # validate inputs names
-        validation_result.merge_with(
-            self._validate_io_names(self.inputs, raise_error=False)
-        )
-        validation_result.merge_with(
-            self._validate_io_names(self.outputs, raise_error=False)
-        )
+        validation_result.merge_with(self._validate_io_names(self.inputs, raise_error=False))
+        validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
 
@@ -623,9 +590,7 @@ class Component(
         if self._intellectual_property:
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
-            component["intellectualProperty"] = (
-                self._intellectual_property._to_rest_object()
-            )
+            component["intellectualProperty"] = self._intellectual_property._to_rest_object()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
@@ -642,9 +607,7 @@ class Component(
             result.name = ANONYMOUS_COMPONENT_NAME
         else:
             result.name = self.name
-            result.properties.properties["client_component_hash"] = (
-                self._get_component_hash(keys_to_omit=["version"])
-            )
+            result.properties.properties["client_component_hash"] = self._get_component_hash(keys_to_omit=["version"])
         return result
 
     def _to_dict(self) -> Dict:
@@ -663,11 +626,7 @@ class Component(
         :type base_path: str
         """
         if not getattr(self, "id", None):
-            raise ValueError(
-                "Only remote asset can be localize but got a {} without id.".format(
-                    type(self)
-                )
-            )
+            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
         self._id = None
         self._creation_context = None
         self._base_path = base_path

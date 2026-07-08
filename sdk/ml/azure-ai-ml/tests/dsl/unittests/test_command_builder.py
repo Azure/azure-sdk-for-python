@@ -182,9 +182,7 @@ class TestCommandFunction:
                     "_source": "BUILDER",
                     "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
-                    "command": "python train.py --input-data "
-                    "${{inputs.uri_folder}} --lr "
-                    "${{inputs.float}}",
+                    "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
@@ -197,9 +195,7 @@ class TestCommandFunction:
                         "uri_folder": {"type": "uri_folder", "mode": "ro_mount"},
                     },
                     "is_deterministic": True,
-                    "outputs": {
-                        "my_model": {"type": "mlflow_model", "mode": "rw_mount"}
-                    },
+                    "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -227,9 +223,7 @@ class TestCommandFunction:
                     "_source": "BUILDER",
                     "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
-                    "command": "python train.py --input-data "
-                    "${{inputs.uri_folder}} --lr "
-                    "${{inputs.float}}",
+                    "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
@@ -242,9 +236,7 @@ class TestCommandFunction:
                         "uri_folder": {"type": "uri_folder", "mode": "ro_mount"},
                     },
                     "is_deterministic": False,
-                    "outputs": {
-                        "my_model": {"type": "mlflow_model", "mode": "rw_mount"}
-                    },
+                    "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -255,9 +247,7 @@ class TestCommandFunction:
             }
         }
         actual_component = pydash.omit(
-            as_attribute_dict(
-                test_no_deterministic_command._component._to_rest_object()
-            ),
+            as_attribute_dict(test_no_deterministic_command._component._to_rest_object()),
             "name",
             "properties.component_spec.name",
             "properties.properties.client_component_hash",
@@ -265,9 +255,7 @@ class TestCommandFunction:
         assert actual_component == expected_component
 
     def test_command_function_set_inputs(self, test_command):
-        test_data = Input(
-            type="uri_folder", path="https://my-blob/path/to/data", mode="download"
-        )
+        test_data = Input(type="uri_folder", path="https://my-blob/path/to/data", mode="download")
         # Command can be called as a function, returning a new Component instance
         node1 = test_command(uri_folder=test_data, float=0.02)
         node2 = test_command(uri_folder=test_data, float=0.02)
@@ -469,9 +457,7 @@ class TestCommandFunction:
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
                     "code": parse_local_path("./tests"),
-                    "command": "python train.py --input-data "
-                    "${{inputs.uri_folder}} --lr "
-                    "${{inputs.float}}",
+                    "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
@@ -554,9 +540,7 @@ class TestCommandFunction:
     def test_inputs_binding(self, test_command):
         node1 = test_command()
         node2 = test_command()
-        node3 = test_command(
-            uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model
-        )
+        node3 = test_command(uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model)
         node1.name = "new_name1"
         node2.name = "new_name2"
 
@@ -583,9 +567,7 @@ class TestCommandFunction:
 
         node1 = test_command()
         node2 = node1()
-        node3 = node2(
-            uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model
-        )
+        node3 = node2(uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model)
         node1.name = "new_node1"
         node2.name = "new_node2"
 
@@ -676,9 +658,7 @@ class TestCommandFunction:
             assert re.match(pattern, str(e.value)), str(e.value)
 
     def test_command_unprovided_inputs_outputs(self, test_command_params):
-        test_command_params.update(
-            {"inputs": None, "outputs": None, "command": "echo hello"}
-        )
+        test_command_params.update({"inputs": None, "outputs": None, "command": "echo hello"})
         node1 = command(**test_command_params)
 
         actual_component = pydash.omit(
@@ -818,9 +798,7 @@ class TestCommandFunction:
         test_command_params.update(
             {
                 "distribution": MpiDistribution(process_count_per_instance=2),
-                "resources": JobResourceConfiguration(
-                    instance_count=2, instance_type="STANDARD_D2"
-                ),
+                "resources": JobResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
             }
         )
         command_func = command(**test_command_params)
@@ -844,9 +822,7 @@ class TestCommandFunction:
         expected_resources = {"instance_count": 4, "instance_type": "STANDARD_D2"}
         test_command_params.update(
             {
-                "resources": JobResourceConfiguration(
-                    instance_count=4, instance_type="STANDARD_D2"
-                ),
+                "resources": JobResourceConfiguration(instance_count=4, instance_type="STANDARD_D2"),
             }
         )
         command_node = command(**test_command_params)
@@ -864,9 +840,7 @@ class TestCommandFunction:
 
         test_command_params.update(
             {
-                "resources": dict(
-                    instance_count=4, instance_type="STANDARD_D2", unknown_field=1
-                ),
+                "resources": dict(instance_count=4, instance_type="STANDARD_D2", unknown_field=1),
             }
         )
         command_node = command(**test_command_params)
@@ -920,19 +894,16 @@ class TestCommandFunction:
             "str": {"default": "str", "type": "string"},
         }
         for job_input, input_type in literal_input_2_expected_type.items():
-            assert (
-                ComponentTranslatableMixin._to_input(job_input, {})._to_dict()
-                == input_type
-            )
+            assert ComponentTranslatableMixin._to_input(job_input, {})._to_dict() == input_type
 
         with pytest.raises(JobException) as err_info:
             ComponentTranslatableMixin._to_input(None, {})
-        assert "'<class 'NoneType'>' is not supported as component input" in str(
-            err_info.value
-        )
+        assert "'<class 'NoneType'>' is not supported as component input" in str(err_info.value)
 
         # test input binding
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
+        )
         job_dict = load_job(source=test_path)._to_dict()
         binding_2_expected_type = {
             "${{parent.inputs.job_data}}": {"type": "uri_folder"},
@@ -941,10 +912,7 @@ class TestCommandFunction:
         }
 
         for job_input, input_type in binding_2_expected_type.items():
-            assert (
-                ComponentTranslatableMixin._to_input(job_input, job_dict)._to_dict()
-                == input_type
-            )
+            assert ComponentTranslatableMixin._to_input(job_input, job_dict)._to_dict() == input_type
 
     def test_to_component_output(self):
         # test output binding
@@ -958,10 +926,7 @@ class TestCommandFunction:
         }
 
         for job_output, input_type in binding_2_expected_type.items():
-            assert (
-                ComponentTranslatableMixin._to_output(job_output, job_dict)._to_dict()
-                == input_type
-            )
+            assert ComponentTranslatableMixin._to_output(job_output, job_dict)._to_dict() == input_type
 
     def test_spark_job_with_dynamic_allocation_disabled(self):
         node = spark(
@@ -978,9 +943,7 @@ class TestCommandFunction:
         )
         result = node._validate()
         message = "Should not specify min or max executors when dynamic allocation is disabled."
-        assert (
-            "conf" in result.error_messages and message == result.error_messages["conf"]
-        )
+        assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_executor_instances_is_mandatory_when_dynamic_allocation_disabled(self):
         node = spark(
@@ -997,9 +960,7 @@ class TestCommandFunction:
             "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
             "spark.executor.instances are mandatory fields."
         )
-        assert (
-            "conf" in result.error_messages and message == result.error_messages["conf"]
-        )
+        assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
         node = spark(
@@ -1036,9 +997,7 @@ class TestCommandFunction:
             "Executor instances must be a valid non-negative integer and must be between "
             "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
         )
-        assert (
-            "conf" in result.error_messages and message == result.error_messages["conf"]
-        )
+        assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_spark_job_with_additional_conf(self):
         node = spark(
@@ -1088,14 +1047,10 @@ class TestCommandFunction:
         )
 
         rest_obj = command_obj._to_rest_object()
-        assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {
-            "nodes_value_type": "All"
-        }
+        assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {"nodes_value_type": "All"}
         assert rest_obj["services"]["my_tensorboard"].get("nodes") == None
 
-        with pytest.raises(
-            ValidationException, match="nodes should be either 'all' or None"
-        ):
+        with pytest.raises(ValidationException, match="nodes should be either 'all' or None"):
             services_invalid_nodes = {"my_service": JobService(nodes="All")}
 
     def test_command_services(self) -> None:
@@ -1213,12 +1168,8 @@ class TestCommandFunction:
 
         command_job_services = node._to_job().services
         assert isinstance(command_job_services.get("my_ssh"), SshJobService)
-        assert isinstance(
-            command_job_services.get("my_tensorboard"), TensorBoardJobService
-        )
-        assert isinstance(
-            command_job_services.get("my_jupyterlab"), JupyterLabJobService
-        )
+        assert isinstance(command_job_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(command_job_services.get("my_jupyterlab"), JupyterLabJobService)
         assert isinstance(command_job_services.get("my_vscode"), VsCodeJobService)
 
         node_rest_obj = node._to_rest_object()
@@ -1230,9 +1181,7 @@ class TestCommandFunction:
         assert hash(node1) == hash(node2)
         assert node1 == node2
 
-        component_func = load_component(
-            "./tests/test_configs/components/helloworld_component_no_paths.yml"
-        )
+        component_func = load_component("./tests/test_configs/components/helloworld_component_no_paths.yml")
         node3 = component_func()
         node4 = component_func()
         assert hash(node3) == hash(node4)
@@ -1253,9 +1202,7 @@ class TestCommandFunction:
 
         pipeline_job = my_pipeline()
         omit_fields = ["jobs.*.componentId", "jobs.*._source"]
-        actual_dict = omit_with_wildcard(
-            pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields
-        )
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
 
         assert actual_dict["jobs"] == {
             "my_job": {
@@ -1314,9 +1261,7 @@ class TestCommandFunction:
             goal="maximize",
             sampling_algorithm="random",
         )
-        sweep_node_1.search_space = {
-            "batch_size": {"type": "choice", "values": [25, 35]}
-        }
+        sweep_node_1.search_space = {"batch_size": {"type": "choice", "values": [25, 35]}}
 
         command_node_to_sweep_2 = node1()
         sweep_node_2 = command_node_to_sweep_2.sweep(

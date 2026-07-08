@@ -174,9 +174,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(
-            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
-        )
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _get_base_info_dict(self) -> OrderedDict:
         return OrderedDict(
@@ -195,9 +193,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 [
                     (
                         "Details Page",
-                        make_link(
-                            self.studio_url, "Link to Azure Machine Learning studio"
-                        ),
+                        make_link(self.studio_url, "Link to Azure Machine Learning studio"),
                     ),
                 ]
             )
@@ -209,9 +205,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         pass
 
     @classmethod
-    def _resolve_cls_and_type(
-        cls, data: Dict, params_override: Optional[List[Dict]] = None
-    ) -> Tuple:
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -225,9 +219,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
         job_type: Optional[Type["Job"]] = None
         type_in_override = find_type_in_override(params_override)
-        type_str = type_in_override or data.get(
-            CommonYamlFields.TYPE, JobType.COMMAND
-        )  # override takes the priority
+        type_str = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
         if type_str == JobType.COMMAND:
             job_type = Command
         elif type_str == JobType.SPARK:
@@ -297,9 +289,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return job
 
     @classmethod
-    def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[JobBase, Run]
-    ) -> "Job":
+    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
@@ -321,9 +311,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
-                if obj.properties.compute_id and obj.properties.compute_id.endswith(
-                    "/" + ComputeType.ADF
-                ):
+                if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
                     return ImportJob._load_from_rest(obj)
 
                 res_command: Job = Command._load_from_rest_job(obj)
@@ -380,7 +368,5 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
-    ) -> "Job":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
         pass

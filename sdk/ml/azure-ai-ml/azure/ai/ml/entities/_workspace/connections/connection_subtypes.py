@@ -195,12 +195,8 @@ class MicrosoftOneLakeConnection(WorkspaceConnection):
             if endpoint is None:
                 raise ValueError("If target is unset, then endpoint must be set")
             if one_lake_workspace_name is None:
-                raise ValueError(
-                    "If target is unset, then one_lake_workspace_name must be set"
-                )
-            target = MicrosoftOneLakeConnection._construct_target(
-                endpoint, one_lake_workspace_name, artifact
-            )
+                raise ValueError("If target is unset, then one_lake_workspace_name must be set")
+            target = MicrosoftOneLakeConnection._construct_target(endpoint, one_lake_workspace_name, artifact)
         super().__init__(
             target=target,
             type=camel_to_snake(ConnectionCategory.AZURE_ONE_LAKE),
@@ -216,9 +212,7 @@ class MicrosoftOneLakeConnection(WorkspaceConnection):
     # Target is constructed from user inputs, because it's apparently very difficult for users to
     # directly access a One Lake's target URL.
     @classmethod
-    def _construct_target(
-        cls, endpoint: str, workspace: str, artifact: OneLakeConnectionArtifact
-    ) -> str:
+    def _construct_target(cls, endpoint: str, workspace: str, artifact: OneLakeConnectionArtifact) -> str:
         artifact_name = artifact.name
         # If an id is supplied, the format is different
         if re.match(".{7}-.{4}-.{4}-.{4}.{12}", artifact_name):
@@ -262,8 +256,8 @@ class ApiOrAadConnection(WorkspaceConnection):
         **kwargs: Any,
     ):
         # See if credentials directly inputted via kwargs
-        credentials: Union[AadCredentialConfiguration, ApiKeyConfiguration] = (
-            kwargs.pop("credentials", AadCredentialConfiguration())
+        credentials: Union[AadCredentialConfiguration, ApiKeyConfiguration] = kwargs.pop(
+            "credentials", AadCredentialConfiguration()
         )
         # Replace anything that isn't an API credential with an AAD credential.
         # Importantly, this replaced the None credential default from the parent YAML schema.

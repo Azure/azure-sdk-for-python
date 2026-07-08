@@ -95,9 +95,7 @@ class TestPipelineJobSchema:
         validator("a.b.c0")
 
     def test_simple_deserialize(self):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
-        )
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
         yaml_obj = load_yaml(test_path)
         job: PipelineJob = load_job(test_path)
         # Expected REST overrides and settings are in a JSON file "settings_overrides.json"
@@ -113,19 +111,14 @@ class TestPipelineJobSchema:
         }
         assert job._build_inputs() == expected_inputs
         settings = job.settings._to_dict()
-        settings = {
-            k: v for k, v in settings.items() if v is not None and k != "force_rerun"
-        }
+        settings = {k: v for k, v in settings.items() if v is not None and k != "force_rerun"}
         assert settings == yaml_obj["settings"]
         # check that components were loaded correctly
         hello_world_component = job.jobs["hello_world_component"]
         rest_hello_world_component = hello_world_component._to_rest_object()
         hello_world_component_yaml = yaml_obj["jobs"]["hello_world_component"]
         assert hello_world_component_yaml["type"] == hello_world_component.type
-        assert (
-            hello_world_component_yaml["component"][len(ARM_ID_PREFIX) :]
-            == hello_world_component.component
-        )
+        assert hello_world_component_yaml["component"][len(ARM_ID_PREFIX) :] == hello_world_component.component
         assert rest_hello_world_component["inputs"] == {
             "component_in_number": {
                 "job_input_type": "literal",
@@ -136,19 +129,16 @@ class TestPipelineJobSchema:
         rest_hello_world_component_2 = hello_world_component_2._to_rest_object()
         hello_world_component_2_yaml = yaml_obj["jobs"]["hello_world_component_2"]
         assert hello_world_component_2_yaml["type"] == hello_world_component_2.type
-        assert (
-            hello_world_component_2_yaml["component"][len(ARM_ID_PREFIX) :]
-            == hello_world_component_2.component
-        )
+        assert hello_world_component_2_yaml["component"][len(ARM_ID_PREFIX) :] == hello_world_component_2.component
         assert rest_hello_world_component_2["inputs"] == {
             "component_in_number": {
                 "job_input_type": "literal",
                 "value": "${{parent.inputs.job_in_other_number}}",
             }
         }
-        assert expected_rest_settings_overrides["expected_rest_overrides"][
-            "distribution"
-        ] == (as_attribute_dict(hello_world_component_2.distribution._to_rest_object()))
+        assert expected_rest_settings_overrides["expected_rest_overrides"]["distribution"] == (
+            as_attribute_dict(hello_world_component_2.distribution._to_rest_object())
+        )
         assert {"FOO": "bar"} == hello_world_component_2.environment_variables
         assert {"nested_override": 5} == hello_world_component_2.additional_override
 
@@ -173,17 +163,12 @@ class TestPipelineJobSchema:
                 rest_pipeline_properties.inputs[input_name],
                 (MLTableJobInput, UriFolderJobInput),
             ):
-                assert (
-                    str(input_value)
-                    == rest_pipeline_properties.inputs[input_name].value
-                )
+                assert str(input_value) == rest_pipeline_properties.inputs[input_name].value
 
         # Check settings
         assert (
             rest_pipeline_properties.settings["continue_on_step_failure"]
-            == expected_rest_settings_overrides["expected_rest_settings"][
-                "continue_on_step_failure"
-            ]
+            == expected_rest_settings_overrides["expected_rest_settings"]["continue_on_step_failure"]
         )
 
         # Check that components were properly serialized:
@@ -193,10 +178,7 @@ class TestPipelineJobSchema:
             assert job_name in rest_pipeline_properties.jobs
             rest_component_job = rest_pipeline_properties.jobs[job_name]
             if "component" in rest_pipeline_properties.jobs[job_name]:
-                assert (
-                    component_job["component"][len(ARM_ID_PREFIX) :]
-                    == rest_component_job["componentId"]
-                )
+                assert component_job["component"][len(ARM_ID_PREFIX) :] == rest_component_job["componentId"]
             # Check the inputs are properly placed
             rest_component_job_inputs = rest_component_job["inputs"]
             for input_name, input_value in component_job["inputs"].items():
@@ -205,30 +187,18 @@ class TestPipelineJobSchema:
                     # If given input is a literal
                     assert input_name in rest_component_job_inputs
                     # If the given input is a literal value
-                    assert rest_component_job_inputs[input_name].data.value == str(
-                        input_value
-                    )
+                    assert rest_component_job_inputs[input_name].data.value == str(input_value)
             overrides = component_job.get("overrides", None)
             if overrides:
                 assert rest_component_job["overrides"]
-                assert (
-                    expected_rest_settings_overrides["expected_rest_overrides"]
-                    == rest_component_job["overrides"]
-                )
+                assert expected_rest_settings_overrides["expected_rest_overrides"] == rest_component_job["overrides"]
             # Check that the compute is properly serialized
             if "component" in rest_component_job:
                 assert rest_component_job["computeId"]
-                assert (
-                    rest_component_job["computeId"]
-                    == component_job["compute"][len(ARM_ID_PREFIX) :]
-                )
+                assert rest_component_job["computeId"] == component_job["compute"][len(ARM_ID_PREFIX) :]
 
-    def test_pipeline_job_settings_compute_dump(
-        self, mock_machinelearning_client: MLClient
-    ):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
-        )
+    def test_pipeline_job_settings_compute_dump(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
         job = load_job(test_path)
         job.settings.default_compute = "cpu-cluster"
         dump_str = StringIO()
@@ -261,22 +231,16 @@ class TestPipelineJobSchema:
             ),
         ]:
             loaded_value = pydash.get(pipeline_dict, key, None)
-            assert (
-                loaded_value == expected_value
-            ), f"{key} isn't as expected: {loaded_value} != {expected_value}"
+            assert loaded_value == expected_value, f"{key} isn't as expected: {loaded_value} != {expected_value}"
 
     def test_literal_inputs_fidelity_in_yaml_dump(self):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
-        )
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
         job = load_job(test_path)
 
         reconstructed_yaml = job._to_dict()
         assert reconstructed_yaml["inputs"] == job._build_inputs()
 
-    def test_pipeline_job_with_inputs(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
-    ) -> None:
+    def test_pipeline_job_with_inputs(self, mock_machinelearning_client: MLClient, mocker: MockFixture) -> None:
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_data_options_no_outputs.yml"
         yaml_obj = load_yaml(test_path)
         job = load_job(test_path)
@@ -328,14 +292,9 @@ class TestPipelineJobSchema:
             if from_rest_input.mode is None:
                 assert input_value.mode is None
             else:
-                assert (
-                    from_rest_input.mode
-                    == INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
-                )
+                assert from_rest_input.mode == INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
 
-    def test_pipeline_job_with_inputs_dataset(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
-    ) -> None:
+    def test_pipeline_job_with_inputs_dataset(self, mock_machinelearning_client: MLClient, mocker: MockFixture) -> None:
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_dataset_options_no_outputs.yml"
         yaml_obj = load_yaml(test_path)
         job = load_job(test_path)  # type: PipelineJob
@@ -345,9 +304,7 @@ class TestPipelineJobSchema:
             job_obj_input = job.inputs.get(input_name, None)
             assert job_obj_input is not None
             assert isinstance(job_obj_input, PipelineInput)
-            assert isinstance(job_obj_input._data, Input) or isinstance(
-                job_obj_input._data, Input
-            )
+            assert isinstance(job_obj_input._data, Input) or isinstance(job_obj_input._data, Input)
 
         # "Upload" the depedencies so that the dataset serialization behavior can be verified
         mocker.patch(
@@ -366,10 +323,7 @@ class TestPipelineJobSchema:
             # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/1318153/ For now, check that mode is present until new delivery types are supported.
             # yaml_input_mode = input_value.get("mode", InputDataDeliveryMode.READ_WRITE_MOUNT)
             if rest_input.mode:
-                assert (
-                    INPUT_MOUNT_MAPPING_FROM_REST[rest_input.mode]
-                    == job.inputs[input_name]._data.mode
-                )
+                assert INPUT_MOUNT_MAPPING_FROM_REST[rest_input.mode] == job.inputs[input_name]._data.mode
             else:
                 assert job.inputs[input_name]._data.mode is None
 
@@ -390,10 +344,7 @@ class TestPipelineJobSchema:
             if from_rest_input.mode is None:
                 assert input_value.mode is None
             else:
-                assert (
-                    from_rest_input.mode
-                    == INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
-                )
+                assert from_rest_input.mode == INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
 
     def test_pipeline_job_components_with_inputs(
         self, mock_machinelearning_client: MLClient, mocker: MockFixture
@@ -409,9 +360,7 @@ class TestPipelineJobSchema:
             for input_name, input_value in job_value["inputs"].items():
                 job_input = job_obj.inputs[input_name]._to_job_input()
                 if isinstance(input_value, str):
-                    if isinstance(job_input, Input) and is_data_binding_expression(
-                        job_input.path
-                    ):
+                    if isinstance(job_input, Input) and is_data_binding_expression(job_input.path):
                         job_input = job_input.path
                     assert isinstance(job_input, str)
                 else:
@@ -432,10 +381,7 @@ class TestPipelineJobSchema:
                 "value": "${{parent.inputs.inputvalue}}",
             }
         }
-        assert (
-            rest_job.properties.jobs["multiple_data_component"]["inputs"]
-            == expected_inputs
-        )
+        assert rest_job.properties.jobs["multiple_data_component"]["inputs"] == expected_inputs
 
         # Test that translating from REST preserves the inputs for each job. In this case, they are all bindings
         from_rest_job = PipelineJob._from_rest_object(rest_job)
@@ -454,9 +400,7 @@ class TestPipelineJobSchema:
             for input_name, input_value in job_value["inputs"].items():
                 job_input = job_obj.inputs[input_name]._to_job_input()
                 if isinstance(input_value, str):
-                    if isinstance(job_input, Input) and is_data_binding_expression(
-                        job_input.path
-                    ):
+                    if isinstance(job_input, Input) and is_data_binding_expression(job_input.path):
                         job_input = job_input.path
                     assert isinstance(job_input, str)
                 else:
@@ -612,13 +556,8 @@ class TestPipelineJobSchema:
                 "value": "${{parent.inputs.job_in_data_uri}}",
             },
         }
-        assert (
-            rest_component_jobs["multiple_data_component"]["outputs"]
-            == expected_outputs
-        )
-        assert (
-            rest_component_jobs["multiple_data_component"]["inputs"] == expected_inputs
-        )
+        assert rest_component_jobs["multiple_data_component"]["outputs"] == expected_outputs
+        assert rest_component_jobs["multiple_data_component"]["inputs"] == expected_inputs
 
         # Check the from REST behavior
         from_rest_job = PipelineJob._from_rest_object(rest_job)
@@ -632,18 +571,14 @@ class TestPipelineJobSchema:
             assert isinstance(from_rest_output, Output)
 
         # Check that outputs were properly converted from REST format to SDK format for each ComponentJob
-        from_rest_component_job = from_rest_job.jobs.get(
-            "multiple_data_component", None
-        )
+        from_rest_component_job = from_rest_job.jobs.get("multiple_data_component", None)
         assert from_rest_component_job is not None
 
         from_rest_component_job = from_rest_component_job._to_rest_object()
         assert from_rest_component_job["outputs"] == expected_outputs
         assert from_rest_component_job["inputs"] == expected_inputs
 
-    def _check_data_output_rest_formatting(
-        self, rest_output: RestJobOutput, yaml_output: Dict[str, Any]
-    ) -> None:
+    def _check_data_output_rest_formatting(self, rest_output: RestJobOutput, yaml_output: Dict[str, Any]) -> None:
         rest_output_data = rest_output.data
         assert rest_output_data
         yaml_output_data = yaml_output["data"]
@@ -662,9 +597,7 @@ class TestPipelineJobSchema:
         if mode:
             assert rest_output_data.mode.lower() == mode.lower()
 
-    def _check_data_output_from_rest_formatting(
-        self, rest_output_data: RestJobOutput, from_rest_output: Input
-    ) -> None:
+    def _check_data_output_from_rest_formatting(self, rest_output_data: RestJobOutput, from_rest_output: Input) -> None:
         from_rest_output_data = from_rest_output.data
         assert from_rest_output_data
         assert from_rest_output_data.path == rest_output_data.datapath
@@ -693,21 +626,15 @@ class TestPipelineJobSchema:
         component = component_job.component or component_job.trial
         assert component._is_anonymous
         # hash will be generated before create_or_update, so can't check it in unit tests
-        assert list(component.inputs.keys()) == list(
-            component_dict.get("inputs", {}).keys()
-        )
-        assert list(component.outputs.keys()) == list(
-            component_dict.get("outputs", {}).keys()
-        )
+        assert list(component.inputs.keys()) == list(component_dict.get("inputs", {}).keys())
+        assert list(component.outputs.keys()) == list(component_dict.get("outputs", {}).keys())
 
     def test_pipeline_job_inline_component(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
         hello_world_component = job.jobs["hello_world_component_inline"]
-        component_dict = load_yaml(test_path)["jobs"]["hello_world_component_inline"][
-            "component"
-        ]
+        component_dict = load_yaml(test_path)["jobs"]["hello_world_component_inline"]["component"]
         self.assert_inline_component(hello_world_component, component_dict)
 
     def test_pipeline_job_inline_component_file(self):
@@ -715,14 +642,10 @@ class TestPipelineJobSchema:
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
         hello_world_component = job.jobs["hello_world_component_inline_file"]
-        component_dict = load_yaml(
-            "./tests/test_configs/components/helloworld_component.yml"
-        )
+        component_dict = load_yaml("./tests/test_configs/components/helloworld_component.yml")
         self.assert_inline_component(hello_world_component, component_dict)
 
-        test_path = (
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
-        )
+        test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
         spark_component = job.jobs["add_greeting_column"]
@@ -731,24 +654,18 @@ class TestPipelineJobSchema:
         )
         self.assert_inline_component(spark_component, component_dict)
 
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
-        )
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
         spark_component = job.jobs["merge_files_job"]
-        component_dict = load_yaml(
-            "./tests/test_configs/components/data_transfer/merge_files.yaml"
-        )
+        component_dict = load_yaml("./tests/test_configs/components/data_transfer/merge_files.yaml")
         self.assert_inline_component(spark_component, component_dict)
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
         spark_component = job.jobs["copy_files"]
-        component_dict = load_yaml(
-            "./tests/test_configs/components/data_transfer/copy_files.yaml"
-        )
+        component_dict = load_yaml("./tests/test_configs/components/data_transfer/copy_files.yaml")
         self.assert_inline_component(spark_component, component_dict)
 
     def test_pipeline_job_inline_component_file_with_complex_path(self):
@@ -757,9 +674,7 @@ class TestPipelineJobSchema:
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
         hello_world_component = job.jobs["hello_world_inline_paralleljob"]
-        component_dict = load_yaml(
-            "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
-        )
+        component_dict = load_yaml("./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml")
         self.assert_inline_component(hello_world_component, component_dict)
 
     def test_pipeline_job_inline_component_file_parallel_with_user_identity(self):
@@ -793,9 +708,7 @@ class TestPipelineJobSchema:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             side_effect=mock_get_asset_arm_id,
         )
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(
-            pipeline_job
-        )
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline_job)
 
         # Check that if compute was specified, it was resolved
         # Otherwise, it should be left unset since the backend will apply the default
@@ -812,9 +725,7 @@ class TestPipelineJobSchema:
         def assert_setting(rest_job, key, value):
             assert rest_job.properties.settings.get(key, None) == value
 
-        assert_setting(
-            rest_job, PipelineConstants.DEFAULT_DATASTORE, "workspacefilestore"
-        )
+        assert_setting(rest_job, PipelineConstants.DEFAULT_DATASTORE, "workspacefilestore")
         assert_setting(rest_job, PipelineConstants.DEFAULT_COMPUTE, "cpu-cluster-1")
         assert_setting(rest_job, PipelineConstants.CONTINUE_ON_STEP_FAILURE, True)
 
@@ -825,12 +736,8 @@ class TestPipelineJobSchema:
         assert from_rest_job.settings.default_compute == "cpu-cluster-1"
         assert from_rest_job.settings.continue_on_step_failure is True
 
-    def test_pipeline_job_settings_field(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
-    ):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults.yml"
-        )
+    def test_pipeline_job_settings_field(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults.yml"
 
         job = load_job(test_path)
         self.assert_settings_field(job, mock_machinelearning_client, mocker)
@@ -840,9 +747,7 @@ class TestPipelineJobSchema:
         assert rest_job.properties.compute_id == job.compute
 
     def test_set_unknown_pipeline_job_settings(self):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults.yml"
-        )
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults.yml"
 
         job: PipelineJob = load_job(
             test_path,
@@ -894,9 +799,7 @@ class TestPipelineJobSchema:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             side_effect=mock_get_asset_arm_id,
         )
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(
-            pipeline_job
-        )
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline_job)
 
         # Check that if compute was specified, it was resolved
         # Otherwise, it should be left unset since the backend will apply the default
@@ -1004,22 +907,14 @@ class TestPipelineJobSchema:
             with pytest.raises(Exception) as e:
                 load_job(
                     test_path,
-                    params_override=[
-                        {
-                            "jobs.hello_world.inputs.test1": "${{parent.inputs.not_found}}"
-                        }
-                    ],
+                    params_override=[{"jobs.hello_world.inputs.test1": "${{parent.inputs.not_found}}"}],
                 )
-            assert "Failed to find top level definition for input binding" in str(
-                e.value
-            )
+            assert "Failed to find top level definition for input binding" in str(e.value)
 
         # Check that all inputs are present and are of type Input or are literals
         for input_name, input_yaml in yaml_obj["inputs"].items():
             job_obj_input = job.inputs.get(input_name, None)
-            assert (
-                job_obj_input is not None
-            ), f"Input {input_name} not found in loaded job"
+            assert job_obj_input is not None, f"Input {input_name} not found in loaded job"
             assert isinstance(job_obj_input, PipelineInput)
             job_obj_input = job_obj_input._to_job_input()
             if isinstance(input_yaml, dict):
@@ -1250,10 +1145,7 @@ class TestPipelineJobSchema:
 
         for job_name, job_value in yaml_obj["jobs"].items():
             for io_type in ["inputs", "outputs"]:
-                if (
-                    job_name not in expected_input_outputs
-                    or io_type not in expected_input_outputs[job_name]
-                ):
+                if job_name not in expected_input_outputs or io_type not in expected_input_outputs[job_name]:
                     continue
                 expected_values = expected_input_outputs[job_name][io_type]
 
@@ -1268,7 +1160,9 @@ class TestPipelineJobSchema:
                 assert expected_values == rest_component[io_type]
 
     def test_pipeline_job_str(self):
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
+        )
         pipeline_entity = load_job(source=test_path)
         pipeline_str = str(pipeline_entity)
         assert pipeline_entity.name in pipeline_str
@@ -1279,13 +1173,8 @@ class TestPipelineJobSchema:
         )
 
         pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert (
-            "environment_variables"
-            in pipeline_job_dict["properties"]["jobs"]["world_job"]
-        )
-        assert pipeline_job_dict["properties"]["jobs"]["world_job"][
-            "environment_variables"
-        ] == {
+        assert "environment_variables" in pipeline_job_dict["properties"]["jobs"]["world_job"]
+        assert pipeline_job_dict["properties"]["jobs"]["world_job"]["environment_variables"] == {
             "AZUREML_COMPUTE_USE_COMMON_RUNTIME": "false",
             "abc": "def",
         }
@@ -1311,26 +1200,18 @@ class TestPipelineJobSchema:
             ValidationError,
             match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema",
         ):
-            _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(
-                distribution_dict
-            )
+            _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
         with pytest.raises(
             ValidationError,
             match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema",
         ):
-            _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(
-                distribution_obj
-            )
+            _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
 
-        after_dump_correct = TensorFlowDistributionSchema(
-            context={"base_path": "./"}
-        ).dump(distribution_obj)
+        after_dump_correct = TensorFlowDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
         assert after_dump_correct == distribution_dict
 
     def test_job_defaults(self, mocker: MockFixture):
-        pipeline_job = load_job(
-            source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_e2e.yml"
-        )
+        pipeline_job = load_job(source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_e2e.yml")
         mocker.patch(
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
@@ -1443,22 +1324,20 @@ class TestPipelineJobSchema:
         pipeline_entity = load_job(source=test_path)
         # check component of pipeline job is expected
         for name, expected_dict in expected_components.items():
-            actual_dict = as_attribute_dict(
-                pipeline_entity.jobs[name].component._to_rest_object()
-            )
+            actual_dict = as_attribute_dict(pipeline_entity.jobs[name].component._to_rest_object())
             omit_fields = [
                 "name",
                 # dumped code will be an absolute path, tested in other tests
                 "code",
             ]
 
-            actual_dict = pydash.omit(
-                actual_dict["properties"]["component_spec"], omit_fields
-            )
+            actual_dict = pydash.omit(actual_dict["properties"]["component_spec"], omit_fields)
             assert actual_dict == expected_dict
 
     def test_command_job_in_pipeline_deep_reference(self):
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_deep_reference.yml"
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_deep_reference.yml"
+        )
         pipeline_entity = load_job(source=test_path)
         expected_components = {
             "hello_world_inline_commandjob_1": {
@@ -1504,25 +1383,19 @@ class TestPipelineJobSchema:
             },
         }
         for name, expected_dict in expected_components.items():
-            actual_dict = as_attribute_dict(
-                pipeline_entity.jobs[name].component._to_rest_object()
-            )
+            actual_dict = as_attribute_dict(pipeline_entity.jobs[name].component._to_rest_object())
             omit_fields = [
                 "name",
             ]
 
-            actual_dict = pydash.omit(
-                actual_dict["properties"]["component_spec"], omit_fields
-            )
+            actual_dict = pydash.omit(actual_dict["properties"]["component_spec"], omit_fields)
             assert actual_dict == expected_dict
 
     def test_command_job_referenced_component_no_meta(self):
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_deep_reference.yml"
-        params_override = [
-            {
-                "jobs.hello_world_component_before.component": "azureml:fake_component_arm_id:1"
-            }
-        ]
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_deep_reference.yml"
+        )
+        params_override = [{"jobs.hello_world_component_before.component": "azureml:fake_component_arm_id:1"}]
         # when component is provided as arm id, won't able to get referenced component input/output type
         with pytest.raises(Exception) as e:
             load_job(source=test_path, params_override=params_override)
@@ -1606,9 +1479,7 @@ class TestPipelineJobSchema:
             "azure.mgmt.core.policies._authentication.ARMChallengeAuthenticationPolicy._need_new_token",
             return_value=False,
         )
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(
-            pipeline
-        )
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
         automl_job = pipeline.jobs[job_key]
         automl_job_dict = automl_job._to_dict(inside_pipeline=True)
@@ -1633,22 +1504,14 @@ class TestPipelineJobSchema:
             pipeline_job_dict = pydash.omit(pipeline_job_dict, ["sweep"])
             original_job_dict = pydash.omit(original_job_dict, ["sweep"])
 
-            for i, search_space_item in enumerate(
-                original_job_dict.get("search_space", [])
-            ):
-                original_job_dict["search_space"][i] = (
-                    _convert_sweep_dist_dict_to_str_dict(search_space_item)
-                )
+            for i, search_space_item in enumerate(original_job_dict.get("search_space", [])):
+                original_job_dict["search_space"][i] = _convert_sweep_dist_dict_to_str_dict(search_space_item)
         assert pipeline_job_dict == original_job_dict
 
-    def _raise_error_on_wrong_schema(
-        self, test_path, original_dict, job_key, mock_machinelearning_client, mocker
-    ):
+    def _raise_error_on_wrong_schema(self, test_path, original_dict, job_key, mock_machinelearning_client, mocker):
         dump_yaml_to_file(test_path, original_dict)
         with pytest.raises(ValidationError):
-            self.test_automl_node_in_pipeline_load_dump(
-                test_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_path, job_key, mock_machinelearning_client, mocker)
 
     @pytest.mark.parametrize(
         "test_path, job_key",
@@ -1715,15 +1578,11 @@ class TestPipelineJobSchema:
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["ams_gradient"] = True
         dump_yaml_to_file(test_yaml_path, original_dict_copy)
-        self.test_automl_node_in_pipeline_load_dump(
-            test_yaml_path, job_key, mock_machinelearning_client, mocker
-        )
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         # test LRSChedular Enum
         original_dict_copy = deepcopy(original_dict)
-        original_dict_copy["jobs"][job_key]["search_space"][0][
-            "learning_rate_scheduler"
-        ] = {
+        original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = {
             "type": "choice",
             "values": ["random_lr_scheduler1", "random_lr_scheduler2"],
         }
@@ -1735,17 +1594,13 @@ class TestPipelineJobSchema:
             mocker,
         )
 
-        original_dict_copy["jobs"][job_key]["search_space"][0][
-            "learning_rate_scheduler"
-        ] = camel_to_snake(LearningRateScheduler.WARMUP_COSINE)
-        dump_yaml_to_file(test_yaml_path, original_dict_copy)
-        self.test_automl_node_in_pipeline_load_dump(
-            test_yaml_path, job_key, mock_machinelearning_client, mocker
+        original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = camel_to_snake(
+            LearningRateScheduler.WARMUP_COSINE
         )
+        dump_yaml_to_file(test_yaml_path, original_dict_copy)
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
-        original_dict_copy["jobs"][job_key]["search_space"][0][
-            "learning_rate_scheduler"
-        ] = {
+        original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = {
             "type": "choice",
             "values": [
                 camel_to_snake(LearningRateScheduler.WARMUP_COSINE),
@@ -1753,9 +1608,7 @@ class TestPipelineJobSchema:
             ],
         }
         dump_yaml_to_file(test_yaml_path, original_dict_copy)
-        self.test_automl_node_in_pipeline_load_dump(
-            test_yaml_path, job_key, mock_machinelearning_client, mocker
-        )
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         # test Optimizer
         original_dict_copy = deepcopy(original_dict)
@@ -1771,13 +1624,9 @@ class TestPipelineJobSchema:
             mocker,
         )
 
-        original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = (
-            camel_to_snake(StochasticOptimizer.ADAM)
-        )
+        original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = camel_to_snake(StochasticOptimizer.ADAM)
         dump_yaml_to_file(test_yaml_path, original_dict_copy)
-        self.test_automl_node_in_pipeline_load_dump(
-            test_yaml_path, job_key, mock_machinelearning_client, mocker
-        )
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = {
             "type": "choice",
@@ -1787,9 +1636,7 @@ class TestPipelineJobSchema:
             ],
         }
         dump_yaml_to_file(test_yaml_path, original_dict_copy)
-        self.test_automl_node_in_pipeline_load_dump(
-            test_yaml_path, job_key, mock_machinelearning_client, mocker
-        )
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         # Test Model Name
         original_dict_copy = deepcopy(original_dict)
@@ -1826,17 +1673,11 @@ class TestPipelineJobSchema:
                 "values": ["vitb16r224"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
-            self.test_automl_node_in_pipeline_load_dump(
-                test_yaml_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
-            original_dict_copy["jobs"][job_key]["search_space"][0][
-                "model_name"
-            ] = "vitb16r224"
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "vitb16r224"
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
-            self.test_automl_node_in_pipeline_load_dump(
-                test_yaml_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         elif "object_detection" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
@@ -1844,17 +1685,11 @@ class TestPipelineJobSchema:
                 "values": ["yolov5", "fasterrcnn_resnet50_fpn"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
-            self.test_automl_node_in_pipeline_load_dump(
-                test_yaml_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
-            original_dict_copy["jobs"][job_key]["search_space"][0][
-                "model_name"
-            ] = "fasterrcnn_resnet50_fpn"
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "fasterrcnn_resnet50_fpn"
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
-            self.test_automl_node_in_pipeline_load_dump(
-                test_yaml_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         elif "instance_segmentation" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
@@ -1862,53 +1697,33 @@ class TestPipelineJobSchema:
                 "values": ["maskrcnn_resnet152_fpn", "maskrcnn_resnet18_fpn"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
-            self.test_automl_node_in_pipeline_load_dump(
-                test_yaml_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
-            original_dict_copy["jobs"][job_key]["search_space"][0][
-                "model_name"
-            ] = "maskrcnn_resnet18_fpn"
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "maskrcnn_resnet18_fpn"
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
-            self.test_automl_node_in_pipeline_load_dump(
-                test_yaml_path, job_key, mock_machinelearning_client, mocker
-            )
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
     @pytest.mark.parametrize(
         "params_override, error_field, expecting_field",
         [
             (
-                [
-                    {
-                        "jobs.train_job.inputs.training_data": "${{inputs.pipeline_job_training_input}}"
-                    }
-                ],
+                [{"jobs.train_job.inputs.training_data": "${{inputs.pipeline_job_training_input}}"}],
                 "${{inputs.pipeline_job_training_input}}",
                 "${{parent.inputs.pipeline_job_training_input}}",
             ),
             (
-                [
-                    {
-                        "jobs.score_job.inputs.model_input": "${{jobs.train_job.outputs.model_output}}"
-                    }
-                ],
+                [{"jobs.score_job.inputs.model_input": "${{jobs.train_job.outputs.model_output}}"}],
                 "${{jobs.train_job.outputs.model_output}}",
                 "${{parent.jobs.train_job.outputs.model_output}}",
             ),
         ],
     )
-    def test_legacy_data_binding_error_msg(
-        self, params_override, error_field, expecting_field
-    ):
-        test_path = (
-            "./tests/test_configs/dsl_pipeline/e2e_local_components/pipeline.yml"
-        )
+    def test_legacy_data_binding_error_msg(self, params_override, error_field, expecting_field):
+        test_path = "./tests/test_configs/dsl_pipeline/e2e_local_components/pipeline.yml"
         job: PipelineJob = load_job(source=test_path, params_override=params_override)
         with pytest.raises(ValidationException) as e:
             job._to_rest_object()
-        err_msg = "{} has changed to {}, please change to use new format.".format(
-            error_field, expecting_field
-        )
+        err_msg = "{} has changed to {}, please change to use new format.".format(error_field, expecting_field)
         assert err_msg in str(e.value)
 
     @pytest.mark.parametrize(
@@ -1917,9 +1732,7 @@ class TestPipelineJobSchema:
             "./tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml",
         ],
     )
-    def test_parallel_pipeline_not_private_preview_features(
-        self, test_path, mocker: MockFixture
-    ):
+    def test_parallel_pipeline_not_private_preview_features(self, test_path, mocker: MockFixture):
         mocker.patch(
             "azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled",
             return_value=False,
@@ -1928,9 +1741,7 @@ class TestPipelineJobSchema:
         try:
             job._to_rest_object()
         except UserErrorException as e:
-            assert (
-                False
-            ), f"parallel in pipeline is public preview feature, but raised exception {e.value}"
+            assert False, f"parallel in pipeline is public preview feature, but raised exception {e.value}"
 
     def test_pipeline_yaml_job_node_source(self, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml"
@@ -1954,9 +1765,7 @@ class TestPipelineJobSchema:
         assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
 
         job_rest_obj = job._to_rest_object()
-        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"][
-            "services"
-        ]
+        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
         # rest object of node in pipeline should be pure dict
         assert rest_services == {
             "my_ssh": {
@@ -1989,9 +1798,7 @@ class TestPipelineJobSchema:
         assert node_services.get("my_tensorboard").log_dir == "~/tblog"
 
         job_rest_obj = job._to_rest_object()
-        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"][
-            "services"
-        ]
+        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
         # rest object of node in pipeline should be pure dict
         assert rest_services == {
             "my_ssh": {
@@ -2023,9 +1830,7 @@ class TestPipelineJobSchema:
         job_rest_obj = job._to_rest_object()
 
         # rest object of node in pipeline should be pure dict
-        assert job_rest_obj.properties.jobs["hello_world_component_inline"][
-            "services"
-        ] == {
+        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
             "my_ssh": {
                 "job_service_type": "SSH",
                 "properties": {"sshPublicKeys": "xyz123"},
@@ -2057,9 +1862,7 @@ class TestPipelineJobSchema:
         job_rest_obj = job._to_rest_object()
 
         # rest object of node in pipeline should be pure dict
-        assert job_rest_obj.properties.jobs["hello_world_component_inline"][
-            "services"
-        ] == {
+        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
             "my_ssh": {
                 "job_service_type": "SSH",
                 "properties": {"sshPublicKeys": "xyz123"},
@@ -2114,9 +1917,7 @@ class TestPipelineJobSchema:
         assert nodes["node3"]["inputs"] == expected_node3_input_dict
 
     def test_pipeline_component_job(self):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/remote_pipeline_component_job.yml"
-        )
+        test_path = "./tests/test_configs/pipeline_jobs/remote_pipeline_component_job.yml"
         job: PipelineJob = load_job(source=test_path)
         assert job._validate().passed
         expected_job_dict = {
@@ -2175,10 +1976,7 @@ class TestPipelineJobSchema:
         test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"
         with pytest.raises(Exception) as e:
             load_job(source=test_path)
-        assert (
-            "'jobs' and 'component' are mutually exclusive fields in pipeline job"
-            in str(e.value)
-        )
+        assert "'jobs' and 'component' are mutually exclusive fields in pipeline job" in str(e.value)
 
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",

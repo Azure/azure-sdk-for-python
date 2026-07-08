@@ -21,9 +21,7 @@ class TestFlowComponent:
         target_path = "./tests/test_configs/flows/basic/flow.dag.yaml"
 
         component = load_component(target_path)
-        component._fill_back_code_value(
-            "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1"
-        )
+        component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
 
         component.version = "2"
         component.description = "test load component from flow"
@@ -73,9 +71,7 @@ class TestFlowComponent:
             "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1"
         )
 
-        assert (
-            as_attribute_dict(named_component._to_rest_object()) == expected_rest_dict
-        )
+        assert as_attribute_dict(named_component._to_rest_object()) == expected_rest_dict
 
     def test_component_normalize_folder_name(self):
         target_path = "./tests/test_configs/flows/basic/"
@@ -123,16 +119,12 @@ class TestFlowComponent:
                 "description": "A run of the basic flow",
                 "is_anonymous": False,
                 "is_archived": False,
-                "properties": {
-                    "client_component_hash": "f060820c-7fb3-56a8-790c-ae2969a7b544"
-                },
+                "properties": {"client_component_hash": "f060820c-7fb3-56a8-790c-ae2969a7b544"},
                 "tags": {},
             },
         }
 
-        component._fill_back_code_value(
-            "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1"
-        )
+        component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
 
         assert as_attribute_dict(component._to_rest_object()) == expected_rest_dict
 
@@ -155,15 +147,11 @@ class TestFlowComponent:
                     pass
 
     def test_flow_component_load_with_additional_includes(self):
-        flow_dir_path = (
-            "./tests/test_configs/flows/web_classification_with_additional_includes"
-        )
+        flow_dir_path = "./tests/test_configs/flows/web_classification_with_additional_includes"
         component = load_component(f"{flow_dir_path}/flow.dag.yaml")
         with component._build_code() as code:
             assert Path(code.path, "convert_to_dict.py").is_file()
-            flow_dag = yaml.safe_load(
-                Path(code.path, "flow.dag.yaml").read_text(encoding="utf-8")
-            )
+            flow_dag = yaml.safe_load(Path(code.path, "flow.dag.yaml").read_text(encoding="utf-8"))
             # we won't update the flow.dag.yaml for now. user may use `mldesigner compile` if they want to update it
             assert "additional_includes" in flow_dag
 
@@ -174,21 +162,15 @@ class TestFlowComponent:
             assert Path(code.path, "convert_to_dict.py").is_file()
 
     def test_flow_component_entity(self):
-        component: FlowComponent = load_component(
-            "./tests/test_configs/flows/basic/flow.dag.yaml"
-        )
+        component: FlowComponent = load_component("./tests/test_configs/flows/basic/flow.dag.yaml")
 
         assert component.type == NodeType.FLOW_PARALLEL
 
         input_port_dict = component.inputs
-        with pytest.raises(
-            RuntimeError, match="Ports of flow component are not editable."
-        ):
+        with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
             input_port_dict["text"] = None
 
-        with pytest.raises(
-            RuntimeError, match="Ports of flow component are not editable."
-        ):
+        with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
             del input_port_dict["text"]
 
         with pytest.raises(AttributeError):
@@ -206,9 +188,7 @@ class TestFlowComponent:
             "AZURE_OPENAI_API_BASE": "${azure_open_ai_connection.api_base}",
         }
 
-        component._fill_back_code_value(
-            "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1"
-        )
+        component._fill_back_code_value("/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1")
 
         assert as_attribute_dict(component._to_rest_object()) == {
             "name": "basic",
@@ -216,9 +196,7 @@ class TestFlowComponent:
                 "component_spec": {
                     "_source": "YAML.COMPONENT",
                     "code": "/subscriptions/xxx/resourceGroups/xxx/workspaces/xxx/codes/xxx/versions/1",
-                    "environment_variables": {
-                        "AZURE_OPENAI_API_BASE": "${azure_open_ai_connection.api_base}"
-                    },
+                    "environment_variables": {"AZURE_OPENAI_API_BASE": "${azure_open_ai_connection.api_base}"},
                     "flow_file_name": "flow.dag.yaml",
                     "is_deterministic": True,
                     "name": "basic",
@@ -228,9 +206,7 @@ class TestFlowComponent:
                 "is_anonymous": False,
                 "is_archived": False,
                 # note that this won't take effect actually
-                "properties": {
-                    "client_component_hash": "07cdc416-c6ee-0beb-3d1b-4e5a5c4b44ec"
-                },
+                "properties": {"client_component_hash": "07cdc416-c6ee-0beb-3d1b-4e5a5c4b44ec"},
                 "tags": {},
             },
         }
@@ -331,13 +307,9 @@ class TestFlowComponent:
             ),
         ],
     )
-    def test_component_connection_inputs(
-        self, input_values: dict, expected_rest_objects: dict
-    ):
+    def test_component_connection_inputs(self, input_values: dict, expected_rest_objects: dict):
         component = load_component("./tests/test_configs/flows/basic/flow.dag.yaml")
-        data_input = Input(
-            path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE
-        )
+        data_input = Input(path="./tests/test_configs/flows/data/basic.jsonl", type=AssetTypes.URI_FILE)
 
         # validation_result = component()._validate()
         # assert validation_result.passed is False

@@ -20,9 +20,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 class TestParallelComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
-        component_yaml = (
-            "./tests/test_configs/components/basic_parallel_component_score.yml"
-        )
+        component_yaml = "./tests/test_configs/components/basic_parallel_component_score.yml"
         parallel_component = load_component(
             source=component_yaml,
         )
@@ -34,13 +32,8 @@ class TestParallelComponentEntity:
         yaml_path = "./tests/test_configs/components/basic_parallel_component_score.yml"
         yaml_dict = load_yaml(yaml_path)
         yaml_dict["mock_option_param"] = {"mock_key": "mock_val"}
-        parallel_component = ParallelComponent._load(
-            data=yaml_dict, yaml_path=yaml_path
-        )
-        assert (
-            parallel_component._other_parameter.get("mock_option_param")
-            == yaml_dict["mock_option_param"]
-        )
+        parallel_component = ParallelComponent._load(data=yaml_dict, yaml_path=yaml_path)
+        assert parallel_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
 
     def test_parallel_component_entity(self):
         task = {
@@ -115,12 +108,8 @@ class TestParallelComponentEntity:
                 "type": "run_function",
             },
         }
-        pipeline_input = PipelineInput(
-            name="pipeline_input", owner="pipeline", meta=None
-        )
-        yaml_component = yaml_component_version(
-            model="SVM", label="test", component_in_path=pipeline_input
-        )
+        pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
+        yaml_component = yaml_component_version(model="SVM", label="test", component_in_path=pipeline_input)
 
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
@@ -128,21 +117,11 @@ class TestParallelComponentEntity:
         assert rest_yaml_component == expected_rest_component
 
     def test_parallel_component_run_settings_picked_up(self):
-        yaml_path = (
-            "./tests/test_configs/components/parallel_component_with_run_settings.yml"
-        )
+        yaml_path = "./tests/test_configs/components/parallel_component_with_run_settings.yml"
         parallel_component = load_component(source=yaml_path)
         parallel_node = parallel_component()
         # Normally, during initiation of nodes, the settings from the yaml file shouldn't be changed
-        assert (
-            parallel_component.resources.instance_count
-            == parallel_node.resources.instance_count
-            == 1
-        )
-        assert (
-            parallel_component.max_concurrency_per_instance
-            == parallel_node.max_concurrency_per_instance
-            == 16
-        )
+        assert parallel_component.resources.instance_count == parallel_node.resources.instance_count == 1
+        assert parallel_component.max_concurrency_per_instance == parallel_node.max_concurrency_per_instance == 16
         assert parallel_component.retry_settings == parallel_node.retry_settings
         assert parallel_component.retry_settings.timeout == 12345

@@ -74,19 +74,13 @@ class DistillationJob(Job, JobIOMixin):
         self._hyperparameters = hyperparameters
         self._resources = resources
 
-        if (
-            self._training_data is None
-            and self._data_generation_type == DataGenerationType.LABEL_GENERATION
-        ):
+        if self._training_data is None and self._data_generation_type == DataGenerationType.LABEL_GENERATION:
             raise ValueError(
                 f"Training data can not be None when data generation type is set to "
                 f"{DataGenerationType.LABEL_GENERATION}."
             )
 
-        if (
-            self._validation_data is None
-            and self._data_generation_type == DataGenerationType.LABEL_GENERATION
-        ):
+        if self._validation_data is None and self._data_generation_type == DataGenerationType.LABEL_GENERATION:
             raise ValueError(
                 f"Validation data can not be None when data generation type is set to "
                 f"{DataGenerationType.LABEL_GENERATION}."
@@ -143,9 +137,7 @@ class DistillationJob(Job, JobIOMixin):
         return self._teacher_model_endpoint_connection
 
     @teacher_model_endpoint_connection.setter
-    def teacher_model_endpoint_connection(
-        self, connection: WorkspaceConnection
-    ) -> None:
+    def teacher_model_endpoint_connection(self, connection: WorkspaceConnection) -> None:
         """Set the endpoint information of the teacher model.
 
         :param connection: Workspace connection
@@ -275,9 +267,7 @@ class DistillationJob(Job, JobIOMixin):
         :param prompt_settings: Settings related to the system prompt used for generating data.
         :type prompt_settings: typing.Optional[PromptSettings]
         """
-        self._prompt_settings = (
-            prompt_settings if prompt_settings is not None else self._prompt_settings
-        )
+        self._prompt_settings = prompt_settings if prompt_settings is not None else self._prompt_settings
 
     def set_finetuning_settings(self, hyperparameters: Optional[Dict]):
         """Set the hyperparamters for finetuning.
@@ -285,9 +275,7 @@ class DistillationJob(Job, JobIOMixin):
         :param hyperparameters: The hyperparameters for finetuning.
         :type hyperparameters: typing.Optional[typing.Dict]
         """
-        self._hyperparameters = (
-            hyperparameters if hyperparameters is not None else self._hyperparameters
-        )
+        self._hyperparameters = hyperparameters if hyperparameters is not None else self._hyperparameters
 
     def _to_dict(self) -> Dict:
         """Convert the object to a dictionary.
@@ -300,9 +288,7 @@ class DistillationJob(Job, JobIOMixin):
         )
 
         schema_dict: dict = {}
-        schema_dict = DistillationJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )
+        schema_dict = DistillationJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
         return schema_dict
 
@@ -329,9 +315,7 @@ class DistillationJob(Job, JobIOMixin):
             DistillationJobSchema,
         )
 
-        loaded_data = load_from_dict(
-            DistillationJobSchema, data, context, additional_message, **kwargs
-        )
+        loaded_data = load_from_dict(DistillationJobSchema, data, context, additional_message, **kwargs)
 
         training_data = loaded_data.get("training_data", None)
         if isinstance(training_data, str):
@@ -339,15 +323,11 @@ class DistillationJob(Job, JobIOMixin):
 
         validation_data = loaded_data.get("validation_data", None)
         if isinstance(validation_data, str):
-            loaded_data["validation_data"] = Input(
-                type="uri_file", path=validation_data
-            )
+            loaded_data["validation_data"] = Input(type="uri_file", path=validation_data)
 
         student_model = loaded_data.get("student_model", None)
         if isinstance(student_model, str):
-            loaded_data["student_model"] = Input(
-                type=AssetTypes.URI_FILE, path=student_model
-            )
+            loaded_data["student_model"] = Input(type=AssetTypes.URI_FILE, path=student_model)
 
         job_instance = DistillationJob(**loaded_data)
         return job_instance
@@ -362,13 +342,9 @@ class DistillationJob(Job, JobIOMixin):
         :rtype: DistillationJob
         """
         properties: RestFineTuningJob = obj.properties
-        finetuning_details: RestCustomModelFineTuningVertical = (
-            properties.fine_tuning_details
-        )
+        finetuning_details: RestCustomModelFineTuningVertical = properties.fine_tuning_details
 
-        job_kwargs_dict = DistillationJob._filter_properties(
-            properties=properties.properties
-        )
+        job_kwargs_dict = DistillationJob._filter_properties(properties=properties.properties)
 
         job_args_dict = {
             "id": obj.id,
@@ -477,17 +453,13 @@ class DistillationJob(Job, JobIOMixin):
         :type properties: typing.Dict
         """
         properties[AzureMLDistillationProperties.ENABLE_DISTILLATION] = True
-        properties[AzureMLDistillationProperties.DATA_GENERATION_TASK_TYPE] = (
-            self._data_generation_task_type.upper()
-        )
+        properties[AzureMLDistillationProperties.DATA_GENERATION_TASK_TYPE] = self._data_generation_task_type.upper()
         properties[f"{AzureMLDistillationProperties.TEACHER_MODEL}.endpoint_name"] = (
             self._teacher_model_endpoint_connection.name
         )
 
         # Not needed for FT Overload API but additional info needed to convert from REST object to Distillation object
-        properties[AzureMLDistillationProperties.DATA_GENERATION_TYPE] = (
-            self._data_generation_type
-        )
+        properties[AzureMLDistillationProperties.DATA_GENERATION_TYPE] = self._data_generation_type
         properties[AzureMLDistillationProperties.CONNECTION_INFORMATION] = json.dumps(
             self._teacher_model_endpoint_connection._to_dict()  # pylint: disable=protected-access
         )
@@ -504,9 +476,7 @@ class DistillationJob(Job, JobIOMixin):
             if inference_settings:
                 for inference_key, value in inference_settings.items():
                     if value is not None:
-                        properties[
-                            f"{AzureMLDistillationProperties.TEACHER_MODEL}.{inference_key}"
-                        ] = value
+                        properties[f"{AzureMLDistillationProperties.TEACHER_MODEL}.{inference_key}"] = value
 
             if endpoint_settings:
                 for setting, value in endpoint_settings.items():
@@ -514,9 +484,7 @@ class DistillationJob(Job, JobIOMixin):
                         properties[f"azureml.{setting.strip('_')}"] = value
 
         if self._resources and self._resources.instance_type:
-            properties[
-                f"{AzureMLDistillationProperties.INSTANCE_TYPE}.data_generation"
-            ] = self._resources.instance_type
+            properties[f"{AzureMLDistillationProperties.INSTANCE_TYPE}.data_generation"] = self._resources.instance_type
 
     # TODO: Remove once Distillation is added to MFE
     @staticmethod
@@ -568,10 +536,7 @@ class DistillationJob(Job, JobIOMixin):
         teacher_model_info = ""
         for key, val in properties.items():
             param = key.split(".")[-1]
-            if (
-                AzureMLDistillationProperties.TEACHER_MODEL in key
-                and param != "endpoint_name"
-            ):
+            if AzureMLDistillationProperties.TEACHER_MODEL in key and param != "endpoint_name":
                 inference_parameters[param] = cls._coerce_property_value(val)
             elif AzureMLDistillationProperties.INSTANCE_TYPE in key:
                 resources[key.split(".")[1]] = val
@@ -589,38 +554,26 @@ class DistillationJob(Job, JobIOMixin):
             teacher_settings["endpoint_request_settings"] = EndpointRequestSettings(**endpoint_settings)  # type: ignore
 
         return {
-            "data_generation_task_type": properties.get(
-                AzureMLDistillationProperties.DATA_GENERATION_TASK_TYPE
-            ),
-            "data_generation_type": properties.get(
-                AzureMLDistillationProperties.DATA_GENERATION_TYPE
-            ),
+            "data_generation_task_type": properties.get(AzureMLDistillationProperties.DATA_GENERATION_TASK_TYPE),
+            "data_generation_type": properties.get(AzureMLDistillationProperties.DATA_GENERATION_TYPE),
             "teacher_model_endpoint_connection": WorkspaceConnection._load(  # pylint: disable=protected-access
                 data=json.loads(teacher_model_info)
             ),
             "teacher_model_settings": (
                 TeacherModelSettings(**teacher_settings) if teacher_settings else None  # type: ignore
             ),
-            "prompt_settings": (
-                PromptSettings(**prompt_settings) if prompt_settings else None
-            ),
+            "prompt_settings": (PromptSettings(**prompt_settings) if prompt_settings else None),
             "resources": ResourceConfiguration(**resources) if resources else None,
         }
 
     def _restore_inputs(self) -> None:
         """Restore UriFileJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, UriFileJobInput):
-            self.training_data = Input(
-                type=AssetTypes.URI_FILE, path=self.training_data.uri
-            )
+            self.training_data = Input(type=AssetTypes.URI_FILE, path=self.training_data.uri)
         if isinstance(self.validation_data, UriFileJobInput):
-            self.validation_data = Input(
-                type=AssetTypes.URI_FILE, path=self.validation_data.uri
-            )
+            self.validation_data = Input(type=AssetTypes.URI_FILE, path=self.validation_data.uri)
         if isinstance(self.student_model, MLFlowModelJobInput):
-            self.student_model = Input(
-                type=AssetTypes.MLFLOW_MODEL, path=self.student_model.uri
-            )
+            self.student_model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.student_model.uri)
 
     def __eq__(self, other: object) -> bool:
         """Returns True if both instances have the same values.
@@ -649,8 +602,7 @@ class DistillationJob(Job, JobIOMixin):
         return (
             self.data_generation_type == other.data_generation_type
             and self.data_generation_task_type == other.data_generation_task_type
-            and self.teacher_model_endpoint_connection.name
-            == other.teacher_model_endpoint_connection.name
+            and self.teacher_model_endpoint_connection.name == other.teacher_model_endpoint_connection.name
             and self.student_model == other.student_model
             and self.training_data == other.training_data
             and self.validation_data == other.validation_data

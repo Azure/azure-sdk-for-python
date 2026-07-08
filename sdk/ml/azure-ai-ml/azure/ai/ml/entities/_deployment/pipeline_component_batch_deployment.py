@@ -128,18 +128,12 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         return res
 
     @classmethod
-    def _from_rest_object(
-        cls, deployment: RestBatchDeployment
-    ) -> "PipelineComponentBatchDeployment":
+    def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
-            component=deployment.properties.additional_properties[
-                "deploymentConfiguration"
-            ]["componentId"]["assetId"],
-            settings=deployment.properties.additional_properties[
-                "deploymentConfiguration"
-            ]["settings"],
+            component=deployment.properties.additional_properties["deploymentConfiguration"]["componentId"]["assetId"],
+            settings=deployment.properties.additional_properties["deploymentConfiguration"]["settings"],
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 
@@ -156,13 +150,9 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(
-            dest, yaml_serialized, default_flow_style=False, path=path, **kwargs
-        )
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        res: dict = PipelineComponentBatchDeploymentSchema(
-            context={BASE_PATH_CONTEXT_KEY: "./"}
-        ).dump(self)
+        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
         return res

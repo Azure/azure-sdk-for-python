@@ -78,8 +78,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _validate_type_name(self) -> None:
         if self.type and not self.type in JobServiceTypeNames.ENTITY_TO_REST:
             msg = (
-                f"type should be one of "
-                f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
+                f"type should be one of " f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
             )
             raise ValidationException(
                 message=msg,
@@ -89,20 +88,14 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _to_rest_job_service(
-        self, updated_properties: Optional[Dict[str, str]] = None
-    ) -> RestJobService:
+    def _to_rest_job_service(self, updated_properties: Optional[Dict[str, str]] = None) -> RestJobService:
         # ``status`` is intentionally NOT set on the wire object. On the v2023_04 msrest model it was a
         # readonly attribute that ``serialize()`` silently dropped, so the submitted body never carried it.
         # The shared arm_ml_service model exposes ``status`` as a writable field, so omitting it here keeps
         # the wire payload byte-identical to the previous behavior.
         return RestJobService(
             endpoint=self.endpoint,
-            job_service_type=(
-                JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None)
-                if self.type
-                else None
-            ),
+            job_service_type=(JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None),
             nodes=AllNodes() if self.nodes else None,
             port=self.port,
             properties=updated_properties if updated_properties else self.properties,
@@ -239,9 +232,7 @@ class SshJobService(JobServiceBase):
         return ssh_job_service
 
     def _to_rest_object(self) -> RestJobService:
-        updated_properties = _append_or_update_properties(
-            self.properties, "sshPublicKeys", self.ssh_public_keys
-        )
+        updated_properties = _append_or_update_properties(self.properties, "sshPublicKeys", self.ssh_public_keys)
         return self._to_rest_job_service(updated_properties)
 
 
@@ -297,16 +288,12 @@ class TensorBoardJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "TensorBoardJobService":
-        tensorboard_job_Service = cast(
-            TensorBoardJobService, cls._from_rest_job_service_object(obj)
-        )
+        tensorboard_job_Service = cast(TensorBoardJobService, cls._from_rest_job_service_object(obj))
         tensorboard_job_Service.log_dir = _get_property(obj.properties, "logDir")
         return tensorboard_job_Service
 
     def _to_rest_object(self) -> RestJobService:
-        updated_properties = _append_or_update_properties(
-            self.properties, "logDir", self.log_dir
-        )
+        updated_properties = _append_or_update_properties(self.properties, "logDir", self.log_dir)
         return self._to_rest_job_service(updated_properties)
 
 
