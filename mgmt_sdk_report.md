@@ -11,9 +11,9 @@
 | 6 | azure-mgmt-datafactory | 2018-06-01 | 10.0.0b1 | [#47198](https://github.com/Azure/azure-sdk-for-python/pull/47198) | 2026-05-28 | Doing | [47908](https://github.com/Azure/azure-sdk-for-python/pull/47908) |
 | 7 | azure-mgmt-resourcehealth | 2025-05-01 | 1.0.0b7 | [#47187](https://github.com/Azure/azure-sdk-for-python/pull/47187) | 2026-05-28 | Doing | [47910](https://github.com/Azure/azure-sdk-for-python/pull/47910) |
 | 8 | azure-mgmt-appcontainers | 2026-01-01 | 5.0.0b1 | [#47161](https://github.com/Azure/azure-sdk-for-python/pull/47161) | 2026-05-27 | Doing | [47925](https://github.com/Azure/azure-sdk-for-python/pull/47925) |
-| 9 | azure-mgmt-databricks | 2026-01-01 | 3.0.0b1 | [#47151](https://github.com/Azure/azure-sdk-for-python/pull/47151) | 2026-05-27 | Not Started |  |
-| 10 | azure-mgmt-storagecache | 2026-01-01 | 4.0.0b1 | [#47154](https://github.com/Azure/azure-sdk-for-python/pull/47154) | 2026-05-27 | Not Started |  |
-| 11 | azure-mgmt-costmanagement | 2025-03-01 | 5.0.0b1 | [#47118](https://github.com/Azure/azure-sdk-for-python/pull/47118) | 2026-05-26 | Not Started |  |
+| 9 | azure-mgmt-databricks | 2026-01-01 | 3.0.0b1 | [#47151](https://github.com/Azure/azure-sdk-for-python/pull/47151) | 2026-05-27 | Doing | [47926](https://github.com/Azure/azure-sdk-for-python/pull/47926) |
+| 10 | azure-mgmt-storagecache | 2026-01-01 | 4.0.0b1 | [#47154](https://github.com/Azure/azure-sdk-for-python/pull/47154) | 2026-05-27 | Doing | [47927](https://github.com/Azure/azure-sdk-for-python/pull/47927) |
+| 11 | azure-mgmt-costmanagement | 2025-03-01 | 5.0.0b1 | [#47118](https://github.com/Azure/azure-sdk-for-python/pull/47118) | 2026-05-26 | Doing | [47928](https://github.com/Azure/azure-sdk-for-python/pull/47928) |
 | 12 | azure-mgmt-databoxedge | 2023-12-01 | 3.0.0b2 | [#47119](https://github.com/Azure/azure-sdk-for-python/pull/47119) | 2026-05-26 | Not Started |  |
 | 13 | azure-mgmt-redhatopenshift | 2025-07-25 | 4.0.0b1 | [#47124](https://github.com/Azure/azure-sdk-for-python/pull/47124) | 2026-05-26 | Not Started |  |
 | 14 | azure-mgmt-serialconsole | 2024-07-01 | 1.1.0b2 | [#47125](https://github.com/Azure/azure-sdk-for-python/pull/47125) | 2026-05-26 | Not Started |  |
