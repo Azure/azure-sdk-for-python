@@ -19,12 +19,6 @@
   - Model `DirectLineSite` added property `app_id`
   - Model `DirectLineSite` added property `is_web_chat_speech_enabled`
   - Model `DirectLineSite` added property `is_webchat_preview_enabled`
-  - Enum `EmailChannelAuthMethod` added member `bit_count`
-  - Enum `EmailChannelAuthMethod` added member `bit_length`
-  - Enum `EmailChannelAuthMethod` added member `denominator`
-  - Enum `EmailChannelAuthMethod` added member `from_bytes`
-  - Enum `EmailChannelAuthMethod` added member `numerator`
-  - Enum `EmailChannelAuthMethod` added member `to_bytes`
   - Model `ListChannelWithKeysResponse` added property `system_data`
   - Model `PrivateEndpointConnection` added property `system_data`
   - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
@@ -73,31 +67,12 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Deleted or renamed model `AzureBotService`
-  - Deleted or renamed enum value `EmailChannelAuthMethod.fromhex`
-  - Deleted or renamed enum value `EmailChannelAuthMethod.hex`
+  - Renamed client `AzureBotService` to `AzureBotServiceMgmtClient`
   - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `provisioning_state` and `group_ids` under property `properties` whose type is `PrivateEndpointConnectionProperties`
   - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
-  - Model `Resource` deleted or renamed its instance variable `location`
-  - Model `Resource` deleted or renamed its instance variable `tags`
-  - Model `Resource` deleted or renamed its instance variable `sku`
-  - Model `Resource` deleted or renamed its instance variable `kind`
-  - Model `Resource` deleted or renamed its instance variable `etag`
-  - Model `Resource` deleted or renamed its instance variable `zones`
-  - Method `BotsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `BotsOperations.update` deleted or renamed its parameter `location` of kind `positional_or_keyword`
-  - Method `BotsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
-  - Method `BotsOperations.update` deleted or renamed its parameter `sku` of kind `positional_or_keyword`
-  - Method `BotsOperations.update` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
-  - Method `BotsOperations.update` deleted or renamed its parameter `etag` of kind `positional_or_keyword`
-  - Method `BotsOperations.update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `ChannelsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `ChannelsOperations.update` deleted or renamed its parameter `location` of kind `positional_or_keyword`
-  - Method `ChannelsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
-  - Method `ChannelsOperations.update` deleted or renamed its parameter `sku` of kind `positional_or_keyword`
-  - Method `ChannelsOperations.update` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
-  - Method `ChannelsOperations.update` deleted or renamed its parameter `etag` of kind `positional_or_keyword`
-  - Method `ChannelsOperations.update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
+  - Model `Resource` deleted its instance variable `location`/`tags`/`sku`/`kind`/`etag`/`zones`
+  - Method `BotsOperations.update` grouped its parameter `location`/`tags`/`sku`/`kind`/`etag`/`properties` into a new `positional_or_keyword` parameter `parameters`
+  - Method `ChannelsOperations.update` grouped its parameter `location`/`tags`/`sku`/`kind`/`etag`/`properties` into a new `positional_or_keyword` parameter `parameters`
 
 ### Other Changes
 
