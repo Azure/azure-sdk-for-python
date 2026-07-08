@@ -380,14 +380,7 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
 def test_trim_changelog_note_ignores_unreleased_placeholder(temp_arm_package):
     package_path, changelog_path = temp_arm_package
     changelog = _make_changelog(5, body_per_version="  - " + "x" * 200 + "\n")
-    placeholder = (
-        "## 0.0.0 (UnReleased)\n"
-        "\n"
-        "### Features Added\n"
-        "\n"
-        f"  - {'x' * 2000}\n"
-        "\n"
-    )
+    placeholder = "## 0.0.0 (UnReleased)\n" "\n" "### Features Added\n" "\n" f"  - {'x' * 2000}\n" "\n"
     changelog_path.write_text(changelog.replace("\n\n", f"\n\n{placeholder}", 1), encoding="utf-8")
 
     trimmed = trim_changelog_if_needed(package_path, size_limit=2300, trim_target=1024)
