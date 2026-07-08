@@ -1,0 +1,32 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineComponent.schema.json
+name: test_pipeline_component_asset_defaults
+type: pipeline
+display_name: "Test Pipeline Component with Asset-type Defaults"
+inputs:
+  year:
+    type: integer
+  spaceship_data:
+    type: uri_file
+    mode: ro_mount
+    default: azureml:test_dataset:1
+  folder_data:
+    type: uri_folder
+    mode: ro_mount
+    default: https://example.com/data
+  table_data:
+    type: mltable
+    default: azureml:test_mltable:1
+  model_input:
+    type: mlflow_model
+    default: azureml:test_model:1
+  custom_model_input:
+    type: custom_model
+    default: azureml:test_custom_model:1
+  pilot_data:
+    type: uri_file
+    mode: ro_mount
+outputs:
+  pilot_rosta:
+    type: uri_file
+    mode: rw_mount
+jobs: {}

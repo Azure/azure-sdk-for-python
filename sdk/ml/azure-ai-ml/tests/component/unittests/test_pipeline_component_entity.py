@@ -465,3 +465,94 @@ class TestPipelineComponentEntity:
         # all leaf nodes in last layer
         # 2 leaf node of the same node name
         assert get_layer_node_name_set(layers[2]) == {"command_component", "component_a_job"}
+
+    def test_pipeline_component_asset_type_defaults(self) -> None:
+        """load_component must succeed for pipeline-component YAMLs with default: on asset-type inputs."""
+        component_path = "./tests/test_configs/components/pipeline_component_with_asset_defaults.yml"
+        component: PipelineComponent = load_component(source=component_path)
+        inputs = component.inputs
+
+        # uri_file with azureml: reference
+        assert inputs["spaceship_data"].type == "uri_file"
+        assert inputs["spaceship_data"].default == "azureml:test_dataset:1"
+
+        # uri_folder with https:// URI
+        assert inputs["folder_data"].type == "uri_folder"
+        assert inputs["folder_data"].default == "https://example.com/data"
+
+        # mltable
+        assert inputs["table_data"].type == "mltable"
+        assert inputs["table_data"].default == "azureml:test_mltable:1"
+
+        # mlflow_model
+        assert inputs["model_input"].type == "mlflow_model"
+        assert inputs["model_input"].default == "azureml:test_model:1"
+
+        # custom_model
+        assert inputs["custom_model_input"].type == "custom_model"
+        assert inputs["custom_model_input"].default == "azureml:test_custom_model:1"
+
+        # input without default is unaffected
+        assert inputs["pilot_data"].default is None
+
+    def test_pipeline_component_asset_default_round_trip(self) -> None:
+        """Dumping a loaded component with asset-type defaults must preserve the default values."""
+        component_path = "./tests/test_configs/components/pipeline_component_with_asset_defaults.yml"
+        component: PipelineComponent = load_component(source=component_path)
+        component_dict = component._to_dict()
+
+        assert component_dict["inputs"]["spaceship_data"]["default"] == "azureml:test_dataset:1"
+        assert component_dict["inputs"]["folder_data"]["default"] == "https://example.com/data"
+        assert component_dict["inputs"]["table_data"]["default"] == "azureml:test_mltable:1"
+        assert component_dict["inputs"]["model_input"]["default"] == "azureml:test_model:1"
+        assert component_dict["inputs"]["custom_model_input"]["default"] == "azureml:test_custom_model:1"
+        assert "default" not in component_dict["inputs"]["pilot_data"]
+
+    def test_pipeline_component_asset_default_rest_round_trip(self) -> None:
+        """Asset-type defaults must survive a REST serialization / deserialization round-trip."""
+        component_path = "./tests/test_configs/components/pipeline_component_with_asset_defaults.yml"
+        component: PipelineComponent = load_component(source=component_path)
+
+        rest_obj = component._to_rest_object()
+        restored = PipelineComponent._from_rest_object(rest_obj)
+
+        assert restored.inputs["spaceship_data"].default == "azureml:test_dataset:1"
+        assert restored.inputs["folder_data"].default == "https://example.com/data"
+        assert restored.inputs["table_data"].default == "azureml:test_mltable:1"
+
+    def test_pipeline_component_asset_default_inline(self) -> None:
+        """Input() constructor must accept a string default for asset types."""
+        uri_file_input = Input(type="uri_file", default="azureml:my_dataset:1", mode="ro_mount")
+        assert uri_file_input.default == "azureml:my_dataset:1"
+
+        uri_folder_input = Input(type="uri_folder", default="https://example.com/folder")
+        assert uri_folder_input.default == "https://example.com/folder"
+
+        mltable_input = Input(type="mltable", default="azureml:my_table:2")
+        assert mltable_input.default == "azureml:my_table:2"
+
+        mlflow_input = Input(type="mlflow_model", default="azureml:my_model:3")
+        assert mlflow_input.default == "azureml:my_model:3"
+
+        custom_input = Input(type="custom_model", default="azureml:my_custom:4")
+        assert custom_input.default == "azureml:my_custom:4"
+
+    def test_pipeline_component_asset_default_invalid_type_raises(self) -> None:
+        """Passing a non-string, non-Input value as default for an asset type must still raise."""
+        from azure.ai.ml.exceptions import UserErrorException
+
+        with pytest.raises(UserErrorException, match="default for type 'uri_file' must be"):
+            Input(type="uri_file", default=42)  # type: ignore[arg-type]
+
+    def test_pipeline_component_non_asset_default_still_raises(self) -> None:
+        """Non-asset non-primitive types must still raise the original error."""
+        from azure.ai.ml.exceptions import UserErrorException
+
+        # Provide a type that is not primitive and not in _ASSET_TYPES.
+        # We simulate this by creating an Input with an unknown type via kwargs.
+        inp = Input.__new__(Input)
+        inp.type = "unknown_type"
+        inp._port_name = "test_input"
+
+        with pytest.raises(UserErrorException, match="Non-primitive type Input has no default value"):
+            inp._update_default("some_value")  # type: ignore[arg-type]
