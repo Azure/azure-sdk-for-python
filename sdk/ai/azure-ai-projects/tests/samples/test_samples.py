@@ -234,19 +234,11 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
-                test_id="sample_create_hosted_agent",
-                sample_filename="sample_create_hosted_agent.py",
-                env_vars={
-                    "SKIP_RBAC": "true",
-                },
-            ),
-            AdditionalSampleTestDetail(
                 test_id="sample_create_hosted_agent_from_remote_build",
                 sample_filename="sample_create_hosted_agent_from_code.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
-                    "ZIP_FILE_PATH": "tests/samples/assets/echo-agent.zip",
-                    "SKIP_RBAC": "true",
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
                 },
             ),
             AdditionalSampleTestDetail(
@@ -254,7 +246,28 @@ class TestSamples(AzureRecordedTestCase):
                 sample_filename="sample_create_hosted_agent_from_code.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
-                    "SKIP_RBAC": "true",
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent-prebuilt.zip",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_session_log_stream",
+                sample_filename="sample_session_log_stream.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_sessions_crud",
+                sample_filename="sample_sessions_crud.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_sessions_files_upload_download",
+                sample_filename="sample_sessions_files_upload_download.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
                 },
             ),
             AdditionalSampleTestDetail(
@@ -262,7 +275,6 @@ class TestSamples(AzureRecordedTestCase):
                 sample_filename="sample_toolbox_with_skill.py",
                 env_vars={
                     "ZIP_FILE_PATH": "tests/samples/assets/toolbox-agent.zip",
-                    "SKIP_RBAC": "true",
                 },
             ),
             AdditionalSampleTestDetail(
@@ -272,7 +284,6 @@ class TestSamples(AzureRecordedTestCase):
                     "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
                     "DELEGATED_USER_IDENTITY": "86636782-5c1b-455e-b25f-91fc467ac05d",
                     "DELEGATED_USER_IDENTITY_2": "340fcd8b-b87e-41d5-b4d5-fc02df14e807",
-                    "SKIP_RBAC": "true",
                 },
             ),
         ]
@@ -282,10 +293,12 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "hosted_agents",
             samples_to_skip=[
-                "sample_create_hosted_agent.py",  # Specified through AdditionalSampleTestDetail
                 "sample_toolbox_with_skill.py",  # Specified through AdditionalSampleTestDetail
                 "sample_create_hosted_agent_from_code.py",  # Specified through AdditionalSampleTestDetail
                 "sample_agent_user_identity_isolation.py",  # Specified through AdditionalSampleTestDetail
+                "sample_session_log_stream.py",  # Specified through AdditionalSampleTestDetail
+                "sample_sessions_crud.py",  # Specified through AdditionalSampleTestDetail
+                "sample_sessions_files_upload_download.py",  # Specified through AdditionalSampleTestDetail
             ],
         ),
     )
