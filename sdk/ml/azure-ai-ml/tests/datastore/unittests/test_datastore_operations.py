@@ -87,7 +87,7 @@ class TestDatastoreOperations:
     def test_create_body_is_json_serializable(
         self, mock_from_rest, mock_datastore_operation: DatastoreOperations, path
     ) -> None:
-        # Regression for ICM 829788361 (regressed in 1.34.0): the datastore operation was switched to the
+        # Regression test (regressed in 1.34.0): the datastore operation was switched to the
         # TypeSpec/arm_ml_service client, whose ``SdkJSONEncoder`` only serializes hybrid models. The entity
         # ``_to_rest_object()`` still builds a legacy msrest Datastore model, so passing it as the request body
         # raised ``TypeError: Object of type Datastore is not JSON serializable`` on every ``datastore create``.
