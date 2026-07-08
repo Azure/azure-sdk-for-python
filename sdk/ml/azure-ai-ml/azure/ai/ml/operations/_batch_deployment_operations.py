@@ -7,7 +7,7 @@
 import re
 from typing import Any, Optional, TypeVar, Union
 
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,

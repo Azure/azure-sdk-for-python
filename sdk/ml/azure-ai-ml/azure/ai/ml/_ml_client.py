@@ -682,7 +682,7 @@ class MLClient:
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_01_2024_preview,
+            self._service_client_01_2024_preview_arm,
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
