@@ -67,7 +67,7 @@
 | 65 | Microsoft.HybridNetwork | hybridnetwork | no specs | - | - |
 | 66 | Microsoft.MachineLearningServices | machinelearningservices | be part of data-plane package | - | - |
 | 67 | Microsoft.Management | management/Microsoft.Management/ManagementGroups | azure-mgmt-managementgroups | Y | Y |
-| 68 | Microsoft.Peering | peering | azure-mgmt-peering | Y | N |
+| 68 | Microsoft.Peering | peering | azure-mgmt-peering | Y | Y |
 | 69 | Microsoft.ProviderHub | providerhub | azure-mgmt-providerhub | N | N |
 | 70 | Microsoft.Cache | redisenterprise | azure-mgmt-redisenterprise | Y | Y |
 | 71 | Microsoft.Authorization | resources/Microsoft.Authorization/policy | azure-mgmt-resource-policy | Y | Y |
@@ -87,7 +87,7 @@
 | 85 | Microsoft.KubernetesConfiguration | kubernetesconfiguration | azure-mgmt-kubernetesconfiguration-extensions | Y | Y |
 | 86 | Microsoft.Maps | maps | azure-mgmt-maps | Y | Y |
 | 87 | Microsoft.Marketplace | marketplace | azure-mgmt-marketplace | N | N |
-| 88 | Microsoft.Purview | purview | azure-mgmt-purview | Y | N |
+| 88 | Microsoft.Purview | purview | azure-mgmt-purview | Y | Y |
 | 89 | Microsoft.RecoveryServices | recoveryservicessiterecovery | azure-mgmt-recoveryservicessiterecovery | Y | Y |
 | 90 | Microsoft.Search | search | azure-mgmt-search | Y | Y |
 | 91 | Microsoft.Network | frontdoor | azure-mgmt-frontdoor | Y | Y |
@@ -119,7 +119,7 @@
 | 117 | Microsoft.AzureArcData | azurearcdata | azure-mgmt-azurearcdata | Y | N |
 | 118 | Microsoft.Databricks | databricks | azure-mgmt-databricks | Y | Y |
 | 119 | Microsoft.DevHub | developerhub | azure-mgmt-devhub | Y | Y |
-| 120 | Microsoft.AAD | domainservices | azure-mgmt-domainservices | N | N |
+| 120 | Microsoft.AAD | domainservices | azure-mgmt-domainservices | Y | Y |
 | 121 | Microsoft.Education | education | azure-mgmt-education | Y | Y |
 | 122 | Microsoft.HanaOnAzure | hanaonazure | azure-mgmt-hanaonazure | Y | Y |
 | 123 | Microsoft.VirtualMachineImages | imagebuilder | azure-mgmt-imagebuilder | Y | Y |

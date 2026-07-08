@@ -47,7 +47,7 @@ Microsoft.Compute	compute/Recommender
 dynatrace.observability	dynatrace
 Microsoft.AppConfiguration	appconfiguration
 microsoft.consumption	consumption
-microsoft.costmanagement	cost-management
+microsoft.costmanagement	cost-management azure-mgmt-costmanagement
 microsoft.databoxedge	databoxedge
 Microsoft.EventHub	eventhub
 Microsoft.NetApp	netapp
@@ -65,7 +65,7 @@ Microsoft.ContainerRegistry	containerregistry
 Microsoft.Dashboard	dashboard
 Microsoft.HybridNetwork	hybridnetwork "no specs"
 Microsoft.MachineLearningServices	machinelearningservices "be part of data-plane package"
-Microsoft.Management	management/Microsoft.Management/ManagementGroups
+Microsoft.Management	management/Microsoft.Management/ManagementGroups azure-mgmt-managementgroups
 Microsoft.Peering	peering
 Microsoft.ProviderHub	providerhub
 Microsoft.Cache	redisenterprise
