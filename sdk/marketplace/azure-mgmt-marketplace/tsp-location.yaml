@@ -1,0 +1,4 @@
+directory: specification/marketplace/resource-manager/Microsoft.Marketplace/Marketplace
+commit: ea850a065dc8679f82dc3fdbba9ceff53eeba116
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
