@@ -462,9 +462,7 @@ class TestGenAIMainAgentSpanProcessorSDKPropagation(unittest.TestCase):
         main_agent.set_attribute("gen_ai.agent.name", "MainAgent")
         main_agent.set_attribute("gen_ai.agent.id", "main-1")
 
-        sub_agent = self.tracer.start_span(
-            "invoke_agent SubAgent", context=trace_api.set_span_in_context(main_agent)
-        )
+        sub_agent = self.tracer.start_span("invoke_agent SubAgent", context=trace_api.set_span_in_context(main_agent))
         sub_agent.set_attribute("gen_ai.operation.name", "invoke_agent")
         sub_agent.set_attribute("gen_ai.agent.name", "SubAgent")
         sub_agent.set_attribute("gen_ai.agent.id", "sub-1")
