@@ -12,7 +12,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ConfidentialLedger`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `ConfidentialLedger` to `ConfidentialLedgerMgmtClient`
   - Deleted or renamed model `ConfidentialLedgerBackup`
   - Deleted or renamed model `ConfidentialLedgerBackupResponse`
   - Deleted or renamed model `ConfidentialLedgerRestore`
@@ -28,12 +29,12 @@
   - Deleted or renamed model `MemberIdentityCertificate`
   - Deleted or renamed method `LedgerOperations.begin_backup`
   - Deleted or renamed method `LedgerOperations.begin_restore`
-  - Deleted or renamed model `ConfidentialLedgerOperationsMixin`
   - Deleted or renamed operation group `ManagedCCFOperations`
 
 ### Other Changes
 
   - Deleted model `CertificateTags`/`ConfidentialLedgerList`/`ManagedCCFList`/`ResourceProviderOperationList` which actually were not used by SDK users
+  - Renamed operation group `ConfidentialLedgerOperationsMixin` which actually was not used by users to `_ConfidentialLedgerOperationsMixin`
 
 ## 1.0.1 (2026-05-07)
 
