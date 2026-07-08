@@ -11,9 +11,7 @@
   - Model `PrivateEndpointConnection` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `TrackedResource` added property `system_data`
-  - Model `VirtualNetworkPeering` added property `properties`
   - Model `VirtualNetworkPeering` added property `system_data`
-  - Model `Workspace` added property `properties`
   - Added model `AutomaticClusterUpdateDefinition`
   - Added enum `AutomaticClusterUpdateValue`
   - Added model `ComplianceSecurityProfileDefinition`
@@ -27,47 +25,19 @@
   - Added enum `IdentityType`
   - Added enum `InitialType`
   - Added model `ProxyResource`
-  - Added model `VirtualNetworkPeeringPropertiesFormat`
   - Added model `WorkspaceNoPublicIPBooleanParameter`
-  - Added model `WorkspaceProperties`
   - Added model `WorkspacePropertiesAccessConnector`
   - Model `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
 
 ### Breaking Changes
 
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_virtual_network_access`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_forwarded_traffic`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_gateway_transit`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `use_remote_gateways`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `databricks_virtual_network`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `databricks_address_space`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_virtual_network`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_address_space`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `peering_state`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `provisioning_state`
-  - Model `Workspace` deleted or renamed its instance variable `managed_resource_group_id`
-  - Model `Workspace` deleted or renamed its instance variable `parameters`
-  - Model `Workspace` deleted or renamed its instance variable `provisioning_state`
-  - Model `Workspace` deleted or renamed its instance variable `ui_definition_uri`
-  - Model `Workspace` deleted or renamed its instance variable `authorizations`
-  - Model `Workspace` deleted or renamed its instance variable `created_by`
-  - Model `Workspace` deleted or renamed its instance variable `updated_by`
-  - Model `Workspace` deleted or renamed its instance variable `created_date_time`
-  - Model `Workspace` deleted or renamed its instance variable `workspace_id`
-  - Model `Workspace` deleted or renamed its instance variable `workspace_url`
-  - Model `Workspace` deleted or renamed its instance variable `storage_account_identity`
-  - Model `Workspace` deleted or renamed its instance variable `managed_disk_identity`
-  - Model `Workspace` deleted or renamed its instance variable `disk_encryption_set_id`
-  - Model `Workspace` deleted or renamed its instance variable `encryption`
-  - Model `Workspace` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `Workspace` deleted or renamed its instance variable `public_network_access`
-  - Model `Workspace` deleted or renamed its instance variable `required_nsg_rules`
-  - Deleted or renamed model `AccessConnectorListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `PrivateEndpointConnectionsList`
-  - Deleted or renamed model `PrivateLinkResourcesList`
-  - Deleted or renamed model `VirtualNetworkPeeringList`
-  - Deleted or renamed model `WorkspaceListResult`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `VirtualNetworkPeering` moved instance variable `allow_virtual_network_access`, `allow_forwarded_traffic`, `allow_gateway_transit`, `use_remote_gateways`, `databricks_virtual_network`, `databricks_address_space`, `remote_virtual_network`, `remote_address_space`, `peering_state` and `provisioning_state` under property `properties` whose type is `VirtualNetworkPeeringPropertiesFormat`
+  - Model `Workspace` moved instance variable `managed_resource_group_id`, `parameters`, `provisioning_state`, `ui_definition_uri`, `authorizations`, `created_by`, `updated_by`, `created_date_time`, `workspace_id`, `workspace_url`, `storage_account_identity`, `managed_disk_identity`, `disk_encryption_set_id`, `encryption`, `private_endpoint_connections`, `public_network_access` and `required_nsg_rules` under property `properties` whose type is `WorkspaceProperties`
+
+### Other Changes
+
+  - Deleted model `AccessConnectorListResult`/`OperationListResult`/`PrivateEndpointConnectionsList`/`PrivateLinkResourcesList`/`VirtualNetworkPeeringList`/`WorkspaceListResult` which actually were not used by SDK users
 
 ## 3.0.0b1 (2026-05-27)
 
