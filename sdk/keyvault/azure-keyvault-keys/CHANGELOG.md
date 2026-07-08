@@ -1,6 +1,6 @@
 # Release History
 
-## 4.12.0b3 (Unreleased)
+## 4.12.0b3 (2026-07-08)
 
 ### Features Added
 
@@ -8,13 +8,9 @@
 - Added the `KeySecureWrapAlgorithm` enum, listing the algorithms supported by the secure wrap/unwrap operations.
 - Added the `SecureWrapResult` and `SecureUnwrapResult` model classes wrapping the results of `secure_wrap_key` and `secure_unwrap_key`, respectively.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
-
-### Other Changes
 
 ## 4.12.0b2 (2026-05-29)
 
