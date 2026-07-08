@@ -5932,7 +5932,7 @@ namespace azure.ai.ml.entities
             ): ...
 
 
-    @dataclass(eq = True, frozen = False, init = True, kw_only = False, match_args = True, order = False, repr = True, slots = False, unsafe_hash = False, weakref_slot = False)
+    @dataclass(eq = True, frozen = False, init = True, order = False, repr = True, unsafe_hash = False)
     @experimental
     class azure.ai.ml.entities.IndexModelConfiguration:
         api_base: Optional[str]
@@ -10892,6 +10892,14 @@ namespace azure.ai.ml.operations
                 tags: Optional[dict] = ..., 
                 **kwargs: Any
             ) -> Job: ...
+
+        @distributed_trace
+        @monitor_with_telemetry_mixin(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
+        def delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
 
         @distributed_trace
         @monitor_with_activity(ops_logger, 'Job.Download', ActivityType.PUBLICAPI)
