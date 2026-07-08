@@ -1,5 +1,42 @@
 # Release History
 
+## 1.0.0b7 (2026-07-07)
+
+### Features Added
+
+  - Client `SqlVirtualMachineManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SqlVirtualMachineManagementClient` added method `send_request`
+  - Model `AutoPatchingSettings` added property `additional_vm_patch`
+  - Model `AvailabilityGroupListener` moved instance variable `provisioning_state`, `availability_group_name`, `load_balancer_configurations`, `multi_subnet_ip_configurations`, `create_default_availability_group_if_not_exist`, `port` and `availability_group_configuration` under property `properties` whose type is `AvailabilityGroupListenerProperties`
+  - Enum `IdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Enum `IdentityType` added member `USER_ASSIGNED`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SQLStorageSettings` added property `use_storage_pool`
+  - Model `SQLTempDbSettings` added property `use_storage_pool`
+  - Model `SqlVirtualMachine` moved instance variable `virtual_machine_resource_id`, `provisioning_state`, `sql_image_offer`, `sql_server_license_type`, `sql_management`, `least_privilege_mode`, `sql_image_sku`, `sql_virtual_machine_group_resource_id`, `wsfc_domain_credentials`, `wsfc_static_ip`, `auto_patching_settings`, `auto_backup_settings`, `key_vault_credential_settings`, `server_configurations_management_settings`, `storage_configuration_settings`, `troubleshooting_status`, `assessment_settings` and `enable_automatic_upgrade` under property `properties` whose type is `SqlVirtualMachineProperties`
+  - Model `SqlVirtualMachineGroup` moved instance variable `provisioning_state`, `sql_image_offer`, `sql_image_sku`, `scale_type`, `cluster_manager_type`, `cluster_configuration` and `wsfc_domain_profile` under property `properties` whose type is `SqlVirtualMachineGroupProperties`
+  - Model `StorageConfigurationSettings` added property `enable_storage_config_blade`
+  - Model `TrackedResource` added property `system_data`
+  - Model `WsfcDomainProfile` added property `is_sql_service_account_gmsa`
+  - Added enum `AdditionalOsPatch`
+  - Added enum `AdditionalVmPatch`
+  - Added model `DiskConfigAssessmentRequest`
+  - Added enum `OsType`
+  - Added model `VirtualMachineIdentity`
+  - Added enum `VmIdentityType`
+  - Operation group `SqlVirtualMachinesOperations` added method `begin_fetch_dc_assessment`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Method `AvailabilityGroupListenersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SqlVirtualMachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AvailabilityGroupListenerListResult`/`OperationListResult`/`SqlVirtualMachineGroupListResult`/`SqlVirtualMachineListResult` which actually were not used by SDK users
+
 ## 1.0.0b6 (2023-06-16)
 
 ### Other Changes

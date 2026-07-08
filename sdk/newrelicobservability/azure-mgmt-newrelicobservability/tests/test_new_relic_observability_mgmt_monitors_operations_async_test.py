@@ -22,19 +22,15 @@ class TestNewRelicObservabilityMgmtMonitorsOperationsAsync(AzureMgmtRecordedTest
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_monitors_list_by_subscription(self, resource_group):
-        response = self.client.monitors.list_by_subscription(
-
-        )
+        response = self.client.monitors.list_by_subscription()
         result = [r async for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_monitors_list_by_resource_group(self, resource_group):
         response = self.client.monitors.list_by_resource_group(
             resource_group_name=resource_group.name,
-
         )
         result = [r async for r in response]
         assert result == []

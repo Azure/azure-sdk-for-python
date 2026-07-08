@@ -31,32 +31,30 @@ def main():
     )
 
     response = client.signal_definitions.begin_create_or_update(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        signal_definition_name="sig1",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        signal_definition_name="sql-cpu-percent",
         resource={
             "properties": {
-                "aggregationType": "None",
-                "dataUnit": "byte",
-                "dimension": "nodename",
-                "dimensionFilter": "node1",
-                "displayName": "cpu usage",
+                "aggregationType": "Average",
+                "dataUnit": "Percent",
+                "displayName": "SQL CPU utilization",
                 "evaluationRules": {
-                    "degradedRule": {"operator": "LowerThan", "threshold": 65},
-                    "unhealthyRule": {"operator": "LowerThan", "threshold": 60},
+                    "degradedRule": {"operator": "GreaterThan", "threshold": 70},
+                    "unhealthyRule": {"lookBackWindow": "PT1H", "operator": "Dynamic", "sensitivity": "Medium"},
                 },
-                "metricName": "cpuusage",
-                "metricNamespace": "microsoft.compute/virtualMachines",
+                "metricName": "cpu_percent",
+                "metricNamespace": "Microsoft.Sql/servers/databases",
                 "refreshInterval": "PT1M",
                 "signalKind": "AzureResourceMetric",
-                "tags": {"key4788": "ixfvzsfnpvkkbrce"},
-                "timeGrain": "PT1M",
+                "tags": {"environment": "production", "team": "online-store"},
+                "timeGrain": "PT5M",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/SignalDefinitions_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01-preview/SignalDefinitions_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

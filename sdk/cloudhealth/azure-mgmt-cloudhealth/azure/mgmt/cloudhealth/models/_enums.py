@@ -103,6 +103,17 @@ class DiscoveryRuleRelationshipDiscoveryBehavior(  # pylint: disable=name-too-lo
     """Do not automatically attempt to discover relationships."""
 
 
+class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sensitivity level for dynamic threshold detection."""
+
+    LOW = "Low"
+    """Low sensitivity — fewer anomalies detected, wider threshold band."""
+    MEDIUM = "Medium"
+    """Medium sensitivity — balanced detection."""
+    HIGH = "High"
+    """High sensitivity — more anomalies detected, tighter threshold band."""
+
+
 class EntityImpact(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of impact an entity has on health state propagation."""
 
@@ -142,6 +153,19 @@ class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unknown status."""
     DELETED = "Deleted"
     """Deleted status."""
+
+
+class LookBackWindow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed look-back window durations for dynamic threshold computation."""
+
+    PT5_M = "PT5M"
+    """Five minutes."""
+    PT15_M = "PT15M"
+    """Fifteen minutes."""
+    PT30_M = "PT30M"
+    """Thirty minutes."""
+    PT1_H = "PT1H"
+    """One hour."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -192,18 +216,73 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RefreshInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Refresh interval in ISO duration format."""
 
-    PT1M = "PT1M"
+    PT1_M = "PT1M"
     """One Minute."""
-    PT5M = "PT5M"
+    PT5_M = "PT5M"
     """Five Minutes."""
-    PT10M = "PT10M"
+    PT10_M = "PT10M"
     """Ten Minutes."""
-    PT30M = "PT30M"
+    PT15_M = "PT15M"
+    """Fifteen Minutes."""
+    PT30_M = "PT30M"
     """Thirty Minutes."""
-    PT1H = "PT1H"
+    PT1_H = "PT1H"
     """One Hour."""
-    PT2H = "PT2H"
+    PT2_H = "PT2H"
     """Two Hours."""
+
+
+class ResourceHealthAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Availability state of an Azure resource as reported by Azure Resource Health."""
+
+    AVAILABLE = "Available"
+    """The resource is available."""
+    UNAVAILABLE = "Unavailable"
+    """The resource is unavailable."""
+    DEGRADED = "Degraded"
+    """The resource is degraded."""
+    UNKNOWN = "Unknown"
+    """The resource availability state is unknown."""
+
+
+class ResourceHealthAvailabilityStateSignalBehavior(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Resource health availability state signal behavior."""
+
+    ENABLED = "Enabled"
+    """Automatically add resource health availability state signal."""
+    DISABLED = "Disabled"
+    """Do not automatically add resource health availability state signal."""
+
+
+class ResourceHealthCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether an Azure Resource Health status changing event was planned or unplanned."""
+
+    PLANNED = "Planned"
+    """The event was planned."""
+    UNPLANNED = "Unplanned"
+    """The event was unplanned."""
+
+
+class ResourceHealthReasonChronicity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the current Azure Resource Health availability state is persistent or transient."""
+
+    PERSISTENT = "Persistent"
+    """Persistent state."""
+    TRANSIENT = "Transient"
+    """Transient state."""
+
+
+class ResourceHealthReasonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason type for the current Azure Resource Health availability state."""
+
+    UNPLANNED = "Unplanned"
+    """Unplanned reason."""
+    PLANNED = "Planned"
+    """Planned reason."""
+    USER_INITIATED = "UserInitiated"
+    """User-initiated reason."""
 
 
 class SignalKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -234,3 +313,7 @@ class SignalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Equal to."""
     NOT_EQUAL = "NotEqual"
     """Not equal to."""
+    DYNAMIC = "Dynamic"
+    """Dynamic threshold — uses deviation from a ML-computed baseline to determine health state
+    transitions. Only valid for the unhealthy threshold rule. Requires ``sensitivity`` and
+    ``lookBackWindow`` on the rule; ``threshold`` is ignored."""

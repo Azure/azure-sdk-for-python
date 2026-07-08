@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.signal_definitions.list_by_health_model(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-01-01-preview/SignalDefinitions_ListByHealthModel.json
+# x-ms-original-file: 2026-05-01-preview/SignalDefinitions_ListByHealthModel.json
 if __name__ == "__main__":
     main()

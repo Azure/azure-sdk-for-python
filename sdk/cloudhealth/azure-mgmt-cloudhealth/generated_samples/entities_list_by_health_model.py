@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.entities.list_by_health_model(
-        resource_group_name="rgopenapi",
-        health_model_name="gPWT6GP85xRV248L7LhNRTD--2Yc73wu-5Qk-0tS",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-01-01-preview/Entities_ListByHealthModel.json
+# x-ms-original-file: 2026-05-01-preview/Entities_ListByHealthModel.json
 if __name__ == "__main__":
     main()

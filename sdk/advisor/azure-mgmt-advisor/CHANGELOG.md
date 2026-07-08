@@ -1,5 +1,78 @@
 # Release History
 
+## 10.0.0b2 (2026-07-07)
+
+### Features Added
+
+  - Client `AdvisorManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AdvisorManagementClient` added method `predict`
+  - Client `AdvisorManagementClient` added method `send_request`
+  - Client `AdvisorManagementClient` added operation group `advisor_scores`
+  - Client `AdvisorManagementClient` added operation group `assessments`
+  - Client `AdvisorManagementClient` added operation group `resiliency_reviews`
+  - Client `AdvisorManagementClient` added operation group `assessment_types`
+  - Client `AdvisorManagementClient` added operation group `workloads`
+  - Model `ConfigData` added property `system_data`
+  - Model `ConfigData` moved instance variable `exclude`, `low_cpu_threshold` and `digests` under property `properties` whose type is `ConfigDataProperties`
+  - Model `MetadataEntity` added property `system_data`
+  - Model `MetadataEntity` moved instance variable `display_name`, `depends_on`, `applicable_scenarios` and `supported_values` under property `properties` whose type is `MetadataEntityProperties`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceRecommendationBase` added property `system_data`
+  - Model `ResourceRecommendationBase` moved instance variable `category`, `impact`, `impacted_field`, `impacted_value`, `last_updated`, `metadata`, `recommendation_type_id`, `short_description`, `suppression_ids`, `extended_properties`, `resource_metadata`, `description`, `label`, `learn_more_link`, `potential_benefits`, `actions`, `remediation` and `exposed_metadata_properties` under property `properties` whose type is `RecommendationProperties`
+  - Model `SuppressionContract` added property `system_data`
+  - Model `SuppressionContract` moved instance variable `suppression_id`, `ttl` and `expiration_time_stamp` under property `properties` whose type is `SuppressionProperties`
+  - Added model `AdvisorScoreEntity`
+  - Added model `AdvisorScoreEntityProperties`
+  - Added enum `Aggregated`
+  - Added model `AssessmentResult`
+  - Added model `AssessmentResultProperties`
+  - Added model `AssessmentTypeResult`
+  - Added enum `Control`
+  - Added enum `CreatedByType`
+  - Added enum `Duration`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `ExtensionResource`
+  - Added model `PredictionRequest`
+  - Added model `PredictionRequestProperties`
+  - Added model `PredictionResponse`
+  - Added model `PredictionResponseProperties`
+  - Added enum `PredictionType`
+  - Added enum `Priority`
+  - Added model `ProxyResource`
+  - Added enum `RecommendationDismissReason`
+  - Added model `RecommendationPatchPayload`
+  - Added model `RecommendationPropertiesResourceWorkload`
+  - Added model `RecommendationPropertiesReview`
+  - Added model `RecommendationStatePropertiesPayload`
+  - Added enum `RecommendationStatus`
+  - Added model `ResiliencyReview`
+  - Added model `ResiliencyReviewProperties`
+  - Added enum `ReviewStatus`
+  - Added enum `Risk`
+  - Added model `ScoreEntity`
+  - Added model `SystemData`
+  - Added model `TimeSeriesEntity`
+  - Added model `TrackedRecommendationProperties`
+  - Added model `WorkloadResult`
+  - Operation group `RecommendationsOperations` added method `list_by_tenant`
+  - Added operation group `AdvisorScoresOperations`
+  - Added operation group `AssessmentTypesOperations`
+  - Added operation group `AssessmentsOperations`
+  - Added operation group `WorkloadsOperations`
+  - Added operation group `resiliencyReviewsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Method `RecommendationsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `SuppressionsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ConfigurationListResult`/`MetadataEntityListResult`/`OperationEntityListResult`/`ResourceRecommendationBaseListResult`/`SuppressionContractListResult` which actually were not used by SDK users
+
 ## 9.0.1 (2026-05-13)
 
 ### Other Changes

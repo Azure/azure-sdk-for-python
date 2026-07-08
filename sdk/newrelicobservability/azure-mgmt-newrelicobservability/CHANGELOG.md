@@ -1,5 +1,33 @@
 # Release History
 
+## 2.0.0b2 (2026-07-07)
+
+### Features Added
+
+  - Client `NewRelicObservabilityMgmtClient` added method `send_request`
+  - Model `MonitoredSubscriptionProperties` added property `system_data`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AccountResource` moved instance variable `organization_id`, `account_id`, `account_name` and `region` under property `properties` whose type is `AccountProperties`
+  - Model `NewRelicMonitorResource` moved instance variable `provisioning_state`, `monitoring_status`, `marketplace_subscription_status`, `marketplace_subscription_id`, `new_relic_account_properties`, `user_info`, `plan_data`, `saa_s_data`, `liftr_resource_category`, `liftr_resource_preference`, `org_creation_source`, `account_creation_source`, `subscription_state` and `saa_s_azure_subscription_status` under property `properties` whose type is `MonitorProperties`
+  - Model `NewRelicMonitorResourceUpdate` moved instance variable `new_relic_account_properties`, `user_info`, `plan_data`, `saa_s_data`, `org_creation_source` and `account_creation_source` under property `properties` whose type is `NewRelicMonitorResourceUpdateProperties`
+  - Model `OrganizationResource` moved instance variable `organization_id`, `organization_name` and `billing_source` under property `properties` whose type is `OrganizationProperties`
+  - Model `PlanDataResource` moved instance variable `plan_data`, `org_creation_source` and `account_creation_source` under property `properties` whose type is `PlanDataProperties`
+  - Model `TagRule` moved instance variable `provisioning_state`, `log_rules` and `metric_rules` under property `properties` whose type is `MonitoringTagRulesProperties`
+  - Model `TagRuleUpdate` moved instance variable `log_rules` and `metric_rules` under property `properties` whose type is `TagRuleUpdateProperties`
+  - Method `AccountsOperations.list` changed its parameter `user_email`/`location` from `positional_or_keyword` to `keyword_only`
+  - Method `MonitorsOperations.begin_delete` changed its parameter `user_email` from `positional_or_keyword` to `keyword_only`
+  - Method `OrganizationsOperations.list` changed its parameter `user_email`/`location` from `positional_or_keyword` to `keyword_only`
+  - Method `PlansOperations.list` changed its parameter `account_id`/`organization_id` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AccountsListResponse`/`AppServicesListResponse`/`ConnectedPartnerResourcesListResponse`/`LinkedResourceListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`NewRelicMonitorResourceListResult`/`OperationListResult`/`OrganizationsListResponse`/`PlanDataListResponse`/`TagRuleListResult`/`VMHostsListResponse` which actually were not used by SDK users
+  - Deleted model `AppServicesGetParameter`/`HostsGetParameter`/`MetricsRequestParameter`/`MetricsStatusRequestParameter`/`SwitchBillingParameter` which actually were not used by SDK users
+
 ## 2.0.0b1 (2025-11-17)
 
 ### Features Added

@@ -31,12 +31,12 @@ def main():
     )
 
     client.authentication_settings.begin_delete(
-        resource_group_name="my-resource-group",
-        health_model_name="my-health-model",
-        authentication_setting_name="my-auth-setting",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        authentication_setting_name="default-auth",
     ).result()
 
 
-# x-ms-original-file: 2026-01-01-preview/AuthenticationSettings_Delete.json
+# x-ms-original-file: 2026-05-01-preview/AuthenticationSettings_Delete.json
 if __name__ == "__main__":
     main()

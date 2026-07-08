@@ -48,6 +48,7 @@ class TestCloudHealthMgmtDiscoveryRulesOperationsAsync(AzureMgmtRecordedTestCase
                         "discoverRelationships": "str",
                         "entityName": "str",
                         "specification": "discovery_rule_specification",
+                        "addResourceHealthSignal": "str",
                         "displayName": "str",
                         "error": {"message": "str", "context": ["str"]},
                         "provisioningState": "str",

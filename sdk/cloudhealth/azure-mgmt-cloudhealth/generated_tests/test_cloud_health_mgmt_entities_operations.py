@@ -64,13 +64,24 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
                                     "dataUnit": "str",
                                     "displayName": "str",
                                     "evaluationRules": {
-                                        "unhealthyRule": {"operator": "str", "threshold": 0.0},
-                                        "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        "unhealthyRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
+                                        "degradedRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
                                     },
                                     "queryText": "str",
                                     "refreshInterval": "str",
                                     "signalDefinitionName": "str",
                                     "status": {
+                                        "additionalContext": "str",
                                         "error": "str",
                                         "healthState": "str",
                                         "reportedAt": "2020-02-20 00:00:00",
@@ -91,13 +102,24 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
                                     "dataUnit": "str",
                                     "displayName": "str",
                                     "evaluationRules": {
-                                        "unhealthyRule": {"operator": "str", "threshold": 0.0},
-                                        "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        "unhealthyRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
+                                        "degradedRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
                                     },
                                     "queryText": "str",
                                     "refreshInterval": "str",
                                     "signalDefinitionName": "str",
                                     "status": {
+                                        "additionalContext": "str",
                                         "error": "str",
                                         "healthState": "str",
                                         "reportedAt": "2020-02-20 00:00:00",
@@ -111,24 +133,52 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
                             "authenticationSetting": "str",
                             "azureResourceId": "str",
                             "azureResourceKind": "str",
+                            "resourceHealth": {
+                                "enabled": "str",
+                                "signalName": "str",
+                                "status": {
+                                    "additionalContext": "str",
+                                    "availabilityReportedTime": "2020-02-20 00:00:00",
+                                    "availabilityState": "str",
+                                    "category": "str",
+                                    "detailedStatus": "str",
+                                    "error": "str",
+                                    "healthState": "str",
+                                    "reasonChronicity": "str",
+                                    "reasonType": "str",
+                                    "reportedAt": "2020-02-20 00:00:00",
+                                    "summary": "str",
+                                    "value": 0.0,
+                                },
+                            },
                             "signals": [
                                 {
                                     "name": "str",
                                     "signalKind": "AzureResourceMetric",
                                     "aggregationType": "str",
                                     "dataUnit": "str",
-                                    "dimension": "str",
                                     "dimensionFilter": "str",
                                     "displayName": "str",
                                     "evaluationRules": {
-                                        "unhealthyRule": {"operator": "str", "threshold": 0.0},
-                                        "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        "unhealthyRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
+                                        "degradedRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
                                     },
                                     "metricName": "str",
                                     "metricNamespace": "str",
                                     "refreshInterval": "str",
                                     "signalDefinitionName": "str",
                                     "status": {
+                                        "additionalContext": "str",
                                         "error": "str",
                                         "healthState": "str",
                                         "reportedAt": "2020-02-20 00:00:00",
@@ -151,11 +201,22 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
                                     "name": "str",
                                     "signalKind": "External",
                                     "evaluationRules": {
-                                        "unhealthyRule": {"operator": "str", "threshold": 0.0},
-                                        "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        "unhealthyRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
+                                        "degradedRule": {
+                                            "operator": "str",
+                                            "lookBackWindow": "str",
+                                            "sensitivity": "str",
+                                            "threshold": 0.0,
+                                        },
                                     },
                                     "signalDefinitionName": "str",
                                     "status": {
+                                        "additionalContext": "str",
                                         "error": "str",
                                         "healthState": "str",
                                         "reportedAt": "2020-02-20 00:00:00",
@@ -212,7 +273,7 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             health_model_name="str",
             entity_name="str",
-            body={"endAt": "2020-02-20 00:00:00", "startAt": "2020-02-20 00:00:00"},
+            body={"endAt": "2020-02-20 00:00:00", "nextMarker": "str", "startAt": "2020-02-20 00:00:00", "top": 0},
         )
 
         # please add some check logic here by yourself
@@ -225,7 +286,13 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             health_model_name="str",
             entity_name="str",
-            body={"signalName": "str", "endAt": "2020-02-20 00:00:00", "startAt": "2020-02-20 00:00:00"},
+            body={
+                "signalName": "str",
+                "endAt": "2020-02-20 00:00:00",
+                "nextMarker": "str",
+                "startAt": "2020-02-20 00:00:00",
+                "top": 0,
+            },
         )
 
         # please add some check logic here by yourself
@@ -243,12 +310,60 @@ class TestCloudHealthMgmtEntitiesOperations(AzureMgmtRecordedTestCase):
                 "signalName": "str",
                 "additionalContext": "str",
                 "evaluationRules": {
-                    "unhealthyRule": {"operator": "str", "threshold": 0.0},
-                    "degradedRule": {"operator": "str", "threshold": 0.0},
+                    "unhealthyRule": {
+                        "operator": "str",
+                        "lookBackWindow": "str",
+                        "sensitivity": "str",
+                        "threshold": 0.0,
+                    },
+                    "degradedRule": {
+                        "operator": "str",
+                        "lookBackWindow": "str",
+                        "sensitivity": "str",
+                        "threshold": 0.0,
+                    },
                 },
                 "expiresInMinutes": 0,
                 "value": 0.0,
             },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_entities_add_data_annotation(self, resource_group):
+        response = self.client.entities.add_data_annotation(
+            resource_group_name=resource_group.name,
+            health_model_name="str",
+            entity_name="str",
+            body={"annotationDetails": {"str": "str"}, "description": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_entities_get_data_annotations(self, resource_group):
+        response = self.client.entities.get_data_annotations(
+            resource_group_name=resource_group.name,
+            health_model_name="str",
+            entity_name="str",
+            body={"endAt": "2020-02-20 00:00:00", "nextMarker": "str", "startAt": "2020-02-20 00:00:00", "top": 0},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_entities_get_signal_recommendations(self, resource_group):
+        response = self.client.entities.get_signal_recommendations(
+            resource_group_name=resource_group.name,
+            health_model_name="str",
+            entity_name="str",
         )
 
         # please add some check logic here by yourself
