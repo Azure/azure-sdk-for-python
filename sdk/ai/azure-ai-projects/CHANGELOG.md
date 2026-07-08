@@ -40,6 +40,7 @@ all derived from `ToolboxTool`, have been defined.
 
 ### Sample updates
 
+* Updated `weather_openapi.json` to pass the OpenAPI spec validation.
 * Added agent optimization samples under `samples/agents/optimization/`:
   * `sample_optimization_job_basic.py` demonstrating how to create an optimization job, poll it to completion, and read the results.
   * `sample_optimization_job_cancel.py` demonstrating how to create and immediately cancel an optimization job.
