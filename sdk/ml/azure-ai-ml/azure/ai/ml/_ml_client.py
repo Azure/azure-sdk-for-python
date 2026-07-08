@@ -26,7 +26,6 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
@@ -371,13 +370,6 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_01_2024_preview = ServiceClient012024Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_04_2024_preview = ServiceClient042024Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -470,17 +462,6 @@ class MLClient:
         )
 
         self._service_client_10_2023 = ServiceClient102023(
-            credential=self._credential,
-            subscription_id=(
-                self._ws_operation_scope._subscription_id
-                if registry_reference
-                else self._operation_scope._subscription_id
-            ),
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_01_2024_preview = ServiceClient012024Preview(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
@@ -731,7 +712,6 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
-            service_client_01_2024_preview=self._service_client_01_2024_preview,
             service_client_01_2024_preview_arm=self._service_client_01_2024_preview_arm,
             service_client_10_2024_preview=self._service_client_10_2024_preview_tsp,
             service_client_01_2025_preview=self._service_client_01_2025_preview,

@@ -295,6 +295,11 @@ def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2024_01_01_preview(mocker: MockFixture) -> Mock:
+    # Ensure the submodule is imported so it is an attribute of ``azure.ai.ml._restclient`` for mocker.patch.
+    # Production code no longer imports v2024_01_01_preview (operations were migrated to arm_ml_service), so the
+    # attribute would otherwise be absent when a test that never imports it directly requests this fixture.
+    import azure.ai.ml._restclient.v2024_01_01_preview  # noqa: F401  pylint: disable=unused-import
+
     return mocker.patch("azure.ai.ml._restclient.v2024_01_01_preview")
 
 

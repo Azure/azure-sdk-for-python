@@ -31,8 +31,6 @@ from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtCl
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.arm_ml_service.models import UserIdentity as UserIdentityArm
 from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJobBaseArm
 
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -147,53 +145,6 @@ module_logger = ops_logger.module_logger
 _FINE_TUNING_JOB_TYPE = "FineTuning"
 
 
-def _ensure_arm_job_base(rest_job_resource: Any) -> Any:
-    """Return the body as a shared arm_ml_service hybrid ``JobBase``.
-
-    Command and fine-tuning jobs route to the shared arm_ml_service client, whose ``SdkJSONEncoder``
-    only serializes hybrid models. Most call sites already build an arm hybrid body, but the local-run
-    re-submit path re-PUTs a msrest ``JobBase`` fetched via GET. Round-trip any msrest body through its
-    wire dict (msrest ``.serialize()`` -> arm ``._deserialize()``), which is wire-identical. No-op when
-    the body is already an arm hybrid model. Remove once arm_ml_service is regenerated with
-    api-version "all".
-
-    :param rest_job_resource: A msrest or arm hybrid ``JobBase``.
-    :type rest_job_resource: Any
-    :return: An arm_ml_service hybrid ``JobBase``.
-    :rtype: Any
-    """
-    if hasattr(rest_job_resource, "_is_model"):  # already an arm hybrid model
-        return rest_job_resource
-    converted = RestJobBaseArm._deserialize(rest_job_resource.serialize(), [])  # pylint: disable=protected-access
-    # ``name`` is a read-only resource field that msrest ``.serialize()`` omits; carry it over so the
-    # create_or_update URL (which uses ``id=rest_job_resource.name``) is populated.
-    converted.name = rest_job_resource.name
-    return converted
-
-
-def _ensure_msrest_job_base(result: Any) -> Any:
-    """Return the create/update result as a msrest ``JobBase`` (v2024_01) for entity parsing.
-
-    Command and fine-tuning jobs (and, since the operations-layer migration, pipeline/automl/sweep jobs)
-    route to the shared arm_ml_service client, whose ``create_or_update`` returns an arm hybrid
-    ``JobBase``. The entity readers (``Job._from_rest_object`` and the nested
-    ``DistributionConfiguration._from_rest_object`` etc.) were authored against msrest ``.as_dict()``,
-    which emits snake_case keys; the hybrid ``.as_dict()`` emits camelCase, so a hybrid result makes
-    those readers pop ``None`` (e.g. ``distribution_type``) and crash. Round-trip the hybrid result
-    through its camelCase wire dict (hybrid ``.as_dict()`` -> msrest ``.deserialize()``), which is
-    wire-identical and rehydrates proper msrest nested models. No-op when the result is already a msrest
-    model. Remove once arm_ml_service is regenerated with api-version "all".
-
-    :param result: A msrest or arm hybrid ``JobBase``.
-    :type result: Any
-    :return: A msrest ``JobBase``.
-    :rtype: Any
-    """
-    if not getattr(result, "_is_model", False) is True:  # already a msrest model (or a test mock)
-        return result
-    return JobBase_2401.deserialize(result.as_dict())
-
-
 class JobOperations(_ScopeDependentOperations):
     """Initiates an instance of JobOperations
 
@@ -239,7 +190,6 @@ class JobOperations(_ScopeDependentOperations):
         self._credential = credential
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
-        self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self.service_client_01_2024_preview_arm = kwargs.pop("service_client_01_2024_preview_arm", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
@@ -363,15 +313,23 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name, max_results=max_results)
 
+        # The shared arm_ml_service ``jobs.list`` has no ``scheduled``/``schedule_id`` query params (they are
+        # only modeled on the 2024-01-01-preview wire and are never set by the SDK itself). Forward them as raw
+        # query params when a caller passes them so the wire stays identical to the old v2024_01 client.
+        extra_params: Dict[str, str] = {}
+        if schedule_defined is not None:
+            extra_params["scheduled"] = str(schedule_defined).lower()
+        if scheduled_job_name is not None:
+            extra_params["scheduleId"] = scheduled_job_name
+
         return cast(
             Iterable[Job],
-            self.service_client_01_2024_preview.jobs.list(
+            self.service_client_01_2024_preview_arm.jobs.list(
                 self._operation_scope.resource_group_name,
                 self._workspace_name,
                 cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
                 list_view_type=list_view_type,
-                scheduled=schedule_defined,
-                schedule_id=scheduled_job_name,
+                params=extra_params,
                 **self._kwargs,
                 **kwargs,
             ),
@@ -800,34 +758,20 @@ class JobOperations(_ScopeDependentOperations):
 
             result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
 
-        # Command/fine-tuning route to the shared arm_ml_service client, which returns an arm hybrid
-        # JobBase whose camelCase ``.as_dict()`` breaks the snake_case entity readers; normalize to msrest.
-        result = _ensure_msrest_job_base(result)
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
     def _create_or_update_with_different_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         if rest_job_resource.properties.job_type == _FINE_TUNING_JOB_TYPE:
             service_client_operation = self.service_client_10_2024_preview.jobs
-            # The 2024-10 client is the shared arm_ml_service client; ensure the body is a hybrid model
-            # (the local-run re-submit path passes a msrest JobBase fetched via GET).
-            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-            # The 2024-01 arm_ml_service client preserves the pipeline wire api-version while using the
-            # shared hybrid client; ensure the body is a hybrid model (SdkJSONEncoder only serializes those).
             service_client_operation = self.service_client_01_2024_preview_arm.jobs
-            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
             service_client_operation = self.service_client_01_2024_preview_arm.jobs
-            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview_arm.jobs
-            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
         if rest_job_resource.properties.job_type == RestJobType.COMMAND:
             service_client_operation = self.service_client_01_2025_preview.jobs
-            # The 2025 client is the shared arm_ml_service client; ensure the body is a hybrid model
-            # (the local-run re-submit path passes a msrest JobBase fetched via GET).
-            rest_job_resource = _ensure_arm_job_base(rest_job_resource)
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
@@ -840,7 +784,7 @@ class JobOperations(_ScopeDependentOperations):
         return result
 
     def _create_or_update_with_latest_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
-        service_client_operation = self.service_client_01_2024_preview.jobs
+        service_client_operation = self.service_client_01_2024_preview_arm.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -1148,7 +1092,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        job = self.service_client_01_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview_arm.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -1172,8 +1116,8 @@ class JobOperations(_ScopeDependentOperations):
 
     # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
-    def _get_job_2401(self, name: str) -> JobBase_2401:
-        service_client_operation = self.service_client_01_2024_preview.jobs
+    def _get_job_2401(self, name: str) -> JobBase:
+        service_client_operation = self.service_client_01_2024_preview_arm.jobs
         return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
