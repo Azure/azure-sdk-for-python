@@ -388,60 +388,6 @@ class TestDeploymentTemplate:
     def test_deployment_template_from_rest_object_list_shape_stringified_settings(self):
         """Regression test for bug #5402672.
 
-        In the list() response, requestSettings / livenessProbe / readinessProbe arrive as
-        stringified dicts nested under ``properties`` (get() returns typed objects instead).
-        _from_rest_object must parse them instead of raising
-        ``AttributeError: 'str' object has no attribute 'request_timeout'``.
-        """
-        mock_rest = Mock(spec=[])
-        mock_rest.name = "test-template"
-        mock_rest.id = None
-        mock_rest.request_settings = None
-        mock_rest.liveness_probe = None
-        mock_rest.readiness_probe = None
-        mock_rest.properties = {
-            "name": "test-template",
-            "version": "5",
-            "requestSettings": "{'requestTimeout': 'PT1M30S', 'maxConcurrentRequestsPerInstance': 32}",
-            "livenessProbe": "{'initialDelay': 'PT5M', 'period': 'PT10S', 'timeout': 'PT10S', "
-            "'failureThreshold': 30, 'successThreshold': 1, 'path': '/health', 'port': 8000}",
-            "readinessProbe": "{'initialDelay': 'PT5M', 'period': 'PT10S', 'timeout': 'PT10S', "
-            "'failureThreshold': 30, 'successThreshold': 1, 'path': '/health', 'port': 8000}",
-        }
-
-        template = DeploymentTemplate._from_rest_object(mock_rest)
-
-        # request settings parsed: PT1M30S == 90000 ms
-        assert template.request_settings is not None
-        assert template.request_settings.request_timeout_ms == 90000
-        assert template.request_settings.max_concurrent_requests_per_instance == 32
-        # probes parsed
-        assert template.liveness_probe is not None
-        assert template.liveness_probe.failure_threshold == 30
-        assert template.readiness_probe is not None
-        assert template.readiness_probe.failure_threshold == 30
-
-    def test_deployment_template_from_rest_object_get_shape_typed_settings(self):
-        """The get() shape (already-typed request settings object) must keep working."""
-        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import models as rest_models
-
-        rest = rest_models.DeploymentTemplate(
-            {
-                "name": "test-template",
-                "version": "5",
-                "requestSettings": {"requestTimeout": "PT1M30S", "maxConcurrentRequestsPerInstance": 16},
-            }
-        )
-
-        template = DeploymentTemplate._from_rest_object(rest)
-
-        assert template.request_settings is not None
-        assert template.request_settings.request_timeout_ms == 90000
-        assert template.request_settings.max_concurrent_requests_per_instance == 16
-
-    def test_deployment_template_from_rest_object_list_shape_stringified_settings(self):
-        """Regression test for bug #5402672.
-
         In the list() response, settings such as requestSettings / livenessProbe /
         readinessProbe arrive as stringified dicts nested under ``properties`` (rather
         than as typed objects at the top level like get() returns). _from_rest_object
