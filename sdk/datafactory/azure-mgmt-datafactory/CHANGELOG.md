@@ -366,4 +366,4 @@
   - Deleted model `CopyTranslator`/`GetDataFactoryOperationStatusResponse`/`QueryDataFlowDebugSessionsResponse`/`TabularTranslator`/`TypeConversionSettings` which actually were not used by SDK users
   - Deleted enum `AmazonRdsForOraclePartitionOption`/`AvroCompressionCodec`/`CompressionCodec`/`CopyBehaviorType`/`DatasetCompressionLevel`/`DynamicsAuthenticationType`/`DynamicsDeploymentType`/`HdiNodeTypes`/`JsonFormatFilePattern`/`JsonWriteFilePattern`/`NetezzaPartitionOption`/`OraclePartitionOption`/`OrcCompressionCodec`/`SalesforceSourceReadBehavior`/`SapHanaPartitionOption`/`SapTablePartitionOption`/`ServicePrincipalCredentialType`/`SqlPartitionOption`/`StoredProcedureParameterType`/`TeradataPartitionOption` which actually were not used by SDK users
 
-> Changelog entries prior to 9.3.0 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-datafactory/9.3.0/ for the older history.
+> Changelog entries prior to 10.0.0b1 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-datafactory/10.0.0b1/ for the older history.
