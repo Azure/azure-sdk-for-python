@@ -24,7 +24,7 @@ def _resolve_zip_file(zip_file: str) -> Path:
     return (Path.cwd() / zip_path).resolve()
 
 
-def zip(
+def zip_directory(
     source_dir: Path, zip_filename: Optional[str] = None, *, env_var: str = "ZIP_FILE_PATH"
 ) -> Tuple[bytes, str, Path]:
     """Return zip bytes, SHA-256, and path for a source directory.

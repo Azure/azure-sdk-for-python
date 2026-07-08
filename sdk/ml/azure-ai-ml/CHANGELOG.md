@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.
 
 ### Other Changes
 

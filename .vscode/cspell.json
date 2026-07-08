@@ -1664,18 +1664,6 @@
       ]
     },
     {
-      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
-      "words": [
-        "wday",
-        "mday",
-        "unflattened",
-        "deseralize",
-        "astimezone",
-        "ctxt",
-        "Nify"
-      ]
-    },
-    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",

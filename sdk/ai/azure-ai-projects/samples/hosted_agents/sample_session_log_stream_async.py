@@ -21,62 +21,28 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
-
-    If you don't have a Hosted Agent, run `sample_create_hosted_agent_async.py` or
-    `sample_create_hosted_agent_from_code_async.py` first to create one as a prerequisite.
-
-    NOTE: This sample assumes the Foundry project and Azure AI account are in the
-    same resource group.
-
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
 """
 
 import asyncio
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentEndpointConfig,
-    FixedRatioVersionSelectionRule,
-    ProtocolConfiguration,
-    ResponsesProtocolConfiguration,
-    VersionSelector,
+    CodeConfiguration,
+    CodeDependencyResolution,
+    HostedAgentDefinition,
+    ProtocolVersionRecord,
+    VersionRefIndicator,
 )
-from azure.ai.projects.models import VersionRefIndicator
-from hosted_agents_util import get_latest_active_agent_version_async
+from hosted_agents_util import create_version_from_code_async
+from util import zip_directory
 
 load_dotenv()
-
-
-def _iter_sse_frames(stream, max_log_events: int):
-    event_count = 0
-    buffer = ""
-
-    for chunk in stream:
-        buffer += chunk.decode("utf-8", errors="replace")
-
-        while "\n\n" in buffer:
-            frame, buffer = buffer.split("\n\n", 1)
-            event_name = None
-            data_lines = []
-
-            for line in frame.splitlines():
-                if line.startswith("event: "):
-                    event_name = line[7:]
-                elif line.startswith("data: "):
-                    data_lines.append(line[6:])
-
-            if data_lines or event_name:
-                event_count += 1
-                yield {
-                    "event": event_name,
-                    "data": "\n".join(data_lines),
-                }
-
-                if event_count >= max_log_events:
-                    return
 
 
 async def _iter_sse_frames_async(stream, max_log_events: int):
@@ -110,63 +76,72 @@ async def _iter_sse_frames_async(stream, max_log_events: int):
 
 async def main():
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+    agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+    model_name = os.environ["FOUNDRY_MODEL_NAME"]
+    hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
 
-    async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(
-            endpoint=endpoint,
-            credential=credential,
-        ) as project_client,
-    ):
-        agent = await get_latest_active_agent_version_async(project_client, agent_name)
-        session = await project_client.agents.create_session(
-            agent_name=agent_name,
-            version_indicator=VersionRefIndicator(agent_version=agent.version),
-        )
-        print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
-        try:
-            endpoint_config = AgentEndpointConfig(
-                version_selector=VersionSelector(
-                    version_selection_rules=[
-                        FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
-                    ]
+    zip_path = zip_directory(hosted_agent_source_dir, "basic-agent.zip")[2]
+
+    with zip_path.open("rb") as code_stream:
+        async with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(
+                endpoint=endpoint,
+                credential=credential,
+            ) as project_client,
+            create_version_from_code_async(
+                project_client=project_client,
+                agent_name=agent_name,
+                description="Session log stream hosted agent uploaded from assets/basic-agent.",
+                definition=HostedAgentDefinition(
+                    cpu="0.5",
+                    memory="1Gi",
+                    code_configuration=CodeConfiguration(
+                        runtime="python_3_14",
+                        entry_point=["python", "main.py"],
+                        dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+                    ),
+                    environment_variables={
+                        "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                        "FOUNDRY_MODEL_NAME": model_name,
+                    },
+                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
                 ),
-                protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
-            )
-
-            await project_client.agents.update_details(
+                code=code_stream,
+            ) as created,
+        ):
+            session = await project_client.agents.create_session(
                 agent_name=agent_name,
-                agent_endpoint=endpoint_config,
+                version_indicator=VersionRefIndicator(agent_version=created.version),
             )
+            print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+            try:
+                input_text = "Say hello in one short sentence."
 
-            print(f"Agent endpoint configured for agent: {agent_name}")
-            input_text = "Say hello in one short sentence."
+                openai_client = project_client.get_openai_client(agent_name=agent_name)
+                response = await openai_client.responses.create(
+                    input=input_text,
+                    extra_body={
+                        "agent_session_id": session.agent_session_id,
+                    },
+                )
+                print(f"Response output: {response.output_text}")
 
-            openai_client = project_client.get_openai_client(agent_name=agent_name)
-            response = await openai_client.responses.create(
-                input=input_text,
-                extra_body={
-                    "agent_session_id": session.agent_session_id,
-                },
-            )
-            print(f"Response output: {response.output_text}")
-
-            print("Streaming session logs...")
-            raw_stream = await project_client.agents.get_session_log_stream(
-                agent_name=agent_name,
-                agent_version=agent.version,
-                session_id=session.agent_session_id,
-            )
-            async for frame in _iter_sse_frames_async(raw_stream, max_log_events=30):
-                print(f"SSE event: {frame.get('event')}")
-                print(f"SSE data: {frame.get('data')}\n")
-        finally:
-            await project_client.agents.delete_session(
-                agent_name=agent_name,
-                session_id=session.agent_session_id,
-            )
-            print(f"Session deleted (id: {session.agent_session_id})")
+                print("Streaming session logs...")
+                raw_stream = await project_client.agents.get_session_log_stream(
+                    agent_name=agent_name,
+                    agent_version=created.version,
+                    session_id=session.agent_session_id,
+                )
+                async for frame in _iter_sse_frames_async(raw_stream, max_log_events=30):
+                    print(f"SSE event: {frame.get('event')}")
+                    print(f"SSE data: {frame.get('data')}\n")
+            finally:
+                await project_client.agents.delete_session(
+                    agent_name=agent_name,
+                    session_id=session.agent_session_id,
+                )
+                print(f"Session deleted (id: {session.agent_session_id})")
 
 
 if __name__ == "__main__":
