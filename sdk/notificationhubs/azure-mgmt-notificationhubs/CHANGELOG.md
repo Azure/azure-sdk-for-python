@@ -1,5 +1,146 @@
 # Release History
 
+## 8.1.0b3 (2026-07-08)
+
+### Features Added
+
+  - Client `NotificationHubsManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `NotificationHubsManagementClient` added method `send_request`
+  - Model `DebugSendResponse` added property `properties`
+  - Model `NamespaceResource` added property `properties`
+  - Model `NotificationHubPatchParameters` added property `properties`
+  - Model `NotificationHubResource` added property `properties`
+  - Model `PnsCredentialsResource` added property `properties`
+  - Model `SharedAccessAuthorizationRuleResource` added property `properties`
+  - Added model `AdmCredentialProperties`
+  - Added model `ApnsCredentialProperties`
+  - Added model `BaiduCredentialProperties`
+  - Added model `BrowserCredentialProperties`
+  - Added model `DebugSendResult`
+  - Added model `FcmV1CredentialProperties`
+  - Added model `GcmCredentialProperties`
+  - Added model `MpnsCredentialProperties`
+  - Added model `NotificationHubProperties`
+  - Added model `WnsCredentialProperties`
+  - Added model `XiaomiCredentialProperties`
+
+### Breaking Changes
+
+  - Model `AdmCredential` deleted or renamed its instance variable `client_id`
+  - Model `AdmCredential` deleted or renamed its instance variable `client_secret`
+  - Model `AdmCredential` deleted or renamed its instance variable `auth_token_url`
+  - Model `ApnsCredential` deleted or renamed its instance variable `apns_certificate`
+  - Model `ApnsCredential` deleted or renamed its instance variable `certificate_key`
+  - Model `ApnsCredential` deleted or renamed its instance variable `endpoint`
+  - Model `ApnsCredential` deleted or renamed its instance variable `thumbprint`
+  - Model `ApnsCredential` deleted or renamed its instance variable `key_id`
+  - Model `ApnsCredential` deleted or renamed its instance variable `app_name`
+  - Model `ApnsCredential` deleted or renamed its instance variable `app_id`
+  - Model `ApnsCredential` deleted or renamed its instance variable `token`
+  - Model `BaiduCredential` deleted or renamed its instance variable `baidu_api_key`
+  - Model `BaiduCredential` deleted or renamed its instance variable `baidu_end_point`
+  - Model `BaiduCredential` deleted or renamed its instance variable `baidu_secret_key`
+  - Model `BrowserCredential` deleted or renamed its instance variable `subject`
+  - Model `BrowserCredential` deleted or renamed its instance variable `vapid_private_key`
+  - Model `BrowserCredential` deleted or renamed its instance variable `vapid_public_key`
+  - Model `DebugSendResponse` deleted or renamed its instance variable `success`
+  - Model `DebugSendResponse` deleted or renamed its instance variable `failure`
+  - Model `DebugSendResponse` deleted or renamed its instance variable `results`
+  - Model `FcmV1Credential` deleted or renamed its instance variable `client_email`
+  - Model `FcmV1Credential` deleted or renamed its instance variable `private_key`
+  - Model `FcmV1Credential` deleted or renamed its instance variable `project_id`
+  - Model `GcmCredential` deleted or renamed its instance variable `gcm_endpoint`
+  - Model `GcmCredential` deleted or renamed its instance variable `google_api_key`
+  - Model `MpnsCredential` deleted or renamed its instance variable `mpns_certificate`
+  - Model `MpnsCredential` deleted or renamed its instance variable `certificate_key`
+  - Model `MpnsCredential` deleted or renamed its instance variable `thumbprint`
+  - Model `NamespaceResource` deleted or renamed its instance variable `name_properties_name`
+  - Model `NamespaceResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `NamespaceResource` deleted or renamed its instance variable `status`
+  - Model `NamespaceResource` deleted or renamed its instance variable `enabled`
+  - Model `NamespaceResource` deleted or renamed its instance variable `critical`
+  - Model `NamespaceResource` deleted or renamed its instance variable `subscription_id`
+  - Model `NamespaceResource` deleted or renamed its instance variable `region`
+  - Model `NamespaceResource` deleted or renamed its instance variable `metric_id`
+  - Model `NamespaceResource` deleted or renamed its instance variable `created_at`
+  - Model `NamespaceResource` deleted or renamed its instance variable `updated_at`
+  - Model `NamespaceResource` deleted or renamed its instance variable `namespace_type`
+  - Model `NamespaceResource` deleted or renamed its instance variable `replication_region`
+  - Model `NamespaceResource` deleted or renamed its instance variable `zone_redundancy`
+  - Model `NamespaceResource` deleted or renamed its instance variable `network_acls`
+  - Model `NamespaceResource` deleted or renamed its instance variable `pns_credentials`
+  - Model `NamespaceResource` deleted or renamed its instance variable `service_bus_endpoint`
+  - Model `NamespaceResource` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `NamespaceResource` deleted or renamed its instance variable `scale_unit`
+  - Model `NamespaceResource` deleted or renamed its instance variable `data_center`
+  - Model `NamespaceResource` deleted or renamed its instance variable `public_network_access`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `name`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `registration_ttl`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `authorization_rules`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `apns_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `wns_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `gcm_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `mpns_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `adm_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `baidu_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `browser_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `xiaomi_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `fcm_v1_credential`
+  - Model `NotificationHubPatchParameters` deleted or renamed its instance variable `daily_max_active_devices`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `name_properties_name`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `registration_ttl`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `authorization_rules`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `apns_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `wns_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `gcm_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `mpns_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `adm_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `baidu_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `browser_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `xiaomi_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `fcm_v1_credential`
+  - Model `NotificationHubResource` deleted or renamed its instance variable `daily_max_active_devices`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `adm_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `apns_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `baidu_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `browser_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `gcm_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `mpns_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `wns_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `xiaomi_credential`
+  - Model `PnsCredentialsResource` deleted or renamed its instance variable `fcm_v1_credential`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `rights`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `primary_key`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `secondary_key`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `key_name`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `modified_time`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `created_time`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `claim_type`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `claim_value`
+  - Model `SharedAccessAuthorizationRuleResource` deleted or renamed its instance variable `revision`
+  - Model `WnsCredential` deleted or renamed its instance variable `package_sid`
+  - Model `WnsCredential` deleted or renamed its instance variable `secret_key`
+  - Model `WnsCredential` deleted or renamed its instance variable `windows_live_endpoint`
+  - Model `WnsCredential` deleted or renamed its instance variable `certificate_key`
+  - Model `WnsCredential` deleted or renamed its instance variable `wns_certificate`
+  - Model `XiaomiCredential` deleted or renamed its instance variable `app_secret`
+  - Model `XiaomiCredential` deleted or renamed its instance variable `endpoint`
+  - Deleted or renamed model `ConnectionDetails`
+  - Deleted or renamed model `GroupConnectivityInformation`
+  - Deleted or renamed model `NamespaceListResult`
+  - Deleted or renamed model `NotificationHubListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PrivateEndpointConnectionResourceListResult`
+  - Deleted or renamed model `PrivateLinkResourceListResult`
+  - Deleted or renamed model `PrivateLinkServiceConnection`
+  - Deleted or renamed model `SharedAccessAuthorizationRuleListResult`
+  - Method `NamespacesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `NamespacesOperations.list` parameter `top` changed default value from `int` to `none`
+  - Method `NamespacesOperations.list_all` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `NamespacesOperations.list_all` parameter `top` changed default value from `int` to `none`
+  - Method `NotificationHubsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `NotificationHubsOperations.list` parameter `top` changed default value from `int` to `none`
+
 ## 8.1.0b2 (2024-03-21)
 
 ### Features Added
