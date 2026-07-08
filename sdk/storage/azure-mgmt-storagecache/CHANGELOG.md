@@ -6,9 +6,31 @@
 
   - Client `StorageCacheManagementClient` added method `send_request`
   - Client `StorageCacheManagementClient` added operation group `expansion_jobs`
+  - Model `AmlFilesystem` added property `properties`
   - Enum `AmlFilesystemHealthStateType` added member `EXPANDING`
+  - Model `AmlFilesystemUpdate` added property `properties`
+  - Model `ApiOperation` added property `properties`
+  - Model `AscOperation` added property `properties`
+  - Model `AutoExportJob` added property `properties`
+  - Model `AutoExportJobUpdate` added property `properties`
+  - Model `AutoImportJob` added property `properties`
+  - Model `AutoImportJobUpdate` added property `properties`
+  - Model `Cache` added property `properties`
+  - Model `ImportJob` added property `properties`
+  - Model `ImportJobUpdate` added property `properties`
+  - Model `Restriction` added property `values_property`
+  - Model `StorageTarget` added property `properties`
+  - Added model `AmlFilesystemProperties`
+  - Added model `AmlFilesystemUpdateProperties`
+  - Added model `ApiOperationProperties`
+  - Added model `AscOperationProperties`
+  - Added model `AutoExportJobProperties`
   - Added model `AutoExportJobPropertiesStatus`
+  - Added model `AutoExportJobUpdateProperties`
+  - Added model `AutoImportJobProperties`
   - Added model `AutoImportJobPropertiesStatus`
+  - Added model `AutoImportJobUpdateProperties`
+  - Added model `CacheProperties`
   - Added model `CloudError`
   - Added model `ExpansionJob`
   - Added model `ExpansionJobProperties`
@@ -16,33 +38,135 @@
   - Added model `ExpansionJobPropertiesStatus`
   - Added enum `ExpansionJobStatusType`
   - Added model `ExpansionJobUpdate`
+  - Added model `ImportJobProperties`
   - Added model `ImportJobPropertiesStatus`
+  - Added model `ImportJobUpdateProperties`
   - Added model `ProxyResource`
-  - Added operation group `ExpansionJobsOperations`
+  - Added model `StorageTargetProperties`
+  - Added model `ExpansionJobsOperations`
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Model `AmlFilesystem` moved instance variable `storage_capacity_ti_b`, `health`, `provisioning_state`, `filesystem_subnet`, `client_info`, `throughput_provisioned_m_bps`, `encryption_settings`, `maintenance_window`, `hsm` and `root_squash_settings` under property `properties` whose type is `AmlFilesystemProperties`
-  - Model `AmlFilesystemUpdate` moved instance variable `encryption_settings`, `maintenance_window` and `root_squash_settings` under property `properties` whose type is `AmlFilesystemUpdateProperties`
-  - Model `ApiOperation` moved instance variable `service_specification` under property `properties` whose type is `ApiOperationProperties`
-  - Model `AscOperation` moved instance variable `output` under property `properties` whose type is `AscOperationProperties`
-  - Model `AutoExportJob` moved instance variable `provisioning_state`, `admin_status`, `auto_export_prefixes`, `state`, `status_code`, `status_message`, `total_files_exported`, `total_mi_b_exported`, `total_files_failed`, `export_iteration_count`, `last_successful_iteration_completion_time_utc`, `current_iteration_files_discovered`, `current_iteration_mi_b_discovered`, `current_iteration_files_exported`, `current_iteration_mi_b_exported`, `current_iteration_files_failed`, `last_started_time_utc` and `last_completion_time_utc` under property `properties` whose type is `AutoExportJobProperties`
-  - Model `AutoExportJobUpdate` moved instance variable `admin_status` under property `properties` whose type is `AutoExportJobUpdateProperties`
-  - Model `AutoImportJob` moved instance variable `provisioning_state`, `admin_status`, `auto_import_prefixes`, `conflict_resolution_mode`, `enable_deletions`, `maximum_errors`, `state`, `status_code`, `status_message`, `scan_start_time`, `scan_end_time`, `total_blobs_walked`, `rate_of_blob_walk`, `total_blobs_imported`, `rate_of_blob_import`, `imported_files`, `imported_directories`, `imported_symlinks`, `preexisting_files`, `preexisting_directories`, `preexisting_symlinks`, `total_errors`, `total_conflicts`, `blob_sync_events`, `last_started_time_utc` and `last_completion_time_utc` under property `properties` whose type is `AutoImportJobProperties`
-  - Model `AutoImportJobUpdate` moved instance variable `admin_status` under property `properties` whose type is `AutoImportJobUpdateProperties`
-  - Model `Cache` moved instance variable `cache_size_gb`, `health`, `mount_addresses`, `provisioning_state`, `subnet`, `upgrade_status`, `upgrade_settings`, `network_settings`, `encryption_settings`, `security_settings`, `directory_services_settings`, `zones`, `priming_jobs` and `space_allocation` under property `properties` whose type is `CacheProperties`
-  - Model `ImportJob` moved instance variable `provisioning_state`, `admin_status`, `import_prefixes`, `conflict_resolution_mode`, `maximum_errors`, `state`, `status_message`, `total_blobs_walked`, `blobs_walked_per_second`, `total_blobs_imported`, `imported_files`, `imported_directories`, `imported_symlinks`, `preexisting_files`, `preexisting_directories`, `preexisting_symlinks`, `blobs_imported_per_second`, `last_completion_time`, `last_started_time`, `total_errors` and `total_conflicts` under property `properties` whose type is `ImportJobProperties`
-  - Model `ImportJobUpdate` moved instance variable `admin_status` under property `properties` whose type is `ImportJobUpdateProperties`
-  - Model `Restriction` renamed its instance variable `values` to `values_property`
-  - Model `StorageTarget` moved instance variable `junctions`, `target_type`, `provisioning_state`, `state`, `nfs3`, `clfs`, `unknown`, `blob_nfs` and `allocation_percentage` under property `properties` whose type is `StorageTargetProperties`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `storage_capacity_ti_b`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `health`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `provisioning_state`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `filesystem_subnet`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `client_info`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `throughput_provisioned_m_bps`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `encryption_settings`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `maintenance_window`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `hsm`
+  - Model `AmlFilesystem` deleted or renamed its instance variable `root_squash_settings`
+  - Model `AmlFilesystemUpdate` deleted or renamed its instance variable `encryption_settings`
+  - Model `AmlFilesystemUpdate` deleted or renamed its instance variable `maintenance_window`
+  - Model `AmlFilesystemUpdate` deleted or renamed its instance variable `root_squash_settings`
+  - Model `ApiOperation` deleted or renamed its instance variable `service_specification`
+  - Model `AscOperation` deleted or renamed its instance variable `output`
+  - Model `AutoExportJob` deleted or renamed its instance variable `provisioning_state`
+  - Model `AutoExportJob` deleted or renamed its instance variable `admin_status`
+  - Model `AutoExportJob` deleted or renamed its instance variable `auto_export_prefixes`
+  - Model `AutoExportJob` deleted or renamed its instance variable `state`
+  - Model `AutoExportJob` deleted or renamed its instance variable `status_code`
+  - Model `AutoExportJob` deleted or renamed its instance variable `status_message`
+  - Model `AutoExportJob` deleted or renamed its instance variable `total_files_exported`
+  - Model `AutoExportJob` deleted or renamed its instance variable `total_mi_b_exported`
+  - Model `AutoExportJob` deleted or renamed its instance variable `total_files_failed`
+  - Model `AutoExportJob` deleted or renamed its instance variable `export_iteration_count`
+  - Model `AutoExportJob` deleted or renamed its instance variable `last_successful_iteration_completion_time_utc`
+  - Model `AutoExportJob` deleted or renamed its instance variable `current_iteration_files_discovered`
+  - Model `AutoExportJob` deleted or renamed its instance variable `current_iteration_mi_b_discovered`
+  - Model `AutoExportJob` deleted or renamed its instance variable `current_iteration_files_exported`
+  - Model `AutoExportJob` deleted or renamed its instance variable `current_iteration_mi_b_exported`
+  - Model `AutoExportJob` deleted or renamed its instance variable `current_iteration_files_failed`
+  - Model `AutoExportJob` deleted or renamed its instance variable `last_started_time_utc`
+  - Model `AutoExportJob` deleted or renamed its instance variable `last_completion_time_utc`
+  - Model `AutoExportJobUpdate` deleted or renamed its instance variable `admin_status`
+  - Model `AutoImportJob` deleted or renamed its instance variable `provisioning_state`
+  - Model `AutoImportJob` deleted or renamed its instance variable `admin_status`
+  - Model `AutoImportJob` deleted or renamed its instance variable `auto_import_prefixes`
+  - Model `AutoImportJob` deleted or renamed its instance variable `conflict_resolution_mode`
+  - Model `AutoImportJob` deleted or renamed its instance variable `enable_deletions`
+  - Model `AutoImportJob` deleted or renamed its instance variable `maximum_errors`
+  - Model `AutoImportJob` deleted or renamed its instance variable `state`
+  - Model `AutoImportJob` deleted or renamed its instance variable `status_code`
+  - Model `AutoImportJob` deleted or renamed its instance variable `status_message`
+  - Model `AutoImportJob` deleted or renamed its instance variable `scan_start_time`
+  - Model `AutoImportJob` deleted or renamed its instance variable `scan_end_time`
+  - Model `AutoImportJob` deleted or renamed its instance variable `total_blobs_walked`
+  - Model `AutoImportJob` deleted or renamed its instance variable `rate_of_blob_walk`
+  - Model `AutoImportJob` deleted or renamed its instance variable `total_blobs_imported`
+  - Model `AutoImportJob` deleted or renamed its instance variable `rate_of_blob_import`
+  - Model `AutoImportJob` deleted or renamed its instance variable `imported_files`
+  - Model `AutoImportJob` deleted or renamed its instance variable `imported_directories`
+  - Model `AutoImportJob` deleted or renamed its instance variable `imported_symlinks`
+  - Model `AutoImportJob` deleted or renamed its instance variable `preexisting_files`
+  - Model `AutoImportJob` deleted or renamed its instance variable `preexisting_directories`
+  - Model `AutoImportJob` deleted or renamed its instance variable `preexisting_symlinks`
+  - Model `AutoImportJob` deleted or renamed its instance variable `total_errors`
+  - Model `AutoImportJob` deleted or renamed its instance variable `total_conflicts`
+  - Model `AutoImportJob` deleted or renamed its instance variable `blob_sync_events`
+  - Model `AutoImportJob` deleted or renamed its instance variable `last_started_time_utc`
+  - Model `AutoImportJob` deleted or renamed its instance variable `last_completion_time_utc`
+  - Model `AutoImportJobUpdate` deleted or renamed its instance variable `admin_status`
+  - Model `Cache` deleted or renamed its instance variable `cache_size_gb`
+  - Model `Cache` deleted or renamed its instance variable `health`
+  - Model `Cache` deleted or renamed its instance variable `mount_addresses`
+  - Model `Cache` deleted or renamed its instance variable `provisioning_state`
+  - Model `Cache` deleted or renamed its instance variable `subnet`
+  - Model `Cache` deleted or renamed its instance variable `upgrade_status`
+  - Model `Cache` deleted or renamed its instance variable `upgrade_settings`
+  - Model `Cache` deleted or renamed its instance variable `network_settings`
+  - Model `Cache` deleted or renamed its instance variable `encryption_settings`
+  - Model `Cache` deleted or renamed its instance variable `security_settings`
+  - Model `Cache` deleted or renamed its instance variable `directory_services_settings`
+  - Model `Cache` deleted or renamed its instance variable `zones`
+  - Model `Cache` deleted or renamed its instance variable `priming_jobs`
+  - Model `Cache` deleted or renamed its instance variable `space_allocation`
+  - Model `ImportJob` deleted or renamed its instance variable `provisioning_state`
+  - Model `ImportJob` deleted or renamed its instance variable `admin_status`
+  - Model `ImportJob` deleted or renamed its instance variable `import_prefixes`
+  - Model `ImportJob` deleted or renamed its instance variable `conflict_resolution_mode`
+  - Model `ImportJob` deleted or renamed its instance variable `maximum_errors`
+  - Model `ImportJob` deleted or renamed its instance variable `state`
+  - Model `ImportJob` deleted or renamed its instance variable `status_message`
+  - Model `ImportJob` deleted or renamed its instance variable `total_blobs_walked`
+  - Model `ImportJob` deleted or renamed its instance variable `blobs_walked_per_second`
+  - Model `ImportJob` deleted or renamed its instance variable `total_blobs_imported`
+  - Model `ImportJob` deleted or renamed its instance variable `imported_files`
+  - Model `ImportJob` deleted or renamed its instance variable `imported_directories`
+  - Model `ImportJob` deleted or renamed its instance variable `imported_symlinks`
+  - Model `ImportJob` deleted or renamed its instance variable `preexisting_files`
+  - Model `ImportJob` deleted or renamed its instance variable `preexisting_directories`
+  - Model `ImportJob` deleted or renamed its instance variable `preexisting_symlinks`
+  - Model `ImportJob` deleted or renamed its instance variable `blobs_imported_per_second`
+  - Model `ImportJob` deleted or renamed its instance variable `last_completion_time`
+  - Model `ImportJob` deleted or renamed its instance variable `last_started_time`
+  - Model `ImportJob` deleted or renamed its instance variable `total_errors`
+  - Model `ImportJob` deleted or renamed its instance variable `total_conflicts`
+  - Model `ImportJobUpdate` deleted or renamed its instance variable `admin_status`
+  - Model `Restriction` deleted or renamed its instance variable `values`
+  - Model `StorageTarget` deleted or renamed its instance variable `junctions`
+  - Model `StorageTarget` deleted or renamed its instance variable `target_type`
+  - Model `StorageTarget` deleted or renamed its instance variable `provisioning_state`
+  - Model `StorageTarget` deleted or renamed its instance variable `state`
+  - Model `StorageTarget` deleted or renamed its instance variable `nfs3`
+  - Model `StorageTarget` deleted or renamed its instance variable `clfs`
+  - Model `StorageTarget` deleted or renamed its instance variable `unknown`
+  - Model `StorageTarget` deleted or renamed its instance variable `blob_nfs`
+  - Model `StorageTarget` deleted or renamed its instance variable `allocation_percentage`
+  - Deleted or renamed model `AmlFilesystemsListResult`
+  - Deleted or renamed model `ApiOperationListResult`
+  - Deleted or renamed model `AutoExportJobsListResult`
+  - Deleted or renamed model `AutoImportJobsListResult`
+  - Deleted or renamed model `CachesListResult`
+  - Deleted or renamed model `ImportJobsListResult`
+  - Deleted or renamed model `ResourceSkusResult`
+  - Deleted or renamed model `ResourceUsagesListResult`
+  - Deleted or renamed model `StorageTargetResource`
+  - Deleted or renamed model `StorageTargetsResult`
+  - Deleted or renamed model `UsageModelsResult`
+  - Deleted or renamed model `UserAssignedIdentitiesValueAutoGenerated`
   - Method `StorageTargetsOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-
-  - Deleted model `AmlFilesystemsListResult`/`ApiOperationListResult`/`AutoExportJobsListResult`/`AutoImportJobsListResult`/`CachesListResult`/`ImportJobsListResult`/`ResourceSkusResult`/`ResourceUsagesListResult`/`StorageTargetsResult`/`UsageModelsResult` which actually were not used by SDK users
-  - Deleted model `StorageTargetResource`/`UserAssignedIdentitiesValueAutoGenerated` which actually were not used by SDK users
 
 ## 4.0.0b1 (2026-05-27)
 
