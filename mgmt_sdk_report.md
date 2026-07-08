@@ -1,7 +1,7 @@
 # Stable Management SDK Report
 
 
-| id | sdk name | api version | sdk version | beta refresh pr link | release date | state | stable refresh pr link |
+| id | sdk name | api version | beta refresh sdk version | beta refresh pr link | release date | state | stable refresh pr link |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | azure-mgmt-resource | 2025-04-01 | 26.0.0b1 | [#47386](https://github.com/Azure/azure-sdk-for-python/pull/47386) | 2026-06-08 | Done | [47626](https://github.com/Azure/azure-sdk-for-python/pull/47626) |
 | 2 | azure-mgmt-loganalytics | 2025-07-01 | 14.0.0b1 | [#47335](https://github.com/Azure/azure-sdk-for-python/pull/47335) | 2026-06-04 | Done | [47629](https://github.com/Azure/azure-sdk-for-python/pull/47629) |
