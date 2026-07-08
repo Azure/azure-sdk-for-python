@@ -18,7 +18,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ComponentVersion, ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,

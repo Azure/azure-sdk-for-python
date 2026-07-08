@@ -28,7 +28,8 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
