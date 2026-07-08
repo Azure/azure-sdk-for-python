@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2026-03-01",
+  "apiVersions": {
+    "Microsoft.IoTOperations": "2026-03-01"
+  },
+  "commit": "0238251ff4a7b2404ec0110599b845b15d7fdd7f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/iotoperations/IoTOperations.Management",
+  "emitterVersion": "0.61.3"
+}

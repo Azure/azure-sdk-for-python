@@ -127,6 +127,12 @@ class AioHttpTransport(AsyncHttpTransport):
     :keyword bool session_owner: Session owner. Defaults True.
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
+    Environment variables (read when ``use_env_settings`` is True, the default):
+
+    * ``HTTP_PROXY`` - Proxy URL for HTTP requests.
+    * ``HTTPS_PROXY`` - Proxy URL for HTTPS requests.
+    * ``NO_PROXY`` - Comma-separated list of hosts that should bypass the proxy.
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/test_example_async.py

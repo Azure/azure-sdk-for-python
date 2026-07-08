@@ -1,5 +1,80 @@
 # Release History
 
+## 3.0.0b2 (2026-05-26)
+
+### Features Added
+
+  - Client `DataBoxEdgeManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DataBoxEdgeManagementClient` added method `send_request`
+  - Client `DataBoxEdgeManagementClient` added operation group `diagnostic_settings`
+  - Client `DataBoxEdgeManagementClient` added operation group `device_capacity_check`
+  - Client `DataBoxEdgeManagementClient` added operation group `support_packages`
+  - Client `DataBoxEdgeManagementClient` added operation group `device_capacity_info`
+  - Model `DataBoxEdgeDeviceExtendedInfo` added property `system_data`
+  - Model `Job` added property `system_data`
+  - Model `LoadBalancerConfig` added property `ip_range`
+  - Model `Order` added property `kind`
+  - Enum `SkuName` added member `EDGE_MR_TCP`
+  - Enum `SkuName` added member `EP2_128_GPU1_MX1_W`
+  - Enum `SkuName` added member `EP2_256_GPU2_MX1`
+  - Enum `SkuName` added member `EP2_64_MX1_W`
+  - Model `UpdateDetails` added property `friendly_version_number`
+  - Model `UpdateDetails` added property `installation_impact`
+  - Added enum `AccessLevel`
+  - Added model `CloudError`
+  - Added model `ClusterCapacityViewData`
+  - Added model `ClusterGpuCapacity`
+  - Added model `ClusterMemoryCapacity`
+  - Added model `ClusterStorageViewData`
+  - Added enum `ClusterWitnessType`
+  - Added model `DataResidency`
+  - Added enum `DataResidencyType`
+  - Added model `DeviceCapacityInfo`
+  - Added model `DeviceCapacityInfoProperties`
+  - Added model `DeviceCapacityRequestInfo`
+  - Added model `DeviceCapacityRequestInfoProperties`
+  - Added model `DiagnosticProactiveLogCollectionSettings`
+  - Added model `DiagnosticRemoteSupportSettings`
+  - Added model `DiagnosticRemoteSupportSettingsProperties`
+  - Added model `HostCapacity`
+  - Added enum `InstallationImpact`
+  - Added model `NumaNodeData`
+  - Added enum `ProactiveDiagnosticsConsent`
+  - Added model `ProactiveLogCollectionSettingsProperties`
+  - Added model `ProxyResource`
+  - Added enum `RemoteApplicationType`
+  - Added model `RemoteSupportSettings`
+  - Added model `Resource`
+  - Added model `SupportPackageRequestProperties`
+  - Added model `TrackedResource`
+  - Added model `TriggerSupportPackageRequest`
+  - Added model `VmMemory`
+  - Added model `VmPlacementRequestResult`
+  - Operation group `DevicesOperations` added method `create_or_update`
+  - Added operation group `DeviceCapacityCheckOperations`
+  - Added operation group `DeviceCapacityInfoOperations`
+  - Added operation group `DiagnosticSettingsOperations`
+  - Added operation group `SupportPackagesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `DCAccessCode` moved instance variable `auth_code` under property `properties` whose type is `DCAccessCodeProperties`
+  - Model `DataBoxEdgeDevicePatch` moved instance variable `edge_profile` under property `properties` whose type is `DataBoxEdgeDevicePropertiesPatch`
+  - Model `EdgeProfileSubscription` moved instance variable `tenant_id`, `location_placement_id`, `quota_id`, `serialized_details` and `registered_features` under property `properties` whose type is `SubscriptionProperties`
+  - Model `FileEventTrigger` moved instance variable `source_info`, `sink_info` and `custom_context_tag` under property `properties` whose type is `FileTriggerProperties`
+  - Model `PeriodicTimerEventTrigger` moved instance variable `source_info`, `sink_info` and `custom_context_tag` under property `properties` whose type is `PeriodicTimerProperties`
+  - Model `UploadCertificateRequest` moved instance variable `authentication_type` and `certificate` under property `properties` whose type is `RawCertificateData`
+  - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `DevicesOperations.begin_create_or_update`
+  - Method `UsersOperations.list_by_data_box_edge_device` renamed its parameter `expand` to `filter`
+
+### Other Changes
+
+  - Deleted model `AddonList`/`AlertList`/`BandwidthSchedulesList`/`ContainerList`/`DataBoxEdgeDeviceList`/`DataBoxEdgeSkuList`/`MonitoringMetricConfigurationList`/`NodeList`/`OperationsList`/`OrderList`/`RoleList`/`ShareList`/`SkuInformationList`/`StorageAccountCredentialList`/`StorageAccountList`/`TriggerList`/`UserList` which actually were not used by SDK users
+  - Deleted model `DataBoxEdgeMoveRequest`/`ResourceTypeSku`/`SkuInformation` which actually were not used by SDK users
+
 ## 3.0.0b1 (2025-08-06)
 
 ### Breaking Changes

@@ -82,6 +82,9 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
         policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
     else:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
+
+    policy.ReadTimeout = kwargs.pop(Constants.Kwargs.READ_TIMEOUT, policy.ReadTimeout)
+
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
@@ -147,6 +150,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int connection_timeout: The HTTP request timeout in seconds.
+    :keyword float read_timeout: The socket read timeout in seconds. This is the time the client will wait for a
+        response from the server after a connection has been established. If not specified, the default value of
+        65 seconds is used. This can be overridden at the request level.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
@@ -230,8 +236,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
-        return await self.client_connection.pipeline_client.__aexit__(*args)
+        try:
+            await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
+            return await self.client_connection.pipeline_client.__aexit__(*args)
+        finally:
+            try:
+                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+            except Exception:  # pylint: disable=broad-except
+                pass
 
     async def close(self) -> None:
         """Close this instance of CosmosClient."""

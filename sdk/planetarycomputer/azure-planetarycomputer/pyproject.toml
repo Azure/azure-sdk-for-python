@@ -17,23 +17,24 @@ authors = [
 description = "Microsoft Corporation Azure Planetarycomputer Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.37.0",
     "typing-extensions>=4.6.0",
+    "pystac>=1.11.0",
+    "geojson>=2.0.0",
 ]
 dynamic = [
 "version", "readme"
@@ -58,3 +59,9 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.azure-sdk-build]
+is_stable = true
+
+[tool.azure-sdk-conda]
+in_bundle = false

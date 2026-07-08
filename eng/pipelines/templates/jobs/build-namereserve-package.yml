@@ -1,8 +1,10 @@
 parameters:
   - name: NameForReservation
     type: string
+    default: 'auto'
   - name: VersionForReservation
     type: string
+    default: '0.0.0'
 
 jobs:
   - job: generate_namereserve_package
@@ -20,15 +22,26 @@ jobs:
           python -m pip install -r eng/ci_tools.txt
         displayName: Install Dependencies
 
-      - pwsh: |
-          $ErrorActionPreference = 'Stop'
-          $PSNativeCommandUseErrorActionPreference = $true
+      - ${{ if eq(parameters.NameForReservation, 'auto') }}:
+        - pwsh: |
+            python eng/scripts/discover_unpublished_packages.py `
+              --output-dir "$(Build.ArtifactStagingDirectory)" `
+              --version "${{ parameters.VersionForReservation }}"
+          name: generatePackages
+          displayName: Discover and Generate Name Reservation Packages
 
-          generate_namereserve_package `
-            --package_version "${{ parameters.VersionForReservation }}" `
-            --output_dir "$(Build.ArtifactStagingDirectory)" `
-            "${{ parameters.NameForReservation }}"
-        displayName: Generate Name Reservation Package
+      - ${{ else }}:
+        - pwsh: |
+            Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]true"
+            $ErrorActionPreference = 'Stop'
+            $PSNativeCommandUseErrorActionPreference = $true
+
+            generate_namereserve_package `
+              --package_version "${{ parameters.VersionForReservation }}" `
+              --output_dir "$(Build.ArtifactStagingDirectory)" `
+              "${{ parameters.NameForReservation }}"
+          name: generatePackages
+          displayName: Generate Name Reservation Package
 
       - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
         parameters:

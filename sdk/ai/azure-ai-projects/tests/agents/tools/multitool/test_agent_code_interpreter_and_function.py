@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: Code Interpreter + Function Tool
 
@@ -14,21 +12,16 @@ Tests various scenarios using an agent with Code Interpreter and Function Tool.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import json
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
     FunctionTool,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
@@ -43,7 +36,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         2. Function Tool: Saves the computed result
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -72,7 +65,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a calculator assistant. Use code interpreter to perform calculations, then ALWAYS save the result using the save_result function.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     func_tool,
                 ],
             ),
@@ -103,7 +96,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         2. Function Tool: Creates a report with the computed statistics
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -134,7 +127,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a data analyst. Use code interpreter to generate and analyze data, then ALWAYS create a report using the generate_report function with the exact statistics you computed.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     report_function,
                 ],
             ),

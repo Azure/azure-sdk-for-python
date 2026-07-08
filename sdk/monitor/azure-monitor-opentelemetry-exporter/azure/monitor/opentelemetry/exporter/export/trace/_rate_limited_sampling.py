@@ -109,10 +109,8 @@ class RateLimitedSampler(Sampler):
         else:
             decision = Decision.DROP
 
-        if sampling_percentage == 100.0:
-            new_attributes = {}
-        else:
-            new_attributes = {} if attributes is None else dict(attributes)
+        new_attributes = {} if attributes is None else dict(attributes)
+        if sampling_percentage != 100.0:
             new_attributes[_SAMPLE_RATE_KEY] = sampling_percentage
 
         return SamplingResult(

@@ -62,16 +62,22 @@ TASK
 
 Produce exactly one JSON object (and nothing else) with these keys in **this exact order**:
 
-1. `faulty_details`: array of strings — list only the faults found (empty array if none).  
-   Each entry can follow one of these formats:
-   - "claim -> MISMATCH (expected X, saw Y) mapped to tool_name.field_path"
-   - "claim -> FABRICATED (no supporting tool field)"
-   - "use -> FABRICATED (referenced value not found in prior tool outputs)"
-   - "use -> MISMATCH (expected X, used Y) mapped to tool_name.field_path"
+1. `properties`: object with these keys:
+   - `faulty_details`: array of strings — list only the faults found (empty array if none).  
+     Each entry can follow one of these formats:
+     - "claim -> MISMATCH (expected X, saw Y) mapped to tool_name.field_path"
+     - "claim -> FABRICATED (no supporting tool field)"
+     - "use -> FABRICATED (referenced value not found in prior tool outputs)"
+     - "use -> MISMATCH (expected X, used Y) mapped to tool_name.field_path"
+2. `reason`: short 1-2 sentence summary of why PASS or FAIL.
+3. `score`: integer `1` for pass or `0` for fail.
+4. `status`: `"completed"` if evaluation was performed, or `"skipped"` if evaluation could not be performed.
 
-
-2. `reason`: short 1–2 sentence summary of why PASS or FAIL.
-3. `label`: string `"pass"` or `"fail"`.
+**Status: Skipped**
+If the CONVERSATION_HISTORY or AGENT_RESPONSE is empty or not provided, or if there are no tool outputs in the conversation to evaluate, return status "skipped" immediately without scoring:
+```json
+{"properties": null, "reason": "<explain why evaluation was skipped>", "score": null, "status": "skipped"}
+```
 
 > Output must be valid JSON, all lowercase keys, no extra text or markdown.
 
@@ -88,7 +94,7 @@ EVALUATION STEPS
 3. Populate the JSON object:
    - `faulty_details`: all detected issues (empty if none).
    - `reason`: concise rationale.
-   - `label`: `"pass"` or `"fail"`.
+   - `score`: 1 for pass, 0 for fail.
 
 SCORING RULES
 =============
@@ -135,9 +141,12 @@ Transfer completed successfully. Checking now has $750.75 and savings $3,900.20.
 
 EXPECTED JSON:
 {
-  "faulty_details": [],
+  "properties": {
+    "faulty_details": []
+  },
   "reason": "All tool-derived claims and uses in the response match the prior tool outputs correctly.",
-  "label": "pass",
+  "score": 1,
+  "status": "completed"
 }
 
 
@@ -156,13 +165,15 @@ TOOL_DEFINITIONS:
 
 EXPECTED JSON:
 {
-  "faulty_details": [
-    "claim -> MISMATCH (expected 28°C, saw 28°F) mapped to weather_api.temp"
-  ],
+  "properties": {
+    "faulty_details": [
+      "claim -> MISMATCH (expected 28°C, saw 28°F) mapped to weather_api.temp"
+    ]
+  },
   "reason": "Agent incorrectly reported the temperature in Fahrenheit instead of Celsius as provided by the tool output.",
-  "label": "fail",
+  "score": 0,
+  "status": "completed"
 }
-
 
 ### Example 3 - FAIL (fabricated inventory claim)
 QUERY:
@@ -176,13 +187,15 @@ The item is in stock till the 7th of October.
 
 EXPECTED JSON:
 {
-  "faulty_details": [
-    "claim -> FABRICATED (no supporting tool field; inventory_api.qty is 0, eta is future date)"
-  ],
+  "properties": {
+    "faulty_details": [
+      "claim -> FABRICATED (no supporting tool field; inventory_api.qty is 0, eta is future date)"
+    ]
+  },
   "reason": "Agent fabricated a claim that the item is in stock, whereas the tool output indicates a quantity of 0 and misunderstood availability eta",
-  "label": "fail",
+  "score": 0,
+  "status": "completed"
 }
-
 
 ### Example 4 - FAIL (misuse of prior tool output in new tool call)
 QUERY:
@@ -204,18 +217,20 @@ The latest transactions for your checking account are: ...
 
 EXPECTED JSON:
 {
-  "faulty_details": [
-    "use -> MISMATCH (expected CHK100, used SAV200) mapped to get_transactions.account_id"
-  ],
+  "properties": {
+    "faulty_details": [
+      "use -> MISMATCH (expected CHK100, used SAV200) mapped to get_transactions.account_id"
+    ]
+  },
   "reason": "Agent incorrectly used the savings account ID instead of the requested checking account ID, leading to a mismatch in the transactions reported.",
-  "label": "fail",
+  "score": 0,
+  "status": "completed"
 }
 
 --
-END OF EXAMPLES
 
 FINAL NOTES:
 
-- Output must be exactly one JSON object and must follow the key order: `faulty_details`, `reason`, `label`.
+- Output must be exactly one JSON object and must follow the key order: `properties`, `reason`, `score`, `status`.
 
 # Output

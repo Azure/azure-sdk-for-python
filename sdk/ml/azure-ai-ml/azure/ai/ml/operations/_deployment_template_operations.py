@@ -8,19 +8,23 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
+# cspell:disable-next-line
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
+    MachineLearningServicesClient as AzureAiAssetsClient,
+)
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class DeploymentTemplateOperations(_ScopeDependentOperations):
     """DeploymentTemplateOperations.
 
@@ -33,68 +37,77 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: "OperationConfig",
-        service_client_04_2024_dataplanepreview,
+        credential: TokenCredential,
         **kwargs: Dict[str, Any],
     ):
         super(DeploymentTemplateOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
         self._operation_scope = operation_scope
         self._operation_config = operation_config
-        self._service_client = service_client_04_2024_dataplanepreview
+        self._credential = credential
+        self._service_client_kwargs: Dict[str, Any] = kwargs.pop("_service_client_kwargs", {})
         self._init_kwargs = kwargs
+        self.__service_client: Optional[AzureAiAssetsClient] = None
+
+    @property
+    def _service_client(self) -> AzureAiAssetsClient:
+        """Lazily instantiated client for azure ai assets API.
+
+        The client is created on first access since the endpoint depends on the registry region.
+        """
+        if self.__service_client is None:
+            endpoint = self._get_registry_endpoint()
+            # Only pass through kwargs that the TypeSpec-generated AzureAiAssetsClient
+            # can handle. MLClient injects kwargs like 'cloud', 'credential_scopes',
+            # 'client_request_id', 'request_id' which break the client's HTTP pipeline
+            # when passed through to its policies.
+            _allowed_kwargs = ("user_agent", "logging_enable")
+            client_kwargs = {k: v for k, v in self._service_client_kwargs.items() if k in _allowed_kwargs}
+            self.__service_client = AzureAiAssetsClient(
+                endpoint=endpoint,
+                subscription_id=self._operation_scope.subscription_id,
+                resource_group_name=self._operation_scope.resource_group_name,
+                credential=self._credential,
+                **client_kwargs,
+            )
+        return self.__service_client
 
     def _get_registry_endpoint(self) -> str:
         """Dynamically determine the registry endpoint based on registry region.
+
+        Uses the registry discovery API (which does not require ARM access to the
+        registry's subscription) to resolve the primary region, then constructs the
+        appropriate dataplane endpoint.
 
         :return: The API endpoint URL for the registry
         :rtype: str
         """
         try:
-            # Import here to avoid circular dependencies
-            from azure.ai.ml.operations import RegistryOperations
-            from azure.ai.ml._restclient.v2022_10_01_preview import (
-                AzureMachineLearningWorkspaces as ServiceClient102022,
+            from azure.ai.ml._azure_environments import (
+                _get_default_cloud_name,
+                _get_registry_discovery_endpoint_from_metadata,
+            )
+            from azure.ai.ml._restclient.registry_discovery import (
+                RegistryDiscoveryClient as ServiceClientRegistryDiscovery,
             )
 
-            # Try to get credential from service client or operation config
-            credential = None
-            if hasattr(self._service_client, "_config") and hasattr(self._service_client._config, "credential"):
-                credential = self._service_client._config.credential
-            elif hasattr(self._operation_config, "credential"):
-                credential = self._operation_config.credential
-
-            if credential and self._operation_scope.registry_name:
-                # Get registry information to determine the region
-                registry_operations = RegistryOperations(
-                    operation_scope=self._operation_scope,
-                    service_client=ServiceClient102022(
-                        credential=credential,
-                        subscription_id=self._operation_scope.subscription_id,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                    ),
-                    all_operations=None,  # type: ignore[arg-type]
-                    credentials=credential,
+            if self._credential and self._operation_scope.registry_name:
+                # Use registry discovery API to get the primary region
+                discovery_base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
+                discovery_client = ServiceClientRegistryDiscovery(
+                    credential=self._credential, base_url=discovery_base_url
+                )
+                response = discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
+                    self._operation_scope.registry_name
                 )
 
-                registry = registry_operations.get(self._operation_scope.registry_name)
-
-                # Extract region from registry location or replication locations
-                region = None
-                if registry.location:
-                    region = registry.location
-                elif registry.replication_locations and len(registry.replication_locations) > 0:
-                    region = registry.replication_locations[0].location
-
-                if region:
-                    # Format the endpoint using the detected region
-                    # return f"https://int.experiments.azureml-test.net"
-                    return f"https://{region}.api.azureml.ms"
+                if response.primary_region:
+                    return f"https://{response.primary_region}.api.azureml.ms"
 
         except Exception as e:
-            module_logger.warning("Could not determine registry region dynamically: %s. Using default.", e)
+            module_logger.debug("Could not determine registry region dynamically: %s. Using default.", e)
 
         # Fallback to default region if unable to determine dynamically
-        return f"https://int.experiments.azureml-test.net"
+        return "https://eastus.api.azureml.ms"
 
     def _convert_dict_to_deployment_template(self, dict_data: Dict[str, Any]) -> DeploymentTemplate:
         """Convert dictionary format to DeploymentTemplate object.
@@ -140,9 +153,6 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
         # Handle field name variations for constructor parameters
         allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceTypes")
-        if isinstance(allowed_instance_types, str):
-            # Convert space-separated string to list
-            allowed_instance_types = allowed_instance_types.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
@@ -264,6 +274,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.List", ActivityType.PUBLICAPI)
+    @experimental
     def list(
         self,
         *,
@@ -291,25 +302,25 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.DeploymentTemplate]
         """
 
-        endpoint = self._get_registry_endpoint()
         return cast(
             Iterable[DeploymentTemplate],
-            self._service_client.deployment_templates.list(
-                endpoint=endpoint,
-                subscription_id=self._operation_scope.subscription_id,
-                resource_group_name=self._operation_scope.resource_group_name,
-                registry_name=self._operation_scope.registry_name,
-                name=name,
-                tags=tags,
-                count=count,
-                stage=stage,
-                list_view_type=list_view_type,
-                **kwargs,
+            (
+                DeploymentTemplate._from_rest_object(item)
+                for item in self._service_client.deployment_templates.list(
+                    registry_name=self._operation_scope.registry_name,
+                    name=name,
+                    tags=tags,
+                    count=count,
+                    stage=stage,
+                    list_view_type=list_view_type,
+                    **kwargs,
+                )
             ),
         )
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
+    @experimental
     def get(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Get a deployment template by name and version.
 
@@ -324,12 +335,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         version = version or "latest"
 
         try:
-            endpoint = self._get_registry_endpoint()
-
             result = self._service_client.deployment_templates.get(
-                endpoint=endpoint,
-                subscription_id=self._operation_scope.subscription_id,
-                resource_group_name=self._operation_scope.resource_group_name,
                 registry_name=self._operation_scope.registry_name,
                 name=name,
                 version=version,
@@ -337,11 +343,12 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             )
             return DeploymentTemplate._from_rest_object(result)
         except Exception as e:
-            module_logger.warning("DeploymentTemplate get operation failed: %s", e)
+            module_logger.debug("DeploymentTemplate get operation failed: %s", e)
             raise ResourceNotFoundError(f"DeploymentTemplate {name}:{version} not found") from e
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @experimental
     def create_or_update(self, deployment_template: DeploymentTemplate, **kwargs: Any) -> DeploymentTemplate:
         """Create or update a deployment template.
 
@@ -351,34 +358,29 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :return: DeploymentTemplate object representing the created or updated resource.
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         """
+        # Ensure we have a DeploymentTemplate object
+        if not isinstance(deployment_template, DeploymentTemplate):
+            raise ValueError("deployment_template must be a DeploymentTemplate object")
+
+        rest_object = deployment_template._to_rest_object()
+        self._service_client.deployment_templates.begin_create(
+            registry_name=self._operation_scope.registry_name,
+            name=deployment_template.name,
+            version=deployment_template.version,
+            body=rest_object,
+            polling=False,
+            **kwargs,
+        )
+        # Fire the LRO but don't wait for polling — the asset is available immediately.
+        # Fetch the created/updated resource to return the server-side state.
         try:
-            # Ensure we have a DeploymentTemplate object
-            if not isinstance(deployment_template, DeploymentTemplate):
-                raise ValueError("deployment_template must be a DeploymentTemplate object")
-
-            if hasattr(self._service_client, "deployment_templates"):
-                endpoint = self._get_registry_endpoint()
-
-                rest_object = deployment_template._to_rest_object()
-                self._service_client.deployment_templates.begin_create(
-                    endpoint=endpoint,
-                    subscription_id=self._operation_scope.subscription_id,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._operation_scope.registry_name,
-                    name=deployment_template.name,
-                    version=deployment_template.version,
-                    body=rest_object,
-                    **kwargs,
-                )
-                return deployment_template
-            else:
-                raise RuntimeError("DeploymentTemplate service not available")
-        except Exception as e:
-            module_logger.error("DeploymentTemplate create_or_update operation failed: %s", e)
-            raise
+            return self.get(deployment_template.name, deployment_template.version)
+        except Exception:
+            return deployment_template
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
+    @experimental
     def delete(self, name: str, version: Optional[str] = None, **kwargs: Any) -> None:
         """Delete a deployment template.
 
@@ -390,28 +392,21 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         version = version or "latest"
 
         try:
-            if hasattr(self._service_client, "deployment_templates"):
-                endpoint = self._get_registry_endpoint()
-
-                self._service_client.deployment_templates.delete_deployment_template(
-                    endpoint=endpoint,
-                    subscription_id=self._operation_scope.subscription_id,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._operation_scope.registry_name,
-                    name=name,
-                    version=version,
-                    **kwargs,
-                )
-            else:
-                raise RuntimeError("DeploymentTemplate service not available")
+            self._service_client.deployment_templates.delete(
+                registry_name=self._operation_scope.registry_name,
+                name=name,
+                version=version,
+                **kwargs,
+            )
         except ResourceNotFoundError:
             raise
         except Exception as e:
-            module_logger.error("DeploymentTemplate delete operation failed: %s", e)
+            module_logger.debug("DeploymentTemplate delete operation failed: %s", e)
             raise
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Archive", ActivityType.PUBLICAPI)
+    @experimental
     def archive(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Archive a deployment template by setting its stage to 'Archived'.
 
@@ -423,21 +418,18 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         :raises: ~azure.core.exceptions.ResourceNotFoundError if deployment template not found.
         """
-        try:
-            # Get the existing template
-            template = self.get(name=name, version=version, **kwargs)
+        # Get the existing template
+        template = self.get(name=name, version=version, **kwargs)
 
-            # Set stage to Archived
-            template.stage = "Archived"
+        # Set stage to Archived
+        template.stage = "Archived"
 
-            # Update the template using create_or_update
-            return self.create_or_update(template, **kwargs)
-        except Exception as e:
-            module_logger.error("DeploymentTemplate archive operation failed: %s", e)
-            raise
+        # Update the template using create_or_update
+        return self.create_or_update(template, **kwargs)
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Restore", ActivityType.PUBLICAPI)
+    @experimental
     def restore(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Restore a deployment template by setting its stage to 'Development'.
 
@@ -449,15 +441,11 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         :raises: ~azure.core.exceptions.ResourceNotFoundError if deployment template not found.
         """
-        try:
-            # Get the existing template
-            template = self.get(name=name, version=version, **kwargs)
+        # Get the existing template
+        template = self.get(name=name, version=version, **kwargs)
 
-            # Set stage to Development
-            template.stage = "Development"
+        # Set stage to Development
+        template.stage = "Development"
 
-            # Update the template using create_or_update
-            return self.create_or_update(template, **kwargs)
-        except Exception as e:
-            module_logger.error("DeploymentTemplate restore operation failed: %s", e)
-            raise
+        # Update the template using create_or_update
+        return self.create_or_update(template, **kwargs)

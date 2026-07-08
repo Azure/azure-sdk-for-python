@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-public-methods, unnecessary-lambda-assignment
 
 import os
 import unittest
@@ -11,6 +12,19 @@ from json import dumps, loads
 from unittest import mock
 
 import pytest
+
+from cryptography.hazmat import backends
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.padding import PKCS7
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
@@ -29,17 +43,6 @@ from azure.storage.queue._encryption import (
     _WrappedContentKey,
 )
 from azure.storage.queue._shared import decode_base64_to_bytes
-from cryptography.hazmat import backends
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.padding import PKCS7
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
-from settings.testcase import QueuePreparer
 
 
 # ------------------------------------------------------------------------------
@@ -64,7 +67,7 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
     def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue = self._get_queue_reference(qsc, prefix, **kwargs)
         try:
-            created = queue.create_queue()
+            queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -189,7 +192,7 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         list_result1.content = "Updated"
 
         # Act
-        message = queue.update_message(list_result1)
+        queue.update_message(list_result1)
         list_result2 = next(messages)
 
         # Assert
@@ -204,7 +207,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -297,7 +302,7 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             queue.send_message("message")
 
-        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_kid")
+        assert str(e.value.args[0]) == _ERROR_OBJECT_INVALID.format("key encryption key", "get_kid")
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None
@@ -438,7 +443,8 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
 
         message = message["EncryptedMessageContents"]
         content_encryption_key = kek.unwrap_key(
-            encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
+            encryption_data.wrapped_content_key.encrypted_key,
+            encryption_data.wrapped_content_key.algorithm,
         )
 
         # Create decryption cipher
@@ -664,7 +670,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
             key_encryption_key=KeyWrapper("key1"),
         )
         queue = self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -721,7 +729,7 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         queue.key_encryption_key = kek
 
         with pytest.raises(HttpResponseError) as e:
-            new_message = queue.receive_message()
+            queue.receive_message()
 
         assert "Decryption failed." in str(e.value.args[0])
 

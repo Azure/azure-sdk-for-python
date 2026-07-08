@@ -24,7 +24,11 @@ from azure.ai.ml import (
     load_component,
     load_job,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ComponentContainer as ComponentContainerData,
+    ComponentContainerProperties as ComponentContainerDetails,
+    SystemData,
+)
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_RESOURCE_PROVIDER,

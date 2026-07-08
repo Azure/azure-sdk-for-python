@@ -11,7 +11,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_PROJECTION_MIN_VALUE,
     _SHORT_PING_INTERVAL_SECONDS,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     AggregationType,
     DerivedMetricInfo,
     DocumentIngress,

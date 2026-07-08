@@ -3,16 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import re
-import pytest
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestFiles(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:

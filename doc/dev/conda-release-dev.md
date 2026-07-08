@@ -62,6 +62,7 @@ See [`conda-builds.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/
 **Release stage (`archetype-conda-release.yml`):**
 - Requires deployment approval (environment: `package-publish`).
 - Uploads all `.conda` files from the `conda/noarch` artifact to Anaconda using `anaconda-client`, under the `Microsoft` user.
+- Requires Anaconda API token with the “Allow all operations on Conda repositories” and "Allow write access to the API" scopes (see [Microsoft Open-Source Python docs](https://docs.opensource.microsoft.com/releasing/publish-binaries/python/))
 
 ## Versioning
 

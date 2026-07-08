@@ -21,11 +21,11 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 coverage_dir = os.path.join(root_dir, "_coverage/")
 coveragerc = os.path.join(root_dir, ".coveragerc")
 
-def collect_tox_coverage_files():
+def collect_coverage_files():
     coverage_version_cmd = [sys.executable, "-m", "coverage", "--version"]
     run(coverage_version_cmd, cwd=root_dir)
 
-    logging.info("Running collect tox coverage files...")
+    logging.info("Running collect coverage files...")
 
     coverage_files = []
     for root, _, files in os.walk(coverage_dir):
@@ -79,7 +79,7 @@ def fix_coverage_xml(coverage_file):
 if __name__ == "__main__":
     coverage_xml = os.path.join(root_dir, "coverage.xml")
 
-    collect_tox_coverage_files()
+    collect_coverage_files()
     generate_coverage_xml()
     create_coverage_report()
 

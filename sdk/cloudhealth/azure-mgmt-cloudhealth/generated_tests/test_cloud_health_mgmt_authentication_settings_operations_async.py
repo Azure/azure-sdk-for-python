@@ -33,38 +33,42 @@ class TestCloudHealthMgmtAuthenticationSettingsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_authentication_settings_create_or_update(self, resource_group):
-        response = await self.client.authentication_settings.create_or_update(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            authentication_setting_name="str",
-            resource={
-                "id": "str",
-                "name": "str",
-                "properties": "authentication_setting_properties",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
+    async def test_authentication_settings_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.authentication_settings.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                authentication_setting_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": "authentication_setting_properties",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
                 },
-                "type": "str",
-            },
-        )
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_authentication_settings_delete(self, resource_group):
-        response = await self.client.authentication_settings.delete(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            authentication_setting_name="str",
-        )
+    async def test_authentication_settings_begin_delete(self, resource_group):
+        response = await (
+            await self.client.authentication_settings.begin_delete(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                authentication_setting_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

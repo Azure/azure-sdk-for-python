@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +10,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -24,7 +31,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -328,6 +336,7 @@ def build_get_dataset_by_name_request(
         **kwargs
     )
 
+
 # fmt: on
 class DatasetV2Operations(object):
     """DatasetV2Operations operations.
@@ -379,16 +388,14 @@ class DatasetV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.DatasetV2
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetV2"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasetV2"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DatasetV2')
+            _json = self._serialize.body(body, "DatasetV2")
         else:
             _json = None
 
@@ -399,7 +406,7 @@ class DatasetV2Operations(object):
             content_type=content_type,
             json=_json,
             if_exists_update=if_exists_update,
-            template_url=self.create.metadata['url'],
+            template_url=self.create.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -412,15 +419,14 @@ class DatasetV2Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DatasetV2', pipeline_response)
+        deserialized = self._deserialize("DatasetV2", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets'}  # type: ignore
-
+    create.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets"}  # type: ignore
 
     @distributed_trace
     def delete_all_datasets(
@@ -444,18 +450,15 @@ class DatasetV2Operations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_all_datasets_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            template_url=self.delete_all_datasets.metadata['url'],
+            template_url=self.delete_all_datasets.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -471,8 +474,7 @@ class DatasetV2Operations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_all_datasets.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets'}  # type: ignore
-
+    delete_all_datasets.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -510,14 +512,13 @@ class DatasetV2Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedDatasetV2List]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedDatasetV2List"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedDatasetV2List"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -526,13 +527,13 @@ class DatasetV2Operations(object):
                     search_text=search_text,
                     continuation_token_parameter=continuation_token_parameter,
                     page_size=page_size,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -568,11 +569,9 @@ class DatasetV2Operations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets'}  # type: ignore
+    list.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets"}  # type: ignore
 
     @distributed_trace
     def delete_dataset_by_name(
@@ -602,20 +601,17 @@ class DatasetV2Operations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_dataset_by_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
             version_id=version_id,
-            template_url=self.delete_dataset_by_name.metadata['url'],
+            template_url=self.delete_dataset_by_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -631,8 +627,7 @@ class DatasetV2Operations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_dataset_by_name.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}/versions/{versionId}'}  # type: ignore
-
+    delete_dataset_by_name.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}/versions/{versionId}"}  # type: ignore
 
     @distributed_trace
     def update_dataset_by_name_and_version(
@@ -665,16 +660,14 @@ class DatasetV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.DatasetV2
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetV2"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasetV2"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DatasetV2')
+            _json = self._serialize.body(body, "DatasetV2")
         else:
             _json = None
 
@@ -686,7 +679,7 @@ class DatasetV2Operations(object):
             version_id=version_id,
             content_type=content_type,
             json=_json,
-            template_url=self.update_dataset_by_name_and_version.metadata['url'],
+            template_url=self.update_dataset_by_name_and_version.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -699,15 +692,14 @@ class DatasetV2Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DatasetV2', pipeline_response)
+        deserialized = self._deserialize("DatasetV2", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_dataset_by_name_and_version.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}/versions/{versionId}'}  # type: ignore
-
+    update_dataset_by_name_and_version.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}/versions/{versionId}"}  # type: ignore
 
     @distributed_trace
     def get_dataset_by_id(
@@ -734,19 +726,16 @@ class DatasetV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.DatasetV2
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetV2"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasetV2"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_dataset_by_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             dataset_id=dataset_id,
-            template_url=self.get_dataset_by_id.metadata['url'],
+            template_url=self.get_dataset_by_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -759,15 +748,14 @@ class DatasetV2Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DatasetV2', pipeline_response)
+        deserialized = self._deserialize("DatasetV2", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_dataset_by_id.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}'}  # type: ignore
-
+    get_dataset_by_id.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}"}  # type: ignore
 
     @distributed_trace
     def update_dataset(
@@ -797,16 +785,14 @@ class DatasetV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.DatasetV2
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetV2"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasetV2"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DatasetV2')
+            _json = self._serialize.body(body, "DatasetV2")
         else:
             _json = None
 
@@ -817,7 +803,7 @@ class DatasetV2Operations(object):
             dataset_id=dataset_id,
             content_type=content_type,
             json=_json,
-            template_url=self.update_dataset.metadata['url'],
+            template_url=self.update_dataset.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -830,15 +816,14 @@ class DatasetV2Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DatasetV2', pipeline_response)
+        deserialized = self._deserialize("DatasetV2", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_dataset.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}'}  # type: ignore
-
+    update_dataset.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}"}  # type: ignore
 
     @distributed_trace
     def get_dataset_by_name(
@@ -868,20 +853,17 @@ class DatasetV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.DatasetV2
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetV2"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasetV2"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_dataset_by_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             dataset_name=dataset_name,
             version_id=version_id,
-            template_url=self.get_dataset_by_name.metadata['url'],
+            template_url=self.get_dataset_by_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -894,12 +876,11 @@ class DatasetV2Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DatasetV2', pipeline_response)
+        deserialized = self._deserialize("DatasetV2", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_dataset_by_name.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/query/name={datasetName}'}  # type: ignore
-
+    get_dataset_by_name.metadata = {"url": "/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/query/name={datasetName}"}  # type: ignore

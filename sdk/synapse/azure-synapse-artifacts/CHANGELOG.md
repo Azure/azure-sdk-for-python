@@ -1,5 +1,26 @@
 # Release History
 
+## 0.22.0 (2026-03-20)
+
+### Features Added
+
+- Model AzureDatabricksDeltaLakeLinkedService has a new parameter workspace_resource_id
+- Model HDInsightOnDemandLinkedService has a new parameter cluster_resource_group_auth_type
+- Model JiraObjectDataset has a new parameter table
+- Model JiraObjectDataset has a new parameter schema_type_properties_schema
+- Model LookupActivity has a new parameter treat_decimal_as_string
+- Model NetezzaLinkedService has a new parameter server
+- Model NetezzaLinkedService has a new parameter port
+- Model NetezzaLinkedService has a new parameter uid
+- Model NetezzaLinkedService has a new parameter database
+- Model NetezzaLinkedService has a new parameter security_level
+- Model SalesforceV2Source has a new parameter partition_option
+- Model ScriptActivity has a new parameter treat_decimal_as_string
+- Model SnowflakeV2LinkedService has a new parameter treat_decimal_as_string
+- Model SnowflakeV2LinkedService has a new parameter use_utc_timestamps
+- Added new enum type HDInsightOndemandClusterResourceGroupAuthenticationType
+- Added new enum type NetezzaSecurityLevelType
+
 ## 0.21.0 (2025-09-05)
 
 ### Features Added

@@ -7,15 +7,13 @@
 
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-import pytest
 
 # from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
 
 # TODO: Emitter did not produce the output class OpenAI.ConversationResource. Validating service response as Dict for now.
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
+
+
 class TestConversationCrud(TestBase):
 
     # To run only this test:
@@ -89,7 +87,7 @@ class TestConversationCrud(TestBase):
             metadata = {"key1": "value1", "key2": "value2"}
             conversation = client.conversations.update(conversation_id=conversation1.id, metadata=metadata)
             TestBase._validate_conversation(conversation, expected_id=conversation1.id, expected_metadata=metadata)
-            print(f"Conversation updated")
+            print("Conversation updated")
 
             conversation = client.conversations.retrieve(conversation_id=conversation1.id)
             TestBase._validate_conversation(conversation)

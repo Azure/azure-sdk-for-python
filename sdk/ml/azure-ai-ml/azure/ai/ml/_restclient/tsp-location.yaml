@@ -1,0 +1,8 @@
+batch:
+  - ./azure_ai_assets_v2024_04_01
+  - ./arm_ml_service
+  - ./registry_discovery
+  - ./workspace_dataplane
+  - ./dataset_dataplane
+  - ./model_dataplane
+  - ./runhistory

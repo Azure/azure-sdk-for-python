@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -22,15 +23,10 @@ class ComputeRuntimeDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'spark_runtime_version': {'key': 'sparkRuntimeVersion', 'type': 'str'},
+        "spark_runtime_version": {"key": "sparkRuntimeVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        spark_runtime_version: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, spark_runtime_version: Optional[str] = None, **kwargs):
         """
         :keyword spark_runtime_version:
         :paramtype spark_runtime_version: str
@@ -47,15 +43,10 @@ class CosmosDbSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'collections_throughput': {'key': 'collectionsThroughput', 'type': 'int'},
+        "collections_throughput": {"key": "collectionsThroughput", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        collections_throughput: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, collections_throughput: Optional[int] = None, **kwargs):
         """
         :keyword collections_throughput:
         :paramtype collections_throughput: int
@@ -90,17 +81,17 @@ class EncryptionProperty(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_vault_properties': {'required': True},
-        'status': {'required': True},
+        "key_vault_properties": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'cosmos_db_resource_id': {'key': 'cosmosDbResourceId', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityForCmk'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'search_account_resource_id': {'key': 'searchAccountResourceId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'storage_account_resource_id': {'key': 'storageAccountResourceId', 'type': 'str'},
+        "cosmos_db_resource_id": {"key": "cosmosDbResourceId", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityForCmk"},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "search_account_resource_id": {"key": "searchAccountResourceId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "storage_account_resource_id": {"key": "storageAccountResourceId", "type": "str"},
     }
 
     def __init__(
@@ -155,9 +146,9 @@ class FeatureStoreSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'compute_runtime': {'key': 'computeRuntime', 'type': 'ComputeRuntimeDto'},
-        'offline_store_connection_name': {'key': 'offlineStoreConnectionName', 'type': 'str'},
-        'online_store_connection_name': {'key': 'onlineStoreConnectionName', 'type': 'str'},
+        "compute_runtime": {"key": "computeRuntime", "type": "ComputeRuntimeDto"},
+        "offline_store_connection_name": {"key": "offlineStoreConnectionName", "type": "str"},
+        "online_store_connection_name": {"key": "onlineStoreConnectionName", "type": "str"},
     }
 
     def __init__(
@@ -191,15 +182,10 @@ class IdentityForCmk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        user_assigned_identity: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs):
         """
         :keyword user_assigned_identity: UserAssignedIdentity to be used to fetch the encryption key
          from keyVault.
@@ -224,23 +210,18 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_identifier': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-        'key_vault_arm_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+        "key_identifier": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "key_vault_arm_id": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
-        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
-        'key_vault_arm_id': {'key': 'keyVaultArmId', 'type': 'str'},
+        "identity_client_id": {"key": "identityClientId", "type": "str"},
+        "key_identifier": {"key": "keyIdentifier", "type": "str"},
+        "key_vault_arm_id": {"key": "keyVaultArmId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        key_identifier: str,
-        key_vault_arm_id: str,
-        identity_client_id: Optional[str] = None,
-        **kwargs
+        self, *, key_identifier: str, key_vault_arm_id: str, identity_client_id: Optional[str] = None, **kwargs
     ):
         """
         :keyword identity_client_id: Currently, we support only SystemAssigned MSI.
@@ -283,16 +264,16 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
@@ -331,17 +312,11 @@ class NotebookPreparationError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        error_message: Optional[str] = None,
-        status_code: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error_message: Optional[str] = None, status_code: Optional[int] = None, **kwargs):
         """
         :keyword error_message:
         :paramtype error_message: str
@@ -368,10 +343,10 @@ class NotebookResourceInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'is_private_link_enabled': {'key': 'isPrivateLinkEnabled', 'type': 'bool'},
-        'notebook_preparation_error': {'key': 'notebookPreparationError', 'type': 'NotebookPreparationError'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "is_private_link_enabled": {"key": "isPrivateLinkEnabled", "type": "bool"},
+        "notebook_preparation_error": {"key": "notebookPreparationError", "type": "NotebookPreparationError"},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
     def __init__(
@@ -420,25 +395,21 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -492,24 +463,27 @@ class PrivateEndpointConnection(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'WorkspacePrivateEndpointResource'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "WorkspacePrivateEndpointResource"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -587,9 +561,9 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -633,15 +607,10 @@ class ServiceManagedResourcesSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cosmos_db': {'key': 'cosmosDb', 'type': 'CosmosDbSettings'},
+        "cosmos_db": {"key": "cosmosDb", "type": "CosmosDbSettings"},
     }
 
-    def __init__(
-        self,
-        *,
-        cosmos_db: Optional["CosmosDbSettings"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, cosmos_db: Optional["CosmosDbSettings"] = None, **kwargs):
         """
         :keyword cosmos_db:
         :paramtype cosmos_db: ~azure.mgmt.machinelearningservices.models.CosmosDbSettings
@@ -676,11 +645,11 @@ class SharedPrivateLinkResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "request_message": {"key": "properties.requestMessage", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
     def __init__(
@@ -746,15 +715,15 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -812,12 +781,12 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -869,21 +838,17 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -1014,68 +979,77 @@ class Workspace(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'ml_flow_tracking_uri': {'readonly': True},
-        'notebook_info': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'private_link_count': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'service_provisioned_resource_group': {'readonly': True},
-        'storage_hns_enabled': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'workspace_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "ml_flow_tracking_uri": {"readonly": True},
+        "notebook_info": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "private_link_count": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "service_provisioned_resource_group": {"readonly": True},
+        "storage_hns_enabled": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "workspace_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'allow_public_access_when_behind_vnet': {'key': 'properties.allowPublicAccessWhenBehindVnet', 'type': 'bool'},
-        'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
-        'associated_workspaces': {'key': 'properties.associatedWorkspaces', 'type': '[str]'},
-        'container_registries': {'key': 'properties.containerRegistries', 'type': '[str]'},
-        'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
-        'enable_data_isolation': {'key': 'properties.enableDataIsolation', 'type': 'bool'},
-        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
-        'existing_workspaces': {'key': 'properties.existingWorkspaces', 'type': '[str]'},
-        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
-        'hub_resource_id': {'key': 'properties.hubResourceId', 'type': 'str'},
-        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
-        'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
-        'key_vaults': {'key': 'properties.keyVaults', 'type': '[str]'},
-        'managed_network': {'key': 'properties.managedNetwork', 'type': 'object'},
-        'ml_flow_tracking_uri': {'key': 'properties.mlFlowTrackingUri', 'type': 'str'},
-        'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
-        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
-        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
-        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
-        'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[str]'},
-        'storage_hns_enabled': {'key': 'properties.storageHnsEnabled', 'type': 'bool'},
-        'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
-        'workspace_hub_config': {'key': 'properties.workspaceHubConfig', 'type': 'WorkspaceHubConfig'},
-        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "allow_public_access_when_behind_vnet": {"key": "properties.allowPublicAccessWhenBehindVnet", "type": "bool"},
+        "application_insights": {"key": "properties.applicationInsights", "type": "str"},
+        "associated_workspaces": {"key": "properties.associatedWorkspaces", "type": "[str]"},
+        "container_registries": {"key": "properties.containerRegistries", "type": "[str]"},
+        "container_registry": {"key": "properties.containerRegistry", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "discovery_url": {"key": "properties.discoveryUrl", "type": "str"},
+        "enable_data_isolation": {"key": "properties.enableDataIsolation", "type": "bool"},
+        "encryption": {"key": "properties.encryption", "type": "EncryptionProperty"},
+        "existing_workspaces": {"key": "properties.existingWorkspaces", "type": "[str]"},
+        "feature_store_settings": {"key": "properties.featureStoreSettings", "type": "FeatureStoreSettings"},
+        "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "hbi_workspace": {"key": "properties.hbiWorkspace", "type": "bool"},
+        "hub_resource_id": {"key": "properties.hubResourceId", "type": "str"},
+        "image_build_compute": {"key": "properties.imageBuildCompute", "type": "str"},
+        "key_vault": {"key": "properties.keyVault", "type": "str"},
+        "key_vaults": {"key": "properties.keyVaults", "type": "[str]"},
+        "managed_network": {"key": "properties.managedNetwork", "type": "object"},
+        "ml_flow_tracking_uri": {"key": "properties.mlFlowTrackingUri", "type": "str"},
+        "notebook_info": {"key": "properties.notebookInfo", "type": "NotebookResourceInfo"},
+        "primary_user_assigned_identity": {"key": "properties.primaryUserAssignedIdentity", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "private_link_count": {"key": "properties.privateLinkCount", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "service_managed_resources_settings": {
+            "key": "properties.serviceManagedResourcesSettings",
+            "type": "ServiceManagedResourcesSettings",
+        },
+        "service_provisioned_resource_group": {"key": "properties.serviceProvisionedResourceGroup", "type": "str"},
+        "shared_private_link_resources": {
+            "key": "properties.sharedPrivateLinkResources",
+            "type": "[SharedPrivateLinkResource]",
+        },
+        "soft_delete_retention_in_days": {"key": "properties.softDeleteRetentionInDays", "type": "int"},
+        "storage_account": {"key": "properties.storageAccount", "type": "str"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[str]"},
+        "storage_hns_enabled": {"key": "properties.storageHnsEnabled", "type": "bool"},
+        "system_datastores_auth_mode": {"key": "properties.systemDatastoresAuthMode", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "v1_legacy_mode": {"key": "properties.v1LegacyMode", "type": "bool"},
+        "workspace_hub_config": {"key": "properties.workspaceHubConfig", "type": "WorkspaceHubConfig"},
+        "workspace_id": {"key": "properties.workspaceId", "type": "str"},
     }
 
     def __init__(
@@ -1256,8 +1230,8 @@ class WorkspaceHubConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_workspace_storage_accounts': {'key': 'additionalWorkspaceStorageAccounts', 'type': '[str]'},
-        'default_workspace_resource_group': {'key': 'defaultWorkspaceResourceGroup', 'type': 'str'},
+        "additional_workspace_storage_accounts": {"key": "additionalWorkspaceStorageAccounts", "type": "[str]"},
+        "default_workspace_resource_group": {"key": "defaultWorkspaceResourceGroup", "type": "str"},
     }
 
     def __init__(
@@ -1291,21 +1265,17 @@ class WorkspacePrivateEndpointResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'subnet_arm_id': {'readonly': True},
+        "id": {"readonly": True},
+        "subnet_arm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subnet_arm_id': {'key': 'subnetArmId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "subnet_arm_id": {"key": "subnetArmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(WorkspacePrivateEndpointResource, self).__init__(**kwargs)
         self.id = None
         self.subnet_arm_id = None

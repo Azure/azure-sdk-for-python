@@ -22,7 +22,12 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
     def test_search_services(self, resource_group, location):
         account_name = "ptvstestsearch"
 
-        availability = self.client.services.check_name_availability(account_name)
+        availability = self.client.services.check_name_availability(
+            {
+                "name": account_name,
+                "type": "searchServices",
+            }
+        )
         assert availability.is_name_available
 
         service = self.client.services.begin_create_or_update(
@@ -30,14 +35,21 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
             account_name,
             {
                 "location": location,
-                "replica_count": 1,
-                "partition_count": 1,
-                "hosting_mode": "Default",
+                "properties": {
+                    "replica_count": 1,
+                    "partition_count": 1,
+                    "hosting_mode": "Default",
+                },
                 "sku": {"name": "standard"},
             },
         ).result()
 
-        availability = self.client.services.check_name_availability(account_name)
+        availability = self.client.services.check_name_availability(
+            {
+                "name": account_name,
+                "type": "searchServices",
+            }
+        )
         assert not availability.is_name_available
         assert availability.reason == "AlreadyExists"
 
@@ -61,9 +73,11 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
             account_name,
             {
                 "location": location,
-                "replica_count": 1,
-                "partition_count": 1,
-                "hosting_mode": "Default",
+                "properties": {
+                    "replica_count": 1,
+                    "partition_count": 1,
+                    "hosting_mode": "Default",
+                },
                 "sku": {"name": "standard"},
             },
         ).result()
@@ -90,9 +104,11 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
             account_name,
             {
                 "location": location,
-                "replica_count": 1,
-                "partition_count": 1,
-                "hosting_mode": "Default",
+                "properties": {
+                    "replica_count": 1,
+                    "partition_count": 1,
+                    "hosting_mode": "Default",
+                },
                 "sku": {"name": "free"},
             },
         )

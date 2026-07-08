@@ -14,32 +14,39 @@ from devtools_testutils import (
     add_uri_regex_sanitizer,
     is_live,
     remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
 
-os.environ['PYTHONHASHSEED'] = '0'
+os.environ["PYTHONHASHSEED"] = "0"
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True, ignored_headers="Accept")
     azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://Sanitized.vault.azure.net")
     azure_keyvault_url = azure_keyvault_url.rstrip("/")
     keyvault_tenant_id = os.getenv("KEYVAULT_TENANT_ID", "keyvault_tenant_id")
     keyvault_subscription_id = os.getenv("KEYVAULT_SUBSCRIPTION_ID", "keyvault_subscription_id")
-    azure_managedhsm_url = os.environ.get("AZURE_MANAGEDHSM_URL","https://Sanitized.managedhsm.azure.net")
+    azure_managedhsm_url = os.environ.get("AZURE_MANAGEDHSM_URL", "https://Sanitized.managedhsm.azure.net")
     azure_managedhsm_url = azure_managedhsm_url.rstrip("/")
-    azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL","https://Sanitized.azurewebsites.net")
-    azure_attestation_uri = azure_attestation_uri.rstrip('/')
+    azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL", "https://Sanitized.azurewebsites.net")
+    azure_attestation_uri = azure_attestation_uri.rstrip("/")
     storage_url = os.environ.get("BLOB_STORAGE_URL", "https://Sanitized.blob.core.windows.net")
     client_id = os.environ.get("KEYVAULT_CLIENT_ID", "service-principal-id")
-    sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN","fake-sas")
+    sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN", "fake-sas")
+    ekm_host = os.environ.get("EKM_PROXY_HOST", "fake-ekm-host")
+    ekm_certificate = os.environ.get("EKM_SERVER_CA_CERTIFICATE", "ZmFrZS1jZXJ0LWRhdGE=")
 
     add_general_string_sanitizer(target=azure_keyvault_url, value="https://Sanitized.vault.azure.net")
     add_general_string_sanitizer(target=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_string_sanitizer(target=azure_managedhsm_url,value="https://Sanitized.managedhsm.azure.net")
-    add_general_string_sanitizer(target=azure_attestation_uri,value="https://Sanitized.azurewebsites.net")
+    add_general_string_sanitizer(target=azure_managedhsm_url, value="https://Sanitized.managedhsm.azure.net")
+    add_general_string_sanitizer(target=azure_attestation_uri, value="https://Sanitized.azurewebsites.net")
     add_general_string_sanitizer(target=storage_url, value="https://Sanitized.blob.core.windows.net")
     add_general_string_sanitizer(target=sas_token, value="fake-sas")
-    add_general_string_sanitizer(target=client_id, value = "service-principal-id")
+    add_general_string_sanitizer(target=ekm_host, value="fake-ekm-host")
+    add_general_string_sanitizer(target=ekm_certificate, value="ZmFrZS1jZXJ0LWRhdGE=")
+    add_general_string_sanitizer(target=client_id, value="service-principal-id")
     # Sanitize API versions of `azure-keyvault-keys` requests
     add_uri_regex_sanitizer(
         regex="keys/([^/]*)/create\\?api-version=(\\S*)", value="keys/$1/create?api-version=sanitized"

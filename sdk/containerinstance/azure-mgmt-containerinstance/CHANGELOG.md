@@ -1,5 +1,95 @@
 # Release History
 
+## 10.2.0b2 (2026-06-01)
+
+### Features Added
+
+  - Client `ContainerInstanceManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ContainerInstanceManagementClient` added method `send_request`
+  - Client `ContainerInstanceManagementClient` added operation group `ngroups`
+  - Client `ContainerInstanceManagementClient` added operation group `cg_profile`
+  - Client `ContainerInstanceManagementClient` added operation group `sandbox_groups`
+  - Client `ContainerInstanceManagementClient` added operation group `cg_profiles`
+  - Model `AzureFileVolume` added property `storage_account_key_reference`
+  - Model `ContainerGroup` added property `system_data`
+  - Model `ContainerGroupProfile` added property `system_data`
+  - Model `ContainerGroupProfileProperties` added property `shutdown_grace_period`
+  - Model `ContainerGroupProfileProperties` added property `time_to_live`
+  - Model `ContainerGroupProfileProperties` added property `security_context`
+  - Model `ContainerGroupProfileProperties` added property `registered_revisions`
+  - Model `ContainerGroupProfileProperties` added property `use_krypton`
+  - Model `ContainerGroupProperties` added property `secret_references`
+  - Model `ContainerGroupProperties` added property `identity_acls`
+  - Enum `ContainerGroupSku` added member `NOT_SPECIFIED`
+  - Model `EnvironmentVariable` added property `secure_value_reference`
+  - Model `ImageRegistryCredential` added property `password_reference`
+  - Model `Volume` added property `secret_reference`
+  - Added model `ApiEntityReference`
+  - Added model `ApplicationGateway`
+  - Added model `ApplicationGatewayBackendAddressPool`
+  - Added model `ArmResource`
+  - Added enum `AzureFileShareAccessTier`
+  - Added enum `AzureFileShareAccessType`
+  - Added model `CloudError`
+  - Added model `ContainerGroupProfileStub`
+  - Added enum `CreatedByType`
+  - Added model `ElasticProfile`
+  - Added model `ElasticProfileContainerGroupNamingPolicy`
+  - Added model `ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `FileShare`
+  - Added model `FileShareProperties`
+  - Added model `IdentityAccessControl`
+  - Added enum `IdentityAccessLevel`
+  - Added model `IdentityAcls`
+  - Added model `LoadBalancer`
+  - Added model `LoadBalancerBackendAddressPool`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `NGroup`
+  - Added model `NGroupCGPropertyContainer`
+  - Added model `NGroupCGPropertyContainerProperties`
+  - Added model `NGroupCGPropertyVolume`
+  - Added model `NGroupContainerGroupProperties`
+  - Added model `NGroupIdentity`
+  - Added model `NGroupPatch`
+  - Added model `NGroupProperties`
+  - Added enum `NGroupProvisioningState`
+  - Added enum `NGroupUpdateMode`
+  - Added model `NetworkProfile`
+  - Added model `PlacementProfile`
+  - Added model `ProxyResource`
+  - Added model `SandboxGroup`
+  - Added model `SandboxGroupAccessToken`
+  - Added model `SandboxGroupNetworkProfile`
+  - Added model `SandboxGroupProperties`
+  - Added enum `SandboxGroupProvisioningState`
+  - Added model `SandboxGroupTagsUpdate`
+  - Added model `SecretReference`
+  - Added model `StorageProfile`
+  - Added model `SubnetReference`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+  - Added model `UpdateProfile`
+  - Added model `UpdateProfileRollingUpdateProfile`
+  - Added model `UserAssignedIdentity`
+  - Added operation group `NGroupsOperations`
+  - Added operation group `SandboxGroupsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Client `ContainerInstanceManagementClient` renamed operation group `container_group_profiles` to `cg_profiles`
+  - Client `ContainerInstanceManagementClient` renamed operation group `container_group_profile` to `cg_profile`
+  - Model `ContainerGroup` moved instance variable `provisioning_state`, `containers`, `image_registry_credentials`, `restart_policy`, `ip_address`, `os_type`, `volumes`, `instance_view`, `diagnostics`, `subnet_ids`, `dns_config`, `sku`, `encryption_properties`, `init_containers`, `extensions`, `confidential_compute_properties`, `priority`, `container_group_profile`, `standby_pool_profile` and `is_created_from_standby_pool` under property `properties` whose type is `ContainerGroupProperties`
+  - Model `ContainerGroupProfile` moved instance variable `containers`, `image_registry_credentials`, `restart_policy`, `ip_address`, `os_type`, `volumes`, `diagnostics`, `sku`, `encryption_properties`, `init_containers`, `extensions`, `confidential_compute_properties`, `priority` and `revision` under property `properties` whose type is `ContainerGroupProfileProperties`
+  - Model `ContainerGroupProperties` deleted or renamed its instance variable `identity`
+  - Model `InitContainerDefinition` moved instance variable `image`, `command`, `environment_variables`, `instance_view`, `volume_mounts` and `security_context` under property `properties` whose type is `InitContainerPropertiesDefinition`
+  - Method `ContainersOperations.list_logs` changed its parameter `tail`/`timestamps` from `positional_or_keyword` to `keyword_only`
+
 ## 10.2.0b1 (2024-10-21)
 
 ### Features Added

@@ -21,17 +21,17 @@ class AzureCommunicationCallAutomationServiceConfiguration:  # pylint: disable=t
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The endpoint of the Azure Communication resource. Required.
+    :param endpoint: The endpoint of the Azure Communication Service resource. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2025-06-15". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2026-03-12". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-06-15")
+        api_version: str = kwargs.pop("api_version", "2026-03-12")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

@@ -52,8 +52,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources.
-    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces
+    :type service_client_05_2022: ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credentials: Credential to use for authentication.

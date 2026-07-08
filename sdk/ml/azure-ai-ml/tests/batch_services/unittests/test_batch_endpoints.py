@@ -8,8 +8,8 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_batch_endpoint
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpointProperties as RestBatchEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
@@ -53,13 +53,13 @@ def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 

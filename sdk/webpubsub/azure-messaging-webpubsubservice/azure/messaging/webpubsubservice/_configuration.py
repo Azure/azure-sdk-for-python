@@ -27,10 +27,11 @@ class WebPubSubServiceClientConfiguration:  # pylint: disable=too-many-instance-
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param hub: Target hub name, which should start with alphabetic characters and only contain
-          alpha-numeric characters or underscore. Required.
+     alpha-numeric characters or underscore. Required.
     :type hub: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-12-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2024-12-01".
+     Default value is "2024-12-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 

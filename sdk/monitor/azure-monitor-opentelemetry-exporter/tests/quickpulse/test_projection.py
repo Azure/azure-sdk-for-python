@@ -6,7 +6,7 @@ from unittest import mock
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_PROJECTION_MAX_VALUE,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     AggregationType,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._projection import (

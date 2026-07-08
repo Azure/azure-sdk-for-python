@@ -14,12 +14,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
@@ -39,14 +39,13 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    # [START tool_declaration]
     tool = MicrosoftFabricPreviewTool(
         fabric_dataagent_preview=FabricDataAgentToolParameters(
             project_connections=[
@@ -54,12 +53,11 @@ with (
             ]
         )
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant.",
             tools=[tool],
         ),
@@ -81,7 +79,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             if event.item.type == "message":
                 item = event.item
@@ -95,7 +93,7 @@ with (
                                 f"End index: {annotation.end_index}"
                             )
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
     print("\nCleaning up...")

@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import asyncio
 import pytest
 from websockets import connect as ws_connect
 from testcase import WebpubsubPowerShellPreparer
@@ -17,7 +18,7 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_list_connections(self, **kwargs):
-        webpubsub_connection_string = kwargs.get("webpubsub_connection_string")
+        webpubsub_endpoint = kwargs.get("webpubsub_endpoint")
         # Test cases with different pagination scenarios
         test_cases = [
             {"total_connection_count": 6, "max_count_to_list": 6, "expected_total_count": 6, "expected_page_count": 1},
@@ -32,7 +33,7 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
         ]
 
         for test_case in test_cases:
-            client = self.create_client(connection_string=webpubsub_connection_string, hub="test_list_connections")
+            client = self.create_client(endpoint=webpubsub_endpoint, hub="test_list_connections")
             async with client:
                 group_name = "group1"
                 ws_clients = []
@@ -46,6 +47,7 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
                     for _ in range(test_case["total_connection_count"]):
                         ws = await ws_connect(client_url)
                         ws_clients.append(ws)
+                    await asyncio.sleep(3)  # wait for server to register connections
 
                 # List connections with pagination
                 actual_page_count = 0

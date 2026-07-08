@@ -1,5 +1,21 @@
 # Release History
 
+## 4.0.0b1 (2026-05-26)
+
+### Features Added
+
+  - Client `AzureRedHatOpenShiftClient` added method `send_request`
+  - Added model `CloudError`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `OpenShiftClusterUpdate` moved instance variable `provisioning_state`, `cluster_profile`, `console_profile`, `service_principal_profile`, `platform_workload_identity_profile`, `network_profile`, `master_profile`, `worker_profiles`, `worker_profiles_status`, `apiserver_profile` and `ingress_profiles` under property `properties` whose type is `OpenShiftClusterProperties`
+
+### Other Changes
+
+  - Deleted model `OpenShiftClusterList`/`OpenShiftVersionList`/`OperationList`/`PlatformWorkloadIdentityRoleSetList` which actually were not used by SDK users
+
 ## 3.0.0 (2026-02-06)
 
 ### Features Added

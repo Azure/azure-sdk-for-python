@@ -4,7 +4,7 @@
 
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     MaterializationComputeResource as RestMaterializationComputeResource,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin

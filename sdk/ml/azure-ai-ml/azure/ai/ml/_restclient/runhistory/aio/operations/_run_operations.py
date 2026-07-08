@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, List, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +25,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._run_operations import build_list_by_compute_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class RunOperations:
     """RunOperations async operations.
@@ -93,14 +101,13 @@ class RunOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedRunList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedRunList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedRunList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_compute_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -112,13 +119,13 @@ class RunOperations:
                     sortorder=sortorder,
                     top=top,
                     count=count,
-                    template_url=self.list_by_compute.metadata['url'],
+                    template_url=self.list_by_compute.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_by_compute_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -148,9 +155,7 @@ class RunOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -161,8 +166,6 @@ class RunOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_compute.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/runs"}  # type: ignore
+    list_by_compute.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/runs"}  # type: ignore

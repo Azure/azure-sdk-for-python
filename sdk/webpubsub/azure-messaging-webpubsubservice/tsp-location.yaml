@@ -1,4 +1,4 @@
 directory: specification/webpubsub/data-plane/WebPubSub
-commit: 31e9334fb19097c919bd17b5cdf4c4c3f45df3bf
+commit: 8ea36809e83ff5cb79618942fab105f909cf8a53
 repo: Azure/azure-rest-api-specs
 additionalDirectories: []

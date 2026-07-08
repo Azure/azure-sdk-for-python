@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -17,17 +18,24 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import MessagesPaged
 from .._deserialize import deserialize_queue_creation, deserialize_queue_properties
 from .._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
+from .._generated.aio import QueuesClient as AzureQueueStorage
+from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier, SignedIdentifiers
 from .._message_encoding import NoDecodePolicy, NoEncodePolicy
 from .._models import AccessPolicy, QueueMessage
 from .._queue_client_helpers import _format_url, _from_queue_url, _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    parse_connection_str,
+)
 from .._shared.policies_async import ExponentialRetry
-from .._shared.request_handlers import add_metadata_headers, serialize_iso
-from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
+from .._shared.request_handlers import add_metadata_headers
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_headers_and_deserialized,
+    return_response_headers,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -106,7 +114,13 @@ class QueueClient(  # type: ignore [misc]
         account_url: str,
         queue_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -133,7 +147,9 @@ class QueueClient(  # type: ignore [misc]
         self._message_encode_policy = message_encode_policy or NoEncodePolicy()
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline, loop=loop
+            self.url,
+            version=get_api_version(api_version),
+            pipeline=self._pipeline,
         )
         self._loop = loop
         self._configure_encryption(kwargs)
@@ -143,7 +159,10 @@ class QueueClient(  # type: ignore [misc]
         return self
 
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -164,14 +183,25 @@ class QueueClient(  # type: ignore [misc]
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        return _format_url(queue_name=self.queue_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str)
+        return _format_url(
+            queue_name=self.queue_name,
+            hostname=hostname,
+            scheme=self.scheme,
+            query_str=self._query_str,
+        )
 
     @classmethod
     def from_queue_url(
         cls,
         queue_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -236,7 +266,13 @@ class QueueClient(  # type: ignore [misc]
         conn_str: str,
         queue_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -466,14 +502,21 @@ class QueueClient(  # type: ignore [misc]
         """
         try:
             _, identifiers = cast(
-                Tuple[Dict, List],
+                Tuple[Dict, SignedIdentifiers],
                 await self._client.queue.get_access_policy(
                     timeout=timeout, cls=return_headers_and_deserialized, **kwargs
                 ),
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return (
+            {
+                s.id: AccessPolicy._from_generated(s.access_policy)  # pylint: disable=protected-access
+                for s in (identifiers.items_property or [])
+            }
+            if identifiers
+            else {}
+        )
 
     @distributed_trace_async
     async def set_queue_access_policy(
@@ -521,12 +564,13 @@ class QueueClient(  # type: ignore [misc]
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+            access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
+            # access_policy is optional on the wire (an identifier may reference a stored
+            # policy by id alone), but the generated model types it as required.
+            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
+        signed_identifiers_model = SignedIdentifiers(items_property=identifiers) if identifiers else None
         try:
-            await self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
+            await self._client.queue.set_access_policy(queue_acl=signed_identifiers_model, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -591,7 +635,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         try:
@@ -617,20 +664,20 @@ class QueueClient(  # type: ignore [misc]
         new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
-            enqueued = await self._client.messages.enqueue(
+            enqueued = await self._client.queue.send_message(
                 queue_message=new_message,
-                visibilitytimeout=visibility_timeout,
+                visibility_timeout=visibility_timeout,
                 message_time_to_live=time_to_live,
                 timeout=timeout,
                 **kwargs
             )
             queue_message = QueueMessage(
                 content=content,
-                id=enqueued[0].message_id,
-                inserted_on=enqueued[0].insertion_time,
-                expires_on=enqueued[0].expiration_time,
-                pop_receipt=enqueued[0].pop_receipt,
-                next_visible_on=enqueued[0].time_next_visible,
+                id=enqueued.items_property[0].message_id,
+                inserted_on=enqueued.items_property[0].insertion_time,
+                expires_on=enqueued.items_property[0].expiration_time,
+                pop_receipt=enqueued.items_property[0].pop_receipt,
+                next_visible_on=enqueued.items_property[0].time_next_visible,
             )
             return queue_message
         except HttpResponseError as error:
@@ -679,7 +726,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -688,15 +738,17 @@ class QueueClient(  # type: ignore [misc]
             resolver=self.key_resolver_function,
         )
         try:
-            message = await self._client.messages.dequeue(
+            message = await self._client.queue.receive_messages(
                 number_of_messages=1,
-                visibilitytimeout=visibility_timeout,
+                visibility_timeout=visibility_timeout,
                 timeout=timeout,
                 cls=self._message_decode_policy,
                 **kwargs
             )
             wrapped_message = (
-                QueueMessage._from_generated(message[0]) if message != [] else None  # pylint: disable=protected-access
+                QueueMessage._from_generated(message.items_property[0])  # pylint: disable=protected-access
+                if message.items_property
+                else None
             )
             return wrapped_message
         except HttpResponseError as error:
@@ -762,7 +814,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -772,8 +827,8 @@ class QueueClient(  # type: ignore [misc]
         )
         try:
             command = functools.partial(
-                self._client.messages.dequeue,
-                visibilitytimeout=visibility_timeout,
+                self._client.queue.receive_messages,
+                visibility_timeout=visibility_timeout,
                 timeout=timeout,
                 cls=self._message_decode_policy,
                 **kwargs
@@ -853,7 +908,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         if isinstance(message, QueueMessage):
@@ -889,7 +947,9 @@ class QueueClient(  # type: ignore [misc]
                     Retrying without encryption_version."
                 )
                 self._message_encode_policy.configure(
-                    self.require_encryption, self.key_encryption_key, self.key_resolver_function
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
                 )
             encoded_message_text = self._message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
@@ -898,13 +958,13 @@ class QueueClient(  # type: ignore [misc]
         try:
             response = cast(
                 QueueMessage,
-                await self._client.message_id.update(
+                await self._client.queue.update_message(
                     queue_message=updated,
-                    visibilitytimeout=visibility_timeout or 0,
+                    visibility_timeout=visibility_timeout or 0,
                     timeout=timeout,
                     pop_receipt=receipt,
                     cls=return_response_headers,
-                    queue_message_id=message_id,
+                    message_id=message_id,
                     **kwargs
                 ),
             )
@@ -969,7 +1029,10 @@ class QueueClient(  # type: ignore [misc]
 
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -978,11 +1041,11 @@ class QueueClient(  # type: ignore [misc]
             resolver=self.key_resolver_function,
         )
         try:
-            messages = await self._client.messages.peek(
+            messages = await self._client.queue.peek_messages(
                 number_of_messages=max_messages, timeout=timeout, cls=self._message_decode_policy, **kwargs
             )
             wrapped_messages = []
-            for peeked in messages:
+            for peeked in messages.items_property or []:
                 wrapped_messages.append(QueueMessage._from_generated(peeked))  # pylint: disable=protected-access
             return wrapped_messages
         except HttpResponseError as error:
@@ -1009,7 +1072,7 @@ class QueueClient(  # type: ignore [misc]
                 :caption: Clears all messages.
         """
         try:
-            await self._client.messages.clear(timeout=timeout, **kwargs)
+            await self._client.queue.clear(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1067,8 +1130,8 @@ class QueueClient(  # type: ignore [misc]
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         try:
-            await self._client.message_id.delete(
-                pop_receipt=receipt, timeout=timeout, queue_message_id=message_id, **kwargs
+            await self._client.queue.delete_message(
+                pop_receipt=receipt, timeout=timeout, message_id=message_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)

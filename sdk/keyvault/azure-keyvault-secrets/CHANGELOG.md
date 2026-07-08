@@ -1,14 +1,16 @@
 # Release History
 
-## 4.10.1 (Unreleased)
+## 4.11.0 (2026-03-26)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service API version `2025-07-01`
+  - Added support for retrieving secrets with `out_content_type`
+  - Added the `previous_version` property to `SecretProperties`
 
 ### Other Changes
+
+- Key Vault API version `2025-07-01` is now the default
 
 ## 4.10.0 (2025-06-16)
 

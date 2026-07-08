@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +7,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -45,12 +43,12 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
-class AgreementTerms(Resource):  # pylint: disable=too-many-instance-attributes
+class AgreementTerms(Resource):
     """Terms properties for provided Publisher/Offer/Plan tuple.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -143,7 +141,7 @@ class AgreementTerms(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype accepted: bool
         """
         super().__init__(**kwargs)
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.publisher = publisher
         self.product = product
         self.plan = plan
@@ -200,8 +198,8 @@ class ErrorResponseError(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class OldAgreementTerms(Resource):
@@ -298,7 +296,7 @@ class OldAgreementTermsList(_serialization.Model):
         "value": {"key": "value", "type": "[OldAgreementTerms]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OldAgreementTerms"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.OldAgreementTerms"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.marketplaceordering.models.OldAgreementTerms]
@@ -404,7 +402,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Microsoft.MarketplaceOrdering operations supported by the
          Microsoft.MarketplaceOrdering resource provider.
@@ -412,7 +410,7 @@ class OperationListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class SystemData(_serialization.Model):

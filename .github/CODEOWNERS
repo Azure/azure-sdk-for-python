@@ -6,27 +6,25 @@
 ###########
 
 # Catch all
-/sdk/ @lmazuel @lirenhe
+/sdk/ @xirzec @lirenhe
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @xirzec @johanste @iscai-msft @kashifkhan
 
-# AzureSdkOwners: @xiangyan99 @kashifkhan @pvaneck
+# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Core.Http
 
-# AzureSdkOwners: @xiangyan99 @kashifkhan
+# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Azure.Core
 
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan @pvaneck
+/sdk/core/                                                           @xirzec @johanste
+/sdk/core/azure-core/                                                @xirzec @johanste @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
-/sdk/core/azure-core-tracing-opencensus/                             @pvaneck
-/sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
 
 # Smoke Tests
-/common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @chlowell @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -52,34 +50,27 @@
 
 # ServiceLabel: %AI Projects %Service Attention
 # PRLabel: %AI Projects
-/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson
+/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/    @albertofori @avanigupta @jimmyca15 @mrm9084 @rossgrambo @xiangyan99
+/sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084
 
 # AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
-# ServiceOwners: @albertofori @avanigupta @mrm9084
+# ServiceOwners: @avanigupta @mrm9084
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/    @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
-# PRLabel: %Azure Projects
-/sdk/projects/    @annatisch
-
-# AzureSdkOwners: @annatisch
-# ServiceLabel: %Azure Projects
-# ServiceOwners: @annatisch
-
-# AzureSdkOwners: @xiangyan99
+# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
-/sdk/identity/    @Azure/azure-sdk-write-identity @pvaneck @xiangyan99
+/sdk/identity/    @Azure/azure-sdk-write-identity
 
 # ServiceLabel: %Batch
 # PRLabel: %Batch
-/sdk/batch/    @cRui861 @dpwatrous @jingjlii @JJJessieWang @wanghoppe @wiboris
+/sdk/batch/    @cRui861 @dpwatrous @jingjlii @JJJessieWang @wanghoppe @wiboris @lilinvictorms @iwang2 @xingwu1
 
 # ServiceLabel: %Cognitive - Anomaly Detector
 # PRLabel: %Cognitive - Anomaly Detector
@@ -110,13 +101,8 @@
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/    @ahmedaashour @bidisha-c @mikaelsitruk @quentinRobinson @sarkar-rajarshi
 
-# AzureSdkOwners: @xiangyan99
-# ServiceLabel: %Cognitive - Metrics Advisor
-# PRLabel: %Cognitive - Metrics Advisor
-/sdk/metricsadvisor/    @iscai-msft @xiangyan99
-
 # PRLabel: %Cognitive - Mgmt
-/sdk/cognitiveservices/    @lmazuel
+/sdk/cognitiveservices/    @xirzec
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/    @sharathmalladi
@@ -126,10 +112,10 @@
 /sdk/textanalytics/    @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/    @jrjrguo @SG-MS
+/sdk/translation/    @jrjrguo @zhangeugenia
 
 # ServiceLabel: %Cognitive - Translator
-# ServiceOwners: @jrjrguo @SG-MS
+# ServiceOwners: @jrjrguo @zhangeugenia
 
 # ServiceLabel: %Communication
 # PRLabel: %Communication
@@ -189,7 +175,7 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/    @samkreter @xizhamsft
 
-# AzureSdkOwners: @kashifkhan 
+# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
 /sdk/containerregistry/    @kashifkhan
@@ -249,7 +235,7 @@
 /sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
 
 # PRLabel: %EngSys
-/sdk/template/    @benbp @scbedd @weshaggard
+/sdk/template/    @benbp @mikeharder @danieljurek 
 
 # PRLabel: %Evaluation
 /sdk/evaluation/    @Azure/azure-sdk-write-evaluation
@@ -263,13 +249,13 @@
 /sdk/eventgrid/    @rajeshka @shankarsama
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/    @axisc @hmlam @sjkwak
+/sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @axisc @hmlam @sjkwak
+# ServiceOwners: @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # PRLabel: %Graph
-/sdk/graphrbac/    @lmazuel
+/sdk/graphrbac/    @xirzec
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/    @idear1203
@@ -279,10 +265,12 @@
 /sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
 
 # PRLabel: %Hosted Agents
-/sdk/agentserver/    @JC-386 @lusu-msft
+/sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
+# PRLabel: %Hosted Agents
+/sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
-# ServiceOwners: @JC-386 @lusu-msft
+# ServiceOwners: @ankitbko @vangarp @RaviPidaparthi
 
 # ServiceLabel: %Image Analysis %Service Attention
 # PRLabel: %Image Analysis
@@ -317,14 +305,6 @@
 # PRLabel: %Maps
 /sdk/maps/    @andykao1213 @dubiety
 
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/    @RamonArguelles
-
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/remoterendering/    @FlorianBorn71
-
 # PRLabel: %Monitor
 /sdk/loganalytics/    @lirenhe @msyyc
 
@@ -334,13 +314,12 @@
 # PRLabel: %Monitor
 /sdk/monitor/azure-mgmt-monitor    @lirenhe @msyyc
 
-# AzureSdkOwners: @pvaneck
 # ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/    @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Cognitive - Content Understanding
-/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw 
+/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/    @Azure/azure-sdk-write-monitor-query-logs
 
@@ -380,6 +359,10 @@
 # PRLabel: %Purview
 /sdk/purview/    @adyabansal-ms
 
+# ServiceLabel: %PostgreSQL Auth
+# PRLabel: %PostgreSQL Auth
+/sdk/postgresql/azure-postgresql-auth/    @alxhghs @carlovi81 @mattboentoro @nasc17 @nehrao1 @rmendiza
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/    @DheerendraRathor
 
@@ -395,7 +378,7 @@
 # PRLabel: %Search
 /sdk/search/    @Azure/azsdk-search @Azure/azure-sdk-write-search
 
-# AzureSdkOwners: @xiangyan99
+# AzureSdkOwners: @hizixin
 # ServiceLabel: %Search
 # ServiceOwners: @kuanlu95 @mattgotteiner
 
@@ -703,6 +686,9 @@
 # ServiceLabel: %PostgreSQL %Service Attention
 # ServiceOwners: @lfittl-msft @niklarin @sr-msft @sunilagarwal
 
+# ServiceLabel: %PostgreSQL Auth
+# ServiceOwners: @alxhghs @carlovi81 @mattboentoro @nasc17 @nehrao1 @rmendiza
+
 # ServiceLabel: %Redis Cache %Service Attention
 # ServiceOwners: @yegu-ms
 
@@ -752,22 +738,22 @@
 # ServiceOwners: @antcp @AzureAppServiceCLI
 
 # PRLabel: %Service Bus
-/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft
+/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft @j7nw4r
 
 # ServiceLabel: %Service Bus
-# ServiceOwners: @EldertGrootenboer @skarri-microsoft
+# ServiceOwners: @EldertGrootenboer @skarri-microsoft @j7nw4r
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/    @QingChenmsft @samedder
 
 # PRLabel: %Speech Transcription
-/sdk/cognitiveservices/azure-ai-transcription/    @amber-yujueWang @rhurey @xitzhang
+/sdk/transcription/azure-ai-transcription/    @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # ServiceLabel: %Speech Transcription
-# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # PRLabel: %Storage
-/sdk/storage/    @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
+/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
 # ServiceLabel: %Storage
 # ServiceOwners: @jalauzon-msft @vincenttran-msft
@@ -824,34 +810,45 @@
 ###########
 # Eng Sys and other
 ###########
-/eng/                                                                @scbedd @weshaggard @benbp
+/eng/                                                                @danieljurek @mikeharder @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
-/eng/tools/                                                          @scbedd @mccoyp
+/eng/tools/                                                          @danieljurek @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
-/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
+/.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
+/.github/CODEOWNERS                                                  @xirzec @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence @benbp
-/.github/skills/                                                     @mccoyp @l0lawrence @benbp
-/sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
+/.github/skills/                                                     @mccoyp @l0lawrence @benbp @Azure/azsdk-cli
+/sdk/pullrequest.yml                                                 @danieljurek @mikeharder @benbp
 
-/.config/1espt/                                                      @benbp @weshaggard
-/.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
-/.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
+/.config/1espt/                                                      @benbp @mikeharder
+/.devcontainer/                                                      @danieljurek @mccoyp @benbp @mikeharder
+/.vscode/                                                            @danieljurek @mccoyp @benbp @mikeharder
 
-/scripts/                                                            @scbedd @mccoyp
-/scripts/breaking_changes_checker/                                   @catalinaperalta
-/doc/                                                                @scbedd @mccoyp
-/conda/                                                              @scbedd @xiangyan99 @lmazuel
+/scripts/                                                            @danieljurek @mccoyp
+/doc/                                                                @danieljurek @Azure/azure-python-sdk
+/conda/                                                              @danieljurek @xiangyan99 @xirzec
+
+/shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
 
 # Add owners for notifications for specific pipelines
-/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @pvaneck
-/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
-/eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @xirzec @mccoyp
+/eng/common/pipelines/codeowners-linter.yml                          @xirzec @mccoyp
+/eng/pipelines/docindex.yml                                          @danieljurek @benbp
 
 # Add approvers for typespec-python emitter version updates
-/eng/emitter-package.json                                            @mccoyp @catalinaperalta @iscai-msft
-/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @iscai-msft
+/eng/emitter-package.json                                            @mccoyp @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package-lock.json                                       @mccoyp @iscai-msft @msyyc @ChenxiJiang333
 
-/pylintrc                                                            @l0lawrence @scbedd @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd
+# TypeSpec Python generated tests and regeneration workflow
+/eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333
+
+/pylintrc                                                            @l0lawrence @danieljurek @mccoyp
+/sdk/**/ci.yml                                                       @msyyc @xirzec @danieljurek
+
+# Add Johnathan Walker as code owner for Event Hubs SDK
+/sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207
+
+# Add Johnathan Walker as code owner for Service Bus SDK
+/sdk/servicebus/azure-servicebus/* @j7nw4r @SwayGom @sagar0207

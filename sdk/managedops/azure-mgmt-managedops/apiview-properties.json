@@ -30,6 +30,8 @@
         "azure.mgmt.managedops.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.managedops.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.managedops.models.ProvisioningState": "Microsoft.ManagedOps.ProvisioningState",
+        "azure.mgmt.managedops.models.DesiredEnablementState": "Microsoft.ManagedOps.DesiredEnablementState",
+        "azure.mgmt.managedops.models.EnablementState": "Microsoft.ManagedOps.EnablementState",
         "azure.mgmt.managedops.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.managedops.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.managedops.operations.ManagedOpsOperations.get": "Microsoft.ManagedOps.ManagedOps.get",

@@ -10,7 +10,10 @@ from typing import Any, Callable, List, Optional, Tuple
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._models import QueueMessage, QueueProperties
-from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+)
 
 
 class MessagesPaged(AsyncPageIterator):
@@ -62,11 +65,13 @@ class MessagesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
-        if not messages:
+        if not messages or not messages.items_property:
             raise StopAsyncIteration("End of paging")
         if self._max_messages is not None:
-            self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+            self._max_messages = self._max_messages - len(messages.items_property)
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages.items_property  # pylint: disable=protected-access
+        ]
 
 
 class QueuePropertiesPaged(AsyncPageIterator):

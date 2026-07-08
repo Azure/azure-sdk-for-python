@@ -7,7 +7,7 @@ Start be creating a new virtual environment for your perf tests. This will need 
 
 These tests will run against a pre-configured application configuration service. The following environment variable will need to be set for the tests to access the live resources:
 ```
-AZURE_APP_CONFIG_CONNECTION_STRING=<app config connection string>
+AZURE_APP_CONFIG_ENDPOINT=<app config endpoint>
 ```
 
 ### Setup for perf test runs

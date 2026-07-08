@@ -5,15 +5,11 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentWebSearch(TestBase):
 
     @servicePreparer()
@@ -41,7 +37,7 @@ class TestAgentWebSearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

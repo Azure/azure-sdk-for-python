@@ -71,6 +71,32 @@ class AutoUpgradeProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEn
     """Resource creation was canceled."""
 
 
+class ClusterMeshProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the cluster mesh profile resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
+class ClusterMeshState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster mesh state."""
+
+    NOT_CONNECTED = "NotConnected"
+    """The mesh is not connected."""
+    APPLYING = "Applying"
+    """The mesh is applying."""
+    CONNECTED = "Connected"
+    """The mesh is connected."""
+    DEGRADED = "Degraded"
+    """The mesh is degraded."""
+    FAILED = "Failed"
+    """The mesh failed to connect."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -188,13 +214,13 @@ class LabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A label selector operator is the set of operators that can be used in a selector requirement."""
 
     IN = "In"
-    """Label Selector Operator In"""
+    """Label Selector Operator In."""
     NOT_IN = "NotIn"
-    """Label Selector Operator NotIn"""
+    """Label Selector Operator NotIn."""
     EXISTS = "Exists"
-    """Label Selector Operator Exists"""
+    """Label Selector Operator Exists."""
     DOES_NOT_EXIST = "DoesNotExist"
-    """Label Selector Operator DoesNotExist"""
+    """Label Selector Operator DoesNotExist."""
 
 
 class ManagedClusterUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -225,6 +251,19 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     """System and user assigned managed identity."""
+
+
+class MeshMemberState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mesh member state."""
+
+    CONNECTING = "Connecting"
+    """The member is connecting to the mesh."""
+    CONNECTED = "Connected"
+    """The member is connected to the mesh."""
+    DISCONNECTING = "Disconnecting"
+    """The member is disconnecting from the mesh."""
+    FAILED = "Failed"
+    """The member failed to connect due to an error."""
 
 
 class NodeImageSelectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -347,9 +386,9 @@ class TolerationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A toleration operator is the set of operators that can be used in a toleration."""
 
     EXISTS = "Exists"
-    """Toleration Operator Exists"""
+    """Toleration Operator Exists."""
     EQUAL = "Equal"
-    """Toleration Operator Equal"""
+    """Toleration Operator Equal."""
 
 
 class UpdateRunProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -403,4 +442,4 @@ class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
       For information on the behavior of update run for Kubernetes version upgrade,
       see
     `https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal
-    <https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal>`_"""
+    <https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal>`_."""

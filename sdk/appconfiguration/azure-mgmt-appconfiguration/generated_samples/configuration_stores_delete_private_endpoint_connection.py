@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-06-01-preview/ConfigurationStoresDeletePrivateEndpointConnection.json
+# x-ms-original-file: 2025-08-01-preview/ConfigurationStoresDeletePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

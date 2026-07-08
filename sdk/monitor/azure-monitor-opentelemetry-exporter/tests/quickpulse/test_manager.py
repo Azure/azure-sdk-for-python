@@ -19,7 +19,7 @@ from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _DEPENDENCY_DURATION_NAME,
     _DEPENDENCY_FAILURE_RATE_NAME,
@@ -41,7 +41,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     TelemetryType,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._manager import (
@@ -129,7 +129,7 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._reader._exporter, qpm._exporter)
         self.assertEqual(qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point)
         self.assertTrue(isinstance(qpm._meter_provider, MeterProvider))
-        self.assertEqual(qpm._meter_provider._sdk_config.metric_readers, [qpm._reader])
+        self.assertEqual(qpm._meter_provider._metric_readers, [qpm._reader])
         self.assertEqual(qpm._meter_provider._sdk_config.resource, self.resource)
         self.assertTrue(isinstance(qpm._meter, Meter))
         self.assertEqual(qpm._meter.name, "azure_monitor_live_metrics")

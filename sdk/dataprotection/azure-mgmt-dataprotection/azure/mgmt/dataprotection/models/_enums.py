@@ -14,10 +14,15 @@ class AbsoluteMarker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AbsoluteMarker."""
 
     ALL_BACKUP = "AllBackup"
+    """ALL_BACKUP."""
     FIRST_OF_DAY = "FirstOfDay"
+    """FIRST_OF_DAY."""
     FIRST_OF_MONTH = "FirstOfMonth"
+    """FIRST_OF_MONTH."""
     FIRST_OF_WEEK = "FirstOfWeek"
+    """FIRST_OF_WEEK."""
     FIRST_OF_YEAR = "FirstOfYear"
+    """FIRST_OF_YEAR."""
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -33,24 +38,47 @@ class AKSVolumeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AKSVolumeTypes."""
 
     AZURE_DISK = "AzureDisk"
+    """AZURE_DISK."""
     AZURE_FILE_SHARE_SMB = "AzureFileShareSMB"
+    """AZURE_FILE_SHARE_SMB."""
 
 
 class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AlertsState."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class BCDRSecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Security Level of Backup Vault."""
 
     POOR = "Poor"
+    """POOR."""
     FAIR = "Fair"
+    """FAIR."""
     GOOD = "Good"
+    """GOOD."""
     EXCELLENT = "Excellent"
+    """EXCELLENT."""
     NOT_SUPPORTED = "NotSupported"
+    """NOT_SUPPORTED."""
+
+
+class BlobBackupPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Pattern type. Only Prefix supported for now."""
+
+    PREFIX = "Prefix"
+    """PREFIX."""
+
+
+class BlobBackupRuleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Rule mode (Only Exclude supported for now)."""
+
+    EXCLUDE = "Exclude"
+    """EXCLUDE."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -70,59 +98,86 @@ class CrossRegionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CrossRegionRestore state."""
 
     DISABLED = "Disabled"
+    """DISABLED."""
     ENABLED = "Enabled"
+    """ENABLED."""
 
 
 class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CrossSubscriptionRestore state."""
 
     DISABLED = "Disabled"
+    """DISABLED."""
     PERMANENTLY_DISABLED = "PermanentlyDisabled"
+    """PERMANENTLY_DISABLED."""
     ENABLED = "Enabled"
+    """ENABLED."""
 
 
 class CurrentProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the current protection state of the resource."""
 
     INVALID = "Invalid"
+    """INVALID."""
     NOT_PROTECTED = "NotProtected"
+    """NOT_PROTECTED."""
     CONFIGURING_PROTECTION = "ConfiguringProtection"
+    """CONFIGURING_PROTECTION."""
     PROTECTION_CONFIGURED = "ProtectionConfigured"
+    """PROTECTION_CONFIGURED."""
     BACKUP_SCHEDULES_SUSPENDED = "BackupSchedulesSuspended"
+    """BACKUP_SCHEDULES_SUSPENDED."""
     RETENTION_SCHEDULES_SUSPENDED = "RetentionSchedulesSuspended"
+    """RETENTION_SCHEDULES_SUSPENDED."""
     PROTECTION_STOPPED = "ProtectionStopped"
+    """PROTECTION_STOPPED."""
     PROTECTION_ERROR = "ProtectionError"
+    """PROTECTION_ERROR."""
     CONFIGURING_PROTECTION_FAILED = "ConfiguringProtectionFailed"
+    """CONFIGURING_PROTECTION_FAILED."""
     SOFT_DELETING = "SoftDeleting"
+    """SOFT_DELETING."""
     SOFT_DELETED = "SoftDeleted"
+    """SOFT_DELETED."""
     UPDATING_PROTECTION = "UpdatingProtection"
+    """UPDATING_PROTECTION."""
 
 
 class DataStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """type of datastore; Operational/Vault/Archive."""
 
     OPERATIONAL_STORE = "OperationalStore"
+    """OPERATIONAL_STORE."""
     VAULT_STORE = "VaultStore"
+    """VAULT_STORE."""
     ARCHIVE_STORE = "ArchiveStore"
+    """ARCHIVE_STORE."""
 
 
 class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DayOfWeek."""
 
     FRIDAY = "Friday"
+    """FRIDAY."""
     MONDAY = "Monday"
+    """MONDAY."""
     SATURDAY = "Saturday"
+    """SATURDAY."""
     SUNDAY = "Sunday"
+    """SUNDAY."""
     THURSDAY = "Thursday"
+    """THURSDAY."""
     TUESDAY = "Tuesday"
+    """TUESDAY."""
     WEDNESDAY = "Wednesday"
+    """WEDNESDAY."""
 
 
 class EncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption state of the Backup Vault."""
 
     ENABLED = "Enabled"
-    """CMK encryption is enabled on the Backup Vault"""
+    """CMK encryption is enabled on the Backup Vault."""
     DISABLED = "Disabled"
     """CMK encryption is disabled on the Backup Vault. User can not set this state once Encryption
     State is 'Enabled'."""
@@ -137,25 +192,35 @@ class ExistingResourcePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     SKIP = "Skip"
+    """SKIP."""
     PATCH = "Patch"
+    """PATCH."""
 
 
 class FeatureSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """feature support status."""
 
     INVALID = "Invalid"
+    """INVALID."""
     NOT_SUPPORTED = "NotSupported"
+    """NOT_SUPPORTED."""
     ALPHA_PREVIEW = "AlphaPreview"
+    """ALPHA_PREVIEW."""
     PRIVATE_PREVIEW = "PrivatePreview"
+    """PRIVATE_PREVIEW."""
     PUBLIC_PREVIEW = "PublicPreview"
+    """PUBLIC_PREVIEW."""
     GENERALLY_AVAILABLE = "GenerallyAvailable"
+    """GENERALLY_AVAILABLE."""
 
 
 class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """backup support feature type."""
 
     INVALID = "Invalid"
+    """INVALID."""
     DATA_SOURCE_TYPE = "DataSourceType"
+    """DATA_SOURCE_TYPE."""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -164,39 +229,58 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
+    """SYSTEM_ASSIGNED."""
     USER_ASSIGNED = "UserAssigned"
+    """USER_ASSIGNED."""
 
 
 class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Immutability state."""
 
     DISABLED = "Disabled"
+    """DISABLED."""
     UNLOCKED = "Unlocked"
+    """UNLOCKED."""
     LOCKED = "Locked"
+    """LOCKED."""
 
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabling/Disabling the Double Encryption state."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of Month."""
 
     APRIL = "April"
+    """APRIL."""
     AUGUST = "August"
+    """AUGUST."""
     DECEMBER = "December"
+    """DECEMBER."""
     FEBRUARY = "February"
+    """FEBRUARY."""
     JANUARY = "January"
+    """JANUARY."""
     JULY = "July"
+    """JULY."""
     JUNE = "June"
+    """JUNE."""
     MARCH = "March"
+    """MARCH."""
     MAY = "May"
+    """MAY."""
     NOVEMBER = "November"
+    """NOVEMBER."""
     OCTOBER = "October"
+    """OCTOBER."""
     SEPTEMBER = "September"
+    """SEPTEMBER."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -218,23 +302,31 @@ class PersistentVolumeRestoreMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     RESTORE_WITH_VOLUME_DATA = "RestoreWithVolumeData"
+    """RESTORE_WITH_VOLUME_DATA."""
     RESTORE_WITHOUT_VOLUME_DATA = "RestoreWithoutVolumeData"
+    """RESTORE_WITHOUT_VOLUME_DATA."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the BackupVault resource."""
 
     FAILED = "Failed"
+    """FAILED."""
     PROVISIONING = "Provisioning"
+    """PROVISIONING."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     UNKNOWN = "Unknown"
+    """UNKNOWN."""
     UPDATING = "Updating"
+    """UPDATING."""
 
 
 class RecoveryOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recovery Option."""
 
     FAIL_IF_EXISTS = "FailIfExists"
+    """FAIL_IF_EXISTS."""
 
 
 class RecoveryPointCompletionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -243,136 +335,187 @@ class RecoveryPointCompletionState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """
 
     COMPLETED = "Completed"
+    """COMPLETED."""
     PARTIAL = "Partial"
+    """PARTIAL."""
 
 
 class RehydrationPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Priority to be used for rehydration. Values High or Standard."""
 
     INVALID = "Invalid"
+    """INVALID."""
     HIGH = "High"
+    """HIGH."""
     STANDARD = "Standard"
+    """STANDARD."""
 
 
 class RehydrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RehydrationStatus."""
 
     CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS"
+    """CREATE_IN_PROGRESS."""
     COMPLETED = "COMPLETED"
+    """COMPLETED."""
     DELETE_IN_PROGRESS = "DELETE_IN_PROGRESS"
+    """DELETE_IN_PROGRESS."""
     DELETED = "DELETED"
+    """DELETED."""
     FAILED = "FAILED"
+    """FAILED."""
 
 
 class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource move state for backup vault."""
 
     UNKNOWN = "Unknown"
+    """UNKNOWN."""
     IN_PROGRESS = "InProgress"
+    """IN_PROGRESS."""
     PREPARE_FAILED = "PrepareFailed"
+    """PREPARE_FAILED."""
     COMMIT_FAILED = "CommitFailed"
+    """COMMIT_FAILED."""
     FAILED = "Failed"
+    """FAILED."""
     PREPARE_TIMEDOUT = "PrepareTimedout"
+    """PREPARE_TIMEDOUT."""
     COMMIT_TIMEDOUT = "CommitTimedout"
+    """COMMIT_TIMEDOUT."""
     CRITICAL_FAILURE = "CriticalFailure"
+    """CRITICAL_FAILURE."""
     PARTIAL_SUCCESS = "PartialSuccess"
+    """PARTIAL_SUCCESS."""
     MOVE_SUCCEEDED = "MoveSucceeded"
+    """MOVE_SUCCEEDED."""
 
 
 class ResourcePropertiesObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the specific object - used for deserializing."""
 
     DEFAULT_RESOURCE_PROPERTIES = "DefaultResourceProperties"
+    """DEFAULT_RESOURCE_PROPERTIES."""
 
 
 class RestoreSourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the source data store."""
 
     OPERATIONAL_STORE = "OperationalStore"
+    """OPERATIONAL_STORE."""
     VAULT_STORE = "VaultStore"
+    """VAULT_STORE."""
     ARCHIVE_STORE = "ArchiveStore"
+    """ARCHIVE_STORE."""
 
 
 class RestoreTargetLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Denotes the target location where the data will be restored,
-    string value for the enum
+    """Denotes the target location where the data will be restored, string value for the enum
     {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
     """
 
     INVALID = "Invalid"
+    """INVALID."""
     AZURE_BLOBS = "AzureBlobs"
+    """AZURE_BLOBS."""
     AZURE_FILES = "AzureFiles"
+    """AZURE_FILES."""
 
 
 class SecretStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of secret store."""
 
     INVALID = "Invalid"
+    """INVALID."""
     AZURE_KEY_VAULT = "AzureKeyVault"
+    """AZURE_KEY_VAULT."""
 
 
 class SecureScoreLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Secure Score of Backup Vault."""
 
     NONE = "None"
+    """NONE."""
     MINIMUM = "Minimum"
+    """MINIMUM."""
     ADEQUATE = "Adequate"
+    """ADEQUATE."""
     MAXIMUM = "Maximum"
+    """MAXIMUM."""
     NOT_SUPPORTED = "NotSupported"
+    """NOT_SUPPORTED."""
 
 
 class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of soft delete."""
 
     OFF = "Off"
-    """Soft Delete is turned off for the BackupVault"""
+    """Soft Delete is turned off for the BackupVault."""
     ON = "On"
-    """Soft Delete is enabled for the BackupVault but can be turned off"""
+    """Soft Delete is enabled for the BackupVault but can be turned off."""
     ALWAYS_ON = "AlwaysOn"
-    """Soft Delete is permanently enabled for the BackupVault and the setting cannot be changed"""
+    """Soft Delete is permanently enabled for the BackupVault and the setting cannot be changed."""
 
 
 class SourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the source data store."""
 
     ARCHIVE_STORE = "ArchiveStore"
+    """ARCHIVE_STORE."""
     SNAPSHOT_STORE = "SnapshotStore"
+    """SNAPSHOT_STORE."""
     OPERATIONAL_STORE = "OperationalStore"
+    """OPERATIONAL_STORE."""
     VAULT_STORE = "VaultStore"
+    """VAULT_STORE."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the protection status of the resource."""
 
     CONFIGURING_PROTECTION = "ConfiguringProtection"
+    """CONFIGURING_PROTECTION."""
     CONFIGURING_PROTECTION_FAILED = "ConfiguringProtectionFailed"
+    """CONFIGURING_PROTECTION_FAILED."""
     PROTECTION_CONFIGURED = "ProtectionConfigured"
+    """PROTECTION_CONFIGURED."""
     PROTECTION_STOPPED = "ProtectionStopped"
+    """PROTECTION_STOPPED."""
     SOFT_DELETED = "SoftDeleted"
+    """SOFT_DELETED."""
     SOFT_DELETING = "SoftDeleting"
+    """SOFT_DELETING."""
 
 
 class StorageSettingStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the datastore."""
 
     ARCHIVE_STORE = "ArchiveStore"
+    """ARCHIVE_STORE."""
     OPERATIONAL_STORE = "OperationalStore"
+    """OPERATIONAL_STORE."""
     VAULT_STORE = "VaultStore"
+    """VAULT_STORE."""
 
 
 class StorageSettingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type."""
 
     GEO_REDUNDANT = "GeoRedundant"
+    """GEO_REDUNDANT."""
     LOCALLY_REDUNDANT = "LocallyRedundant"
+    """LOCALLY_REDUNDANT."""
     ZONE_REDUNDANT = "ZoneRedundant"
+    """ZONE_REDUNDANT."""
 
 
 class SyncType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Field indicating sync type e.g. to sync only in case of failure or in all cases."""
 
     DEFAULT = "Default"
+    """DEFAULT."""
     FORCE_RESYNC = "ForceResync"
+    """FORCE_RESYNC."""
 
 
 class ValidationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -381,14 +524,21 @@ class ValidationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     SHALLOW_VALIDATION = "ShallowValidation"
+    """SHALLOW_VALIDATION."""
     DEEP_VALIDATION = "DeepValidation"
+    """DEEP_VALIDATION."""
 
 
 class WeekNumber(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of WeekNumber."""
 
     FIRST = "First"
+    """FIRST."""
     FOURTH = "Fourth"
+    """FOURTH."""
     LAST = "Last"
+    """LAST."""
     SECOND = "Second"
+    """SECOND."""
     THIRD = "Third"
+    """THIRD."""

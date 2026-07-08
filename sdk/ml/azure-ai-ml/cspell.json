@@ -1,19 +1,27 @@
 {
-    "version": "0.2",
-    "ignoreWords": [
-        "kwoa",
-        "rslex",
-        "aadtoken",
-        "alds",
-        "entra",
-        "restclient",
-        "SERP",
-        "mpnet",
-        "FAISS",
-        "faiss",
-        "Faiss",
-        "LLMRAG",
-        "expirable",
-        "elts"
-    ]
+  "version": "0.2",
+  "ignoreWords": [
+    "FAISS",
+    "Faiss",
+    "LLMRAG",
+    "SERP",
+    "aadtoken",
+    "alds",
+    "arimax",
+    "elts",
+    "entra",
+    "expirable",
+    "faiss",
+    "kwoa",
+    "maskrcnn",
+    "merkle",
+    "merkletree",
+    "misformatted",
+    "mobilenetv",
+    "mpnet",
+    "restclient",
+    "rslex",
+    "vectorizer",
+    "vitl"
+  ]
 }

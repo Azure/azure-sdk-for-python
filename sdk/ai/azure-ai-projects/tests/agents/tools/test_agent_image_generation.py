@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,broad-exception-caught
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,9 +14,6 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentImageGeneration(TestBase):
 
     @servicePreparer()
@@ -44,7 +41,7 @@ class TestAgentImageGeneration(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         image_model = kwargs.get("image_generation_model_deployment_name")
         agent_name = "image-gen-agent"
 

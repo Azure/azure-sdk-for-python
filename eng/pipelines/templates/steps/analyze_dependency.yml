@@ -13,6 +13,6 @@ steps:
       Condition: succeededOrFailed()
 
   - pwsh: |
-      sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
+      sdk_analyze_deps "$(TargetingString)" --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
     displayName: 'Analyze dependencies'
     condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))

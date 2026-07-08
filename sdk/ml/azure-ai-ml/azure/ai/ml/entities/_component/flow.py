@@ -21,7 +21,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._component import ComponentParameterTypes, NodeType
 
-from ..._restclient.v2022_10_01.models import ComponentVersion
+from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException

@@ -5,11 +5,11 @@
 # ------------------------------------
 # cSpell:disable
 
+from typing import Any, Dict, Optional
 import pytest
 import httpx
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from test_base import TestBase, servicePreparer
-from typing import Any, Dict, Optional
 from openai import OpenAI
 from azure.core.credentials import TokenCredential
 from azure.ai.projects import AIProjectClient
@@ -22,7 +22,7 @@ class DummyTokenCredential(TokenCredential):
         return None
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def patch_openai(monkeypatch):
     # Ensure no real network/token calls are made during the test.
     monkeypatch.setattr("azure.ai.projects._patch.get_bearer_token_provider", lambda *_, **__: "token-provider")
@@ -45,9 +45,6 @@ class TestResponses(TestBase):
 
     # To run this test:
     # pytest tests\responses\test_responses.py::TestResponses::test_responses -s
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses(self, **kwargs):
@@ -60,7 +57,7 @@ class TestResponses(TestBase):
         ------+---------------------------------------------+-----------------------------------
         POST   /openai/responses                             client.responses.create()
         """
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         client = self.create_client(operation_group="agents", **kwargs).get_openai_client()
 
@@ -106,12 +103,14 @@ class TestResponses(TestBase):
             ),
         ],
     )
-    def test_user_agent_patching_via_response_create(self, project_ua, openai_default_header, expected_ua):
+    def test_user_agent_patching_via_response_create(
+        self, project_ua, openai_default_header, expected_ua, patch_openai
+    ):  # pylint: disable=redefined-outer-name,unused-argument
         client = _build_client(project_ua, openai_default_header)
 
         calls = []
 
-        def fake_send(request: httpx.Request, *args: Any, **kwargs: Any):
+        def fake_send(request: httpx.Request, *_args: Any, **kwargs: Any):
             # Capture headers that would be sent over the wire.
             calls.append(dict(request.headers))
             return httpx.Response(

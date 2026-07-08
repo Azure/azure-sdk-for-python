@@ -1,5 +1,5 @@
 import time
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch, PoolPatchProperties
 from test_account import create_account, delete_account

@@ -7344,7 +7344,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
     :vartype domain: JSON
     :ivar access_token: Access token for databricks REST API. Refer to
      https://docs.azuredatabricks.net/api/latest/authentication.html. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference.
     :vartype access_token: ~azure.synapse.artifacts.models.SecretBase
     :ivar cluster_id: The id of an existing interactive cluster that will be used for all runs of
      this job. Type: string (or Expression with resultType string).
@@ -7355,12 +7355,14 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
     :vartype encrypted_credential: JSON
     :ivar credential: The credential reference containing authentication information.
     :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
+    :ivar workspace_resource_id: Workspace resource id for databricks REST API. Type: string (or
+     Expression with resultType string).
+    :vartype workspace_resource_id: JSON
     """
 
     _validation = {
         "type": {"required": True},
         "domain": {"required": True},
-        "access_token": {"required": True},
     }
 
     _attribute_map = {
@@ -7376,22 +7378,24 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         "cluster_id": {"key": "typeProperties.clusterId", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
+        "workspace_resource_id": {"key": "typeProperties.workspaceResourceId", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         domain: JSON,
-        access_token: "_models.SecretBase",
         additional_properties: Optional[Dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        access_token: Optional["_models.SecretBase"] = None,
         cluster_id: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
+        workspace_resource_id: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7413,7 +7417,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         :paramtype domain: JSON
         :keyword access_token: Access token for databricks REST API. Refer to
          https://docs.azuredatabricks.net/api/latest/authentication.html. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference.
         :paramtype access_token: ~azure.synapse.artifacts.models.SecretBase
         :keyword cluster_id: The id of an existing interactive cluster that will be used for all runs
          of this job. Type: string (or Expression with resultType string).
@@ -7424,6 +7428,9 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         :paramtype encrypted_credential: JSON
         :keyword credential: The credential reference containing authentication information.
         :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
+        :keyword workspace_resource_id: Workspace resource id for databricks REST API. Type: string (or
+         Expression with resultType string).
+        :paramtype workspace_resource_id: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -7440,6 +7447,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         self.cluster_id = cluster_id
         self.encrypted_credential = encrypted_credential
         self.credential = credential
+        self.workspace_resource_id = workspace_resource_id
 
 
 class AzureDatabricksDeltaLakeSink(CopySink):
@@ -33331,6 +33339,11 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :ivar cluster_resource_group: The resource group where the cluster belongs. Type: string (or
      Expression with resultType string). Required.
     :vartype cluster_resource_group: JSON
+    :ivar cluster_resource_group_auth_type: HDInsight On-demand cluster resource group
+     authentication type. Known values are: "ServicePrincipalKey", "SystemAssignedManagedIdentity",
+     and "UserAssignedManagedIdentity".
+    :vartype cluster_resource_group_auth_type: str or
+     ~azure.synapse.artifacts.models.HDInsightOndemandClusterResourceGroupAuthenticationType
     :ivar cluster_name_prefix: The prefix of cluster name, postfix will be distinct with timestamp.
      Type: string (or Expression with resultType string).
     :vartype cluster_name_prefix: JSON
@@ -33433,6 +33446,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "cluster_resource_group": {"key": "typeProperties.clusterResourceGroup", "type": "object"},
+        "cluster_resource_group_auth_type": {"key": "typeProperties.clusterResourceGroupAuthType", "type": "str"},
         "cluster_name_prefix": {"key": "typeProperties.clusterNamePrefix", "type": "object"},
         "cluster_user_name": {"key": "typeProperties.clusterUserName", "type": "object"},
         "cluster_password": {"key": "typeProperties.clusterPassword", "type": "SecretBase"},
@@ -33484,6 +33498,9 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         annotations: Optional[List[JSON]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
+        cluster_resource_group_auth_type: Optional[
+            Union[str, "_models.HDInsightOndemandClusterResourceGroupAuthenticationType"]
+        ] = None,
         cluster_name_prefix: Optional[JSON] = None,
         cluster_user_name: Optional[JSON] = None,
         cluster_password: Optional["_models.SecretBase"] = None,
@@ -33553,6 +33570,11 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword cluster_resource_group: The resource group where the cluster belongs. Type: string (or
          Expression with resultType string). Required.
         :paramtype cluster_resource_group: JSON
+        :keyword cluster_resource_group_auth_type: HDInsight On-demand cluster resource group
+         authentication type. Known values are: "ServicePrincipalKey", "SystemAssignedManagedIdentity",
+         and "UserAssignedManagedIdentity".
+        :paramtype cluster_resource_group_auth_type: str or
+         ~azure.synapse.artifacts.models.HDInsightOndemandClusterResourceGroupAuthenticationType
         :keyword cluster_name_prefix: The prefix of cluster name, postfix will be distinct with
          timestamp. Type: string (or Expression with resultType string).
         :paramtype cluster_name_prefix: JSON
@@ -33646,6 +33668,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.cluster_resource_group = cluster_resource_group
+        self.cluster_resource_group_auth_type = cluster_resource_group_auth_type
         self.cluster_name_prefix = cluster_name_prefix
         self.cluster_user_name = cluster_user_name
         self.cluster_password = cluster_password
@@ -37520,7 +37543,7 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         self.encrypted_credential = encrypted_credential
 
 
-class JiraObjectDataset(Dataset):
+class JiraObjectDataset(Dataset):  # pylint: disable=too-many-instance-attributes
     """Jira Service dataset.
 
     All required parameters must be populated in order to send to Azure.
@@ -37547,8 +37570,15 @@ class JiraObjectDataset(Dataset):
     :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :vartype folder: ~azure.synapse.artifacts.models.DatasetFolder
-    :ivar table_name: The table name. Type: string (or Expression with resultType string).
+    :ivar table_name: This property is only supported in Jira V1 Dataset, please consider upgrading
+     to V2 dataset.
     :vartype table_name: JSON
+    :ivar table: The schema name of the Jira, applies only for Jira V2 dataset. Type: string (or
+     Expression with resultType string).
+    :vartype table: JSON
+    :ivar schema_type_properties_schema: The table name of the Jira, applies only for Jira V2
+     dataset. Type: string (or Expression with resultType string).
+    :vartype schema_type_properties_schema: JSON
     """
 
     _validation = {
@@ -37567,6 +37597,8 @@ class JiraObjectDataset(Dataset):
         "annotations": {"key": "annotations", "type": "[object]"},
         "folder": {"key": "folder", "type": "DatasetFolder"},
         "table_name": {"key": "typeProperties.tableName", "type": "object"},
+        "table": {"key": "typeProperties.table", "type": "object"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
     }
 
     def __init__(
@@ -37581,6 +37613,8 @@ class JiraObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
+        table: Optional[JSON] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -37604,8 +37638,15 @@ class JiraObjectDataset(Dataset):
         :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
          the root level.
         :paramtype folder: ~azure.synapse.artifacts.models.DatasetFolder
-        :keyword table_name: The table name. Type: string (or Expression with resultType string).
+        :keyword table_name: This property is only supported in Jira V1 Dataset, please consider
+         upgrading to V2 dataset.
         :paramtype table_name: JSON
+        :keyword table: The schema name of the Jira, applies only for Jira V2 dataset. Type: string (or
+         Expression with resultType string).
+        :paramtype table: JSON
+        :keyword schema_type_properties_schema: The table name of the Jira, applies only for Jira V2
+         dataset. Type: string (or Expression with resultType string).
+        :paramtype schema_type_properties_schema: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -37620,6 +37661,8 @@ class JiraObjectDataset(Dataset):
         )
         self.type: str = "JiraObject"
         self.table_name = table_name
+        self.table = table
+        self.schema_type_properties_schema = schema_type_properties_schema
 
 
 class JiraSource(TabularSource):
@@ -40754,6 +40797,10 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
     :ivar first_row_only: Whether to return first row or all rows. Default value is true. Type:
      boolean (or Expression with resultType boolean).
     :vartype first_row_only: JSON
+    :ivar treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+     value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+     Expression with resultType boolean).
+    :vartype treat_decimal_as_string: JSON
     """
 
     _validation = {
@@ -40777,6 +40824,7 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         "source": {"key": "typeProperties.source", "type": "CopySource"},
         "dataset": {"key": "typeProperties.dataset", "type": "DatasetReference"},
         "first_row_only": {"key": "typeProperties.firstRowOnly", "type": "object"},
+        "treat_decimal_as_string": {"key": "typeProperties.treatDecimalAsString", "type": "object"},
     }
 
     def __init__(
@@ -40794,6 +40842,7 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         first_row_only: Optional[JSON] = None,
+        treat_decimal_as_string: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -40826,6 +40875,10 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         :keyword first_row_only: Whether to return first row or all rows. Default value is true. Type:
          boolean (or Expression with resultType boolean).
         :paramtype first_row_only: JSON
+        :keyword treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+         value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+         Expression with resultType boolean).
+        :paramtype treat_decimal_as_string: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -40843,6 +40896,7 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         self.source = source
         self.dataset = dataset
         self.first_row_only = first_row_only
+        self.treat_decimal_as_string = treat_decimal_as_string
 
 
 class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -44175,7 +44229,7 @@ class MySqlTableDataset(Dataset):
         self.table_name = table_name
 
 
-class NetezzaLinkedService(LinkedService):
+class NetezzaLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Netezza linked service.
 
     All required parameters must be populated in order to send to Azure.
@@ -44198,6 +44252,19 @@ class NetezzaLinkedService(LinkedService):
     :ivar connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar server: Server name for connection. Type: string.
+    :vartype server: JSON
+    :ivar port: The port for the connection. Type: integer.
+    :vartype port: JSON
+    :ivar uid: Username for authentication. Type: string.
+    :vartype uid: JSON
+    :ivar database: Database name for connection. Type: string.
+    :vartype database: JSON
+    :ivar security_level: Specifies the security level for the driver connection to the data store.
+     PreferredUnSecured : prefer unsecured, allow fallback to secured connection if required.
+     OnlyUnSecured : strictly unsecured, no fallback. Known values are: "PreferredUnSecured" and
+     "OnlyUnSecured".
+    :vartype security_level: str or ~azure.synapse.artifacts.models.NetezzaSecurityLevelType
     :ivar pwd: The Azure key vault secret reference of password in connection string.
     :vartype pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
@@ -44219,6 +44286,11 @@ class NetezzaLinkedService(LinkedService):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "port": {"key": "typeProperties.port", "type": "object"},
+        "uid": {"key": "typeProperties.uid", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "security_level": {"key": "typeProperties.securityLevel", "type": "str"},
         "pwd": {"key": "typeProperties.pwd", "type": "AzureKeyVaultSecretReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
     }
@@ -44233,6 +44305,11 @@ class NetezzaLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         connection_string: Optional[JSON] = None,
+        server: Optional[JSON] = None,
+        port: Optional[JSON] = None,
+        uid: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        security_level: Optional[Union[str, "_models.NetezzaSecurityLevelType"]] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
         **kwargs: Any
@@ -44254,6 +44331,19 @@ class NetezzaLinkedService(LinkedService):
         :keyword connection_string: An ODBC connection string. Type: string, SecureString or
          AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword server: Server name for connection. Type: string.
+        :paramtype server: JSON
+        :keyword port: The port for the connection. Type: integer.
+        :paramtype port: JSON
+        :keyword uid: Username for authentication. Type: string.
+        :paramtype uid: JSON
+        :keyword database: Database name for connection. Type: string.
+        :paramtype database: JSON
+        :keyword security_level: Specifies the security level for the driver connection to the data
+         store. PreferredUnSecured : prefer unsecured, allow fallback to secured connection if required.
+         OnlyUnSecured : strictly unsecured, no fallback. Known values are: "PreferredUnSecured" and
+         "OnlyUnSecured".
+        :paramtype security_level: str or ~azure.synapse.artifacts.models.NetezzaSecurityLevelType
         :keyword pwd: The Azure key vault secret reference of password in connection string.
         :paramtype pwd: ~azure.synapse.artifacts.models.AzureKeyVaultSecretReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
@@ -44272,6 +44362,11 @@ class NetezzaLinkedService(LinkedService):
         )
         self.type: str = "Netezza"
         self.connection_string = connection_string
+        self.server = server
+        self.port = port
+        self.uid = uid
+        self.database = database
+        self.security_level = security_level
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
 
@@ -55947,6 +56042,9 @@ class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-at
     :ivar page_size: Page size for each http request, too large pageSize will caused timeout,
      default 300,000. Type: integer (or Expression with resultType integer).
     :vartype page_size: JSON
+    :ivar partition_option: Partition option for the SalesforceV2 connector in copy activity,
+     AutoDetect or None. Type: string (or Expression with resultType string).
+    :vartype partition_option: JSON
     """
 
     _validation = {
@@ -55965,6 +56063,7 @@ class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-at
         "query": {"key": "query", "type": "object"},
         "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
         "page_size": {"key": "pageSize", "type": "object"},
+        "partition_option": {"key": "partitionOption", "type": "object"},
     }
 
     def __init__(
@@ -55980,6 +56079,7 @@ class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-at
         query: Optional[JSON] = None,
         include_deleted_objects: Optional[JSON] = None,
         page_size: Optional[JSON] = None,
+        partition_option: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -56017,6 +56117,9 @@ class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-at
         :keyword page_size: Page size for each http request, too large pageSize will caused timeout,
          default 300,000. Type: integer (or Expression with resultType integer).
         :paramtype page_size: JSON
+        :keyword partition_option: Partition option for the SalesforceV2 connector in copy activity,
+         AutoDetect or None. Type: string (or Expression with resultType string).
+        :paramtype partition_option: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -56032,6 +56135,7 @@ class SalesforceV2Source(TabularSource):  # pylint: disable=too-many-instance-at
         self.query = query
         self.include_deleted_objects = include_deleted_objects
         self.page_size = page_size
+        self.partition_option = partition_option
 
 
 class SapBwCubeDataset(Dataset):
@@ -59180,6 +59284,10 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
      and the number of rows affected by the DML statement. Supported connector: SnowflakeV2. Type:
      boolean (or Expression with resultType boolean).
     :vartype return_multistatement_result: JSON
+    :ivar treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+     value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+     Expression with resultType boolean).
+    :vartype treat_decimal_as_string: JSON
     """
 
     _validation = {
@@ -59202,6 +59310,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         "scripts": {"key": "typeProperties.scripts", "type": "[ScriptActivityScriptBlock]"},
         "log_settings": {"key": "typeProperties.logSettings", "type": "ScriptActivityTypePropertiesLogSettings"},
         "return_multistatement_result": {"key": "typeProperties.returnMultistatementResult", "type": "object"},
+        "treat_decimal_as_string": {"key": "typeProperties.treatDecimalAsString", "type": "object"},
     }
 
     def __init__(
@@ -59220,6 +59329,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         scripts: Optional[List["_models.ScriptActivityScriptBlock"]] = None,
         log_settings: Optional["_models.ScriptActivityTypePropertiesLogSettings"] = None,
         return_multistatement_result: Optional[JSON] = None,
+        treat_decimal_as_string: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -59258,6 +59368,10 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
          statements and the number of rows affected by the DML statement. Supported connector:
          SnowflakeV2. Type: boolean (or Expression with resultType boolean).
         :paramtype return_multistatement_result: JSON
+        :keyword treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+         value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+         Expression with resultType boolean).
+        :paramtype treat_decimal_as_string: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -59276,6 +59390,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         self.scripts = scripts
         self.log_settings = log_settings
         self.return_multistatement_result = return_multistatement_result
+        self.treat_decimal_as_string = treat_decimal_as_string
 
 
 class ScriptActivityParameter(_serialization.Model):
@@ -62417,6 +62532,9 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
+    :ivar use_utc_timestamps: Indicates whether to use UTC timezone for timestamp data types. Type:
+     boolean.
+    :vartype use_utc_timestamps: JSON
     """
 
     _validation = {
@@ -62450,9 +62568,10 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         "private_key": {"key": "typeProperties.privateKey", "type": "SecretBase"},
         "private_key_passphrase": {"key": "typeProperties.privateKeyPassphrase", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "use_utc_timestamps": {"key": "typeProperties.useUtcTimestamps", "type": "object"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         account_identifier: JSON,
@@ -62477,6 +62596,7 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         private_key: Optional["_models.SecretBase"] = None,
         private_key_passphrase: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
+        use_utc_timestamps: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -62537,6 +62657,9 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
+        :keyword use_utc_timestamps: Indicates whether to use UTC timezone for timestamp data types.
+         Type: boolean.
+        :paramtype use_utc_timestamps: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -62564,6 +62687,7 @@ class SnowflakeV2LinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.private_key = private_key
         self.private_key_passphrase = private_key_passphrase
         self.encrypted_credential = encrypted_credential
+        self.use_utc_timestamps = use_utc_timestamps
 
 
 class SnowflakeV2Sink(CopySink):

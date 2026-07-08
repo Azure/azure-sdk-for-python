@@ -2,8 +2,8 @@
     "CrossLanguagePackageId": "KeyVault",
     "CrossLanguageDefinitionId": {
         "azure.keyvault.securitydomain.models.CertificateInfo": "KeyVault.CertificateInfoObject",
-        "azure.keyvault.securitydomain.models.Error": "Error",
         "azure.keyvault.securitydomain.models.KeyVaultError": "KeyVaultError",
+        "azure.keyvault.securitydomain.models.KeyVaultErrorError": "KeyVaultError.error.anonymous",
         "azure.keyvault.securitydomain.models.SecurityDomain": "KeyVault.SecurityDomainObject",
         "azure.keyvault.securitydomain.models.SecurityDomainJsonWebKey": "KeyVault.SecurityDomainJsonWebKey",
         "azure.keyvault.securitydomain.models.SecurityDomainOperationStatus": "KeyVault.SecurityDomainOperationStatus",

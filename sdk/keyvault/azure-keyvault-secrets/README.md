@@ -22,7 +22,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
-_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)._
 
 ## Getting started
 ### Install packages

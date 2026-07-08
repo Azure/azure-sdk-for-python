@@ -35,6 +35,7 @@ USAGE:
 
 import os
 from pathlib import Path
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -85,7 +86,7 @@ def main() -> None:
 
     # For video analysis, keyframes would be found in AudioVisualContent.key_frame_times_ms
     # Cast AnalysisContent to AudioVisualContent to access video-specific properties
-    video_content: AudioVisualContent = result.contents[0]  # type: ignore
+    video_content = cast(AudioVisualContent, result.contents[0])
 
     # Print keyframe information
     if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
@@ -121,7 +122,9 @@ def main() -> None:
         print(f"Keyframe image saved to: {output_path}")
     else:
         print("\nNote: This sample demonstrates GetResultFile API usage.")
-        print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
+        print(
+            "      For video analysis with keyframes, use prebuilt-videoSearch analyzer."
+        )
         print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
     # [END get_result_file]
 

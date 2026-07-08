@@ -38,6 +38,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_file_systems_request(
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     continuation: Optional[str] = None,
     max_results: Optional[int] = None,
@@ -49,7 +50,6 @@ def build_list_file_systems_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["account"] = kwargs.pop("resource", _params.pop("resource", "account"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,13 +160,13 @@ class ServiceOperations:
 
                 _request = build_list_file_systems_request(
                     url=self._config.url,
+                    version=self._config.version,
                     prefix=prefix,
                     continuation=continuation,
                     max_results=max_results,
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
                     resource=resource,
-                    version=self._config.version,
                     headers=_headers,
                     params=_params,
                 )

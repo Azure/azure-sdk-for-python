@@ -1,9 +1,16 @@
 # Release History
 
-## 7.14.4 (Unreleased)
+## 7.15.0 (Unreleased)
+
+### Features Added
+
+- Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
 
 ### Bugs Fixed
 
+- Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
+- Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
+- Fixed a bug where sending a batched or multi-message payload with `uamqp_transport=True` raised `TypeError: 'BatchMessage' object is not subscriptable` (and a masked `AttributeError` on the list path) when the first message carried a `message_id`, `session_id`, or `partition_key`. The batch envelope properties are now set through the transport-appropriate code path. (regression from [#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
 - Fixed a bug where the async pure-Python AMQP transport failed to connect with `[Errno 22] Invalid argument` (`amqp:socket-error`) inside containerized/virtualized environments such as Docker Desktop on macOS. The transport no longer reads back and re-applies platform-negotiated TCP options (e.g. `TCP_MAXSEG`) that some platforms reject via `setsockopt`. ([#45394](https://github.com/Azure/azure-sdk-for-python/issues/45394))
 
 ## 7.14.3 (2025-11-11)

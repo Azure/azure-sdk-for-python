@@ -6,15 +6,20 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.queue import CorsRule, Metrics, QueueAnalyticsLogging, QueueServiceClient, RetentionPolicy
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
 
+from azure.core.exceptions import HttpResponseError
+from azure.storage.queue import (
+    CorsRule,
+    Metrics,
+    QueueAnalyticsLogging,
+    QueueServiceClient,
+    RetentionPolicy,
+)
 
 # ------------------------------------------------------------------------------
 
@@ -81,8 +86,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -106,7 +110,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         # Act
         resp = qsc.set_service_properties(
-            analytics_logging=QueueAnalyticsLogging(), hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[]
+            analytics_logging=QueueAnalyticsLogging(),
+            hour_metrics=Metrics(),
+            minute_metrics=Metrics(),
+            cors=[],
         )
 
         # Assert
@@ -124,7 +131,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         logging = QueueAnalyticsLogging(
-            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            read=True,
+            write=True,
+            delete=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Act
@@ -142,7 +152,11 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = Metrics(
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
+        )
 
         # Act
         qsc.set_service_properties(hour_metrics=hour_metrics)
@@ -160,7 +174,9 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Act
@@ -183,8 +199,18 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
         allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
-        exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
-        allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
+        exposed_headers = [
+            "x-ms-meta-data*",
+            "x-ms-meta-source*",
+            "x-ms-meta-abc",
+            "x-ms-meta-bcd",
+        ]
+        allowed_headers = [
+            "x-ms-meta-data*",
+            "x-ms-meta-target*",
+            "x-ms-meta-xyz",
+            "x-ms-meta-foo",
+        ]
         cors_rule2 = CorsRule(
             allowed_origins,
             allowed_methods,
@@ -204,12 +230,9 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
     # --Test cases for errors ---------------------------------------
     @QueuePreparer()
-    def test_retention_no_days(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Assert
-        pytest.raises(ValueError, RetentionPolicy, True, None)
+    def test_retention_no_days(self):
+        with pytest.raises(ValueError):
+            RetentionPolicy(True, None)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -220,11 +243,12 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         cors = []
-        for i in range(0, 6):
+        for _ in range(6):
             cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
-        pytest.raises(HttpResponseError, qsc.set_service_properties, None, None, None, cors)
+        with pytest.raises(HttpResponseError):
+            qsc.set_service_properties(None, None, None, cors)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -235,11 +259,14 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=366),
         )
 
         # Assert
-        pytest.raises(HttpResponseError, qsc.set_service_properties, None, None, minute_metrics)
+        with pytest.raises(HttpResponseError):
+            qsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

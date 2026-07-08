@@ -4,9 +4,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator
-from test_constants import FEATURE_MANAGEMENT_KEY
+import functools
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
 from testcase import (
     AppConfigTestCase,
     has_feature_flag,
@@ -14,17 +18,24 @@ from testcase import (
 from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR
 
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
+
 
 class TestTagFilters(AppConfigTestCase):
     """Tests for tag filter functionality in Azure App Configuration provider."""
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
-    def test_tag_filter_exact_match(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_tag_filter_exact_match(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test filtering by exact tag name and value match."""
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -38,13 +49,13 @@ class TestTagFilters(AppConfigTestCase):
         assert "no_tags" not in config_client
         assert "wildcard_tag" not in config_client
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
-    def test_multiple_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_multiple_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test filtering with multiple tag filters (AND condition)."""
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b", "c=d"])}
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -57,13 +68,13 @@ class TestTagFilters(AppConfigTestCase):
         assert "different_tag" not in config_client
         assert "no_tags" not in config_client
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
-    def test_tag_filter_empty_value(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_tag_filter_empty_value(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test filtering by tag with empty value."""
         selects = {SettingSelector(key_filter="*", tag_filters=["a="])}
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -78,14 +89,14 @@ class TestTagFilters(AppConfigTestCase):
         assert "different_tag" not in config_client
         assert "no_tags" not in config_client
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_tag_filter_special_characters(
-        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+        self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
     ):
         selects = {SettingSelector(key_filter="*", tag_filters=["special@tag=special:value"])}
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -98,13 +109,13 @@ class TestTagFilters(AppConfigTestCase):
         assert "multi_tagged" not in config_client
         assert "no_tags" not in config_client
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
-    def test_feature_flag_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_feature_flag_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test tag filters with feature flags."""
         # Only apply tag filters to feature flags
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             feature_flag_enabled=True,
             feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -122,13 +133,13 @@ class TestTagFilters(AppConfigTestCase):
         assert not has_feature_flag(config_client, "DifferentTaggedFeatureFlag")
         assert not has_feature_flag(config_client, "NoTagsFeatureFlag")
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
-    def test_nonexistent_tag_filter(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_nonexistent_tag_filter(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test filtering by non-existent tag."""
         selects = {SettingSelector(key_filter="*", tag_filters=["nonexistent=tag"])}
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -141,7 +152,7 @@ class TestTagFilters(AppConfigTestCase):
 
         # Check that feature flags are also filtered properly
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             feature_flag_enabled=True,
             feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["nonexistent=tag"])},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -150,13 +161,13 @@ class TestTagFilters(AppConfigTestCase):
         # Feature flags shouldn't be available with non-existent tag filter
         assert len(config_client[FEATURE_MANAGEMENT_KEY]["feature_flags"]) == 0
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
-    def test_tag_filter_with_null_value(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    def test_tag_filter_with_null_value(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test filtering by tag with null value."""
         selects = {SettingSelector(key_filter="*", tag_filters=["tag=" + NULL_CHAR])}
         config_client = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )

@@ -35,13 +35,22 @@ def main():
         name="demo-resource",
         resource={
             "location": "eastus",
-            "properties": {"billingModel": "Capacity", "connectionIntent": "Disconnected"},
+            "properties": {
+                "benefitPlans": {"azureHybridWindowsServerBenefit": "Enabled", "windowsServerVmCount": 5},
+                "billingConfiguration": {
+                    "autoRenew": "Enabled",
+                    "billingStatus": "Enabled",
+                    "current": {"cores": 12, "pricingModel": "Trial"},
+                },
+                "billingModel": "Capacity",
+                "connectionIntent": "Disconnected",
+            },
             "tags": {"key1": "value1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/DisconnectedOperations_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-15/DisconnectedOperations_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

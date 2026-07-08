@@ -14,19 +14,15 @@ from azure.ai.projects.models import (
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionTextOptions,
 )
-import pytest
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_crud_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -79,7 +75,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 conversation_id=conversation.id,
                 items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
             )
-            print(f"Added a second user message to the conversation")
+            print("Added a second user message to the conversation")
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
@@ -132,7 +128,7 @@ class TestAgentResponsesCrudAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_with_structured_output_async(self, **kwargs):
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -179,7 +175,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response id: {response.id}, output text: {response.output_text}")
-            assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'
+            assert response.output_text == '{"name":"Science fair","date":"2025-11-07","participants":["Alice","Bob"]}'
 
             await openai_client.conversations.delete(conversation_id=conversation.id)
             print("Conversation deleted")

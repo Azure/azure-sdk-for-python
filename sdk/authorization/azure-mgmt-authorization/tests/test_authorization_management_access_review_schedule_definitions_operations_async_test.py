@@ -24,4 +24,4 @@ class TestAuthorizationManagementAccessReviewScheduleDefinitionsOperationsAsync(
     async def test_access_review_schedule_definitions_list(self, resource_group):
         response = self.client.access_review_schedule_definitions.list()
         result = [r async for r in response]
-        assert response
+        assert len(result)

@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._test_base import _FileTest
-
-from devtools_testutils.perfstress_tests import RandomStream, get_random_bytes
+from devtools_testutils.perfstress_tests import RandomStream
 from devtools_testutils.perfstress_tests import AsyncRandomStream
+
+from ._test_base import _FileTest
 
 
 class UploadTest(_FileTest):
@@ -18,13 +18,11 @@ class UploadTest(_FileTest):
     def run_sync(self):
         self.upload_stream.reset()
         self.sharefile_client.upload_file(
-            self.upload_stream,
-            length=self.args.size,
-            max_concurrency=self.args.max_concurrency)
+            self.upload_stream, length=self.args.size, max_concurrency=self.args.max_concurrency
+        )
 
     async def run_async(self):
         self.upload_stream_async.reset()
         await self.async_sharefile_client.upload_file(
-            self.upload_stream_async,
-            length=self.args.size,
-            max_concurrency=self.args.max_concurrency)
+            self.upload_stream_async, length=self.args.size, max_concurrency=self.args.max_concurrency
+        )

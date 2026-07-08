@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,13 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -17,9 +23,18 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._events_operations import build_batch_post_by_experiment_id_request, build_batch_post_by_experiment_name_request, build_batch_post_request, build_post_by_experiment_id_request, build_post_by_experiment_name_request, build_post_request
-T = TypeVar('T')
+from ...operations._events_operations import (
+    build_batch_post_by_experiment_id_request,
+    build_batch_post_by_experiment_name_request,
+    build_batch_post_request,
+    build_post_by_experiment_id_request,
+    build_post_by_experiment_name_request,
+    build_post_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class EventsOperations:
     """EventsOperations async operations.
@@ -70,16 +85,14 @@ class EventsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchEventCommandResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchEventCommandResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchEventCommandResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchEventCommand')
+            _json = self._serialize.body(body, "BatchEventCommand")
         else:
             _json = None
 
@@ -90,15 +103,13 @@ class EventsOperations:
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_post_by_experiment_name.metadata['url'],
+            template_url=self.batch_post_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -107,15 +118,14 @@ class EventsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchEventCommandResult', pipeline_response)
+        deserialized = self._deserialize("BatchEventCommandResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_post_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/batch/events"}  # type: ignore
-
+    batch_post_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/batch/events"}  # type: ignore
 
     @distributed_trace_async
     async def batch_post_by_experiment_id(
@@ -144,16 +154,14 @@ class EventsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchEventCommandResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchEventCommandResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchEventCommandResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchEventCommand')
+            _json = self._serialize.body(body, "BatchEventCommand")
         else:
             _json = None
 
@@ -164,15 +172,13 @@ class EventsOperations:
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_post_by_experiment_id.metadata['url'],
+            template_url=self.batch_post_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -181,15 +187,14 @@ class EventsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchEventCommandResult', pipeline_response)
+        deserialized = self._deserialize("BatchEventCommandResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_post_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/batch/events"}  # type: ignore
-
+    batch_post_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/batch/events"}  # type: ignore
 
     @distributed_trace_async
     async def batch_post(
@@ -215,16 +220,14 @@ class EventsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchEventCommandResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchEventCommandResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchEventCommandResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchEventCommand')
+            _json = self._serialize.body(body, "BatchEventCommand")
         else:
             _json = None
 
@@ -234,15 +237,13 @@ class EventsOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_post.metadata['url'],
+            template_url=self.batch_post.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -251,15 +252,14 @@ class EventsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchEventCommandResult', pipeline_response)
+        deserialized = self._deserialize("BatchEventCommandResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_post.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batch/events"}  # type: ignore
-
+    batch_post.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batch/events"}  # type: ignore
 
     @distributed_trace_async
     async def post_by_experiment_name(  # pylint: disable=inconsistent-return-statements
@@ -291,16 +291,14 @@ class EventsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BaseEvent')
+            _json = self._serialize.body(body, "BaseEvent")
         else:
             _json = None
 
@@ -312,15 +310,13 @@ class EventsOperations:
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.post_by_experiment_name.metadata['url'],
+            template_url=self.post_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -332,8 +328,7 @@ class EventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    post_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/events"}  # type: ignore
-
+    post_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/events"}  # type: ignore
 
     @distributed_trace_async
     async def post_by_experiment_id(  # pylint: disable=inconsistent-return-statements
@@ -365,16 +360,14 @@ class EventsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BaseEvent')
+            _json = self._serialize.body(body, "BaseEvent")
         else:
             _json = None
 
@@ -386,15 +379,13 @@ class EventsOperations:
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.post_by_experiment_id.metadata['url'],
+            template_url=self.post_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -406,8 +397,7 @@ class EventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    post_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/events"}  # type: ignore
-
+    post_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/events"}  # type: ignore
 
     @distributed_trace_async
     async def post(  # pylint: disable=inconsistent-return-statements
@@ -436,16 +426,14 @@ class EventsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BaseEvent')
+            _json = self._serialize.body(body, "BaseEvent")
         else:
             _json = None
 
@@ -456,15 +444,13 @@ class EventsOperations:
             run_id=run_id,
             content_type=content_type,
             json=_json,
-            template_url=self.post.metadata['url'],
+            template_url=self.post.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -476,5 +462,4 @@ class EventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    post.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/events"}  # type: ignore
-
+    post.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/events"}  # type: ignore

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
-from typing_extensions import Self
+import sys
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -24,7 +24,13 @@ from .operations import (
     DeploymentsOperations,
     EvaluationRulesOperations,
     IndexesOperations,
+    ToolboxesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -47,6 +53,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.aio.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -55,15 +63,22 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param allow_preview: Whether to enable preview features. Must be specified and set to True to
+     enable preview features. Default value is None.
+    :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is "v1". Note that overriding this default value may result in unsupported
-     behavior.
+     None. Default value is None. If not set, the operation's default API version will be used. Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "AsyncTokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AIProjectClientConfiguration(
+            endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -96,6 +111,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

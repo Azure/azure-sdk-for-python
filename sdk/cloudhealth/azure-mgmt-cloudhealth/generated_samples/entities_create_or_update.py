@@ -31,60 +31,138 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.entities.create_or_update(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        entity_name="uszrxbdkxesdrxhmagmzywebgbjj",
+    response = client.entities.begin_create_or_update(
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        entity_name="orders-api",
         resource={
             "properties": {
                 "alerts": {
                     "degraded": {
                         "actionGroupIds": [
-                            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Insights/actionGroups/myactiongroup"
+                            "/subscriptions/abcdef12-3456-7890-abcd-ef1234567890/resourceGroups/online-store-rg/providers/Microsoft.Insights/actionGroups/online-store-oncall"
                         ],
-                        "description": "Alert description",
-                        "severity": "Sev4",
+                        "description": "Orders API is degraded.",
+                        "severity": "Sev3",
                     },
                     "unhealthy": {
                         "actionGroupIds": [
-                            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Insights/actionGroups/myactiongroup"
+                            "/subscriptions/abcdef12-3456-7890-abcd-ef1234567890/resourceGroups/online-store-rg/providers/Microsoft.Insights/actionGroups/online-store-oncall"
                         ],
-                        "description": "Alert description",
+                        "description": "Orders API is unhealthy.",
                         "severity": "Sev1",
                     },
                 },
-                "canvasPosition": {"x": 14, "y": 13},
-                "displayName": "My entity",
-                "healthObjective": 62,
-                "icon": {"customData": "rcitntvapruccrhtxmkqjphbxunkz", "iconName": "Custom"},
+                "canvasPosition": {"x": 360, "y": 240},
+                "displayName": "Orders API",
+                "healthObjective": 99.9,
+                "icon": {"iconName": "Kubernetes"},
                 "impact": "Standard",
-                "labels": {"key1376": "ixfvzsfnpvkkbrce"},
-                "signals": {
+                "signalGroups": {
                     "azureLogAnalytics": {
-                        "authenticationSetting": "B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX",
-                        "logAnalyticsWorkspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.OperationalInsights/workspaces/myworkspace",
-                        "signalAssignments": [
-                            {"signalDefinitions": ["B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX"]}
+                        "authenticationSetting": "default-auth",
+                        "logAnalyticsWorkspaceResourceId": "/subscriptions/abcdef12-3456-7890-abcd-ef1234567890/resourceGroups/online-store-rg/providers/Microsoft.OperationalInsights/workspaces/online-store-law",
+                        "signals": [
+                            {
+                                "dataUnit": "Count",
+                                "displayName": "Unhealthy pods",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 0},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 2},
+                                },
+                                "name": "unhealthy-pods",
+                                "queryText": "KubePodInventory | where TimeGenerated > ago(5m) | where Namespace == 'online-store' | where PodStatus != 'Running' | summarize unhealthyPods = dcount(Name)",
+                                "refreshInterval": "PT5M",
+                                "signalKind": "LogAnalyticsQuery",
+                                "timeGrain": "PT5M",
+                                "valueColumnName": "unhealthyPods",
+                            }
                         ],
                     },
                     "azureMonitorWorkspace": {
-                        "authenticationSetting": "B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX",
-                        "azureMonitorWorkspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.OperationalInsights/workspaces/myworkspace",
-                        "signalAssignments": [{"signalDefinitions": ["sigdef2"]}, {"signalDefinitions": ["sigdef3"]}],
+                        "authenticationSetting": "default-auth",
+                        "azureMonitorWorkspaceResourceId": "/subscriptions/abcdef12-3456-7890-abcd-ef1234567890/resourceGroups/online-store-rg/providers/Microsoft.Monitor/accounts/online-store-amw",
+                        "signals": [
+                            {
+                                "dataUnit": "Percent",
+                                "displayName": "HTTP 5xx error rate",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 1},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 5},
+                                },
+                                "name": "error-rate",
+                                "queryText": 'sum(rate(http_requests_total{job="orders-api", code=~"5.."}[5m])) / sum(rate(http_requests_total{job="orders-api"}[5m])) * 100',
+                                "refreshInterval": "PT1M",
+                                "signalKind": "PrometheusMetricsQuery",
+                                "timeGrain": "PT5M",
+                            },
+                            {
+                                "dataUnit": "MilliSeconds",
+                                "displayName": "p95 request latency",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 300},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 800},
+                                },
+                                "name": "p95-latency",
+                                "queryText": 'histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job="orders-api"}[5m]))) * 1000',
+                                "refreshInterval": "PT1M",
+                                "signalKind": "PrometheusMetricsQuery",
+                                "timeGrain": "PT5M",
+                            },
+                            {
+                                "dataUnit": "Percent",
+                                "displayName": "Pod CPU utilization",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 70},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 90},
+                                },
+                                "name": "pod-cpu",
+                                "queryText": 'sum(rate(container_cpu_usage_seconds_total{namespace="online-store", pod=~"orders-api-.*"}[5m])) * 100',
+                                "refreshInterval": "PT1M",
+                                "signalDefinitionName": "pod-cpu-usage",
+                                "signalKind": "PrometheusMetricsQuery",
+                                "timeGrain": "PT5M",
+                            },
+                        ],
                     },
                     "azureResource": {
-                        "authenticationSetting": "B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX",
-                        "azureResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1",
-                        "signalAssignments": [{"signalDefinitions": ["sigdef1"]}],
+                        "authenticationSetting": "default-auth",
+                        "azureResourceId": "/subscriptions/abcdef12-3456-7890-abcd-ef1234567890/resourceGroups/online-store-rg/providers/Microsoft.ContainerService/managedClusters/online-store-aks",
+                        "azureResourceKind": "managedClusters",
+                        "resourceHealth": {"enabled": "Enabled"},
+                        "signals": [
+                            {
+                                "aggregationType": "Average",
+                                "dataUnit": "Percent",
+                                "displayName": "Node CPU utilization",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 70},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 90},
+                                },
+                                "metricName": "node_cpu_usage_percentage",
+                                "metricNamespace": "Microsoft.ContainerService/managedClusters",
+                                "name": "node-cpu",
+                                "refreshInterval": "PT1M",
+                                "signalKind": "AzureResourceMetric",
+                                "timeGrain": "PT5M",
+                            }
+                        ],
                     },
-                    "dependencies": {"aggregationType": "WorstOf"},
+                    "dependencies": {
+                        "aggregationType": "MinHealthy",
+                        "degradedThreshold": 100,
+                        "ignoreUnknown": True,
+                        "unhealthyThreshold": 50,
+                        "unit": "Percentage",
+                    },
                 },
+                "tags": {"environment": "production", "team": "online-store"},
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/Entities_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01-preview/Entities_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

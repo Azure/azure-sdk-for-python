@@ -5,20 +5,16 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
 )
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentCodeInterpreterAsync(TestBase):
 
     @servicePreparer()
@@ -31,7 +27,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
         without any file uploads or downloads - just pure code execution.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         agent_name = "code-interpreter-simple-agent-async"
 
         async with (
@@ -44,7 +40,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can execute Python code.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Simple code interpreter agent for basic Python execution.",
             )

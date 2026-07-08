@@ -1,5 +1,34 @@
 # Release History
 
+## 1.1.0b2 (2026-05-26)
+
+### Features Added
+
+  - Client `HanaManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HanaManagementClient` added method `send_request`
+  - Model `ProviderInstance` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SapMonitor` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `CreatedByType`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ProviderInstance` moved instance variable `type_properties_type`, `metadata` and `provisioning_state` under property `properties` whose type is `ProviderInstanceProperties`
+
+### Other Changes
+
+  - Deleted model `OperationList` which actually was not used by SDK users
+
+## 1.0.1 (2026-05-15)
+
+### Other Changes
+
+  - Regenerated with latest code generator tool
+
 ## 1.1.0b1 (2022-10-31)
 
 ### Other Changes

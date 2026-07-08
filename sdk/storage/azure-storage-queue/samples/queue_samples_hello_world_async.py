@@ -20,6 +20,7 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
+# pylint: disable=unused-variable, name-too-long
 
 import asyncio
 import os
@@ -71,7 +72,8 @@ class QueueHelloWorldSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message("I'm using queues!"), queue.send_message("This is my second message")
+                    queue.send_message("I'm using queues!"),
+                    queue.send_message("This is my second message"),
                 )
 
                 # Receive the messages

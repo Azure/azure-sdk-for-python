@@ -15,7 +15,6 @@ from ..avro import schema
 from .datafile import DataFileException
 from .datafile import MAGIC, SYNC_SIZE, META_SCHEMA, SCHEMA_KEY
 
-
 PY3 = sys.version_info[0] == 3
 
 logger = logging.getLogger(__name__)

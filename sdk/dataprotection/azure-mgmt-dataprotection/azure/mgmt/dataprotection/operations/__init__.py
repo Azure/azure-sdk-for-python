@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import DataProtectionOperationsOperations  # type: ignore
 from ._operations import BackupInstancesOperations  # type: ignore
 from ._operations import BackupVaultOperationResultsOperations  # type: ignore
+from ._operations import DeletedBackupVaultsOperations  # type: ignore
 from ._operations import ResourceGuardsOperations  # type: ignore
 from ._operations import BackupVaultsOperations  # type: ignore
 from ._operations import OperationStatusBackupVaultContextOperations  # type: ignore
@@ -43,6 +44,7 @@ __all__ = [
     "DataProtectionOperationsOperations",
     "BackupInstancesOperations",
     "BackupVaultOperationResultsOperations",
+    "DeletedBackupVaultsOperations",
     "ResourceGuardsOperations",
     "BackupVaultsOperations",
     "OperationStatusBackupVaultContextOperations",

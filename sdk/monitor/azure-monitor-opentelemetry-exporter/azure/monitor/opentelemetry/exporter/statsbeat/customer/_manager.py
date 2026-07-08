@@ -82,7 +82,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             self._base_attributes: Optional[Dict[str, Any]] = {  # type: ignore
                 "language": self._language,
                 "version": VERSION,
-                "compute_type": get_compute_type(),
+                "computeType": get_compute_type(),
             }
         else:
             self._base_attributes = None
@@ -128,11 +128,14 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         """
         return self._status == CustomerSdkStatsStatus.SHUTDOWN  # type: ignore
 
-    def initialize(self, connection_string: str) -> bool:
+    def initialize(self, connection_string: str, credential: Optional[Any] = None) -> bool:
         """Initialize Customer SDKStats collection with the provided connection string.
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
+        :param credential: Token credential for AAD authentication. Defaults to None.
+        :type credential: ~azure.core.credentials.TokenCredential or None
+
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
@@ -147,13 +150,16 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                 # Already initialized, return True
                 return True
 
-            return self._do_initialize(connection_string)
+            return self._do_initialize(connection_string, credential=credential)
 
-    def _do_initialize(self, connection_string: str) -> bool:
+    def _do_initialize(self, connection_string: str, credential: Optional[Any] = None) -> bool:
         """Internal initialization method.
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
+        :param credential: Token credential for AAD authentication. Defaults to None.
+        :type credential: ~azure.core.credentials.TokenCredential or None
+
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
@@ -161,10 +167,13 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             # Use delayed import to avoid circular import
             from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 
-            self._customer_sdkstats_exporter = AzureMonitorMetricExporter(
-                connection_string=connection_string,
-                is_customer_sdkstats=True,
-            )
+            exporter_kwargs: Dict[str, Any] = {
+                "connection_string": connection_string,
+                "is_customer_sdkstats": True,
+            }
+            if credential is not None:
+                exporter_kwargs["credential"] = credential
+            self._customer_sdkstats_exporter = AzureMonitorMetricExporter(**exporter_kwargs)
             metric_reader_options = {
                 "exporter": self._customer_sdkstats_exporter,
                 "export_interval_millis": get_customer_sdkstats_export_interval() * 1000,  # Default 15m
@@ -309,7 +318,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                 if count > 0:
                     # Create attributes by copying base and adding telemetry-specific data
                     attributes = self._base_attributes.copy()
-                    attributes["telemetry_type"] = telemetry_type
+                    attributes["telemetryType"] = telemetry_type
                     observations.append(Observation(count, attributes))
 
             # Reset counts after reading
@@ -331,11 +340,11 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                             if count > 0:
                                 # Create attributes by copying base and adding drop-specific data
                                 attributes = self._base_attributes.copy()
-                                attributes["drop.code"] = drop_code if isinstance(drop_code, int) else drop_code.value
-                                attributes["drop.reason"] = reason
-                                attributes["telemetry_type"] = telemetry_type
+                                attributes["dropCode"] = drop_code if isinstance(drop_code, int) else drop_code.value
+                                attributes["dropReason"] = reason
+                                attributes["telemetryType"] = telemetry_type
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
-                                    attributes["telemetry_success"] = success_tracker
+                                    attributes["telemetrySuccess"] = success_tracker
                                 observations.append(Observation(count, attributes))
 
             # Reset counts after reading
@@ -355,9 +364,9 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                         if count > 0:
                             # Create attributes by copying base and adding retry-specific data
                             attributes = self._base_attributes.copy()
-                            attributes["retry.code"] = retry_code if isinstance(retry_code, int) else retry_code.value
-                            attributes["retry.reason"] = reason
-                            attributes["telemetry_type"] = telemetry_type
+                            attributes["retryCode"] = retry_code if isinstance(retry_code, int) else retry_code.value
+                            attributes["retryReason"] = reason
+                            attributes["telemetryType"] = telemetry_type
                             observations.append(Observation(count, attributes))
 
             # Reset counts after reading

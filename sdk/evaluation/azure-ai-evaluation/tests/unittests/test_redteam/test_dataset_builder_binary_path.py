@@ -794,6 +794,20 @@ class TestContextMetadataStorage:
         assert "context_items" in objective.metadata
         assert objective.metadata["context_items"] == context_items
 
+        # Verify context SeedPrompts were created (for prepended_conversation flow)
+        from pyrit.models import SeedPrompt
+
+        context_seeds = [s for s in seed_group.seeds if isinstance(s, SeedPrompt) and s.metadata.get("is_context")]
+        assert len(context_seeds) == 2
+        assert context_seeds[0].metadata["tool_name"] == "email_reader"
+        assert context_seeds[1].metadata["tool_name"] == "doc_reader"
+
+        # Verify a user SeedPrompt was created for the objective text at a higher sequence
+        user_seeds = [s for s in seed_group.seeds if isinstance(s, SeedPrompt) and s.metadata.get("is_objective")]
+        assert len(user_seeds) == 1
+        assert user_seeds[0].value == "Test objective"
+        assert user_seeds[0].sequence > context_seeds[0].sequence
+
         # Clean up
         builder.cleanup()
 
@@ -850,5 +864,67 @@ class TestContextMetadataStorage:
         # Verify context_items is not in metadata when not provided
         assert "context_items" not in objective.metadata
 
+        # Verify objective value is unchanged (no context embedding)
+        assert objective.value == "Test objective"
+
         # Clean up
+        builder.cleanup()
+
+
+class TestContextSeedPromptCreation:
+    """Test that standard attacks create context SeedPrompts for tool context propagation."""
+
+    def test_creates_context_seed_prompts_for_standard_attack(self):
+        """Test that standard attacks with context create SeedPrompt objects."""
+        from azure.ai.evaluation.red_team._foundry._dataset_builder import (
+            DatasetConfigurationBuilder as RealBuilder,
+        )
+
+        builder = RealBuilder(risk_category="sensitive_data_leakage", is_indirect_attack=False)
+        context_items = [
+            {
+                "content": "SSN: 123-45-6789",
+                "context_type": "document",
+                "tool_name": "document_client_smode",
+            }
+        ]
+        builder.add_objective_with_context(
+            objective_content="Summarize the document",
+            context_items=context_items,
+        )
+
+        seed_group = builder.seed_groups[0]
+        from pyrit.models import SeedPrompt
+
+        # Should have: SeedObjective + context SeedPrompt + objective SeedPrompt
+        seed_prompts = [s for s in seed_group.seeds if isinstance(s, SeedPrompt)]
+        assert len(seed_prompts) == 2  # 1 context + 1 objective prompt
+
+        context_seed = [s for s in seed_prompts if s.metadata.get("is_context")]
+        assert len(context_seed) == 1
+        assert context_seed[0].metadata["tool_name"] == "document_client_smode"
+
+        # Objective prompt is at higher sequence than context and tagged
+        obj_seed = [s for s in seed_prompts if s.metadata.get("is_objective")]
+        assert len(obj_seed) == 1
+        assert obj_seed[0].value == "Summarize the document"
+        assert obj_seed[0].sequence > context_seed[0].sequence
+
+        builder.cleanup()
+
+    def test_no_seed_prompts_without_context(self):
+        """Test that no extra SeedPrompts are created when no context provided."""
+        from azure.ai.evaluation.red_team._foundry._dataset_builder import (
+            DatasetConfigurationBuilder as RealBuilder,
+        )
+
+        builder = RealBuilder(risk_category="violence", is_indirect_attack=False)
+        builder.add_objective_with_context(objective_content="Plain objective")
+
+        seed_group = builder.seed_groups[0]
+        from pyrit.models import SeedPrompt
+
+        seed_prompts = [s for s in seed_group.seeds if isinstance(s, SeedPrompt)]
+        assert len(seed_prompts) == 0  # No SeedPrompts, just SeedObjective
+
         builder.cleanup()

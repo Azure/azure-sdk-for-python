@@ -43,6 +43,7 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Create a mock exporter
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        mock_exporter._credential = None
 
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)
@@ -50,6 +51,24 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Verify manager is initialized
         manager = get_customer_stats_manager()
         self.assertTrue(manager.is_initialized)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._customer_sdkstats.get_customer_stats_manager")
+    def test_collect_customer_sdkstats_passes_credential(self, mock_get_manager):
+        """Test that credential from exporter is passed to manager.initialize()."""
+        mock_manager = mock.Mock()
+        mock_manager.is_initialized = False
+        mock_get_manager.return_value = mock_manager
+
+        mock_exporter = mock.Mock()
+        mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        mock_exporter._credential = mock.Mock()
+
+        collect_customer_sdkstats(mock_exporter)
+
+        mock_manager.initialize.assert_called_once_with(
+            connection_string=mock_exporter._connection_string,
+            credential=mock_exporter._credential,
+        )
 
     def test_collect_customer_sdkstats_multiple_calls(self):
         """Test that multiple calls to collect_customer_sdkstats don't cause issues."""

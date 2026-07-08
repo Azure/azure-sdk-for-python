@@ -1,11 +1,10 @@
 {
-  "commit": "94cec42b293ffaaf67b51ac86235819e6c4886b3",
+  "apiVersion": "2022-12-01",
+  "apiVersions": {
+    "Microsoft.Resources": "2022-12-01"
+  },
+  "commit": "f34830624e2040e4777496c73aa7c6fe764f4bfc",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.48.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/resources/resource-manager/Microsoft.Resources/subscriptions/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-subscriptions-2022-12 --use=@autorest/python@6.48.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/resources/resource-manager/Microsoft.Resources/subscriptions/readme.md"
+  "typespec_src": "specification/resources/resource-manager/Microsoft.Resources/subscriptions",
+  "emitterVersion": "0.62.1"
 }

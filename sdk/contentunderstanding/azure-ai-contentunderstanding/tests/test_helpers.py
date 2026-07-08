@@ -132,6 +132,25 @@ def assert_poller_properties(poller: Any, poller_name: str = "Poller") -> None:
     print(f"{poller_name} properties verified successfully")
 
 
+def assert_analyze_poller_usage(poller: Any, poller_name: str = "Poller") -> None:
+    """Assert the usage property on a completed analyze poller (AnalyzeLROPoller / AnalyzeAsyncLROPoller).
+
+    Must be called AFTER poller.result() has been called, since usage is only available
+    once the LRO has completed and the final polling response contains the usage data.
+
+    Args:
+        poller: The AnalyzeLROPoller or AnalyzeAsyncLROPoller instance to validate
+        poller_name: Optional name for the poller in log messages
+
+    Raises:
+        AssertionError: If the usage property is not available or invalid
+    """
+    assert hasattr(poller, "usage"), f"{poller_name} should have a 'usage' property"
+    usage = poller.usage
+    assert usage is not None, f"{poller_name} usage should not be None after completion"
+    print(f"{poller_name} usage verified: {usage}")
+
+
 def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str = "Analysis result") -> None:
     """Assert simple content analyzer result properties and field extraction.
 

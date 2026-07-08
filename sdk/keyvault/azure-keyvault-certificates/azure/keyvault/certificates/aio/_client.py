@@ -96,7 +96,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
-        if not (policy.san_emails or policy.san_user_principal_names or policy.san_dns_names or policy.subject):
+        if not (
+            policy.san_emails
+            or policy.san_user_principal_names
+            or policy.san_dns_names
+            or policy.san_ip_addresses
+            or policy.san_uris
+            or policy.subject
+            or policy.platform_managed
+        ):
             raise ValueError(NO_SAN_OR_SUBJECT)
 
         polling_interval = kwargs.pop("_polling_interval", None)

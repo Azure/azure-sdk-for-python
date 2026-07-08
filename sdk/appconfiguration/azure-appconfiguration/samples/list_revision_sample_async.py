@@ -17,6 +17,7 @@ USAGE: python list_revision_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
+
 import asyncio
 import os
 from azure.appconfiguration import ConfigurationSetting

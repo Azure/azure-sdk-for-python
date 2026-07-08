@@ -30,6 +30,18 @@ class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The user authentication method is a username and password."""
 
 
+class BringYourOwnRootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the Bring Your Own Root configuration."""
+
+    PENDING_ACTIVATION = "PendingActivation"
+    """The CSR has been generated and is waiting for the customer to provide the signed certificate."""
+    ACTIVE = "Active"
+    """The signed certificate has been successfully uploaded and validated, and the CA is active."""
+    ACTIVE_BUT_PENDING_RENEWAL = "ActiveButPendingRenewal"
+    """The certificate is nearing expiration (within renewal window) or has expired. A new CSR has
+    been generated and is waiting for the customer to provide a new signed certificate."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -91,9 +103,9 @@ class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the schema format."""
 
     JSON_SCHEMA_DRAFT7 = "JsonSchema/draft-07"
-    """JSON Schema version draft 7 format"""
+    """JSON Schema version draft 7 format."""
     DELTA1_0 = "Delta/1.0"
-    """Delta format"""
+    """Delta format."""
 
 
 class ManagementActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -159,14 +171,14 @@ class SchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the schema type."""
 
     MESSAGE_SCHEMA = "MessageSchema"
-    """Message Schema schema type"""
+    """Message Schema schema type."""
 
 
 class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scope of the migrate resources operation."""
 
     RESOURCES = "Resources"
-    """Scoping the migration to resourceIds provided"""
+    """Scoping the migration to resourceIds provided."""
 
 
 class StreamDestinationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -176,6 +188,13 @@ class StreamDestinationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MQTT target."""
     STORAGE = "Storage"
     """Storage target."""
+
+
+class SupportedKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported key types."""
+
+    ECC = "ECC"
+    """Indicates the ECC key type."""
 
 
 class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

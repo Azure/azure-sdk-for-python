@@ -22,33 +22,14 @@
 """Internal class for connection reset retry policy implementation in the Azure
 Cosmos database service.
 """
-
+from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 # pylint: disable=protected-access
 
 
-class PartitionKeyRangeGoneRetryPolicy(object):
-
-    def __init__(self, client, *args):
-        self.retry_after_in_milliseconds = 1000
-        self.refresh_partition_key_range_cache = True
-        self.args = args
-        self.client = client
-        self.exception = None
+class PartitionKeyRangeGoneRetryPolicy(_PartitionKeyRangeGoneRetryPolicyBase):
 
     def ShouldRetry(self, exception):
-        """Returns true if the request should retry based on the passed-in exception.
+        self.exception = exception
 
-        :param (exceptions.CosmosHttpResponseError instance) exception:
-        :returns: a boolean stating whether the request should be retried
-        :rtype: bool
-
-        """
-        self.exception = exception  # needed for pylint
-        if self.refresh_partition_key_range_cache:
-            # refresh routing_map_provider to refresh partition key range cache
-            # make refresh_partition_key_range_cache False to skip this check on subsequent Gone exceptions
-            self.client.refresh_routing_map_provider()
-            self.refresh_partition_key_range_cache = False
-        # return False to raise error to multi_execution_aggregator and repair document producer context
         return False

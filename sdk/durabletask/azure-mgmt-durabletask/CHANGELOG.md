@@ -1,5 +1,31 @@
 # Release History
 
+## 1.1.0 (2026-03-09)
+
+### Features Added
+
+  - Model `SchedulerProperties` added property `public_network_access`
+  - Model `SchedulerProperties` added property `private_endpoint_connections`
+  - Model `SchedulerPropertiesUpdate` added property `public_network_access`
+  - Added model `OptionalPropertiesUpdateableProperties`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added model `PrivateEndpointConnectionUpdate`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PublicNetworkAccess`
+  - Added model `SchedulerPrivateLinkResource`
+  - Operation group `SchedulersOperations` added method `begin_create_or_update_private_endpoint_connection`
+  - Operation group `SchedulersOperations` added method `begin_delete_private_endpoint_connection`
+  - Operation group `SchedulersOperations` added method `begin_update_private_endpoint_connection`
+  - Operation group `SchedulersOperations` added method `get_private_endpoint_connection`
+  - Operation group `SchedulersOperations` added method `get_private_link`
+  - Operation group `SchedulersOperations` added method `list_private_endpoint_connections`
+  - Operation group `SchedulersOperations` added method `list_private_links`
+
 ## 1.0.0 (2025-09-25)
 
 ### Features Added

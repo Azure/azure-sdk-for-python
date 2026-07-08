@@ -31,6 +31,7 @@ from ... import models as _models2
 from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ...._utils.utils import ClientMixinABC
+from ...._validation import api_version_validation
 from ..._operations._operations import build_knowledge_base_retrieval_retrieve_request
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
 
@@ -46,7 +47,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     async def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: _models2.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
@@ -55,8 +55,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
@@ -76,7 +74,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     async def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: JSON,
         *,
         query_source_authorization: Optional[str] = None,
@@ -85,8 +82,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
@@ -105,7 +100,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     async def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
@@ -114,8 +108,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
@@ -132,9 +124,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["query_source_authorization"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+    )
     async def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: Union[_models2.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
@@ -142,8 +137,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Is one of the following types:
          KnowledgeBaseRetrievalRequest, JSON, IO[bytes] Required.
         :type retrieval_request:
@@ -180,7 +173,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             _content = json.dumps(retrieval_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_knowledge_base_retrieval_retrieve_request(
-            knowledge_base_name=knowledge_base_name,
+            knowledge_base_name=self._config.knowledge_base_name,
             query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -193,6 +186,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -214,7 +208,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeBaseRetrievalResponse, response.json())
 

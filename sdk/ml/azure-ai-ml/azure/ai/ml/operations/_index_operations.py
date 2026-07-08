@@ -117,8 +117,16 @@ class IndexOperations(_ScopeDependentOperations):
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._operation_scope.workspace_name,
                 credential=self._credential,
+                api_version="2024-04-01-preview",
                 **self._service_client_kwargs,
             )
+
+            # Index operations require the legacy /genericasset/ path (without v2.0).
+            # The TypeSpec-generated client defaults to /genericasset/v2.0/ which is needed
+            # for DeploymentTemplate operations, but the Index service returns HTTP 500 on
+            # the v2.0 path for write operations. Override the base URL to use the legacy path.
+            base_url = self.__azure_ai_assets_client._client._base_url
+            self.__azure_ai_assets_client._client._base_url = base_url.replace("/genericasset/v2.0/", "/genericasset/")
 
         return self.__azure_ai_assets_client
 
@@ -155,7 +163,9 @@ class IndexOperations(_ScopeDependentOperations):
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
 
-            next_version = self._azure_ai_assets.indexes.get_next_version(index.name).next_version
+            next_version = self._azure_ai_assets.indexes.get_next_version(
+                self._operation_scope.workspace_name, index.name
+            ).next_version
 
             if next_version is None:
                 msg = "Version not specified, could not automatically increment version. Set a version to resolve."
@@ -179,7 +189,11 @@ class IndexOperations(_ScopeDependentOperations):
 
         return Index._from_rest_object(
             self._azure_ai_assets.indexes.create_or_update(
-                name=index.name, version=index.version, body=index._to_rest_object(), **kwargs
+                workspace_name=self._operation_scope.workspace_name,
+                name=index.name,
+                version=index.version,
+                body=index._to_rest_object(),
+                **kwargs,
             )
         )
 
@@ -218,12 +232,16 @@ class IndexOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
 
-        index_version_resource = self._azure_ai_assets.indexes.get(name=name, version=version, **kwargs)
+        index_version_resource = self._azure_ai_assets.indexes.get(
+            workspace_name=self._operation_scope.workspace_name, name=name, version=version, **kwargs
+        )
 
         return Index._from_rest_object(index_version_resource)
 
     def _get_latest_version(self, name: str) -> Index:
-        return Index._from_rest_object(self._azure_ai_assets.indexes.get_latest(name))
+        return Index._from_rest_object(
+            self._azure_ai_assets.indexes.get_latest(self._operation_scope.workspace_name, name)
+        )
 
     @monitor_with_activity(ops_logger, "Index.List", ActivityType.PUBLICAPI)
     def list(
@@ -246,9 +264,17 @@ class IndexOperations(_ScopeDependentOperations):
             return [Index._from_rest_object(i) for i in rest_indexes]
 
         if name is None:
-            return self._azure_ai_assets.indexes.list_latest(cls=cls, **kwargs)
+            return self._azure_ai_assets.indexes.list_latest(
+                workspace_name=self._operation_scope.workspace_name, cls=cls, **kwargs
+            )
 
-        return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls, **kwargs)
+        return self._azure_ai_assets.indexes.list(
+            workspace_name=self._operation_scope.workspace_name,
+            name=name,
+            list_view_type=list_view_type,
+            cls=cls,
+            **kwargs,
+        )
 
     def build_index(
         self,

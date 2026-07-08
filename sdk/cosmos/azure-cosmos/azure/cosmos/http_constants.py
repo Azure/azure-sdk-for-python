@@ -100,6 +100,7 @@ class HttpHeaders:
     QueryMetrics = "x-ms-documentdb-query-metrics"
     QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
     IndexUtilization = "x-ms-cosmos-index-utilization"
+    QueryAdvice = "x-ms-cosmos-query-advice"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -131,6 +132,7 @@ class HttpHeaders:
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
     PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
+    PopulateQueryAdvice = "x-ms-cosmos-populatequeryadvice"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
     IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"
@@ -219,7 +221,7 @@ class HttpHeaders:
 
     # Change feed
     AIM = "A-IM"
-    IncrementalFeedHeaderValue = "Incremental feed"
+    IncrementalFeedHeaderValue = "Incremental Feed"
     FullFidelityFeedHeaderValue = "Full-Fidelity Feed"
     ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
 
@@ -448,6 +450,12 @@ class SubStatusCodes:
 
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
+
+    # 503: Routing-map (/pkranges) drain produced overlapping or gapped ranges
+    # across the configured number of retries (transient snapshot inconsistency).
+    # Surfaced by ``_handle_transient_snapshot_retry_decision`` so callers and
+    # telemetry can distinguish this client-side condition from backend 503s.
+    ROUTING_MAP_SNAPSHOT_INCONSISTENT = 21015
 
     # Client Side substatus codes
     THROUGHPUT_OFFER_NOT_FOUND = 10004

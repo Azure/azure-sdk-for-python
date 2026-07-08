@@ -18,13 +18,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
@@ -34,6 +34,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from openai.types.responses import EasyInputMessageParam
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -45,7 +46,7 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
@@ -83,25 +84,19 @@ with (
     scope = "user_123"
 
     # Extract memories from messages and add them to the memory store
-    user_message = {
-        "role": "user",
-        "content": "I prefer dark roast coffee and usually drink it in the morning",
-        "type": "message",
-    }
     update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
-        items=[user_message],  # Pass conversation items that you want to add to memory
+        items="I prefer dark roast coffee and usually drink it in the morning",  # Pass conversation items that you want to add to memory
         update_delay=300,  # Keep default inactivity delay before starting update
     )
     print(f"Scheduled memory update operation (Update ID: {update_poller.update_id}, Status: {update_poller.status()})")
 
     # Extend the previous update with another update and more messages
-    new_message = {"role": "user", "content": "I also like cappuccinos in the afternoon", "type": "message"}
     new_update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
-        items=[new_message],
+        items="I also like cappuccinos in the afternoon",
         previous_update_id=update_poller.update_id,  # Extend from previous update ID
         update_delay=0,  # Trigger update immediately without waiting for inactivity
     )
@@ -124,11 +119,10 @@ with (
         )
 
     # Retrieve memories from the memory store
-    query_message = {"role": "user", "content": "What are my morning coffee preferences?", "type": "message"}
     search_response = project_client.beta.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,
-        items=[query_message],
+        items="What are my morning coffee preferences?",
         options=MemorySearchOptions(max_memories=5),
     )
     print(f"Found {len(search_response.memories)} memories")
@@ -136,12 +130,12 @@ with (
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Perform another search using the previous search as context
-    agent_message = {
-        "role": "assistant",
-        "content": "You previously indicated a preference for dark roast coffee in the morning.",
-        "type": "message",
-    }
-    followup_query = {"role": "user", "content": "What about afternoon?", "type": "message"}
+    agent_message = EasyInputMessageParam(
+        role="assistant",
+        content="You previously indicated a preference for dark roast coffee in the morning.",
+        type="message",
+    )
+    followup_query = EasyInputMessageParam(role="user", content="What about afternoon?", type="message")
     followup_search_response = project_client.beta.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,

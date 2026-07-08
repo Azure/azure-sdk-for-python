@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     DerivedMetricInfo,
     DocumentFilterConjunctionGroupInfo,
     FilterInfo,

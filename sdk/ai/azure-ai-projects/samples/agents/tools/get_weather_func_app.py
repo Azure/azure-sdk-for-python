@@ -15,8 +15,8 @@ to demonstrate how to integrate Azure Functions with AI Agents using queue trigg
 
 # app = func.FunctionApp()
 
-# @app.queue_trigger(arg_name="msg", queue_name="input", connection="STORAGE_CONNECTION")
-# @app.queue_output(arg_name="outputQueue", queue_name="output", connection="STORAGE_CONNECTION")
+# @app.queue_trigger(arg_name="msg", queue_name="get-weather-input-queue", connection="STORAGE_CONNECTION")
+# @app.queue_output(arg_name="outputQueue", queue_name="get-weather-output-queue", connection="STORAGE_CONNECTION")
 # def queue_trigger(msg: func.QueueMessage, outputQueue: func.Out[str]):
 #     try:
 #         messagepayload: dict = json.loads(msg.get_body().decode("utf-8"))

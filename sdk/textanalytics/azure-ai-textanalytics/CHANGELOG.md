@@ -18,7 +18,7 @@ This version of the client library defaults to the service API version `2023-04-
 - Renamed client method `begin_abstractive_summary` to `begin_abstract_summary`.
 - Removed `dynamic_classification` client method and related types: `DynamicClassificationResult` and `ClassificationType`.
 - Removed keyword arguments `fhir_version` and `document_type` from `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`.
-- Removed property `fhir_bundle` from `AnalyzeHealthcareEntitiesResult`. 
+- Removed property `fhir_bundle` from `AnalyzeHealthcareEntitiesResult`.
 - Removed enum `HealthcareDocumentType`.
 - Removed property `resolutions` from `CategorizedEntity`.
 - Removed models and enums related to resolutions: `ResolutionKind`, `AgeResolution`, `AreaResolution`,
@@ -55,7 +55,7 @@ This version of the client library defaults to the service API version `2022-10-
 
 ### Other Changes
 
- - Improved static typing in the client library. 
+ - Improved static typing in the client library.
 
 ## 5.3.0b1 (2022-11-17)
 
@@ -69,7 +69,7 @@ This version of the client library defaults to the service API version `2022-10-
 - Added property `confidence_score` to `HealthcareRelation`.
 - Added enum `HealthcareDocumentType`.
 - Added property `resolutions` to `CategorizedEntity`.
-- Added models and enums related to resolutions: `BaseResolution`, `ResolutionKind`, `AgeResolution`, `AreaResolution`, 
+- Added models and enums related to resolutions: `BaseResolution`, `ResolutionKind`, `AgeResolution`, `AreaResolution`,
   `BooleanResolution`, `CurrencyResolution`, `DateTimeResolution`, `InformationResolution`, `LengthResolution`,
   `NumberResolution`, `NumericRangeResolution`, `OrdinalResolution`, `SpeedResolution`, `TemperatureResolution`,
   `TemporalSpanResolution`, `VolumeResolution`, `WeightResolution`, `AgeUnit`, `AreaUnit`, `TemporalModifier`,
@@ -131,7 +131,7 @@ The version of this client library defaults to the API version `2022-05-01`.
 
 ### Other Changes
 
-- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 
 ## 5.2.0b4 (2022-05-18)

@@ -15,12 +15,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv azure-monitor-opentelemetry
+    pip install "azure-ai-projects>=2.0.0" python-dotenv azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
@@ -31,11 +31,9 @@ USAGE:
 import os
 from dotenv import load_dotenv
 
-# [START imports_for_azure_monitor_tracing]
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-# [END imports_for_azure_monitor_tracing]
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
@@ -46,23 +44,19 @@ agent = None
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
 ):
-    # [START setup_azure_monitor_tracing]
     # Enable Azure Monitor tracing
     application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
     configure_azure_monitor(connection_string=application_insights_connection_string)
-    # [END setup_azure_monitor_tracing]
 
-    # [START create_span_for_scenario]
     tracer = trace.get_tracer(__name__)
     scenario = os.path.basename(__file__)
 
     with tracer.start_as_current_span(scenario):
-        # [END create_span_for_scenario]
         with project_client.get_openai_client() as openai_client:
             agent_definition = PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
             )
 

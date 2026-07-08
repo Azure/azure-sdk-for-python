@@ -20,10 +20,15 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
 )
+from opentelemetry.metrics import Observation
+from azure.monitor.opentelemetry.exporter.statsbeat import _utils as statsbeat_utils
+from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
+    get_statsbeat_feature_attribute_bits,
+    set_statsbeat_feature_attribute_bits,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
@@ -32,6 +37,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _StatsbeatMetrics,
     _AttachTypes,
     _RP_Names,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _get_additional_observations,
 )
 
 
@@ -87,6 +95,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
             _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+            _STATSBEAT_STATE["FEATURE_ATTRIBUTE_BITS"] = 0
 
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(_StatsbeatMetrics_COMMON_ATTRS)
         _StatsbeatMetrics._NETWORK_ATTRIBUTES = dict(_StatsbeatMetrics_NETWORK_ATTRS)
@@ -125,6 +134,14 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertTrue(isinstance(metric._feature_metric, ObservableGauge))
         self.assertEqual(metric._attach_metric.name, _ATTACH_METRIC_NAME[0])
         self.assertEqual(metric._feature_metric.name, _FEATURE_METRIC_NAME[0])
+
+    def test_statsbeat_feature_attribute_bits_getter_default(self):
+        self.assertEqual(get_statsbeat_feature_attribute_bits(), 0)
+
+    def test_statsbeat_feature_attribute_bits_setter_and_getter(self):
+        feature_bits = _StatsbeatFeature.DISK_RETRY | _StatsbeatFeature.LIVE_METRICS
+        set_statsbeat_feature_attribute_bits(feature_bits)
+        self.assertEqual(get_statsbeat_feature_attribute_bits(), feature_bits)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled")
     def test_statsbeat_metric_init_attach_enabled(self, attach_mock):
@@ -716,6 +733,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         metric._feature = _StatsbeatFeature.NONE
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = _StatsbeatFeature.NONE
+        set_statsbeat_feature_attribute_bits(_StatsbeatFeature.NONE)
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
         self.assertEqual(attributes["type"], _FEATURE_TYPES.INSTRUMENTATION)
@@ -747,6 +766,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         metric._feature = _StatsbeatFeature.NONE
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = _StatsbeatFeature.NONE
+        set_statsbeat_feature_attribute_bits(_StatsbeatFeature.NONE)
         self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], 0)
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
             instrumentations.return_value = 0
@@ -950,6 +971,117 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
+
+
+# pylint: disable=protected-access
+class TestAdditionalObservationCallbacks(unittest.TestCase):
+    """Tests for statsbeat callback registration and _get_additional_observations."""
+
+    def setUp(self):
+        _REQUESTS_MAP.clear()
+        # Force a fresh StatsbeatManager so its __init__ runs again (which
+        # rebuilds an empty _additional_callbacks dict on the instance).
+        StatsbeatManager._instances.pop(StatsbeatManager, None)
+
+    def tearDown(self):
+        _REQUESTS_MAP.clear()
+        StatsbeatManager._instances.pop(StatsbeatManager, None)
+
+    @staticmethod
+    def _register(metric_name, callback):
+        StatsbeatManager().add_additional_metric_callbacks(metric_name, callback)
+
+    def _make_metric(self):
+        return _StatsbeatMetrics(
+            MeterProvider(),
+            "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334",
+            "https://westus-1.in.applicationinsights.azure.com/",
+            False,
+            0,
+            False,
+        )
+
+    # ---- _get_additional_observations ----
+
+    def test_get_unregistered_name_returns_empty(self):
+        self.assertEqual(_get_additional_observations(_REQ_SUCCESS_NAME[0], None), [])
+
+    def test_get_returns_observations_from_registered_callback(self):
+        obs = Observation(7, {"endpoint": "ep1"})
+
+        def cb(_options):
+            yield obs
+
+        self._register(_REQ_SUCCESS_NAME[0], cb)
+        self.assertEqual(_get_additional_observations(_REQ_SUCCESS_NAME[0], None), [obs])
+
+    def test_get_aggregates_across_multiple_callbacks(self):
+        obs1 = Observation(1, {"endpoint": "ep1"})
+        obs2 = Observation(2, {"endpoint": "ep2"})
+        self._register(_REQ_SUCCESS_NAME[0], lambda _options: [obs1])
+        self._register(_REQ_SUCCESS_NAME[0], lambda _options: [obs2])
+        self.assertEqual(
+            _get_additional_observations(_REQ_SUCCESS_NAME[0], None),
+            [obs1, obs2],
+        )
+
+    def test_get_swallows_callback_exception_and_continues(self):
+        good_obs = Observation(42, {"endpoint": "ok"})
+
+        def bad_cb(_options):
+            raise RuntimeError("boom")
+
+        self._register(_REQ_SUCCESS_NAME[0], bad_cb)
+        self._register(_REQ_SUCCESS_NAME[0], lambda _options: [good_obs])
+        # Should not raise; should still emit the good observation.
+        self.assertEqual(
+            _get_additional_observations(_REQ_SUCCESS_NAME[0], None),
+            [good_obs],
+        )
+
+    def test_get_callbacks_for_other_metrics_not_invoked(self):
+        called = []
+        self._register(_REQ_FAILURE_NAME[0], lambda _options: called.append("failure") or [])
+        _get_additional_observations(_REQ_SUCCESS_NAME[0], None)
+        self.assertEqual(called, [])
+
+    # ---- integration with built-in callbacks ----
+
+    def test_success_count_callback_emits_extras(self):
+        metric = self._make_metric()
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 5
+
+        extra = Observation(99, {"endpoint": "extra-ep", "statusCode": 200})
+        self._register(_REQ_SUCCESS_NAME[0], lambda _options: [extra])
+
+        observations = metric._get_success_count(options=None)
+
+        # Built-in observation followed by the extra one.
+        self.assertEqual(len(observations), 2)
+        self.assertEqual(observations[0].value, 5)
+        self.assertIs(observations[-1], extra)
+
+    def test_success_count_callback_unchanged_without_extras(self):
+        metric = self._make_metric()
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 3
+
+        observations = metric._get_success_count(options=None)
+
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(observations[0].value, 3)
+
+    def test_extras_for_other_metric_do_not_leak_into_success(self):
+        metric = self._make_metric()
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 1
+
+        unrelated = Observation(123, {"endpoint": "other"})
+        self._register(_REQ_FAILURE_NAME[0], lambda _options: [unrelated])
+
+        observations = metric._get_success_count(options=None)
+
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(observations[0].value, 1)
+        self.assertNotIn(unrelated, observations)
 
 
 # cSpell:enable

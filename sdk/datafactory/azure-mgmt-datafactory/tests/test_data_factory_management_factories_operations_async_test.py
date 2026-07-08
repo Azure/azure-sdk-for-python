@@ -24,7 +24,6 @@ class TestDataFactoryManagementFactoriesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.factories.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2018-06-01",
         )
         result = [r async for r in response]
         assert result == []

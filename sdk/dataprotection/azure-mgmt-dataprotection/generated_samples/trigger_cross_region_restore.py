@@ -80,6 +80,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/CrossRegionRestore/TriggerCrossRegionRestore.json
+# x-ms-original-file: 2026-03-01/CrossRegionRestore/TriggerCrossRegionRestore.json
 if __name__ == "__main__":
     main()

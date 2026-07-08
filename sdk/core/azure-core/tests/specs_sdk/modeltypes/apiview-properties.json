@@ -1,6 +1,7 @@
 {
     "CrossLanguagePackageId": "",
     "CrossLanguageDefinitionId": {
+        "modeltypes.models.BackcompatModel": "ModelTypes.BackcompatModel",
         "modeltypes.models.ClientNameAndJsonEncodedNameModel": "ModelTypes.ClientNameAndJsonEncodedNameModel",
         "modeltypes.models.Element": "ModelTypes.Element",
         "modeltypes.models.Fish": "ModelTypes.Fish",

@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.entities.delete(
-        resource_group_name="rgopenapi",
-        health_model_name="model1",
-        entity_name="U4VTRFlUkm9kR6H23-c-6U-XHq7n",
-    )
+    client.entities.begin_delete(
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        entity_name="catalog-storage",
+    ).result()
 
 
-# x-ms-original-file: 2025-05-01-preview/Entities_Delete.json
+# x-ms-original-file: 2026-05-01-preview/Entities_Delete.json
 if __name__ == "__main__":
     main()

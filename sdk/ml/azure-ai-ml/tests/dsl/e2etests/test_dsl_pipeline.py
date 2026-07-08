@@ -2615,7 +2615,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert rest_job_dict["properties"]["outputs"]["output1"]["description"] == "new description"
 
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
-        assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
+        assert component._to_rest_object().as_dict()["properties"]["componentSpec"]["outputs"] == expected_outputs
 
     def test_group_outputs_mode_overwrite(self, client):
         # test group outputs mode overwrite

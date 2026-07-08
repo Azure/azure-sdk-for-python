@@ -4,13 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
-from azure.storage.queue.aio import QueueServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import QueuePreparer
+
+from azure.storage.queue.aio import QueueServiceClient
 
 
 # --Test Class -----------------------------------------------------------------

@@ -51,16 +51,27 @@ The evaluation must check ALL of the following criteria. If ANY criterion fails,
 - Any parameter value is inappropriate for the context
 
 ## Task
-Analyze each tool call and its parameters against the provided tool definitions and conversation context. Provide your evaluation in the following JSON format:
+Before performing any evaluation, check for the following conditions. If ANY are true, return `status: "skipped"` immediately without scoring:
+1. **No tool calls to evaluate**: The Tool Calls Made section is empty or not provided.
+2. **Missing tool definitions**: The Tool Definitions section is empty or not provided.
+3. **No conversation context**: The Conversation History/Query section is empty or not provided.
+
+When skipped, return:
+```json
+{"reason": "<explain why evaluation was skipped>", "properties": null, "score": null, "status": "skipped"}
+```
+
+Otherwise, analyze each tool call and its parameters against the provided tool definitions and conversation context. Provide your evaluation in the following JSON format:
 
 {
-  "chain_of_thought": "Step-by-step analysis for all parameters passed to all the tools to check for the criteria mentioned above",
-  "details": {
+  "reason": "Step-by-step analysis for all parameters passed to all the tools to check for the criteria mentioned above.",
+  "properties": {
     "total_parameters_passed": <number of total parameters that were passed to all tools>,
     "correct_parameters_passed": <number of correct parameters that were passed to all tools in the agent's response>,
     "incorrect_parameters": ["list of incorrect parameters passed with reasons"]
   },
-  "result": <0 for FAIL, 1 for PASS>
+  "score": <0 for FAIL, 1 for PASS>,
+  "status": "completed"
 }
 
 

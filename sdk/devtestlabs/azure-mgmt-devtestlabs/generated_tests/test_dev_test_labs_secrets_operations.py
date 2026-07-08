@@ -20,7 +20,7 @@ class TestDevTestLabsSecretsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_secrets_list(self, resource_group):
         response = self.client.secrets.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsSecretsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_secrets_get(self, resource_group):
         response = self.client.secrets.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -47,7 +47,7 @@ class TestDevTestLabsSecretsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_secrets_begin_create_or_update(self, resource_group):
         response = self.client.secrets.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -71,7 +71,7 @@ class TestDevTestLabsSecretsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_secrets_delete(self, resource_group):
         response = self.client.secrets.delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -85,7 +85,7 @@ class TestDevTestLabsSecretsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_secrets_update(self, resource_group):
         response = self.client.secrets.update(
             resource_group_name=resource_group.name,
             lab_name="str",

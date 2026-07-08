@@ -3,11 +3,11 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
-    ModelContainerData,
-    ModelContainerDetails,
-    ModelVersionData,
-    ModelVersionDetails,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ModelContainer as ModelContainerData,
+    ModelContainerProperties as ModelContainerDetails,
+    ModelVersion as ModelVersionData,
+    ModelVersionProperties as ModelVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model
@@ -24,13 +24,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 

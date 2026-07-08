@@ -27,11 +27,13 @@ class ComputeEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BATCHAMLCOMPUTE = "BATCHAMLCOMPUTE"
     UNKNOWN = "UNKNOWN"
 
+
 class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GRPC_REALTIME_ENDPOINT = "GRPCRealtimeEndpoint"
     HTTP_REALTIME_ENDPOINT = "HttpRealtimeEndpoint"
     BATCH = "Batch"
+
 
 class EntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -40,11 +42,13 @@ class EntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERSIONED = "Versioned"
     UNVERSIONED = "Unversioned"
 
+
 class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
+
 
 class ModelFormatEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -52,6 +56,7 @@ class ModelFormatEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MLFLOW = "MLFLOW"
     TRITON = "TRITON"
     PRESETS = "PRESETS"
+
 
 class ModelSchemaDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -73,12 +78,14 @@ class ModelSchemaDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLEX128 = "complex128"
     STRING = "string"
 
+
 class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATED_AT_DESC = "CreatedAtDesc"
     CREATED_AT_ASC = "CreatedAtAsc"
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
+
 
 class WebServiceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 

@@ -9,14 +9,80 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, IO, AnyStr
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._assets import Environment
-
+from azure.ai.ml.entities._deployment.accelerator_map import AcceleratorMap
 from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings, ProbeSettings
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._system_data import SystemData
+
+
+def _read_wire_value(source: Any, *keys: str) -> Any:
+    """Read the first non-None value for any of ``keys`` from a REST object.
+
+    Handles both mapping-style access (wire/camelCase keys such as ``createdTime``) and
+    attribute-style access (snake_case such as ``created_time``). This is needed because
+    some service fields are returned as undeclared/flattened keys that only exist on the
+    backing mapping of the generated REST model, not as typed attributes.
+    """
+    if source is None:
+        return None
+    for key in keys:
+        getter = getattr(source, "get", None)
+        if callable(getter) and not isinstance(source, str):
+            try:
+                value = source.get(key)
+            except Exception:  # pylint: disable=broad-except
+                value = None
+            if value is not None:
+                return value
+        value = getattr(source, key, None)
+        if value is not None:
+            return value
+    return None
+
+
+def _parse_iso_datetime(value: Any) -> Any:
+    """Best-effort parse of an ISO-8601 timestamp string into a ``datetime``.
+
+    Returns the original value unchanged when it is not a parseable string, so the raw
+    timestamp is still surfaced rather than dropped.
+    """
+    if not isinstance(value, str):
+        return value
+    try:
+        import isodate
+
+        return isodate.parse_datetime(value)
+    except Exception:  # pylint: disable=broad-except
+        return value
+
+
+def _extract_created_by(value: Any) -> Any:
+    """Extract a readable ``created_by`` identity from a service ``createdBy`` value.
+
+    The value may be a plain string identity, an object/dict such as ``{"userName": ...}``
+    (get() shape), or a stringified dict such as ``"{'userName': ...}"`` (list() shape).
+    Returns the ``userName`` (or object id) when available, otherwise the value unchanged.
+    """
+    if value is None:
+        return None
+    if isinstance(value, str):
+        # list() returns createdBy as a stringified dict; parse it, else treat as a plain identity.
+        import ast
+
+        try:
+            parsed = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return value
+        if isinstance(parsed, dict):
+            value = parsed
+        else:
+            return value
+    return _read_wire_value(value, "userName", "user_name", "userObjectId", "user_object_id")
 
 
 @experimental
@@ -49,8 +115,13 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
     :type environment_variables: dict
     :param app_insights_enabled: Whether application insights is enabled.
     :type app_insights_enabled: bool
+    :param display_name: Display name of the deployment template.
+    :type display_name: str
     :param stage: Stage of the deployment template. Can be "Active" or "Archived".
     :type stage: str
+    :param accelerator_maps: List of accelerator maps describing the accelerator types
+        and their configurations for this deployment template.
+    :type accelerator_maps: list[~azure.ai.ml.entities.AcceleratorMap]
     """
 
     def __init__(  # pylint: disable=too-many-locals
@@ -58,6 +129,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         name: str,
         version: str,
         *,
+        display_name: Optional[str] = None,
         description: Optional[str] = None,
         environment: Optional[Union[Environment, str]] = None,
         request_settings: Optional[OnlineRequestSettings] = None,
@@ -69,7 +141,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         code_configuration: Optional[Dict[str, Any]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         app_insights_enabled: Optional[bool] = None,
-        allowed_instance_types: Optional[str] = None,
+        allowed_instance_types: Optional[List[str]] = None,
         default_instance_type: Optional[str] = None,  # Handle default instance type
         scoring_port: Optional[int] = None,
         scoring_path: Optional[str] = None,
@@ -77,6 +149,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         type: Optional[str] = None,
         deployment_template_type: Optional[str] = None,
         stage: Optional[str] = None,
+        accelerator_maps: Optional[List[AcceleratorMap]] = None,
         **kwargs,
     ):
         # Extract kwargs that should be passed to parent
@@ -88,6 +161,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         super().__init__(name=name, **parent_kwargs)
 
         self.version = version
+        self.display_name = display_name
         self.description = description
         self.environment = environment
         self.request_settings = request_settings
@@ -99,14 +173,20 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
+        if allowed_instance_types is not None and not isinstance(allowed_instance_types, list):
+            raise TypeError(
+                "allowed_instance_types must be a list of strings, e.g. ['Standard_DS3_v2', 'Standard_DS4_v2']."
+            )
         self.allowed_instance_types = allowed_instance_types
         self.default_instance_type = default_instance_type
+        self._allowed_environment_variable_overrides = None
         self.scoring_port = scoring_port
         self.scoring_path = scoring_path
         self.model_mount_path = model_mount_path
         self.type = type
         self.deployment_template_type = deployment_template_type
         self.stage = stage
+        self.accelerator_maps = accelerator_maps
 
         # Private flag to track if this template came from the service (and thus should exclude
         # immutable fields on update)
@@ -272,11 +352,13 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         :return: Dictionary representation of the deployment template.
         :rtype: Dict[str, Any]
         """
-        result = {
+        result: Dict[str, Any] = {
             "name": self.name,
             "version": self.version,
         }
 
+        if self.display_name:
+            result["display_name"] = self.display_name
         if self.description:
             result["description"] = self.description
         if self.environment:
@@ -306,6 +388,15 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["environment_variables"] = self.environment_variables  # type: ignore[assignment]
         if self.app_insights_enabled is not None:
             result["app_insights_enabled"] = self.app_insights_enabled  # type: ignore[assignment]
+        if self.accelerator_maps:
+            result["accelerator_maps"] = [
+                {
+                    "accelerator_type": am.accelerator_type,
+                    "number_of_accelerators_per_model_instance": am.number_of_accelerators_per_model_instance,
+                    **({"default": am.default} if am.default is not None else {}),
+                }
+                for am in self.accelerator_maps
+            ]
 
         return result
 
@@ -323,8 +414,26 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Get the properties dictionary where the actual data is stored
         properties = get_value(obj, "properties", {})
 
-        # Extract name and version from properties first, then fallback to top-level
+        # Extract name and version from properties first, then fallback to top-level, then parse from id
         name = get_value(properties, "name") or get_value(obj, "name")
+        version = get_value(properties, "version") or get_value(obj, "version")
+
+        # Parse name/version from id field if not found directly
+        # id format: azureml://registries/{reg}/deploymenttemplates/{name}/versions/{version}
+        if not name or not version:
+            obj_id = get_value(obj, "id") or ""
+            if "deploymenttemplates/" in obj_id:
+                parts = obj_id.split("/")
+                try:
+                    dt_idx = parts.index("deploymenttemplates")
+                    if not name and dt_idx + 1 < len(parts):
+                        name = parts[dt_idx + 1]
+                    ver_idx = parts.index("versions") if "versions" in parts else -1
+                    if not version and ver_idx >= 0 and ver_idx + 1 < len(parts):
+                        version = parts[ver_idx + 1]
+                except (ValueError, IndexError):
+                    pass
+
         if not name:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
@@ -332,7 +441,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             else:
                 name = "unknown"
 
-        version = get_value(properties, "version") or get_value(obj, "version")
         if not version:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
@@ -341,6 +449,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 version = "1.0"
 
         # Extract other fields from properties first, then fallback to top-level
+        display_name = get_value(properties, "displayName") or get_value(obj, "display_name")
         description = get_value(properties, "description") or get_value(obj, "description")
         tags = get_value(properties, "tags") or get_value(obj, "tags", {})
 
@@ -362,18 +471,36 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         )
 
         # Extract additional fields
-        allowed_instance_types = get_value(properties, "allowedInstanceTypes") or get_value(
-            obj, "allowed_instance_types"
+        allowed_instance_types = (
+            get_value(properties, "allowedInstanceTypes")
+            or get_value(properties, "allowedInstanceType")
+            or get_value(obj, "allowed_instance_types")
+            or get_value(obj, "allowed_instance_type")
         )
+        # Also check additional_properties for service fields with mismatched names
+        if not allowed_instance_types:
+            additional_props = get_value(obj, "additional_properties", {})
+            if isinstance(additional_props, dict):
+                allowed_instance_types = additional_props.get("allowedInstanceType") or additional_props.get(
+                    "allowedInstanceTypes"
+                )
+        allowed_environment_variable_overrides = get_value(
+            properties, "allowedEnvironmentVariableOverrides"
+        ) or get_value(obj, "allowed_environment_variable_overrides")
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
         model_mount_path = get_value(properties, "modelMountPath") or get_value(obj, "model_mount_path")
         stage = get_value(properties, "stage") or get_value(obj, "stage")
         type_field = get_value(properties, "type") or get_value(obj, "type")
 
+        accelerator_maps_data = get_value(properties, "acceleratorMaps") or get_value(obj, "accelerator_maps")
+        accelerator_maps_list = None
+        if accelerator_maps_data and isinstance(accelerator_maps_data, list):
+            accelerator_maps_list = [AcceleratorMap._from_rest_dict(am) for am in accelerator_maps_data]
+
         # Handle string representations from properties - they come as JSON strings
-        import json
         import ast
+        import json
 
         # Parse tags if it's a string
         if isinstance(tags, str):
@@ -395,6 +522,13 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 allowed_instance_types = ast.literal_eval(allowed_instance_types)
             except (ValueError, SyntaxError):
                 allowed_instance_types = None
+
+        # Parse allowed_environment_variable_overrides if it's a string
+        if isinstance(allowed_environment_variable_overrides, str):
+            try:
+                allowed_environment_variable_overrides = ast.literal_eval(allowed_environment_variable_overrides)
+            except (ValueError, SyntaxError):
+                allowed_environment_variable_overrides = None
 
         # Convert request_settings to OnlineRequestSettings object using the built-in conversion method
         request_settings_obj = OnlineRequestSettings._from_rest_object(request_settings) if request_settings else None
@@ -418,13 +552,43 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             except (ValueError, TypeError):
                 scoring_port = None
 
+        # Populate creation_context so DeploymentTemplate is consistent with Model and
+        # Environment. Those entities return a nested ``systemData`` block, but the
+        # deployment-template API (e.g. the azure-huggingface registry) instead returns
+        # flattened ``createdTime`` / ``modifiedTime`` / ``createdBy`` fields. These live at the
+        # top level in the get() response but nested under ``properties`` in the list() response,
+        # so read properties-first with an obj fallback (matching the other fields above).
+        system_data = get_value(obj, "system_data") or get_value(obj, "systemData")
+        if system_data is not None:
+            creation_context = SystemData._from_rest_object(system_data)
+        else:
+            created_time = _read_wire_value(properties, "createdTime", "createdAt") or _read_wire_value(
+                obj, "createdTime", "created_time", "createdAt", "created_at"
+            )
+            modified_time = _read_wire_value(properties, "modifiedTime", "lastModifiedAt") or _read_wire_value(
+                obj, "modifiedTime", "modified_time", "lastModifiedAt", "last_modified_at"
+            )
+            created_by = _extract_created_by(
+                _read_wire_value(properties, "createdBy") or _read_wire_value(obj, "createdBy", "created_by")
+            )
+            if created_time or modified_time or created_by:
+                creation_context = SystemData(
+                    created_at=_parse_iso_datetime(created_time),
+                    created_by=created_by,
+                    last_modified_at=_parse_iso_datetime(modified_time),
+                )
+            else:
+                creation_context = None
+
         template = cls(
             name=name or "unknown",
             version=version or "1.0",
+            display_name=display_name,
             description=description,
             tags=tags,  # Include tags from REST response
             properties=properties,  # Include properties from REST response
             id=get_value(obj, "id"),  # Set the ID from the REST response
+            creation_context=creation_context,  # Populate created/modified metadata from systemData
             environment=environment_id,  # Use the environment ID from API
             request_settings=request_settings_obj,  # Use proper OnlineRequestSettings object or None
             liveness_probe=liveness_probe_obj,  # Use proper ProbeSettings object or None
@@ -442,11 +606,15 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             model_mount_path=model_mount_path,  # Include model mount path
             stage=stage,  # Include stage for archive/restore functionality
             type=type_field,  # Include type field from REST response
+            accelerator_maps=accelerator_maps_list,  # Include accelerator maps
         )
 
         # Mark this template as coming from the service so it excludes immutable fields on
         # updates
         template._from_service = True
+
+        # Store allowed_environment_variable_overrides as private field for round-trip
+        template._allowed_environment_variable_overrides = allowed_environment_variable_overrides
 
         # Store additional fields from the REST response that may be needed
         template.environment_id = environment_id  # type: ignore[attr-defined]
@@ -469,6 +637,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             "app_insights_enabled": get_value(obj, "app_insights_enabled"),
             "deployment_template_type": deployment_template_type,
             "allowed_instance_types": allowed_instance_types,
+            "allowed_environment_variable_overrides": allowed_environment_variable_overrides,
             "scoring_port": scoring_port,
             "scoring_path": scoring_path,
             "model_mount_path": model_mount_path,
@@ -485,18 +654,20 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                                        If None, automatically determines based on whether template came from service.
         :type exclude_immutable_fields: bool
         """
-        result = {
+        result: Dict[str, Any] = {
             "name": self.name,
             "version": self.version,
         }
 
-        # Always include type field
-        if hasattr(self, "type") and self.type:
-            result["type"] = self.type
-        else:
-            result["type"] = "deploymenttemplates"  # Default type if not specified
+        # Always use "deploymenttemplates" as the type value for the API wire format.
+        # YAML schema uses "deployment_template" as the entity type identifier, but the
+        # service validates that the type in the body matches the route ("deploymenttemplates").
+        result["type"] = "deploymenttemplates"
 
         # Add optional basic fields
+        if self.display_name:
+            result["displayName"] = self.display_name
+
         if self.description:
             result["description"] = self.description
 
@@ -565,28 +736,30 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         if hasattr(self, "app_insights_enabled") and self.app_insights_enabled is not None:
             result["appInsightsEnabled"] = self.app_insights_enabled  # type: ignore
 
-        # Handle allowed instance types - convert string to array format for API
+        # Handle allowed instance types
         if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
-            if isinstance(self.allowed_instance_types, str):
-                # Convert space-separated string to array
-                instance_types_array = self.allowed_instance_types.split()
-            elif isinstance(self.allowed_instance_types, list):
-                instance_types_array = self.allowed_instance_types
-            else:
-                instance_types_array = [str(self.allowed_instance_types)]
-            result["allowedInstanceTypes"] = instance_types_array  # type: ignore[assignment]
+            result["allowedInstanceTypes"] = self.allowed_instance_types  # type: ignore[assignment]
+            result["allowedInstanceType"] = self.allowed_instance_types  # type: ignore[assignment]
+
+        if hasattr(self, "_allowed_environment_variable_overrides") and self._allowed_environment_variable_overrides:
+            result["allowedEnvironmentVariableOverrides"] = self._allowed_environment_variable_overrides
+
+        if self.accelerator_maps:
+            result["acceleratorMaps"] = [am._to_rest_dict() for am in self.accelerator_maps]
 
         return result
 
     def _to_dict(self) -> Dict:
         """Convert the deployment template to a dictionary matching the expected API format."""
-        result = {
+        result: Dict[str, Any] = {
             "type": "deploymenttemplates",
             "name": self.name,
             "version": self.version,
         }
 
         # Add optional basic fields
+        if self.display_name:
+            result["displayName"] = self.display_name
         if self.description:
             result["description"] = self.description
         if self.stage:
@@ -641,6 +814,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Add instance configuration
         if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
             result["allowedInstanceTypes"] = self.allowed_instance_types  # type: ignore[assignment]
+        if hasattr(self, "_allowed_environment_variable_overrides") and self._allowed_environment_variable_overrides:
+            result["allowedEnvironmentVariableOverrides"] = self._allowed_environment_variable_overrides
         if self.default_instance_type:
             result["defaultInstanceType"] = self.default_instance_type
         elif self.instance_type:
@@ -653,6 +828,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["scoringPath"] = self.scoring_path
         if self.scoring_port is not None:
             result["scoringPort"] = self.scoring_port  # type: ignore[assignment]
+        if self.accelerator_maps:
+            result["acceleratorMaps"] = [am._to_rest_dict() for am in self.accelerator_maps]
 
         return result
 

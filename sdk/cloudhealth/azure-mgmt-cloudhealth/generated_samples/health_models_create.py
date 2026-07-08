@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,29 +31,18 @@ def main():
     )
 
     response = client.health_models.begin_create(
-        resource_group_name="rgopenapi",
-        health_model_name="model1",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
         resource={
-            "identity": {
-                "type": "SystemAssigned, UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/4980D7D5-4E07-47AD-AD34-E76C6BC9F061/resourceGroups/rgopenapi/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ua1": {}
-                },
-            },
-            "location": "eastus2",
-            "properties": {
-                "discovery": {
-                    "addRecommendedSignals": "Enabled",
-                    "identity": "SystemAssigned",
-                    "scope": "/providers/Microsoft.Management/serviceGroups/myServiceGroup",
-                }
-            },
-            "tags": {"key2961": "hbljozzkqrpcthsjtfkyozpwyx"},
+            "identity": {"type": "SystemAssigned"},
+            "location": "eastus",
+            "properties": {},
+            "tags": {"environment": "production", "team": "online-store"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/HealthModels_Create.json
+# x-ms-original-file: 2026-05-01-preview/HealthModels_Create.json
 if __name__ == "__main__":
     main()

@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
+from datetime import datetime, timedelta
 import sys
 import threading
+import time
 
 import pytest
 from azure.core.tracing.common import with_current_context
@@ -85,7 +86,9 @@ class TestEventHubsTracing:
 
         with tracing_helper.tracer.start_as_current_span(name="root"):
 
-            current_date = datetime.now()
+            # Use a starting position slightly in the past to defend against any
+            # clock skew between the test machine and the Event Hubs service.
+            current_date = datetime.now() - timedelta(seconds=30)
 
             with producer_client:
 
@@ -120,8 +123,12 @@ class TestEventHubsTracing:
 
             tracing_helper.exporter.clear()
 
+            # Signal used to stop the consumer once we have received the batch.
+            received = threading.Event()
+
             def on_event_batch(partition_context, event_batch):
-                pass
+                if event_batch:
+                    received.set()
 
             # Receive batch of events.
             worker = threading.Thread(
@@ -131,9 +138,20 @@ class TestEventHubsTracing:
             )
             worker.daemon = True
             worker.start()
-            worker.join(timeout=3)
 
+            try:
+                # Wait up to 60s for the consumer to connect and dispatch the batch.
+                assert received.wait(timeout=60), "Did not receive event batch within timeout"
+            finally:
+                consumer_client.close()
+                worker.join(timeout=30)
+
+            # Poll briefly for spans to be exported after the receive completes.
+            deadline = time.monotonic() + 10
             receive_spans = tracing_helper.exporter.get_finished_spans()
+            while len(receive_spans) < 2 and time.monotonic() < deadline:
+                time.sleep(0.1)
+                receive_spans = tracing_helper.exporter.get_finished_spans()
 
             # We expect 2 spans to have finished: 1 receive span and 1 process span.
             assert len(receive_spans) == 2

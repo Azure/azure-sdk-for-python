@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (
-    Any, AsyncIterator, cast, IO,
-    TYPE_CHECKING
-)
+from typing import Any, AsyncIterator, cast, IO, TYPE_CHECKING
 
 from .._deserialize import from_blob_properties
 
@@ -31,13 +28,12 @@ class StorageStreamDownloader:
         self.name = self._downloader.name
 
         # Parse additional Datalake-only properties
-        encryption_context = self._downloader._response.response.headers.get('x-ms-encryption-context')
-        acl = self._downloader._response.response.headers.get('x-ms-acl')
+        encryption_context = self._downloader._response.response.headers.get("x-ms-encryption-context")
+        acl = self._downloader._response.response.headers.get("x-ms-acl")
 
         self.properties = from_blob_properties(
-            self._downloader.properties,
-            encryption_context=encryption_context,
-            acl=acl)
+            self._downloader.properties, encryption_context=encryption_context, acl=acl
+        )
         self.size = self._downloader.size
 
     def __len__(self) -> int:

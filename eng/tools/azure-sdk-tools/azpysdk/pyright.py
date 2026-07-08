@@ -4,18 +4,18 @@ import os
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
-from ci_tools.variables import in_ci, set_envvar_defaults
-from ci_tools.variables import discover_repo_root
+from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.scenario.generation import create_package_and_install
 
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.405"
+PYRIGHT_VERSION = "1.1.407"
+NEXT_PYRIGHT_VERSION = "1.1.407"
 REPO_ROOT = discover_repo_root()
 
 
@@ -68,6 +68,7 @@ class pyright(Check):
         logger.info("Running pyright check...")
 
         set_envvar_defaults()
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -78,13 +79,19 @@ class pyright(Check):
             package_dir = parsed.folder
             package_name = parsed.name
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for pyright check")
 
             try:
                 if args.next:
                     # use latest version of pyright
-                    install_into_venv(executable, ["pyright"], package_dir)
+                    install_into_venv(executable, [f"pyright=={NEXT_PYRIGHT_VERSION}"], package_dir)
                 else:
                     install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
             except CalledProcessError as e:
@@ -144,19 +151,20 @@ class pyright(Check):
                 if (
                     args.next
                     and in_ci()
-                    and is_check_enabled(args.target_package, "pyright")
+                    and is_check_enabled(package_dir, "pyright")
                     and not is_typing_ignored(package_name)
                 ):
                     from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                    create_vnext_issue(package_dir, "pyright")
+                    check_version = self.get_check_version(executable, "pyright")
+                    create_vnext_issue(package_dir, "pyright", check_version)
 
                 print("See https://aka.ms/python/typing-guide for information.\n\n")
                 results.append(1)
+            else:
+                if args.next and in_ci() and not is_typing_ignored(package_name):
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
 
-            if args.next and in_ci() and not is_typing_ignored(package_name):
-                from gh_tools.vnext_issue_creator import close_vnext_issue
-
-                close_vnext_issue(package_name, "pyright")
+                    close_vnext_issue(package_name, "pyright")
 
         return max(results) if results else 0

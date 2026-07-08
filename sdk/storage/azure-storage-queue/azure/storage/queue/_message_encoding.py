@@ -9,7 +9,12 @@ from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
-from ._encryption import decrypt_queue_message, encrypt_queue_message, KeyEncryptionKey, _ENCRYPTION_PROTOCOL_V1
+from ._encryption import (
+    decrypt_queue_message,
+    encrypt_queue_message,
+    KeyEncryptionKey,
+    _ENCRYPTION_PROTOCOL_V1,
+)
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -71,16 +76,31 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]) -> object:
-        for message in obj:
+    def __call__(
+        self,
+        response: "PipelineResponse",
+        obj: Iterable,
+        headers: Dict[str, Any],
+    ) -> object:
+        # ``obj`` is the deserialized container (PeekedMessages/ReceivedMessages)
+        # whose messages live on ``items_property``; to make typing happy
+        messages = getattr(obj, "items_property", obj)
+        for message in messages or []:
             if message.message_text in [None, "", b""]:
                 continue
             content = message.message_text
             if (self.key_encryption_key is not None) or (self.resolver is not None):
                 content = decrypt_queue_message(
-                    content, response, self.require_encryption, self.key_encryption_key, self.resolver
+                    content,
+                    response,
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.resolver,
                 )
-            message.message_text = self.decode(content, response)
+            decoded = self.decode(content, response)
+            # Store decoded content on a side attribute to bypass the _RestField
+            # descriptor which would re-serialize bytes back to base64.
+            message._decoded_content = decoded
         return obj
 
     def configure(

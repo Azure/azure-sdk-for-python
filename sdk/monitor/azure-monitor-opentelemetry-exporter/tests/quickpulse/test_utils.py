@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from datetime import datetime
+from datetime import datetime, timezone
 import unittest
 from unittest import mock
 
@@ -9,7 +9,7 @@ from opentelemetry.sdk.metrics.export import HistogramDataPoint, NumberDataPoint
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _COMMITTED_BYTES_NAME,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     AggregationType,
     DocumentType,
     Exception,
@@ -72,7 +72,7 @@ class TestUtils(unittest.TestCase):
         metric_data.resource_metrics = [resource_metric]
         metric_point = MetricPoint(name=_COMMITTED_BYTES_NAME[1], weight=1, value=5)
         documents = [mock.Mock()]
-        date_now = datetime.now()
+        date_now = datetime.now(timezone.utc)
         datetime_mock.now.return_value = date_now
         mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, documents)[0]
         self.assertEqual(mdp.version, self.base_mdp.version)
@@ -80,6 +80,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.role_name, self.base_mdp.role_name)
         self.assertEqual(mdp.machine_name, self.base_mdp.machine_name)
         self.assertEqual(mdp.stream_id, self.base_mdp.stream_id)
+        print(mdp.timestamp, date_now)
         self.assertEqual(mdp.timestamp, date_now)
         self.assertEqual(mdp.metrics, [metric_point])
         self.assertEqual(mdp.documents, documents)
@@ -103,7 +104,7 @@ class TestUtils(unittest.TestCase):
         metric_data.resource_metrics = [resource_metric]
         metric_point = MetricPoint(name=_COMMITTED_BYTES_NAME[1], weight=1, value=7)
         documents = [mock.Mock()]
-        date_now = datetime.now()
+        date_now = datetime.now(timezone.utc)
         datetime_mock.now.return_value = date_now
         mdp = _metric_to_quick_pulse_data_points(metric_data, self.base_mdp, documents)[0]
         self.assertEqual(mdp.version, self.base_mdp.version)

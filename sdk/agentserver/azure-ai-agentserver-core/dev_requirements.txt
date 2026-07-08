@@ -1,2 +1,8 @@
 -e ../../../eng/tools/azure-sdk-tools
-python-dotenv
+-e ../../monitor/azure-monitor-query
+-e ../../identity/azure-identity
+pytest
+httpx
+pytest-asyncio
+opentelemetry-api>=1.40.0
+opentelemetry-sdk>=1.40.0

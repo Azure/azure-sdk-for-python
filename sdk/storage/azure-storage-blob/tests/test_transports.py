@@ -3,21 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from azure.storage.blob import BlobClient, BlobServiceClient
-from azure.core.exceptions import ResourceExistsError
-from azure.core.pipeline.transport import RequestsTransport
+# pylint: disable=attribute-defined-outside-init
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import MockLegacyTransport
 
+from azure.storage.blob import BlobClient, BlobServiceClient
+from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
+
 
 class TestStorageTransports(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name, timeout=5)
@@ -32,11 +33,11 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='container',
-            blob_name='blob',
+            container_name="container",
+            blob_name="blob",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         props = blob_client.get_blob_properties()
@@ -60,11 +61,11 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='container',
-            blob_name='blob',
+            container_name="container",
+            blob_name="blob",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         data = b"Hello World!"
@@ -89,9 +90,9 @@ class TestStorageTransports(StorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello World!"
@@ -116,9 +117,9 @@ class TestStorageTransports(StorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello World!"
