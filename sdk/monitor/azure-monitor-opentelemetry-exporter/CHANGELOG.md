@@ -10,6 +10,10 @@
 
 ### Other Changes
 
+- Simplify OneSettings change detection to use ETag-based mechanism instead of change version tracking to reflect spec update
+- Change OneSettings log messages from warning to debug level to reduce noise for users with firewalls
+  ([#47796](https://github.com/Azure/azure-sdk-for-python/pull/47796))
+
 ## 1.0.0b55 (2026-07-01)
 
 ### Bugs Fixed
