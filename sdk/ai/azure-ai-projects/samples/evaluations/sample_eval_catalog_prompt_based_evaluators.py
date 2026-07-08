@@ -83,7 +83,8 @@ with (
 ):
 
     print("Creating a single evaluator version - Prompt based (json style)")
-    prompt_evaluator = project_client.beta.evaluators.create_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    prompt_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]
         name="my_custom_evaluator_prompt",
         evaluator_version={
             "name": "my_custom_evaluator_prompt",

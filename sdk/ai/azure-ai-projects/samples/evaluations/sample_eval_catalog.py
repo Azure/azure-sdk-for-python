@@ -153,7 +153,8 @@ with (
     pprint(prompt_evaluator_latest)
 
     print("Updating code based evaluator version")
-    updated_evaluator = project_client.beta.evaluators.update_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    updated_evaluator = project_client.beta.evaluators.update_version(  # type: ignore[call-overload]
         name=code_evaluator.name,
         version=code_evaluator.version,
         evaluator_version={

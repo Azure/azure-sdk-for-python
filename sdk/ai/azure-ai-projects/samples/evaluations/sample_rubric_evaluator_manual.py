@@ -87,7 +87,8 @@ with (
     # Each dimension is scored independently on a 1-5 scale by an LLM judge at
     # evaluation time. `weight` (1-10) controls how strongly each dimension
     # contributes to the normalized aggregate score.
-    evaluator = project_client.beta.evaluators.create_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]
         name=evaluator_name,
         evaluator_version={
             "name": evaluator_name,

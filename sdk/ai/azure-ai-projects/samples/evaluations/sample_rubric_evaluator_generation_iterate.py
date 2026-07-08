@@ -163,7 +163,8 @@ with (
         )
 
     # 3. Save the edited definition as v2.
-    v2 = project_client.beta.evaluators.create_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    v2 = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]
         name=evaluator_name,
         evaluator_version={
             "name": evaluator_name,

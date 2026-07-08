@@ -42,6 +42,7 @@ USAGE:
 
 import os
 import time
+from typing import Union
 
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
