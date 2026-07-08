@@ -399,7 +399,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         try:
             logger.debug("Extracting context from response")
             tool_calls = self._parse_tools_from_response(response=response)
-            logger.debug(f"Tool Calls parsed successfully: {tool_calls}")
+            logger.debug("Tool calls parsed successfully: count=%d", len(tool_calls) if tool_calls else 0)
 
             if not tool_calls:
                 return NO_CONTEXT

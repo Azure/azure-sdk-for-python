@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "codeId": "./src",
+    "conf": {
+      "spark.driver.cores": "2",
+      "spark.driver.memory": "4g",
+      "spark.dynamicAllocation.enabled": "True",
+      "spark.dynamicAllocation.maxExecutors": "4",
+      "spark.dynamicAllocation.minExecutors": "1",
+      "spark.executor.cores": "2",
+      "spark.executor.instances": "1",
+      "spark.executor.memory": "4g"
+    },
+    "entry": {
+      "file": "main.py",
+      "sparkJobEntryType": "SparkJobPythonEntry"
+    },
+    "experimentName": "smoke-experiment",
+    "identity": {
+      "identityType": "AMLToken"
+    },
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Spark",
+    "outputs": {},
+    "properties": {},
+    "resources": {
+      "instanceType": "Standard_E8S_V3",
+      "runtimeVersion": "3.4.0"
+    },
+    "tags": {}
+  }
+}

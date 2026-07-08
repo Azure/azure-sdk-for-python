@@ -91,7 +91,7 @@ class TestModels(TestBase):
             creds = project_client.beta.models.get_credentials(
                 name=model_name,
                 version=model_version,
-                body=ModelCredentialRequest(blob_uri=registered.blob_uri),
+                credential_request=ModelCredentialRequest(blob_uri=registered.blob_uri),
             )
             blob_ref = getattr(creds, "blob_reference_for_consumption", None) or getattr(creds, "blob_reference", None)
             assert blob_ref is not None, f"no blob reference in credentials response: {creds!r}"
@@ -129,7 +129,7 @@ class TestModels(TestBase):
             pending = project_client.beta.models.pending_upload(
                 name=model_name,
                 version=model_version,
-                body=ModelPendingUploadRequest(
+                pending_upload_request=ModelPendingUploadRequest(
                     pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE,
                 ),
             )

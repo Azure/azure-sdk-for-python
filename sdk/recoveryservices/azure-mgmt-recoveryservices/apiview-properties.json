@@ -19,6 +19,7 @@
         "azure.mgmt.recoveryservices.models.CloudError": "Microsoft.RecoveryServices.CloudError",
         "azure.mgmt.recoveryservices.models.CmkKekIdentity": "Microsoft.RecoveryServices.CmkKekIdentity",
         "azure.mgmt.recoveryservices.models.CmkKeyVaultProperties": "Microsoft.RecoveryServices.CmkKeyVaultProperties",
+        "azure.mgmt.recoveryservices.models.CostManagementSettings": "Microsoft.RecoveryServices.CostManagementSettings",
         "azure.mgmt.recoveryservices.models.CrossSubscriptionRestoreSettings": "Microsoft.RecoveryServices.CrossSubscriptionRestoreSettings",
         "azure.mgmt.recoveryservices.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.recoveryservices.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
@@ -33,6 +34,7 @@
         "azure.mgmt.recoveryservices.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.recoveryservices.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.recoveryservices.models.IdentityData": "Microsoft.RecoveryServices.IdentityData",
+        "azure.mgmt.recoveryservices.models.ImmutabilityConfiguration": "Microsoft.RecoveryServices.ImmutabilityConfiguration",
         "azure.mgmt.recoveryservices.models.ImmutabilitySettings": "Microsoft.RecoveryServices.ImmutabilitySettings",
         "azure.mgmt.recoveryservices.models.JobsSummary": "Microsoft.RecoveryServices.JobsSummary",
         "azure.mgmt.recoveryservices.models.MonitoringSettings": "Microsoft.RecoveryServices.MonitoringSettings",
@@ -83,10 +85,12 @@
         "azure.mgmt.recoveryservices.models.BackupStorageVersion": "Microsoft.RecoveryServices.BackupStorageVersion",
         "azure.mgmt.recoveryservices.models.PublicNetworkAccess": "Microsoft.RecoveryServices.PublicNetworkAccess",
         "azure.mgmt.recoveryservices.models.AlertsState": "Microsoft.RecoveryServices.AlertsState",
+        "azure.mgmt.recoveryservices.models.GranularityLevel": "Microsoft.RecoveryServices.GranularityLevel",
         "azure.mgmt.recoveryservices.models.CrossSubscriptionRestoreState": "Microsoft.RecoveryServices.CrossSubscriptionRestoreState",
         "azure.mgmt.recoveryservices.models.StandardTierStorageRedundancy": "Microsoft.RecoveryServices.StandardTierStorageRedundancy",
         "azure.mgmt.recoveryservices.models.CrossRegionRestore": "Microsoft.RecoveryServices.CrossRegionRestore",
         "azure.mgmt.recoveryservices.models.ImmutabilityState": "Microsoft.RecoveryServices.ImmutabilityState",
+        "azure.mgmt.recoveryservices.models.ImmutabilityType": "Microsoft.RecoveryServices.ImmutabilityType",
         "azure.mgmt.recoveryservices.models.SoftDeleteState": "Microsoft.RecoveryServices.SoftDeleteState",
         "azure.mgmt.recoveryservices.models.EnhancedSecurityState": "Microsoft.RecoveryServices.EnhancedSecurityState",
         "azure.mgmt.recoveryservices.models.MultiUserAuthorization": "Microsoft.RecoveryServices.MultiUserAuthorization",
@@ -147,5 +151,5 @@
         "azure.mgmt.recoveryservices.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult",
         "azure.mgmt.recoveryservices.aio.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult"
     },
-    "CrossLanguageVersion": "c3f1e94d9174"
+    "CrossLanguageVersion": "45e8bbe08725"
 }

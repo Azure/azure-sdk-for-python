@@ -9,8 +9,16 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2025_01_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2025_01_01_preview.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import DistributionConfiguration as RestDistributionConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfiguration as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import JobLimits as RestJobLimits
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobService as RestJobService
+from azure.ai.ml._restclient.arm_ml_service.models import QueueSettings as RestQueueSettings
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
@@ -26,6 +34,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
+    to_hybrid_rest_model,
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
     validate_inputs_for_command,
@@ -158,25 +167,47 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             compute_id=compute,
             properties=modified_properties,
             experiment_name=self.experiment_name,
-            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
-            outputs=to_rest_data_outputs(self.outputs),
+            # The shared arm_ml_service CommandJob model defaults is_archived to None (omitted on the
+            # wire), but the legacy msrest model serialized isArchived=false on create. Set it explicitly
+            # to keep the wire body identical.
+            is_archived=False,
+            # The shared rest helpers below emit msrest models; convert each nested child to its
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            inputs=to_hybrid_rest_model(to_rest_dataset_literal_inputs(self.inputs, job_type=self.type), RestJobInput),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             environment_id=self.environment,
-            distribution=(
-                self.distribution._to_rest_object()
-                if self.distribution and not isinstance(self.distribution, Dict)
-                else None
+            distribution=to_hybrid_rest_model(
+                (
+                    self.distribution._to_rest_object()
+                    if self.distribution and not isinstance(self.distribution, Dict)
+                    else None
+                ),
+                RestDistributionConfiguration,
             ),
             tags=self.tags,
-            identity=(
-                self.identity._to_job_rest_object() if self.identity and not isinstance(self.identity, Dict) else None
+            identity=to_hybrid_rest_model(
+                (
+                    self.identity._to_job_rest_object()
+                    if self.identity and not isinstance(self.identity, Dict)
+                    else None
+                ),
+                RestIdentityConfiguration,
             ),
             environment_variables=self.environment_variables,
-            resources=resources._to_rest_object() if resources and not isinstance(resources, Dict) else None,
-            limits=self.limits._to_rest_object() if self.limits else None,
-            services=JobServiceBase._to_rest_job_services(self.services),
-            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
-            parent_job_name=self.parent_job_name,
+            resources=to_hybrid_rest_model(
+                resources._to_rest_object() if resources and not isinstance(resources, Dict) else None,
+                RestJobResourceConfiguration,
+            ),
+            limits=to_hybrid_rest_model(self.limits._to_rest_object() if self.limits else None, RestJobLimits),
+            services=to_hybrid_rest_model(JobServiceBase._to_rest_job_services(self.services), RestJobService),
+            queue_settings=to_hybrid_rest_model(
+                self.queue_settings._to_rest_object() if self.queue_settings else None, RestQueueSettings
+            ),
         )
+        # parentJobName is part of the 2025-01-01-preview wire contract but is not a constructor
+        # field on the shared arm_ml_service CommandJob model, so set it on the wire directly.
+        if self.parent_job_name is not None:
+            properties["parentJobName"] = self.parent_job_name
         result = JobBase(properties=properties)
         result.name = self.name
         return result
@@ -218,7 +249,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
             queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
-            parent_job_name=rest_command_job.parent_job_name,
+            parent_job_name=rest_command_job.get("parentJobName"),
         )
         # Handle special case of local job
         if (

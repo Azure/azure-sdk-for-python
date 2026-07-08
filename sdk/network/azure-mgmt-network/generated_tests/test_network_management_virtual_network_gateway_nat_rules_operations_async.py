@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
             nat_rule_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -69,7 +69,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 nat_rule_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,7 +82,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
         response = self.client.virtual_network_gateway_nat_rules.list_by_virtual_network_gateway(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

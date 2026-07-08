@@ -326,21 +326,21 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     # Persist at response.created time for bg+store (FR-003)
                     if store and provider is not None:
                         try:
-                            _isolation = context.isolation if context else None
+                            _context = context.platform_context if context else None
                             _response_obj = generated_models.ResponseObject(_initial_snapshot)
                             _history_ids = (
                                 await provider.get_history_item_ids(
                                     record.previous_response_id,
                                     None,
                                     history_limit,
-                                    isolation=_isolation,
+                                    context=_context,
                                 )
                                 if record.previous_response_id
                                 else None
                             )
                             _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                             await provider.create_response(
-                                _response_obj, _resolved_items, _history_ids, isolation=_isolation
+                                _response_obj, _resolved_items, _history_ids, context=_context
                             )
                             _provider_created = True
                         except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -501,15 +501,15 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                 record.set_response_snapshot(storage_error_response)
                 record.status = "failed"  # type: ignore[assignment]
             else:
-                _isolation = context.isolation if context else None
+                _context = context.platform_context if context else None
                 try:
                     if _provider_created:
-                        await provider.update_response(record.response, isolation=_isolation)
+                        await provider.update_response(record.response, context=_context)
                     else:
                         # Response was never created (handler yielded nothing or
                         # failed before response.created) — create instead of update.
                         _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-                        await provider.create_response(record.response, _resolved_items, None, isolation=_isolation)
+                        await provider.create_response(record.response, _resolved_items, None, context=_context)
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                     setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                     logger.error(
@@ -602,7 +602,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
         previous_response_id=ctx.previous_response_id,
         agent_session_id=ctx.agent_session_id,
         conversation_id=ctx.conversation_id,
-        chat_isolation_key=ctx.chat_isolation_key,
+        user_id_key=ctx.user_id,
     )
     # Stash on state so _finalize_stream can access persistence_failed
     state.bg_record = record
@@ -919,11 +919,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 self._apply_storage_error_replacement(ctx, state, record)
             else:
                 record.response.background = record.mode_flags.background
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 try:
                     if state.provider_created:
                         # bg+stream: initial create already done at response.created — use update
-                        await self._provider.update_response(record.response, isolation=_isolation)
+                        await self._provider.update_response(record.response, context=_context)
                     else:
                         # non-bg stream or bg stream where initial create was never registered:
                         # full create
@@ -932,7 +932,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                                 ctx.previous_response_id,
                                 None,
                                 self._runtime_options.default_fetch_history_count,
-                                isolation=_isolation,
+                                context=_context,
                             )
                             if ctx.previous_response_id
                             else None
@@ -942,7 +942,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             generated_models.ResponseObject(response_payload),
                             _resolved_items,
                             _history_ids,
-                            isolation=_isolation,
+                            context=_context,
                         )
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                     setattr(persist_exc, PLATFORM_ERROR_TAG, True)
@@ -1003,7 +1003,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
@@ -1012,14 +1012,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         await state.bg_record.subject.publish(first_normalized)
         await self._runtime_state.add(execution)
         if ctx.store:
-            _isolation = ctx.context.isolation if ctx.context else None
+            _context = ctx.context.platform_context if ctx.context else None
             _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
                 await self._provider.get_history_item_ids(
                     ctx.previous_response_id,
                     None,
                     self._runtime_options.default_fetch_history_count,
-                    isolation=_isolation,
+                    context=_context,
                 )
                 if ctx.previous_response_id
                 else None
@@ -1027,7 +1027,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
             try:
                 await self._provider.create_response(
-                    _initial_response_obj, _resolved_items, _history_ids, isolation=_isolation
+                    _initial_response_obj, _resolved_items, _history_ids, context=_context
                 )
                 state.provider_created = True
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -1336,10 +1336,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
             # Persist SSE events for replay after process restart (not needed for cancelled).
             if record.status != "cancelled" and self._stream_provider is not None and state.handler_events:
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 try:
                     await self._stream_provider.save_stream_events(
-                        ctx.response_id, state.handler_events, isolation=_isolation
+                        ctx.response_id, state.handler_events, context=_context
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(
@@ -1419,7 +1419,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         # Copy persistence_failed from the ephemeral record if one was used
@@ -1430,9 +1430,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # Persist SSE events for replay after eager eviction (bg+stream only).
         if ctx.background and ctx.store and self._stream_provider is not None and events:
-            _isolation = ctx.context.isolation if ctx.context else None
+            _context = ctx.context.platform_context if ctx.context else None
             try:
-                await self._stream_provider.save_stream_events(ctx.response_id, events, isolation=_isolation)
+                await self._stream_provider.save_stream_events(ctx.response_id, events, context=_context)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Best-effort stream event persistence failed (response_id=%s)",
@@ -1720,7 +1720,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -1733,14 +1733,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Persist via provider (non-bg sync: single create at terminal state).
             # §3.1: Persistence failure replaces the response body with storage_error.
             try:
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids(
                         ctx.previous_response_id,
                         None,
                         self._runtime_options.default_fetch_history_count,
-                        isolation=_isolation,
+                        context=_context,
                     )
                     if ctx.previous_response_id
                     else None
@@ -1750,7 +1750,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _response_obj,
                     _resolved_items,
                     _history_ids,
-                    isolation=_isolation,
+                    context=_context,
                 )
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                 logger.error(
@@ -1818,7 +1818,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             initial_agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
 
         # Register so GET can observe in-flight state
