@@ -48,8 +48,6 @@ from ...operations._operations import (
     build_application_definitions_list_by_subscription_request,
     build_application_definitions_update_by_id_request,
     build_application_definitions_update_request,
-    build_application_list_operations_request,
-    build_application_portal_registry_package_request,
     build_applications_create_or_update_by_id_request,
     build_applications_create_or_update_request,
     build_applications_delete_by_id_request,
@@ -70,8 +68,10 @@ from ...operations._operations import (
     build_jit_requests_list_by_resource_group_request,
     build_jit_requests_list_by_subscription_request,
     build_jit_requests_update_request,
+    build_managed_applications_mgmt_list_operations_request,
+    build_managed_applications_mgmt_portal_registry_package_request,
 )
-from .._configuration import ApplicationClientConfiguration
+from .._configuration import ManagedApplicationsMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -83,14 +83,16 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ManagedApplicationsMgmtClient`'s
         :attr:`applications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedApplicationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2183,14 +2185,16 @@ class ApplicationDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ManagedApplicationsMgmtClient`'s
         :attr:`application_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedApplicationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3349,14 +3353,16 @@ class JitRequestsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ManagedApplicationsMgmtClient`'s
         :attr:`jit_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedApplicationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4039,8 +4045,8 @@ class JitRequestsOperations:
         return deserialized  # type: ignore
 
 
-class _ApplicationClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ApplicationClientConfiguration]
+class _ManagedApplicationsMgmtClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ManagedApplicationsMgmtClientConfiguration]
 ):
 
     @overload
@@ -4126,7 +4132,7 @@ class _ApplicationClientOperationsMixin(
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_application_portal_registry_package_request(
+        _request = build_managed_applications_mgmt_portal_registry_package_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4194,7 +4200,7 @@ class _ApplicationClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_application_list_operations_request(
+                _request = build_managed_applications_mgmt_list_operations_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

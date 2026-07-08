@@ -127,10 +127,10 @@
         "azure.mgmt.managedapplications.aio.operations.JitRequestsOperations.list_by_resource_group": "Microsoft.Solutions.JitRequestDefinitions.listByResourceGroup",
         "azure.mgmt.managedapplications.operations.JitRequestsOperations.list_by_subscription": "Microsoft.Solutions.JitRequestDefinitions.listBySubscription",
         "azure.mgmt.managedapplications.aio.operations.JitRequestsOperations.list_by_subscription": "Microsoft.Solutions.JitRequestDefinitions.listBySubscription",
-        "azure.mgmt.managedapplications.ApplicationClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
-        "azure.mgmt.managedapplications.aio.ApplicationClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
-        "azure.mgmt.managedapplications.ApplicationClient.list_operations": "Azure.ResourceManager.Legacy.Operations.list",
-        "azure.mgmt.managedapplications.aio.ApplicationClient.list_operations": "Azure.ResourceManager.Legacy.Operations.list"
+        "azure.mgmt.managedapplications.ManagedApplicationsMgmtClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
+        "azure.mgmt.managedapplications.aio.ManagedApplicationsMgmtClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
+        "azure.mgmt.managedapplications.ManagedApplicationsMgmtClient.list_operations": "Azure.ResourceManager.Legacy.Operations.list",
+        "azure.mgmt.managedapplications.aio.ManagedApplicationsMgmtClient.list_operations": "Azure.ResourceManager.Legacy.Operations.list"
     },
-    "CrossLanguageVersion": "286973ebfdd0"
+    "CrossLanguageVersion": "b6a0bd578472"
 }

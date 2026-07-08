@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ApplicationClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ApplicationClient.
+class ManagedApplicationsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for ManagedApplicationsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,7 +12,6 @@ from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
-        ActionType,
         ApplicationArtifactName,
         ApplicationArtifactType,
         ApplicationDefinitionArtifactName,
@@ -24,23 +23,11 @@ if TYPE_CHECKING:
         JitApproverType,
         JitRequestState,
         JitSchedulingType,
-        Origin,
         ProvisioningState,
         ResourceIdentityType,
         Status,
         Substatus,
     )
-
-
-class AllowedUpgradePlansResult(TypedDict, total=False):
-    """The array of plan.
-
-    :ivar value: The array of plans.
-    :vartype value: list["Plan"]
-    """
-
-    value: list["Plan"]
-    """The array of plans."""
 
 
 class Resource(TypedDict, total=False):
@@ -616,59 +603,6 @@ class ApplicationProperties(TypedDict, total=False):
     """The client entity that last updated the JIT request."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class Identity(TypedDict, total=False):
     """Identity for the resource.
 
@@ -754,21 +688,6 @@ class JitRequestDefinition(Resource):
 
     properties: "JitRequestProperties"
     """The JIT request properties."""
-
-
-class JitRequestDefinitionListResult(TypedDict, total=False):
-    """The response of a JitRequestDefinition list operation.
-
-    :ivar value: The JitRequestDefinition items on this page. Required.
-    :vartype value: list["JitRequestDefinition"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: Required[list["JitRequestDefinition"]]
-    """The JitRequestDefinition items on this page. Required."""
-    nextLink: str
-    """The link to the next page of items."""
 
 
 class JitRequestMetadata(TypedDict, total=False):
@@ -886,129 +805,6 @@ class ListTokenRequest(TypedDict, total=False):
     """The user assigned identities."""
 
 
-class ManagedIdentityToken(TypedDict, total=False):
-    """The managed identity token for the managed app resource.
-
-    :ivar access_token: The requested access token.
-    :vartype access_token: str
-    :ivar expires_in: The number of seconds the access token will be valid.
-    :vartype expires_in: str
-    :ivar expires_on: The timespan when the access token expires. This is represented as the number
-     of seconds from epoch.
-    :vartype expires_on: str
-    :ivar not_before: The timespan when the access token takes effect. This is represented as the
-     number of seconds from epoch.
-    :vartype not_before: str
-    :ivar authorization_audience: The aud (audience) the access token was request for. This is the
-     same as what was provided in the listTokens request.
-    :vartype authorization_audience: str
-    :ivar resource_id: The Azure resource ID for the issued token. This is either the managed
-     application ID or the user-assigned identity ID.
-    :vartype resource_id: str
-    :ivar token_type: The type of the token.
-    :vartype token_type: str
-    """
-
-    accessToken: str
-    """The requested access token."""
-    expiresIn: str
-    """The number of seconds the access token will be valid."""
-    expiresOn: str
-    """The timespan when the access token expires. This is represented as the number of seconds from
-     epoch."""
-    notBefore: str
-    """The timespan when the access token takes effect. This is represented as the number of seconds
-     from epoch."""
-    authorizationAudience: str
-    """The aud (audience) the access token was request for. This is the same as what was provided in
-     the listTokens request."""
-    resourceId: str
-    """The Azure resource ID for the issued token. This is either the managed application ID or the
-     user-assigned identity ID."""
-    tokenType: str
-    """The type of the token."""
-
-
-class ManagedIdentityTokenResult(TypedDict, total=False):
-    """The array of managed identity tokens.
-
-    :ivar value: The array of managed identity tokens.
-    :vartype value: list["ManagedIdentityToken"]
-    """
-
-    value: list["ManagedIdentityToken"]
-    """The array of managed identity tokens."""
-
-
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
-
-
 class Plan(TypedDict, total=False):
     """Plan for the managed application.
 
@@ -1061,48 +857,6 @@ class PlanPatchable(TypedDict, total=False):
     """The promotion code."""
     version: str
     """The plan's version."""
-
-
-class RegistryPackage(TypedDict, total=False):
-    """Information about an application definition request.
-
-    :ivar publisher: The publisher. Required.
-    :vartype publisher: str
-    :ivar offer: The offer Id. Required.
-    :vartype offer: str
-    :ivar plan: The plan Id. Required.
-    :vartype plan: str
-    :ivar version: The version of the plan. Required.
-    :vartype version: str
-    :ivar package_links: The registry package links. Required.
-    :vartype package_links: "RegistryPackageLinks"
-    """
-
-    publisher: Required[str]
-    """The publisher. Required."""
-    offer: Required[str]
-    """The offer Id. Required."""
-    plan: Required[str]
-    """The plan Id. Required."""
-    version: Required[str]
-    """The version of the plan. Required."""
-    packageLinks: Required["RegistryPackageLinks"]
-    """The registry package links. Required."""
-
-
-class RegistryPackageLinks(TypedDict, total=False):
-    """Resource information.
-
-    :ivar create_ui_definition_link: The create ui definition link.
-    :vartype create_ui_definition_link: str
-    :ivar deployment_template_link: The deployment template link.
-    :vartype deployment_template_link: str
-    """
-
-    createUiDefinitionLink: str
-    """The create ui definition link."""
-    deploymentTemplateLink: str
-    """The deployment template link."""
 
 
 class RegistryPackagePlan(TypedDict, total=False):

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 from ._operations import ApplicationsOperations  # type: ignore
 from ._operations import ApplicationDefinitionsOperations  # type: ignore
 from ._operations import JitRequestsOperations  # type: ignore
-from ._operations import _ApplicationClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import _ManagedApplicationsMgmtClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *

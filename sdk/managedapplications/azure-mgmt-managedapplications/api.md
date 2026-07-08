@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.managedapplications
 
-    class azure.mgmt.managedapplications.ApplicationClient(_ApplicationClientOperationsMixin): implements ContextManager 
+    class azure.mgmt.managedapplications.ManagedApplicationsMgmtClient(_ManagedApplicationsMgmtClientOperationsMixin): implements ContextManager 
         application_definitions: ApplicationDefinitionsOperations
         applications: ApplicationsOperations
         jit_requests: JitRequestsOperations
@@ -61,7 +61,7 @@ namespace azure.mgmt.managedapplications
 
 namespace azure.mgmt.managedapplications.aio
 
-    class azure.mgmt.managedapplications.aio.ApplicationClient(_ApplicationClientOperationsMixin): implements AsyncContextManager 
+    class azure.mgmt.managedapplications.aio.ManagedApplicationsMgmtClient(_ManagedApplicationsMgmtClientOperationsMixin): implements AsyncContextManager 
         application_definitions: ApplicationDefinitionsOperations
         applications: ApplicationsOperations
         jit_requests: JitRequestsOperations
@@ -2269,10 +2269,6 @@ namespace azure.mgmt.managedapplications.operations
 
 namespace azure.mgmt.managedapplications.types
 
-    class azure.mgmt.managedapplications.types.AllowedUpgradePlansResult(TypedDict, total=False):
-        value: list[Plan]
-
-
     class azure.mgmt.managedapplications.types.Application(GenericResource):
         key "id": str
         key "identity": ForwardRef('Identity', module='types')
@@ -2512,30 +2508,6 @@ namespace azure.mgmt.managedapplications.types
         updated_by: ApplicationClientDetails
 
 
-    class azure.mgmt.managedapplications.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.managedapplications.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.managedapplications.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
     class azure.mgmt.managedapplications.types.GenericResource(Resource):
         key "id": str
         key "location": str
@@ -2597,13 +2569,6 @@ namespace azure.mgmt.managedapplications.types
         type: str
 
 
-    class azure.mgmt.managedapplications.types.JitRequestDefinitionListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[JitRequestDefinition]]
-        next_link: str
-        value: list[JitRequestDefinition]
-
-
     class azure.mgmt.managedapplications.types.JitRequestMetadata(TypedDict, total=False):
         key "originRequestId": str
         key "requestorId": str
@@ -2654,51 +2619,6 @@ namespace azure.mgmt.managedapplications.types
         user_assigned_identities: list[str]
 
 
-    class azure.mgmt.managedapplications.types.ManagedIdentityToken(TypedDict, total=False):
-        key "accessToken": str
-        key "authorizationAudience": str
-        key "expiresIn": str
-        key "expiresOn": str
-        key "notBefore": str
-        key "resourceId": str
-        key "tokenType": str
-        access_token: str
-        authorization_audience: str
-        expires_in: str
-        expires_on: str
-        not_before: str
-        resource_id: str
-        token_type: str
-
-
-    class azure.mgmt.managedapplications.types.ManagedIdentityTokenResult(TypedDict, total=False):
-        value: list[ManagedIdentityToken]
-
-
-    class azure.mgmt.managedapplications.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.managedapplications.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
     class azure.mgmt.managedapplications.types.Plan(TypedDict, total=False):
         key "name": Required[str]
         key "product": Required[str]
@@ -2723,26 +2643,6 @@ namespace azure.mgmt.managedapplications.types
         promotion_code: str
         publisher: str
         version: str
-
-
-    class azure.mgmt.managedapplications.types.RegistryPackage(TypedDict, total=False):
-        key "offer": Required[str]
-        key "packageLinks": Required[RegistryPackageLinks]
-        key "plan": Required[str]
-        key "publisher": Required[str]
-        key "version": Required[str]
-        offer: str
-        package_links: RegistryPackageLinks
-        plan: str
-        publisher: str
-        version: str
-
-
-    class azure.mgmt.managedapplications.types.RegistryPackageLinks(TypedDict, total=False):
-        key "createUiDefinitionLink": str
-        key "deploymentTemplateLink": str
-        create_ui_definition_link: str
-        deployment_template_link: str
 
 
     class azure.mgmt.managedapplications.types.RegistryPackagePlan(TypedDict, total=False):

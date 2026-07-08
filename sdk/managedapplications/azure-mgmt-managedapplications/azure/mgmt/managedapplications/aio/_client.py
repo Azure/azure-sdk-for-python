@@ -18,12 +18,12 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ApplicationClientConfiguration
+from ._configuration import ManagedApplicationsMgmtClientConfiguration
 from .operations import (
     ApplicationDefinitionsOperations,
     ApplicationsOperations,
     JitRequestsOperations,
-    _ApplicationClientOperationsMixin,
+    _ManagedApplicationsMgmtClientOperationsMixin,
 )
 
 if sys.version_info >= (3, 11):
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ApplicationClient(_ApplicationClientOperationsMixin):
+class ManagedApplicationsMgmtClient(_ManagedApplicationsMgmtClientOperationsMixin):
     """ARM applications.
 
     :ivar applications: ApplicationsOperations operations
@@ -79,7 +79,7 @@ class ApplicationClient(_ApplicationClientOperationsMixin):
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ApplicationClientConfiguration(
+        self._config = ManagedApplicationsMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

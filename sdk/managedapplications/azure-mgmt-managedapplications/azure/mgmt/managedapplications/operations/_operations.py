@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import ApplicationClientConfiguration
+from .._configuration import ManagedApplicationsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
@@ -866,7 +866,9 @@ def build_jit_requests_list_by_subscription_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_application_portal_registry_package_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_managed_applications_mgmt_portal_registry_package_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -888,7 +890,9 @@ def build_application_portal_registry_package_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_application_list_operations_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_managed_applications_mgmt_list_operations_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -913,14 +917,16 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.ApplicationClient`'s
+        :class:`~azure.mgmt.managedapplications.ManagedApplicationsMgmtClient`'s
         :attr:`applications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedApplicationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1001,7 +1007,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Union[_models.Application, _types.Application, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1081,7 +1087,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _models.Application,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Creates or updates a managed application.
 
@@ -1109,7 +1115,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _types.Application,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Creates or updates a managed application.
 
@@ -1137,7 +1143,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Creates or updates a managed application.
 
@@ -1163,7 +1169,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Union[_models.Application, _types.Application, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Creates or updates a managed application.
 
@@ -1198,7 +1204,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1238,7 +1244,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Optional[Union[_models.ApplicationPatchable, _types.ApplicationPatchable, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1322,7 +1328,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[_models.ApplicationPatchable] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -1351,7 +1357,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[_types.ApplicationPatchable] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -1380,7 +1386,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -1407,7 +1413,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Optional[Union[_models.ApplicationPatchable, _types.ApplicationPatchable, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -1443,7 +1449,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1566,7 +1572,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1875,7 +1881,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1983,7 +1989,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Union[_models.UpdateAccessDefinition, _types.UpdateAccessDefinition, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2061,7 +2067,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _models.UpdateAccessDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.UpdateAccessDefinition]:
         """Update access for application.
 
@@ -2090,7 +2096,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _types.UpdateAccessDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.UpdateAccessDefinition]:
         """Update access for application.
 
@@ -2119,7 +2125,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.UpdateAccessDefinition]:
         """Update access for application.
 
@@ -2146,7 +2152,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Union[_models.UpdateAccessDefinition, _types.UpdateAccessDefinition, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.UpdateAccessDefinition]:
         """Update access for application.
 
@@ -2182,7 +2188,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -2225,7 +2231,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _models.ListTokenRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ManagedIdentityTokenResult:
         """List tokens for application.
 
@@ -2253,7 +2259,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _types.ListTokenRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ManagedIdentityTokenResult:
         """List tokens for application.
 
@@ -2281,7 +2287,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ManagedIdentityTokenResult:
         """List tokens for application.
 
@@ -2307,7 +2313,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_name: str,
         parameters: Union[_models.ListTokenRequest, _types.ListTokenRequest, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ManagedIdentityTokenResult:
         """List tokens for application.
 
@@ -2537,7 +2543,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _models.Application,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Creates or updates a managed application.
 
@@ -2561,7 +2567,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: _types.Application,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Creates or updates a managed application.
 
@@ -2630,7 +2636,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -2669,7 +2675,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         self,
         application_id: str,
         parameters: Optional[Union[_models.ApplicationPatchable, _types.ApplicationPatchable, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2750,7 +2756,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[_models.ApplicationPatchable] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -2775,7 +2781,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[_types.ApplicationPatchable] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -2800,7 +2806,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -2823,7 +2829,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         self,
         application_id: str,
         parameters: Optional[Union[_models.ApplicationPatchable, _types.ApplicationPatchable, IO[bytes]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.Application]:
         """Updates an existing managed application.
 
@@ -2855,7 +2861,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -3005,14 +3011,16 @@ class ApplicationDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.ApplicationClient`'s
+        :class:`~azure.mgmt.managedapplications.ManagedApplicationsMgmtClient`'s
         :attr:`application_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedApplicationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3099,7 +3107,7 @@ class ApplicationDefinitionsOperations:
         parameters: _models.ApplicationDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3127,7 +3135,7 @@ class ApplicationDefinitionsOperations:
         parameters: _types.ApplicationDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3155,7 +3163,7 @@ class ApplicationDefinitionsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3181,7 +3189,7 @@ class ApplicationDefinitionsOperations:
         resource_group_name: str,
         application_definition_name: str,
         parameters: Union[_models.ApplicationDefinition, _types.ApplicationDefinition, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3273,7 +3281,7 @@ class ApplicationDefinitionsOperations:
         parameters: _models.ApplicationDefinitionPatchable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3301,7 +3309,7 @@ class ApplicationDefinitionsOperations:
         parameters: _types.ApplicationDefinitionPatchable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3329,7 +3337,7 @@ class ApplicationDefinitionsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3355,7 +3363,7 @@ class ApplicationDefinitionsOperations:
         resource_group_name: str,
         application_definition_name: str,
         parameters: Union[_models.ApplicationDefinitionPatchable, _types.ApplicationDefinitionPatchable, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3581,7 +3589,7 @@ class ApplicationDefinitionsOperations:
         parameters: _models.ApplicationDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3608,7 +3616,7 @@ class ApplicationDefinitionsOperations:
         parameters: _types.ApplicationDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3635,7 +3643,7 @@ class ApplicationDefinitionsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3660,7 +3668,7 @@ class ApplicationDefinitionsOperations:
         resource_group_name: str,
         application_definition_name: str,
         parameters: Union[_models.ApplicationDefinition, _types.ApplicationDefinition, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Creates or updates a managed application definition.
 
@@ -3752,7 +3760,7 @@ class ApplicationDefinitionsOperations:
         parameters: _models.ApplicationDefinitionPatchable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3779,7 +3787,7 @@ class ApplicationDefinitionsOperations:
         parameters: _types.ApplicationDefinitionPatchable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3806,7 +3814,7 @@ class ApplicationDefinitionsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -3831,7 +3839,7 @@ class ApplicationDefinitionsOperations:
         resource_group_name: str,
         application_definition_name: str,
         parameters: Union[_models.ApplicationDefinitionPatchable, _types.ApplicationDefinitionPatchable, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ApplicationDefinition:
         """Updates the managed application definition.
 
@@ -4175,14 +4183,16 @@ class JitRequestsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.ApplicationClient`'s
+        :class:`~azure.mgmt.managedapplications.ManagedApplicationsMgmtClient`'s
         :attr:`jit_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedApplicationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4266,7 +4276,7 @@ class JitRequestsOperations:
         resource_group_name: str,
         jit_request_name: str,
         parameters: Union[_models.JitRequestDefinition, _types.JitRequestDefinition, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4346,7 +4356,7 @@ class JitRequestsOperations:
         parameters: _models.JitRequestDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.JitRequestDefinition]:
         """Creates or updates the JIT request.
 
@@ -4375,7 +4385,7 @@ class JitRequestsOperations:
         parameters: _types.JitRequestDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.JitRequestDefinition]:
         """Creates or updates the JIT request.
 
@@ -4404,7 +4414,7 @@ class JitRequestsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.JitRequestDefinition]:
         """Creates or updates the JIT request.
 
@@ -4431,7 +4441,7 @@ class JitRequestsOperations:
         resource_group_name: str,
         jit_request_name: str,
         parameters: Union[_models.JitRequestDefinition, _types.JitRequestDefinition, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[_models.JitRequestDefinition]:
         """Creates or updates the JIT request.
 
@@ -4467,7 +4477,7 @@ class JitRequestsOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -4510,7 +4520,7 @@ class JitRequestsOperations:
         parameters: _models.JitRequestPatchable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.JitRequestDefinition:
         """Updates the JIT request.
 
@@ -4537,7 +4547,7 @@ class JitRequestsOperations:
         parameters: _types.JitRequestPatchable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.JitRequestDefinition:
         """Updates the JIT request.
 
@@ -4564,7 +4574,7 @@ class JitRequestsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.JitRequestDefinition:
         """Updates the JIT request.
 
@@ -4589,7 +4599,7 @@ class JitRequestsOperations:
         resource_group_name: str,
         jit_request_name: str,
         parameters: Union[_models.JitRequestPatchable, _types.JitRequestPatchable, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.JitRequestDefinition:
         """Updates the JIT request.
 
@@ -4865,8 +4875,8 @@ class JitRequestsOperations:
         return deserialized  # type: ignore
 
 
-class _ApplicationClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ApplicationClientConfiguration]
+class _ManagedApplicationsMgmtClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ManagedApplicationsMgmtClientConfiguration]
 ):
 
     @overload
@@ -4952,7 +4962,7 @@ class _ApplicationClientOperationsMixin(
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_application_portal_registry_package_request(
+        _request = build_managed_applications_mgmt_portal_registry_package_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5019,7 +5029,7 @@ class _ApplicationClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_application_list_operations_request(
+                _request = build_managed_applications_mgmt_list_operations_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

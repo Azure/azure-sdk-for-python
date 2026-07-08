@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.managedapplications.aio import ApplicationClient
+from azure.mgmt.managedapplications import ManagedApplicationsMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestManagedApplicationsMgmtApplicationDefinitionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ApplicationClient, is_async=True)
+        self.client = self.create_mgmt_client(ManagedApplicationsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_get(self, resource_group):
-        response = await self.client.application_definitions.get(
+    @recorded_by_proxy
+    def test_application_definitions_get(self, resource_group):
+        response = self.client.application_definitions.get(
             resource_group_name=resource_group.name,
             application_definition_name="str",
         )
@@ -31,88 +30,9 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_create_or_update(self, resource_group):
-        response = await self.client.application_definitions.create_or_update(
-            resource_group_name=resource_group.name,
-            application_definition_name="str",
-            parameters={
-                "properties": {
-                    "lockLevel": "str",
-                    "artifacts": [{"name": "str", "type": "str", "uri": "str"}],
-                    "authorizations": [{"principalId": "str", "roleDefinitionId": "str"}],
-                    "createUiDefinition": {},
-                    "deploymentPolicy": {"deploymentMode": "str"},
-                    "description": "str",
-                    "displayName": "str",
-                    "isEnabled": bool,
-                    "lockingPolicy": {"allowedActions": ["str"], "allowedDataActions": ["str"]},
-                    "mainTemplate": {},
-                    "managementPolicy": {"mode": "str"},
-                    "notificationPolicy": {"notificationEndpoints": [{"uri": "str"}]},
-                    "packageFileUri": "str",
-                    "policies": [{"name": "str", "parameters": "str", "policyDefinitionId": "str"}],
-                    "storageAccountId": "str",
-                },
-                "id": "str",
-                "location": "str",
-                "managedBy": "str",
-                "name": "str",
-                "sku": {"name": "str", "capacity": 0, "family": "str", "model": "str", "size": "str", "tier": "str"},
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "tags": {"str": "str"},
-                "type": "str",
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_update(self, resource_group):
-        response = await self.client.application_definitions.update(
-            resource_group_name=resource_group.name,
-            application_definition_name="str",
-            parameters={"tags": {"str": "str"}},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_delete(self, resource_group):
-        response = await self.client.application_definitions.delete(
-            resource_group_name=resource_group.name,
-            application_definition_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_get_by_id(self, resource_group):
-        response = await self.client.application_definitions.get_by_id(
-            resource_group_name=resource_group.name,
-            application_definition_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_create_or_update_by_id(self, resource_group):
-        response = await self.client.application_definitions.create_or_update_by_id(
+    @recorded_by_proxy
+    def test_application_definitions_create_or_update(self, resource_group):
+        response = self.client.application_definitions.create_or_update(
             resource_group_name=resource_group.name,
             application_definition_name="str",
             parameters={
@@ -155,9 +75,9 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_update_by_id(self, resource_group):
-        response = await self.client.application_definitions.update_by_id(
+    @recorded_by_proxy
+    def test_application_definitions_update(self, resource_group):
+        response = self.client.application_definitions.update(
             resource_group_name=resource_group.name,
             application_definition_name="str",
             parameters={"tags": {"str": "str"}},
@@ -167,9 +87,9 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_delete_by_id(self, resource_group):
-        response = await self.client.application_definitions.delete_by_id(
+    @recorded_by_proxy
+    def test_application_definitions_delete(self, resource_group):
+        response = self.client.application_definitions.delete(
             resource_group_name=resource_group.name,
             application_definition_name="str",
         )
@@ -178,19 +98,98 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_list_by_resource_group(self, resource_group):
+    @recorded_by_proxy
+    def test_application_definitions_get_by_id(self, resource_group):
+        response = self.client.application_definitions.get_by_id(
+            resource_group_name=resource_group.name,
+            application_definition_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_application_definitions_create_or_update_by_id(self, resource_group):
+        response = self.client.application_definitions.create_or_update_by_id(
+            resource_group_name=resource_group.name,
+            application_definition_name="str",
+            parameters={
+                "properties": {
+                    "lockLevel": "str",
+                    "artifacts": [{"name": "str", "type": "str", "uri": "str"}],
+                    "authorizations": [{"principalId": "str", "roleDefinitionId": "str"}],
+                    "createUiDefinition": {},
+                    "deploymentPolicy": {"deploymentMode": "str"},
+                    "description": "str",
+                    "displayName": "str",
+                    "isEnabled": bool,
+                    "lockingPolicy": {"allowedActions": ["str"], "allowedDataActions": ["str"]},
+                    "mainTemplate": {},
+                    "managementPolicy": {"mode": "str"},
+                    "notificationPolicy": {"notificationEndpoints": [{"uri": "str"}]},
+                    "packageFileUri": "str",
+                    "policies": [{"name": "str", "parameters": "str", "policyDefinitionId": "str"}],
+                    "storageAccountId": "str",
+                },
+                "id": "str",
+                "location": "str",
+                "managedBy": "str",
+                "name": "str",
+                "sku": {"name": "str", "capacity": 0, "family": "str", "model": "str", "size": "str", "tier": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "tags": {"str": "str"},
+                "type": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_application_definitions_update_by_id(self, resource_group):
+        response = self.client.application_definitions.update_by_id(
+            resource_group_name=resource_group.name,
+            application_definition_name="str",
+            parameters={"tags": {"str": "str"}},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_application_definitions_delete_by_id(self, resource_group):
+        response = self.client.application_definitions.delete_by_id(
+            resource_group_name=resource_group.name,
+            application_definition_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_application_definitions_list_by_resource_group(self, resource_group):
         response = self.client.application_definitions.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_application_definitions_list_by_subscription(self, resource_group):
+    @recorded_by_proxy
+    def test_application_definitions_list_by_subscription(self, resource_group):
         response = self.client.application_definitions.list_by_subscription()
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
