@@ -172,10 +172,11 @@ def _ensure_arm_job_base(rest_job_resource: Any) -> Any:
 
 
 def _ensure_msrest_job_base(result: Any) -> Any:
-    """Return the create/update result as a msrest ``JobBase`` (v2023_04) for entity parsing.
+    """Return the create/update result as a msrest ``JobBase`` (v2024_01) for entity parsing.
 
-    Command and fine-tuning jobs route to the shared arm_ml_service client, whose ``create_or_update``
-    returns an arm hybrid ``JobBase``. The entity readers (``Job._from_rest_object`` and the nested
+    Command and fine-tuning jobs (and, since the operations-layer migration, pipeline/automl/sweep jobs)
+    route to the shared arm_ml_service client, whose ``create_or_update`` returns an arm hybrid
+    ``JobBase``. The entity readers (``Job._from_rest_object`` and the nested
     ``DistributionConfiguration._from_rest_object`` etc.) were authored against msrest ``.as_dict()``,
     which emits snake_case keys; the hybrid ``.as_dict()`` emits camelCase, so a hybrid result makes
     those readers pop ``None`` (e.g. ``distribution_type``) and crash. Round-trip the hybrid result
@@ -190,7 +191,7 @@ def _ensure_msrest_job_base(result: Any) -> Any:
     """
     if not getattr(result, "_is_model", False) is True:  # already a msrest model (or a test mock)
         return result
-    return JobBase.deserialize(result.as_dict())
+    return JobBase_2401.deserialize(result.as_dict())
 
 
 class JobOperations(_ScopeDependentOperations):
