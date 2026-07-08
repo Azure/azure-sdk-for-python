@@ -10894,6 +10894,14 @@ namespace azure.ai.ml.operations
             ) -> Job: ...
 
         @distributed_trace
+        @monitor_with_telemetry_mixin(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
+        def delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
         @monitor_with_activity(ops_logger, 'Job.Download', ActivityType.PUBLICAPI)
         def download(
                 self, 
