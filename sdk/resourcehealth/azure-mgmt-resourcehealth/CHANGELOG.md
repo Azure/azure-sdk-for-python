@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- First stable release of the Azure Resource Health Management client library.
+- First GA
 
 ## 1.0.0b7 (2026-05-28)
 
