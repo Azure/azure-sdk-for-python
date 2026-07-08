@@ -10,7 +10,7 @@
 | 5 | azure-mgmt-sql | 2025-01-01 | 4.0.0b25 | [#47365](https://github.com/Azure/azure-sdk-for-python/pull/47365) | 2026-06-02 | Done | [47631](https://github.com/Azure/azure-sdk-for-python/pull/47631) |
 | 6 | azure-mgmt-datafactory | 2018-06-01 | 10.0.0b1 | [#47198](https://github.com/Azure/azure-sdk-for-python/pull/47198) | 2026-05-28 | Doing | [47908](https://github.com/Azure/azure-sdk-for-python/pull/47908) |
 | 7 | azure-mgmt-resourcehealth | 2025-05-01 | 1.0.0b7 | [#47187](https://github.com/Azure/azure-sdk-for-python/pull/47187) | 2026-05-28 | Doing | [47910](https://github.com/Azure/azure-sdk-for-python/pull/47910) |
-| 8 | azure-mgmt-appcontainers | 2026-01-01 | 5.0.0b1 | [#47161](https://github.com/Azure/azure-sdk-for-python/pull/47161) | 2026-05-27 | Not Started |  |
+| 8 | azure-mgmt-appcontainers | 2026-01-01 | 5.0.0b1 | [#47161](https://github.com/Azure/azure-sdk-for-python/pull/47161) | 2026-05-27 | Doing | [47925](https://github.com/Azure/azure-sdk-for-python/pull/47925) |
 | 9 | azure-mgmt-databricks | 2026-01-01 | 3.0.0b1 | [#47151](https://github.com/Azure/azure-sdk-for-python/pull/47151) | 2026-05-27 | Not Started |  |
 | 10 | azure-mgmt-storagecache | 2026-01-01 | 4.0.0b1 | [#47154](https://github.com/Azure/azure-sdk-for-python/pull/47154) | 2026-05-27 | Not Started |  |
 | 11 | azure-mgmt-costmanagement | 2025-03-01 | 5.0.0b1 | [#47118](https://github.com/Azure/azure-sdk-for-python/pull/47118) | 2026-05-26 | Not Started |  |
