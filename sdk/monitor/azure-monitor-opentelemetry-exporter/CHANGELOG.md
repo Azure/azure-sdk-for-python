@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Propagate main agent attribute to child spans
 
 ### Other Changes
 
