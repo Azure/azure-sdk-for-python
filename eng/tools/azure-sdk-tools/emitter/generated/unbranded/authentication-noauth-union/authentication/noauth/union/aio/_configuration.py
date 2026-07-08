@@ -50,9 +50,9 @@ class UnionClientConfiguration:
                 *self.credential_scopes,
                 auth_flows=[
                     {
+                        "type": "implicit",
                         "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
                         "scopes": [{"value": "https://security.microsoft.com/.default"}],
-                        "type": "implicit",
                     }
                 ],
                 **kwargs

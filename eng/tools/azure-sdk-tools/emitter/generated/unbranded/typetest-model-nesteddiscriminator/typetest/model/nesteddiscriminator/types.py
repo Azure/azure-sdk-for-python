@@ -67,5 +67,5 @@ class SawShark(TypedDict, total=False):
     """Required. Default value is \"saw\"."""
 
 
-Shark = Union[GoblinShark, SawShark]
-Fish = Union[Salmon, Shark]
+Shark = Union[SawShark, GoblinShark]
+Fish = Union[Shark, Salmon]

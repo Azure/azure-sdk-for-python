@@ -26,7 +26,7 @@ class TestNestedDiscriminator(NestedDiscriminatorClientTestBase):
     def test_put_model(self, nesteddiscriminator_endpoint):
         client = self.create_client(endpoint=nesteddiscriminator_endpoint)
         response = client.put_model(
-            input={"age": 0, "kind": "salmon", "friends": ["fish"], "hate": {"str": "fish"}, "partner": "fish"},
+            input={"age": 0, "kind": "saw"},
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNestedDiscriminator(NestedDiscriminatorClientTestBase):
     def test_put_recursive_model(self, nesteddiscriminator_endpoint):
         client = self.create_client(endpoint=nesteddiscriminator_endpoint)
         response = client.put_recursive_model(
-            input={"age": 0, "kind": "salmon", "friends": ["fish"], "hate": {"str": "fish"}, "partner": "fish"},
+            input={"age": 0, "kind": "saw"},
         )
 
         # please add some check logic here by yourself

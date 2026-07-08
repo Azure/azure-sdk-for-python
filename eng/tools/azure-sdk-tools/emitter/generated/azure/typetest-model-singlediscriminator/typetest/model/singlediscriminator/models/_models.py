@@ -20,7 +20,7 @@ class Bird(_Model):
     """This is base model for polymorphic single level inheritance with a discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Eagle, Goose, SeaGull, Sparrow
+    SeaGull, Sparrow, Goose, Eagle
 
     :ivar kind: Required. Default value is None.
     :vartype kind: str

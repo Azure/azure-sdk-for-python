@@ -582,10 +582,10 @@ class AliasOperations:
             if required_int_list is _Unset:
                 raise TypeError("missing required argument: required_int_list")
             body = {
-                "optionalInt": optional_int,
-                "optionalStringList": optional_string_list,
-                "requiredIntList": required_int_list,
                 "requiredString": required_string,
+                "optionalInt": optional_int,
+                "requiredIntList": required_int_list,
+                "optionalStringList": optional_string_list,
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
@@ -741,7 +741,7 @@ class AliasOperations:
                 raise TypeError("missing required argument: name")
             if age is _Unset:
                 raise TypeError("missing required argument: age")
-            body = {"age": age, "name": name}
+            body = {"name": name, "age": age}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None

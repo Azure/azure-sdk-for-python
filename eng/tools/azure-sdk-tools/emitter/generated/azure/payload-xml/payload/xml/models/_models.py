@@ -37,12 +37,12 @@ class Author(_Model):
 
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "name", "text": False, "unwrapped": False},
+        xml={"name": "name", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "XmlAuthor", "text": False, "unwrapped": False}
+    _xml = {"name": "XmlAuthor", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -71,12 +71,12 @@ class Book(_Model):
 
     title: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "title", "text": False, "unwrapped": False},
+        xml={"name": "title", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "XmlBook", "text": False, "unwrapped": False}
+    _xml = {"name": "XmlBook", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -106,12 +106,12 @@ class ModelWithArrayOfModel(_Model):
     items_property: list["_models.SimpleModel"] = rest_field(
         name="items",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "SimpleModel", "name": "items", "text": False, "unwrapped": False},
+        xml={"name": "items", "attribute": False, "unwrapped": False, "text": False, "itemsName": "SimpleModel"},
         original_tsp_name="items",
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithArrayOfModel", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithArrayOfModel", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -144,24 +144,24 @@ class ModelWithAttributes(_Model):
 
     id1: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": True, "name": "id1", "text": False, "unwrapped": False},
+        xml={"name": "id1", "attribute": True, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
     """Required."""
     id2: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": True, "name": "id2", "text": False, "unwrapped": False},
+        xml={"name": "id2", "attribute": True, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     enabled: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "enabled", "text": False, "unwrapped": False},
+        xml={"name": "enabled", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_bool,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithAttributes", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithAttributes", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -195,19 +195,19 @@ class ModelWithDatetime(_Model):
     rfc3339: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc3339",
-        xml={"attribute": False, "name": "rfc3339", "text": False, "unwrapped": False},
+        xml={"name": "rfc3339", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_datetime,
     )
     """DateTime value with rfc3339 encoding. Required."""
     rfc7231: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
-        xml={"attribute": False, "name": "rfc7231", "text": False, "unwrapped": False},
+        xml={"name": "rfc7231", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_datetime_rfc7231,
     )
     """DateTime value with rfc7231 encoding. Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithDatetime", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithDatetime", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -237,11 +237,11 @@ class ModelWithDictionary(_Model):
 
     metadata: dict[str, str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "metadata", "text": False, "unwrapped": False},
+        xml={"name": "metadata", "attribute": False, "unwrapped": False, "text": False},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithDictionary", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithDictionary", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -271,12 +271,12 @@ class ModelWithEmptyArray(_Model):
     items_property: list["_models.SimpleModel"] = rest_field(
         name="items",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "SimpleModel", "name": "items", "text": False, "unwrapped": False},
+        xml={"name": "items", "attribute": False, "unwrapped": False, "text": False, "itemsName": "SimpleModel"},
         original_tsp_name="items",
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithEmptyArray", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithEmptyArray", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -308,16 +308,16 @@ class ModelWithEncodedNames(_Model):
     model_data: "_models.SimpleModel" = rest_field(
         name="modelData",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "SimpleModelData", "text": False, "unwrapped": False},
+        xml={"name": "SimpleModelData", "attribute": False, "unwrapped": False, "text": False},
     )
     """Required."""
     colors: list[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "string", "name": "PossibleColors", "text": False, "unwrapped": False},
+        xml={"name": "PossibleColors", "attribute": False, "unwrapped": False, "text": False, "itemsName": "string"},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithEncodedNamesSrc", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithEncodedNamesSrc", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -347,12 +347,12 @@ class ModelWithEnum(_Model):
 
     status: Union[str, "_models.Status"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "status", "text": False, "unwrapped": False},
+        xml={"name": "status", "attribute": False, "unwrapped": False, "text": False},
         deserializer=functools.partial(_xml_deser_enum_or_str, Status),
     )
     """Required. Known values are: \"pending\", \"success\", and \"error\"."""
 
-    _xml = {"attribute": False, "name": "ModelWithEnum", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithEnum", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -383,24 +383,24 @@ class ModelWithNamespace(_Model):
 
     id: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "id", "text": False, "unwrapped": False},
+        xml={"name": "id", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
     """Required."""
     title: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "title", "text": False, "unwrapped": False},
+        xml={"name": "title", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
     _xml = {
-        "attribute": False,
         "name": "ModelWithNamespace",
         "namespace": "http://example.com/schema",
         "prefix": "smp",
-        "text": False,
+        "attribute": False,
         "unwrapped": False,
+        "text": False,
     }
 
     @overload
@@ -435,19 +435,19 @@ class ModelWithNamespaceOnProperties(_Model):
 
     id: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "id", "text": False, "unwrapped": False},
+        xml={"name": "id", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
     """Required."""
     title: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={
-            "attribute": False,
             "name": "title",
             "namespace": "http://example.com/schema",
             "prefix": "smp",
-            "text": False,
+            "attribute": False,
             "unwrapped": False,
+            "text": False,
         },
         deserializer=_xml_deser_str,
     )
@@ -455,24 +455,24 @@ class ModelWithNamespaceOnProperties(_Model):
     author: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={
-            "attribute": False,
             "name": "author",
             "namespace": "http://example.com/ns2",
             "prefix": "ns2",
-            "text": False,
+            "attribute": False,
             "unwrapped": False,
+            "text": False,
         },
         deserializer=_xml_deser_str,
     )
     """Required."""
 
     _xml = {
-        "attribute": False,
         "name": "ModelWithNamespaceOnProperties",
         "namespace": "http://example.com/schema",
         "prefix": "smp",
-        "text": False,
+        "attribute": False,
         "unwrapped": False,
+        "text": False,
     }
 
     @overload
@@ -504,11 +504,11 @@ class ModelWithNestedModel(_Model):
 
     nested: "_models.SimpleModel" = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "nested", "text": False, "unwrapped": False},
+        xml={"name": "nested", "attribute": False, "unwrapped": False, "text": False},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithNestedModel", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithNestedModel", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -539,17 +539,17 @@ class ModelWithOptionalField(_Model):
 
     item: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "item", "text": False, "unwrapped": False},
+        xml={"name": "item", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     value: Optional[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "value", "text": False, "unwrapped": False},
+        xml={"name": "value", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
 
-    _xml = {"attribute": False, "name": "ModelWithOptionalField", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithOptionalField", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -582,16 +582,16 @@ class ModelWithRenamedArrays(_Model):
 
     colors: list[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "Colors", "name": "Colors", "text": False, "unwrapped": True},
+        xml={"name": "Colors", "attribute": False, "unwrapped": True, "text": False, "itemsName": "Colors"},
     )
     """Required."""
     counts: list[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "int32", "name": "Counts", "text": False, "unwrapped": False},
+        xml={"name": "Counts", "attribute": False, "unwrapped": False, "text": False, "itemsName": "int32"},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedArrays", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedArrays", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -625,24 +625,24 @@ class ModelWithRenamedAttribute(_Model):
 
     id: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": True, "name": "xml-id", "text": False, "unwrapped": False},
+        xml={"name": "xml-id", "attribute": True, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
     """Required."""
     title: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "title", "text": False, "unwrapped": False},
+        xml={"name": "title", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     author: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "author", "text": False, "unwrapped": False},
+        xml={"name": "author", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedAttribute", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedAttribute", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -676,17 +676,17 @@ class ModelWithRenamedFields(_Model):
     input_data: "_models.SimpleModel" = rest_field(
         name="inputData",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "InputData", "text": False, "unwrapped": False},
+        xml={"name": "InputData", "attribute": False, "unwrapped": False, "text": False},
     )
     """Required."""
     output_data: "_models.SimpleModel" = rest_field(
         name="outputData",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "OutputData", "text": False, "unwrapped": False},
+        xml={"name": "OutputData", "attribute": False, "unwrapped": False, "text": False},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedFieldsSrc", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedFieldsSrc", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -716,11 +716,11 @@ class ModelWithRenamedNestedModel(_Model):
 
     author: "_models.Author" = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "author", "text": False, "unwrapped": False},
+        xml={"name": "author", "attribute": False, "unwrapped": False, "text": False},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedNestedModel", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedNestedModel", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -751,18 +751,18 @@ class ModelWithRenamedProperty(_Model):
 
     title: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "renamedTitle", "text": False, "unwrapped": False},
+        xml={"name": "renamedTitle", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     author: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "author", "text": False, "unwrapped": False},
+        xml={"name": "author", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedProperty", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedProperty", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -793,12 +793,12 @@ class ModelWithRenamedUnwrappedModelArray(_Model):
     items_property: list["_models.SimpleModel"] = rest_field(
         name="items",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "ModelItem", "name": "ModelItem", "text": False, "unwrapped": True},
+        xml={"name": "ModelItem", "attribute": False, "unwrapped": True, "text": False, "itemsName": "ModelItem"},
         original_tsp_name="items",
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedUnwrappedModelArray", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedUnwrappedModelArray", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -827,11 +827,11 @@ class ModelWithRenamedWrappedAndItemModelArray(_Model):
 
     books: list["_models.Book"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "XmlBook", "name": "AllBooks", "text": False, "unwrapped": False},
+        xml={"name": "AllBooks", "attribute": False, "unwrapped": False, "text": False, "itemsName": "XmlBook"},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedWrappedAndItemModelArray", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedWrappedAndItemModelArray", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -861,12 +861,12 @@ class ModelWithRenamedWrappedModelArray(_Model):
     items_property: list["_models.SimpleModel"] = rest_field(
         name="items",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "SimpleModel", "name": "AllItems", "text": False, "unwrapped": False},
+        xml={"name": "AllItems", "attribute": False, "unwrapped": False, "text": False, "itemsName": "SimpleModel"},
         original_tsp_name="items",
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithRenamedWrappedModelArray", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithRenamedWrappedModelArray", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -897,16 +897,16 @@ class ModelWithSimpleArrays(_Model):
 
     colors: list[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "string", "name": "colors", "text": False, "unwrapped": False},
+        xml={"name": "colors", "attribute": False, "unwrapped": False, "text": False, "itemsName": "string"},
     )
     """Required."""
     counts: list[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "int32", "name": "counts", "text": False, "unwrapped": False},
+        xml={"name": "counts", "attribute": False, "unwrapped": False, "text": False, "itemsName": "int32"},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithSimpleArrays", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithSimpleArrays", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -938,18 +938,18 @@ class ModelWithText(_Model):
 
     language: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": True, "name": "language", "text": False, "unwrapped": False},
+        xml={"name": "language", "attribute": True, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     content: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "content", "text": True, "unwrapped": False},
+        xml={"name": "content", "attribute": False, "unwrapped": False, "text": True},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithText", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithText", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -981,16 +981,16 @@ class ModelWithUnwrappedArray(_Model):
 
     colors: list[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "colors", "name": "colors", "text": False, "unwrapped": True},
+        xml={"name": "colors", "attribute": False, "unwrapped": True, "text": False, "itemsName": "colors"},
     )
     """Required."""
     counts: list[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "int32", "name": "counts", "text": False, "unwrapped": False},
+        xml={"name": "counts", "attribute": False, "unwrapped": False, "text": False, "itemsName": "int32"},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithUnwrappedArray", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithUnwrappedArray", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -1021,12 +1021,12 @@ class ModelWithUnwrappedModelArray(_Model):
     items_property: list["_models.SimpleModel"] = rest_field(
         name="items",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "items", "name": "items", "text": False, "unwrapped": True},
+        xml={"name": "items", "attribute": False, "unwrapped": True, "text": False, "itemsName": "items"},
         original_tsp_name="items",
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithUnwrappedModelArray", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithUnwrappedModelArray", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -1055,11 +1055,11 @@ class ModelWithWrappedPrimitiveCustomItemNames(_Model):
 
     tags: list[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "ItemName", "name": "ItemsTags", "text": False, "unwrapped": False},
+        xml={"name": "ItemsTags", "attribute": False, "unwrapped": False, "text": False, "itemsName": "ItemName"},
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "ModelWithWrappedPrimitiveCustomItemNames", "text": False, "unwrapped": False}
+    _xml = {"name": "ModelWithWrappedPrimitiveCustomItemNames", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -1090,18 +1090,18 @@ class SimpleModel(_Model):
 
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "name", "text": False, "unwrapped": False},
+        xml={"name": "name", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     age: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "age", "text": False, "unwrapped": False},
+        xml={"name": "age", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "SimpleModel", "text": False, "unwrapped": False}
+    _xml = {"name": "SimpleModel", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(
@@ -1133,18 +1133,18 @@ class XmlErrorBody(_Model):
 
     message: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "message", "text": False, "unwrapped": False},
+        xml={"name": "message", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     code: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "code", "text": False, "unwrapped": False},
+        xml={"name": "code", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_int,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "XmlErrorBody", "text": False, "unwrapped": False}
+    _xml = {"name": "XmlErrorBody", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(

@@ -17,7 +17,7 @@ class Animal(_Model):
     """Animal.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Dog, Pet
+    Pet, Dog
 
     :ivar kind: The kind of animal. Required. Default value is None.
     :vartype kind: str

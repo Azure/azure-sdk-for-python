@@ -20,7 +20,7 @@ class Fish(_Model):
     """This is base model for polymorphic multiple levels inheritance with a discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Salmon, Shark
+    Shark, Salmon
 
     :ivar kind: Discriminator property for Fish. Required. Default value is None.
     :vartype kind: str
@@ -58,7 +58,7 @@ class Shark(Fish, discriminator="shark"):
     discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    GoblinShark, SawShark
+    SawShark, GoblinShark
 
     :ivar age: Required.
     :vartype age: int

@@ -21,10 +21,10 @@ def main():
 
     response = client.basic_action(
         body={
-            "arrayProperty": ["item"],
-            "modelProperty": {"enumProperty": "EnumValue1", "float32Property": 1.5, "int32Property": 1},
-            "recordProperty": {"record": "value"},
             "stringProperty": "text",
+            "modelProperty": {"int32Property": 1, "float32Property": 1.5, "enumProperty": "EnumValue1"},
+            "arrayProperty": ["item"],
+            "recordProperty": {"record": "value"},
         },
         query_param="query",
         header_param="header",

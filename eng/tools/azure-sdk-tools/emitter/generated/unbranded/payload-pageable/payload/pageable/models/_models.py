@@ -50,18 +50,18 @@ class XmlPet(_Model):
 
     id: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
+        xml={"name": "Id", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+        xml={"name": "Name", "attribute": False, "unwrapped": False, "text": False},
         deserializer=_xml_deser_str,
     )
     """Required."""
 
-    _xml = {"attribute": False, "name": "Pet", "text": False, "unwrapped": False}
+    _xml = {"name": "Pet", "attribute": False, "unwrapped": False, "text": False}
 
     @overload
     def __init__(

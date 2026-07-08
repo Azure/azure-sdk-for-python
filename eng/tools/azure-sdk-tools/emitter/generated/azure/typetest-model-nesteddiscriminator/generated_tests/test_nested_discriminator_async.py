@@ -27,7 +27,7 @@ class TestNestedDiscriminatorAsync(NestedDiscriminatorClientTestBaseAsync):
     async def test_put_model(self, nesteddiscriminator_endpoint):
         client = self.create_async_client(endpoint=nesteddiscriminator_endpoint)
         response = await client.put_model(
-            input={"age": 0, "kind": "salmon", "friends": ["fish"], "hate": {"str": "fish"}, "partner": "fish"},
+            input={"age": 0, "kind": "saw"},
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNestedDiscriminatorAsync(NestedDiscriminatorClientTestBaseAsync):
     async def test_put_recursive_model(self, nesteddiscriminator_endpoint):
         client = self.create_async_client(endpoint=nesteddiscriminator_endpoint)
         response = await client.put_recursive_model(
-            input={"age": 0, "kind": "salmon", "friends": ["fish"], "hate": {"str": "fish"}, "partner": "fish"},
+            input={"age": 0, "kind": "saw"},
         )
 
         # please add some check logic here by yourself

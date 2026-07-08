@@ -96,4 +96,4 @@ class Sparrow(TypedDict, total=False):
     """Required. Default value is \"sparrow\"."""
 
 
-Bird = Union[Eagle, Goose, SeaGull, Sparrow]
+Bird = Union[SeaGull, Sparrow, Goose, Eagle]

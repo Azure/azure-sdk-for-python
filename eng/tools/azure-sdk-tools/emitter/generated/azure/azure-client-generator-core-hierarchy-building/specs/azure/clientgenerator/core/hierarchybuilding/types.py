@@ -34,4 +34,4 @@ class Dog(TypedDict, total=False):
 
 
 Pet = Union[Dog]
-Animal = Union[Dog, Pet]
+Animal = Union[Pet, Dog]
