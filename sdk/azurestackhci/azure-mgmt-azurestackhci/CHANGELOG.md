@@ -234,28 +234,28 @@
   - Added enum `WifiSecretType`
   - Added enum `WitnessType`
   - Added model `WorkloadDetails`
-  - Model `ClustersOperations` added method `begin_change_ring`
-  - Model `UpdatesOperations` added method `begin_prepare`
-  - Added model `ClusterJobsOperations`
-  - Added model `DevicePoolsOperations`
-  - Added model `EdgeMachineDiskJobsOperations`
-  - Added model `EdgeMachineDiskPrivilegedJobsOperations`
-  - Added model `EdgeMachineDisksOperations`
-  - Added model `EdgeMachineGpuJobsOperations`
-  - Added model `EdgeMachineGpusOperations`
-  - Added model `EdgeMachineJobsOperations`
-  - Added model `EdgeMachineNetworkAdapterJobsOperations`
-  - Added model `EdgeMachineNetworkAdaptersOperations`
-  - Added model `EdgeMachineUpdatesOperations`
-  - Added model `EdgeMachineVolumesOperations`
-  - Added model `EdgeMachinesOperations`
-  - Added model `KubernetesVersionsOperations`
-  - Added model `OsImagesOperations`
-  - Added model `OwnershipVouchersOperations`
-  - Added model `PlatformUpdatesOperations`
-  - Added model `PublishersOperations`
-  - Added model `UpdateContentsOperations`
-  - Added model `UpdateSummariesOperationGroupOperations`
+  - Operation group `ClustersOperations` added method `begin_change_ring`
+  - Operation group `UpdatesOperations` added method `begin_prepare`
+  - Added operation group `ClusterJobsOperations`
+  - Added operation group `DevicePoolsOperations`
+  - Added operation group `EdgeMachineDiskJobsOperations`
+  - Added operation group `EdgeMachineDiskPrivilegedJobsOperations`
+  - Added operation group `EdgeMachineDisksOperations`
+  - Added operation group `EdgeMachineGpuJobsOperations`
+  - Added operation group `EdgeMachineGpusOperations`
+  - Added operation group `EdgeMachineJobsOperations`
+  - Added operation group `EdgeMachineNetworkAdapterJobsOperations`
+  - Added operation group `EdgeMachineNetworkAdaptersOperations`
+  - Added operation group `EdgeMachineUpdatesOperations`
+  - Added operation group `EdgeMachineVolumesOperations`
+  - Added operation group `EdgeMachinesOperations`
+  - Added operation group `KubernetesVersionsOperations`
+  - Added operation group `OsImagesOperations`
+  - Added operation group `OwnershipVouchersOperations`
+  - Added operation group `PlatformUpdatesOperations`
+  - Added operation group `PublishersOperations`
+  - Added operation group `UpdateContentsOperations`
+  - Added operation group `UpdateSummariesOperationGroupOperations`
 
 ## 8.1.0b1 (2026-04-13)
 
