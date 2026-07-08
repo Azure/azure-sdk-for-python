@@ -1,14 +1,14 @@
 [project]
 name = "azure-ai-agentserver-ghcopilot"
 dynamic = ["version", "readme"]
-description = "GitHub Copilot SDK adapter for Azure AI Agent Server"
+description = "DEPRECATED - This package is no longer maintained. Use azure-ai-agentserver-core and azure-ai-agentserver-responses directly."
 requires-python = ">=3.11"
 authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 7 - Inactive",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -19,14 +19,7 @@ classifiers = [
 ]
 keywords = ["azure", "azure sdk"]
 
-dependencies = [
-    "azure-ai-agentserver-core>=2.0.0a1",
-    "azure-ai-agentserver-responses>=1.0.0a1",
-    "github-copilot-sdk>=0.2.0,<0.3.0",
-    "azure-identity",
-    "httpx>=0.24.0",
-    "pyyaml>=6.0",
-]
+dependencies = []
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]

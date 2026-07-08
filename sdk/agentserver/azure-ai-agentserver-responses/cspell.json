@@ -23,7 +23,8 @@
       "myproj",
       "myhost",
       "bkey",
-      "bval"
+      "bval",
+      "xhigh"
     ],
     "ignorePaths": [
       "*.csv",

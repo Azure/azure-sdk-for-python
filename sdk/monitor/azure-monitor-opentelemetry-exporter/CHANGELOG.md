@@ -1,11 +1,31 @@
 # Release History
 
-## 1.0.0b54 (Unreleased)
+## 1.0.0b56 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b55 (2026-07-01)
+
+### Bugs Fixed
+- Align GenAI main-agent span processor with upstream OpenTelemetry SDK (>= 1.43)
+  immutable `BoundedAttributes` on span end, fixing a `TypeError` when writing
+  `microsoft.gen_ai.main_agent.*` attributes in `on_end`
+  ([#47796](https://github.com/Azure/azure-sdk-for-python/pull/47796))
+
+## 1.0.0b54 (2026-06-30)
 
 ### Features Added
 - Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
   observations to built-in statsbeat metrics
   ([#47363](https://github.com/Azure/azure-sdk-for-python/pull/47363))
+- Implement RFC Retry-After header parsing for 429 responses per [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/822)
+  ([#47601](https://github.com/Azure/azure-sdk-for-python/pull/47601))
 
 ### Breaking Changes
 - Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
@@ -13,9 +33,6 @@
   `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
   ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
 
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b53 (2026-06-08)
 

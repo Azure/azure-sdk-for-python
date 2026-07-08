@@ -22,15 +22,18 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
+    FoundryAgentRequestContext,
     create_error_response,
+    reset_request_context,
+    set_request_context,
 )
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
-    CHAT_ISOLATION_KEY,
     ERROR_DETAIL,
     ERROR_SOURCE,
+    FOUNDRY_CALL_ID,
     MAX_ERROR_DETAIL_LENGTH,
     PLATFORM_ERROR_TAG,
-    USER_ISOLATION_KEY,
+    USER_ID,
 )
 
 from ._constants import InvocationConstants
@@ -362,6 +365,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         response: StreamingResponse,
         invocation_id: str,
         session_id: str,
+        platform_context: FoundryAgentRequestContext | None = None,
     ) -> StreamingResponse:
         """Wrap streaming body iteration with invocation logging/tracing context.
 
@@ -371,6 +375,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         :type invocation_id: str
         :param session_id: Session identifier to stamp in context/logging.
         :type session_id: str
+        :param platform_context: Platform context to re-establish for outbound
+            1P calls made during stream iteration (protocol 2.0.0).
+        :type platform_context: ~azure.ai.agentserver.core.FoundryAgentRequestContext | None
         :return: The response with a wrapped body_iterator.
         :rtype: StreamingResponse
         """
@@ -380,6 +387,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             # Re-establish the invocation context for the streaming task.
             stream_inv_token = _invocation_id_var.set(invocation_id)
             stream_session_token = _session_id_var.set(session_id)
+            stream_ctx_token = (
+                set_request_context(platform_context) if platform_context is not None else None
+            )
             try:
                 async for chunk in original_iterator:
                     yield chunk
@@ -398,6 +408,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             finally:
                 _invocation_id_var.reset(stream_inv_token)
                 _session_id_var.reset(stream_session_token)
+                if stream_ctx_token is not None:
+                    reset_request_context(stream_ctx_token)
 
         response.body_iterator = _wrapped_body()
         return response
@@ -417,9 +429,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
-        # Platform isolation headers — expose to handlers
-        request.state.user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
-        request.state.chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
+        # Platform identity headers — expose to handlers
+        user_id = request.headers.get(USER_ID, "")
+        call_id = request.headers.get(FOUNDRY_CALL_ID, "")
+        request.state.user_id = user_id
+        request.state.call_id = call_id
 
         # Incoming baggage and trace context are already attached by
         # BaggageMiddleware and the Starlette OTel instrumentor.
@@ -437,6 +451,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)
         session_token = _session_id_var.set(session_id)
+        # Bind platform context so outbound 1P calls (and handler/tool code) can
+        # forward the per-request call ID and user ID (protocol 2.0.0).
+        platform_ctx = FoundryAgentRequestContext(
+            call_id=call_id or None,
+            user_id=user_id or None,
+            session_id=session_id,
+        )
+        ctx_token = set_request_context(platform_ctx)
         try:
             response = await self._dispatch_invoke(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -477,6 +499,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             # tokens it sets for stream iteration.
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
+            reset_request_context(ctx_token)
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:
@@ -485,7 +508,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Wrap streaming response body so exceptions during iteration are
         # recorded on the current trace span and logged as invocation errors.
         if isinstance(response, StreamingResponse):
-            response = self._wrap_streaming_response(response, invocation_id, session_id)
+            response = self._wrap_streaming_response(
+                response, invocation_id, session_id, platform_ctx
+            )
 
         return response
 

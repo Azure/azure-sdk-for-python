@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             virtual_router_name="str",
             peering_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperations(AzureMgmtRecordedTest
                 "properties": {"peerAsn": 0, "peerIp": "str", "provisioningState": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             virtual_router_name="str",
             peering_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperations(AzureMgmtRecordedTest
         response = self.client.virtual_router_peerings.list(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

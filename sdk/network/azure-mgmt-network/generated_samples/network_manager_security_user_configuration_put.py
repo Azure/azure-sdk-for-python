@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/NetworkManagerSecurityUserConfigurationPut.json
+# x-ms-original-file: 2025-07-01/NetworkManagerSecurityUserConfigurationPut.json
 if __name__ == "__main__":
     main()

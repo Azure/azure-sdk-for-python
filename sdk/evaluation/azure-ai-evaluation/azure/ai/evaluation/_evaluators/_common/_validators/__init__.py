@@ -3,6 +3,7 @@
 
 """Validators package init."""
 
+from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface
 from ._conversation_validator import ConversationValidator
 from ._tool_definitions_validator import ToolDefinitionsValidator
@@ -11,6 +12,8 @@ from ._task_navigation_efficiency_validator import TaskNavigationEfficiencyValid
 from ._messages_validator import MessagesOrQueryResponseInputValidator
 
 __all__ = [
+    "MessageRole",
+    "ContentType",
     "ValidatorInterface",
     "ConversationValidator",
     "ToolDefinitionsValidator",

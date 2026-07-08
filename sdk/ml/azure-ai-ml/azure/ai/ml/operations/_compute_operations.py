@@ -34,7 +34,7 @@ class ComputeOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
+    :type service_client: ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     """
 
     def __init__(

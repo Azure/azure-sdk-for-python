@@ -4,6 +4,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+from opentelemetry.attributes import BoundedAttributes
 from opentelemetry.context import Context
 from opentelemetry.trace import INVALID_SPAN_CONTEXT, SpanContext, TraceFlags
 
@@ -220,6 +221,51 @@ class TestGenAIMainAgentSpanProcessorOnEnd(unittest.TestCase):
         self.assertNotIn("microsoft.gen_ai.main_agent.id", span._attributes)
         self.assertNotIn("microsoft.gen_ai.main_agent.version", span._attributes)
         self.assertNotIn("microsoft.gen_ai.main_agent.conversation_id", span._attributes)
+
+    def test_on_end_writes_to_immutable_attributes(self):
+        """on_end must self-attribute even when span attributes are frozen.
+
+        OTel SDK >= 1.43 sets BoundedAttributes._immutable = True inside
+        Span.end() *before* invoking on_end. The processor must temporarily lift
+        the freeze to write and restore it afterwards, without raising.
+        """
+        attributes = BoundedAttributes(
+            immutable=False,
+            attributes={
+                "gen_ai.operation.name": "invoke_agent",
+                "gen_ai.agent.name": "RootAgent",
+                "gen_ai.agent.id": "agent-001",
+                "gen_ai.agent.version": "3.0",
+                "gen_ai.conversation.id": "conv-xyz",
+            },
+        )
+        # Simulate the frozen state Span.end() leaves the attributes in.
+        attributes._immutable = True
+
+        span = MagicMock()
+        span.attributes = attributes
+        span._attributes = attributes
+
+        # Must not raise even though the mapping is immutable.
+        self.processor.on_end(span)
+
+        self.assertEqual(attributes["microsoft.gen_ai.main_agent.name"], "RootAgent")
+        self.assertEqual(attributes["microsoft.gen_ai.main_agent.id"], "agent-001")
+        self.assertEqual(attributes["microsoft.gen_ai.main_agent.version"], "3.0")
+        self.assertEqual(attributes["microsoft.gen_ai.main_agent.conversation_id"], "conv-xyz")
+        # The freeze must be restored so the exported snapshot stays immutable.
+        self.assertTrue(attributes._immutable)
+
+    def test_immutable_attributes_reject_direct_write(self):
+        """Regression guard: proves the failure the fix guards against.
+
+        A direct write to frozen BoundedAttributes (the pre-fix behavior)
+        raises TypeError. This is why on_end must lift the freeze first.
+        """
+        attributes = BoundedAttributes(immutable=False, attributes={})
+        attributes._immutable = True
+        with self.assertRaises(TypeError):
+            attributes["microsoft.gen_ai.main_agent.name"] = "RootAgent"
 
 
 class TestGenAIMainAgentLogRecordProcessor(unittest.TestCase):

@@ -74,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/NetworkWatcherConnectionMonitorV2Create.json
+# x-ms-original-file: 2025-07-01/NetworkWatcherConnectionMonitorV2Create.json
 if __name__ == "__main__":
     main()

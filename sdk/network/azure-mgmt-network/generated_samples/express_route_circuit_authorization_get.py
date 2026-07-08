@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/ExpressRouteCircuitAuthorizationGet.json
+# x-ms-original-file: 2025-07-01/ExpressRouteCircuitAuthorizationGet.json
 if __name__ == "__main__":
     main()
