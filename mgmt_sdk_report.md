@@ -44,4 +44,3 @@
 | 43 | azure-mgmt-reservations | 2020-10-25, 2022-11-01 | 3.0.0b1 |  | 2026-06-02 | Not Started |  |
 | 44 | azure-mgmt-automation | 2024-10-23 | 1.1.0b5 |  | 2026-05-27 | Not Started |  |
 | 45 | azure-mgmt-dataprotection | 2026-03-01 | 2.1.0b1 |  | 2026-04-07 | Not Started |  |
-| 46 | azure-mgmt-computerecommender | 2025-06-05 | 1.0.0b1 |  | 2025-09-04 | Not Started |  |
