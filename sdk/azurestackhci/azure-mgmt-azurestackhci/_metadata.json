@@ -1,7 +1,7 @@
 {
-  "apiVersion": "2026-05-01-preview",
+  "apiVersion": "2026-04-30",
   "apiVersions": {
-    "Microsoft.AzureStackHCI": "2026-05-01-preview"
+    "Microsoft.AzureStackHCI": "2026-04-30"
   },
   "commit": "1221591cb34ae0848d7524f908ad2dc695323150",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",

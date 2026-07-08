@@ -129,10 +129,7 @@ def main():
                                     "euLocation": False,
                                     "streamingDataClient": True,
                                 },
-                                "optionalServices": {
-                                    "confidentialVmIntent": "Disable",
-                                    "customLocation": "customLocationName",
-                                },
+                                "optionalServices": {"customLocation": "customLocationName"},
                                 "physicalNodes": [
                                     {"ipv4Address": "10.57.51.224", "name": "ms169host"},
                                     {"ipv4Address": "10.57.53.236", "name": "ms154host"},
@@ -208,6 +205,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/PutDeploymentSettings.json
+# x-ms-original-file: 2026-04-30/PutDeploymentSettings.json
 if __name__ == "__main__":
     main()

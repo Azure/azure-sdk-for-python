@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -95,21 +94,6 @@ class ArcSettingAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Arc agent is being disabled across the nodes."""
 
 
-class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WiFi authentication type."""
-
-    WPA2_PERSONAL = "WPA2-Personal"
-    """WPA2 Personal."""
-    WPA2_ENTERPRISE = "WPA2-Enterprise"
-    """WPA2 Enterprise."""
-    WPA3_PERSONAL = "WPA3-Personal"
-    """WPA3 Personal."""
-    WPA3_ENTERPRISE = "WPA3-Enterprise"
-    """WPA3 Enterprise."""
-    OPEN = "Open"
-    """Open network."""
-
-
 class AvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates how the update content is made available for download. This determines whether the
     update is sourced locally, from an online repository, or requires user notification.
@@ -162,45 +146,6 @@ class ComplianceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource is non-compliant."""
     PENDING = "Pending"
     """The resource compliance status is pending."""
-
-
-class ConfidentialVmIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Captures the customer's intent to enable or disable Confidential Virtual Machine (CVM) support
-    on the cluster, either during initial deployment (Day-0) or at a later stage (Day-N).
-    """
-
-    ENABLE = "Enable"
-    """Indicates that the customer intends to enable CVM support on the cluster."""
-    DISABLE = "Disable"
-    """Indicates that the customer intends to disable CVM support on the cluster."""
-
-
-class ConfidentialVmStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Captures the current status of Confidential Virtual Machine (CVM) support on the cluster."""
-
-    ENABLED = "Enabled"
-    """CVM support is fully enabled on the cluster. All nodes are CVM capable."""
-    PARTIALLY_ENABLED = "PartiallyEnabled"
-    """CVM support is partially enabled. At least one node in the cluster is CVM capable."""
-    DISABLED = "Disabled"
-    """CVM support is disabled. None of the nodes in the cluster are CVM capable."""
-
-
-class ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WiFi connection state."""
-
-    NOT_CONFIGURED = "NotConfigured"
-    """WiFi is not configured."""
-    CONNECTED = "Connected"
-    """WiFi is connected."""
-    DISCONNECTED = "Disconnected"
-    """WiFi is disconnected."""
-    CONNECTING = "Connecting"
-    """WiFi is connecting."""
-    DISCONNECTING = "Disconnecting"
-    """WiFi is disconnecting."""
-    AUTHENTICATION_FAILED = "AuthenticationFailed"
-    """WiFi authentication failed."""
 
 
 class ConnectivityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -298,70 +243,6 @@ class DiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enhanced diagnostic data will be emitted, including detailed performance and usage metrics."""
 
 
-class DiskFileSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """File system types supported for volumes."""
-
-    EXT4 = "ext4"
-    """ext4 file system (Linux)."""
-    XFS = "xfs"
-    """xfs file system (Linux)."""
-    NTFS = "NTFS"
-    """NTFS file system (Windows)."""
-    RE_FS = "ReFS"
-    """ReFS file system (Windows)."""
-    VFAT = "vfat"
-    """vfat file system (Linux/cross-platform)."""
-    FAT32 = "fat32"
-    """FAT32 file system."""
-    FAT = "fat"
-    """FAT file system."""
-
-
-class DiskJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Job Type supported for disk operations."""
-
-    CREATE_VOLUME = "CreateVolume"
-    """Job to create a volume on the disk."""
-    SYNC_CONFIGURATION = "SyncConfiguration"
-    """Job to resolve configuration drift between desired and reported state."""
-
-
-class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the disk."""
-
-    ONLINE = "Online"
-    """Disk is online and available."""
-    OFFLINE = "Offline"
-    """Disk is offline."""
-    FAILED = "Failed"
-    """Disk has failed."""
-    MISSING = "Missing"
-    """Disk is missing."""
-    UNKNOWN = "Unknown"
-    """Disk state is unknown."""
-
-
-class DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of disk."""
-
-    UNKNOWN = "Unknown"
-    """Unknown disk type."""
-    SCM = "SCM"
-    """Storage Class Memory disk."""
-    NV_ME = "NVMe"
-    """NVMe disk."""
-    SATA = "SATA"
-    """SATA disk."""
-    SSD = "SSD"
-    """Solid State Drive."""
-    HDD = "HDD"
-    """Hard Disk Drive."""
-    VIRTUAL = "Virtual"
-    """Virtual disk."""
-    OTHER = "Other"
-    """Other disk type."""
-
-
 class DnsServerConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how DNS servers are configured for the infrastructure network. Allowed values are
     'UseDnsServer' to use the provided DNS servers, and 'UseForwarder' to use DNS forwarders.
@@ -371,19 +252,6 @@ class DnsServerConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the provided DNS servers for the infrastructure network."""
     USE_FORWARDER = "UseForwarder"
     """Use DNS forwarders for the infrastructure network."""
-
-
-class EAPMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """EAP authentication method."""
-
-    PEAP = "PEAP"
-    """PEAP authentication."""
-    EAP_TLS = "EAP-TLS"
-    """EAP-TLS authentication."""
-    EAP_TTLS = "EAP-TTLS"
-    """EAP-TTLS authentication."""
-    EAP_FAST = "EAP-FAST"
-    """EAP-FAST authentication."""
 
 
 class EceSecrets(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -404,101 +272,6 @@ class EdgeDeviceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HCI = "HCI"
     """Arc-enabled edge device with HCI OS."""
-
-
-class EdgeMachineConnectivityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Overall connectivity status for the machine resource."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """The connectivity status of the machine resource is not specified."""
-    DISCONNECTED = "Disconnected"
-    """The machine resource is disconnected."""
-    CONNECTED = "Connected"
-    """The machine resource is connected."""
-
-
-class EdgeMachineGpuJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """GPU Job Type supported for Edge Machine GPU operations."""
-
-    CREATE_PARTITION = "CreatePartition"
-    """Create GPU partitions for virtualization and workload isolation."""
-    SWITCH_MODE = "SwitchMode"
-    """Switch GPU mode between DDA and GPU-P for different workload requirements."""
-    ASSIGN_PARTITION = "AssignPartition"
-    """Assign GPU partition to a specific workload or virtual machine."""
-    REMOVE_PARTITION = "RemovePartition"
-    """Remove GPU partition and free up resources for other workloads."""
-
-
-class EdgeMachineJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Job Type supported."""
-
-    COLLECT_LOG = "CollectLog"
-    """Job to collect logs from the device."""
-    REMOTE_SUPPORT = "RemoteSupport"
-    """Job to provide remote support to the device."""
-    PROVISION_OS = "ProvisionOs"
-    """Job to provision operating system in the device."""
-    DOWNLOAD_OS = "DownloadOs"
-    """Job to download OS packages on to the device."""
-
-
-class EdgeMachineKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Edge Machine Kind."""
-
-    STANDARD = "Standard"
-    """EdgeMachine resource created using Zero-touch provisioning."""
-    DEDICATED = "Dedicated"
-    """EdgeMachine resource created for brownfield HCI customers without zero touch provisioning."""
-
-
-class EdgeMachineLifecycleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lifecycle status of an Edge Machine."""
-
-    CREATING = "Creating"
-    """Machine is being created."""
-    AWAITING_CONNECTION = "AwaitingConnection"
-    """Machine is awaiting connection."""
-    PROVISIONING = "Provisioning"
-    """Machine is being provisioned."""
-    READY_FOR_OS = "ReadyForOs"
-    """Machine is ready for OS installation."""
-    INSTALLING_OS = "InstallingOs"
-    """Machine is installing the OS."""
-    PROVISIONED = "Provisioned"
-    """Machine has been provisioned."""
-    UPDATING_OS = "UpdatingOs"
-    """Machine OS is being updated."""
-    RESETTING_OS = "ResettingOs"
-    """Machine OS is being reset."""
-    DELETING = "Deleting"
-    """Machine is being deleted."""
-    FAILED = "Failed"
-    """Machine is in a failed state."""
-
-
-class EdgeMachineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS State."""
-
-    CREATED = "Created"
-    """Created when EdgeMachine resource created."""
-    REGISTERING = "Registering"
-    """EdgeMachine state during device discovery and registration."""
-    UNPURPOSED = "Unpurposed"
-    """EdgeMachine state when machine configured with restricted OS and not provisioned to deploy
-    workloads."""
-    TRANSITIONING = "Transitioning"
-    """EdgeMachine state when transitioning from initial OS to target OS."""
-    PURPOSED = "Purposed"
-    """EdgeMachine state when machine configured with target OS to deploy workloads."""
-    UPDATING = "Updating"
-    """EdgeMachine state when OS updates are in-progress."""
-    RESETTING = "Resetting"
-    """EdgeMachine state when transitioning from target OS to restricted OS."""
-    FAILED = "Failed"
-    """EdgeMachine failed state and only option to recover is to re-provisioning machine."""
-    PREPARING = "Preparing"
-    """Preparing EdgeMachine."""
 
 
 class ExtensionAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -553,17 +326,6 @@ class ExtensionManagedBy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extension is managed by Azure."""
 
 
-class GpuMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """GPU modes supported."""
-
-    UNKNOWN = "Unknown"
-    """Unknown mode."""
-    GPUP = "GPUP"
-    """GPU-P mode."""
-    DDA = "DDA"
-    """DDA mode."""
-
-
 class HardwareClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Hardware class of the cluster."""
 
@@ -582,27 +344,6 @@ class HciEdgeDeviceJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job to collect logs from the device."""
     REMOTE_SUPPORT = "RemoteSupport"
     """Job to provide remote support to the device."""
-
-
-class HciJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ClusterJob Type supported."""
-
-    ADD_SERVER = "AddServer"
-    """Job to add a server to the cluster."""
-    REPAIR_SERVER = "RepairServer"
-    """Job to repair a server in the cluster."""
-    GPU_CREATE_PARTITION = "GpuCreatePartition"
-    """Job to create GPU partitions for the cluster."""
-    GPU_SWITCH_MODE = "GpuSwitchMode"
-    """Job to switch GPU mode for the cluster."""
-    CONFIGURE_CVM = "ConfigureCVM"
-    """Job to CVM  intent for the cluster."""
-    CONFIGURE_SDN_INTEGRATION = "ConfigureSdnIntegration"
-    """Job to configure SDN (Software Defined Networking) integration for the cluster."""
-    VM_CONNECT_PROVISION = "VmConnectProvision"
-    """Job to open port to enable RDP Connection."""
-    VM_CONNECT_REMOVE = "VmConnectRemove"
-    """Job to close port to disable RDP Connection."""
 
 
 class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -635,18 +376,6 @@ class IdentityProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AD-less environments where Active Directory is not available or required."""
 
 
-class IgvmStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the IGVM support status for the device."""
-
-    UNKNOWN = "Unknown"
-    """The IGVM status could not be determined due to a query failure or inconsistent system state."""
-    ENABLED = "Enabled"
-    """IGVM support is enabled, indicating that confidential VM features are available on this device."""
-    DISABLED = "Disabled"
-    """IGVM status is disabled, indicating that confidential VM features are not supported on this
-    device."""
-
-
 class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMDS attestation status of the cluster."""
 
@@ -654,33 +383,6 @@ class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMDS attestation is disabled for the cluster."""
     ENABLED = "Enabled"
     """IMDS attestation is enabled for the cluster."""
-
-
-class InterfaceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current state of the interface."""
-
-    UP = "up"
-    """Interface is up."""
-    DOWN = "down"
-    """Interface is down."""
-
-
-class IpAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IP assignment types."""
-
-    AUTOMATIC = "Automatic"
-    """Automatic IP assignment."""
-    MANUAL = "Manual"
-    """Manual IP assignment."""
-
-
-class IpInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IP configuration type."""
-
-    DHCP = "Dhcp"
-    """DHCP configuration."""
-    STATIC = "Static"
-    """Static configuration."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -710,19 +412,6 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The job is paused."""
     SCHEDULED = "Scheduled"
     """The job is scheduled to run."""
-
-
-class LifecycleOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of an operation. Maps to Steps.Status / SubSteps.Status."""
-
-    NOT_STARTED = "NotStarted"
-    """Operation has not started."""
-    IN_PROGRESS = "InProgress"
-    """Operation is in progress."""
-    COMPLETED = "Completed"
-    """Operation has completed successfully."""
-    FAILED = "Failed"
-    """Operation has failed."""
 
 
 class LogCollectionJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -762,37 +451,6 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """System and user assigned managed identity."""
-
-
-class NetworkAdapterJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of network adapter job operation."""
-
-    APPLY_CONFIGURATION = "ApplyConfiguration"
-    """Apply configuration to the network adapter."""
-    FORCE_PUSH = "ForcePush"
-    """Force push configuration to the network adapter."""
-    SYNC_CONFIGURATION = "SyncConfiguration"
-    """Job to resolve configuration drift between desired and reported state."""
-
-
-class NetworkAdapterOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of network adapter operation."""
-
-    SUCCEEDED = "Succeeded"
-    """Operation succeeded."""
-    FAILED = "Failed"
-    """Operation failed."""
-    IN_PROGRESS = "InProgress"
-    """Operation in progress."""
-
-
-class NetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of network interface."""
-
-    ETH = "Eth"
-    """Ethernet interface."""
-    WIFI = "wifi"
-    """Wi-Fi interface."""
 
 
 class NodeArcState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -889,13 +547,6 @@ class OemActivation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OEM activation is enabled for the cluster."""
 
 
-class OnboardingResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Onboarding resource type."""
-
-    HYBRID_COMPUTE_MACHINE = "HybridComputeMachine"
-    """Hybrid Compute Machine."""
-
-
 class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended operation for a cluster."""
 
@@ -918,17 +569,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class OSOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS Provision Operation type."""
-
-    PROVISION = "Provision"
-    """OS Provisioning operation."""
-    UPDATE = "Update"
-    """OS Update operation."""
-    RE_IMAGE = "ReImage"
-    """OS ReImage operation."""
-
-
 class OverprovisioningRatio(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Overprovisioning ratio for S2D storage."""
 
@@ -938,38 +578,6 @@ class OverprovisioningRatio(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Overprovisioning ratio of 1."""
     TWO = "2"
     """Overprovisioning ratio of 2."""
-
-
-class OwnerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of owner key in the voucher."""
-
-    MICROSOFT_MANAGED = "MicrosoftManaged"
-    """Owner is Microsoft managed key."""
-
-
-class OwnershipVoucherValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Ownership Voucher validation Status."""
-
-    VALID = "Valid"
-    """Voucher evaluated as valid."""
-    INVALID = "Invalid"
-    """Voucher evaluated as invalid."""
-
-
-class PrivilegedJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Job Type supported for disk privileged operations."""
-
-    DELETE_VOLUME = "DeleteVolume"
-    """Job to delete a volume from the disk."""
-
-
-class ProvisioningOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the provisioning operating system type."""
-
-    AZURE_LINUX = "AzureLinux"
-    """AzureLinux OS."""
-    HCI = "HCI"
-    """HCI OS."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1070,58 +678,11 @@ class RemoteSupportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Revoke previously enabled remote support for the cluster."""
 
 
-class ResolutionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Strategy for resolving configuration drift."""
-
-    APPLY_DESIRED = "ApplyDesired"
-    """Trust Cloud. Push the desiredConfiguration down to the device."""
-    ACCEPT_REPORTED = "AcceptReported"
-    """Trust Device. Update the desiredConfiguration in ARM to match the reported state."""
-
-
-class SdnIntegrationIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether Software Defined Networking (SDN) integration should be enabled or disabled
-    for this deployment.
-    """
-
-    ENABLE = "Enable"
-    """Enable SDN integration for the deployment."""
-    DISABLE = "Disable"
-    """Disable SDN integration for the deployment."""
-
-
-class SdnStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the current Software Defined Networking (SDN) status of the resource, which may be an
-    individual device or a cluster.
-    """
-
-    UNKNOWN = "Unknown"
-    """The SDN status could not be determined due to a failure in querying the SDN API service. This
-    may occur if the query script fails or if the system is in an inconsistent state. The domain
-    name will be null in this case."""
-    DISABLED = "Disabled"
-    """SDN is not enabled on the resource. The domain name will be null. This is the default state
-    when SDN has not been configured."""
-    ENABLED = "Enabled"
-    """SDN is successfully enabled on the resource. The domain name will be populated in the format
-    ``<sdnPrefix>-nc.<domain>``. Customers may need to manage DNS settings to ensure proper
-    resolution."""
-
-
 class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of secrets to store."""
 
     BACKUP_SECRETS = "BackupSecrets"
     """Backup secrets type."""
-
-
-class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of secret used for authentication."""
-
-    KEY_VAULT = "KeyVault"
-    """Key Vault based authentication."""
-    SSH_PUB_KEY = "SshPubKey"
-    """SSH Public Key based authentication."""
 
 
 class ServiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1316,17 +877,6 @@ class VolumeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Thin provisioned provisioning type."""
 
 
-class WifiSecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of WiFi secret."""
-
-    WI_FI_PASSWORD = "WiFiPassword"
-    """WiFi password."""
-    WI_FI_CERTIFICATE = "WiFiCertificate"
-    """WiFi certificate."""
-    WI_FI_CA_CERTIFICATE = "WiFiCACertificate"
-    """WiFi CA certificate."""
-
-
 class WindowsServerSubscription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Desired state of Windows Server Subscription."""
 
@@ -1334,12 +884,3 @@ class WindowsServerSubscription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Windows Server Subscription is disabled."""
     ENABLED = "Enabled"
     """Windows Server Subscription is enabled."""
-
-
-class WitnessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Witness type for an Azure Stack HCI cluster."""
-
-    CLOUD = "Cloud"
-    """Cloud witness backed by an Azure Storage account."""
-    FILE_SHARE = "FileShare"
-    """File-share witness on a local SMB share."""
