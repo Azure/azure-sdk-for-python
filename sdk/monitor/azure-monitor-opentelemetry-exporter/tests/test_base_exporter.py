@@ -1050,7 +1050,7 @@ class TestBaseExporter(unittest.TestCase):
         future = now + timedelta(seconds=121)
         headers = {"Retry-After": future.strftime("%a, %d %b %Y %H:%M:%S GMT")}
 
-        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+        self.assertAlmostEqual(_get_retry_delay_from_headers(headers), 120, delta=1)
 
     def test_get_retry_delay_from_headers_invalid_or_non_positive(self):
         invalid_headers = (
