@@ -32,3 +32,5 @@ extends:
       safeName: azuremgmtalertsmanagement
     - name: azure-mgmt-prometheusrulegroups
       safeName: azuremgmtprometheusrulegroups
+    - name: azure-mgmt-alertprocessingrules
+      safeName: azuremgmtalertprocessingrules
