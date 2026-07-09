@@ -11,6 +11,12 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
+    OnlineRequestSettings as RestOnlineRequestSettings,
+)
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
+    ProbeSettings as RestProbeSettings,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._deployment.accelerator_map import AcceleratorMap
@@ -83,6 +89,28 @@ def _extract_created_by(value: Any) -> Any:
         else:
             return value
     return _read_wire_value(value, "userName", "user_name", "userObjectId", "user_object_id")
+
+
+def _coerce_rest_settings(value: Any, rest_cls: type) -> Any:
+    """Coerce a settings value into ``rest_cls`` so attribute-based converters work.
+
+    In the ``list()`` response, settings such as ``requestSettings`` / ``livenessProbe`` /
+    ``readinessProbe`` arrive as stringified dicts nested under ``properties`` (whereas
+    ``get()`` returns typed objects at the top level). Parse the string and wrap the
+    resulting dict into the typed REST model so ``_from_rest_object`` works for both shapes.
+    """
+    import ast
+
+    if value is None or isinstance(value, rest_cls):
+        return value
+    if isinstance(value, str):
+        try:
+            value = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return None
+    if isinstance(value, dict):
+        return rest_cls(value)
+    return value
 
 
 @experimental
@@ -529,6 +557,13 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 allowed_environment_variable_overrides = ast.literal_eval(allowed_environment_variable_overrides)
             except (ValueError, SyntaxError):
                 allowed_environment_variable_overrides = None
+
+        # In the list() response shape these settings arrive as stringified dicts nested under
+        # ``properties`` (get() returns typed objects at the top level instead). Coerce them into
+        # the typed REST models so the attribute-based converters below work for both shapes.
+        request_settings = _coerce_rest_settings(request_settings, RestOnlineRequestSettings)
+        liveness_probe = _coerce_rest_settings(liveness_probe, RestProbeSettings)
+        readiness_probe = _coerce_rest_settings(readiness_probe, RestProbeSettings)
 
         # Convert request_settings to OnlineRequestSettings object using the built-in conversion method
         request_settings_obj = OnlineRequestSettings._from_rest_object(request_settings) if request_settings else None
