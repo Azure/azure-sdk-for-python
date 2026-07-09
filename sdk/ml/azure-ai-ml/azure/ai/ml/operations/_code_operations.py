@@ -24,6 +24,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023
+from azure.ai.ml._restclient.arm_ml_service.models import CodeVersion as CodeVersionData
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -32,7 +33,11 @@ from azure.ai.ml._utils._asset_utils import (
     get_storage_info_for_non_registry_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_registry_versioned_asset,
+    get_sas_uri_for_registry_asset,
+)
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import (
@@ -287,12 +292,16 @@ class CodeOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         code_version_resource = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._operation_scope.resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_kwargs,
+            CodeVersionData._deserialize(
+                get_registry_versioned_asset(
+                    self._registry_service_client,
+                    "codes",
+                    name,
+                    version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._version_operation.get(

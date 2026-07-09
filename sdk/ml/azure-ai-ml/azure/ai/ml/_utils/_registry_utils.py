@@ -164,6 +164,35 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
     return sas_uri
 
 
+def get_registry_versioned_asset(
+    service_client, asset_plural: str, name, version, resource_group, registry_name
+) -> dict:
+    """Byte-identical registry versioned-asset GET (same MFE endpoint + api-version as the legacy v2021_10 client).
+
+    :param service_client: The hybrid arm client bound to the registry MFE endpoint.
+    :param asset_plural: The plural asset segment of the URL (e.g. ``codes``, ``models``, ``data``, ``environments``).
+    :type asset_plural: str
+    :param name: Asset name.
+    :param version: Asset version.
+    :param resource_group: Resource group name.
+    :param registry_name: Registry name.
+    :return: The raw camelCase response body.
+    :rtype: dict
+    """
+    subscription_id = service_client._config.subscription_id
+    request = HttpRequest(
+        "GET",
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{registry_name}"
+        f"/{asset_plural}/{name}/versions/{version}",
+        params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+        headers={"Accept": "application/json"},
+    )
+    response = service_client.send_request(request)
+    response.raise_for_status()
+    return response.json()
+
+
 def get_asset_body_for_registry_storage(
     registry_name: str, asset_type: str, asset_name: str, asset_version: str
 ) -> dict:
