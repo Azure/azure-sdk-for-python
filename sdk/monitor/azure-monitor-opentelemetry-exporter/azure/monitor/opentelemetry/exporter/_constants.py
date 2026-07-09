@@ -351,6 +351,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry-instrumentation-tornado",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.httpx",
     "opentelemetry.instrumentation.wsgi",
 )
 
