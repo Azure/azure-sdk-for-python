@@ -25,7 +25,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023_preview
-from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import DataContainer, DataVersionBase, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -54,6 +54,8 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
     get_registry_client,
+    get_registry_container_asset,
+    get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
@@ -193,12 +195,16 @@ class DataOperations(_ScopeDependentOperations):
     def _get(self, name: Optional[str], version: Optional[str] = None) -> Data:
         if version:
             return (
-                self._operation.get(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                    **self._init_kwargs,
+                DataVersionBase._deserialize(
+                    get_registry_versioned_asset(
+                        self._registry_service_client,
+                        "data",
+                        name,
+                        version,
+                        self._resource_group_name,
+                        self._registry_name,
+                    ),
+                    [],
                 )
                 if self._registry_name
                 else self._operation.get(
@@ -210,11 +216,15 @@ class DataOperations(_ScopeDependentOperations):
                 )
             )
         return (
-            self._container_operation.get(
-                name=name,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-                **self._init_kwargs,
+            DataContainer._deserialize(
+                get_registry_container_asset(
+                    self._registry_service_client,
+                    "data",
+                    name,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._container_operation.get(

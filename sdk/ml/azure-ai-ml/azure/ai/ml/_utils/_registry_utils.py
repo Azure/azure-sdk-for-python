@@ -198,6 +198,32 @@ def get_registry_versioned_asset(
     return response.json()
 
 
+def get_registry_container_asset(service_client, asset_plural: str, name, resource_group, registry_name) -> dict:
+    """Byte-identical registry container GET (same MFE endpoint + api-version as the legacy v2021_10 client).
+
+    :param service_client: The hybrid arm client bound to the registry MFE endpoint.
+    :param asset_plural: The plural asset segment of the URL (e.g. ``codes``, ``models``, ``data``, ``environments``).
+    :type asset_plural: str
+    :param name: Container name.
+    :param resource_group: Resource group name.
+    :param registry_name: Registry name.
+    :return: The raw camelCase response body.
+    :rtype: dict
+    """
+    subscription_id = service_client._config.subscription_id
+    request = HttpRequest(
+        "GET",
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{registry_name}"
+        f"/{asset_plural}/{name}",
+        params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+        headers={"Accept": "application/json"},
+    )
+    response = service_client.send_request(request)
+    response.raise_for_status()
+    return response.json()
+
+
 def begin_create_or_update_registry_versioned_asset(
     service_client, asset_plural: str, name, version, resource_group, registry_name, body
 ) -> dict:
