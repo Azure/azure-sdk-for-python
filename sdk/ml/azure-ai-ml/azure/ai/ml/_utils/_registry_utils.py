@@ -8,6 +8,7 @@ from typing import Optional, Tuple
 from typing_extensions import Literal
 
 from azure.ai.ml._azure_environments import _get_default_cloud_name, _get_registry_discovery_endpoint_from_metadata
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
@@ -22,6 +23,11 @@ from azure.core.exceptions import HttpResponseError
 module_logger = logging.getLogger(__name__)
 
 MFE_PATH_PREFIX = "mferp/managementfrontend"
+
+# API version pinned for the registry data-plane (MFE discovery endpoint). The registry client is a hybrid
+# arm_ml_service client constructed against the discovered MFE ``base_url`` (NOT the ARM management plane) so that
+# every request stays byte-identical to the legacy v2021_10 msrest client: same URL templates, same api-version.
+REGISTRY_DATAPLANE_API_VERSION = "2021-10-01-dataplanepreview"
 
 
 class RegistryDiscovery:
@@ -71,6 +77,31 @@ class RegistryDiscovery:
             **self.kwargs,
         )
         return service_client_10_2021_dataplanepreview, service_model_client_10_2021_dataplanepreview
+
+    def get_registry_arm_service_client(self) -> MachineLearningServicesMgmtClient:
+        """Build a hybrid arm_ml_service client bound to the discovered registry MFE endpoint.
+
+        The client is pinned to the registry data-plane api-version and the MFE ``base_url`` so that requests issued
+        via ``send_request`` are byte-identical to the legacy ``v2021_10_01_dataplanepreview`` msrest client (same host,
+        same URL templates, same api-version). Registry operations are driven through hand-built ``HttpRequest`` objects
+        rather than the arm-plane registry operation groups (which would target ``management.azure.com``).
+
+        :return: The registry data-plane hybrid client.
+        :rtype: ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
+        """
+        self._get_registry_details()
+        kwargs = dict(self.kwargs)
+        kwargs.pop("subscription_id", None)
+        kwargs.pop("resource_group", None)
+        kwargs.pop("base_url", None)
+        kwargs.pop("workspace_location", None)
+        return MachineLearningServicesMgmtClient(
+            credential=self.credential,
+            subscription_id=self._subscription_id,
+            base_url=self._base_url,
+            api_version=REGISTRY_DATAPLANE_API_VERSION,
+            **kwargs,
+        )
 
     @property
     def subscription_id(self) -> str:
