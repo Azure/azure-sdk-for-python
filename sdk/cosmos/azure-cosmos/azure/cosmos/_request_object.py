@@ -31,6 +31,11 @@ from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
 
+# Internal options key used to mark a request as a cold-start metadata-cache
+# population read (container / partition-key-range cache). Only set by the
+# cache-population callsites; gates cold-start metadata hedging.
+METADATA_CACHE_POPULATION_OPTION = "metadataCachePopulation"
+
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -59,6 +64,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.pk_val = pk_val
         self.retry_write: int = 0
         self.is_hedging_request: bool = False # Flag to track if this is a hedged request
+        self.is_metadata_cache_population: bool = False  # Cold-start metadata-cache read
         self.completion_status: Optional[Union[threading.Event, asyncio.Event]] = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
@@ -96,6 +102,17 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
+
+    def set_metadata_cache_population_from_options(self, options: Mapping[str, Any]) -> None:  # pylint: disable=name-too-long
+        """Mark this request as a cold-start metadata-cache population read when the
+        internal ``metadataCachePopulation`` options flag is set.
+
+        :param options: The request options that may contain the internal flag.
+        :type options: Mapping[str, Any]
+        :return: None
+        """
+        if options and options.get(METADATA_CACHE_POPULATION_OPTION):
+            self.is_metadata_cache_population = True
 
     def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: int) -> None:
         if self.resource_type == ResourceType.Document:
@@ -149,7 +166,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def should_cancel_request(self) -> bool:
         """Check if this request should be cancelled due to parallel request completion.
-        
+
         :return: True if request should be cancelled, False otherwise
         :rtype: bool
         """

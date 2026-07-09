@@ -215,6 +215,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
         Optional ThreadPoolExecutor for handling concurrent operations.
+    :keyword Optional[bool] enable_metadata_hedging:
+        Tri-state opt-in for metadata cache cross-region hedging. When ``None``
+        (the default), it follows the account's Per-Partition Automatic Failover (PPAF)
+        state. When ``True``, the SDK hedges the container and partition-key-range metadata
+        cache reads (both initial population and cache refresh) across regions even when PPAF
+        is disabled. When ``False``, metadata hedging is suppressed regardless of PPAF. The
+        threshold and other tuning knobs are SDK-derived defaults and are not customer-configurable.
+    :paramtype enable_metadata_hedging: Optional[bool]
 
     .. admonition:: Example:
 
@@ -245,6 +253,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=kwargs.pop("availability_strategy", False),
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
+            enable_metadata_hedging=kwargs.pop("enable_metadata_hedging", None),
             **kwargs
         )
 
@@ -261,6 +270,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         finally:
             try:
                 self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+            except Exception:  # pylint: disable=broad-except
+                pass
+            try:
+                handler = self.client_connection._metadata_hedging_handler  # pylint: disable=protected-access
+                if handler is not None:
+                    handler.close()
             except Exception:  # pylint: disable=broad-except
                 pass
 

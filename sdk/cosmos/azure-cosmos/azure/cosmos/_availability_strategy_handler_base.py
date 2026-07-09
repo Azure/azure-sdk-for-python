@@ -21,7 +21,7 @@
 
 """Module containing base classes and mixins for availability strategy handlers."""
 
-from typing import List, Optional, Union, TYPE_CHECKING
+from typing import Any, List, Optional, Union, TYPE_CHECKING
 
 from . import exceptions
 from ._location_cache import RegionalRoutingContext
@@ -68,6 +68,40 @@ class AvailabilityStrategyHandlerMixin:
             excluded += available_locations[:location_index] + available_locations[location_index+1:]
 
         return excluded
+
+    def _record_winner(
+        self,
+        winner_sink: Optional[List[Any]],
+        is_primary: bool,
+        available_locations: List[str],
+        request_params: RequestObject,
+    ) -> None:
+        """Record the winning branch for PartitionKeyRange continuation pinning.
+
+        Populates ``winner_sink[0]`` with the winning region and, when a hedge won, the
+        set of regions to exclude so later change-feed pages pin to the winning region
+        (continuation-etag integrity). No-op when ``winner_sink`` is None. Shared by the
+        sync and async metadata hedging handlers.
+
+        :param winner_sink: Length-1 sink list to receive the winner descriptor, or None.
+        :type winner_sink: Optional[List[Any]]
+        :param is_primary: Whether the primary branch produced the returned outcome.
+        :type is_primary: bool
+        :param available_locations: Ordered applicable region names (index 0 = primary).
+        :type available_locations: List[str]
+        :param request_params: The originating request parameters.
+        :type request_params: ~azure.cosmos._request_object.RequestObject
+        :rtype: None
+        """
+        if winner_sink is None:
+            return
+        winning_index = 0 if is_primary else 1
+        winner_sink[0] = {
+            "hedge_won": not is_primary,
+            "winning_region": available_locations[winning_index],
+            "pin_excluded_locations": self._create_excluded_regions_for_hedging(
+                winning_index, available_locations, request_params.excluded_locations),
+        }
 
     def _is_non_transient_error(self, result: BaseException) -> bool:
         """Check if exception represents a non-transient error.

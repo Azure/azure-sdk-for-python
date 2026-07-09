@@ -3,6 +3,7 @@
 ### 4.16.2 (Unreleased)
 
 #### Features Added
+* Added metadata cache cross-region hedging. When enabled, the SDK hedges the container and partition-key-range metadata cache reads (both initial population and cache refresh) to a second region if the primary region is slow, returning the first acceptable response. Controlled by the new `enable_metadata_hedging` client keyword (tri-state: `None` follows the account's PPAF state, `True` forces it on, `False` disables it). The `AZURE_COSMOS_METADATA_HEDGING_ENABLED` environment variable acts as an operator kill-switch that overrides the client keyword and PPAF state. For partition-key-range reads only the first change-feed page is hedged; later pages are pinned to the winning region to preserve continuation integrity.
 
 #### Breaking Changes
 

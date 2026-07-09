@@ -28,6 +28,7 @@ import threading
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from azure.core.utils import CaseInsensitiveDict
 from ... import _base, http_constants
+from ..._request_object import METADATA_CACHE_POPULATION_OPTION
 from ..collection_routing_map import CollectionRoutingMap
 from ...exceptions import CosmosHttpResponseError
 from .._routing_map_provider_common import (
@@ -408,6 +409,12 @@ class PartitionKeyRangeCache(object):
             )
             base_headers: Dict[str, Any] = base_kwargs_for_headers['headers']
 
+            # Cross-region metadata hedging is applied to the FIRST drain page only.
+            # Pages 2..N are pinned to whichever region won page 1 (via excludedLocations)
+            # so the change-feed continuation etag stays consistent with a single region.
+            is_first_drain_page = True
+            pin_excluded_locations: Optional[List[str]] = None
+
             while True:
                 request_kwargs = dict(kwargs)
                 # Shallow-copy ``base_headers`` so the per-iter
@@ -420,6 +427,19 @@ class PartitionKeyRangeCache(object):
                 # SDKs) instead of inferring it from an empty page.
                 status_capture: List[Optional[int]] = [None]
                 request_kwargs['_internal_response_status_capture'] = status_capture
+
+                # Per-page copy so the first-page-only hedging flag and later-page region
+                # pinning do not bleed across iterations of the shared options dict.
+                page_options = dict(change_feed_options)
+                winner_capture: List[Optional[Dict[str, Any]]] = [None]
+                if is_first_drain_page:
+                    # Mark this read as cold-start metadata-cache population so the request
+                    # layer can hedge it cross-region; other PartitionKeyRange readers
+                    # (e.g. hybrid search) are not flagged and so are not hedged.
+                    page_options[METADATA_CACHE_POPULATION_OPTION] = True
+                    request_kwargs['_internal_hedge_winner_capture'] = winner_capture
+                elif pin_excluded_locations is not None:
+                    page_options['excludedLocations'] = pin_excluded_locations
 
                 # Override If-None-Match with the running etag from the drain
                 # so each page advances. ``prepare_fetch_options_and_headers``
@@ -434,7 +454,7 @@ class PartitionKeyRangeCache(object):
                 try:
                     pk_range_generator = self._document_client._ReadPartitionKeyRanges(
                         collection_link,
-                        change_feed_options,
+                        page_options,
                         **request_kwargs
                     )
                     ranges.extend([item async for item in pk_range_generator])
@@ -443,6 +463,14 @@ class PartitionKeyRangeCache(object):
                         "Failed to read partition key ranges for collection '%s': %s",
                         collection_link, e)
                     raise
+
+                if is_first_drain_page:
+                    # If a hedge won page 1, pin subsequent pages to the winning region so
+                    # the change-feed continuation etag is honored by the same region.
+                    winner = winner_capture[0]
+                    if winner and winner.get("hedge_won"):
+                        pin_excluded_locations = winner.get("pin_excluded_locations")
+                    is_first_drain_page = False
 
                 decision, new_etag, current_if_none_match, seen_any_etag = evaluate_drain_page(
                     page_new_etag=response_headers.get(http_constants.HttpHeaders.ETag),

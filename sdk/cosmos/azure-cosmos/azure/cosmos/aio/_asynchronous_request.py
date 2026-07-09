@@ -30,9 +30,11 @@ from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import _retry_utility_async
 from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
+from ._metadata_hedging import execute_metadata_hedging as execute_metadata_hedging_async
 from .. import exceptions
 from .. import http_constants
-from .._availability_strategy_config import CrossRegionHedgingStrategy
+from .._availability_strategy_config import CrossRegionHedgingStrategy, resolve_metadata_hedging_opt_in
+from .._metadata_hedging import is_supported_metadata_request
 from .._constants import _Constants
 from .._request_object import RequestObject
 from .._response_decoding import decode_response_body_for_status
@@ -215,6 +217,33 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
              request_params.retry_write > 0))
 
+
+def _is_metadata_hedging_applicable(client, request_params: RequestObject, global_endpoint_manager) -> bool:
+    """Determine if cold-start metadata cache hedging should be applied to the request.
+
+    :param client: Document client instance.
+    :type client: object
+    :param request_params: Request parameters containing operation details.
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :param global_endpoint_manager: Manager for endpoint routing and PPAF state.
+    :type global_endpoint_manager: object
+    :returns: True if metadata hedging should be applied, False otherwise.
+    :rtype: bool
+    """
+    handler = getattr(client, "_metadata_hedging_handler", None)
+    if handler is None:
+        return False
+    if request_params.is_hedging_request or request_params.availability_strategy is not None:
+        return False
+    if not request_params.is_metadata_cache_population:
+        return False
+    if not is_supported_metadata_request(request_params):
+        return False
+    opt_in = getattr(client, "_metadata_hedging_opt_in", None)
+    ppaf_enabled = global_endpoint_manager.is_per_partition_automatic_failover_enabled()
+    return resolve_metadata_hedging_opt_in(opt_in, ppaf_enabled)
+
+
 async def AsynchronousRequest(
     client,
     request_params,
@@ -246,6 +275,31 @@ async def AsynchronousRequest(
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
+
+    # Sidecar (length-1 list) used by the /pkranges change-feed drain to learn which
+    # region won the first hedged page, so it can pin later pages to that region for
+    # change-feed continuation integrity. Popped here so it never reaches the pipeline.
+    hedge_winner_capture = kwargs.pop("_internal_hedge_winner_capture", None)
+
+    # Cold-start metadata cache cross-region hedging (Collection / PartitionKeyRange reads).
+    if _is_metadata_hedging_applicable(client, request_params, global_endpoint_manager):
+        return await execute_metadata_hedging_async(
+            client._metadata_hedging_handler,  # pylint: disable=protected-access
+            request_params,
+            global_endpoint_manager,
+            request,
+            lambda req_param, r: _retry_utility_async.ExecuteAsync(
+                client,
+                global_endpoint_manager,
+                _Request,
+                req_param,
+                connection_policy,
+                pipeline_client,
+                r,
+                **kwargs
+            ),
+            winner_sink=hedge_winner_capture,
+        )
 
     if request_params.availability_strategy is None:
         # if ppaf is enabled, then hedging is enabled by default
