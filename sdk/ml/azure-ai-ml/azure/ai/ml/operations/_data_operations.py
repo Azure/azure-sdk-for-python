@@ -52,6 +52,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
     get_registry_container_asset,
@@ -338,11 +339,13 @@ class DataOperations(_ScopeDependentOperations):
                 # If the data asset is a workspace asset, promote to registry
                 if isinstance(data, WorkspaceAssetReference):
                     try:
-                        self._operation.get(
-                            name=data.name,
-                            version=data.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
+                        get_registry_versioned_asset(
+                            self._registry_service_client,
+                            "data",
+                            data.name,
+                            data.version,
+                            self._resource_group_name,
+                            self._registry_name,
                         )
                     except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
@@ -406,13 +409,18 @@ class DataOperations(_ScopeDependentOperations):
                 )
             else:
                 result = (
-                    self._operation.begin_create_or_update(
-                        name=name,
-                        version=version,
-                        registry_name=self._registry_name,
-                        body=data_version_resource,
-                        **self._scope_kwargs,
-                    ).result()
+                    DataVersionBase._deserialize(
+                        begin_create_or_update_registry_versioned_asset(
+                            self._registry_service_client,
+                            "data",
+                            name,
+                            version,
+                            self._operation_scope.resource_group_name,
+                            self._registry_name,
+                            data_version_resource,
+                        ),
+                        [],
+                    )
                     if self._registry_name
                     else self._operation.create_or_update(
                         name=name,

@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient a
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.ai.ml.exceptions import MlException
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest
@@ -195,6 +195,8 @@ def get_registry_versioned_asset(
         headers={"Accept": "application/json"},
     )
     response = service_client.send_request(request)
+    if response.status_code == 404:
+        raise ResourceNotFoundError(response=response)
     response.raise_for_status()
     return response.json()
 
@@ -221,6 +223,8 @@ def get_registry_container_asset(service_client, asset_plural: str, name, resour
         headers={"Accept": "application/json"},
     )
     response = service_client.send_request(request)
+    if response.status_code == 404:
+        raise ResourceNotFoundError(response=response)
     response.raise_for_status()
     return response.json()
 
