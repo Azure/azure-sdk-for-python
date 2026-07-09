@@ -1,10 +1,28 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import pytest
 import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
+from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 
-cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
+# Register the in-repo parity-capture pytest plugin. The plugin
+# itself is dormant unless the env var COSMOS_PARITY_CAPTURE_OP is
+# set to a known operation name. Listed here so pytest auto-loads it
+# for every test run without requiring contributors to install
+# anything.
+pytest_plugins = ["common.parity_capture_plugin"]
+
+# This client only sets up shared test data -- it reads the account's
+# regions and creates the databases and containers the tests share. Force
+# it to the core-python backend so a run started with COSMOS_BACKEND=rust
+# still works here: the rust backend can't read the account yet, and that
+# read runs before any test starts. Tests that need rust still ask for it.
+cosmos_sync_client = CosmosSyncClient(
+    test_config.TestConfig.host,
+    test_config.TestConfig.masterKey,
+    _backend=BACKEND_NAME_CORE_PYTHON,
+)
 
 
 def pytest_configure(config):
@@ -42,8 +60,6 @@ def pytest_unconfigure(config):
     called before test process is exited.
     """
 
-
-import pytest
 
 
 @pytest.fixture(autouse=True)

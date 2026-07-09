@@ -1,0 +1,70 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Cross-backend parity tests for create_item (async): run both backends in one
+process and diff the result. Skips without an account or the rust binding."""
+from __future__ import annotations
+
+import os
+import uuid
+
+import pytest
+
+from azure.cosmos import CosmosClient, PartitionKey
+from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+
+pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
+
+
+@pytest.fixture
+def container_for(request):
+    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
+    db = client.create_database_if_not_exists("parity_db")
+    cname = "cra_" + request.node.name + "_" + uuid.uuid4().hex[:6]
+    container = db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
+    yield container
+    try:
+        db.delete_container(cname)
+    except Exception:  # pylint: disable=broad-except
+        pass
+
+
+@pytest.mark.asyncio
+async def test_L0_async_create(container_for):
+    """async create baseline — parity on both backends."""
+    async def _do(client):
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return await c.create_item({"id": uuid.uuid4().hex, "pk": "a", "n": 1})
+
+    cmp = await run_on_both_backends_async(_do, description="[L0] async create")
+    cmp.print_report()
+    cmp.assert_functional_parity()
+
+
+@pytest.mark.asyncio
+async def test_L5_async_duplicate_id_raises(container_for):
+    """async create of a duplicate id raises CosmosResourceExistsError on both."""
+    fixed = uuid.uuid4().hex
+
+    async def _do(client):
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        await c.create_item({"id": fixed, "pk": "a"})
+        return await c.create_item({"id": fixed, "pk": "a"})
+
+    cmp = await run_on_both_backends_async(_do, description="[L5] async dup-id 409")
+    cmp.print_report()
+    cmp.assert_exception_parity()
+
+
+@pytest.mark.asyncio
+async def test_L3_async_create_no_response(container_for):
+    """async create with no_response=True keeps functional parity."""
+    async def _do(client):
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return await c.create_item({"id": uuid.uuid4().hex, "pk": "a", "n": 1}, no_response=True)
+
+    cmp = await run_on_both_backends_async(_do, description="[L3] async create + no_response")
+    cmp.print_report()
+    cmp.assert_functional_parity()

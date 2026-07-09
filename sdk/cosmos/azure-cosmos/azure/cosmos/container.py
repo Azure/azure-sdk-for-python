@@ -40,6 +40,15 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
+from ._helpers._item_dispatch import (
+    merge_create_item_explicit_kwargs,
+    merge_delete_item_explicit_kwargs,
+    merge_patch_item_explicit_kwargs,
+    merge_read_item_explicit_kwargs,
+    merge_upsert_item_explicit_kwargs,
+    pick_backend,
+)
+from ._helpers.item_helper import ItemHelper
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -273,34 +282,52 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Get an item from the database and update one of its properties:
         """
         doc_link = self._get_document_link(item)
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        # populate_query_metrics is deprecated on read_item. Warn and
+        # drop it before the helper builds the request so no header
+        # goes on the wire.
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
+
+        # Validate the cache-staleness value here so a ValueError points
+        # at the caller, not three frames deep in the helper. None
+        # skips validation. Zero is allowed; the prep layer treats it
+        # as a no-op and emits no x-ms-dedicatedgateway-max-age header.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+
+        # Move the positional-or-keyword post_trigger_include into
+        # kwargs so the helper sees one unified dict.
+        merge_read_item_explicit_kwargs(
+            kwargs,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
+            priority=priority,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
+
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).read_item(
+            container_link=self.container_link,
+            document_link=doc_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace
     def read_items(
@@ -1216,47 +1243,42 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         item_link = self._get_document_link(item)
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+        # The id of the document to overwrite comes from ``item`` (a string
+        # id, or the ``id`` of a dict), not the body -- matching delete_item /
+        # read_item and the legacy ReplaceItem. The binding puts this id on the
+        # wire URL.
+        item_id = item if isinstance(item, str) else item["id"]
+        # replace_item takes the same kwargs as upsert_item, so reuse upsert's
+        # merge and options build. document_link is the fall-through target for
+        # the legacy ReplaceItem when no rust backend is wired.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        result = self.client_connection.ReplaceItem(
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).replace_item(
+            container_link=self.container_link,
             document_link=item_link,
-            new_document=body,
-            options=request_options,
-            **kwargs)
-        return result
+            item_id=item_id,
+            body=body,
+            populate_query_metrics=populate_query_metrics,
+            **kwargs,
+        )
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
@@ -1317,48 +1339,39 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        # upsert is write-with-body like create, so the helper extracts
+        # the partition key from the body. The helper also honours
+        # etag / match_condition (an upsert can be narrowed to
+        # insert-only or a version-guarded replace) and writes the legacy
+        # disableAutomaticIdGeneration flag so the fall-through path
+        # matches. populate_query_metrics is deprecated; the helper warns
+        # and writes it onto the legacy options.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        result = self.client_connection.UpsertItem(
-                database_or_container_link=self.container_link,
-                document=body,
-                options=request_options,
-                **kwargs
-            )
-        return result
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).upsert_item(
+            container_link=self.container_link,
+            body=body,
+            populate_query_metrics=populate_query_metrics,
+            **kwargs,
+        )
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
@@ -1433,41 +1446,38 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
-        if populate_query_metrics:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        result = self.client_connection.CreateItem(
-                database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
-        return result
+        # Move the explicit kwargs into the kwargs dict so the helper
+        # sees a single dict.
+        merge_create_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
+
+        # The ensure_container_cached callback routes the cache lookup
+        # back through this proxy, so the existing container-cache
+        # lock and per-call options (excluded_locations, timeouts)
+        # still reach the refresh path.
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).create_item(
+            container_link=self.container_link,
+            body=body,
+            populate_query_metrics=populate_query_metrics,
+            indexing_directive=indexing_directive,
+            enable_automatic_id_generation=enable_automatic_id_generation,
+            **kwargs,
+        )
 
     @distributed_trace
     def patch_item(
@@ -1538,42 +1548,41 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if filter_predicate is not None:
-            request_options["filterPredicate"] = filter_predicate
+        # Stamp the explicit kwargs into kwargs, then hand off to the helper.
+        merge_patch_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        item_link = self._get_document_link(item)
-        result = self.client_connection.PatchItem(
-            document_link=item_link,
-            operations=patch_operations,
-            options=request_options, **kwargs)
-        return result
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        document_link = self._get_document_link(item)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).patch_item(
+            container_link=self.container_link,
+            document_link=document_link,
+            item_id=item_id,
+            patch_operations=patch_operations,
+            filter_predicate=filter_predicate,
+            **kwargs,
+        )
 
     @distributed_trace
     def execute_item_batch(
@@ -1723,40 +1732,50 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if priority is not None:
-            kwargs['priority'] = priority
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
+            # populate_query_metrics has no effect on a point DELETE
+            # (there are no query metrics for a single-document write).
+            # Warn and drop so the header is never built.
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
+        # pre_trigger_include and post_trigger_include are positional-
+        # or-keyword on the public method; move them into kwargs so
+        # the helper sees one unified dict.
+        merge_delete_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
+
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         document_link = self._get_document_link(item)
-        self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).delete_item(
+            container_link=self.container_link,
+            document_link=document_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:

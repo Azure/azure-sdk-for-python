@@ -1,25 +1,28 @@
 # Azure Cosmos DB SQL API client library for Python
 
-## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+This is the `azure-cosmos` Python package. It contains the usual Python
+client (`CosmosClient`, `Container.create_item`, etc.) plus a Rust
+backend that some operations can route through instead of the legacy
+Python HTTP path.
 
-Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
+This README only covers **building it locally and running the tests**.
+For architecture and design, see the docs under `docs/`.
 
-Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service. High level capabilities are:
+---
 
-* Create Cosmos DB **databases** and modify their settings
-* Create and modify **containers** to store collections of JSON documents
-* Create, read, update, and delete the **items** (JSON documents) in your containers
-* Query the documents in your database using **SQL-like syntax**
+## Before you start
 
-[SDK source code][source_code]
-| [Package (PyPI)][cosmos_pypi]
-| [Package (Conda)](https://anaconda.org/microsoft/azure-cosmos/)
-| [API reference documentation][ref_cosmos_sdk]
-| [Product documentation][cosmos_docs]
-| [Samples][cosmos_samples]
+You need three things on your machine:
 
-> This SDK is used for the [SQL API](https://learn.microsoft.com/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://learn.microsoft.com/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+1. **Python 3.9 or newer.** Run `python --version` to check.
+2. **A Rust toolchain**, because part of this package compiles from Rust.
+   Install via [rustup](https://rustup.rs/); any stable version ≥ 1.75 works.
+   Run `cargo --version` to check.
+3. **Either the Cosmos DB Emulator running on `https://localhost:8081`,
+   or a real Cosmos DB account.** The emulator is the simpler choice for
+   local work — [download here](https://learn.microsoft.com/azure/cosmos-db/local-emulator).
+   You only need this for the integration tests; pure unit tests run
+   without it.
 
 ## Getting started
 
@@ -1129,176 +1132,253 @@ except exceptions.CosmosResourceExistsError:
     print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
+>>>>>>> main
 
 ```
-### Logging Diagnostics
-
-This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging diagnostics.
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
-level.
-**Note: You must use 'azure.cosmos' for the logger**
-Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` argument:
-```python
-import sys
-import logging
-from azure.cosmos import CosmosClient
-
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure.cosmos')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-client = CosmosClient(URL, credential=KEY, logging_enable=True)
+<your repos folder>/
+├── azure-sdk-for-python/   ← you are here
+└── azure-sdk-for-rust/
 ```
 
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
-```python
-database = client.create_database(DATABASE_NAME, logging_enable=True)
+If you don't have it, clone it now:
+
+```powershell
+cd ..\..\..\..\..        # back up to <your repos folder>
+git clone https://github.com/Azure/azure-sdk-for-rust.git
+cd azure-sdk-for-python\sdk\cosmos\azure-cosmos
 ```
-Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
-By default, it will use the behaviour from HttpLoggingPolicy. Passing in the `enable_diagnostics_logging` argument will enable the
-CosmosHttpLoggingPolicy, and will have additional information in the response relevant to debugging Cosmos issues.
-```python
-import logging
-from azure.cosmos import CosmosClient
 
-#Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure.cosmos')
-logger.setLevel(logging.DEBUG)
+The build will tell you immediately if it can't find that clone — see
+"When the build complains" at the bottom.
 
-# Configure a file output
-handler = logging.FileHandler(filename="azure")
-logger.addHandler(handler)
+---
 
-# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy.
-# Since we passed in the logger to the client, it will log information on every request.
-client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
+## Set things up once
+
+From this directory (`sdk/cosmos/azure-cosmos`):
+
+```powershell
+# maturin = build tool that compiles Rust + drops the result into the
+# Python package. The other three are test deps. Install straight into
+# whatever Python you're using (system Python is fine -- maturin 1.x
+# installs into system site-packages without complaint; a venv works
+# too if you prefer one).
+pip install -U pip maturin pytest pytest-asyncio
+pip install -r dev_requirements.txt
 ```
-Similarly, logging can be enabled for a single operation by passing in a logger to the singular request.
-However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional information, the `enable_diagnostics_logging` argument needs to be passed in at the client constructor.
-```python
-# This example enables the CosmosHttpLoggingPolicy and uses it with the `logger` passed in to the `create_database` request.
-client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
-database = client.create_database(DATABASE_NAME, logger=logger)
+
+> **Note.** Earlier versions of this README claimed maturin "refuses to
+> install into your system Python" and required a venv. That was true
+> of older maturin (pre-1.0) but is no longer the case. If you already
+> have a `.venv` activated, maturin will use it; if you don't, maturin
+> installs the wheel into the system Python's `site-packages` like any
+> other `pip install -e` would.
+
+---
+
+## Build the Rust part
+
+The Rust code compiles into a single file called `_rust.pyd` (Windows)
+or `_rust.so` (Linux/macOS). It lands in `azure/cosmos/` next to the
+`.py` files, and Python imports it as `azure.cosmos._rust`.
+
+**One thing to know first:** if an old `_rust.pyd` is sitting in
+`azure/cosmos/` from a previous build, Python will load *that* and
+ignore your new code. Symptom is usually
+`AttributeError: module 'azure.cosmos._rust' has no attribute 'init_client'`
+at runtime, even though `init_client` is right there in the source.
+So clean before you build:
+
+```powershell
+# 1. Wipe any old _rust.pyd.
+Get-ChildItem azure\cosmos -Filter "_rust*" -Recurse -ErrorAction SilentlyContinue |
+    Remove-Item -Force
+
+# 2. Build + install in editable mode.
+maturin develop
 ```
-**NOTICE: The Following is a Preview Feature.**
-To further customize what gets logged, you can use logger filters to filter out the logs you don't want to see. You are able to filter based on the following attributes in the log record of cosmos diagnostics logs:
-- `status_code`
-- `sub_status_code`
-- `duration`
-- `verb`
-- `database_name`
-- `collection_name`
-- `operation_type`
-- `url`
-- `resource_type`
-- `is_request`
 
-You can take a look at the samples [here][cosmos_diagnostics_filter_sample] or take a quick look at this snippet:
-- Using **filters** from the **logging** library, it is possible to filter the diagnostics logs. Several filterable attributes are made available to the log record of the diagnostics logs when using logging filters.
-```python
-  import logging
-  from azure.cosmos import CosmosClient
-  logger = logging.getLogger('azure.cosmos')
-  logger.setLevel(logging.INFO)
-  file_handler = logging.FileHandler('diagnostics.output')
-  logger.addHandler(file_handler)
-  # Create a filter to filter out logs
-  class CustomFilter(logging.Filter):
-    def filter(self, record):
-        ret = (hasattr(record, 'status_code') and record.status_code > 400
-           and not (record.status_code in [404, 409, 412] and getattr(record, 'sub_status_code', None) in [0, None])
-           and hasattr(record, 'duration') and record.duration > 1000)
-        return ret
-  # Add the filter to the logger
-  logger.addFilter(CustomFilter())
-  client = CosmosClient(endpoint, key,logger=logger, enable_diagnostics_logging=True)
+First build pulls and compiles a few hundred Rust crates; expect 5–10
+minutes. Subsequent builds are seconds — Cargo caches everything in
+`target/`.
+
+Did it work? This one-liner imports the new module and prints what it
+exposes:
+
+```powershell
+python -c "from azure.cosmos import _rust; print(sorted(a for a in dir(_rust) if not a.startswith('_')))"
+# Expected: ['create_item', 'init_client']
 ```
-### Telemetry
-Azure Core provides the ability for our Python SDKs to use OpenTelemetry with them. The only packages that need to be installed
-to use this functionality are the following:
-```bash
-pip install azure-core-tracing-opentelemetry
-pip install opentelemetry-sdk
+
+If you see anything other than those two names, you have a stale `.pyd`
+— re-run the cleanup step.
+
+(If you can't use a venv for some reason, `maturin build --release`
+followed by `Copy-Item target\release\azure_cosmos_rust.dll azure\cosmos\_rust.pyd -Force`
+does the same thing by hand.)
+
+---
+
+## Smoke test: one round trip Python → Rust → Cosmos
+
+Before running any test suite, run the smoke test. It cuts out the
+*entire* Python helper layer (request-prep, options parsing, PK
+serialization, body marshalling, auto-id) and exercises only:
+
+  PyO3 marshalling → driver authenticates → driver opens HTTPS
+   → driver POSTs to /docs → driver parses response → PyO3 back
+
+So a green smoke test means the binding + driver round-trip is wired
+correctly all the way to your Cosmos endpoint. A failure here is below
+the helper layer; a failure in the parity suite on top of a green
+smoke test is in the helper layer or in response translation.
+
+```powershell
+python tests\create_item\smoke_test_rust_create_item.py
 ```
-For more information on this, we recommend taking a look at this [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/README.md) 
-from Azure Core describing how to set it up. We have also added a [sample file][telemetry_sample] to show how it can
-be used with our SDK. This works the same way regardless of the Cosmos client you are using.
 
-## Next steps
+By default this points at the emulator and expects:
 
-For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos DB documentation][cosmos_docs] on learn.microsoft.com.
+- a database named `pyo3test`
+- inside it, a container named `items` partitioned on `/pk`
 
-<!-- LINKS -->
-[azure_cli]: https://learn.microsoft.com/cli/azure
-[azure_portal]: https://portal.azure.com
-[azure_sub]: https://azure.microsoft.com/free/
-[cloud_shell]: https://learn.microsoft.com/azure/cloud-shell/overview
-[cosmos_account_create]: https://learn.microsoft.com/azure/cosmos-db/how-to-manage-database-account
-[cosmos_account]: https://learn.microsoft.com/azure/cosmos-db/account-overview
-[cosmos_container]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-containers
-[cosmos_database]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-databases
-[cosmos_docs]: https://learn.microsoft.com/azure/cosmos-db/
-[cosmos_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples
-[cosmos_pypi]: https://pypi.org/project/azure-cosmos/
-[cosmos_http_status_codes]: https://learn.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
-[cosmos_item]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
-[cosmos_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/azure/cosmos/_models.py
-[cosmos_request_units]: https://learn.microsoft.com/azure/cosmos-db/request-units
-[cosmos_resources]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items
-[cosmos_sql_queries]: https://learn.microsoft.com/azure/cosmos-db/how-to-sql-query
-[cosmos_ttl]: https://learn.microsoft.com/azure/cosmos-db/time-to-live
-[cosmos_integrated_cache]: https://learn.microsoft.com/azure/cosmos-db/integrated-cache
-[cosmos_configure_integrated_cache]: https://learn.microsoft.com/azure/cosmos-db/how-to-configure-integrated-cache
-[python]: https://www.python.org/downloads/
-[ref_container_delete_item]: https://aka.ms/azsdk-python-cosmos-ref-delete-item
-[ref_container_query_items]: https://aka.ms/azsdk-python-cosmos-ref-query-items
-[ref_container_upsert_item]: https://aka.ms/azsdk-python-cosmos-ref-upsert-item
-[ref_container]: https://aka.ms/azsdk-python-cosmos-ref-container
-[ref_cosmos_sdk]: https://aka.ms/azsdk-python-cosmos-ref
-[ref_cosmosclient_create_database]: https://aka.ms/azsdk-python-cosmos-ref-create-database
-[ref_cosmosclient]: https://aka.ms/azsdk-python-cosmos-ref-cosmos-client
-[ref_database]: https://aka.ms/azsdk-python-cosmos-ref-database
-[ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
-[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
-[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
-[sample_document_mgmt_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management_async.py
-[sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos
-[venv]: https://docs.python.org/3/library/venv.html
-[virtualenv]: https://virtualenv.pypa.io
-[telemetry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py
-[timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
-[cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/transactional-batch
-[cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
-[cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
-[cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
-[RRF]: https://learn.microsoft.com/azure/search/hybrid-search-ranking
-[BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
-[cosmos_fts]: https://aka.ms/cosmosfulltextsearch
-[cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
-[cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management.py
-[cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management_async.py
-[cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
-[cosmos_throughput_bucket_configuration]: https://learn.microsoft.com/azure/cosmos-db/nosql/throughput-buckets#configuring-throughput-buckets
+Create those once via the emulator's Data Explorer (or the Azure CLI
+commands shown in the script's module docstring).
 
-## Contributing
+To point at a real account instead:
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+```powershell
+$env:COSMOS_ENDPOINT = "<your-cosmos-account-uri>"
+$env:COSMOS_KEY      = "<your-cosmos-account-key>"
+python tests\create_item\smoke_test_rust_create_item.py
+```
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+What the smoke test prints, in order: the endpoint, the container
+link, the item id it minted, then `status_code`, `sub_status`, and the
+first 200 bytes of the response body. A successful run ends with
+`OK -- round trip Python -> PyO3 -> driver -> Cosmos succeeded.` and
+exits 0. Exit codes: `0` round-trip OK, `1` non-2xx from the service
+(error body is printed above), `2` the compiled `_rust` module is not
+importable (run `maturin develop`).
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+What the smoke test does **not** check (so don't read too much into a
+green run): response-header parity, typed exceptions on 4xx/5xx,
+response-body parsing into a Python dict, or any routing options
+(consistency level, session token, priority, throughput bucket, ...).
+Those are covered by the parity suite below.
+
+---
+
+## Run the parity suite (Rust path vs. Python path)
+
+The parity suite calls `create_item` with the same input twice — once
+through the legacy Python backend, once through the Rust backend — and
+diffs the results. It's how we catch behaviour drift while the Rust
+path is being built out.
+
+```powershell
+$env:ACCOUNT_URI = "https://localhost:8081"
+$env:ACCOUNT_KEY = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+
+pytest tests/create_item/sync/test_create_item_parity.py -v          # only failures show diffs
+pytest tests/create_item/sync/test_create_item_parity.py -v -s -rA   # show diff + every test in the summary
+```
+
+If you don't set the env vars, the suite skips cleanly. If you set them
+but never built the Rust extension, the suite skips with a "run maturin
+develop" message.
+
+The in-process parity tests above are a CI gate, not an audit-doc
+source. Each test runs both backends inside one pytest process via
+`BackendComparison` and asserts on the diff; a failure prints the full
+`PARITY CALL:` block to the CI log so the contributor sees the
+evidence directly.
+
+A rolling, human-readable per-operation audit doc is produced by a
+separate workflow: two pytest runs against per-op `legacy/` folders
+(one on core-python, one on rust), then `scripts/v5/build_legacy_parity_audit.py`
+pairs the two transcripts and writes the audit markdown. The rendered
+markdown is per-developer-run output and is not checked in.
+
+Tests marked `@pytest.mark.skip(reason="...")` cover known driver- or
+binding-side gaps; the reason string names the specific limitation in
+plain English. `git grep "Permanent skip"` finds every test waiting on
+a Python-only feature that the Rust path can't match.
+
+---
+
+## Run the unit tests (no emulator needed)
+
+Everything under `tests/` that doesn't talk to Cosmos:
+
+```powershell
+pytest tests/ -q
+```
+
+Just the Rust-integration unit subset (the ones that exercise the
+binding without making network calls):
+
+```powershell
+pytest tests/test_backend_wiring_unit.py `
+       tests/test_item_helper_unit.py `
+       tests/test_request_prep_unit.py `
+       tests/test_response_parse_unit.py `
+       tests/test_pk_wire_unit.py `
+       tests/test_body_wire_unit.py `
+       tests/test_auto_id_unit.py `
+       tests/test_options_unit.py `
+       tests/test_container_rid_helper_unit.py `
+       tests/test_create_item_parity.py -q
+```
+
+---
+
+## When the build complains
+
+A few specific failure modes show up enough to be worth naming.
+
+**`failed to read .../azure-sdk-for-rust/...Cargo.toml`** — your sibling
+`azure-sdk-for-rust` clone is missing or in a different folder. Either
+clone it next to `azure-sdk-for-python` (see the layout in "Before you
+start"), or edit the three `path = ...` lines (one in
+`azure_cosmos_rust/Cargo.toml`, two in `Cargo.toml`) to point at where
+your clone actually lives.
+
+**`expected struct azure_core::Error, found struct azure_core::Error`**
+— same type name, two different copies. Means the binding crate and the
+driver crate ended up pulling `azure_core` from two different sources.
+Check `Cargo.toml` (the one in this directory): `azure_core` and
+`azure_identity` must both be `path = ...` deps into the same external
+`azure-sdk-for-rust` clone the driver is using. Don't mix `path` and
+`git`.
+
+**`AttributeError: module 'azure.cosmos._rust' has no attribute ...`** —
+stale `_rust.pyd`. Clean and rebuild:
+
+```powershell
+Get-ChildItem azure\cosmos -Filter "_rust*" -Recurse | Remove-Item -Force
+maturin develop
+```
+
+**Anything else, before reaching for `cargo clean`:**
+
+```powershell
+cargo check          # compiles without linking — fastest "did Rust break?" signal
+```
+
+If `cargo check` is green and you still can't run, the issue is in the
+Python wiring or in maturin's install step, not in the Rust code.
+
+`cargo clean` (nukes `target/`) is the last resort — it costs you the
+5–10-minute first-build time again.
+
+---
+
+## What rebuilds when
+
+- Edited Python? Nothing to rebuild. Editable install picks it up.
+- Edited Rust (anything under `azure_cosmos_rust/` or in the external
+  driver clone)? Run `maturin develop` again before `pytest`.
+- Edited a `Cargo.toml`? `maturin develop` will pick it up; if you only
+  changed deps, `cargo check` first is faster.
+

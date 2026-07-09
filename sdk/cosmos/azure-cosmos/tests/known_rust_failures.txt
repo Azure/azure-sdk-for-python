@@ -1,0 +1,24 @@
+# Known-expected failures for the full v4 suite on COSMOS_BACKEND=rust.
+# The broad gate is "no UNEXPLAINED failures": every red must match a known
+# unsupported feature below. Anything not matching is a real regression.
+# Keep this list current as gaps close — a line that no longer fails should
+# be removed so its category re-reds.
+
+# --- resource-token / permission-feed auth: ValueError at construction (no driver branch)
+resource_token
+permission_feed
+
+# --- partitionless containers: partition_key_header "[]" is rejected
+partitionless
+
+# --- python-only knobs (no rust equivalent)
+availability_strategy
+hedging
+per_attempt
+read_timeout
+connection_timeout
+
+# --- not-yet-migrated operations
+query
+feed
+

@@ -43,6 +43,15 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from .._helpers._item_dispatch import (
+    merge_create_item_explicit_kwargs,
+    merge_delete_item_explicit_kwargs,
+    merge_patch_item_explicit_kwargs,
+    merge_read_item_explicit_kwargs,
+    merge_upsert_item_explicit_kwargs,
+    pick_backend,
+)
+from ._helpers.item_helper import AsyncItemHelper
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -230,6 +239,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -284,35 +294,36 @@ class ContainerProxy:
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
-        if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+        # Move the explicit kwargs into the kwargs dict so the helper
+        # sees a single dict.
+        merge_create_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
         )
-        return result
+
+        # The ensure_container_cached callback routes the cache lookup
+        # back through this proxy, so the per-call options
+        # (excluded_locations, timeouts) still reach the refresh path.
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).create_item(
+            container_link=self.container_link,
+            body=body,
+            indexing_directive=indexing_directive,
+            enable_automatic_id_generation=enable_automatic_id_generation,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def read_item(
@@ -327,6 +338,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
@@ -373,28 +385,41 @@ class ContainerProxy:
                 :name: update_item
         """
         doc_link = self._get_document_link(item)
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-
-        request_options = _build_options(kwargs)
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        # Validate the cache-staleness value here so a ValueError points
+        # at the caller, not three frames deep in the helper. None
+        # skips validation. Zero is allowed; the prep layer treats it
+        # as a no-op and emits no x-ms-dedicatedgateway-max-age header.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        merge_read_item_explicit_kwargs(
+            kwargs,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
+            priority=priority,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
+
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).read_item(
+            container_link=self.container_link,
+            document_link=doc_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace
     def read_all_items(
@@ -1261,6 +1286,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -1302,40 +1328,36 @@ class ContainerProxy:
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.UpsertItem(
-            database_or_container_link=self.container_link,
-            document=body,
-            options=request_options,
-            **kwargs
+        # upsert is write-with-body like create, so the helper extracts
+        # the partition key from the body. It honours etag /
+        # match_condition (insert-only or version-guarded replace) and
+        # writes the legacy disableAutomaticIdGeneration flag so the
+        # fall-through path matches.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
         )
-        return result
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).upsert_item(
+            container_link=self.container_link,
+            body=body,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def semantic_rerank(
@@ -1399,6 +1421,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -1444,37 +1467,42 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         item_link = self._get_document_link(item)
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options, **kwargs
+        # The id of the document to overwrite comes from ``item`` (a string
+        # id, or the ``id`` of a dict), not the body -- matching delete_item /
+        # read_item and the legacy ReplaceItem. The binding puts this id on the
+        # wire URL.
+        item_id = item if isinstance(item, str) else item["id"]
+        # replace_item takes the same kwargs as upsert_item, so reuse upsert's
+        # merge and options build (the async surface has no populate_query_metrics).
+        # document_link is the fall-through target for the legacy ReplaceItem
+        # when no rust backend is wired.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
         )
-        return result
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).replace_item(
+            container_link=self.container_link,
+            document_link=item_link,
+            item_id=item_id,
+            body=body,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def patch_item(
@@ -1494,6 +1522,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -1544,38 +1573,41 @@ class ContainerProxy:
             `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if filter_predicate is not None:
-            request_options["filterPredicate"] = filter_predicate
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        # Stamp the explicit kwargs into kwargs, then hand off to the helper.
+        merge_patch_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        item_link = self._get_document_link(item)
-        result = await self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        return result
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        document_link = self._get_document_link(item)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).patch_item(
+            container_link=self.container_link,
+            document_link=document_link,
+            item_id=item_id,
+            patch_operations=patch_operations,
+            filter_predicate=filter_predicate,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def delete_item(
@@ -1593,6 +1625,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1636,33 +1669,38 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if priority is not None:
-            kwargs['priority'] = priority
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        merge_delete_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = await self._set_partition_key(partition_key)
         document_link = self._get_document_link(item)
-        await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).delete_item(
+            container_link=self.container_link,
+            document_link=document_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def get_throughput(

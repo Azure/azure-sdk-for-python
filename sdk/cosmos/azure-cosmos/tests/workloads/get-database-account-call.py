@@ -1,15 +1,14 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
-
-from workload_utils import create_logger
-from workload_configs import COSMOS_URI, COSMOS_CREDENTIAL, PREFERRED_LOCATIONS
-
-from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
-
+import os
 import time
 from datetime import datetime
+
+from azure.cosmos.aio import CosmosClient as AsyncClient
+
+from workload_configs import COSMOS_CREDENTIAL, COSMOS_URI, PREFERRED_LOCATIONS
+from workload_utils import create_logger
 
 
 async def run_workload(client_id: str):

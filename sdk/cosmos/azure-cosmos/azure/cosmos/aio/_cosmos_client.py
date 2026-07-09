@@ -23,6 +23,7 @@
 """
 
 import warnings
+import logging
 from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 
 from azure.core.async_paging import AsyncItemPaged
@@ -32,7 +33,10 @@ from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ._backend.base import AsyncCosmosBackend
+from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos.offer import ThroughputProperties
+from ._backend.factory import make_async_backend
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -156,6 +160,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
+    :keyword bool proxy_allowed: Rust backend only. When set with ``_backend="rust"``,
+        allows (``True``) or disables (``False``) proxy usage from environment
+        variables (for example ``HTTPS_PROXY`` / ``HTTP_PROXY``).
     :keyword ssl_config: Connection SSL configuration.
     :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
     :keyword bool connection_verify: Whether to verify the connection, default value is True.
@@ -215,6 +222,55 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
+        # Pick the backend for this client (precedence: ``_backend=``
+        # kwarg > COSMOS_BACKEND env var > ``core-python``). The factory
+        # returns an ``AsyncRustBackend`` for the ``rust`` selection, or
+        # ``None`` for ``core-python`` -- ``None`` is the signal that
+        # container methods should use the legacy ``CreateItem`` path.
+        backend_choice = kwargs.pop("_backend", None)
+        proxy_allowed = kwargs.pop("proxy_allowed", None)
+        # Read (don't pop) the startup settings the Rust backend can carry to the
+        # driver; the legacy connection policy still receives them via **kwargs
+        # below. The retry dials mirror _build_connection_policy's precedence
+        # (retry_throttle_* wins over the generic retry_* knob via `or`). On the
+        # async client ``availability_strategy`` is an explicit parameter
+        # (default ``False``), so it is passed directly rather than read from
+        # kwargs; ``False`` carries nothing, ``True``/dict carry the threshold.
+        # ``consistency_level`` is the named constructor arg, carried so the
+        # chosen level reaches the driver instead of every read falling back to
+        # the account default.
+        chosen = make_async_backend(
+            backend_choice,
+            url=url,
+            credential=credential,
+            preferred_locations=kwargs.get("preferred_locations"),
+            excluded_locations=kwargs.get("excluded_locations"),
+            throttling_max_retry_count=(
+                kwargs.get("retry_throttle_total") or kwargs.get("retry_total")
+            ),
+            throttling_max_retry_wait_time_seconds=(
+                kwargs.get("retry_throttle_backoff_max") or kwargs.get("retry_backoff_max")
+            ),
+            availability_strategy=availability_strategy,
+            user_agent_suffix=kwargs.get("user_agent_suffix"),
+            consistency_level=consistency_level,
+            proxy_allowed=proxy_allowed,
+            # Transport/TLS knobs the Rust path can't honor yet: read (don't pop)
+            # so the legacy connection still consumes them on the core-python path,
+            # while the Rust branch rejects them instead of silently ignoring them.
+            proxy_config=kwargs.get("proxy_config"),
+            proxies=kwargs.get("proxies"),
+            connection_verify=kwargs.get("connection_verify"),
+            connection_cert=kwargs.get("connection_cert"),
+            ssl_config=kwargs.get("ssl_config"),
+            transport=kwargs.get("transport"),
+        )
+        self._backend: Optional[AsyncCosmosBackend] = chosen
+        logging.getLogger(__name__).info(
+            "Cosmos client constructed with default backend=%s",
+            chosen.name if chosen is not None else "core-python",
+        )
+
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
@@ -226,6 +282,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )
+        # Expose the chosen backend on client_connection so async
+        # Container methods can dispatch on it.
+        self.client_connection._backend = self._backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
@@ -240,6 +299,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
             return await self.client_connection.pipeline_client.__aexit__(*args)
         finally:
+            try:
+                backend = getattr(self.client_connection, "_backend", None)
+                close_backend = getattr(backend, "close", None)
+                if callable(close_backend):
+                    maybe_awaitable = close_backend()
+                    if hasattr(maybe_awaitable, "__await__"):
+                        await maybe_awaitable
+            except Exception:  # pylint: disable=broad-except
+                pass
             try:
                 self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
             except Exception:  # pylint: disable=broad-except
@@ -742,6 +810,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
+        # On a Rust-backed client, fail loudly instead of silently using the
+        # legacy core-python connection -- the Rust path doesn't surface the
+        # account read yet (a tracked gap).
+        raise_account_read_unsupported(self._backend)
         result = await self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

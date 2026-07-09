@@ -26,7 +26,10 @@ class CosmosUserAgentPolicy(UserAgentPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         options_dict = request.context.options
-        # Add relevant enabled features to user agent for debugging
+        # Compose any per-request user-agent suffixes. Today the only
+        # source is the Cosmos feature flags derived from the global
+        # endpoint manager (circuit breaker, per-partition automatic
+        # failover, etc.).
         if "global_endpoint_manager" in options_dict:
             global_endpoint_manager = options_dict["global_endpoint_manager"]
             user_agent_features = get_user_agent_features(global_endpoint_manager)
