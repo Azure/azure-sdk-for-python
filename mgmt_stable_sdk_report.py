@@ -7,10 +7,10 @@ Workflow:
       tsp-location.yaml.
   (3) Read apiVersions from _metadata.json. If any api-version contains
       "preview", abandon the SDK.
-  (4) Read the latest SDK version from CHANGELOG.md.
-      * stable SDK version + stable apiVersions -> state Done, with a best-effort
-        stable refresh PR link from git history.
-      * beta SDK version + stable apiVersions -> state Not Started.
+    (4) Read the latest SDK version from CHANGELOG.md.
+            * SDKs with last release dates older than 2026-01-01 are abandoned.
+            * stable SDK version + stable apiVersions -> already done; do not record.
+            * beta SDK version + stable apiVersions -> state Not Started.
   (5) Append new rows to mgmt_sdk_report.md without editing existing rows.
 
 Requires the GitHub CLI (gh) to be installed and authenticated.
@@ -32,6 +32,12 @@ from typing import Sequence
 REPO = "Azure/azure-sdk-for-python"
 PR_NUMBER = "47885"
 ROOT = Path(__file__).resolve().parent
+RELEASE_DATE_CUTOFF = "2026-01-01"
+SUPPLEMENTAL_CANDIDATE_SDK_NAMES = (
+    "azure-mgmt-domainservices",
+    "azure-mgmt-alertprocessingrules",
+    "azure-mgmt-prometheusrulegroups",
+)
 
 SDK_NAME_RE = re.compile(r"\bazure-mgmt-[A-Za-z0-9][A-Za-z0-9_-]*\b")
 CHANGELOG_RE = re.compile(r"^##\s+(\S+)\s+\((\d{4}-\d{2}-\d{2})\)")
@@ -111,11 +117,11 @@ def get_candidate_sdk_names(pr_number: str) -> list[str]:
         result_names = sdk_names_from_result(fetch_pr_file(pr_number, "result.md"))
     except Exception as ex:  # pylint: disable=broad-except
         log(f"Could not read result.md from PR {pr_number}; using explicit data.txt names only: {ex}")
-        return data_names
+        result_names = []
 
     names: list[str] = []
     seen: set[str] = set()
-    for name in [*result_names, *data_names]:
+    for name in [*result_names, *data_names, *SUPPLEMENTAL_CANDIDATE_SDK_NAMES]:
         if name not in seen:
             seen.add(name)
             names.append(name)
@@ -204,6 +210,9 @@ def build_rows(sdk_names: Sequence[str], limit: int = 0) -> list[PackageRow]:
         if not sdk_version:
             log("  - skip: no version found in CHANGELOG.md")
             continue
+        if release_date and release_date < RELEASE_DATE_CUTOFF:
+            log(f"  - skip: last release date {release_date} is older than {RELEASE_DATE_CUTOFF}")
+            continue
 
         if is_beta_version(sdk_version):
             rows.append(
@@ -217,18 +226,7 @@ def build_rows(sdk_names: Sequence[str], limit: int = 0) -> list[PackageRow]:
             )
             log(f"  + keep: beta SDK version ({sdk_version}); state=Not Started")
         else:
-            refresh_pr = find_refresh_pr(pkg_dir)
-            rows.append(
-                PackageRow(
-                    name=sdk_name,
-                    api_versions=api_versions,
-                    sdk_version=sdk_version,
-                    release_date=release_date,
-                    state="Done",
-                    stable_refresh_pr=refresh_pr,
-                )
-            )
-            log(f"  + keep: stable SDK version ({sdk_version}); state=Done")
+            log(f"  - skip: stable SDK version ({sdk_version}) is already done")
     return rows
 
 
