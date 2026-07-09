@@ -26,7 +26,6 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import configure_appinsights_logging
@@ -106,10 +105,9 @@ ServiceClient042023Preview = partial(MachineLearningServicesMgmtClient, api_vers
 ServiceClient062023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-06-01-preview")
 ServiceClient012025Preview = partial(MachineLearningServicesMgmtClient, api_version="2025-01-01-preview")
 ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_version="2024-10-01-preview")
-# arm_ml_service-backed client pinned to the 2024-04-01-preview wire api-version, used only by the workspace
-# connections operation (whose entity already builds arm_ml_service bodies and whose operation methods all match
-# the arm client). The separate v2024_04_01_preview msrest client is still required by the compute
-# (update_sso_settings) and Azure OpenAI deployment (.connection group) operations, which have no arm equivalent.
+# arm_ml_service-backed client pinned to the 2024-04-01-preview wire api-version. Used by the workspace
+# connections operation, and (via send_request for arm-absent ops) by compute enable_sso and the Azure OpenAI
+# deployment list. The legacy v2024_04_01_preview msrest client has been fully retired.
 ServiceClient042024PreviewArm = partial(MachineLearningServicesMgmtClient, api_version="2024-04-01-preview")
 # arm_ml_service-backed client pinned to the 2024-01-01-preview wire api-version. Operations whose entities now
 # build arm_ml_service bodies are being repointed onto this shared arm client (marketplace subscriptions,
@@ -370,13 +368,6 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_04_2024_preview = ServiceClient042024Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_10_2024_preview_tsp = ServiceClient102024PreviewTsp(
             credential=self._credential,
             subscription_id=(
@@ -462,17 +453,6 @@ class MLClient:
         )
 
         self._service_client_10_2023 = ServiceClient102023(
-            credential=self._credential,
-            subscription_id=(
-                self._ws_operation_scope._subscription_id
-                if registry_reference
-                else self._operation_scope._subscription_id
-            ),
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_04_2024_preview = ServiceClient042024Preview(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
