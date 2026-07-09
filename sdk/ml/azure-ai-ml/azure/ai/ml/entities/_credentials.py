@@ -52,7 +52,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfigurationT
 from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedIdentity as RestJobManagedIdentity,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedServiceIdentity as RestRegistryManagedIdentity,
 )
 from azure.ai.ml._restclient.arm_ml_service.models import (
@@ -73,7 +73,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
 from azure.ai.ml._restclient.arm_ml_service.models import (
     UserIdentity as RestUserIdentity,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
 from azure.ai.ml._restclient.arm_ml_service.models import (
