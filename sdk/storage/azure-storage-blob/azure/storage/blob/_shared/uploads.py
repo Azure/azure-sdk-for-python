@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
@@ -261,7 +262,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
         # Generate a unique block ID for each staged block. The chunk offset is
         # still returned so the block list can be committed in the correct order.
         index = f"{chunk_offset:032d}"
-        block_id = encode_base64(uuid4().bytes)
+        block_id = encode_base64(f"{uuid4().int:048d}")
         self.service.stage_block(
             block_id,
             len(chunk_data),
@@ -274,7 +275,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = encode_base64(uuid4().bytes)
+            block_id = encode_base64(os.urandom(9))
             self.service.stage_block(
                 block_id,
                 len(block_stream),

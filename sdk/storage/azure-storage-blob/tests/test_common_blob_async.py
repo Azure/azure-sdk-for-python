@@ -89,7 +89,7 @@ class _RecordingBlockBlobServiceAsync:
         self.blocks[block_id] = content
 
 
-def _assert_unique_ordered_block_ids(block_ids, expected_data, staged_blocks):
+def _assert_unique_ordered_block_ids(block_ids, expected_data, staged_blocks, expected_length):
     # The data was actually split into multiple blocks.
     assert len(block_ids) > 1
     # Every block ID is unique (the point of the feature).
@@ -97,7 +97,9 @@ def _assert_unique_ordered_block_ids(block_ids, expected_data, staged_blocks):
     # All block IDs are equal-length, valid base64 (Azure requires equal length per blob).
     assert len({len(block_id) for block_id in block_ids}) == 1
     for block_id in block_ids:
-        assert len(base64.b64decode(block_id)) == 16
+        # Length is fixed per upload path to match the previous scheme (chunk=64, substream=12).
+        assert len(block_id) == expected_length
+        base64.b64decode(block_id)  # must be valid base64
     # Committing the blocks in the returned order must reproduce the original content.
     assert b"".join(staged_blocks[block_id] for block_id in block_ids) == expected_data
 
@@ -3979,7 +3981,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             )
 
         block_ids = asyncio.run(run())
-        _assert_unique_ordered_block_ids(block_ids, data, service.blocks)
+        # Chunk path uses a 48-digit zero-padded UUID -> 64-char block IDs.
+        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 64)
 
     def test_block_blob_substream_upload_generates_unique_ordered_block_ids(self):
         data = b"".join(bytes([i]) * 8 for i in range(20))
@@ -3998,7 +4001,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             )
 
         block_ids = asyncio.run(run())
-        _assert_unique_ordered_block_ids(block_ids, data, service.blocks)
+        # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
+        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
 
 # ------------------------------------------------------------------------------

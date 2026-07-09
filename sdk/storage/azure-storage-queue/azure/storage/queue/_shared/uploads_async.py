@@ -6,6 +6,7 @@
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
+import os
 import threading
 from io import UnsupportedOperation
 from itertools import islice
@@ -16,7 +17,7 @@ from uuid import uuid4
 from . import encode_base64
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import IterStreamer, SubStream  # pylint: disable=unused-import
+from .uploads import SubStream  # pylint: disable=unused-import
 
 
 async def _async_parallel_uploads(uploader, pending, running):
@@ -290,7 +291,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
         # Generate a unique block ID for each staged block. The chunk offset is
         # still returned so the block list can be committed in the correct order.
         index = f"{chunk_offset:032d}"
-        block_id = encode_base64(uuid4().bytes)
+        block_id = encode_base64(f"{uuid4().int:048d}")
         await self.service.stage_block(
             block_id,
             len(chunk_data),
@@ -303,7 +304,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = encode_base64(uuid4().bytes)
+            block_id = encode_base64(os.urandom(9))
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
