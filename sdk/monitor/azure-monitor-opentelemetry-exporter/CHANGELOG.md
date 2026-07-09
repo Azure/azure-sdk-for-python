@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Propagate main agent attribute to child spans
+  ([#47950](https://github.com/Azure/azure-sdk-for-python/pull/47950))
 
 ### Other Changes
 

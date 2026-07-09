@@ -1,0 +1,32 @@
+{
+    "CrossLanguagePackageId": "Microsoft.AlertsManagement",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.prometheusrulegroups.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.prometheusrulegroups.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.prometheusrulegroups.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRule": "Microsoft.AlertsManagement.PrometheusRule",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRuleGroupAction": "Microsoft.AlertsManagement.PrometheusRuleGroupAction",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRuleGroupProperties": "Microsoft.AlertsManagement.PrometheusRuleGroupProperties",
+        "azure.mgmt.prometheusrulegroups.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.prometheusrulegroups.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRuleGroupResource": "Microsoft.AlertsManagement.PrometheusRuleGroupResource",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRuleGroupResourcePatchParameters": "Microsoft.AlertsManagement.PrometheusRuleGroupResourcePatchParameters",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRuleGroupResourcePatchParametersProperties": "Microsoft.AlertsManagement.PrometheusRuleGroupResourcePatchParametersProperties",
+        "azure.mgmt.prometheusrulegroups.models.PrometheusRuleResolveConfiguration": "Microsoft.AlertsManagement.PrometheusRuleResolveConfiguration",
+        "azure.mgmt.prometheusrulegroups.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.prometheusrulegroups.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.get": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.get",
+        "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.get": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.get",
+        "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.create_or_update": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.createOrUpdate",
+        "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.create_or_update": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.createOrUpdate",
+        "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.update": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.update",
+        "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.update": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.update",
+        "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.delete": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.delete",
+        "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.delete": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.delete",
+        "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.list_by_resource_group": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.listByResourceGroup",
+        "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.list_by_resource_group": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.listByResourceGroup",
+        "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.list_by_subscription": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.listBySubscription",
+        "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.list_by_subscription": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.listBySubscription"
+    },
+    "CrossLanguageVersion": "8e0c8db73996"
+}
