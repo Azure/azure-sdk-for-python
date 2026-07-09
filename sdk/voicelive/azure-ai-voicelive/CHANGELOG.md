@@ -21,6 +21,14 @@
 - **Default API Version Update**: Changed the SDK default API version from `2026-06-01-preview` to
   the GA version `2026-07-15`. Pass `api_version="2026-06-01-preview"` explicitly to keep the previous
   default behavior.
+
+### Bugs Fixed
+
+- **Image Input Field Rename**: Renamed `RequestImageContentPart.url` to `image_url`. Update
+  image input construction to use `image_url=` instead of `url=`.
+
+### Other Changes
+
 - **Removed Preview Features**: The following features introduced in `1.3.0b1` are not part of the GA
   release and have been removed:
   - **WebRTC Call Negotiation Support**: Removed `ClientEventRtcCallSdpCreate`,
@@ -28,11 +36,6 @@
   - **Audio Playback Lifecycle Events**: Removed `ServerEventOutputAudioBufferStarted` and
     `ServerEventOutputAudioBufferStopped`.
   - **Smart End-of-Turn Detection**: Removed `SmartEndOfTurnDetection`.
-
-### Bugs Fixed
-
-- **Image Input Field Rename**: Renamed `RequestImageContentPart.url` to `image_url`. Update
-  image input construction to use `image_url=` instead of `url=`.
 
 ## 1.3.0b1 (2026-05-28)
 
