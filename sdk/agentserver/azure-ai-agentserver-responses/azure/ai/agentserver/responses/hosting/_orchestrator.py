@@ -1499,9 +1499,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
 
-        # Keep-alive comment frames are injected at the transport layer
-        # (streaming._sse.with_keep_alive, applied in the endpoint handler); the
-        # orchestrator emits only real events.
+        # The orchestrator emits only real events; keep-alive frames are added by the
+        # transport layer (streaming._sse.with_keep_alive in the endpoint handler).
         if not (ctx.background and ctx.store):
             # Simple path for non-background (or non-store) streaming.
             _stream_completed = False
@@ -1515,20 +1514,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     resolved = await self._persist_and_resolve_terminal(ctx, state, record)
                     yield encode_sse_any_event(resolved)
             finally:
-                # B17: If the stream did not complete naturally (e.g. client
-                # disconnect -> CancelledError), mark it as interrupted so
+                # B17: mark an interrupted (not naturally completed) stream so
                 # _finalize_stream skips persistence for non-bg streams.
                 if not _stream_completed:
                     state.stream_interrupted = True
                 await _finalize()
             return
 
-        # Background+stream (store): run the handler as an independent asyncio.Task so
-        # that finalization (including subject.complete()) is guaranteed to run even when
-        # the original SSE connection is dropped before all events are delivered. Without
-        # this, _live_stream can be abandoned mid-iteration by Starlette (the
-        # async-generator finalizer may not fire promptly), leaving GET-replay subscribers
-        # blocked on await q.get() forever.
+        # Background+stream (store): run the handler as an independent task so finalization
+        # (including subject.complete()) runs even when the SSE connection is dropped before
+        # all events are delivered.
         _SENTINEL_BG = object()
         bg_queue: asyncio.Queue[object] = asyncio.Queue()
 
@@ -1549,18 +1544,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 state.captured_error = exc
             finally:
-                # Always finalize (includes subject.complete()) -- this runs even if
-                # the original POST SSE connection was dropped and _live_stream is
-                # never properly closed by Starlette.
                 await _finalize()
                 await bg_queue.put(_SENTINEL_BG)
 
         async def _bg_producer() -> None:
             try:
-                # FR-013: Shield the inner producer via asyncio.shield so that
-                # Starlette's anyio cancel-scope cancellation (triggered by client
-                # disconnect) does NOT propagate into the handler. asyncio.shield()
-                # creates a new inner Task whose cancellation is independent of the outer.
+                # FR-013: Shield the producer so client-disconnect cancellation does not
+                # propagate into the handler.
                 await asyncio.shield(_bg_producer_inner())
             except asyncio.CancelledError:
                 pass  # outer task cancelled by scope; inner task continues
@@ -1575,9 +1565,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         except Exception:  # pylint: disable=broad-exception-caught
             pass  # SSE connection dropped; bg_task continues independently
         finally:
-            # Wait for the handler task so _finalize() has run before we exit.
-            # Do NOT cancel it -- background+stream must reach a terminal state
-            # regardless of client connectivity.
+            # Await the producer (do not cancel it) so it reaches a terminal state and
+            # _finalize() has run before returning.
             if not bg_task.done():
                 try:
                     await bg_task

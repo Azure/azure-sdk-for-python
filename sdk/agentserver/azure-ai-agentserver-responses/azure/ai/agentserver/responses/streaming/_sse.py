@@ -186,14 +186,11 @@ async def with_keep_alive(
 ) -> AsyncIterator[str]:
     """Interleave SSE keep-alive comment frames into ``source`` during idle gaps.
 
-    Passthrough when ``interval_seconds`` is falsy. A keep-alive comment frame is emitted
-    whenever no upstream item arrives within ``interval_seconds``; real items are never
-    dropped or reordered. Keep-alive is a transport concern, so this wraps the SSE byte
-    stream at the point it becomes an HTTP response rather than living in the event pipeline.
-
-    The source is advanced by a single dedicated task, so any ``contextvars`` the source sets
-    once and relies on across its whole lifetime (the request/platform context and the SSE
-    sequence-number counter) persist exactly as when the source is iterated directly.
+    Yields the source unchanged when ``interval_seconds`` is falsy. Otherwise a keep-alive
+    comment frame is emitted whenever no upstream item arrives within ``interval_seconds``;
+    real items are never dropped or reordered. The source is advanced by a single task, so
+    any ``contextvars`` it sets (request context, SSE sequence counter) persist across the
+    whole stream.
 
     :param source: The upstream async iterator of SSE-encoded strings.
     :type source: AsyncIterator[str]
@@ -225,8 +222,8 @@ async def with_keep_alive(
                 get_task = asyncio.ensure_future(queue.get())
             done, _ = await asyncio.wait({get_task}, timeout=interval_seconds)
             if get_task not in done:
-                # Idle interval elapsed with no item; emit a heartbeat. The pending
-                # get_task is preserved (not cancelled) so no item is ever dropped.
+                # No item within the interval; emit a heartbeat and keep the pending
+                # get_task so the next item is not dropped.
                 yield encode_keep_alive_comment()
                 continue
             item = get_task.result()
@@ -235,10 +232,8 @@ async def with_keep_alive(
                 break
             yield item
     finally:
-        # Deterministic cleanup — including "client disconnects right after a real item"
-        # (consumer suspended at ``yield item`` with the pump still running): cancelling the
-        # pump throws CancelledError into the source at its yield point, so the source's own
-        # finally (finalize / reset_request_context) runs and is awaited here.
+        # Stop the pump and any pending get, and await them so the source's finally
+        # (finalize, request-context reset) runs before returning.
         pending = [task for task in (pump_task, get_task) if task is not None]
         for task in pending:
             task.cancel()

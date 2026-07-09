@@ -178,10 +178,7 @@ def test_keep_alive__does_not_disrupt_event_stream_integrity() -> None:
 
     event_types = [e["type"] for e in events]
     assert "response.created" in event_types
-    # Sequence numbers must be present, unique, and strictly increasing. (A plain
-    # `== sorted(seq_nums)` check would pass on a corrupted all-zero stream, so assert
-    # uniqueness + strict monotonicity — this guards the contextvars-preservation
-    # requirement of the transport-layer keep-alive wrapper.)
+    # Sequence numbers must be present, unique, and strictly increasing.
     seq_nums = [e["data"].get("sequence_number") for e in events if "sequence_number" in e["data"]]
     assert len(seq_nums) >= 2
     assert all(isinstance(n, int) for n in seq_nums)
