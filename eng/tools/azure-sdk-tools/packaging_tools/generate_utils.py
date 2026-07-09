@@ -629,10 +629,14 @@ def gen_typespec(
 
         raise e
 
+    http_client_python = "@typespec/http-client-python"
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
         npm_package_version = {
             "emitterVersion": data["dependencies"][typespec_python],
         }
+        http_client_python_version = data.get("devDependencies", {}).get(http_client_python)
+        if http_client_python_version:
+            npm_package_version["httpClientPythonVersion"] = http_client_python_version
 
     return npm_package_version

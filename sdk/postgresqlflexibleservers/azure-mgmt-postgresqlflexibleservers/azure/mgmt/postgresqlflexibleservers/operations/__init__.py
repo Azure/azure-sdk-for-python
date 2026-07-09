@@ -21,6 +21,8 @@ from ._operations import FirewallRulesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import VirtualEndpointsOperations  # type: ignore
+from ._operations import MaintenanceEventsOperations  # type: ignore
+from ._operations import MajorVersionUpgradePrecheckOperations  # type: ignore
 from ._operations import AdministratorsMicrosoftEntraOperations  # type: ignore
 from ._operations import CapabilitiesByServerOperations  # type: ignore
 from ._operations import CapturedLogsOperations  # type: ignore
@@ -50,6 +52,8 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
     "VirtualEndpointsOperations",
+    "MaintenanceEventsOperations",
+    "MajorVersionUpgradePrecheckOperations",
     "AdministratorsMicrosoftEntraOperations",
     "CapabilitiesByServerOperations",
     "CapturedLogsOperations",

@@ -60,7 +60,7 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import AsyncIterStreamer, FileChunkUploader, IterStreamer, upload_data_chunks
-from .._shared.validation import CV_TYPE_PARSED, parse_validation_option
+from .._shared.validation import CV_TYPE_PARSED, is_crc64_validation, parse_validation_option
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle, HandlesPaged
@@ -916,7 +916,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :keyword validate_content:
             Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the file.
             Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
-            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+
+            .. note:: When using CRC64 validation (including when "auto" resolves to CRC64):
+
+                - The ``ext-checksums`` extra must be installed.
+                - Automatic decompression is not supported. If ``decompress=True`` is explicitly
+                  set, a :class:`ValueError` will be raised. If ``decompress`` is not specified,
+                  it will be set to ``False`` automatically.
         :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
@@ -961,6 +967,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         access_conditions = get_access_conditions(kwargs.pop("lease", None))
         validate_content = parse_validation_option(kwargs.pop("validate_content", None))
+
+        # Decompression is not supported with CRC64 content validation
+        if is_crc64_validation(validate_content):
+            decompress = kwargs.get("decompress")
+            if decompress is True:
+                raise ValueError("Decompression is not supported when using CRC64 content validation.")
+            kwargs["decompress"] = False
 
         downloader = StorageStreamDownloader(
             client=self._client.file,

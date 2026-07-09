@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/ExpressRouteCircuitConnectionList.json
+# x-ms-original-file: 2025-07-01/ExpressRouteCircuitConnectionList.json
 if __name__ == "__main__":
     main()

@@ -895,5 +895,51 @@ class TestAvailabilityStrategy:
                 retry_write=True)
         self._clean_up_container(setup['db'].id, setup['col'].id)
 
+    # When the client is built with a hedging strategy and a per-call
+    # surface explicitly passes ``availability_strategy=None``, the
+    # request must still hedge per the client's strategy. The None
+    # means "use what the client was configured with."
+    def test_per_request_none_falls_back_to_client_strategy(self):
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
+
+        # Inject a 1-second delay on the first region so the hedging
+        # threshold (150 ms) fires and the second region gets the read.
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, OperationType.Read) and
+                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            1000,
+            CosmosHttpResponseError(status_code=400, message="Injected Error"),
+        )
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+
+        client_strategy = {'threshold_ms': 150, 'threshold_steps_ms': 50}
+        setup = self._setup_method_with_custom_transport(
+            custom_transport,
+            multiple_write_locations=True,
+            availability_strategy=client_strategy,
+        )
+
+        # Seed the document via a separate fault-free client.
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
+        setup_without_fault['col'].create_item(body=doc)
+
+        # Exercise the explicit per-request None path directly; helper
+        # utilities omit the kwarg when the value is None.
+        setup['col'].read_item(
+            item=doc['id'],
+            partition_key=doc['pk'],
+            availability_strategy=None,
+        )
+        _validate_response_uris(
+            [uri_down, failed_over_uri],
+            [],
+            operation_type=OperationType.Read,
+            resource_type=ResourceType.Document,
+        )
+        self._clean_up_container(setup['db'].id, setup['col'].id)
+
 if __name__ == '__main__':
     unittest.main()

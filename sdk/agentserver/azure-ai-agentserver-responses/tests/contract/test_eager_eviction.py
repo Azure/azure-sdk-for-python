@@ -390,14 +390,14 @@ class TestTryEvict:
             response_id=rid,
             mode_flags=ResponseModeFlags(stream=False, store=True, background=False),
             status="completed",
-            chat_isolation_key="my_key",
+            user_id_key="my_key",
         )
         await state.add(record)
 
         # In-flight: static helper enforces isolation via the record's key
-        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, "my_key") is True
-        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, "wrong") is False
-        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, None) is False
+        assert _RuntimeState.check_user_isolation(record.user_id_key, "my_key") is True
+        assert _RuntimeState.check_user_isolation(record.user_id_key, "wrong") is False
+        assert _RuntimeState.check_user_isolation(record.user_id_key, None) is False
 
         await state.try_evict(rid)
 

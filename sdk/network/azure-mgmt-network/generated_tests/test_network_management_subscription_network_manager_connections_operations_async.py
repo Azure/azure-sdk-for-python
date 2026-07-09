@@ -24,7 +24,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperationsAsync(
     async def test_subscription_network_manager_connections_get(self, resource_group):
         response = await self.client.subscription_network_manager_connections.get(
             network_manager_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperationsAsync(
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperationsAsync(
     async def test_subscription_network_manager_connections_delete(self, resource_group):
         response = await self.client.subscription_network_manager_connections.delete(
             network_manager_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperationsAsync(
     @recorded_by_proxy_async
     async def test_subscription_network_manager_connections_list(self, resource_group):
         response = self.client.subscription_network_manager_connections.list(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

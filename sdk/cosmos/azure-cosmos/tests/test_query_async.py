@@ -5,10 +5,12 @@ import os
 import unittest
 import uuid
 from asyncio import gather
+from unittest.mock import patch
 
 import pytest
 
 import azure.cosmos.aio._retry_utility_async as retry_utility
+import azure.cosmos.aio._asynchronous_request as _asynchronous_request
 import azure.cosmos.exceptions as exceptions
 import azure.cosmos.cosmos_client as sync_cosmos_client
 import test_config
@@ -1007,6 +1009,508 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         self._delete_container_for_test(container_id)
 
 
+    # Async variants of the by_page() read_timeout coverage. Verify
+    # that the per-request and client-level read_timeout reach every
+    # page fetch when results are walked one page at a time.
+
+    def _capture_pipeline_read_timeouts_async(self):
+        # Wraps the outgoing async HTTP call so each request records
+        # its URL and the read_timeout the SDK passed along with it.
+        captured = []
+        original = _asynchronous_request._PipelineRunFunction
+
+        async def _wrapper(pipeline_client, request, **kwargs):
+            captured.append((str(request.url), kwargs.get("read_timeout")))
+            return await original(pipeline_client, request, **kwargs)
+
+        return captured, patch.object(
+            _asynchronous_request, "_PipelineRunFunction", side_effect=_wrapper
+        )
+
+    @staticmethod
+    def _doc_call_timeouts(captured):
+        # Keep only document page fetches. Other internal calls have
+        # their own timeout settings and are not part of these tests.
+        return [rt for (url, rt) in captured if "/docs" in url]
+
+    async def test_read_timeout_propagates_through_by_page_paging_async(self):
+        # Per-request read_timeout should reach every page fetch across
+        # single-partition queries, cross-partition queries, full reads,
+        # and change feeds when results are walked via by_page().
+        container_id = "by_page_read_timeout_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "data": i})
+
+            request_level_timeout = 25
+
+            # Single-partition query paged with by_page().
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": 0}],
+                    partition_key=0,
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0, "expected at least one page fetch")
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"single-partition by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+
+            # Cross-partition query paged with by_page().
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"cross-partition by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+
+            # read_all_items paged with by_page().
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.read_all_items(
+                    max_item_count=2,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"read_all_items by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+
+            # Change feed paged with by_page().
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.query_items_change_feed(
+                    start_time="Beginning",
+                    max_item_count=2,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"change feed by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_client_level_read_timeout_propagates_through_by_page_paging_async(self):
+        # When the async client is built with a read_timeout and the
+        # caller does not pass a per-request one, that client value
+        # should still reach every page fetch.
+        container_id = "by_page_client_read_timeout_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(4):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": "p", "data": i})
+
+            client_timeout = 22
+
+            async with test_config.TestConfig.create_data_client_async(read_timeout=client_timeout) as ct_client:
+                ct_container = ct_client.get_database_client(self.TEST_DATABASE_ID) \
+                                        .get_container_client(container_id)
+
+                captured, ctx = self._capture_pipeline_read_timeouts_async()
+                with ctx:
+                    pages = ct_container.query_items(
+                        query="SELECT * FROM c WHERE c.pk = @pk",
+                        parameters=[{"name": "@pk", "value": "p"}],
+                        partition_key="p",
+                        max_item_count=1,
+                    ).by_page()
+                    async for page in pages:
+                        [item async for item in page]
+                doc_timeouts = self._doc_call_timeouts(captured)
+                self.assertGreater(len(doc_timeouts), 0)
+                self.assertTrue(
+                    all(rt == client_timeout for rt in doc_timeouts),
+                    f"client-level read_timeout did not reach all pages: {doc_timeouts}",
+                )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_client_level_short_read_timeout_propagates_on_by_page_async(self):
+        # A tiny client-level read_timeout should still flow through to
+        # by_page() fetches. Avoid asserting wall-clock timeout failure
+        # since timer granularity differs across environments.
+        container_id = "by_page_short_client_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(3):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": "p", "data": i})
+
+            short_timeout = 0.000000000001
+            async with test_config.TestConfig.create_data_client_async(read_timeout=short_timeout) as short_client:
+                short_container = short_client.get_database_client(self.TEST_DATABASE_ID) \
+                                              .get_container_client(container_id)
+
+                captured = []
+                original = _asynchronous_request._PipelineRunFunction
+
+                async def _capture_and_clamp_timeout(pipeline_client, request, **kwargs):
+                    captured.append((str(request.url), kwargs.get("read_timeout")))
+                    if kwargs.get("read_timeout") is not None and kwargs["read_timeout"] < 1:
+                        kwargs = dict(kwargs)
+                        kwargs["read_timeout"] = 1
+                    return await original(pipeline_client, request, **kwargs)
+
+                with patch.object(
+                    _asynchronous_request, "_PipelineRunFunction", side_effect=_capture_and_clamp_timeout
+                ):
+                    pages = short_container.query_items(
+                        query="SELECT * FROM c WHERE c.pk = @pk",
+                        parameters=[{"name": "@pk", "value": "p"}],
+                        partition_key="p",
+                        max_item_count=1,
+                    ).by_page()
+                    async for page in pages:
+                        [item async for item in page]
+                doc_timeouts = [rt for (url, rt) in captured if "/docs" in url]
+                self.assertGreater(len(doc_timeouts), 0)
+                self.assertTrue(
+                    all(rt == short_timeout for rt in doc_timeouts),
+                    f"client-level short read_timeout did not reach all pages: {doc_timeouts}",
+                )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    # Aggregate queries (COUNT, SUM, MAX) take a separate execution path
+    # from regular queries. The tests below confirm a per-request
+    # read_timeout still reaches every page fetch on that path. GROUP BY
+    # is excluded because the Python SDK does not declare it as
+    # supported and the gateway rejects those queries. ``c.amount`` is
+    # used instead of ``c.value`` because ``VALUE`` is a SQL keyword.
+
+    async def test_read_timeout_propagates_through_by_page_value_count_aggregate_async(self):
+        container_id = "by_page_count_agg_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            request_level_timeout = 25
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT VALUE COUNT(1) FROM c",
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0, "expected at least one page fetch")
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"VALUE COUNT aggregate by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_read_timeout_propagates_through_by_page_value_sum_aggregate_async(self):
+        container_id = "by_page_sum_agg_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            request_level_timeout = 25
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT VALUE SUM(c.amount) FROM c WHERE IS_NUMBER(c.amount)",
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"VALUE SUM aggregate by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_read_timeout_propagates_through_by_page_value_max_aggregate_async(self):
+        # MAX exercises the same MultiExecutionAggregator path GROUP BY
+        # would, but is actually supported by the Python SDK.
+        container_id = "by_page_max_agg_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            request_level_timeout = 25
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT VALUE MAX(c.amount) FROM c",
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"VALUE MAX aggregate by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_client_level_read_timeout_propagates_through_aggregate_by_page_async(self):
+        # Async mirror of test_client_level_read_timeout_propagates_through_aggregate_by_page.
+        container_id = "by_page_client_agg_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            client_timeout = 22
+
+            async with test_config.TestConfig.create_data_client_async(read_timeout=client_timeout) as ct_client:
+                ct_container = ct_client.get_database_client(self.TEST_DATABASE_ID) \
+                                        .get_container_client(container_id)
+
+                for query in (
+                    "SELECT VALUE COUNT(1) FROM c",
+                    "SELECT VALUE SUM(c.amount) FROM c WHERE IS_NUMBER(c.amount)",
+                    "SELECT VALUE MAX(c.amount) FROM c",
+                ):
+                    captured, ctx = self._capture_pipeline_read_timeouts_async()
+                    with ctx:
+                        pages = ct_container.query_items(
+                            query=query,
+                            max_item_count=1,
+                        ).by_page()
+                        async for page in pages:
+                            [item async for item in page]
+                    doc_timeouts = self._doc_call_timeouts(captured)
+                    self.assertGreater(
+                        len(doc_timeouts), 0,
+                        f"no /docs/ fetches for aggregate query {query!r}",
+                    )
+                    # See sync sibling test for why ``None`` is tolerated.
+                    non_none = [rt for rt in doc_timeouts if rt is not None]
+                    self.assertGreater(
+                        len(non_none), 0,
+                        f"every /docs/ call dropped read_timeout for aggregate {query!r}",
+                    )
+                    self.assertTrue(
+                        all(rt == client_timeout for rt in non_none),
+                        f"client-level read_timeout did not reach all pages for "
+                        f"aggregate {query!r}: {doc_timeouts}",
+                    )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    # by_page() coverage for the outer timeout, connection_timeout,
+    # resume from a continuation token, and the cross-partition AVG
+    # error. See the sync siblings in test_query.py for the rationale.
+
+    def _capture_pipeline_kwarg_async(self, kwarg_name):
+        captured = []
+        original = _asynchronous_request._PipelineRunFunction
+
+        async def _wrapper(pipeline_client, request, **kwargs):
+            captured.append((str(request.url), kwargs.get(kwarg_name)))
+            return await original(pipeline_client, request, **kwargs)
+
+        return captured, patch.object(
+            _asynchronous_request, "_PipelineRunFunction", side_effect=_wrapper,
+        )
+
+    async def test_outer_timeout_propagates_through_by_page_paging_async(self):
+        # The outer wall-clock timeout must reach every page fetch when
+        # a cross-partition query is walked one page at a time.
+        container_id = "by_page_outer_timeout_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "data": i}
+                )
+
+            outer_timeout = 15
+            captured, ctx = self._capture_pipeline_kwarg_async("timeout")
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    timeout=outer_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_values = [t for (url, t) in captured if "/docs" in url]
+            self.assertGreater(len(doc_values), 0)
+            non_none = [t for t in doc_values if t is not None]
+            self.assertGreater(len(non_none), 0)
+            for t in non_none:
+                self.assertLessEqual(t, outer_timeout)
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_connection_timeout_propagates_through_by_page_paging_async(self):
+        # connection_timeout is per-attempt; it must reach every page
+        # fetch as the same exact value the caller passed in.
+        container_id = "by_page_conn_timeout_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                await container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "data": i}
+                )
+
+            connection_timeout = 27
+            captured, ctx = self._capture_pipeline_kwarg_async("connection_timeout")
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    connection_timeout=connection_timeout,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            doc_values = [t for (url, t) in captured if "/docs" in url]
+            self.assertGreater(len(doc_values), 0)
+            self.assertTrue(all(t == connection_timeout for t in doc_values))
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_avg_aggregate_by_page_raises_value_error_cross_partition_async(self):
+        # A VALUE AVG query across multiple partitions must raise
+        # ValueError. A single-partition AVG is verified as a control.
+        container_id = "by_page_avg_cross_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(20):
+                await container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": f"pk_{i}", "amount": i + 10}
+                )
+
+            # A feed range that covers the full hash space forces the
+            # query to fan out across every physical partition.
+            full_range = test_config.create_range(
+                range_min="",
+                range_max="FF",
+                is_min_inclusive=True,
+                is_max_inclusive=False,
+            )
+            feed_range = test_config.create_feed_range_in_dict(full_range)
+
+            with self.assertRaises(ValueError) as cm:
+                pages = container.query_items(
+                    query="SELECT VALUE AVG(c.amount) FROM c",
+                    feed_range=feed_range,
+                    max_item_count=1,
+                ).by_page()
+                async for page in pages:
+                    [item async for item in page]
+            self.assertIn("AVG", str(cm.exception).upper())
+
+            # Control: a single-partition AVG must still succeed.
+            single_pages = container.query_items(
+                query="SELECT VALUE AVG(c.amount) FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "pk_0"}],
+                partition_key="pk_0",
+                max_item_count=1,
+            ).by_page()
+            single_result = []
+            async for page in single_pages:
+                async for item in page:
+                    single_result.append(item)
+            self.assertEqual(len(single_result), 1)
+        finally:
+            self._delete_container_for_test(container_id)
+
+    async def test_read_timeout_propagates_through_by_page_resume_async(self):
+        # When the caller resumes paging on a new pager built from a
+        # continuation token, the per-request read_timeout must reach
+        # every page fetch on the resumed pager too.
+        container_id = "by_page_resume_timeout_async_" + str(uuid.uuid4())
+        container = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk"), offer_throughput=11000,
+        )
+        try:
+            for i in range(10):
+                await container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": "p", "data": i}
+                )
+
+            request_level_timeout = 19
+
+            # Pull one page and capture its continuation token. This
+            # initial call runs outside the capture context because we
+            # only want to assert on the resumed pager.
+            first_pages = container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "p"}],
+                partition_key="p",
+                max_item_count=2,
+            ).by_page()
+            first_page = await first_pages.__anext__()
+            _ = [item async for item in first_page]
+            continuation = first_pages.continuation_token
+            self.assertIsNotNone(continuation)
+
+            captured, ctx = self._capture_pipeline_read_timeouts_async()
+            with ctx:
+                resumed_pages = container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": "p"}],
+                    partition_key="p",
+                    max_item_count=2,
+                    read_timeout=request_level_timeout,
+                ).by_page(continuation_token=continuation)
+                async for page in resumed_pages:
+                    [item async for item in page]
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(all(rt == request_level_timeout for rt in doc_timeouts))
+        finally:
+            self._delete_container_for_test(container_id)
+
+
 if __name__ == '__main__':
     unittest.main()
-

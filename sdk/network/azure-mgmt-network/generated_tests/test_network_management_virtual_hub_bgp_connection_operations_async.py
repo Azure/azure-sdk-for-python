@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -50,10 +50,26 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
                         "peerAsn": 0,
                         "peerIp": "str",
                         "provisioningState": "str",
+                        "routingConfiguration": {
+                            "associatedRouteTable": {"id": "str"},
+                            "inboundRouteMap": {"id": "str"},
+                            "outboundRouteMap": {"id": "str"},
+                            "propagatedRouteTables": {"ids": [{"id": "str"}], "labels": ["str"]},
+                            "vnetRoutes": {
+                                "bgpConnections": [{"id": "str"}],
+                                "staticRoutes": [
+                                    {"addressPrefixes": ["str"], "name": "str", "nextHopIpAddress": "str"}
+                                ],
+                                "staticRoutesConfig": {
+                                    "propagateStaticRoutes": bool,
+                                    "vnetLocalRouteOverrideCriteria": "str",
+                                },
+                            },
+                        },
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,7 +84,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 connection_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

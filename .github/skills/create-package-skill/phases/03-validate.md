@@ -34,7 +34,7 @@ If over budget, split content into additional reference files (for example, brea
 ## Step 3 — DECIDE
 
 Present validation results. If all pass:
-Question: "Validation passed. Proceed to register the skill?"
+Question: "Validation passed. Proceed to finalize the skill?"
 
 If failures exist, present them and ask:
 Question: "These issues need fixing. Fix now, or skip validation?"
@@ -42,5 +42,5 @@ Question: "These issues need fixing. Fix now, or skip validation?"
 📍 **Phase 3 complete** | Validation: pass/fail | Next: Phase 4
 
 ---
-## → Next: Phase 4 — Register
-Read [04-register.md](04-register.md) and begin immediately.
+## → Next: Phase 4 — Finalize
+Read [04-finalize.md](04-finalize.md) and begin immediately.

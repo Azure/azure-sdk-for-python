@@ -752,7 +752,7 @@ class BackupRequestBase(_Model):
 
 
 class BackupSettings(_Model):
-    """The settings for the long term backup.
+    """Settings for the long term backup.
 
     :ivar backup_name: Backup Name for the current backup. Required.
     :vartype backup_name: str
@@ -853,7 +853,7 @@ class BackupsLongTermRetentionOperation(ProxyResource):
 
 
 class BackupsLongTermRetentionRequest(BackupRequestBase):
-    """The request that is made for a long term retention backup.
+    """Request made for a long term retention backup.
 
     :ivar backup_settings: Backup Settings. Required.
     :vartype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
@@ -1012,27 +1012,27 @@ class BackupStoreDetails(_Model):
 class CapabilityBase(_Model):
     """Base object for representing capability.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     """
 
     status: Optional[Union[str, "_models.CapabilityStatus"]] = rest_field(visibility=["read"])
-    """The status of the capability. Known values are: \"Visible\", \"Available\", \"Default\", and
+    """Status of the capability. Known values are: \"Visible\", \"Available\", \"Default\", and
      \"Disabled\"."""
     reason: Optional[str] = rest_field(visibility=["read"])
-    """The reason for the capability not being available."""
+    """Reason for the capability not being available."""
 
 
 class Capability(CapabilityBase):
     """Capability for the Azure Database for PostgreSQL flexible server.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar name: Name of flexible servers capabilities.
     :vartype name: str
@@ -1898,6 +1898,12 @@ class DataEncryption(_Model):
      Known values are: "Valid" and "Invalid".
     :vartype geo_backup_encryption_key_status: str or
      ~azure.mgmt.postgresqlflexibleservers.models.EncryptionKeyStatus
+    :ivar primary_federated_identity_client_id: Client id of multi-tenant Microsoft Entra
+     application.
+    :vartype primary_federated_identity_client_id: str
+    :ivar geo_backup_federated_identity_client_id: Client id of multi-tenant Microsoft Entra
+     application for when it is configured to support geographically redundant backups.
+    :vartype geo_backup_federated_identity_client_id: str
     """
 
     primary_key_uri: Optional[str] = rest_field(
@@ -1939,6 +1945,15 @@ class DataEncryption(_Model):
     """Status of key used by a server configured with data encryption based on customer managed key,
      to encrypt the geographically redundant storage associated to the server when it is configured
      to support geographically redundant backups. Known values are: \"Valid\" and \"Invalid\"."""
+    primary_federated_identity_client_id: Optional[str] = rest_field(
+        name="primaryFederatedIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client id of multi-tenant Microsoft Entra application."""
+    geo_backup_federated_identity_client_id: Optional[str] = rest_field(
+        name="geoBackupFederatedIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client id of multi-tenant Microsoft Entra application for when it is configured to support
+     geographically redundant backups."""
 
     @overload
     def __init__(
@@ -1949,6 +1964,8 @@ class DataEncryption(_Model):
         geo_backup_key_uri: Optional[str] = None,
         geo_backup_user_assigned_identity_id: Optional[str] = None,
         type: Optional[Union[str, "_models.DataEncryptionType"]] = None,
+        primary_federated_identity_client_id: Optional[str] = None,
+        geo_backup_federated_identity_client_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2148,10 +2165,10 @@ class ErrorResponse(_Model):
 class FastProvisioningEditionCapability(CapabilityBase):
     """Capability of a fast provisioning compute tier.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar supported_tier: Compute tier supporting fast provisioning.
     :vartype supported_tier: str
@@ -2287,7 +2304,8 @@ class HighAvailability(_Model):
      ~azure.mgmt.postgresqlflexibleservers.models.PostgreSqlFlexibleServerHighAvailabilityMode
     :ivar state: Possible states of the standby server created when high availability is set to
      SameZone or ZoneRedundant. Known values are: "NotEnabled", "CreatingStandby",
-     "ReplicatingData", "FailingOver", "Healthy", and "RemovingStandby".
+     "ReplicatingData", "FailingOver", "Healthy", "RemovingStandby", "RecreatingStandby", and
+     "ComputeUpdatingByFailover".
     :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityState
     :ivar standby_availability_zone: Availability zone associated to the standby server created
      when high availability is set to SameZone or ZoneRedundant.
@@ -2302,7 +2320,8 @@ class HighAvailability(_Model):
     state: Optional[Union[str, "_models.HighAvailabilityState"]] = rest_field(visibility=["read"])
     """Possible states of the standby server created when high availability is set to SameZone or
      ZoneRedundant. Known values are: \"NotEnabled\", \"CreatingStandby\", \"ReplicatingData\",
-     \"FailingOver\", \"Healthy\", and \"RemovingStandby\"."""
+     \"FailingOver\", \"Healthy\", \"RemovingStandby\", \"RecreatingStandby\", and
+     \"ComputeUpdatingByFailover\"."""
     standby_availability_zone: Optional[str] = rest_field(
         name="standbyAvailabilityZone", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2337,7 +2356,8 @@ class HighAvailabilityForPatch(_Model):
      ~azure.mgmt.postgresqlflexibleservers.models.PostgreSqlFlexibleServerHighAvailabilityMode
     :ivar state: Possible states of the standby server created when high availability is set to
      SameZone or ZoneRedundant. Known values are: "NotEnabled", "CreatingStandby",
-     "ReplicatingData", "FailingOver", "Healthy", and "RemovingStandby".
+     "ReplicatingData", "FailingOver", "Healthy", "RemovingStandby", "RecreatingStandby", and
+     "ComputeUpdatingByFailover".
     :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityState
     :ivar standby_availability_zone: Availability zone associated to the standby server created
      when high availability is set to SameZone or ZoneRedundant.
@@ -2352,7 +2372,8 @@ class HighAvailabilityForPatch(_Model):
     state: Optional[Union[str, "_models.HighAvailabilityState"]] = rest_field(visibility=["read"])
     """Possible states of the standby server created when high availability is set to SameZone or
      ZoneRedundant. Known values are: \"NotEnabled\", \"CreatingStandby\", \"ReplicatingData\",
-     \"FailingOver\", \"Healthy\", and \"RemovingStandby\"."""
+     \"FailingOver\", \"Healthy\", \"RemovingStandby\", \"RecreatingStandby\", and
+     \"ComputeUpdatingByFailover\"."""
     standby_availability_zone: Optional[str] = rest_field(
         name="standbyAvailabilityZone", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2488,11 +2509,11 @@ class LtrBackupOperationResponseProperties(_Model):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: End time of the operation.
     :vartype end_time: ~datetime.datetime
-    :ivar percent_complete: PercentageCompleted.
+    :ivar percent_complete: Percentage completed.
     :vartype percent_complete: float
-    :ivar error_code: The error code.
+    :ivar error_code: Error code.
     :vartype error_code: str
-    :ivar error_message: The error message.
+    :ivar error_message: Error message.
     :vartype error_message: str
     """
 
@@ -2529,11 +2550,11 @@ class LtrBackupOperationResponseProperties(_Model):
     percent_complete: Optional[float] = rest_field(
         name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
     )
-    """PercentageCompleted."""
+    """Percentage completed."""
     error_code: Optional[str] = rest_field(name="errorCode", visibility=["read"])
-    """The error code."""
+    """Error code."""
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
-    """The error message."""
+    """Error message."""
 
     @overload
     def __init__(
@@ -2636,6 +2657,228 @@ class LtrPreBackupResponse(_Model):
             super().__setattr__(key, value)
 
 
+class MaintenanceEventActionResponse(_Model):
+    """Response model for maintenance event reschedule and apply-now actions.
+
+    :ivar maintenance_event_id: The maintenance event name (maintenance ID).
+    :vartype maintenance_event_id: str
+    :ivar server_id: The full Azure resource ID of the server.
+    :vartype server_id: str
+    :ivar status: The status of the maintenance event. Known values are: "Planned", "InProgress",
+     "Complete", "Rescheduled", and "Canceled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventStatus
+    :ivar planned_start_time: The planned start time of the maintenance event (UTC).
+    :vartype planned_start_time: ~datetime.datetime
+    :ivar planned_end_time: The planned end time of the maintenance event (UTC).
+    :vartype planned_end_time: ~datetime.datetime
+    :ivar applied_now: A value indicating whether this was an apply-now (immediate) action. True
+     for ApplyNow; false for Reschedule.
+    :vartype applied_now: bool
+    :ivar last_updated_time: The time this maintenance event record was last updated (UTC).
+    :vartype last_updated_time: ~datetime.datetime
+    """
+
+    maintenance_event_id: Optional[str] = rest_field(
+        name="maintenanceEventId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maintenance event name (maintenance ID)."""
+    server_id: Optional[str] = rest_field(name="serverId", visibility=["read", "create", "update", "delete", "query"])
+    """The full Azure resource ID of the server."""
+    status: Optional[Union[str, "_models.MaintenanceEventStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the maintenance event. Known values are: \"Planned\", \"InProgress\",
+     \"Complete\", \"Rescheduled\", and \"Canceled\"."""
+    planned_start_time: Optional[datetime.datetime] = rest_field(
+        name="plannedStartTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The planned start time of the maintenance event (UTC)."""
+    planned_end_time: Optional[datetime.datetime] = rest_field(
+        name="plannedEndTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The planned end time of the maintenance event (UTC)."""
+    applied_now: Optional[bool] = rest_field(
+        name="appliedNow", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating whether this was an apply-now (immediate) action. True for ApplyNow; false
+     for Reschedule."""
+    last_updated_time: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time this maintenance event record was last updated (UTC)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        maintenance_event_id: Optional[str] = None,
+        server_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.MaintenanceEventStatus"]] = None,
+        planned_start_time: Optional[datetime.datetime] = None,
+        planned_end_time: Optional[datetime.datetime] = None,
+        applied_now: Optional[bool] = None,
+        last_updated_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceEventRescheduleRequest(_Model):
+    """Parameters to reschedule a maintenance event.
+
+    :ivar postpone_to_date_time: New start time in RFC3339 format. Required.
+    :vartype postpone_to_date_time: ~datetime.datetime
+    """
+
+    postpone_to_date_time: datetime.datetime = rest_field(
+        name="postponeToDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """New start time in RFC3339 format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        postpone_to_date_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceEventResource(ProxyResource):
+    """Maintenance event resource for a PostgreSQL flexible server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventResourceProperties
+    """
+
+    properties: Optional["_models.MaintenanceEventResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MaintenanceEventResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceEventResourceProperties(_Model):
+    """Properties of a maintenance event resource.
+
+    :ivar maintenance_event_id: A service-generated identifier for this maintenance event, assigned
+     by the platform (e.g., 'YL1T-HFG'). The format is not contractual and clients should not
+     attempt to parse or construct this value.
+    :vartype maintenance_event_id: str
+    :ivar maintenance_type: The maintenance type (e.g., 'PlannedMaintenance'). Required.
+     "PlannedMaintenance"
+    :vartype maintenance_type: str or ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceType
+    :ivar description: The human-readable description of the maintenance event.
+    :vartype description: str
+    :ivar status: The customer-facing status of the maintenance event. Required. Known values are:
+     "Planned", "InProgress", "Complete", "Rescheduled", and "Canceled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventStatus
+    :ivar start_time: The scheduled start time of the maintenance event (UTC). Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The scheduled end time of the maintenance event (UTC). Required.
+    :vartype end_time: ~datetime.datetime
+    :ivar estimated_downtime: The estimated downtime as an ISO 8601 duration string (e.g., 'PT60S'
+     = 60 seconds).
+    :vartype estimated_downtime: str
+    :ivar deferrable: A value indicating whether this maintenance event can be rescheduled by the
+     customer. Required.
+    :vartype deferrable: bool
+    :ivar deferral_deadline: The latest date/time this maintenance event can be postponed to (UTC).
+     Present only when deferrable is true.
+    :vartype deferral_deadline: ~datetime.datetime
+    :ivar rescheduled_from: The previous scheduled start time before the most recent reschedule
+     (UTC). Null if the event has never been rescheduled.
+    :vartype rescheduled_from: ~datetime.datetime
+    :ivar last_updated_time: The time this maintenance event record was last updated (UTC).
+    :vartype last_updated_time: ~datetime.datetime
+    :ivar original_start_time: The initial scheduled start time before any reschedule (UTC). Equals
+     startTime when the event has never been rescheduled. Required.
+    :vartype original_start_time: ~datetime.datetime
+    """
+
+    maintenance_event_id: Optional[str] = rest_field(name="maintenanceEventId", visibility=["read"])
+    """A service-generated identifier for this maintenance event, assigned by the platform (e.g.,
+     'YL1T-HFG'). The format is not contractual and clients should not attempt to parse or construct
+     this value."""
+    maintenance_type: Union[str, "_models.MaintenanceType"] = rest_field(name="maintenanceType", visibility=["read"])
+    """The maintenance type (e.g., 'PlannedMaintenance'). Required. \"PlannedMaintenance\""""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """The human-readable description of the maintenance event."""
+    status: Union[str, "_models.MaintenanceEventStatus"] = rest_field(visibility=["read"])
+    """The customer-facing status of the maintenance event. Required. Known values are: \"Planned\",
+     \"InProgress\", \"Complete\", \"Rescheduled\", and \"Canceled\"."""
+    start_time: datetime.datetime = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    """The scheduled start time of the maintenance event (UTC). Required."""
+    end_time: datetime.datetime = rest_field(name="endTime", visibility=["read"], format="rfc3339")
+    """The scheduled end time of the maintenance event (UTC). Required."""
+    estimated_downtime: Optional[str] = rest_field(name="estimatedDowntime", visibility=["read"])
+    """The estimated downtime as an ISO 8601 duration string (e.g., 'PT60S' = 60 seconds)."""
+    deferrable: bool = rest_field(visibility=["read"])
+    """A value indicating whether this maintenance event can be rescheduled by the customer. Required."""
+    deferral_deadline: Optional[datetime.datetime] = rest_field(
+        name="deferralDeadline", visibility=["read"], format="rfc3339"
+    )
+    """The latest date/time this maintenance event can be postponed to (UTC). Present only when
+     deferrable is true."""
+    rescheduled_from: Optional[datetime.datetime] = rest_field(
+        name="rescheduledFrom", visibility=["read"], format="rfc3339"
+    )
+    """The previous scheduled start time before the most recent reschedule (UTC). Null if the event
+     has never been rescheduled."""
+    last_updated_time: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTime", visibility=["read"], format="rfc3339"
+    )
+    """The time this maintenance event record was last updated (UTC)."""
+    original_start_time: datetime.datetime = rest_field(name="originalStartTime", visibility=["read"], format="rfc3339")
+    """The initial scheduled start time before any reschedule (UTC). Equals startTime when the event
+     has never been rescheduled. Required."""
+
+
 class MaintenanceWindow(_Model):
     """Maintenance window properties of a server.
 
@@ -2734,6 +2977,112 @@ class MaintenanceWindowForPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MajorVersionUpgradePrecheckResource(ProxyResource):
+    """Major version upgrade precheck resource for a PostgreSQL flexible server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.postgresqlflexibleservers.models.MajorVersionUpgradePrecheckResourceProperties
+    """
+
+    properties: Optional["_models.MajorVersionUpgradePrecheckResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MajorVersionUpgradePrecheckResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MajorVersionUpgradePrecheckResourceProperties(_Model):  # pylint: disable=name-too-long
+    """Major version upgrade precheck resource with validation results.
+
+    :ivar create_time: The time when the precheck was created.
+    :vartype create_time: ~datetime.datetime
+    :ivar status: The status of the precheck validation. Known values are: "Validating",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MajorVersionUpgradePrecheckStatus
+    :ivar precheck_result: The detailed result of the precheck operation.
+    :vartype precheck_result: ~azure.mgmt.postgresqlflexibleservers.models.PrecheckResult
+    :ivar target_version: The target PostgreSQL major version for the upgrade. Known values are:
+     "18", "17", "16", "15", "14", "13", "12", and "11".
+    :vartype target_version: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar policy_details: Array of policy validation details.
+    :vartype policy_details: list[~azure.mgmt.postgresqlflexibleservers.models.PolicyDetail]
+    """
+
+    create_time: Optional[datetime.datetime] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the precheck was created."""
+    status: Optional[Union[str, "_models.MajorVersionUpgradePrecheckStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the precheck validation. Known values are: \"Validating\", \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    precheck_result: Optional["_models.PrecheckResult"] = rest_field(
+        name="precheckResult", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed result of the precheck operation."""
+    target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
+        name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target PostgreSQL major version for the upgrade. Known values are: \"18\", \"17\", \"16\",
+     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    policy_details: Optional[list["_models.PolicyDetail"]] = rest_field(
+        name="policyDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of policy validation details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        create_time: Optional[datetime.datetime] = None,
+        status: Optional[Union[str, "_models.MajorVersionUpgradePrecheckStatus"]] = None,
+        precheck_result: Optional["_models.PrecheckResult"] = None,
+        target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+        policy_details: Optional[list["_models.PolicyDetail"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MetricSpecification(_Model):
     """Metric specification for an operation.
 
@@ -2808,15 +3157,15 @@ class MetricSpecification(_Model):
 
 
 class MigrateNetworkStatus(_Model):
-    """The status of a network migration operation.
+    """Status of a network migration operation.
 
-    :ivar subscription_id: The ID of the subscription.
+    :ivar subscription_id: Identifier of the subscription.
     :vartype subscription_id: str
-    :ivar resource_group_name: The name of the resource group.
+    :ivar resource_group_name: Name of the resource group.
     :vartype resource_group_name: str
-    :ivar server_name: The name of the server.
+    :ivar server_name: Name of the server.
     :vartype server_name: str
-    :ivar state: The state of the network migration operation. Known values are: "Pending",
+    :ivar state: State of the network migration operation. Known values are: "Pending",
      "InProgress", "Succeeded", "Failed", "CancelInProgress", and "Cancelled".
     :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.NetworkMigrationState
     """
@@ -2824,17 +3173,17 @@ class MigrateNetworkStatus(_Model):
     subscription_id: Optional[str] = rest_field(
         name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The ID of the subscription."""
+    """Identifier of the subscription."""
     resource_group_name: Optional[str] = rest_field(
         name="resourceGroupName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The name of the resource group."""
+    """Name of the resource group."""
     server_name: Optional[str] = rest_field(
         name="serverName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The name of the server."""
+    """Name of the server."""
     state: Optional[Union[str, "_models.NetworkMigrationState"]] = rest_field(visibility=["read"])
-    """The state of the network migration operation. Known values are: \"Pending\", \"InProgress\",
+    """State of the network migration operation. Known values are: \"Pending\", \"InProgress\",
      \"Succeeded\", \"Failed\", \"CancelInProgress\", and \"Cancelled\"."""
 
     @overload
@@ -4268,6 +4617,137 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PolicyDetail(_Model):
+    """Policy validation details.
+
+    :ivar policy_name: The name of the policy.
+    :vartype policy_name: str
+    :ivar passed: Whether the policy validation passed.
+    :vartype passed: bool
+    :ivar error_code: The error code if validation failed.
+    :vartype error_code: int
+    :ivar error_message: The error message if validation failed.
+    :vartype error_message: str
+    :ivar policy_description: Description of what the policy validates.
+    :vartype policy_description: str
+    """
+
+    policy_name: Optional[str] = rest_field(
+        name="policyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the policy."""
+    passed: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the policy validation passed."""
+    error_code: Optional[int] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """The error code if validation failed."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The error message if validation failed."""
+    policy_description: Optional[str] = rest_field(
+        name="policyDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Description of what the policy validates."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_name: Optional[str] = None,
+        passed: Optional[bool] = None,
+        error_code: Optional[int] = None,
+        error_message: Optional[str] = None,
+        policy_description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrecheckErrorInfo(_Model):
+    """Error information from precheck validation.
+
+    :ivar error_code: The error code.
+    :vartype error_code: int
+    :ivar error_message: The error message.
+    :vartype error_message: str
+    """
+
+    error_code: Optional[int] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """The error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The error message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[int] = None,
+        error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrecheckResult(_Model):
+    """Precheck result details.
+
+    :ivar action: The action performed.
+    :vartype action: str
+    :ivar upgrade_sequence: The upgrade sequence information.
+    :vartype upgrade_sequence: ~azure.mgmt.postgresqlflexibleservers.models.UpgradeSequence
+    :ivar error_info: Array of error information.
+    :vartype error_info: list[~azure.mgmt.postgresqlflexibleservers.models.PrecheckErrorInfo]
+    """
+
+    action: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action performed."""
+    upgrade_sequence: Optional["_models.UpgradeSequence"] = rest_field(
+        name="upgradeSequence", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upgrade sequence information."""
+    error_info: Optional[list["_models.PrecheckErrorInfo"]] = rest_field(
+        name="errorInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of error information."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: Optional[str] = None,
+        upgrade_sequence: Optional["_models.UpgradeSequence"] = None,
+        error_info: Optional[list["_models.PrecheckErrorInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PrivateEndpoint(_Model):
     """The private endpoint resource.
 
@@ -4811,10 +5291,10 @@ class Server(TrackedResource):
 class ServerEditionCapability(CapabilityBase):
     """Capabilities in terms of compute tier.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar name: Name of compute tier.
     :vartype name: str
@@ -5280,10 +5760,10 @@ class ServerSku(_Model):
 class ServerSkuCapability(CapabilityBase):
     """Capabilities in terms of compute.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar name: Name of the compute (SKU).
     :vartype name: str
@@ -5332,10 +5812,10 @@ class ServerSkuCapability(CapabilityBase):
 class ServerVersionCapability(CapabilityBase):
     """Capabilities in terms of major versions of PostgreSQL database engine.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar name: Major version of PostgreSQL database engine.
     :vartype name: str
@@ -5453,6 +5933,84 @@ class SkuForPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
+class StartMajorVersionUpgradePrecheckRequest(_Model):
+    """Request model for starting a major version upgrade precheck.
+
+    :ivar target_version: The target major version to upgrade to. Required. Known values are: "18",
+     "17", "16", "15", "14", "13", "12", and "11".
+    :vartype target_version: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    """
+
+    target_version: Union[str, "_models.PostgresMajorVersion"] = rest_field(
+        name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target major version to upgrade to. Required. Known values are: \"18\", \"17\", \"16\",
+     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_version: Union[str, "_models.PostgresMajorVersion"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StartMajorVersionUpgradePrecheckResponse(_Model):
+    """Response model for starting a major version upgrade precheck.
+
+    :ivar name: The precheck validation ID.
+    :vartype name: str
+    :ivar create_time: The time when the precheck was created.
+    :vartype create_time: ~datetime.datetime
+    :ivar status: The status of the precheck validation. Known values are: "Validating",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MajorVersionUpgradePrecheckStatus
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The precheck validation ID."""
+    create_time: Optional[datetime.datetime] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the precheck was created."""
+    status: Optional[Union[str, "_models.MajorVersionUpgradePrecheckStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the precheck validation. Known values are: \"Validating\", \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        create_time: Optional[datetime.datetime] = None,
+        status: Optional[Union[str, "_models.MajorVersionUpgradePrecheckStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Storage(_Model):
     """Storage properties of a server.
 
@@ -5532,10 +6090,10 @@ class Storage(_Model):
 class StorageEditionCapability(CapabilityBase):
     """Capabilities in terms of storage tier.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar name: Name of storage tier.
     :vartype name: str
@@ -5559,10 +6117,10 @@ class StorageEditionCapability(CapabilityBase):
 class StorageMbCapability(CapabilityBase):
     """Storage size (in MB) capability.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar supported_iops: Minimum IOPS supported by the storage size.
     :vartype supported_iops: int
@@ -5606,10 +6164,10 @@ class StorageMbCapability(CapabilityBase):
 class StorageTierCapability(CapabilityBase):
     """Capability of a storage tier.
 
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
+    :ivar status: Status of the capability. Known values are: "Visible", "Available", "Default",
+     and "Disabled".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
+    :ivar reason: Reason for the capability not being available.
     :vartype reason: str
     :ivar name: Name of the storage tier.
     :vartype name: str
@@ -5758,6 +6316,49 @@ class TuningOptionsProperties(_Model):
 
     state: Optional[str] = rest_field(visibility=["read"])
     """State of the tuning option."""
+
+
+class UpgradeSequence(_Model):
+    """Upgrade sequence information.
+
+    :ivar source_version: The source PostgreSQL version. Known values are: "18", "17", "16", "15",
+     "14", "13", "12", and "11".
+    :vartype source_version: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar target_version: The target PostgreSQL version. Known values are: "18", "17", "16", "15",
+     "14", "13", "12", and "11".
+    :vartype target_version: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    """
+
+    source_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
+        name="sourceVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source PostgreSQL version. Known values are: \"18\", \"17\", \"16\", \"15\", \"14\",
+     \"13\", \"12\", and \"11\"."""
+    target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
+        name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target PostgreSQL version. Known values are: \"18\", \"17\", \"16\", \"15\", \"14\",
+     \"13\", \"12\", and \"11\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+        target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class UserAssignedIdentity(_Model):

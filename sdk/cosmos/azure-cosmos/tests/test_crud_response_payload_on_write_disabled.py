@@ -2638,7 +2638,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         # create container via setup client (control-plane)
         created_collection = key_db.create_container(
-            id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+            id='test_delete_all_items_by_partition_key_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash')
         )
         data_collection = data_db.get_container_client(created_collection.id)

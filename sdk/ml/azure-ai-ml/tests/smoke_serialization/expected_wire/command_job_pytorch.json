@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "command": "python train.py",
+    "computeId": "smoke-compute",
+    "distribution": {
+      "distributionType": "PyTorch",
+      "processCountPerInstance": 4
+    },
+    "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+    "environmentVariables": {},
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {},
+    "properties": {},
+    "resources": {
+      "instanceCount": 2,
+      "properties": {}
+    },
+    "tags": {}
+  }
+}

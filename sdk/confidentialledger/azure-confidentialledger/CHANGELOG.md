@@ -1,10 +1,11 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0b3 (2026-06-05)
 
 ### Features Added
 
 - Added redirect URL caching for write operations (POST/PUT/PATCH/DELETE). After the first redirect from the load balancer, subsequent writes go directly to the primary node, significantly reducing latency.
+- Enforced a stricter redirect destination policy: redirects are only followed when the target uses HTTPS, has the same effective port, and the host is the original ledger host or one of its subdomains (e.g. an individual node). Redirects that downgrade to HTTP, change the port, or point to sibling ledgers, parent domains, unrelated hosts, or look-alike suffix domains are now rejected and never followed or cached.
 
 ### Bugs Fixed
 

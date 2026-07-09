@@ -7,10 +7,8 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import CapabilityHost as RestCapabilityHost
-from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import (
-    CapabilityHostProperties as RestCapabilityHostProperties,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import CapabilityHost as RestCapabilityHost
+from azure.ai.ml._restclient.arm_ml_service.models import CapabilityHostProperties as RestCapabilityHostProperties
 from azure.ai.ml._schema.workspace.ai_workspaces.capability_host import CapabilityHostSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -139,7 +137,7 @@ class CapabilityHost(Resource):
         :param cls: Indicates that this is a class method.
         :type cls: class
         :param rest_obj: The REST object to convert.
-        :type rest_obj: ~azure.ai.ml._restclient.v2024_10_01_preview_tsp.models._models_py3.CapabilityHost
+        :type rest_obj: ~azure.ai.ml._restclient.arm_ml_service.models.CapabilityHost
         :return: CapabilityHost object.
         :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
         """
@@ -163,7 +161,7 @@ class CapabilityHost(Resource):
         Convert the CapabilityHost instance to a RestCapabilityHost object.
 
         :return: A RestCapabilityHost object representing the capability host for a Hub or Project workspace.
-        :rtype: azure.ai.ml._restclient.v2024_10_01_preview_tsp.models._models_py3.CapabilityHost
+        :rtype: azure.ai.ml._restclient.arm_ml_service.models.CapabilityHost
         """
 
         properties = RestCapabilityHostProperties(

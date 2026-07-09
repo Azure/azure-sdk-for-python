@@ -11,7 +11,7 @@ import re
 import uuid
 from io import BytesIO, SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from urllib.parse import (
     parse_qsl,
     urlencode,
@@ -843,3 +843,65 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
+
+
+class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
+    """A simple policy that cleans up sensitive headers
+
+    :keyword list[str] blocked_redirect_headers: The headers to clean up when redirecting to another domain.
+    :keyword bool disable_redirect_cleanup: Opt out cleaning up sensitive headers when redirecting to another domain.
+    """
+
+    DEFAULT_SENSITIVE_HEADERS = {
+        "Authorization",
+        "x-ms-authorization-auxiliary",
+        "x-ms-copy-source",
+        "x-ms-copy-source-authorization",
+        "x-ms-rename-source",
+    }
+
+    DEFAULT_SENSITIVE_QUERY_PARAMS = {"sig"}
+
+    def __init__(
+        self,  # pylint: disable=unused-argument
+        *,
+        blocked_redirect_headers: Optional[List[str]] = None,
+        blocked_redirect_query_params: Optional[List[str]] = None,
+        disable_redirect_cleanup: bool = False,
+        **kwargs: Any,
+    ) -> None:
+        self._disable_redirect_cleanup = disable_redirect_cleanup
+        self._blocked_redirect_headers = (
+            StorageSensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS
+            if blocked_redirect_headers is None
+            else blocked_redirect_headers
+        )
+        self._blocked_query_params = (
+            StorageSensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_QUERY_PARAMS
+            if blocked_redirect_query_params is None
+            else blocked_redirect_query_params
+        )
+
+    def on_request(self, request: "PipelineRequest") -> None:
+        """This is executed before sending the request to the next policy.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        # "insecure_domain_change" is used to indicate that a redirect
+        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+        # to clean up sensitive headers.
+        insecure_domain_change = request.context.get("insecure_domain_change", False)
+        if not self._disable_redirect_cleanup and insecure_domain_change:
+            # Clean up request query parameters
+            parsed = urlparse(request.http_request.url)
+            kept = [
+                pair
+                for pair in parsed.query.split("&")
+                if pair and pair.split("=", 1)[0] not in self._blocked_query_params
+            ]
+            request.http_request.url = urlunparse(parsed._replace(query="&".join(kept)))
+
+            # Clean up request headers
+            for header in self._blocked_redirect_headers:
+                request.http_request.headers.pop(header, None)

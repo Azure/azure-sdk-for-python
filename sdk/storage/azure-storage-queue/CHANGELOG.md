@@ -4,6 +4,11 @@
 
 ### Features Added
 
+## 12.17.0 (2026-06-08)
+
+### Features Added
+- Stable release of features from 12.17.0b1
+
 ## 12.16.0 (2026-05-14)
 
 ### Features Added
@@ -18,7 +23,7 @@ basis and with retries. Prior to this fix logging may have not behaved as expect
 
 ### Features Added
 - Added support for service version 2026-06-06.
-- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes
 for `QueueServiceClient` and `QueueClient`.
 
 ## 12.16.0b1 (2026-01-27)
@@ -26,7 +31,7 @@ for `QueueServiceClient` and `QueueClient`.
 ### Features Added
 - Added support for service version 2026-04-06.
 - Added support for the keyword `user_delegation_tid` to `QueueServiceClient.get_user_delegation_key` API, which
-can be used in `generate_queue_sas` to specify the Tenant ID that is authorized to use the generated SAS URL. 
+can be used in `generate_queue_sas` to specify the Tenant ID that is authorized to use the generated SAS URL.
 Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
 
 ### Other Changes
@@ -43,9 +48,9 @@ Note that `user_delegation_tid` must be used together with `user_delegation_oid`
 - Added support for service version 2026-02-06.
 - Added new `get_user_delegation_key` API to `QueueServiceClient` to obtain a user delegation key
 for the purposes of signing SAS tokens.
-- Added support for the keyword `user_delegation_oid` to `generate_queue_sas`, which specifies the Entra ID 
+- Added support for the keyword `user_delegation_oid` to `generate_queue_sas`, which specifies the Entra ID
 of the user that is authorized to use the generated SAS URL.
-- Added support for the keyword `user_delegation_key` to `generate_queue_sas` used with 
+- Added support for the keyword `user_delegation_key` to `generate_queue_sas` used with
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
 - Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
 
@@ -60,7 +65,7 @@ of the user that is authorized to use the generated SAS URL.
 - Stable release of features from 12.14.0b1
 
 ### Other Changes
-- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`,
 and let the `AttributeError` raise directly.
 
 ## 12.13.0 (2025-07-16)
@@ -79,11 +84,11 @@ This version and all future versions will require Python 3.9+. Python 3.8 is no 
 
 ### Features Added
 - Added support for service version 2025-07-05.
-- Added support for OAuth authentication in `QueueClient`'s `get_queue_access_policy` 
+- Added support for OAuth authentication in `QueueClient`'s `get_queue_access_policy`
 and `set_queue_access_policy` APIs.
 
 ### Other Changes
-- Migrated any previously documented `kwarg` arguments to be named keywords. 
+- Migrated any previously documented `kwarg` arguments to be named keywords.
 Some public types may have been adjusted if they were previously erroneous or incomplete.
 
 ## 12.12.0 (2024-09-17)

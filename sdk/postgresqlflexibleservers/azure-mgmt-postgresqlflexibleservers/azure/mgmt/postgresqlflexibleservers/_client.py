@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -30,6 +30,8 @@ from .operations import (
     ConfigurationsOperations,
     DatabasesOperations,
     FirewallRulesOperations,
+    MaintenanceEventsOperations,
+    MajorVersionUpgradePrecheckOperations,
     MigrationsOperations,
     NameAvailabilityOperations,
     Operations,
@@ -44,6 +46,11 @@ from .operations import (
     VirtualEndpointsOperations,
     VirtualNetworkSubnetUsageOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -79,6 +86,12 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
     :ivar virtual_endpoints: VirtualEndpointsOperations operations
     :vartype virtual_endpoints:
      azure.mgmt.postgresqlflexibleservers.operations.VirtualEndpointsOperations
+    :ivar maintenance_events: MaintenanceEventsOperations operations
+    :vartype maintenance_events:
+     azure.mgmt.postgresqlflexibleservers.operations.MaintenanceEventsOperations
+    :ivar major_version_upgrade_precheck: MajorVersionUpgradePrecheckOperations operations
+    :vartype major_version_upgrade_precheck:
+     azure.mgmt.postgresqlflexibleservers.operations.MajorVersionUpgradePrecheckOperations
     :ivar administrators_microsoft_entra: AdministratorsMicrosoftEntraOperations operations
     :vartype administrators_microsoft_entra:
      azure.mgmt.postgresqlflexibleservers.operations.AdministratorsMicrosoftEntraOperations
@@ -129,8 +142,9 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-01-preview" and None. Default value is "2026-01-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+     "2026-04-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -196,6 +210,12 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_endpoints = VirtualEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.maintenance_events = MaintenanceEventsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.major_version_upgrade_precheck = MajorVersionUpgradePrecheckOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.administrators_microsoft_entra = AdministratorsMicrosoftEntraOperations(

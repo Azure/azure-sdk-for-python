@@ -58,7 +58,7 @@ def build_azure_app_configuration_get_keys_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.keyset+json, application/problem+json")
 
     # Construct URL
@@ -92,7 +92,7 @@ def build_azure_app_configuration_check_keys_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/keys"
 
@@ -129,7 +129,7 @@ def build_azure_app_configuration_get_key_values_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kvset+json, application/problem+json")
 
     # Construct URL
@@ -183,7 +183,7 @@ def build_azure_app_configuration_check_key_values_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/kv"
 
@@ -232,7 +232,7 @@ def build_azure_app_configuration_get_key_value_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -281,7 +281,7 @@ def build_azure_app_configuration_put_key_value_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -325,7 +325,7 @@ def build_azure_app_configuration_delete_key_value_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -370,7 +370,7 @@ def build_azure_app_configuration_check_key_value_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/kv/{key}"
     path_format_arguments = {
@@ -415,7 +415,7 @@ def build_azure_app_configuration_get_snapshots_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshotset+json, application/problem+json")
 
     # Construct URL
@@ -446,7 +446,7 @@ def build_azure_app_configuration_check_snapshots_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/snapshots"
 
@@ -474,7 +474,7 @@ def build_azure_app_configuration_get_snapshot_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshot+json, application/problem+json")
 
     # Construct URL
@@ -510,7 +510,7 @@ def build_azure_app_configuration_get_operation_details_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -533,7 +533,7 @@ def build_azure_app_configuration_create_snapshot_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshot+json, application/problem+json")
 
     # Construct URL
@@ -569,7 +569,7 @@ def build_azure_app_configuration_update_snapshot_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.snapshot+json, application/problem+json")
 
     # Construct URL
@@ -610,7 +610,7 @@ def build_azure_app_configuration_check_snapshot_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/snapshots/{name}"
     path_format_arguments = {
@@ -647,7 +647,7 @@ def build_azure_app_configuration_get_labels_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.labelset+json, application/problem+json")
 
     # Construct URL
@@ -684,7 +684,7 @@ def build_azure_app_configuration_check_labels_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/labels"
 
@@ -718,7 +718,7 @@ def build_azure_app_configuration_put_lock_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -760,7 +760,7 @@ def build_azure_app_configuration_delete_lock_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kv+json, application/problem+json")
 
     # Construct URL
@@ -804,7 +804,7 @@ def build_azure_app_configuration_get_revisions_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/vnd.microsoft.appconfig.kvset+json, application/problem+json")
 
     # Construct URL
@@ -847,7 +847,7 @@ def build_azure_app_configuration_check_revisions_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/revisions"
 
@@ -1353,7 +1353,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     @distributed_trace
     @api_version_validation(
         params_added_on={"2024-09-01": ["tags"]},
-        api_versions_list=["2023-11-01", "2024-09-01"],
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01"],
     )
     def get_key_value(
         self,
@@ -1741,7 +1741,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     @distributed_trace
     @api_version_validation(
         params_added_on={"2024-09-01": ["tags"]},
-        api_versions_list=["2023-11-01", "2024-09-01"],
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01"],
     )
     def check_key_value(
         self,

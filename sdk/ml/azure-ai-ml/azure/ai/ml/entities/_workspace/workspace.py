@@ -8,16 +8,17 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import NetworkAcls as RestNetworkAcls
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import NetworkAcls as RestNetworkAcls
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.arm_ml_service.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml._utils._workspace_utils import get_removed_workspace_property, set_removed_workspace_property
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
@@ -357,9 +358,13 @@ class Workspace(Resource):
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
+        # allowRoleAssignmentOnRG was @removed at api-version 2025-12-01, so it is not declared on the
+        # shared arm_ml_service Workspace model; read it from the flattened wire envelope instead.
         allow_roleassignment_on_rg = None
         if hasattr(rest_obj, "allow_role_assignment_on_rg"):
             allow_roleassignment_on_rg = rest_obj.allow_role_assignment_on_rg
+        else:
+            allow_roleassignment_on_rg = get_removed_workspace_property(rest_obj, "allowRoleAssignmentOnRG")
         system_datastores_auth_mode = None
         if hasattr(rest_obj, "system_datastores_auth_mode"):
             system_datastores_auth_mode = rest_obj.system_datastores_auth_mode
@@ -402,6 +407,14 @@ class Workspace(Resource):
         if hasattr(rest_obj, "network_acls"):
             if rest_obj.network_acls and isinstance(rest_obj.network_acls, RestNetworkAcls):
                 network_acls = NetworkAcls._from_rest_object(rest_obj.network_acls)  # pylint: disable=protected-access
+        else:
+            # networkAcls was @removed at api-version 2025-12-01, so it is not declared on the shared
+            # arm_ml_service Workspace model; read it from the flattened wire envelope instead.
+            rest_network_acls = get_removed_workspace_property(rest_obj, "networkAcls")
+            if rest_network_acls:
+                network_acls = NetworkAcls._from_rest_object(  # pylint: disable=protected-access
+                    RestNetworkAcls(rest_network_acls)
+                )
 
         return cls(
             name=rest_obj.name,
@@ -451,7 +464,7 @@ class Workspace(Resource):
         if self.serverless_compute:
             serverless_compute_settings = self.serverless_compute._to_rest_object()  # pylint: disable=protected-access
 
-        return RestWorkspace(
+        rest_workspace = RestWorkspace(
             name=self.name,
             identity=(
                 self.identity._to_workspace_rest_object() if self.identity else None  # pylint: disable=protected-access
@@ -479,10 +492,14 @@ class Workspace(Resource):
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
-            allow_role_assignment_on_rg=self.allow_roleassignment_on_rg,  # diff due to swagger restclient casing diff
             hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )
+        # allowRoleAssignmentOnRG was @removed at api-version 2025-12-01 and is not a constructor field
+        # on the shared arm_ml_service Workspace model; set it on the flattened wire envelope instead.
+        # diff due to swagger restclient casing diff
+        set_removed_workspace_property(rest_workspace, "allowRoleAssignmentOnRG", self.allow_roleassignment_on_rg)
+        return rest_workspace
 
     # Helper for sub-class polymorphism. Needs to be overwritten by child classes
     # If they don't want to redefine things like _to_dict.

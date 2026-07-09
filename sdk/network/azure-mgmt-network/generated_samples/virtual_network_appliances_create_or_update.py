@@ -37,7 +37,7 @@ def main():
         parameters={
             "location": "eastus",
             "properties": {
-                "bandwidthInGbps": "100",
+                "bandwidthInGbps": 100,
                 "subnet": {
                     "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/rg1-vnet/subnets/default"
                 },
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VirtualNetworkAppliances_CreateOrUpdate.json
+# x-ms-original-file: 2025-07-01/VirtualNetworkAppliances_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

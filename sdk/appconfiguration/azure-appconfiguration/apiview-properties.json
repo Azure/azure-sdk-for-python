@@ -54,5 +54,5 @@
         "azure.appconfiguration.AzureAppConfigurationClient.check_revisions": "AzureAppConfiguration.checkRevisions",
         "azure.appconfiguration.aio.AzureAppConfigurationClient.check_revisions": "AzureAppConfiguration.checkRevisions"
     },
-    "CrossLanguageVersion": "29f9953822ad"
+    "CrossLanguageVersion": "a2a80f4f2e80"
 }

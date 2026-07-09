@@ -93,6 +93,8 @@ class KeyValue(_Model):
     :vartype last_modified: ~datetime.datetime
     :ivar tags: The tags of the key-value.
     :vartype tags: dict[str, str]
+    :ivar description: The description of the key-value.
+    :vartype description: str
     :ivar locked: Indicates whether the key-value is locked.
     :vartype locked: bool
     :ivar etag: A value representing the current state of the resource.
@@ -113,6 +115,8 @@ class KeyValue(_Model):
     """A date representing the last time the key-value was modified."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The tags of the key-value."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the key-value."""
     locked: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the key-value is locked."""
     etag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -127,6 +131,7 @@ class KeyValue(_Model):
         value: Optional[str] = None,
         last_modified: Optional[datetime.datetime] = None,
         tags: Optional[dict[str, str]] = None,
+        description: Optional[str] = None,
         locked: Optional[bool] = None,
         etag: Optional[str] = None,
     ) -> None: ...
@@ -283,6 +288,8 @@ class Snapshot(_Model):
     :vartype items_count: int
     :ivar tags: The tags of the snapshot.
     :vartype tags: dict[str, str]
+    :ivar description: The description of the snapshot.
+    :vartype description: str
     :ivar etag: A value representing the current state of the snapshot.
     :vartype etag: str
     """
@@ -315,6 +322,8 @@ class Snapshot(_Model):
     """The amount of key-values in the snapshot."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The tags of the snapshot."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the snapshot."""
     etag: Optional[str] = rest_field(visibility=["read"])
     """A value representing the current state of the snapshot."""
 
@@ -326,6 +335,7 @@ class Snapshot(_Model):
         composition_type: Optional[Union[str, "_models.SnapshotComposition"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[dict[str, str]] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload

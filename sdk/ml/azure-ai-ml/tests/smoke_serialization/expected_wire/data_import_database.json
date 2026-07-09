@@ -1,0 +1,17 @@
+{
+  "assetName": "smoke-data-import",
+  "dataType": "uri_folder",
+  "dataUri": "azureml://datastores/workspaceblobstore/paths/smoke/imported/",
+  "description": "smoke data import",
+  "isAnonymous": false,
+  "isArchived": false,
+  "properties": {},
+  "source": {
+    "connection": "azureml:my_connection",
+    "query": "SELECT * FROM my_table",
+    "sourceType": "database"
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}
