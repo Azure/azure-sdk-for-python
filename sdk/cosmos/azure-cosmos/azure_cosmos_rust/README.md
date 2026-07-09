@@ -9,8 +9,8 @@ README at `../README.md` is the one you want.
 
 ## What this crate is for
 
-The Python SDK needs to call into a Rust HTTP driver for point operations
-and client lifecycle. Python can't call Rust functions directly — the two
+The Python SDK needs to call into a Rust HTTP driver for item operations,
+query/feed helpers, and client lifecycle. Python can't call Rust functions directly — the two
 languages don't share a calling convention. So we have a small
 "glue" crate, this one, that does the translation. When it's compiled,
 you get one file: `_rust.pyd` on Windows, `_rust.so` on Linux/macOS.
@@ -21,7 +21,7 @@ The binding is split across modules:
 
 - `src/lib.rs` — module registration (`#[pymodule]` export list)
 - `src/runtime.rs` — process runtime + driver cache + `init_client`/`close_client`
-- `src/documents.rs` — point-op entry points (sync + async)
+- `src/documents.rs` — operation entry points (sync + async)
 - `src/wire.rs` — request/response translation, header mapping, tuple shaping
 - `src/credential.rs` — Python token-credential adapter for driver auth
 
@@ -40,8 +40,10 @@ Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:
 
 - lifecycle: `init_client`, `close_client`
-- point ops (sync): `create_item`, `upsert_item`, `replace_item`, `delete_item`, `read_item`, `patch_item`
-- point ops (async): `*_item_async` for the same six operations
+- item ops (sync): `create_item`, `upsert_item`, `replace_item`, `delete_item`, `read_item`, `patch_item`
+- item ops (async): `*_item_async` for the same six operations
+- feed/query ops (sync): `query_items`, `read_feed_ranges`
+- feed/query ops (async): `query_items_async`, `read_feed_ranges_async`
 - diagnostics/provenance: `operation_count`, `DriverTransportError`, `__version__`
 
 `init_client` requires **exactly one** auth input: either `master_key` or
@@ -130,7 +132,7 @@ azure_cosmos_rust/
 ├── src/
 │   ├── lib.rs          # module export registration
 │   ├── runtime.rs      # runtime/cache/client lifecycle
-│   ├── documents.rs    # six point ops, sync + async
+│   ├── documents.rs    # item + query/feed ops, sync + async
 │   ├── wire.rs         # prepared request parsing + response tuple shaping
 │   └── credential.rs   # Python token credential adapter
 └── README.md           # this file

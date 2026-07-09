@@ -29,7 +29,18 @@ pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
 # the azure-sdk-for-rust repo. Both repos are expected to live side-by-side
 # under the same parent directory (e.g. ~/source/repos/). If you keep them
 # elsewhere, edit this path or change it to a `git = ...` dependency.
-azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver" }
+#
+# The `__internal_native_query_plan` feature turns on the driver's local
+# query-plan builder. A query plan is the recipe for how to run a query
+# (which partitions to hit, how to merge results, how to do ORDER BY and
+# aggregates). With it on, the driver builds that plan in-process and only
+# calls the Gateway if the local builder is unavailable; with it off, every
+# query fetches the plan from the Gateway over the network. This is what lets
+# query_items run on the rust engine without that extra round-trip.
+# read_feed_ranges does not use it (listing key-space slices needs no query
+# plan). The `__internal_` prefix marks it as an unstable, not-yet-public
+# driver feature.
+azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver", features = ["__internal_native_query_plan"] }
 
 # Tokio runtime. Lives here, not in the driver, because the binding is
 # what bridges Python's sync call into Rust's async world.
@@ -61,5 +72,9 @@ url = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 
-# Surfaced at the binding boundary when forwarding driver errors.
-azure_core = { workspace = true }
+# Surfaced at the binding boundary when forwarding driver errors. Pin it to the
+# driver's own azure_core copy: the binding and the driver share credential,
+# header, and error types, and Rust treats the same crate pulled from two
+# different sources as two different types. Same source means one type, so the
+# credential and headers this binding builds can be passed into the driver.
+azure_core = { path = "../../../../../azure-sdk-for-rust/sdk/core/azure_core" }

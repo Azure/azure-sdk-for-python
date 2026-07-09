@@ -30,7 +30,13 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.cosmos._backend.base import BackendResponse, PreparedClientConfig, PreparedRequest
+from azure.cosmos._backend.base import (
+    BackendResponse,
+    OP_QUERY_ITEMS,
+    OP_READ_FEED_RANGES,
+    PreparedClientConfig,
+    PreparedRequest,
+)
 from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._driver_registry import (
@@ -276,6 +282,65 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
     assert resp.body == b'{"id":"x"}'
 
 
+# The next two tests cover the newly-migrated query_items and read_feed_ranges on
+# the sync Rust backend: each proves a prepared request is handed to the matching
+# binding entry point and the binding's reply is returned unchanged. Without them a
+# wiring mistake -- a wrong op-to-binding name, or a dropped reply -- could send
+# these operations nowhere and no test would catch it.
+def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
+    """A query page prepared request routes to the binding's query_items entry point."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.query_items.return_value = (
+        200,
+        0,
+        {"x-ms-continuation": "ct-1"},
+        b'{"Documents":[{"id":"x"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_QUERY_ITEMS,
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"query":"SELECT * FROM c"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.query_items.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert resp.body == b'{"Documents":[{"id":"x"}]}'
+
+
+def test_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
+    """A read_feed_ranges prepared request routes to binding read_feed_ranges."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_feed_ranges.return_value = (
+        200,
+        0,
+        {},
+        b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_READ_FEED_RANGES,
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"forceRefresh":true}',
+        partition_key_header="[]",
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.read_feed_ranges.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert b"PartitionKeyRanges" in resp.body
+
+
 def test_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
     """The backend accepts diagnostics returned by the binding."""
     fake_module = MagicMock()
@@ -463,6 +528,65 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
         fake_module.create_item_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 201
         assert resp.body == b'{"id":"x"}'
+    asyncio.run(_run())
+
+
+# Async twins of the two dispatch tests above: the same check for query_items_async
+# and read_feed_ranges_async, so the async path can't silently diverge from the sync one.
+def test_async_rust_backend_dispatches_query_items_to_binding(monkeypatch):
+    """Async query prepared requests route to the binding's query_items_async entry point."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.query_items_async = AsyncMock(
+        return_value=(200, 0, {"x-ms-continuation": "ct-1"}, b'{"Documents":[{"id":"x"}]}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_QUERY_ITEMS,
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"query":"SELECT * FROM c"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.query_items_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert resp.body == b'{"Documents":[{"id":"x"}]}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
+    """Async read_feed_ranges prepared requests route to read_feed_ranges_async."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_feed_ranges_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_READ_FEED_RANGES,
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"forceRefresh":false}',
+            partition_key_header="[]",
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.read_feed_ranges_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert b"PartitionKeyRanges" in resp.body
+
     asyncio.run(_run())
 
 
@@ -1928,6 +2052,195 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
         assert fake_module.create_item_async.called, "async Rust path should have been taken"
 
     asyncio.run(_run())
+
+
+# The next tests cover read_feed_ranges end to end from the container method (sync
+# and async): it uses the Rust backend when the client has one and the caller passed
+# no extra kwargs; it falls back to the legacy routing-map path when any kwarg is
+# present; and a malformed Rust payload is rejected loudly instead of returning empty
+# data. Without them, read_feed_ranges could quietly take the wrong path, or hand back
+# silently-wrong ranges, and a customer's later calls (e.g. get_latest_session_token)
+# would break with no failing test to warn us.
+def test_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
+    """read_feed_ranges uses Rust backend when available and no legacy kwargs are passed."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.read_feed_ranges.return_value = (
+        200,
+        0,
+        {},
+        b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container.client_connection._routing_map_provider = MagicMock()
+
+    feed_ranges = list(container.read_feed_ranges(force_refresh=True))
+    assert len(feed_ranges) == 1
+    assert fake_module.read_feed_ranges.called
+    assert not container.client_connection.refresh_routing_map_provider.called
+    assert not container.client_connection._routing_map_provider.get_overlapping_ranges.called
+
+    prepared = fake_module.read_feed_ranges.call_args.args[1]
+    assert prepared.op == OP_READ_FEED_RANGES
+    assert prepared.container_link == "dbs/test/colls/test"
+    assert prepared.body_bytes == b'{"forceRefresh":true}'
+
+
+def test_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monkeypatch):
+    """Any extra kwargs keep read_feed_ranges on legacy routing-map provider."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.read_feed_ranges.return_value = (
+        200,
+        0,
+        {},
+        b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container.client_connection._routing_map_provider = MagicMock()
+    container.client_connection._routing_map_provider.get_overlapping_ranges.return_value = [
+        {"id": "0", "minInclusive": "", "maxExclusive": "FF"}
+    ]
+    container._get_properties_with_options = MagicMock(return_value={})
+    setattr(
+        container,
+        "_ContainerProxy__get_client_container_caches",
+        lambda: {container.container_link: {"_rid": "rid-1"}},
+    )
+
+    feed_ranges = list(container.read_feed_ranges(force_refresh=True, excluded_locations=["West US"]))
+    assert len(feed_ranges) == 1
+    assert not fake_module.read_feed_ranges.called
+    container.client_connection.refresh_routing_map_provider.assert_called_once()
+    container.client_connection._routing_map_provider.get_overlapping_ranges.assert_called_once()
+
+
+def test_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges(monkeypatch):
+    """Malformed Rust payload is rejected loudly instead of returning silent empty data."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.read_feed_ranges.return_value = (200, 0, {}, b'{"unexpected":[]}')
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    with pytest.raises(ValueError, match="PartitionKeyRanges"):
+        list(container.read_feed_ranges())
+
+
+def test_async_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
+    """Async read_feed_ranges uses Rust backend when available and kwargs are empty."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.read_feed_ranges_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    mock_cc._routing_map_provider = MagicMock()
+    mock_cc.refresh_routing_map_provider = AsyncMock()
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+
+    async def _run():
+        return [feed_range async for feed_range in container.read_feed_ranges(force_refresh=True)]
+
+    feed_ranges = asyncio.run(_run())
+    assert len(feed_ranges) == 1
+    assert fake_module.read_feed_ranges_async.await_count == 1
+    mock_cc.refresh_routing_map_provider.assert_not_awaited()
+    assert not mock_cc._routing_map_provider.get_overlapping_ranges.called
+
+    prepared = fake_module.read_feed_ranges_async.await_args.args[1]
+    assert prepared.op == OP_READ_FEED_RANGES
+    assert prepared.container_link == "dbs/test/colls/test"
+    assert prepared.body_bytes == b'{"forceRefresh":true}'
+
+
+def test_async_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monkeypatch):
+    """Async read_feed_ranges keeps legacy path when caller passes extra kwargs."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.read_feed_ranges_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    mock_cc._routing_map_provider = MagicMock()
+    mock_cc._routing_map_provider.get_overlapping_ranges = AsyncMock(
+        return_value=[{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
+    )
+    mock_cc.refresh_routing_map_provider = AsyncMock()
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+    container._get_properties_with_options = AsyncMock(return_value={})
+    setattr(
+        container,
+        "_ContainerProxy__get_client_container_caches",
+        lambda: {container.container_link: {"_rid": "rid-1"}},
+    )
+
+    async def _run():
+        return [
+            feed_range
+            async for feed_range in container.read_feed_ranges(
+                force_refresh=True, excluded_locations=["West US"]
+            )
+        ]
+
+    feed_ranges = asyncio.run(_run())
+    assert len(feed_ranges) == 1
+    assert fake_module.read_feed_ranges_async.await_count == 0
+    mock_cc.refresh_routing_map_provider.assert_awaited_once()
+    mock_cc._routing_map_provider.get_overlapping_ranges.assert_awaited_once()
+
+
+def test_async_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges(monkeypatch):
+    """Async malformed Rust payload is rejected loudly."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.read_feed_ranges_async = AsyncMock(return_value=(200, 0, {}, b'{"unexpected":[]}'))
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+
+    async def _run():
+        return [feed_range async for feed_range in container.read_feed_ranges()]
+
+    with pytest.raises(ValueError, match="PartitionKeyRanges"):
+        asyncio.run(_run())
 
 
 # ---------------------------------------------------------------------------

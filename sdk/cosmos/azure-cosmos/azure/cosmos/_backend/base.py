@@ -50,6 +50,8 @@ OP_READ_ITEM = "read_item"
 OP_UPSERT_ITEM = "upsert_item"
 OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
+OP_QUERY_ITEMS = "query_items"
+OP_READ_FEED_RANGES = "read_feed_ranges"
 
 
 # ``PreparedRequest.op`` -> binding function name. Shared by the sync and
@@ -61,6 +63,8 @@ OP_TO_BINDING_METHOD = {
     OP_DELETE_ITEM: "delete_item",
     OP_READ_ITEM: "read_item",
     OP_PATCH_ITEM: "patch_item",
+    OP_QUERY_ITEMS: "query_items",
+    OP_READ_FEED_RANGES: "read_feed_ranges",
 }
 
 

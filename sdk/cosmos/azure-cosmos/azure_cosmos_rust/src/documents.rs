@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The binding's front counter for the six single-item operations a customer
-//! does most: create / upsert / replace / delete / read / patch -- each in a
-//! synchronous and an async version (12 functions in all).
+//! The binding's front counter for the eight migrated operations:
+//! create / upsert / replace / delete / read / patch / query_items /
+//! read_feed_ranges -- each in a synchronous and an async version (16 functions
+//! in all).
 //!
 //! Where this fits in the layering (same direction as a normal call):
 //!
@@ -59,7 +60,9 @@ use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
     extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id, extract_required_item_id,
-    run_item_operation, run_item_operation_async, OpModifiers,
+    extract_read_feed_ranges_force_refresh, run_item_operation, run_item_operation_async,
+    run_query_operation, run_query_operation_async, run_read_feed_ranges_operation,
+    run_read_feed_ranges_operation_async, OpModifiers,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
@@ -72,6 +75,8 @@ const PATCH_ITEM_ID_REQUIRED: &str = "patch_item: PreparedRequest.item_id is req
 type CommonInputs = (String, String, OpModifiers);
 type ItemInputs = (String, String, OpModifiers, String);
 type ItemBodyInputs = (String, String, OpModifiers, String, Vec<u8>);
+type QueryInputs = (String, String, OpModifiers, Vec<u8>);
+type ReadFeedRangesInputs = (String, bool);
 
 /// Pull the common fields (container link, partition-key header, per-request
 /// modifiers) plus a *required* item id off the PreparedRequest. Used by the
@@ -122,6 +127,21 @@ fn extract_item_body_inputs(
         item_id,
         body_bytes,
     ))
+}
+
+/// Common fields plus a required query body. Used by query_items (sync/async).
+fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
+    let (container_link, partition_key_header, modifiers): CommonInputs =
+        extract_common_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    Ok((container_link, partition_key_header, modifiers, body_bytes))
+}
+
+/// Fields for `read_feed_ranges` (container link + force-refresh flag).
+fn extract_read_feed_ranges_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadFeedRangesInputs> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let force_refresh = extract_read_feed_ranges_force_refresh(prepared)?;
+    Ok((container_link, force_refresh))
 }
 
 /// create_item: write-with-body; the id is read from the body. Maps to
@@ -288,6 +308,50 @@ pub(crate) fn patch_item<'py>(
         "patch_item",
         true,
         move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
+    )
+}
+
+/// query_items: feed operation where `PreparedRequest.partition_key_header`
+/// chooses the query scope. A non-empty header targets one logical partition;
+/// `[]` targets the full container. The query JSON is read from
+/// `PreparedRequest.body_bytes`. Without it, one page of query_items could not
+/// run on the rust driver, and every query would stay on the core-python HTTP
+/// path.
+#[pyfunction]
+pub(crate) fn query_items<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (container_link, partition_key_header, modifiers, body_bytes) = extract_query_inputs(prepared)?;
+    run_query_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        body_bytes,
+        "query_items",
+    )
+}
+
+/// read_feed_ranges: enumerate the container's partition-key ranges (routing map)
+/// and return them in the service-style `{"PartitionKeyRanges":[...]}` payload.
+/// Without it, read_feed_ranges could not run on the rust driver and would stay
+/// on the core-python path.
+#[pyfunction]
+pub(crate) fn read_feed_ranges<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
+    run_read_feed_ranges_operation(
+        py,
+        handle,
+        &container_link,
+        force_refresh,
+        "read_feed_ranges",
     )
 }
 
@@ -471,5 +535,42 @@ pub(crate) fn patch_item_async<'py>(
         "patch_item",
         true,
         move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
+    )
+}
+
+/// Async twin of `query_items`: identical inputs/driver work; returns a Python
+/// awaitable instead of a ready tuple.
+#[pyfunction]
+pub(crate) fn query_items_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers, body_bytes) = extract_query_inputs(prepared)?;
+    run_query_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        body_bytes,
+        "query_items",
+    )
+}
+
+/// Async twin of `read_feed_ranges`.
+#[pyfunction]
+pub(crate) fn read_feed_ranges_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
+    run_read_feed_ranges_operation_async(
+        py,
+        handle,
+        &container_link,
+        force_refresh,
+        "read_feed_ranges",
     )
 }

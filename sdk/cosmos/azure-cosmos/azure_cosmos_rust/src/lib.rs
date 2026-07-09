@@ -93,6 +93,22 @@
 //!         the supported subset here; a `filter_predicate` or an `etag` /
 //!         `match_condition` precondition takes the legacy path instead.
 //!
+//!   * `query_items(handle, prepared) -> (status, sub_status,
+//!                                        headers, body, diagnostics)`
+//!         Executes one query page. The query JSON is in
+//!         `PreparedRequest.body_bytes`; `PreparedRequest.partition_key_header`
+//!         selects the scope (`["pk"]` for one logical partition, `[]` for
+//!         cross-partition/full-container). Returns a feed envelope body
+//!         (`{"Documents":[...]}`) so the Python query iterator can consume it
+//!         with the same shape as the legacy path.
+//!
+//!   * `read_feed_ranges(handle, prepared) -> (status, sub_status,
+//!                                             headers, body, diagnostics)`
+//!         Enumerates the container's partition-key ranges (routing map view).
+//!         The request body may carry `{"forceRefresh": true}` to force a cache
+//!         refresh. Returns body shape
+//!         `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"},...]}`.
+//!
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
 //! is lifted to the typed `OperationOptions::content_response_on_write`
@@ -129,6 +145,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::delete_item);
     add_pyfn!(m, documents::read_item);
     add_pyfn!(m, documents::patch_item);
+    add_pyfn!(m, documents::query_items);
+    add_pyfn!(m, documents::read_feed_ranges);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
     add_pyfn!(m, documents::create_item_async);
@@ -137,6 +155,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::delete_item_async);
     add_pyfn!(m, documents::read_item_async);
     add_pyfn!(m, documents::patch_item_async);
+    add_pyfn!(m, documents::query_items_async);
+    add_pyfn!(m, documents::read_feed_ranges_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.

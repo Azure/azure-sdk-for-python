@@ -49,6 +49,10 @@ from ._helpers._item_dispatch import (
     pick_backend,
 )
 from ._helpers.item_helper import ItemHelper
+from ._feed_ranges_rust_routing import (
+    can_use_rust_backend_for_read_feed_ranges,
+    try_read_feed_ranges_with_rust_backend,
+)
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -1124,6 +1128,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
+        # This method does not choose between core-python and rust; it just hands the
+        # query to the client connection. The rust choice for queries is made one layer
+        # down, per page, inside the connection's paging loop.
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query,
@@ -2090,14 +2097,43 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
-        if force_refresh is True:
-            self.client_connection.refresh_routing_map_provider()
-
-        # Ensure container properties cache is populated so we can get the container RID.
-        self._get_properties_with_options()
-        feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
+        # Choose the engine once, before paging starts. `backend` is the rust engine
+        # object this client uses, or None for core-python. `can_use_rust` is true only
+        # when this client uses rust and the caller passed no extra kwargs. It is
+        # temporary: it narrows as each kwarg is mirrored on rust and is removed once the
+        # surface is fully mirrored.
+        backend = getattr(self.client_connection, "_backend", None)
+        can_use_rust = can_use_rust_backend_for_read_feed_ranges(backend=backend, kwargs=kwargs)
+        # read_feed_ranges returns a finished list, not a stream, so run the work once and
+        # return the same list on repeat get_next calls.
+        cached_feed_ranges: Optional[list[dict[str, Any]]] = None
 
         def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
+            nonlocal cached_feed_ranges
+            if cached_feed_ranges is not None:
+                return cached_feed_ranges
+
+            # Rust path. Ask the rust engine for the container's key-space slices, which
+            # it reads from the driver's cached partition map. It returns the same opaque
+            # dicts as the legacy path below, so the caller sees no difference.
+            if can_use_rust:
+                rust_feed_ranges = try_read_feed_ranges_with_rust_backend(
+                    client_connection=self.client_connection,
+                    container_link=self.container_link,
+                    force_refresh=force_refresh,
+                )
+                if rust_feed_ranges is not None:
+                    cached_feed_ranges = rust_feed_ranges
+                    return rust_feed_ranges
+
+            # Legacy path (core-python). Permanent, kept for as long as core-python is a
+            # shipped backend. It reads the slices from Python's own in-memory routing map.
+            if force_refresh is True:
+                self.client_connection.refresh_routing_map_provider()
+
+            # Ensure container properties cache is populated so we can get the container RID.
+            self._get_properties_with_options()
+            feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
             partition_key_ranges = \
                 self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
                     self.container_link,
@@ -2108,6 +2144,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
                     for partitionKeyRange in partition_key_ranges]
 
+            cached_feed_ranges = feed_ranges
             return feed_ranges
 
         def extract_data(feed_ranges_response: list[dict[str, Any]]):

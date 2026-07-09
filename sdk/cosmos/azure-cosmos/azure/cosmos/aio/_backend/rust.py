@@ -281,7 +281,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             pass
 
     async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Send one point operation (read/create/upsert/replace/delete/patch) to the rust driver."""
+        """Send one prepared operation (point op, query page, or feed-range enumeration)."""
         if prepared is None:
             return None
         if _rust_module is None:

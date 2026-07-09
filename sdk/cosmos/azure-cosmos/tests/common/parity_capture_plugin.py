@@ -108,7 +108,9 @@ For an exception::
 from __future__ import annotations
 
 import json
+import inspect
 import os
+import re
 import secrets
 import sys
 import threading
@@ -171,6 +173,8 @@ SENTINEL_TOKEN: Optional[str] = None
 SENTINEL_PREFIX = "===PARITY-CAPTURE-"
 SENTINEL_SUFFIX_START = "-START==="
 SENTINEL_SUFFIX_END = "-END==="
+
+_HEX_ADDR_RE = re.compile(r" at 0x[0-9a-fA-F]+")
 
 
 def _ensure_sentinel_token() -> str:
@@ -292,6 +296,36 @@ def _aio_patch_item_target() -> Tuple[Any, str, str]:
 _register_op("patch_item", sync=_sync_patch_item_target, aio=_aio_patch_item_target)
 
 
+# query_items -----------------------------------------------------------------
+
+def _sync_query_items_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "query_items"
+
+
+def _aio_query_items_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "query_items"
+
+
+_register_op("query_items", sync=_sync_query_items_target, aio=_aio_query_items_target)
+
+
+# read_feed_ranges -------------------------------------------------------------
+
+def _sync_read_feed_ranges_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_feed_ranges"
+
+
+def _aio_read_feed_ranges_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_feed_ranges"
+
+
+_register_op("read_feed_ranges", sync=_sync_read_feed_ranges_target, aio=_aio_read_feed_ranges_target)
+
+
 # ---------------------------------------------------------------------------
 # Capture state (per pytest session)
 # ---------------------------------------------------------------------------
@@ -380,7 +414,10 @@ def _coerce_json_safe(value: Any) -> Any:
             return value.decode("utf-8")
         except UnicodeDecodeError:
             return value.decode("utf-8", errors="replace")
-    return repr(value)
+    # Object reprs often include memory addresses (``... at 0x...``), which
+    # are process-local noise and create false parity diffs for iterator/pager
+    # return values. Drop only the hex-address suffix, keep the type context.
+    return _HEX_ADDR_RE.sub("", repr(value))
 
 
 def _serialise_exception(exc: BaseException) -> Dict[str, Any]:
@@ -500,6 +537,101 @@ def _build_sync_wrapper(op_name: str, surface: str,
         headers_id_before = _snapshot_headers_identity(self_container)
         try:
             result = original(self_container, *args, **kwargs)
+            # ``read_feed_ranges`` is lazy on both sync and aio surfaces:
+            # the method returns a pager, and the HTTP call happens when
+            # the pager is drained. Capture at drain-time so request/headers
+            # reflect the actual operation, not the pre-call account probe.
+            if op_name == "read_feed_ranges" and hasattr(result, "__aiter__"):
+                async def _captured_async_iterable():
+                    try:
+                        materialized = [item async for item in result]
+                    except BaseException as iter_exc:  # pylint: disable=broad-except
+                        headers_id_after = _snapshot_headers_identity(self_container)
+                        if headers_id_after != headers_id_before and headers_id_after != 0:
+                            response_headers = _snapshot_headers(self_container)
+                        else:
+                            response_headers = {}
+                        payload = {
+                            "nodeid": nodeid,
+                            "backend": backend,
+                            "surface": surface,
+                            "op": op_name,
+                            "ordinal": ordinal,
+                            "plugin_version": PLUGIN_VERSION,
+                            "status": "raised",
+                            "test_doc": test_doc,
+                            "request": request_view,
+                            "return_value": None,
+                            "response_headers": response_headers,
+                            "exception": _serialise_exception(iter_exc),
+                        }
+                        _emit_block(payload)
+                        raise
+                    payload = {
+                        "nodeid": nodeid,
+                        "backend": backend,
+                        "surface": surface,
+                        "op": op_name,
+                        "ordinal": ordinal,
+                        "plugin_version": PLUGIN_VERSION,
+                        "status": "ok",
+                        "test_doc": test_doc,
+                        "request": request_view,
+                        "return_value": _coerce_json_safe(materialized),
+                        "response_headers": _snapshot_headers(self_container),
+                        "exception": None,
+                    }
+                    _emit_block(payload)
+                    for item in materialized:
+                        yield item
+
+                return _captured_async_iterable()
+
+            if op_name == "read_feed_ranges" and hasattr(result, "__iter__"):
+                def _captured_sync_iterable():
+                    try:
+                        materialized = list(result)
+                    except BaseException as iter_exc:  # pylint: disable=broad-except
+                        headers_id_after = _snapshot_headers_identity(self_container)
+                        if headers_id_after != headers_id_before and headers_id_after != 0:
+                            response_headers = _snapshot_headers(self_container)
+                        else:
+                            response_headers = {}
+                        payload = {
+                            "nodeid": nodeid,
+                            "backend": backend,
+                            "surface": surface,
+                            "op": op_name,
+                            "ordinal": ordinal,
+                            "plugin_version": PLUGIN_VERSION,
+                            "status": "raised",
+                            "test_doc": test_doc,
+                            "request": request_view,
+                            "return_value": None,
+                            "response_headers": response_headers,
+                            "exception": _serialise_exception(iter_exc),
+                        }
+                        _emit_block(payload)
+                        raise
+                    payload = {
+                        "nodeid": nodeid,
+                        "backend": backend,
+                        "surface": surface,
+                        "op": op_name,
+                        "ordinal": ordinal,
+                        "plugin_version": PLUGIN_VERSION,
+                        "status": "ok",
+                        "test_doc": test_doc,
+                        "request": request_view,
+                        "return_value": _coerce_json_safe(materialized),
+                        "response_headers": _snapshot_headers(self_container),
+                        "exception": None,
+                    }
+                    _emit_block(payload)
+                    return iter(materialized)
+
+                return _captured_sync_iterable()
+
             payload = {
                 "nodeid": nodeid,
                 "backend": backend,
@@ -633,7 +765,7 @@ def _install_patches(op_name: str) -> None:
                 .format(surface, op_name, import_err)
             )
             continue
-        if surface == "aio":
+        if surface == "aio" and inspect.iscoroutinefunction(original):
             wrapper = _build_aio_wrapper(op_name, surface, original)
         else:
             wrapper = _build_sync_wrapper(op_name, surface, original)

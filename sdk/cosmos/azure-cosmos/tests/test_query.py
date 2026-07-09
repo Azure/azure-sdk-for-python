@@ -22,7 +22,11 @@ from azure.cosmos.partition_key import PartitionKey
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADQuery
 class TestQuery(unittest.TestCase):
-    """Test to ensure escaping of non-ascii characters from partition key"""
+    """Live query tests: exercise Container.query_items across the query features customers rely
+    on -- partition-scoped and cross-partition queries, paging with continuation tokens, DISTINCT /
+    OFFSET-LIMIT / VALUE aggregates, query and index metrics, positional args, None parameters, and
+    retry behavior. Without these, a change to the query path could silently return wrong results,
+    skip or duplicate pages, or break a customer's error/retry handling."""
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
@@ -586,6 +590,10 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def test_full_pk_continuation_emits_legacy_by_default(self):
+        # A full-partition-key query must still hand back the legacy (opaque) continuation
+        # token, not the new feed-range token: _decode_token returns None only for the legacy
+        # form. Without this, changing the default token format could break customers who
+        # stored an old token and replay it later.
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
@@ -604,6 +612,9 @@ class TestQuery(unittest.TestCase):
 
 
     def test_full_pk_legacy_replay_resumes_same_page(self):
+        # Replaying that legacy continuation token must resume on the same next page. Without
+        # this, a regression in legacy-token replay would drop or repeat results for customers
+        # who page through query results.
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})

@@ -47,7 +47,7 @@ use azure_data_cosmos_driver::{
     driver::CosmosDriver,
     error::CosmosError,
     models::{
-        ActivityId, CosmosOperation, CosmosResponse, ItemReference, PartitionKey,
+        ActivityId, CosmosOperation, CosmosResponse, FeedRange, ItemReference, PartitionKey,
         PartitionKeyValue, ResponseBody, SessionToken,
     },
     options::{
@@ -55,7 +55,7 @@ use azure_data_cosmos_driver::{
         OperationOptionsBuilder,
     },
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::runtime::{drivers, require_runtime_context};
 
@@ -307,6 +307,171 @@ pub(crate) fn run_item_operation_async<'py>(
     })
 }
 
+// ---------------------------------------------------------------------------
+// Query page execution
+//
+// This is the engine that lets one page of query_items (and whole-container
+// read_all_items) be fetched by the Rust driver instead of by the Python HTTP
+// path. The rest of wire.rs handles single-document operations (create / read /
+// replace / delete / patch by id); the code below is the only part that can run
+// a query. The flow is: the Python wrapper hands us a PreparedRequest, we work
+// out what to search, ask the driver for one page, and turn the driver's reply
+// back into the exact shape the Python query parser expects. Without this code
+// the query_items / read_all_items fast paths in the Python client would have
+// nothing to call, and every query page would stay on the Python HTTP path.
+// ---------------------------------------------------------------------------
+
+/// The scope of the query, worked out from `PreparedRequest.partition_key_header`.
+/// This is how we know whether the customer asked for one partition or the whole
+/// container.
+enum QueryTarget {
+    /// Search one logical partition (the customer passed a `partition_key`).
+    Partition(PartitionKey),
+    /// Search the full container (the customer used cross-partition query, or
+    /// this is a whole-container `read_all_items`).
+    CrossPartition,
+}
+
+/// Entry point the binding calls to run one query page and wait for it. Finds the
+/// driver for this client, splits the container link into database + container
+/// names, works out the query scope, then runs the driver work below and converts
+/// the reply into the tuple the Python parser reads. Mirrors `run_item_operation`
+/// but builds a `CosmosOperation::query_items` targeting either a logical partition
+/// (`["pk"]`) or the full container (`[]`).
+pub(crate) fn run_query_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    modifiers: OpModifiers,
+    body_bytes: Vec<u8>,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let query_target = parse_query_target_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
+        runtime_ctx.tokio_rt.block_on(run_query_future(
+            driver,
+            database_name,
+            container_name,
+            query_target,
+            modifiers,
+            body_bytes,
+        ))
+    });
+
+    tuple_from_feed_result(py, response_result)
+}
+
+/// Async sibling of `run_query_operation`.
+pub(crate) fn run_query_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    modifiers: OpModifiers,
+    body_bytes: Vec<u8>,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let query_target = parse_query_target_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let join = runtime_ctx.tokio_rt.spawn(run_query_future(
+        driver,
+        database_name,
+        container_name,
+        query_target,
+        modifiers,
+        body_bytes,
+    ));
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}
+
+/// Entry point that enumerates every partition-key range for one container.
+/// The Python wrapper uses this to implement `ContainerProxy.read_feed_ranges`
+/// on the Rust path (sync version).
+pub(crate) fn run_read_feed_ranges_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    force_refresh: bool,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let response_result = py.allow_threads(|| {
+        runtime_ctx.tokio_rt.block_on(run_read_feed_ranges_future(
+            driver,
+            database_name,
+            container_name,
+            force_refresh,
+        ))
+    });
+
+    tuple_from_partition_key_ranges_result(py, response_result)
+}
+
+/// Async sibling of `run_read_feed_ranges_operation`.
+pub(crate) fn run_read_feed_ranges_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    force_refresh: bool,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let join = runtime_ctx.tokio_rt.spawn(run_read_feed_ranges_future(
+        driver,
+        database_name,
+        container_name,
+        force_refresh,
+    ));
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_partition_key_ranges_result(py, response_result)
+                .map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}
+
 /// Look up the cached driver for a client handle, or raise if `init_client`
 /// has not run yet (or the client was already closed).
 fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
@@ -374,6 +539,63 @@ async fn run_singleton_future(
     driver.execute_singleton_operation(op, options).await
 }
 
+/// The actual driver work for one query page. Resolves the container, builds a
+/// `FeedRange` that limits the search to one partition or opens it to the whole
+/// container, then builds a `query_items` operation carrying the query JSON (from
+/// the request body) plus the session token, activity id, excluded regions,
+/// timeout, and any custom headers the wrapper attached. Returns one page.
+async fn run_query_future(
+    driver: Arc<CosmosDriver>,
+    database_name: String,
+    container_name: String,
+    query_target: QueryTarget,
+    modifiers: OpModifiers,
+    body_bytes: Vec<u8>,
+) -> Result<Option<CosmosResponse>, CosmosError> {
+    let container = driver
+        .resolve_container(&database_name, &container_name)
+        .await?;
+    let feed_range = match query_target {
+        QueryTarget::Partition(partition_key) => {
+            FeedRange::for_partition(partition_key, container.partition_key_definition())
+        }
+        QueryTarget::CrossPartition => FeedRange::full(),
+    };
+    let mut op = CosmosOperation::query_items(container, Some(feed_range)).with_body(body_bytes);
+
+    if let Some(activity) = modifiers.activity_header.as_ref() {
+        op = op.with_activity_id(ActivityId::from(activity.clone()));
+    }
+    if let Some(session) = modifiers.session_header.as_ref() {
+        op = op.with_session_token(SessionToken::from(session.clone()));
+    }
+
+    let options = build_operation_options(
+        None,
+        modifiers.excluded_regions_value,
+        modifiers.end_to_end_timeout,
+        modifiers.custom_headers,
+    );
+    driver.execute_operation(op, options).await
+}
+
+/// Driver work for `read_feed_ranges`: resolve the container, ask the driver for
+/// all partition-key ranges (cached unless `force_refresh` is true), and return
+/// them in min-EPK order.
+async fn run_read_feed_ranges_future(
+    driver: Arc<CosmosDriver>,
+    database_name: String,
+    container_name: String,
+    force_refresh: bool,
+) -> Result<Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>, CosmosError> {
+    let container = driver
+        .resolve_container(&database_name, &container_name)
+        .await?;
+    Ok(driver
+        .resolve_all_partition_key_ranges(&container, force_refresh)
+        .await)
+}
+
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
 /// `BackendResponse` tuple. A CosmosError carrying a wire response (404 / 409
 /// / 412 / ...) becomes the same tuple shape as success so the Python parser raises
@@ -403,6 +625,77 @@ fn tuple_from_result<'py>(
     }
 }
 
+/// Turn the driver's query reply into the tuple the Python parser reads. Handles
+/// the three outcomes: a page of rows becomes a success reply; `None` (no rows)
+/// becomes an empty `{"Documents":[]}` page; an error carrying a real service
+/// response (e.g. a 400) becomes the same tuple shape so the Python parser raises
+/// the right Cosmos error, while a pure transport failure becomes a Rust error.
+/// Feed variant of `tuple_from_result`, which handles single-document replies.
+fn tuple_from_feed_result<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match response_result {
+        Ok(Some(response)) => backend_response_tuple_from_feed_success(py, response),
+        Ok(None) => {
+            let response_headers = PyDict::new_bound(py);
+            backend_response_tuple(
+                py,
+                200,
+                0,
+                response_headers,
+                br#"{"Documents":[]}"#,
+                None,
+            )
+        }
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(DriverTransportError::new_err(format!(
+                    "driver execute_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+/// Feed-range variant: returns a JSON body in the shape
+/// `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"}, ...]}`.
+fn tuple_from_partition_key_ranges_result<'py>(
+    py: Python<'py>,
+    response_result:
+        Result<Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match response_result {
+        Ok(Some(ranges)) => {
+            let response_headers = PyDict::new_bound(py);
+            response_headers.set_item("content-type", "application/json")?;
+            // Match the wire contract observed on core-python for pkranges:
+            // this feed response surfaces x-ms-item-count as "0".
+            response_headers.set_item("x-ms-item-count", "0")?;
+            let body = partition_key_ranges_to_response_body(&ranges)?;
+            backend_response_tuple(py, 200, 0, response_headers, &body, None)
+        }
+        Ok(None) => Err(DriverTransportError::new_err(
+            "driver resolve_all_partition_key_ranges returned no routing map",
+        )),
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(DriverTransportError::new_err(format!(
+                    "driver resolve_all_partition_key_ranges failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Shared prepared-request input extraction
 // ---------------------------------------------------------------------------
@@ -423,6 +716,31 @@ pub(crate) fn extract_common_prepared_inputs<'py>(
 
 pub(crate) fn extract_body_bytes<'py>(prepared: &Bound<'py, PyAny>) -> PyResult<Vec<u8>> {
     prepared.getattr("body_bytes")?.extract()
+}
+
+#[derive(Deserialize)]
+struct ReadFeedRangesBody {
+    #[serde(rename = "forceRefresh", default)]
+    force_refresh: bool,
+}
+
+pub(crate) fn parse_read_feed_ranges_force_refresh(body_bytes: &[u8]) -> PyResult<bool> {
+    if body_bytes.is_empty() {
+        return Ok(false);
+    }
+    let parsed: ReadFeedRangesBody = serde_json::from_slice(body_bytes).map_err(|e| {
+        PyValueError::new_err(format!(
+            "read_feed_ranges body must be valid JSON object with optional boolean forceRefresh: {e}"
+        ))
+    })?;
+    Ok(parsed.force_refresh)
+}
+
+pub(crate) fn extract_read_feed_ranges_force_refresh<'py>(
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<bool> {
+    let body_bytes = extract_body_bytes(prepared)?;
+    parse_read_feed_ranges_force_refresh(&body_bytes)
 }
 
 pub(crate) fn extract_required_item_id<'py>(
@@ -666,6 +984,9 @@ fn build_operation_options(
     builder.build()
 }
 
+/// Assemble the fixed 5-part reply the Python backend reads. Every success and
+/// wire-error path ends here, so the tuple shape stays identical no matter which
+/// operation or backend produced it.
 fn backend_response_tuple<'py>(
     py: Python<'py>,
     status_code: i64,
@@ -691,6 +1012,9 @@ fn backend_response_tuple<'py>(
     Ok(PyTuple::new_bound(py, &items))
 }
 
+/// Build the reply tuple for a successful point operation: read status and
+/// sub-status, fold this operation's wire attempts into the diagnostics counters,
+/// copy the response headers under their wire names, and convert the body.
 fn backend_response_tuple_from_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
@@ -731,6 +1055,37 @@ fn backend_response_tuple_from_success<'py>(
     )
 }
 
+/// Query-page version of `backend_response_tuple_from_success`: same steps, but the
+/// body is wrapped in the `{"Documents":[...]}` envelope the query parser reads.
+fn backend_response_tuple_from_feed_success<'py>(
+    py: Python<'py>,
+    response: azure_data_cosmos_driver::models::CosmosResponse,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let status = response.status();
+    let status_code = u16::from(status.status_code()) as i64;
+    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+    let diag = response.diagnostics();
+    BINDING_ATTEMPT_COUNT.fetch_add(diag.request_count() as u64, Ordering::Relaxed);
+    let retries = diag
+        .requests()
+        .iter()
+        .filter(|req| req.execution_context().as_str() != "initial")
+        .count() as u64;
+    BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
+    let diagnostics = diag.to_string();
+    let response_headers = PyDict::new_bound(py);
+    write_response_headers(&response_headers, response.headers())?;
+    let body_vec = query_response_body_to_vec(response.into_body())?;
+    backend_response_tuple(
+        py,
+        status_code,
+        sub_status,
+        response_headers,
+        &body_vec,
+        Some(diagnostics.as_str()),
+    )
+}
+
 /// Map the driver's typed `ResponseBody` to a flat `Vec<u8>` suitable for the
 /// Python `BackendResponse.body` bytes field.
 ///
@@ -749,6 +1104,70 @@ fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
             items.len()
         ))),
     }
+}
+
+/// Wrap the driver's query results into the `{"Documents":[ ... ]}` JSON envelope
+/// the Python query parser expects — the same shape the Cosmos REST service
+/// returns for a query. The driver hands back the rows as a list of item bytes
+/// (or raw bytes, or nothing); this stitches them into that envelope so the parser
+/// can read a Rust-served page without knowing it came from Rust. No rows becomes
+/// `{"Documents":[]}`.
+fn query_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
+    match body {
+        ResponseBody::NoPayload => Ok(br#"{"Documents":[]}"#.to_vec()),
+        ResponseBody::Bytes(b) => Ok(b.to_vec()),
+        ResponseBody::Items(items) => {
+            let mut out = Vec::with_capacity(16 + items.iter().map(|i| i.len()).sum::<usize>());
+            out.extend_from_slice(br#"{"Documents":["#);
+            for (index, item) in items.iter().enumerate() {
+                if index > 0 {
+                    out.push(b',');
+                }
+                out.extend_from_slice(item.as_ref());
+            }
+            out.extend_from_slice(b"]}");
+            Ok(out)
+        }
+    }
+}
+
+#[derive(Serialize)]
+struct PartitionKeyRangesEnvelope<'a> {
+    #[serde(rename = "PartitionKeyRanges")]
+    partition_key_ranges: Vec<PartitionKeyRangeWire<'a>>,
+}
+
+#[derive(Serialize)]
+struct PartitionKeyRangeWire<'a> {
+    id: &'a str,
+    #[serde(rename = "minInclusive")]
+    min_inclusive: &'a str,
+    #[serde(rename = "maxExclusive")]
+    max_exclusive: &'a str,
+}
+
+/// Serialize the driver's partition-key ranges into the
+/// `{"PartitionKeyRanges":[{id,minInclusive,maxExclusive}, ...]}` body the
+/// read_feed_ranges wrapper parses.
+fn partition_key_ranges_to_response_body(
+    ranges: &[azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange],
+) -> PyResult<Vec<u8>> {
+    let partition_key_ranges = ranges
+        .iter()
+        .map(|range| PartitionKeyRangeWire {
+            id: range.id.as_str(),
+            min_inclusive: range.min_inclusive.as_str(),
+            max_exclusive: range.max_exclusive.as_str(),
+        })
+        .collect();
+    let envelope = PartitionKeyRangesEnvelope {
+        partition_key_ranges,
+    };
+    serde_json::to_vec(&envelope).map_err(|e| {
+        PyRuntimeError::new_err(format!(
+            "failed to serialize read_feed_ranges response body: {e}"
+        ))
+    })
 }
 
 /// Build a `BackendResponse` tuple from a driver `CosmosError` that
@@ -785,6 +1204,43 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     write_response_headers(&response_headers, response.headers())?;
 
     let body_vec = response_body_to_vec(response.body().clone())?;
+    Ok(Some(backend_response_tuple(
+        py,
+        status_code,
+        sub_status,
+        response_headers,
+        &body_vec,
+        Some(diagnostics.as_str()),
+    )?))
+}
+
+/// Query-page version of `backend_response_tuple_from_cosmos_error`: same handling
+/// of an error that carries a wire response, with the query body envelope.
+fn backend_response_tuple_from_cosmos_error_feed<'py>(
+    py: Python<'py>,
+    error: &CosmosError,
+) -> PyResult<Option<Bound<'py, PyTuple>>> {
+    let response = match error.response() {
+        Some(r) => r,
+        None => return Ok(None),
+    };
+
+    let status = response.status();
+    let status_code = u16::from(status.status_code()) as i64;
+    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+    let diag = response.diagnostics();
+    BINDING_ATTEMPT_COUNT.fetch_add(diag.request_count() as u64, Ordering::Relaxed);
+    let retries = diag
+        .requests()
+        .iter()
+        .filter(|req| req.execution_context().as_str() != "initial")
+        .count() as u64;
+    BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
+    let diagnostics = diag.to_string();
+
+    let response_headers = PyDict::new_bound(py);
+    write_response_headers(&response_headers, response.headers())?;
+    let body_vec = query_response_body_to_vec(response.body().clone())?;
     Ok(Some(backend_response_tuple(
         py,
         status_code,
@@ -992,6 +1448,32 @@ fn parse_partition_key_header(header: &str) -> PyResult<PartitionKey> {
     Ok(PartitionKey::from(components))
 }
 
+/// Work out the query scope from the partition-key header string the wrapper set.
+/// `[]` means search the whole container (cross-partition); a non-empty value like
+/// `["alice-123"]` means search that one logical partition. Allows the 1-3 levels a
+/// Cosmos partition key can have, and rejects anything longer or not valid JSON.
+fn parse_query_target_header(header: &str) -> PyResult<QueryTarget> {
+    let parsed: Vec<serde_json::Value> = serde_json::from_str(header).map_err(|e| {
+        PyValueError::new_err(format!("invalid partition_key_header {header:?}: {e}"))
+    })?;
+
+    if parsed.is_empty() {
+        return Ok(QueryTarget::CrossPartition);
+    }
+    if parsed.len() > 3 {
+        return Err(PyValueError::new_err(format!(
+            "partition_key_header has {} components; Cosmos partition keys can have at most 3 levels",
+            parsed.len()
+        )));
+    }
+
+    let mut components: Vec<PartitionKeyValue> = Vec::with_capacity(parsed.len());
+    for value in parsed {
+        components.push(json_value_to_pk_component(value)?);
+    }
+    Ok(QueryTarget::Partition(PartitionKey::from(components)))
+}
+
 /// Convert a single JSON-array element into a `PartitionKeyValue`.
 fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKeyValue> {
     match value {
@@ -1077,10 +1559,13 @@ mod tests {
     use super::{
         extract_item_id, extract_op_modifiers, is_intentionally_ignored_option_key,
         json_value_to_pk_component, parse_container_link, parse_partition_key_header,
-        response_body_to_vec, write_response_headers,
+        parse_query_target_header, parse_read_feed_ranges_force_refresh, response_body_to_vec,
+        tuple_from_partition_key_ranges_result, write_response_headers, QueryTarget,
     };
     use azure_core::Bytes;
-    use azure_data_cosmos_driver::models::{CosmosResponseHeaders, ResponseBody};
+    use azure_data_cosmos_driver::models::{
+        partition_key_range::PartitionKeyRange, CosmosResponseHeaders, ResponseBody,
+    };
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
 
@@ -1163,6 +1648,110 @@ mod tests {
         assert!(parse_partition_key_header(r#"["a","b","c","d"]"#).is_err());
         // Not a JSON array.
         assert!(parse_partition_key_header("nonsense").is_err());
+    }
+
+    // ---- parse_query_target_header ------------------------------------------
+
+    #[test]
+    fn query_target_header_accepts_partition_and_cross_partition_shapes() {
+        assert!(matches!(
+            parse_query_target_header("[]").unwrap(),
+            QueryTarget::CrossPartition
+        ));
+        assert!(matches!(
+            parse_query_target_header(r#"["customerA"]"#).unwrap(),
+            QueryTarget::Partition(_)
+        ));
+        assert!(matches!(
+            parse_query_target_header(r#"[null]"#).unwrap(),
+            QueryTarget::Partition(_)
+        ));
+    }
+
+    #[test]
+    fn query_target_header_rejects_overflow_and_garbage() {
+        assert!(parse_query_target_header(r#"["a","b","c","d"]"#).is_err());
+        assert!(parse_query_target_header("nonsense").is_err());
+    }
+
+    // ---- read_feed_ranges body parsing ----------------------------------------
+
+    #[test]
+    fn read_feed_ranges_body_defaults_to_no_refresh_when_empty() {
+        assert!(
+            !parse_read_feed_ranges_force_refresh(b"").expect("empty body should default to false")
+        );
+    }
+
+    #[test]
+    fn read_feed_ranges_body_accepts_boolean_force_refresh() {
+        assert!(
+            parse_read_feed_ranges_force_refresh(br#"{"forceRefresh":true}"#)
+                .expect("true should parse")
+        );
+        assert!(
+            !parse_read_feed_ranges_force_refresh(br#"{"forceRefresh":false}"#)
+                .expect("false should parse")
+        );
+        assert!(
+            !parse_read_feed_ranges_force_refresh(br#"{}"#)
+                .expect("missing forceRefresh should default to false")
+        );
+    }
+
+    #[test]
+    fn read_feed_ranges_body_rejects_invalid_shape() {
+        assert!(parse_read_feed_ranges_force_refresh(br#"{"forceRefresh":"yes"}"#).is_err());
+        assert!(parse_read_feed_ranges_force_refresh(br#"{"forceRefresh":1}"#).is_err());
+        assert!(parse_read_feed_ranges_force_refresh(br#"not json"#).is_err());
+    }
+
+    #[test]
+    fn read_feed_ranges_tuple_sets_minimal_headers() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let ranges = vec![PartitionKeyRange::new("0".to_string(), "", "FF")];
+            let tuple = tuple_from_partition_key_ranges_result(py, Ok(Some(ranges)))
+                .expect("successful read_feed_ranges should map to backend tuple");
+            let headers_any = tuple
+                .get_item(2)
+                .expect("headers slot must exist");
+            let headers = headers_any
+                .downcast::<PyDict>()
+                .expect("headers slot must be a dict");
+            assert_eq!(
+                headers
+                    .get_item("content-type")
+                    .expect("dict lookup should succeed")
+                    .expect("content-type should be present")
+                    .extract::<String>()
+                    .expect("content-type must be string"),
+                "application/json"
+            );
+            assert_eq!(
+                headers
+                    .get_item("x-ms-item-count")
+                    .expect("dict lookup should succeed")
+                    .expect("x-ms-item-count should be present")
+                    .extract::<String>()
+                    .expect("x-ms-item-count must be string"),
+                "0"
+            );
+        });
+    }
+
+    #[test]
+    fn read_feed_ranges_tuple_rejects_missing_routing_map() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let err = tuple_from_partition_key_ranges_result(py, Ok(None))
+                .expect_err("missing routing map must raise a transport error");
+            assert!(
+                err.to_string()
+                    .contains("driver resolve_all_partition_key_ranges returned no routing map"),
+                "unexpected error: {err}"
+            );
+        });
     }
 
     // ---- json_value_to_pk_component -------------------------------------------

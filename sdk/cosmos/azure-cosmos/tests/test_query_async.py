@@ -24,7 +24,11 @@ from azure.cosmos.partition_key import PartitionKey
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADQuery
 class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
-    """Test to ensure escaping of non-ascii characters from partition key"""
+    """Live async query tests: exercise Container.query_items across the query features customers
+    rely on -- partition-scoped and cross-partition queries, paging with continuation tokens,
+    DISTINCT / OFFSET-LIMIT / VALUE aggregates, query and index metrics, positional args, None
+    parameters, and retry behavior. Without these, a change to the query path could silently return
+    wrong results, skip or duplicate pages, or break a customer's error/retry handling."""
 
     created_db: DatabaseProxy = None
     created_container: ContainerProxy = None
@@ -599,6 +603,9 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_full_pk_continuation_emits_legacy_by_default_async(self):
         """Full partition-key queries return legacy continuation tokens by default."""
+        # The token is the legacy (opaque) form, not the new feed-range token: _decode_token
+        # returns None only for the legacy form. Without this, changing the default token format
+        # could break customers who stored an old token and replay it later.
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
@@ -617,6 +624,9 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 
     async def test_full_pk_legacy_replay_resumes_same_page_async(self):
+        # Replaying that legacy continuation token must resume on the same next page. Without
+        # this, a regression in legacy-token replay would drop or repeat results for customers
+        # who page through query results.
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})

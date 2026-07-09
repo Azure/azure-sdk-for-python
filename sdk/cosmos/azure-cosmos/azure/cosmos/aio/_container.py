@@ -52,6 +52,10 @@ from .._helpers._item_dispatch import (
     pick_backend,
 )
 from ._helpers.item_helper import AsyncItemHelper
+from .._feed_ranges_rust_routing import (
+    can_use_rust_backend_for_read_feed_ranges,
+    try_read_feed_ranges_with_rust_backend_async,
+)
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -933,6 +937,8 @@ class ContainerProxy:
         feed_options = _build_options(kwargs)
 
         # Update 'feed_options' from 'kwargs'
+        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
+            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
         if utils.valid_key_value_exist(kwargs, "max_item_count"):
             feed_options["maxItemCount"] = kwargs.pop("max_item_count")
         if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
@@ -978,8 +984,12 @@ class ContainerProxy:
         # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
         if utils.valid_key_value_exist(kwargs, "partition_key"):
             feed_options["partitionKey"] = self._set_partition_key(kwargs["partition_key"])
-        # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
-        elif not utils.valid_key_value_exist(kwargs, "feed_range"):
+        # If 'partition_key' or 'feed_range' is not provided, set
+        # 'enableCrossPartitionQuery' to True unless the caller already set it.
+        elif (
+            not utils.valid_key_value_exist(kwargs, "feed_range")
+            and "enableCrossPartitionQuery" not in feed_options
+        ):
             feed_options["enableCrossPartitionQuery"] = True
         kwargs.pop("partition_key", None)
 
@@ -2080,19 +2090,45 @@ class ContainerProxy:
           are present. It therefore should only be treated as an opaque value.
 
         """
-        feed_options: Dict[str, Any] = {}
-        setup_complete = False
+        # Choose the engine once, before paging starts. `backend` is the rust engine
+        # object this client uses, or None for core-python. `can_use_rust` is true only
+        # when this client uses rust and the caller passed no extra kwargs. It is
+        # temporary: it narrows as each kwarg is mirrored on rust and is removed once the
+        # surface is fully mirrored.
+        backend = getattr(self.client_connection, "_backend", None)
+        can_use_rust = can_use_rust_backend_for_read_feed_ranges(backend=backend, kwargs=kwargs)
+        # read_feed_ranges returns a finished list, not a stream, so run the work once and
+        # return the same list on repeat get_next calls.
+        cached_feed_ranges: Optional[list[dict[str, Any]]] = None
 
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
-            nonlocal setup_complete
-            if not setup_complete:
-                if force_refresh is True:
-                    await self.client_connection.refresh_routing_map_provider()
+            nonlocal cached_feed_ranges
+            if cached_feed_ranges is not None:
+                return cached_feed_ranges
 
-                # Ensure container properties cache is populated so we can get the container RID.
-                await self._get_properties_with_options()
-                feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-                setup_complete = True
+            # Rust path. Ask the rust engine for the container's key-space slices, which
+            # it reads from the driver's cached partition map. It returns the same opaque
+            # dicts as the legacy path below, so the caller sees no difference.
+            if can_use_rust:
+                rust_feed_ranges = await try_read_feed_ranges_with_rust_backend_async(
+                    client_connection=self.client_connection,
+                    container_link=self.container_link,
+                    force_refresh=force_refresh,
+                )
+                if rust_feed_ranges is not None:
+                    cached_feed_ranges = rust_feed_ranges
+                    return rust_feed_ranges
+
+            # Legacy path (core-python). Permanent, kept for as long as core-python is a
+            # shipped backend. It reads the slices from Python's own in-memory routing map.
+            if force_refresh is True:
+                await self.client_connection.refresh_routing_map_provider()
+
+            # Ensure container properties cache is populated so we can get the container RID.
+            await self._get_properties_with_options()
+            feed_options: Dict[str, Any] = {
+                Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]
+            }
 
             partition_key_ranges = \
                 await self.client_connection._routing_map_provider.get_overlapping_ranges(
@@ -2106,6 +2142,7 @@ class ContainerProxy:
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
                            for partitionKeyRange in partition_key_ranges]
 
+            cached_feed_ranges = feed_ranges
             return feed_ranges
 
         async def extract_data(feed_ranges_response: list[dict[str, Any]]):
