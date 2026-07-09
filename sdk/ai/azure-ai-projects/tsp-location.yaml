@@ -17,9 +17,9 @@ additionalDirectories:
   - specification/ai-foundry/data-plane/Foundry/src/insights
   - specification/ai-foundry/data-plane/Foundry/src/memory-stores
   - specification/ai-foundry/data-plane/Foundry/src/models
-  - specification/ai-foundry/data-plane/Foundry/src/openai-conversations
-  - specification/ai-foundry/data-plane/Foundry/src/openai-evaluations
-  - specification/ai-foundry/data-plane/Foundry/src/openai-responses
+  - specification/ai-foundry/data-plane/Foundry/src/openai/conversations
+  - specification/ai-foundry/data-plane/Foundry/src/openai/evaluations
+  - specification/ai-foundry/data-plane/Foundry/src/openai/responses
   - specification/ai-foundry/data-plane/Foundry/src/red-teams
   - specification/ai-foundry/data-plane/Foundry/src/routines
   - specification/ai-foundry/data-plane/Foundry/src/schedules
