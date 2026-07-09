@@ -671,7 +671,7 @@ class TestAgentConfigUrlPreparation:
         manager = _VoiceLiveConnectionManager(
             credential=self.credential,
             endpoint="https://test.azure.com",
-            api_version="2026-04-10",
+            api_version="2026-07-15",
             agent_config=agent_config,
             extra_query={},
             extra_headers={},
@@ -679,7 +679,7 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-04-10" in url
+        assert "api-version=2026-07-15" in url
 
     def test_url_uses_default_api_version(self):
         """Test that URL uses the current SDK default API version when none is provided."""
@@ -698,4 +698,4 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-06-01-preview" in url
+        assert "api-version=2026-07-15" in url

@@ -6,4 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.3.0"
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from . import models as _models
+Voice = Union[
+    str, "_models.OpenAIVoiceName", "_models.OpenAIVoice", "_models.AzureVoice", "_models.AzureRealtimeNativeVoice"
+]
+ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceSelection"]
+InterimResponseConfig = Union["_models.StaticInterimResponseConfig", "_models.LlmInterimResponseConfig"]
