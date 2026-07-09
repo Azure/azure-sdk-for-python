@@ -369,15 +369,18 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
-            stor.put(test_input, 0)
-            self.assertEqual(stor.get().get(), test_input)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
-            self.assertEqual(stor.get().get(), test_input)
-            with mock.patch("os.rename", side_effect=throw(Exception)):
-                result = stor.put(test_input)
-                # Should return an error string when os.rename fails
-                # self.assertIsInstance(result, None)
+        test_path = os.path.join(TEST_FOLDER, "bar")
+        os.makedirs(test_path, exist_ok=True)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path) as stor:
+                stor.put(test_input, 0)
+                self.assertEqual(stor.get().get(), test_input)
+            with LocalFileStorage(test_path) as stor:
+                self.assertEqual(stor.get().get(), test_input)
+                with mock.patch("os.rename", side_effect=throw(Exception)):
+                    result = stor.put(test_input)
+                    # Should return an error string when os.rename fails
+                    # self.assertIsInstance(result, None)
 
     def test_put_max_size(self):
         test_input = (1, 2, 3)
@@ -480,17 +483,23 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_persistence_capacity_reached(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "capacity_test")) as stor:
-            with mock.patch.object(stor, "_check_storage_size", return_value=False):
-                result = stor.put(test_input)
-                self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
+        test_path = os.path.join(TEST_FOLDER, "capacity_test")
+        os.makedirs(test_path, exist_ok=True)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path) as stor:
+                with mock.patch.object(stor, "_check_storage_size", return_value=False):
+                    result = stor.put(test_input)
+                    self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
 
     def test_put_success_returns_localfileblob(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "success_test")) as stor:
-            result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
-            self.assertIsInstance(result, StorageExportResult)
-            self.assertEqual(stor.get().get(), test_input)
+        test_path = os.path.join(TEST_FOLDER, "success_test")
+        os.makedirs(test_path, exist_ok=True)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path) as stor:
+                result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
+                self.assertIsInstance(result, StorageExportResult)
+                self.assertEqual(stor.get().get(), test_input)
 
     @unittest.skip("transient storage")
     def test_put_blob_put_failure_returns_string(self):
@@ -504,13 +513,16 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_exception_in_method_returns_string(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "method_exception_test")) as stor:
-            with mock.patch(
-                "azure.monitor.opentelemetry.exporter._storage._now", side_effect=RuntimeError("Time error")
-            ):
-                result = stor.put(test_input)
-                self.assertIsInstance(result, str)
-                self.assertIn("Time error", result)
+        test_path = os.path.join(TEST_FOLDER, "method_exception_test")
+        os.makedirs(test_path, exist_ok=True)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path) as stor:
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter._storage._now", side_effect=RuntimeError("Time error")
+                ):
+                    result = stor.put(test_input)
+                    self.assertIsInstance(result, str)
+                    self.assertIn("Time error", result)
 
     def test_put_various_blob_errors(self):
         test_input = (1, 2, 3)
