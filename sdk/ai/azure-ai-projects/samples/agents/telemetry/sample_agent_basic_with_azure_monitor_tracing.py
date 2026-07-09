@@ -80,5 +80,3 @@ with (
             print(f"Response output: {response.output_text}")
 
             openai_client.conversations.delete(conversation_id=conversation.id)
-            print("Conversation deleted")
-

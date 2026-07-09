@@ -133,7 +133,5 @@ with (
         openai_client.conversations.delete(new_conversation.id)
         print("Conversations deleted")
 
-        print("Agent deleted")
-
     project_client.beta.memory_stores.delete(memory_store.name)
     print("Memory store deleted")

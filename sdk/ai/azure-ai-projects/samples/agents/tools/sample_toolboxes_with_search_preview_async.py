@@ -106,9 +106,7 @@ async def main() -> None:
             project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
         ):
             agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})."
-            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version}).")
 
             response = await openai_client.responses.create(
                 input="What is my username in Github profile?",

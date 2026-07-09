@@ -94,7 +94,9 @@ with (
                 print("\nFollow-up response done!")
             elif event.type == "response.output_item.done":
                 item = event.item
-                if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
+                if (
+                    item.type == "browser_automation_preview_call"
+                ):  # TODO: support browser_automation_preview_call schema
                     arguments_str = getattr(item, "arguments", "{}")
 
                     # Parse the arguments string into a dictionary

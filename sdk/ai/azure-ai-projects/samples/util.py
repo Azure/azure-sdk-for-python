@@ -110,7 +110,7 @@ def create_version_with_endpoint(
                 ]
             ),
             protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
-        )        
+        )
         project_client.agents.update_details(agent_name=agent_name, agent_endpoint=endpoint_config)
         print(f"Agent endpoint configured for version {created_version.version}")
 
@@ -118,13 +118,11 @@ def create_version_with_endpoint(
     finally:
         if original_agent_endpoint is not None:
             project_client.agents.update_details(agent_name=agent_name, agent_endpoint=original_agent_endpoint)
-            print("Agent endpoint restored")
 
         if created_version is not None:
             project_client.agents.delete_version(
                 agent_name=agent_name, agent_version=created_version.version, force=True
             )
-            print(f"Hosted agent version {created_version.version} deleted")
 
 
 @asynccontextmanager
@@ -170,10 +168,8 @@ async def create_version_with_endpoint_async(
     finally:
         if original_agent_endpoint is not None:
             await project_client.agents.update_details(agent_name=agent_name, agent_endpoint=original_agent_endpoint)
-            print("Agent endpoint restored")
 
         if created_version is not None:
             await project_client.agents.delete_version(
                 agent_name=agent_name, agent_version=created_version.version, force=True
             )
-            print(f"Hosted agent version {created_version.version} deleted")

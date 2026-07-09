@@ -89,9 +89,7 @@ async def main():
             project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
         ):
             agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})"
-            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
             # Initial request with screenshot - start with Bing search page
             print("Starting computer automation session (initial screenshot: cua_browser_search.png)...")

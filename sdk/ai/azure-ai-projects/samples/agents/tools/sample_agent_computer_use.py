@@ -137,7 +137,9 @@ with (
             print(f"Processing computer call (ID: {call_id})")
 
             # Handle the action and get the screenshot info
-            screenshot_info, current_state = handle_computer_action_and_take_screenshot(action, current_state, screenshots)
+            screenshot_info, current_state = handle_computer_action_and_take_screenshot(
+                action, current_state, screenshots
+            )
 
             print(f"Sending action result back to agent (using {screenshot_info['filename']})...")
 

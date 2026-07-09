@@ -68,9 +68,7 @@ async def main():
             project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
         ):
             agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})"
-            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
             # Create a conversation thread to maintain context across multiple interactions
             conversation = await openai_client.conversations.create()
@@ -107,10 +105,6 @@ async def main():
             )
 
             print(f"Response: {response.output_text}")
-
-            # Clean up resources by deleting the agent version
-            # This prevents accumulation of unused agent versions in your project
-            print("Agent deleted")
 
 
 if __name__ == "__main__":

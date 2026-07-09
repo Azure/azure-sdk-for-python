@@ -104,9 +104,7 @@ async def main() -> None:
             project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
         ):
             agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})"
-            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
             # Create a conversation with the agent with memory tool enabled
             conversation = await openai_client.conversations.create()
@@ -138,8 +136,6 @@ async def main() -> None:
             await openai_client.conversations.delete(conversation.id)
             await openai_client.conversations.delete(new_conversation.id)
             print("Conversations deleted")
-
-            print("Agent deleted")
 
         await project_client.beta.memory_stores.delete(memory_store.name)
         print("Memory store deleted")

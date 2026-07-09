@@ -82,9 +82,7 @@ async def main():
             project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
         ):
             agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})"
-            )
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
             # Prompt the model with tools defined
             response = await openai_client.responses.create(

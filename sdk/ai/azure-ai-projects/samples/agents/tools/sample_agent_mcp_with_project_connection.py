@@ -101,7 +101,3 @@ with (
         )
 
         print(f"Response: {response.output_text}")
-
-        # Clean up resources by deleting the agent version
-        # This prevents accumulation of unused agent versions in your project
-        print("Agent deleted")

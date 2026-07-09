@@ -48,7 +48,7 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
-        )
+        ),
     ),
     project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
