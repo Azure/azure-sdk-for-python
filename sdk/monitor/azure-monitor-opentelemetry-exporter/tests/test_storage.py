@@ -38,20 +38,8 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
-def _reset_local_storage_setup_state():
-    # Reset the global local-storage setup state between tests. Several tests
-    # intentionally set the readonly/exception state (which is process-global),
-    # and there is no public setter to clear the readonly flag, so we reset the
-    # underlying state dict directly to keep tests isolated and order-independent.
-    from azure.monitor.opentelemetry.exporter.statsbeat.customer import _state
-
-    with _state._LOCAL_STORAGE_SETUP_STATE_LOCK:
-        _state._LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
-        _state._LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = ""
-
-
 def clean_folder(folder):
-    if os.path.isdir(folder):
+    if os.path.isfile(folder):
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:
@@ -336,14 +324,6 @@ class TestLocalFileStorage(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
 
-    def setUp(self):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
-        _reset_local_storage_setup_state()
-
-    def tearDown(self):
-        _reset_local_storage_setup_state()
-        clean_folder(TEST_FOLDER)
-
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
             pass
@@ -369,18 +349,15 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put(self):
         test_input = (1, 2, 3)
-        test_path = os.path.join(TEST_FOLDER, "bar")
-        os.makedirs(test_path, exist_ok=True)
-        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
-            with LocalFileStorage(test_path) as stor:
-                stor.put(test_input, 0)
-                self.assertEqual(stor.get().get(), test_input)
-            with LocalFileStorage(test_path) as stor:
-                self.assertEqual(stor.get().get(), test_input)
-                with mock.patch("os.rename", side_effect=throw(Exception)):
-                    result = stor.put(test_input)
-                    # Should return an error string when os.rename fails
-                    # self.assertIsInstance(result, None)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
+            stor.put(test_input, 0)
+            self.assertEqual(stor.get().get(), test_input)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
+            self.assertEqual(stor.get().get(), test_input)
+            with mock.patch("os.rename", side_effect=throw(Exception)):
+                result = stor.put(test_input)
+                # Should return an error string when os.rename fails
+                # self.assertIsInstance(result, None)
 
     def test_put_max_size(self):
         test_input = (1, 2, 3)
@@ -483,23 +460,17 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_persistence_capacity_reached(self):
         test_input = (1, 2, 3)
-        test_path = os.path.join(TEST_FOLDER, "capacity_test")
-        os.makedirs(test_path, exist_ok=True)
-        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
-            with LocalFileStorage(test_path) as stor:
-                with mock.patch.object(stor, "_check_storage_size", return_value=False):
-                    result = stor.put(test_input)
-                    self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "capacity_test")) as stor:
+            with mock.patch.object(stor, "_check_storage_size", return_value=False):
+                result = stor.put(test_input)
+                self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
 
     def test_put_success_returns_localfileblob(self):
         test_input = (1, 2, 3)
-        test_path = os.path.join(TEST_FOLDER, "success_test")
-        os.makedirs(test_path, exist_ok=True)
-        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
-            with LocalFileStorage(test_path) as stor:
-                result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
-                self.assertIsInstance(result, StorageExportResult)
-                self.assertEqual(stor.get().get(), test_input)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "success_test")) as stor:
+            result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
+            self.assertIsInstance(result, StorageExportResult)
+            self.assertEqual(stor.get().get(), test_input)
 
     @unittest.skip("transient storage")
     def test_put_blob_put_failure_returns_string(self):
@@ -513,16 +484,13 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_exception_in_method_returns_string(self):
         test_input = (1, 2, 3)
-        test_path = os.path.join(TEST_FOLDER, "method_exception_test")
-        os.makedirs(test_path, exist_ok=True)
-        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
-            with LocalFileStorage(test_path) as stor:
-                with mock.patch(
-                    "azure.monitor.opentelemetry.exporter._storage._now", side_effect=RuntimeError("Time error")
-                ):
-                    result = stor.put(test_input)
-                    self.assertIsInstance(result, str)
-                    self.assertIn("Time error", result)
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "method_exception_test")) as stor:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter._storage._now", side_effect=RuntimeError("Time error")
+            ):
+                result = stor.put(test_input)
+                self.assertIsInstance(result, str)
+                self.assertIn("Time error", result)
 
     def test_put_various_blob_errors(self):
         test_input = (1, 2, 3)
