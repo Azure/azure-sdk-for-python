@@ -41,7 +41,7 @@ class TestClientEventSessionUpdate:
     def test_create_session_update_with_request_session(self):
         """Test creating session update with RequestSession object."""
         session = RequestSession(
-            model="gpt-4o-realtime-preview",
+            model="gpt-realtime",
             modalities=[Modality.TEXT, Modality.AUDIO],
             voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY),
             temperature=0.7,
@@ -55,7 +55,7 @@ class TestClientEventSessionUpdate:
 
     def test_create_session_update_with_event_id(self):
         """Test creating session update with event ID."""
-        session = RequestSession(model="gpt-4o-realtime-preview")
+        session = RequestSession(model="gpt-realtime")
         event_id = "session-update-123"
 
         event = ClientEventSessionUpdate(session=session, event_id=event_id)
@@ -65,7 +65,7 @@ class TestClientEventSessionUpdate:
 
     def test_create_session_update_with_dict(self):
         """Test creating session update with dictionary session."""
-        session_dict = {"model": "gpt-4o-realtime-preview", "modalities": ["text", "audio"], "temperature": 0.8}
+        session_dict = {"model": "gpt-realtime", "modalities": ["text", "audio"], "temperature": 0.8}
 
         event = ClientEventSessionUpdate(session=session_dict)
 
@@ -277,7 +277,7 @@ class TestClientEventSerialization:
 
     def test_session_update_dict_access(self):
         """Test that session update events support dict-like access."""
-        session = RequestSession(model="gpt-4o-realtime-preview")
+        session = RequestSession(model="gpt-realtime")
         event = ClientEventSessionUpdate(session=session)
 
         # Test that the event has expected attributes
@@ -314,7 +314,7 @@ class TestClientEventIntegration:
         """Test a complete conversation flow with multiple events."""
         # Session update
         session = RequestSession(
-            model="gpt-4o-realtime-preview",
+            model="gpt-realtime",
             modalities=[Modality.TEXT, Modality.AUDIO],
             voice=OpenAIVoice(name=OpenAIVoiceName.SHIMMER),
         )
