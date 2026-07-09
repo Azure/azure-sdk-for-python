@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -732,6 +732,139 @@ class TestToolCallAccuracyEvaluator:
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
+
+    def test_extract_needed_tool_definitions_openapi_with_functions(self, mock_model_config):
+        """OpenAPI tool definitions that expose nested functions should be expanded so a
+        tool call referencing a nested function name is validated successfully."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "get_countries_LookupCountryByCurrency",
+                "arguments": {"currency": "GBP"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_countries",
+                "type": "openapi",
+                "description": "Retrieve a list of countries",
+                "functions": [
+                    {
+                        "name": "get_countries_LookupCountryByCurrency",
+                        "type": "function",
+                        "description": "Search by currency.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "currency": {"type": "string", "description": "The currency to search for."}
+                            },
+                            "required": ["currency"],
+                        },
+                    }
+                ],
+            }
+        ]
+
+        needed_tool_definitions = evaluator._extract_needed_tool_definitions(
+            tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+        )
+
+        # The nested function name resolved during validation (no exception was raised),
+        # and the original OpenAPI tool definition is returned unchanged.
+        assert needed_tool_definitions == tool_definitions
+
+    def test_extract_needed_tool_definitions_openapi_without_functions(self, mock_model_config):
+        """OpenAPI tool definitions without nested functions should be kept as is so a
+        tool call referencing the top-level OpenAPI tool name is validated successfully."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "get_countries",
+                "arguments": {"currency": "GBP"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_countries",
+                "type": "openapi",
+                "description": "Retrieve a list of countries",
+            }
+        ]
+
+        needed_tool_definitions = evaluator._extract_needed_tool_definitions(
+            tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+        )
+
+        # The top-level OpenAPI tool name resolved during validation (no exception was raised).
+        assert needed_tool_definitions == tool_definitions
+
+    def test_extract_needed_tool_definitions_openapi_empty_functions(self, mock_model_config):
+        """OpenAPI tool definitions with an empty functions list should fall back to the
+        top-level OpenAPI tool definition for validation."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "get_countries",
+                "arguments": {"currency": "GBP"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_countries",
+                "type": "openapi",
+                "description": "Retrieve a list of countries",
+                "functions": [],
+            }
+        ]
+
+        needed_tool_definitions = evaluator._extract_needed_tool_definitions(
+            tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+        )
+
+        assert needed_tool_definitions == tool_definitions
+
+    def test_extract_needed_tool_definitions_openapi_missing_nested_function_raises(self, mock_model_config):
+        """A tool call referencing a nested function not present in an expanded OpenAPI tool
+        definition should still raise an EvaluationException."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "get_countries_UnknownFunction",
+                "arguments": {"currency": "GBP"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_countries",
+                "type": "openapi",
+                "functions": [
+                    {
+                        "name": "get_countries_LookupCountryByCurrency",
+                        "type": "function",
+                        "parameters": {"type": "object", "properties": {}},
+                    }
+                ],
+            }
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator._extract_needed_tool_definitions(
+                tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+            )
+
+        assert "Tool definition for get_countries_UnknownFunction not found" in str(exc_info.value)
 
     def test_evaluate_missing_query(self, mock_model_config):
         """Test that evaluator raises exception when query is None or missing."""

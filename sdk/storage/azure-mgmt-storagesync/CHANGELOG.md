@@ -1,5 +1,61 @@
 # Release History
 
+## 2.0.0b2 (2026-07-06)
+
+### Features Added
+
+  - Model `CheckNameAvailabilityParameters` added property `type`
+  - Model `OperationResourceMetricSpecification` added property `lock_aggregation_type`
+  - Model `StorageSyncService` added property `identity`
+  - Model `StorageSyncServiceCreateParameters` added property `identity`
+  - Model `StorageSyncServiceCreateParameters` added property `id`
+  - Model `StorageSyncServiceCreateParameters` added property `name`
+  - Model `StorageSyncServiceCreateParameters` added property `type`
+  - Model `StorageSyncServiceCreateParameters` added property `system_data`
+  - Model `StorageSyncServiceUpdateParameters` added property `identity`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `RegisteredServerUpdateParameters`
+  - Added model `RegisteredServerUpdateProperties`
+  - Added enum `ServerAuthType`
+  - Added model `ServerEndpointProvisioningStatus`
+  - Added model `ServerEndpointProvisioningStepStatus`
+  - Added enum `ServerProvisioningStatus`
+  - Added enum `Type`
+  - Added model `UserAssignedIdentity`
+  - Operation group `RegisteredServersOperations` added method `begin_update`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `MicrosoftStorageSync` to `StorageSyncMgmtClient`
+  - Operation group `CloudEndpointsOperations` renamed method `restoreheartbeat` to `restore_heartbeat`
+  - Model `CloudEndpoint` moved instance variable `storage_account_resource_id`, `azure_file_share_name`, `storage_account_tenant_id`, `partnership_id`, `friendly_name`, `backup_enabled`, `provisioning_state`, `last_workflow_id`, `last_operation_name` and `change_enumeration_status` under property `properties` whose type is `CloudEndpointProperties`
+  - Model `CloudEndpointCreateParameters` moved instance variable `storage_account_resource_id`, `azure_file_share_name`, `storage_account_tenant_id` and `friendly_name` under property `properties` whose type is `CloudEndpointCreateParametersProperties`
+  - Model `PostBackupResponse` moved instance variable `cloud_endpoint_name` under property `backup_metadata` whose type is `PostBackupResponseProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `RegisteredServer` moved instance variable `server_certificate`, `agent_version`, `agent_version_status`, `agent_version_expiration_date`, `server_os_version`, `server_management_error_code`, `last_heart_beat`, `provisioning_state`, `server_role`, `cluster_id`, `cluster_name`, `server_id`, `storage_sync_service_uid`, `last_workflow_id`, `last_operation_name`, `discovery_endpoint_uri`, `resource_location`, `service_location`, `friendly_name`, `management_endpoint_uri`, `monitoring_endpoint_uri`, `monitoring_configuration` and `server_name` under property `properties` whose type is `RegisteredServerProperties`
+  - Model `RegisteredServerCreateParameters` moved instance variable `server_certificate`, `agent_version`, `server_os_version`, `last_heart_beat`, `server_role`, `cluster_id`, `cluster_name`, `server_id` and `friendly_name` under property `properties` whose type is `RegisteredServerCreateParametersProperties`
+  - Model `ServerEndpoint` moved instance variable `server_local_path`, `cloud_tiering`, `volume_free_space_percent`, `tier_files_older_than_days`, `friendly_name`, `server_resource_id`, `provisioning_state`, `last_workflow_id`, `last_operation_name`, `sync_status`, `offline_data_transfer`, `offline_data_transfer_storage_account_resource_id`, `offline_data_transfer_storage_account_tenant_id`, `offline_data_transfer_share_name`, `cloud_tiering_status`, `recall_status`, `initial_download_policy`, `local_cache_mode`, `initial_upload_policy` and `server_name` under property `properties` whose type is `ServerEndpointProperties`
+  - Model `ServerEndpointCreateParameters` moved instance variable `server_local_path`, `cloud_tiering`, `volume_free_space_percent`, `tier_files_older_than_days`, `friendly_name`, `server_resource_id`, `offline_data_transfer`, `offline_data_transfer_share_name`, `initial_download_policy`, `local_cache_mode` and `initial_upload_policy` under property `properties` whose type is `ServerEndpointCreateParametersProperties`
+  - Model `ServerEndpointUpdateParameters` moved instance variable `cloud_tiering`, `volume_free_space_percent`, `tier_files_older_than_days`, `offline_data_transfer`, `offline_data_transfer_share_name` and `local_cache_mode` under property `properties` whose type is `ServerEndpointUpdateProperties`
+  - Model `StorageSyncService` moved instance variable `incoming_traffic_policy`, `storage_sync_service_status`, `storage_sync_service_uid`, `provisioning_state`, `last_workflow_id`, `last_operation_name` and `private_endpoint_connections` under property `properties` whose type is `StorageSyncServiceProperties`
+  - Model `StorageSyncServiceCreateParameters` moved instance variable `incoming_traffic_policy` under property `properties` whose type is `StorageSyncServiceCreateParametersProperties`
+  - Model `StorageSyncServiceUpdateParameters` moved instance variable `incoming_traffic_policy` under property `properties` whose type is `StorageSyncServiceUpdateProperties`
+  - Model `SyncGroup` moved instance variable `unique_id` and `sync_group_status` under property `properties` whose type is `SyncGroupProperties`
+  - Model `Workflow` moved instance variable `last_step_name`, `status`, `operation`, `steps`, `last_operation_id`, `command_name`, `created_timestamp` and `last_status_timestamp` under property `properties` whose type is `WorkflowProperties`
+
+### Other Changes
+
+  - Deleted model `CloudEndpointArray`/`OperationEntityListResult`/`PrivateEndpointConnectionListResult`/`RegisteredServerArray`/`ServerEndpointArray`/`StorageSyncServiceArray`/`SyncGroupArray`/`WorkflowArray` which actually were not used by SDK users
+  - Deleted model `OperationDisplayResource`/`ResourcesMoveInfo`/`SubscriptionState` which actually were not used by SDK users
+  - Deleted enum `ProgressType`/`Reason` which actually were not used by SDK users
+  - Deleted operation mixin `MicrosoftStorageSyncOperationsMixin` which actually was not used by SDK users
+
 ## 1.0.1 (2026-05-14)
 
 ### Other Changes

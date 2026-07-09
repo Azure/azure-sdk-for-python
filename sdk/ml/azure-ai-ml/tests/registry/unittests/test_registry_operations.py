@@ -59,8 +59,15 @@ class TestRegistryOperations:
             source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
         )
         # valid creation of new registry
-        mock_registry_operation.begin_create(registry=reg)
-        mock_registry_operation._operation.begin_create_or_update.assert_called_once()
+        mock_registry_operation._operation._client._pipeline.run.return_value = Mock(
+            http_response=Mock(status_code=200)
+        )
+        with patch("azure.ai.ml.operations._registry_operations.LROPoller"):
+            mock_registry_operation.begin_create(registry=reg)
+        # begin_create sends the create request via the client pipeline directly (custom poller that
+        # accepts the 202 the service returns), not the generated begin_create_or_update which only
+        # accepts 200/201.
+        mock_registry_operation._operation._client._pipeline.run.assert_called_once()
 
     def test_delete(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
         mock_registry_operation.begin_delete(name="some registry")

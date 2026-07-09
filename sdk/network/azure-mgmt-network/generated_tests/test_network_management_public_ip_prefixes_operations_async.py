@@ -25,7 +25,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.public_ip_prefixes.get(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -56,6 +56,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
                             "name": "str",
                             "properties": {
                                 "idleTimeoutInMinutes": 0,
+                                "nat64": "str",
                                 "provisioningState": "str",
                                 "publicIpAddresses": [{"id": "str"}],
                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -82,7 +83,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +97,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +110,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
             await self.client.public_ip_prefixes.begin_delete(
                 resource_group_name=resource_group.name,
                 public_ip_prefix_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -121,7 +122,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
     async def test_public_ip_prefixes_list(self, resource_group):
         response = self.client.public_ip_prefixes.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -131,7 +132,7 @@ class TestNetworkManagementPublicIPPrefixesOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_public_ip_prefixes_list_all(self, resource_group):
         response = self.client.public_ip_prefixes.list_all(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

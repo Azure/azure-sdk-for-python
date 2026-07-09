@@ -4,9 +4,9 @@
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
-from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachine as VMResource
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource
+from azure.ai.ml._restclient.arm_ml_service.models import VirtualMachine as VMResource
+from azure.ai.ml._restclient.arm_ml_service.models import (
     VirtualMachineSchemaProperties,
     VirtualMachineSshCredentials,
 )

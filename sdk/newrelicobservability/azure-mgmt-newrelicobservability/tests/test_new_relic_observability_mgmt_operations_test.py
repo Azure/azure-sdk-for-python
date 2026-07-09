@@ -21,9 +21,6 @@ class TestNewRelicObservabilityMgmtOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
-        response = self.client.operations.list(
-
-        )
+        response = self.client.operations.list()
         result = [r for r in response]
         assert result
-        

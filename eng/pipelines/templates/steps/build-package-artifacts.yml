@@ -25,10 +25,29 @@ parameters:
     default: []
 
 steps:
+  - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+    - checkout: self
+      displayName: 'Sparse checkout eng/common/scripts for GitHub login'
+      path: s/_login_scripts
+      sparseCheckoutDirectories: eng/common/scripts
+      fetchDepth: 1
+
+    - pwsh: |
+        $source = "$(Build.SourcesDirectory)/_login_scripts/eng"
+        $dest = "$(Agent.TempDirectory)"
+        Copy-Item -Recurse -Force $source $dest
+        Remove-Item -Recurse -Force "$(Build.SourcesDirectory)/*" -ErrorAction SilentlyContinue
+        Remove-Item -Recurse -Force "$(Build.SourcesDirectory)/.git" -ErrorAction SilentlyContinue
+      displayName: Copy and clean repo checkout folder
+    
+    - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+      parameters:
+        ScriptDirectory: "$(Agent.TempDirectory)/eng/common/scripts"
+
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
     parameters:
       ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-        TokenToUseForAuth: $(azuresdk-github-pat)
+        TokenToUseForAuth: $(GH_TOKEN)
       Paths:
         - '**'
 
