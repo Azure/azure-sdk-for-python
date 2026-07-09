@@ -82,6 +82,7 @@ class CodeOperations(_ScopeDependentOperations):
         super(CodeOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._version_operation = service_client.code_versions
         self._container_operation = service_client.code_containers
         self._datastore_operation = datastore_operations
@@ -120,7 +121,7 @@ class CodeOperations(_ScopeDependentOperations):
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=name,
                     version=version,
                     resource_group=self._resource_group_name,

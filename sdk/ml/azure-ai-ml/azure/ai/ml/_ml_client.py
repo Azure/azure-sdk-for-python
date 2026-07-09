@@ -560,6 +560,7 @@ class MLClient:
             control_plane_client=self._service_client_08_2023_preview,
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             registry_reference=registry_reference,
         )
         # Evaluators
@@ -586,6 +587,7 @@ class MLClient:
             self._operation_config,
             (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023),
             self._datastores,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
@@ -594,6 +596,7 @@ class MLClient:
             self._operation_config,
             (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
             self._operation_container,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.ENVIRONMENT, self._environments)
@@ -657,6 +660,7 @@ class MLClient:
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)

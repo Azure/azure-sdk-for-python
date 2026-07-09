@@ -12,13 +12,10 @@ from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtCl
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    BlobReferenceSASRequestDto,
-    TemporaryDataReferenceRequestDto,
-)
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.ai.ml.exceptions import MlException
 from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpRequest
 
 module_logger = logging.getLogger(__name__)
 
@@ -137,19 +134,27 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
     :param registry: Registry name
     :type registry: str
     :param body: Request body
-    :type body: TemporaryDataReferenceRequestDto
+    :type body: dict
     :rtype: str
     """
     sas_uri = None
+    # Byte-identical to the legacy v2021_10 msrest ``temporary_data_references.create_or_get_temporary_data_reference``
+    # (same MFE endpoint + api-version); the client is the hybrid arm client bound to the discovered registry base_url.
+    subscription_id = service_client._config.subscription_id
+    request = HttpRequest(
+        "PUT",
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{registry}"
+        f"/tempdatarefs/{name}/versions/{version}",
+        params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+        headers={"Accept": "application/json"},
+        json=body,
+    )
     try:
-        res = service_client.temporary_data_references.create_or_get_temporary_data_reference(
-            name=name,
-            version=version,
-            resource_group_name=resource_group,
-            registry_name=registry,
-            body=body,
-        )
-        sas_uri = res.blob_reference_for_consumption.credential.additional_properties["sasUri"]
+        response = service_client.send_request(request)
+        response.raise_for_status()
+        res = response.json()
+        sas_uri = res["blobReferenceForConsumption"]["credential"]["sasUri"]
     except HttpResponseError as e:
         # "Asset already exists" exception is thrown from service with error code 409, that we need to ignore
         if e.status_code == 409:
@@ -161,7 +166,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
 
 def get_asset_body_for_registry_storage(
     registry_name: str, asset_type: str, asset_name: str, asset_version: str
-) -> TemporaryDataReferenceRequestDto:
+) -> dict:
     """Get Asset body for registry.
 
     :param registry_name: Registry name.
@@ -172,18 +177,18 @@ def get_asset_body_for_registry_storage(
     :type asset_name: str
     :param asset_version: Asset version.
     :type asset_version: str
-    :return: The temporary data reference request dto
-    :rtype: TemporaryDataReferenceRequestDto
+    :return: The temporary data reference request body (camelCase wire dict).
+    :rtype: dict
     """
-    body = TemporaryDataReferenceRequestDto(
-        asset_id=REGISTRY_ASSET_ID.format(registry_name, asset_type, asset_name, asset_version),
-        temporary_data_reference_type="TemporaryBlobReference",
-    )
+    body = {
+        "assetId": REGISTRY_ASSET_ID.format(registry_name, asset_type, asset_name, asset_version),
+        "temporaryDataReferenceType": "TemporaryBlobReference",
+    }
     return body
 
 
 def get_storage_details_for_registry_assets(
-    service_client: AzureMachineLearningWorkspaces,
+    service_client: MachineLearningServicesMgmtClient,
     asset_type: str,
     asset_name: str,
     asset_version: str,
@@ -212,22 +217,33 @@ def get_storage_details_for_registry_assets(
       * A sas URI and "SAS"
     :rtype: Tuple[str, Literal["NoCredentials", "SAS"]]
     """
-    body = BlobReferenceSASRequestDto(
-        asset_id=REGISTRY_ASSET_ID.format(reg_name, asset_type, asset_name, asset_version),
-        blob_uri=uri,
+    # Byte-identical to the legacy v2021_10 msrest ``data_references.get_blob_reference_sas`` (same MFE endpoint +
+    # api-version). NOTE: the ``credential_type == "no_credentials"`` comparison is preserved verbatim from the legacy
+    # code path; the wire value is actually "NoCredentials", so this branch never matches (behavior kept identical).
+    subscription_id = service_client._config.subscription_id
+    body = {
+        "assetId": REGISTRY_ASSET_ID.format(reg_name, asset_type, asset_name, asset_version),
+        "blobUri": uri,
+    }
+    request = HttpRequest(
+        "POST",
+        f"/subscriptions/{subscription_id}/resourceGroups/{rg_name}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{reg_name}"
+        f"/datarefs/{asset_name}/versions/{asset_version}",
+        params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+        headers={"Accept": "application/json"},
+        json=body,
     )
-    sas_uri = service_client.data_references.get_blob_reference_sas(
-        name=asset_name,
-        version=asset_version,
-        resource_group_name=rg_name,
-        registry_name=reg_name,
-        body=body,
-    )
-    if sas_uri.blob_reference_for_consumption.credential.credential_type == "no_credentials":
-        return sas_uri.blob_reference_for_consumption.blob_uri, "NoCredentials"
+    response = service_client.send_request(request)
+    response.raise_for_status()
+    sas_uri = response.json()
+    blob_reference_for_consumption = sas_uri["blobReferenceForConsumption"]
+    credential = blob_reference_for_consumption["credential"]
+    if credential["credentialType"] == "no_credentials":
+        return blob_reference_for_consumption["blobUri"], "NoCredentials"
 
     return (
-        sas_uri.blob_reference_for_consumption.credential.additional_properties["sasUri"],
+        credential["sasUri"],
         "SAS",
     )
 

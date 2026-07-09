@@ -122,6 +122,7 @@ class DataOperations(_ScopeDependentOperations):
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         self._all_operations: OperationsContainer = kwargs.pop("all_operations")
@@ -350,7 +351,7 @@ class DataOperations(_ScopeDependentOperations):
                         return Data._from_rest_object(data_res_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=name,
                     version=version,
                     resource_group=self._resource_group_name,

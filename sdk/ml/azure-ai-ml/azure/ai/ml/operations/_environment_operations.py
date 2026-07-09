@@ -80,6 +80,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._all_operations = all_operations
         self._datastore_operation = all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
@@ -160,7 +161,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         return Environment._from_rest_object(env_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=environment.name,
                     version=environment.version,
                     resource_group=self._resource_group_name,

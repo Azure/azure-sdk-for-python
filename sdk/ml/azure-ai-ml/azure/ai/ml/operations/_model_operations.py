@@ -119,6 +119,7 @@ class ModelOperations(_ScopeDependentOperations):
         if service_client_model_dataplane is not None:
             self._model_dataplane_operation = service_client_model_dataplane.models
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
         self._control_plane_client: Any = kwargs.get("control_plane_client", None)
@@ -236,7 +237,7 @@ class ModelOperations(_ScopeDependentOperations):
                         return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=model.name,
                     version=model.version,
                     resource_group=self._resource_group_name,
@@ -413,7 +414,7 @@ class ModelOperations(_ScopeDependentOperations):
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
             sas_uri, auth_type = get_storage_details_for_registry_assets(
-                service_client=self._service_client,
+                service_client=self._registry_service_client,
                 asset_name=name,
                 asset_version=version,
                 reg_name=self._registry_name,
