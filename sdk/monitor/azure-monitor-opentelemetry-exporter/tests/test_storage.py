@@ -39,7 +39,7 @@ def throw(exc_type, *args, **kwargs):
 
 
 def clean_folder(folder):
-    if os.path.isfile(folder):
+    if os.path.isdir(folder):
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:
@@ -51,6 +51,17 @@ def clean_folder(folder):
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
+def reset_local_storage_setup_state():
+    from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+        _LOCAL_STORAGE_SETUP_STATE,
+        _LOCAL_STORAGE_SETUP_STATE_LOCK,
+    )
+
+    with _LOCAL_STORAGE_SETUP_STATE_LOCK:
+        _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
+        _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = ""
+
+
 # pylint: disable=unused-variable
 class TestLocalFileBlob(unittest.TestCase):
     @classmethod
@@ -60,6 +71,10 @@ class TestLocalFileBlob(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
+
+    def setUp(self):
+        clean_folder(TEST_FOLDER)
+        os.makedirs(TEST_FOLDER, exist_ok=True)
 
     def tearDown(self):
         clean_folder(TEST_FOLDER)
@@ -323,6 +338,18 @@ class TestLocalFileStorage(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
+
+    def setUp(self):
+        reset_local_storage_setup_state()
+        clean_folder(TEST_FOLDER)
+        os.makedirs(TEST_FOLDER, exist_ok=True)
+        periodic_task_patcher = mock.patch(f"{STORAGE_MODULE}.PeriodicTask")
+        self._periodic_task_mock = periodic_task_patcher.start()
+        self.addCleanup(periodic_task_patcher.stop)
+
+    def tearDown(self):
+        reset_local_storage_setup_state()
+        clean_folder(TEST_FOLDER)
 
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:

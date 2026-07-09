@@ -31,4 +31,3 @@ collect_ignore_glob = []
 if sys.version_info < (3, 6):
     collect_ignore_glob.append("*")
 
-collect_ignore = ["test_storage.py"]
