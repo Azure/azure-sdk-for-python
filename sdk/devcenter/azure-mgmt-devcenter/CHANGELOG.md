@@ -15,67 +15,42 @@
   - Client `DevCenterMgmtClient` added operation group `dev_center_catalog_image_definition_build`
   - Client `DevCenterMgmtClient` added operation group `dev_center_catalog_image_definition_builds`
   - Client `DevCenterMgmtClient` added operation group `project_catalog_image_definition_builds`
-  - Model `AllowedEnvironmentType` added property `properties`
-  - Model `AttachedNetworkConnection` added property `properties`
-  - Model `Catalog` added property `properties`
   - Enum `CatalogItemType` added member `IMAGE_DEFINITION`
   - Model `CatalogProperties` added property `auto_image_build_enable_status`
   - Model `CatalogUpdateProperties` added property `auto_image_build_enable_status`
   - Model `CustomerManagedKeyEncryptionKeyIdentity` added property `federated_client_id`
-  - Model `DevBoxDefinition` added property `properties`
-  - Model `DevBoxDefinitionUpdate` added property `properties`
-  - Model `DevCenter` added property `properties`
   - Model `DevCenterProperties` added property `network_settings`
   - Model `DevCenterProperties` added property `dev_box_provisioning_settings`
-  - Model `DevCenterUpdate` added property `properties`
   - Model `DevCenterUpdateProperties` added property `network_settings`
   - Model `DevCenterUpdateProperties` added property `dev_box_provisioning_settings`
   - Enum `DomainJoinType` added member `NONE`
-  - Model `EnvironmentDefinition` added property `properties`
-  - Model `EnvironmentType` added property `properties`
-  - Model `EnvironmentTypeUpdate` added property `properties`
-  - Model `Gallery` added property `properties`
   - Enum `HealthCheckStatus` added member `INFORMATIONAL`
-  - Model `HealthCheckStatusDetails` added property `properties`
-  - Model `Image` added property `properties`
-  - Model `ImageVersion` added property `properties`
-  - Model `NetworkConnection` added property `properties`
-  - Model `NetworkConnectionUpdate` added property `properties`
-  - Model `Pool` added property `properties`
   - Model `PoolProperties` added property `dev_box_definition_type`
   - Model `PoolProperties` added property `dev_box_definition`
   - Model `PoolProperties` added property `stop_on_no_connect`
   - Model `PoolProperties` added property `active_hours_configuration`
   - Model `PoolProperties` added property `dev_box_tunnel_enable_status`
-  - Model `PoolUpdate` added property `properties`
   - Model `PoolUpdateProperties` added property `dev_box_definition_type`
   - Model `PoolUpdateProperties` added property `dev_box_definition`
   - Model `PoolUpdateProperties` added property `stop_on_no_connect`
   - Model `PoolUpdateProperties` added property `active_hours_configuration`
   - Model `PoolUpdateProperties` added property `dev_box_tunnel_enable_status`
-  - Model `Project` added property `properties`
-  - Model `ProjectEnvironmentType` added property `properties`
-  - Model `ProjectEnvironmentTypeUpdate` added property `properties`
   - Model `ProjectProperties` added property `customization_settings`
   - Model `ProjectProperties` added property `dev_box_schedule_delete_settings`
   - Model `ProjectProperties` added property `azure_ai_services_settings`
   - Model `ProjectProperties` added property `serverless_gpu_sessions_settings`
   - Model `ProjectProperties` added property `workspace_storage_settings`
   - Model `ProjectProperties` added property `assigned_groups`
-  - Model `ProjectUpdate` added property `properties`
   - Model `ProjectUpdateProperties` added property `customization_settings`
   - Model `ProjectUpdateProperties` added property `dev_box_schedule_delete_settings`
   - Model `ProjectUpdateProperties` added property `azure_ai_services_settings`
   - Model `ProjectUpdateProperties` added property `serverless_gpu_sessions_settings`
   - Model `ProjectUpdateProperties` added property `workspace_storage_settings`
   - Model `ProjectUpdateProperties` added property `assigned_groups`
-  - Model `Schedule` added property `properties`
   - Added model `ActiveHoursConfiguration`
-  - Added model `AllowedEnvironmentTypeProperties`
   - Added enum `ArchitectureType`
   - Added model `AssignedGroup`
   - Added enum `AssignedGroupScope`
-  - Added model `AttachedNetworkConnectionProperties`
   - Added enum `AutoImageBuildStatus`
   - Added enum `AutoStartEnableStatus`
   - Added enum `AzureAiServicesMode`
@@ -103,12 +78,9 @@
   - Added enum `DevCenterResourceType`
   - Added enum `DevboxDisksEncryptionEnableStatus`
   - Added model `EncryptionSetUpdate`
-  - Added model `EnvironmentDefinitionProperties`
   - Added model `FeatureState`
   - Added enum `FeatureStateModifiable`
   - Added enum `FeatureStatus`
-  - Added model `GalleryProperties`
-  - Added model `HealthCheckStatusDetailsProperties`
   - Added model `ImageCreationErrorDetails`
   - Added model `ImageDefinition`
   - Added model `ImageDefinitionBuild`
@@ -120,8 +92,6 @@
   - Added model `ImageDefinitionBuildTaskParametersItem`
   - Added model `ImageDefinitionProperties`
   - Added model `ImageDefinitionReference`
-  - Added model `ImageProperties`
-  - Added model `ImageVersionProperties`
   - Added model `InheritedProjectCatalogSettings`
   - Added model `InheritedSettingsForProject`
   - Added enum `InstallAzureMonitorAgentEnableStatus`
@@ -148,186 +118,54 @@
   - Added enum `UserCustomizationsEnableStatus`
   - Added enum `WorkspaceStorageMode`
   - Added model `WorkspaceStorageSettings`
-  - Model `ImageVersionsOperations` added method `get_by_project`
-  - Model `ImageVersionsOperations` added method `list_by_project`
-  - Model `ImagesOperations` added method `get_by_project`
-  - Model `ImagesOperations` added method `list_by_project`
-  - Model `ProjectsOperations` added method `get_inherited_settings`
-  - Model `SkusOperations` added method `list_by_project`
-  - Added model `CustomizationTasksOperations`
-  - Added model `DevCenterCatalogImageDefinitionBuildOperations`
-  - Added model `DevCenterCatalogImageDefinitionBuildsOperations`
-  - Added model `DevCenterCatalogImageDefinitionsOperations`
-  - Added model `EncryptionSetsOperations`
-  - Added model `ProjectCatalogImageDefinitionBuildOperations`
-  - Added model `ProjectCatalogImageDefinitionBuildsOperations`
-  - Added model `ProjectCatalogImageDefinitionsOperations`
-  - Added model `ProjectPoliciesOperations`
+  - Operation group `ImageVersionsOperations` added method `get_by_project`
+  - Operation group `ImageVersionsOperations` added method `list_by_project`
+  - Operation group `ImagesOperations` added method `get_by_project`
+  - Operation group `ImagesOperations` added method `list_by_project`
+  - Operation group `ProjectsOperations` added method `get_inherited_settings`
+  - Operation group `SkusOperations` added method `list_by_project`
+  - Added operation group `CustomizationTasksOperations`
+  - Added operation group `DevCenterCatalogImageDefinitionBuildOperations`
+  - Added operation group `DevCenterCatalogImageDefinitionBuildsOperations`
+  - Added operation group `DevCenterCatalogImageDefinitionsOperations`
+  - Added operation group `EncryptionSetsOperations`
+  - Added operation group `ProjectCatalogImageDefinitionBuildOperations`
+  - Added operation group `ProjectCatalogImageDefinitionBuildsOperations`
+  - Added operation group `ProjectCatalogImageDefinitionsOperations`
+  - Added operation group `ProjectPoliciesOperations`
 
 ### Breaking Changes
 
-  - Model `AllowedEnvironmentType` deleted or renamed its instance variable `provisioning_state`
-  - Model `AllowedEnvironmentType` deleted or renamed its instance variable `display_name`
-  - Model `AttachedNetworkConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `AttachedNetworkConnection` deleted or renamed its instance variable `network_connection_id`
-  - Model `AttachedNetworkConnection` deleted or renamed its instance variable `network_connection_location`
-  - Model `AttachedNetworkConnection` deleted or renamed its instance variable `health_check_status`
-  - Model `AttachedNetworkConnection` deleted or renamed its instance variable `domain_join_type`
-  - Model `Catalog` deleted or renamed its instance variable `git_hub`
-  - Model `Catalog` deleted or renamed its instance variable `ado_git`
-  - Model `Catalog` deleted or renamed its instance variable `sync_type`
-  - Model `Catalog` deleted or renamed its instance variable `tags`
-  - Model `Catalog` deleted or renamed its instance variable `provisioning_state`
-  - Model `Catalog` deleted or renamed its instance variable `sync_state`
-  - Model `Catalog` deleted or renamed its instance variable `last_sync_stats`
-  - Model `Catalog` deleted or renamed its instance variable `connection_state`
-  - Model `Catalog` deleted or renamed its instance variable `last_connection_time`
-  - Model `Catalog` deleted or renamed its instance variable `last_sync_time`
-  - Model `CatalogUpdate` deleted or renamed its instance variable `git_hub`
-  - Model `CatalogUpdate` deleted or renamed its instance variable `ado_git`
-  - Model `CatalogUpdate` deleted or renamed its instance variable `sync_type`
-  - Model `CatalogUpdate` deleted or renamed its instance variable `tags`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `image_reference`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `sku`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `os_storage_type`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `hibernate_support`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `provisioning_state`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `image_validation_status`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `image_validation_error_details`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `validation_status`
-  - Model `DevBoxDefinition` deleted or renamed its instance variable `active_image_reference`
-  - Model `DevBoxDefinitionUpdate` deleted or renamed its instance variable `image_reference`
-  - Model `DevBoxDefinitionUpdate` deleted or renamed its instance variable `sku`
-  - Model `DevBoxDefinitionUpdate` deleted or renamed its instance variable `os_storage_type`
-  - Model `DevBoxDefinitionUpdate` deleted or renamed its instance variable `hibernate_support`
-  - Model `DevCenter` deleted or renamed its instance variable `encryption`
-  - Model `DevCenter` deleted or renamed its instance variable `display_name`
-  - Model `DevCenter` deleted or renamed its instance variable `project_catalog_settings`
-  - Model `DevCenter` deleted or renamed its instance variable `provisioning_state`
-  - Model `DevCenter` deleted or renamed its instance variable `dev_center_uri`
-  - Model `DevCenterUpdate` deleted or renamed its instance variable `encryption`
-  - Model `DevCenterUpdate` deleted or renamed its instance variable `display_name`
-  - Model `DevCenterUpdate` deleted or renamed its instance variable `project_catalog_settings`
-  - Model `EnvironmentDefinition` deleted or renamed its instance variable `description`
-  - Model `EnvironmentDefinition` deleted or renamed its instance variable `parameters`
-  - Model `EnvironmentDefinition` deleted or renamed its instance variable `template_path`
-  - Model `EnvironmentDefinition` deleted or renamed its instance variable `validation_status`
-  - Model `EnvironmentType` deleted or renamed its instance variable `display_name`
-  - Model `EnvironmentType` deleted or renamed its instance variable `provisioning_state`
-  - Model `EnvironmentTypeUpdate` deleted or renamed its instance variable `display_name`
-  - Model `Gallery` deleted or renamed its instance variable `provisioning_state`
-  - Model `Gallery` deleted or renamed its instance variable `gallery_resource_id`
-  - Model `HealthCheckStatusDetails` deleted or renamed its instance variable `start_date_time`
-  - Model `HealthCheckStatusDetails` deleted or renamed its instance variable `end_date_time`
-  - Model `HealthCheckStatusDetails` deleted or renamed its instance variable `health_checks`
-  - Model `Image` deleted or renamed its instance variable `description`
-  - Model `Image` deleted or renamed its instance variable `publisher`
-  - Model `Image` deleted or renamed its instance variable `offer`
-  - Model `Image` deleted or renamed its instance variable `sku`
-  - Model `Image` deleted or renamed its instance variable `recommended_machine_configuration`
-  - Model `Image` deleted or renamed its instance variable `provisioning_state`
-  - Model `Image` deleted or renamed its instance variable `hibernate_support`
-  - Model `ImageVersion` deleted or renamed its instance variable `name_properties_name`
-  - Model `ImageVersion` deleted or renamed its instance variable `published_date`
-  - Model `ImageVersion` deleted or renamed its instance variable `exclude_from_latest`
-  - Model `ImageVersion` deleted or renamed its instance variable `os_disk_image_size_in_gb`
-  - Model `ImageVersion` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkConnection` deleted or renamed its instance variable `subnet_id`
-  - Model `NetworkConnection` deleted or renamed its instance variable `domain_name`
-  - Model `NetworkConnection` deleted or renamed its instance variable `organization_unit`
-  - Model `NetworkConnection` deleted or renamed its instance variable `domain_username`
-  - Model `NetworkConnection` deleted or renamed its instance variable `domain_password`
-  - Model `NetworkConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkConnection` deleted or renamed its instance variable `health_check_status`
-  - Model `NetworkConnection` deleted or renamed its instance variable `networking_resource_group_name`
-  - Model `NetworkConnection` deleted or renamed its instance variable `domain_join_type`
-  - Model `NetworkConnectionUpdate` deleted or renamed its instance variable `subnet_id`
-  - Model `NetworkConnectionUpdate` deleted or renamed its instance variable `domain_name`
-  - Model `NetworkConnectionUpdate` deleted or renamed its instance variable `organization_unit`
-  - Model `NetworkConnectionUpdate` deleted or renamed its instance variable `domain_username`
-  - Model `NetworkConnectionUpdate` deleted or renamed its instance variable `domain_password`
-  - Model `Pool` deleted or renamed its instance variable `dev_box_definition_name`
-  - Model `Pool` deleted or renamed its instance variable `network_connection_name`
-  - Model `Pool` deleted or renamed its instance variable `license_type`
-  - Model `Pool` deleted or renamed its instance variable `local_administrator`
-  - Model `Pool` deleted or renamed its instance variable `stop_on_disconnect`
-  - Model `Pool` deleted or renamed its instance variable `single_sign_on_status`
-  - Model `Pool` deleted or renamed its instance variable `display_name`
-  - Model `Pool` deleted or renamed its instance variable `virtual_network_type`
-  - Model `Pool` deleted or renamed its instance variable `managed_virtual_network_regions`
-  - Model `Pool` deleted or renamed its instance variable `health_status`
-  - Model `Pool` deleted or renamed its instance variable `health_status_details`
-  - Model `Pool` deleted or renamed its instance variable `dev_box_count`
-  - Model `Pool` deleted or renamed its instance variable `provisioning_state`
-  - Model `PoolUpdate` deleted or renamed its instance variable `dev_box_definition_name`
-  - Model `PoolUpdate` deleted or renamed its instance variable `network_connection_name`
-  - Model `PoolUpdate` deleted or renamed its instance variable `license_type`
-  - Model `PoolUpdate` deleted or renamed its instance variable `local_administrator`
-  - Model `PoolUpdate` deleted or renamed its instance variable `stop_on_disconnect`
-  - Model `PoolUpdate` deleted or renamed its instance variable `single_sign_on_status`
-  - Model `PoolUpdate` deleted or renamed its instance variable `display_name`
-  - Model `PoolUpdate` deleted or renamed its instance variable `virtual_network_type`
-  - Model `PoolUpdate` deleted or renamed its instance variable `managed_virtual_network_regions`
-  - Model `Project` deleted or renamed its instance variable `dev_center_id`
-  - Model `Project` deleted or renamed its instance variable `description`
-  - Model `Project` deleted or renamed its instance variable `max_dev_boxes_per_user`
-  - Model `Project` deleted or renamed its instance variable `display_name`
-  - Model `Project` deleted or renamed its instance variable `catalog_settings`
-  - Model `Project` deleted or renamed its instance variable `provisioning_state`
-  - Model `Project` deleted or renamed its instance variable `dev_center_uri`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `deployment_target_id`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `display_name`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `status`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `creator_role_assignment`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `user_role_assignments`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `provisioning_state`
-  - Model `ProjectEnvironmentType` deleted or renamed its instance variable `environment_count`
-  - Model `ProjectEnvironmentTypeUpdate` deleted or renamed its instance variable `deployment_target_id`
-  - Model `ProjectEnvironmentTypeUpdate` deleted or renamed its instance variable `display_name`
-  - Model `ProjectEnvironmentTypeUpdate` deleted or renamed its instance variable `status`
-  - Model `ProjectEnvironmentTypeUpdate` deleted or renamed its instance variable `creator_role_assignment`
-  - Model `ProjectEnvironmentTypeUpdate` deleted or renamed its instance variable `user_role_assignments`
-  - Model `ProjectUpdate` deleted or renamed its instance variable `dev_center_id`
-  - Model `ProjectUpdate` deleted or renamed its instance variable `description`
-  - Model `ProjectUpdate` deleted or renamed its instance variable `max_dev_boxes_per_user`
-  - Model `ProjectUpdate` deleted or renamed its instance variable `display_name`
-  - Model `ProjectUpdate` deleted or renamed its instance variable `catalog_settings`
-  - Model `Schedule` deleted or renamed its instance variable `tags`
-  - Model `Schedule` deleted or renamed its instance variable `location`
-  - Model `Schedule` deleted or renamed its instance variable `type_properties_type`
-  - Model `Schedule` deleted or renamed its instance variable `frequency`
-  - Model `Schedule` deleted or renamed its instance variable `time`
-  - Model `Schedule` deleted or renamed its instance variable `time_zone`
-  - Model `Schedule` deleted or renamed its instance variable `state`
-  - Model `Schedule` deleted or renamed its instance variable `provisioning_state`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `tags`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `location`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `type`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `frequency`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `time`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `time_zone`
-  - Model `ScheduleUpdate` deleted or renamed its instance variable `state`
-  - Deleted or renamed model `AllowedEnvironmentTypeListResult`
-  - Deleted or renamed model `AttachedNetworkListResult`
-  - Deleted or renamed model `CatalogListResult`
-  - Deleted or renamed model `DevBoxDefinitionListResult`
-  - Deleted or renamed model `DevCenterListResult`
-  - Deleted or renamed model `EnvironmentDefinitionListResult`
-  - Deleted or renamed model `EnvironmentTypeListResult`
-  - Deleted or renamed model `GalleryListResult`
-  - Deleted or renamed model `HealthCheckStatusDetailsListResult`
-  - Deleted or renamed model `ImageListResult`
-  - Deleted or renamed model `ImageVersionListResult`
-  - Deleted or renamed model `ListUsagesResult`
-  - Deleted or renamed model `NetworkConnectionListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `OutboundEnvironmentEndpointCollection`
-  - Deleted or renamed model `PoolListResult`
-  - Deleted or renamed model `ProjectEnvironmentTypeListResult`
-  - Deleted or renamed model `ProjectListResult`
-  - Deleted or renamed model `ScheduleListResult`
-  - Deleted or renamed model `SkuListResult`
-  - Deleted or renamed model `TrackedResourceUpdate`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AllowedEnvironmentType` moved instance variable `provisioning_state` and `display_name` under property `properties` whose type is `AllowedEnvironmentTypeProperties`
+  - Model `AttachedNetworkConnection` moved instance variable `provisioning_state`, `network_connection_id`, `network_connection_location`, `health_check_status` and `domain_join_type` under property `properties` whose type is `AttachedNetworkConnectionProperties`
+  - Model `Catalog` moved instance variable `git_hub`, `ado_git`, `sync_type`, `tags`, `provisioning_state`, `sync_state`, `last_sync_stats`, `connection_state`, `last_connection_time` and `last_sync_time` under property `properties` whose type is `CatalogProperties`
+  - Model `CatalogUpdate` moved instance variable `git_hub`, `ado_git`, `sync_type` and `tags` under property `properties` whose type is `CatalogUpdateProperties`
+  - Model `DevBoxDefinition` moved instance variable `image_reference`, `sku`, `os_storage_type`, `hibernate_support`, `provisioning_state`, `image_validation_status`, `image_validation_error_details`, `validation_status` and `active_image_reference` under property `properties` whose type is `DevBoxDefinitionProperties`
+  - Model `DevBoxDefinitionUpdate` moved instance variable `image_reference`, `sku`, `os_storage_type` and `hibernate_support` under property `properties` whose type is `DevBoxDefinitionUpdateProperties`
+  - Model `DevCenter` moved instance variable `encryption`, `display_name`, `project_catalog_settings`, `provisioning_state` and `dev_center_uri` under property `properties` whose type is `DevCenterProperties`
+  - Model `DevCenterUpdate` moved instance variable `encryption`, `display_name` and `project_catalog_settings` under property `properties` whose type is `DevCenterUpdateProperties`
+  - Model `EnvironmentDefinition` moved instance variable `description`, `parameters`, `template_path` and `validation_status` under property `properties` whose type is `EnvironmentDefinitionProperties`
+  - Model `EnvironmentType` moved instance variable `display_name` and `provisioning_state` under property `properties` whose type is `EnvironmentTypeProperties`
+  - Model `EnvironmentTypeUpdate` moved instance variable `display_name` under property `properties` whose type is `EnvironmentTypeUpdateProperties`
+  - Model `Gallery` moved instance variable `provisioning_state` and `gallery_resource_id` under property `properties` whose type is `GalleryProperties`
+  - Model `HealthCheckStatusDetails` moved instance variable `start_date_time`, `end_date_time` and `health_checks` under property `properties` whose type is `HealthCheckStatusDetailsProperties`
+  - Model `Image` moved instance variable `description`, `publisher`, `offer`, `sku`, `recommended_machine_configuration`, `provisioning_state` and `hibernate_support` under property `properties` whose type is `ImageProperties`
+  - Model `ImageVersion` moved instance variable `name_properties_name`, `published_date`, `exclude_from_latest`, `os_disk_image_size_in_gb` and `provisioning_state` under property `properties` whose type is `ImageVersionProperties`
+  - Model `NetworkConnection` moved instance variable `subnet_id`, `domain_name`, `organization_unit`, `domain_username`, `domain_password`, `provisioning_state`, `health_check_status`, `networking_resource_group_name` and `domain_join_type` under property `properties` whose type is `NetworkProperties`
+  - Model `NetworkConnectionUpdate` moved instance variable `subnet_id`, `domain_name`, `organization_unit`, `domain_username` and `domain_password` under property `properties` whose type is `NetworkConnectionUpdateProperties`
+  - Model `Pool` moved instance variable `dev_box_definition_name`, `network_connection_name`, `license_type`, `local_administrator`, `stop_on_disconnect`, `single_sign_on_status`, `display_name`, `virtual_network_type`, `managed_virtual_network_regions`, `health_status`, `health_status_details`, `dev_box_count` and `provisioning_state` under property `properties` whose type is `PoolProperties`
+  - Model `PoolUpdate` moved instance variable `dev_box_definition_name`, `network_connection_name`, `license_type`, `local_administrator`, `stop_on_disconnect`, `single_sign_on_status`, `display_name`, `virtual_network_type` and `managed_virtual_network_regions` under property `properties` whose type is `PoolUpdateProperties`
+  - Model `Project` moved instance variable `dev_center_id`, `description`, `max_dev_boxes_per_user`, `display_name`, `catalog_settings`, `provisioning_state` and `dev_center_uri` under property `properties` whose type is `ProjectProperties`
+  - Model `ProjectEnvironmentType` moved instance variable `deployment_target_id`, `display_name`, `status`, `creator_role_assignment`, `user_role_assignments`, `provisioning_state` and `environment_count` under property `properties` whose type is `ProjectEnvironmentTypeProperties`
+  - Model `ProjectEnvironmentTypeUpdate` moved instance variable `deployment_target_id`, `display_name`, `status`, `creator_role_assignment` and `user_role_assignments` under property `properties` whose type is `ProjectEnvironmentTypeUpdateProperties`
+  - Model `ProjectUpdate` moved instance variable `dev_center_id`, `description`, `max_dev_boxes_per_user`, `display_name` and `catalog_settings` under property `properties` whose type is `ProjectUpdateProperties`
+  - Model `Schedule` moved instance variable `tags`, `location`, `type_properties_type`, `frequency`, `time`, `time_zone`, `state` and `provisioning_state` under property `properties` whose type is `ScheduleProperties`
+  - Model `ScheduleUpdate` moved instance variable `tags`, `location`, `type`, `frequency`, `time`, `time_zone` and `state` under property `properties` whose type is `ScheduleUpdateProperties`
+
+### Other Changes
+
+  - Deleted model `AllowedEnvironmentTypeListResult`/`AttachedNetworkListResult`/`CatalogListResult`/`DevBoxDefinitionListResult`/`DevCenterListResult`/`EnvironmentDefinitionListResult`/`EnvironmentTypeListResult`/`GalleryListResult`/`HealthCheckStatusDetailsListResult`/`ImageListResult`/`ImageVersionListResult`/`ListUsagesResult`/`NetworkConnectionListResult`/`OperationListResult`/`OutboundEnvironmentEndpointCollection`/`PoolListResult`/`ProjectEnvironmentTypeListResult`/`ProjectListResult`/`ScheduleListResult`/`SkuListResult`/`TrackedResourceUpdate` which actually were not used by SDK users
 
 ## 1.1.0 (2024-04-22)
 
