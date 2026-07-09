@@ -41,7 +41,6 @@ def add_sanitizers(test_proxy):
     # TypeSpec-generated code may order query parameters differently than AutoRest
     set_custom_default_matcher(ignore_query_ordering=True)
 
-    add_remove_header_sanitizer(headers="Accept")
     add_uri_regex_sanitizer(
         regex=r"(?<=[?&]sktid=)[^&#]+",
         value="00000000-0000-0000-0000-000000000000",

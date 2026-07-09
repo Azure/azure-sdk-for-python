@@ -41,17 +41,8 @@ class FileClientConfiguration(GeneratedFileClientConfiguration):
     def __init__(self, url: str, credential: Optional["TokenCredential"] = None, **kwargs: Any) -> None:
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-
-        version: str = kwargs.pop("version", "2026-06-06")
         self.url = url
-        self.credential = credential
-        self.version = version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-        from ._version import VERSION
-
-        kwargs.setdefault("sdk_moniker", "storage-file-share/{}".format(VERSION))
-        self.polling_interval = kwargs.get("polling_interval", 30)
-        self._configure(**kwargs)
+        self.version: str = kwargs.pop("version", "2026-06-06")
 
 
 class FileClient(GeneratedFileClient):
@@ -76,25 +67,20 @@ class FileClient(GeneratedFileClient):
     :paramtype version: str
     """
 
-    def __init__(
-        self, url: str, credential: Optional["TokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
-    ) -> None:
-        if pipeline is None:
-            super().__init__(url=url, credential=credential, **kwargs)  # type: ignore[arg-type]
-            return
-
-        _endpoint = "{url}"
-        self._config = FileClientConfiguration(url=url, credential=credential, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, pipeline=pipeline)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
-
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.share = ShareOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.directory = DirectoryOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
+    def __init__(self, url: str, credential: Optional["TokenCredential"] = None, **kwargs: Any) -> None:
+        _pipeline = kwargs.pop("pipeline", None)
+        if _pipeline is not None:
+            self._config = FileClientConfiguration(url=url, credential=credential, **kwargs)
+            self._client: PipelineClient = PipelineClient(base_url="{url}", pipeline=_pipeline)
+            self._serialize = Serializer()
+            self._deserialize = Deserializer()
+            self._serialize.client_side_validation = False
+            self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+            self.share = ShareOperations(self._client, self._config, self._serialize, self._deserialize)
+            self.directory = DirectoryOperations(self._client, self._config, self._serialize, self._deserialize)
+            self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
+        else:
+            super().__init__(url, credential, **kwargs)  # type: ignore[arg-type]
 
 
 __all__: list[str] = ["FileClient"]
