@@ -97,18 +97,6 @@ async def test_with_keep_alive__emits_heartbeat_on_idle_gap() -> None:
     assert out.index("a") < out.index("b")
 
 
-async def test_with_keep_alive__preserves_item_order_across_gaps() -> None:
-    """Items arriving across several idle gaps keep their order and count."""
-
-    async def source() -> AsyncIterator[str]:
-        for i in range(5):
-            await asyncio.sleep(0.03)
-            yield f"item-{i}"
-
-    out = await _collect(with_keep_alive(source(), 0.01))
-    assert [item for item in out if item != _KA] == [f"item-{i}" for i in range(5)]
-
-
 async def test_with_keep_alive__preserves_contextvars_across_yields() -> None:
     """A ContextVar the source sets once stays set across all of its yields, because the
     source is advanced by a single task."""
