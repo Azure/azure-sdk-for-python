@@ -16,6 +16,7 @@
     "@typespec/openapi3": "1.13.0",
     "@typespec/http-client-python": "^0.34.1",
     "@azure-tools/openai-typespec": "1.21.0",
+    "@azure-tools/typespec-azure-portal-core": "~0.67.0",
     "@azure-tools/typespec-autorest": "~0.69.1",
     "@azure-tools/typespec-azure-core": "~0.69.0",
     "@azure-tools/typespec-azure-resource-manager": "~0.69.2",
