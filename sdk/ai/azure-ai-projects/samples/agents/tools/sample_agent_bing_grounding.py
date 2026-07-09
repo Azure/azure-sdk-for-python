@@ -44,6 +44,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -56,11 +57,11 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = "MyAgent"
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
 
     tool = BingGroundingTool(
@@ -71,43 +72,45 @@ with (
         )
     )
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant.",
-            tools=[tool],
+    with (
+        create_version_with_endpoint(
+            project_client=project_client,
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="You are a helpful assistant.",
+                tools=[tool],
+            ),
+            description="You are a helpful agent.",
         ),
-        description="You are a helpful agent.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    stream_response = openai_client.responses.create(
-        stream=True,
-        tool_choice="required",
-        input="What is today's date and whether in Seattle?",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-    )
+        stream_response = openai_client.responses.create(
+            stream=True,
+            tool_choice="required",
+            input="What is today's date and whether in Seattle?",
+        )
 
-    for event in stream_response:
-        if event.type == "response.created":
-            print(f"Follow-up response created with ID: {event.response.id}")
-        elif event.type == "response.output_text.delta":
-            print(f"Delta: {event.delta}")
-        elif event.type == "response.text.done":
-            print("\nFollow-up response done!")
-        elif event.type == "response.output_item.done":
-            if event.item.type == "message":
-                item = event.item
-                if item.content[-1].type == "output_text":
-                    text_content = item.content[-1]
-                    for annotation in text_content.annotations:
-                        if annotation.type == "url_citation":
-                            print(f"URL Citation: {annotation.url}")
-        elif event.type == "response.completed":
-            print("\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+        for event in stream_response:
+            if event.type == "response.created":
+                print(f"Follow-up response created with ID: {event.response.id}")
+            elif event.type == "response.output_text.delta":
+                print(f"Delta: {event.delta}")
+            elif event.type == "response.text.done":
+                print("\nFollow-up response done!")
+            elif event.type == "response.output_item.done":
+                if event.item.type == "message":
+                    item = event.item
+                    if item.content[-1].type == "output_text":
+                        text_content = item.content[-1]
+                        for annotation in text_content.annotations:
+                            if annotation.type == "url_citation":
+                                print(f"URL Citation: {annotation.url}")
+            elif event.type == "response.completed":
+                print("\nFollow-up completed!")
+                print(f"Full response: {event.response.output_text}")
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+        print("\nCleaning up...")

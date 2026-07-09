@@ -25,6 +25,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool
@@ -32,48 +33,46 @@ from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+AGENT_NAME = "MyAgent"
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
-
-    tool = CodeInterpreterTool()
-
-    # Create agent with code interpreter tool
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant.",
-            tools=[tool],
+    with (
+        create_version_with_endpoint(
+            project_client=project_client,
+            agent_name=AGENT_NAME,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="You are a helpful assistant.",
+                tools=[CodeInterpreterTool()],
+            ),
+            description="Code interpreter agent for data analysis and visualization.",
         ),
-        description="Code interpreter agent for data analysis and visualization.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
+    ):
+        agent = project_client.agents.get(agent_name=AGENT_NAME)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    # Create a conversation for the agent interaction
-    conversation = openai_client.conversations.create()
-    print(f"Created conversation (id: {conversation.id})")
+        # Create a conversation for the agent interaction
+        conversation = openai_client.conversations.create()
+        print(f"Created conversation (id: {conversation.id})")
 
-    # Send request for the agent to generate a multiplication chart.
-    response = openai_client.responses.create(
-        conversation=conversation.id,
-        input="Could you please generate a multiplication chart showing the products for 1-10 multiplied by 1-10 (a 10x10 times table)?",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        tool_choice="required",
-    )
-    print(f"Response completed (id: {response.id})")
+        # Send request for the agent to generate a multiplication chart.
+        response = openai_client.responses.create(
+            conversation=conversation.id,
+            input="Could you please generate a multiplication chart showing the products for 1-10 multiplied by 1-10 (a 10x10 times table)?",
+            tool_choice="required",
+        )
+        print(f"Response completed (id: {response.id})")
 
-    # Print code executed by the code interpreter tool.
-    code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
-    print("Code Interpreter code:")
-    print(code)
+        # Print code executed by the code interpreter tool.
+        code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
+        print("Code Interpreter code:")
+        print(code)
 
-    # Print final assistant text output.
-    print(f"Agent response: {response.output_text}")
+        # Print final assistant text output.
+        print(f"Agent response: {response.output_text}")
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+        print("\nCleaning up...")

@@ -29,6 +29,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
@@ -36,47 +37,44 @@ from azure.ai.projects.models import PromptAgentDefinition
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = "MyAgent"
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
+        )
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    with project_client.get_openai_client() as openai_client:
-        agent = project_client.agents.create_version(
-            agent_name="MyAgent",
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant that answers general questions",
-            ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+    conversation = openai_client.conversations.create(
+        items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+    )
+    print(f"Created conversation with initial user message (id: {conversation.id})")
 
-        conversation = openai_client.conversations.create(
-            items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
-        )
-        print(f"Created conversation with initial user message (id: {conversation.id})")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+    )
+    print(f"Response output: {response.output_text}")
 
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Response output: {response.output_text}")
+    openai_client.conversations.items.create(
+        conversation_id=conversation.id,
+        items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+    )
+    print("Added a second user message to the conversation")
 
-        openai_client.conversations.items.create(
-            conversation_id=conversation.id,
-            items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
-        )
-        print("Added a second user message to the conversation")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+    )
+    print(f"Response output: {response.output_text}")
 
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Response output: {response.output_text}")
-
-        openai_client.conversations.delete(conversation_id=conversation.id)
-        print("Conversation deleted")
-
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+    openai_client.conversations.delete(conversation_id=conversation.id)
+    print("Conversation deleted")

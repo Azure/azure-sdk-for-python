@@ -38,6 +38,7 @@ USAGE:
 import os
 
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 from azure.ai.projects.models._models import ToolboxSearchPreviewToolboxTool
 from azure.core.exceptions import ResourceNotFoundError
@@ -64,7 +65,6 @@ AGENT_NAME = "SkillToolboxAgent"
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
 
     try:
@@ -110,43 +110,47 @@ with (
         require_approval="never",
     )
 
-    agent = project_client.agents.create_version(
-        agent_name=AGENT_NAME,
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions=(
-                "Answer the user using the `shipping-cost-skill` instructions "
-                "available in your context. Do not call `tool_search`; the "
-                "skill rules are already part of your knowledge. Apply the "
-                "skill's formula exactly as given and state the formula in "
-                "your answer."
+    with (
+        create_version_with_endpoint(
+            project_client=project_client,
+            agent_name=AGENT_NAME,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions=(
+                    "Answer the user using the `shipping-cost-skill` instructions "
+                    "available in your context. Do not call `tool_search`; the "
+                    "skill rules are already part of your knowledge. Apply the "
+                    "skill's formula exactly as given and state the formula in "
+                    "your answer."
+                ),
+                temperature=0,
+                tools=[toolbox_mcp_tool],
             ),
-            temperature=0,
-            tools=[toolbox_mcp_tool],
         ),
-    )
-    print(f"Agent created (id={agent.id}, name={agent.name}, version={agent.version})")
+        project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
+    ):
+        agent = project_client.agents.get(agent_name=AGENT_NAME)
+        print(f"Agent created (id={agent.id}, name={agent.name}, version={agent.versions.latest.version})")
 
-    user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
-    print(f"User: {user_input}")
-    response = openai_client.responses.create(
-        input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-    )
+        user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
+        print(f"User: {user_input}")
+        response = openai_client.responses.create(
+            input=user_input,
+        )
 
-    for item in response.output:
-        if item.type == "mcp_list_tools":
-            print(f"mcp_list_tools server_label={item.server_label} tools={[t.name for t in (item.tools or [])]}")
-        elif item.type == "mcp_call":
-            print(f"mcp_call server_label={item.server_label} name={item.name} error={item.error}")
-            if getattr(item, "output", None):
-                print(f"  output: {item.output}")
-        elif item.type == "mcp_approval_request":
-            print(f"mcp_approval_request server_label={item.server_label} name={item.name}")
-        else:
-            print(f"output item type={item.type}")
+        for item in response.output:
+            if item.type == "mcp_list_tools":
+                print(f"mcp_list_tools server_label={item.server_label} tools={[t.name for t in (item.tools or [])]}")
+            elif item.type == "mcp_call":
+                print(f"mcp_call server_label={item.server_label} name={item.name} error={item.error}")
+                if getattr(item, "output", None):
+                    print(f"  output: {item.output}")
+            elif item.type == "mcp_approval_request":
+                print(f"mcp_approval_request server_label={item.server_label} name={item.name}")
+            else:
+                print(f"output item type={item.type}")
 
-    print(f"Response: {response.output_text}")
+        print(f"Response: {response.output_text}")
 
     project_client.toolboxes.delete(TOOLBOX_NAME)
     print("Toolbox deleted")

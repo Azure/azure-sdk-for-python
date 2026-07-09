@@ -27,6 +27,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, WorkIQPreviewTool
@@ -34,35 +35,37 @@ from azure.ai.projects.models import PromptAgentDefinition, WorkIQPreviewTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = "MyAgent"
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
     tool_payload = WorkIQPreviewTool(
         project_connection_id=os.environ["WORK_IQ_PROJECT_CONNECTION_ID"],
     )
 
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="Use the available WorkIQ tools to answer questions and perform tasks.",
-            tools=[tool_payload],
+    with (
+        create_version_with_endpoint(
+            project_client=project_client,
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="Use the available WorkIQ tools to answer questions and perform tasks.",
+                tools=[tool_payload],
+            ),
         ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    user_input = os.environ.get("WORK_IQ_USER_INPUT") or input("Enter your question:\n")
+        user_input = os.environ.get("WORK_IQ_USER_INPUT") or input("Enter your question:\n")
 
-    response = openai_client.responses.create(
-        input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-    )
+        response = openai_client.responses.create(
+            input=user_input,
+        )
 
-    print(f"Agent response: {response.output_text}")
+        print(f"Agent response: {response.output_text}")
 
-    # Clean up the agent version so unused versions don't accumulate in the project.
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+        # The helper restores the endpoint and deletes the temporary version automatically.

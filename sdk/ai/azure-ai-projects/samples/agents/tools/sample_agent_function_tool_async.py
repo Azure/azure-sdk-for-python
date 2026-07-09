@@ -30,6 +30,7 @@ import json
 import asyncio
 from dotenv import load_dotenv
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
@@ -37,6 +38,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+AGENT_NAME = "MyAgent"
 
 
 async def get_horoscope(sign: str) -> str:
@@ -48,7 +50,6 @@ async def main():
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
     ):
         # Define a function tool for the model to use
         func_tool = FunctionTool(
@@ -68,49 +69,55 @@ async def main():
             strict=True,
         )
 
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant that can use function tools.",
-                tools=[func_tool],
+        async with (
+            create_version_with_endpoint_async(
+                project_client=project_client,
+                agent_name=AGENT_NAME,
+                definition=PromptAgentDefinition(
+                    model=os.environ["FOUNDRY_MODEL_NAME"],
+                    instructions="You are a helpful assistant that can use function tools.",
+                    tools=[func_tool],
+                ),
             ),
-        )
+            project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
+        ):
+            agent = await project_client.agents.get(agent_name=AGENT_NAME)
+            print(
+                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})"
+            )
 
-        # Prompt the model with tools defined
-        response = await openai_client.responses.create(
-            input="What is my horoscope? I am an Aquarius.",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Response output: {response.output_text}")
+            # Prompt the model with tools defined
+            response = await openai_client.responses.create(
+                input="What is my horoscope? I am an Aquarius.",
+            )
+            print(f"Response output: {response.output_text}")
 
-        input_list: ResponseInputParam = []
-        # Process function calls
-        for item in response.output:
-            if item.type == "function_call":
-                if item.name == "get_horoscope":
-                    # Execute the function logic for get_horoscope
-                    horoscope = await get_horoscope(**json.loads(item.arguments))
+            input_list: ResponseInputParam = []
+            # Process function calls
+            for item in response.output:
+                if item.type == "function_call":
+                    if item.name == "get_horoscope":
+                        # Execute the function logic for get_horoscope
+                        horoscope = await get_horoscope(**json.loads(item.arguments))
 
-                    # Provide function call results to the model
-                    input_list.append(
-                        FunctionCallOutput(
-                            type="function_call_output",
-                            call_id=item.call_id,
-                            output=json.dumps({"horoscope": horoscope}),
+                        # Provide function call results to the model
+                        input_list.append(
+                            FunctionCallOutput(
+                                type="function_call_output",
+                                call_id=item.call_id,
+                                output=json.dumps({"horoscope": horoscope}),
+                            )
                         )
-                    )
 
-        print("Final input:")
-        print(input_list)
+            print("Final input:")
+            print(input_list)
 
-        response = await openai_client.responses.create(
-            input=input_list,
-            previous_response_id=response.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response = await openai_client.responses.create(
+                input=input_list,
+                previous_response_id=response.id,
+            )
 
-        print(f"Agent response: {response.output_text}")
+            print(f"Agent response: {response.output_text}")
 
 
 if __name__ == "__main__":

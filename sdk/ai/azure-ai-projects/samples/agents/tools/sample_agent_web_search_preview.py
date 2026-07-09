@@ -34,6 +34,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -43,61 +44,62 @@ load_dotenv()
 
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = "MyAgent105"
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
 ):
     tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
-    # Create Agent with web search tool
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent105",
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant that can search the web",
-            tools=[tool],
+    with (
+        create_version_with_endpoint(
+            project_client=project_client,
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="You are a helpful assistant that can search the web",
+                tools=[tool],
+            ),
+            description="Agent for web search.",
         ),
-        description="Agent for web search.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    # Create a conversation for the agent interaction
-    conversation = openai_client.conversations.create()
-    print(f"Created conversation (id: {conversation.id})")
+        # Create a conversation for the agent interaction
+        conversation = openai_client.conversations.create()
+        print(f"Created conversation (id: {conversation.id})")
 
-    # Send a query to search the web
-    user_input = "Show me the latest London Underground service updates"
-    stream_response = openai_client.responses.create(
-        stream=True,
-        input=user_input,
-        tool_choice="required",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-    )
+        # Send a query to search the web
+        user_input = "Show me the latest London Underground service updates"
+        stream_response = openai_client.responses.create(
+            stream=True,
+            input=user_input,
+            tool_choice="required",
+        )
 
-    for event in stream_response:
-        if event.type == "response.created":
-            print(f"Follow-up response created with ID: {event.response.id}")
-        elif event.type == "response.output_text.delta":
-            print(f"Delta: {event.delta}")
-        elif event.type == "response.text.done":
-            print("\nFollow-up response done!")
-        elif event.type == "response.output_item.done":
-            if event.item.type == "message":
-                item = event.item
-                if item.content[-1].type == "output_text":
-                    text_content = item.content[-1]
-                    for annotation in text_content.annotations:
-                        if annotation.type == "url_citation":
-                            print(
-                                f"URL Citation: {annotation.url}, "
-                                f"Start index: {annotation.start_index}, "
-                                f"End index: {annotation.end_index}"
-                            )
-        elif event.type == "response.completed":
-            print("\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+        for event in stream_response:
+            if event.type == "response.created":
+                print(f"Follow-up response created with ID: {event.response.id}")
+            elif event.type == "response.output_text.delta":
+                print(f"Delta: {event.delta}")
+            elif event.type == "response.text.done":
+                print("\nFollow-up response done!")
+            elif event.type == "response.output_item.done":
+                if event.item.type == "message":
+                    item = event.item
+                    if item.content[-1].type == "output_text":
+                        text_content = item.content[-1]
+                        for annotation in text_content.annotations:
+                            if annotation.type == "url_citation":
+                                print(
+                                    f"URL Citation: {annotation.url}, "
+                                    f"Start index: {annotation.start_index}, "
+                                    f"End index: {annotation.end_index}"
+                                )
+            elif event.type == "response.completed":
+                print("\nFollow-up completed!")
+                print(f"Full response: {event.response.output_text}")
 
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
+        print("\nCleaning up...")

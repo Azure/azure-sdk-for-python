@@ -38,6 +38,7 @@ USAGE:
 import asyncio
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -55,13 +56,13 @@ TOOLBOX_NAME = "toolbox_with_mcp_tool"
 INNER_MCP_LABEL = "github"
 INNER_MCP_URL = "https://api.githubcopilot.com/mcp"
 TOOLBOX_MCP_LABEL = "search-tool"
+AGENT_NAME = "MyAgent"
 
 
 async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
     ):
 
         inner_mcp_tool = MCPToolboxTool(
@@ -88,39 +89,42 @@ async def main() -> None:
             require_approval="never",
         )
 
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions=(
-                    "Always use the toolbox search tool to answer questions and perform tasks. "
-                    "Use `tool_search` to discover a relevant tool, then `call_tool` "
-                    "with the tool name returned by the search."
+        async with (
+            create_version_with_endpoint_async(
+                project_client=project_client,
+                agent_name=AGENT_NAME,
+                definition=PromptAgentDefinition(
+                    model=os.environ["FOUNDRY_MODEL_NAME"],
+                    instructions=(
+                        "Always use the toolbox search tool to answer questions and perform tasks. "
+                        "Use `tool_search` to discover a relevant tool, then `call_tool` "
+                        "with the tool name returned by the search."
+                    ),
+                    tools=[toolbox_mcp_tool],
                 ),
-                tools=[toolbox_mcp_tool],
             ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
+            project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
+        ):
+            agent = await project_client.agents.get(agent_name=AGENT_NAME)
+            print(
+                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})."
+            )
 
-        response = await openai_client.responses.create(
-            input="What is my username in Github profile?",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response = await openai_client.responses.create(
+                input="What is my username in Github profile?",
+            )
 
-        for item in response.output:
-            if item.type == "mcp_approval_request":
-                print(f"server_label={item.server_label}, name={item.name}")
-            elif item.type == "mcp_list_tools":
-                print(f"server_label={item.server_label}, tools={[t.name for t in (item.tools or [])]}")
-            elif item.type == "mcp_call":
-                print(f"server_label={item.server_label}, name={item.name}, error={item.error}")
-            else:
-                print()
+            for item in response.output:
+                if item.type == "mcp_approval_request":
+                    print(f"server_label={item.server_label}, name={item.name}")
+                elif item.type == "mcp_list_tools":
+                    print(f"server_label={item.server_label}, tools={[t.name for t in (item.tools or [])]}")
+                elif item.type == "mcp_call":
+                    print(f"server_label={item.server_label}, name={item.name}, error={item.error}")
+                else:
+                    print()
 
-        print(f"Response: {response.output_text}")
-
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print(f"Agent version {agent.version} deleted.")
+            print(f"Response: {response.output_text}")
 
 
 if __name__ == "__main__":
