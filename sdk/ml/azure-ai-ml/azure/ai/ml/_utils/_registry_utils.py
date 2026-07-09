@@ -9,13 +9,18 @@ from typing_extensions import Literal
 
 from azure.ai.ml._azure_environments import _get_default_cloud_name, _get_registry_discovery_endpoint_from_metadata
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.ai.ml.exceptions import MlException
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest
+from azure.mgmt.core.polling.arm_polling import ARMPolling
+
+import json
 
 module_logger = logging.getLogger(__name__)
 
@@ -191,6 +196,55 @@ def get_registry_versioned_asset(
     response = service_client.send_request(request)
     response.raise_for_status()
     return response.json()
+
+
+def begin_create_or_update_registry_versioned_asset(
+    service_client, asset_plural: str, name, version, resource_group, registry_name, body
+) -> dict:
+    """Byte-identical registry versioned-asset create-or-update LRO (same MFE endpoint + api-version + wire body).
+
+    Mirrors the arm ``begin_create_or_update`` machinery (initial PUT via the pipeline + ``LROPoller``/``ARMPolling``)
+    but pins the URL template + api-version to the legacy v2021_10 registry data-plane contract.
+
+    :param service_client: The hybrid arm client bound to the registry MFE endpoint.
+    :param asset_plural: The plural asset segment of the URL (e.g. ``codes``, ``models``, ``data``, ``environments``).
+    :type asset_plural: str
+    :param name: Asset name.
+    :param version: Asset version.
+    :param resource_group: Resource group name.
+    :param registry_name: Registry name.
+    :param body: The arm hybrid version model to serialize as the request body.
+    :return: The raw camelCase final response body.
+    :rtype: dict
+    """
+    subscription_id = service_client._config.subscription_id
+    content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)
+    request = HttpRequest(
+        "PUT",
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{registry_name}"
+        f"/{asset_plural}/{name}/versions/{version}",
+        params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        content=content,
+    )
+    path_format_arguments = {
+        "endpoint": service_client._serialize.url(
+            "self._config.base_url", service_client._config.base_url, "str", skip_quote=True
+        ),
+    }
+    request.url = service_client._client.format_url(request.url, **path_format_arguments)
+    raw_result = service_client._client._pipeline.run(request, stream=True)
+    response = raw_result.http_response
+    response.read()
+    if response.status_code not in [200, 201]:
+        response.raise_for_status()
+
+    def get_long_running_output(pipeline_response):
+        return pipeline_response.http_response.json()
+
+    polling_method = ARMPolling(service_client._config.polling_interval, path_format_arguments=path_format_arguments)
+    return LROPoller(service_client._client, raw_result, get_long_running_output, polling_method).result()
 
 
 def get_asset_body_for_registry_storage(

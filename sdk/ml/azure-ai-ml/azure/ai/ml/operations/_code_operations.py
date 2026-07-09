@@ -34,6 +34,7 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
     get_asset_body_for_registry_storage,
     get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
@@ -179,14 +180,18 @@ class CodeOperations(_ScopeDependentOperations):
             code_version_resource = code._to_rest_object()
 
             result = (
-                self._version_operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    body=code_version_resource,
-                    **self._init_kwargs,
-                ).result()
+                CodeVersionData._deserialize(
+                    begin_create_or_update_registry_versioned_asset(
+                        self._registry_service_client,
+                        "codes",
+                        name,
+                        version,
+                        self._operation_scope.resource_group_name,
+                        self._registry_name,
+                        code_version_resource,
+                    ),
+                    [],
+                )
                 if self._registry_name
                 else self._version_operation.create_or_update(
                     name=name,
