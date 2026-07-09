@@ -38,8 +38,20 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
+def _reset_local_storage_setup_state():
+    # Reset the global local-storage setup state between tests. Several tests
+    # intentionally set the readonly/exception state (which is process-global),
+    # and there is no public setter to clear the readonly flag, so we reset the
+    # underlying state dict directly to keep tests isolated and order-independent.
+    from azure.monitor.opentelemetry.exporter.statsbeat.customer import _state
+
+    with _state._LOCAL_STORAGE_SETUP_STATE_LOCK:
+        _state._LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
+        _state._LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = ""
+
+
 def clean_folder(folder):
-    if os.path.isfile(folder):
+    if os.path.isdir(folder):
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:
@@ -323,6 +335,14 @@ class TestLocalFileStorage(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
+
+    def setUp(self):
+        os.makedirs(TEST_FOLDER, exist_ok=True)
+        _reset_local_storage_setup_state()
+
+    def tearDown(self):
+        _reset_local_storage_setup_state()
+        clean_folder(TEST_FOLDER)
 
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
