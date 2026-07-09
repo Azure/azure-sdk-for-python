@@ -57,6 +57,7 @@ from azure.ai.ml._utils._registry_utils import (
     get_registry_container_asset,
     get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
+    list_registry_assets,
 )
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import (
@@ -160,12 +161,15 @@ class DataOperations(_ScopeDependentOperations):
         """
         if name:
             return (
-                self._operation.list(
-                    name=name,
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                list_registry_assets(
+                    self._registry_service_client,
+                    "data",
+                    name,
+                    self._resource_group_name,
+                    self._registry_name,
+                    DataVersionBase,
+                    Data._from_rest_object,
                     list_view_type=list_view_type,
-                    **self._scope_kwargs,
                 )
                 if self._registry_name
                 else self._operation.list(
@@ -177,11 +181,15 @@ class DataOperations(_ScopeDependentOperations):
                 )
             )
         return (
-            self._container_operation.list(
-                registry_name=self._registry_name,
-                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
+            list_registry_assets(
+                self._registry_service_client,
+                "data",
+                None,
+                self._resource_group_name,
+                self._registry_name,
+                DataContainer,
+                Data._from_container_rest_object,
                 list_view_type=list_view_type,
-                **self._scope_kwargs,
             )
             if self._registry_name
             else self._container_operation.list(

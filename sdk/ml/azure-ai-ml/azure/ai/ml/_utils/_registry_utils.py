@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLea
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.ai.ml.exceptions import MlException
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest
 from azure.mgmt.core.polling.arm_polling import ARMPolling
@@ -222,6 +223,57 @@ def get_registry_container_asset(service_client, asset_plural: str, name, resour
     response = service_client.send_request(request)
     response.raise_for_status()
     return response.json()
+
+
+def list_registry_assets(
+    service_client,
+    asset_plural: str,
+    name,
+    resource_group,
+    registry_name,
+    arm_cls,
+    from_rest_fn,
+    list_view_type=None,
+) -> ItemPaged:
+    """Byte-identical registry versioned-asset / container list (same MFE endpoint + api-version + paging contract).
+
+    :param service_client: The hybrid arm client bound to the registry MFE endpoint.
+    :param asset_plural: The plural asset segment of the URL (e.g. ``codes``, ``models``, ``data``, ``environments``).
+    :type asset_plural: str
+    :param name: Container name for a versions list, or ``None`` for a containers list.
+    :param resource_group: Resource group name.
+    :param registry_name: Registry name.
+    :param arm_cls: The arm hybrid model class to deserialize each response item into.
+    :param from_rest_fn: Callable mapping a deserialized arm model to an SDK entity.
+    :param list_view_type: Optional ``listViewType`` query value.
+    :return: An iterator of SDK entities.
+    :rtype: ~azure.core.paging.ItemPaged
+    """
+    subscription_id = service_client._config.subscription_id
+    prefix = (
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{registry_name}/{asset_plural}"
+    )
+    url_path = f"{prefix}/{name}/versions" if name else prefix
+    params = {"api-version": REGISTRY_DATAPLANE_API_VERSION}
+    if list_view_type is not None:
+        params["listViewType"] = list_view_type
+
+    def get_next(continuation_token=None):
+        if continuation_token:
+            request = HttpRequest("GET", continuation_token, headers={"Accept": "application/json"})
+        else:
+            request = HttpRequest("GET", url_path, params=params, headers={"Accept": "application/json"})
+        response = service_client.send_request(request)
+        response.raise_for_status()
+        return response
+
+    def extract_data(response):
+        body = response.json()
+        items = [from_rest_fn(arm_cls._deserialize(obj, [])) for obj in body.get("value", [])]
+        return body.get("nextLink") or None, iter(items)
+
+    return ItemPaged(get_next, extract_data)
 
 
 def begin_create_or_update_registry_versioned_asset(
