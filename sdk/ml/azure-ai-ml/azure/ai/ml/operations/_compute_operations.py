@@ -6,9 +6,8 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042024PreviewArm
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
-from azure.ai.ml._restclient.v2024_04_01_preview.models import SsoSetting
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
@@ -17,6 +16,7 @@ from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import AmlComputeNodeInfo, Compute, Usage, VmSize
 from azure.core.polling import LROPoller
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
@@ -42,13 +42,13 @@ class ComputeOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient022023Preview,
-        service_client_2024: ServiceClient042024Preview,
+        service_client_2024_arm: ServiceClient042024PreviewArm,
         **kwargs: Dict,
     ) -> None:
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
         self._operation = service_client.compute
-        self._operation2024 = service_client_2024.compute
+        self._sso_service_client = service_client_2024_arm
         self._workspace_operations = service_client.workspaces
         self._vmsize_operations = service_client.virtual_machine_sizes
         self._usage_operations = service_client.usages
@@ -434,13 +434,17 @@ class ComputeOperations(_ScopeDependentOperations):
         :paramtype enable_sso: bool
         """
 
-        self._operation2024.update_sso_settings(
-            self._operation_scope.resource_group_name,
-            self._workspace_name,
-            name,
-            parameters=SsoSetting(enable_sso=enable_sso),
-            **kwargs,
+        # ``arm_ml_service`` has no compute ``update_sso_settings`` operation; POST the ``enableSso`` action
+        # directly via ``send_request``. Body ({"enableSSO": ...}) and URL are unchanged (2024-04-01-preview).
+        url = (
+            f"/subscriptions/{self._subscription_id}"
+            f"/resourceGroups/{self._operation_scope.resource_group_name}"
+            f"/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}"
+            f"/computes/{name}/enableSso"
         )
+        request = HttpRequest("POST", url, params={"api-version": "2024-04-01-preview"}, json={"enableSSO": enable_sso})
+        response = self._sso_service_client.send_request(request, **kwargs)
+        response.raise_for_status()
 
     def _get_workspace_location(self) -> str:
         workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)

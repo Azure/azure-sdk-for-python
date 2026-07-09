@@ -564,7 +564,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_08_2023_preview,
-            self._service_client_04_2024_preview,
+            self._service_client_04_2024_preview_arm,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
         self._datastores = DatastoreOperations(
