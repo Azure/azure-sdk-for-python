@@ -17,7 +17,7 @@ from uuid import uuid4
 from . import encode_base64
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import SubStream  # pylint: disable=unused-import
+from .uploads import IterStreamer, SubStream  # pylint: disable=unused-import
 
 
 async def _async_parallel_uploads(uploader, pending, running):
