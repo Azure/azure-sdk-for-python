@@ -22,10 +22,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
     ServerlessEndpointProperties as RestServerlessEndpointProperties,
 )
 from azure.ai.ml._restclient.arm_ml_service.models import Sku as RestSku
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
-    EndpointDeploymentResourcePropertiesBasicResource,
-    OpenAIEndpointDeploymentResourceProperties,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import SystemData as RestSystemData
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._system_data import SystemData
@@ -95,14 +92,21 @@ class AzureOpenAIDeployment(_AzureOpenAIDeployment):
     """System data of the deployment."""
 
     @classmethod
-    def _from_rest_object(cls, obj: EndpointDeploymentResourcePropertiesBasicResource) -> "AzureOpenAIDeployment":
-        properties: OpenAIEndpointDeploymentResourceProperties = obj.properties
+    def _from_rest_object(cls, obj: Dict[str, Any]) -> "AzureOpenAIDeployment":
+        # ``EndpointDeploymentResourcePropertiesBasicResource`` is not modeled on arm_ml_service; the openai
+        # deployments are listed via a raw ``send_request`` call, so read the camelCase wire dict directly.
+        # ``systemData`` is rehydrated through the arm ``SystemData`` model to preserve datetime parsing.
+        properties = obj.get("properties") or {}
+        model = properties.get("model") or {}
+        system_data = obj.get("systemData")
         return cls(
-            name=obj.name,
-            model_name=properties.model.name,
-            model_version=properties.model.version,
-            id=obj.id,
-            system_data=SystemData._from_rest_object(obj.system_data),
+            name=obj.get("name"),
+            model_name=model.get("name"),
+            model_version=model.get("version"),
+            id=obj.get("id"),
+            system_data=(
+                SystemData._from_rest_object(RestSystemData._deserialize(system_data, [])) if system_data else None
+            ),
         )
 
     def as_dict(self, *, exclude_readonly: bool = False) -> Dict[str, Any]:

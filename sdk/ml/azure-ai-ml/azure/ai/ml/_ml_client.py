@@ -782,7 +782,7 @@ class MLClient:
         self._azure_openai_deployments = AzureOpenAIDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2024_preview,
+            self._service_client_04_2024_preview_arm,
             self._connections,
         )
 
