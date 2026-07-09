@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2023-03-01",
+  "apiVersions": {
+    "Microsoft.AlertsManagement": "2023-03-01"
+  },
+  "commit": "683047729cbcd7e39b23e9131fc8e24d89b9582e",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/PrometheusRuleGroups",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
+}
