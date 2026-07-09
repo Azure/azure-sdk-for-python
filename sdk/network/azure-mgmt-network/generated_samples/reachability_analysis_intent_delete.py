@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-05-01/ReachabilityAnalysisIntentDelete.json
+# x-ms-original-file: 2025-07-01/ReachabilityAnalysisIntentDelete.json
 if __name__ == "__main__":
     main()

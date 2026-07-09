@@ -34,6 +34,15 @@ function readLines(fileRelativePath, workspace) {
     .filter((line) => Boolean(line));
 }
 
+function readText(fileRelativePath, workspace) {
+  const fullPath = path.join(workspace, fileRelativePath);
+  if (!fs.existsSync(fullPath)) {
+    return "";
+  }
+
+  return fs.readFileSync(fullPath, "utf-8").trim();
+}
+
 function formatIssueSection(title, apiFiles) {
   if (!apiFiles.length) {
     return "";
@@ -47,12 +56,22 @@ function formatIssueSection(title, apiFiles) {
     lines.push(styleLog(`PACKAGE: ${packageName}`, ANSI.bold, ANSI.cyan));
     lines.push(`PATH:    ${packageDir}`);
     lines.push(`API FILE: ${apiFile}`);
-    lines.push(styleLog("Regenerate from the repository root:", ANSI.bold, ANSI.yellow));
-    lines.push(styleLog(`  azpysdk apistub --md --extract-metadata ${packageName} --dest-dir .`, ANSI.bold, ANSI.yellow));
+    lines.push(styleLog(`Regenerate from the ${packageName} package root:`, ANSI.bold, ANSI.yellow));
+    lines.push(styleLog(`  azpysdk apistub .`, ANSI.bold, ANSI.yellow));
     lines.push("============================================================");
   }
   lines.push("");
   return lines.join("\n");
+}
+
+function logMismatchDetails(core, mismatchDetails) {
+  if (!mismatchDetails) {
+    return;
+  }
+
+  core.startGroup("API.md mismatch details");
+  core.info(mismatchDetails);
+  core.endGroup();
 }
 
 export default async function apiMdConsistency({ core }) {
@@ -81,6 +100,7 @@ export default async function apiMdConsistency({ core }) {
 
   const mismatches = readLines(process.env.API_MD_MISMATCHES_FILE, workspace);
   const missing = readLines(process.env.API_MD_MISSING_FILE, workspace);
+  const mismatchDetails = readText(process.env.API_MD_MISMATCH_DETAILS_FILE, workspace);
 
   const mismatchCount = mismatches.length;
   const missingCount = missing.length;
@@ -91,13 +111,16 @@ export default async function apiMdConsistency({ core }) {
   core.setOutput("issue_count", String(issueCount));
 
   if (issueCount > 0) {
+    logMismatchDetails(core, mismatchDetails);
+
     const messageParts = [
       "Generated api.md or api.metadata.yml does not match the committed files, or required API files are missing, for one or more affected packages.",
       "api.metadata.yml must be committed alongside api.md, and selected metadata fields are part of pass/fail gating.",
       "",
       formatIssueSection("Mismatched packages:", mismatches),
       formatIssueSection("Missing required API files:", missing),
-      "To regenerate api.md locally, run the command shown for each package from the repository root.",
+      mismatchDetails ? ["Mismatch details:", mismatchDetails].join("\n") : "",
+      "To regenerate api.md and api.metadata.yml locally, run the command shown for each package from the repository root.",
     ].filter((part) => part !== "");
 
     core.setFailed(messageParts.join("\n"));

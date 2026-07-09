@@ -39,6 +39,7 @@ from .policies import (
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
+    StorageSensitiveHeaderCleanupPolicy,
 )
 from .policies_async import (
     AsyncContentValidationPolicy,
@@ -173,6 +174,7 @@ class AsyncStorageAccountHostsMixin(object):
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
+            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore

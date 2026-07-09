@@ -13,11 +13,11 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DatastoreSecrets,
     NoneDatastoreCredentials,
 )
@@ -48,7 +48,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     :param serviceclient_2024_10_01_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type serviceclient_2024_10_01_preview: ~azure.ai.ml._restclient.v2024_10_01_preview_tsp.
+    :type serviceclient_2024_10_01_preview: ~azure.ai.ml._restclient.arm_ml_service.
         MachineLearningServicesMgmtClient
     """
 
@@ -228,11 +228,16 @@ class DatastoreOperations(_ScopeDependentOperations):
         """
         try:
             ds_request = datastore._to_rest_object()
+            # ``_to_rest_object`` builds a legacy msrest (v2023_04) Datastore model, but ``self._operation`` is the
+            # TypeSpec/arm_ml_service datastores client whose ``SdkJSONEncoder`` only serializes hybrid models — a
+            # msrest model raises ``TypeError: Object of type Datastore is not JSON serializable`` (ICM 829788361,
+            # regressed in 1.34.0). Serialize the msrest model to its camelCase wire dict first; the operation accepts
+            # ``Union[Datastore, JSON, IO[bytes]]`` and a plain dict serializes cleanly. Byte-identical to 1.33.0.
             datastore_resource = self._operation.create_or_update(
                 name=datastore.name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
-                body=ds_request,
+                body=ds_request.serialize(),
                 skip_validation=True,
             )
             return Datastore._from_rest_object(datastore_resource)

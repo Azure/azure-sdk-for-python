@@ -23,6 +23,7 @@ from typing_extensions import Self
 # ======================================================================
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
+_ENV_FOUNDRY_AGENT_ID = "FOUNDRY_AGENT_ID"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
 _ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
 _ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
@@ -60,6 +61,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
     :param agent_name: Agent name from ``FOUNDRY_AGENT_NAME``.
     :param agent_version: Agent version from ``FOUNDRY_AGENT_VERSION``.
     :param agent_id: Combined identifier (``"name:version"`` or ``"name"`` or ``""``).
+    :param agent_guid: Agent stable identifier (GUID) from ``FOUNDRY_AGENT_ID``.
     :param is_hosted: Whether the agent is running in a Foundry-hosted container environment,
         derived from ``FOUNDRY_HOSTING_ENVIRONMENT``.
     :param project_endpoint: Foundry project endpoint from ``FOUNDRY_PROJECT_ENDPOINT``.
@@ -79,6 +81,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         agent_name: str,
         agent_version: str,
         agent_id: str,
+        agent_guid: str = "",
         is_hosted: bool,
         project_endpoint: str,
         project_id: str,
@@ -92,6 +95,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         self.agent_name = agent_name
         self.agent_version = agent_version
         self.agent_id = agent_id
+        self.agent_guid = agent_guid
         self.is_hosted = is_hosted
         self.project_endpoint = project_endpoint
         self.project_id = project_id
@@ -123,6 +127,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
             agent_name=agent_name,
             agent_version=agent_version,
             agent_id=agent_id,
+            agent_guid=os.environ.get(_ENV_FOUNDRY_AGENT_ID, ""),
             is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, "")),
             project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
@@ -313,6 +318,15 @@ def resolve_agent_id() -> str:
     if agent_name and agent_version:
         return f"{agent_name}:{agent_version}"
     return agent_name
+
+
+def resolve_agent_guid() -> str:
+    """Resolve the agent stable GUID from the ``FOUNDRY_AGENT_ID`` environment variable.
+
+    :return: The agent GUID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_ID, "")
 
 
 def resolve_agent_blueprint_id() -> str:

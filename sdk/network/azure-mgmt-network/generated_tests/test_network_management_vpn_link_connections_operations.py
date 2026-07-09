@@ -26,7 +26,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
                 "properties": {"provisioningState": "str", "sharedKey": "str", "sharedKeyLength": 0},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             gateway_name="str",
             connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestNetworkManagementVpnLinkConnectionsOperations(AzureMgmtRecordedTestCas
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

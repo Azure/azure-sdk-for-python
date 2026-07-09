@@ -8,9 +8,13 @@ from unittest import mock
 
 import pytest
 
-from azure.cosmos import _session, http_constants
+from azure.cosmos import _session, documents, http_constants
+from azure.cosmos._base import set_session_token_header, set_session_token_header_async
+from azure.cosmos._request_object import RequestObject
 from azure.cosmos._vector_session_token import VectorSessionToken
+from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos.http_constants import HttpHeaders, ResourceType
 
 
 class _DummyCollectionRanges:
@@ -256,7 +260,6 @@ if __name__ == '__main__':
     unittest.main()
 
 
-
 class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
     """Regression tests for ``_resolve_partition_local_session_token``.
 
@@ -317,3 +320,152 @@ class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
             (pkr,), token_dict={"child": _Wrap(token)})
         self.assertEqual(result, token.session_token)
 
+
+# Unit tests for set_session_token_header. When a request targets a single
+# partition, the helper must send only that partition's token, not a
+# comma-joined token covering every cached partition.
+
+class _SessionTokenGemStub:
+    """Stub for the global endpoint manager used by session token helpers."""
+
+    def can_use_multiple_write_locations(self, request):  # noqa: D401
+        return False
+
+
+class _SessionTokenClientStub:
+    """Minimal client connection stub for session token header tests."""
+
+    def __init__(self, collection_link, collection_rid, partition_tokens):
+        self.session = _session.Session("https://stub.documents.azure.com")
+        # Seed per-partition tokens that a real client would populate after writes.
+        self.session.session_container.collection_name_to_rid[collection_link] = collection_rid
+        self.session.session_container.rid_to_session_token[collection_rid] = {
+            pk_range_id: VectorSessionToken.create(tok) for pk_range_id, tok in partition_tokens.items()
+        }
+        self._container_properties_cache = {
+            collection_link: {"_rid": collection_rid},
+        }
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self._global_endpoint_manager = _SessionTokenGemStub()
+
+
+def _build_session_request(collection_link):
+    """Build a session-consistency document read request for the given path."""
+    request_object = RequestObject(ResourceType.Document, _OperationType.Read, None)
+    headers = {HttpHeaders.ConsistencyLevel: documents.ConsistencyLevel.Session}
+    return request_object, headers, collection_link
+
+
+@pytest.mark.cosmosEmulator
+class TestSetSessionTokenHeaderFeedRange(unittest.TestCase):
+    """Sync coverage for single-partition session token selection."""
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "rid_session_token_sync"
+    PARTITION_TOKENS = {
+        "0": "1#5",
+        "1": "1#10",
+        "2": "1#7",
+    }
+
+    def test_per_partition_id_selects_single_partition_token_from_compound_state(self):
+        # When a partition id is supplied, only that partition's token should be sent.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        set_session_token_header(
+            client, headers, path, request, {}, partition_key_range_id="1",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertEqual(
+            token, "1:1#10",
+            "Expected single-partition token '1:1#10', got {!r}.".format(token),
+        )
+        self.assertNotIn(",", token or "", "Per-id selection should never emit a compound token.")
+
+    def test_no_partition_id_returns_compound_for_cross_partition_query(self):
+        # Cross-partition queries (no partition id, no partition key) keep the joined token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        set_session_token_header(client, headers, path, request, {}, partition_key_range_id=None)
+
+        token = headers.get(HttpHeaders.SessionToken, "")
+        self.assertIn(",", token, "Cross-partition branch must emit a compound token.")
+        parts = sorted(token.split(","))
+        self.assertEqual(
+            parts, sorted(["0:1#5", "1:1#10", "2:1#7"]),
+            "Compound token entries do not match the seeded state: {!r}".format(token),
+        )
+
+    def test_per_partition_id_returns_no_compound_when_no_state_for_partition(self):
+        # If we have no cached token for the targeted partition, the helper must not
+        # silently fall back to a compound token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        set_session_token_header(
+            client, headers, path, request, {}, partition_key_range_id="999",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertIsNone(
+            token,
+            "Missing per-id state must not set a session token header.",
+        )
+
+
+@pytest.mark.cosmosEmulator
+class TestSetSessionTokenHeaderFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
+    """Async coverage for single-partition session token selection."""
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "rid_session_token_async"
+    PARTITION_TOKENS = {
+        "0": "1#5",
+        "1": "1#10",
+        "2": "1#7",
+    }
+
+    async def test_per_partition_id_selects_single_partition_token_from_compound_state_async(self):
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id="1",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertEqual(token, "1:1#10")
+        self.assertNotIn(",", token or "")
+
+    async def test_no_partition_id_returns_compound_for_cross_partition_query_async(self):
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id=None,
+        )
+
+        token = headers.get(HttpHeaders.SessionToken, "")
+        self.assertIn(",", token)
+        parts = sorted(token.split(","))
+        self.assertEqual(parts, sorted(["0:1#5", "1:1#10", "2:1#7"]))
+
+    async def test_per_partition_id_returns_no_compound_when_no_state_for_partition_async(self):
+        # Async equivalent of the sync test above: if there is no cached token
+        # for the targeted partition, the async helper must not fall back to a
+        # compound (cross-partition) token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id="999",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertIsNone(
+            token,
+            "Missing per-id state must not set a session token header.",
+        )

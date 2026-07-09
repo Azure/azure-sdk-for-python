@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Billing Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -21,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.10"
 keywords = [
@@ -78,7 +79,7 @@ package_name = "azure-mgmt-billing"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Billing"
 package_doc_id = "billing"
-is_stable = false
+is_stable = true
 is_arm = true
 title = "BillingManagementClient"
 need_msrestazure = false

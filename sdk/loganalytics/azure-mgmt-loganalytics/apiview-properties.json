@@ -304,5 +304,5 @@
         "azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations.list_by_resource_group": "Microsoft.OperationalInsights.DeletedWorkspacesOperationGroup.listByResourceGroup",
         "azure.mgmt.loganalytics.aio.operations.DeletedWorkspacesOperations.list_by_resource_group": "Microsoft.OperationalInsights.DeletedWorkspacesOperationGroup.listByResourceGroup"
     },
-    "CrossLanguageVersion": "6fc845d823bb"
+    "CrossLanguageVersion": "c0595d1724d6"
 }

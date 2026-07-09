@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/NetworkProfileGetWithContainerNic.json
+# x-ms-original-file: 2025-07-01/NetworkProfileGetWithContainerNic.json
 if __name__ == "__main__":
     main()

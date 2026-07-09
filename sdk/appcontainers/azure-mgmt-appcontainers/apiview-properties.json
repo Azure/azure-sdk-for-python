@@ -568,5 +568,5 @@
         "azure.mgmt.appcontainers.ContainerAppsAPIClient.job_execution": "Microsoft.App.Jobs.jobExecution",
         "azure.mgmt.appcontainers.aio.ContainerAppsAPIClient.job_execution": "Microsoft.App.Jobs.jobExecution"
     },
-    "CrossLanguageVersion": "d8d4104159f1"
+    "CrossLanguageVersion": "c13ef50cb53c"
 }

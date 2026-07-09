@@ -80,6 +80,7 @@
         "azure.mgmt.cognitiveservices.models.DeploymentRouting": "Microsoft.CognitiveServices.DeploymentRouting",
         "azure.mgmt.cognitiveservices.models.DeploymentScaleSettings": "Microsoft.CognitiveServices.DeploymentScaleSettings",
         "azure.mgmt.cognitiveservices.models.DeploymentSizeCapacity": "Microsoft.CognitiveServices.DeploymentSizeCapacity",
+        "azure.mgmt.cognitiveservices.models.DeploymentSpeculativeDecoding": "Microsoft.CognitiveServices.DeploymentSpeculativeDecoding",
         "azure.mgmt.cognitiveservices.models.DomainAvailability": "Microsoft.CognitiveServices.DomainAvailability",
         "azure.mgmt.cognitiveservices.models.Encryption": "Microsoft.CognitiveServices.Encryption",
         "azure.mgmt.cognitiveservices.models.EncryptionScope": "Microsoft.CognitiveServices.EncryptionScope",
@@ -174,6 +175,15 @@
         "azure.mgmt.cognitiveservices.models.RaiBlocklistProperties": "Microsoft.CognitiveServices.RaiBlocklistProperties",
         "azure.mgmt.cognitiveservices.models.RaiContentFilter": "Microsoft.CognitiveServices.RaiContentFilter",
         "azure.mgmt.cognitiveservices.models.RaiContentFilterProperties": "Microsoft.CognitiveServices.RaiContentFilterProperties",
+        "azure.mgmt.cognitiveservices.models.RaiEgressHeaderTransform": "Microsoft.CognitiveServices.RaiEgressHeaderTransform",
+        "azure.mgmt.cognitiveservices.models.RaiEgressHeaderValueRef": "Microsoft.CognitiveServices.RaiEgressHeaderValueRef",
+        "azure.mgmt.cognitiveservices.models.RaiEgressManagedIdentityRef": "Microsoft.CognitiveServices.RaiEgressManagedIdentityRef",
+        "azure.mgmt.cognitiveservices.models.RaiEgressPolicyConfig": "Microsoft.CognitiveServices.RaiEgressPolicyConfig",
+        "azure.mgmt.cognitiveservices.models.RaiEgressRewriteTarget": "Microsoft.CognitiveServices.RaiEgressRewriteTarget",
+        "azure.mgmt.cognitiveservices.models.RaiEgressRule": "Microsoft.CognitiveServices.RaiEgressRule",
+        "azure.mgmt.cognitiveservices.models.RaiEgressRuleAction": "Microsoft.CognitiveServices.RaiEgressRuleAction",
+        "azure.mgmt.cognitiveservices.models.RaiEgressRuleMatch": "Microsoft.CognitiveServices.RaiEgressRuleMatch",
+        "azure.mgmt.cognitiveservices.models.RaiEgressSecretRef": "Microsoft.CognitiveServices.RaiEgressSecretRef",
         "azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema": "Microsoft.CognitiveServices.RaiExternalSafetyProviderSchema",
         "azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchemaProperties": "Microsoft.CognitiveServices.RaiExternalSafetyProviderSchemaProperties",
         "azure.mgmt.cognitiveservices.models.RaiMonitorConfig": "Microsoft.CognitiveServices.RaiMonitorConfig",
@@ -258,6 +268,12 @@
         "azure.mgmt.cognitiveservices.models.ContentLevel": "Microsoft.CognitiveServices.ContentLevel",
         "azure.mgmt.cognitiveservices.models.RaiPolicyContentSource": "Microsoft.CognitiveServices.RaiPolicyContentSource",
         "azure.mgmt.cognitiveservices.models.RaiActionType": "Microsoft.CognitiveServices.RaiActionType",
+        "azure.mgmt.cognitiveservices.models.RaiEgressMode": "Microsoft.CognitiveServices.RaiEgressMode",
+        "azure.mgmt.cognitiveservices.models.RaiEgressDefaultAction": "Microsoft.CognitiveServices.RaiEgressDefaultAction",
+        "azure.mgmt.cognitiveservices.models.RaiEgressRuleType": "Microsoft.CognitiveServices.RaiEgressRuleType",
+        "azure.mgmt.cognitiveservices.models.RaiEgressRuleActionType": "Microsoft.CognitiveServices.RaiEgressRuleActionType",
+        "azure.mgmt.cognitiveservices.models.RaiEgressHeaderOperation": "Microsoft.CognitiveServices.RaiEgressHeaderOperation",
+        "azure.mgmt.cognitiveservices.models.RaiEgressScheme": "Microsoft.CognitiveServices.RaiEgressScheme",
         "azure.mgmt.cognitiveservices.models.NspAccessRuleDirection": "Microsoft.CognitiveServices.NspAccessRuleDirection",
         "azure.mgmt.cognitiveservices.models.DefenderForAISettingState": "Microsoft.CognitiveServices.DefenderForAISettingState",
         "azure.mgmt.cognitiveservices.models.ConnectionAuthType": "Microsoft.CognitiveServices.ConnectionAuthType",
@@ -635,5 +651,5 @@
         "azure.mgmt.cognitiveservices.CognitiveServicesManagementClient.calculate_model_capacity": "Microsoft.CognitiveServices.calculateModelCapacity",
         "azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient.calculate_model_capacity": "Microsoft.CognitiveServices.calculateModelCapacity"
     },
-    "CrossLanguageVersion": "63628aaa781f"
+    "CrossLanguageVersion": "80649970687f"
 }

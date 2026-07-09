@@ -7,16 +7,21 @@
     "SERP",
     "aadtoken",
     "alds",
+    "arimax",
     "elts",
     "entra",
     "expirable",
     "faiss",
     "kwoa",
+    "maskrcnn",
     "merkle",
     "merkletree",
     "misformatted",
+    "mobilenetv",
     "mpnet",
     "restclient",
-    "rslex"
+    "rslex",
+    "vectorizer",
+    "vitl"
   ]
 }
