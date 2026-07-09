@@ -22,9 +22,6 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
-)
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
@@ -307,13 +304,6 @@ class MLClient:
         ops_kwargs = {}
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
-
-        self._service_client_09_2020_dataplanepreview = ServiceClient092020DataplanePreview(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
 
         self._service_client_workspace_dataplane = ServiceClientWorkspaceDataplane(
             subscription_id=self._operation_scope._subscription_id,
@@ -625,7 +615,6 @@ class MLClient:
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
-            service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
@@ -646,7 +635,6 @@ class MLClient:
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
-            service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             service_client_02_2023_preview=self._service_client_02_2023_preview,
             **ops_kwargs,
         )

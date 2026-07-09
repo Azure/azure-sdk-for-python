@@ -12,7 +12,6 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
@@ -287,13 +286,14 @@ def validate_scoring_script(deployment):
         ) from err
 
 
-def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
+def convert_v1_dataset_to_v2(output_data_set: Dict[str, Any], file_name: str) -> Dict[str, Any]:
+    # ``DataVersion`` / ``UriFileJobOutput`` are not modeled on arm_ml_service; build the wire dict directly
+    # (JSON-direct), byte-identical to the legacy ``UriFileJobOutput(uri=...).serialize()`` output.
+    datastore_id = output_data_set.get("datastore_id")
+    path = output_data_set.get("path")
     if file_name:
-        v2_dataset = UriFileJobOutput(
-            uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
-        ).serialize()
+        uri = f"azureml://datastores/{datastore_id}/paths/{path}/{file_name}"
     else:
-        v2_dataset = UriFileJobOutput(
-            uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}"
-        ).serialize()
+        uri = f"azureml://datastores/{datastore_id}/paths/{path}"
+    v2_dataset = {"uri": uri, "jobOutputType": "UriFile"}
     return {"output_name": v2_dataset}

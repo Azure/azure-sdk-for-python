@@ -4,9 +4,11 @@
 
 # pylint: disable=protected-access, too-many-boolean-expressions
 
+import json
 import re
 from typing import Any, Optional, TypeVar, Union
 
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -17,11 +19,11 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_response, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._package_utils import package_deployment
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
@@ -71,7 +73,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
         self._batch_deployment = service_client_01_2024_preview.batch_deployments
-        self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         service_client_02_2023_preview = kwargs.pop("service_client_02_2023_preview")
         self._component_batch_deployment_operations = service_client_02_2023_preview.batch_deployments
         self._batch_endpoint_operations = service_client_01_2024_preview.batch_endpoints
@@ -301,17 +302,29 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             workspace_operations, self._workspace_name, self._requests_pipeline
         )
 
-        with modified_operation_client(self._batch_job_deployment, mfe_base_uri):
-            result = self._batch_job_deployment.list(
-                endpoint_name=endpoint_name,
-                deployment_name=name,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                **self._init_kwargs,
-            )
+        # The v2020_09 ``batch_job_deployment`` dataplane op has no arm_ml_service equivalent; list the jobs
+        # against the MFE base uri via the raw requests pipeline and page over the arm-paginated result.
+        # On-the-wire request/response is unchanged (api-version 2020-09-01-dataplanepreview).
+        list_url = (
+            f"{mfe_base_uri.rstrip('/')}/subscriptions/{self._subscription_id}"
+            f"/resourceGroups/{self._resource_group_name}"
+            f"/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}"
+            f"/batchEndpoints/{endpoint_name}/deployments/{name}/jobs?api-version=2020-09-01-dataplanepreview"
+        )
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
+        ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        token = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
+        headers["Authorization"] = f"Bearer {token}"
 
-            # This is necessary as the paged result need to be resolved inside the context manager
-            return list(result)
+        jobs = []
+        next_link: Optional[str] = list_url
+        while next_link:
+            response = self._requests_pipeline.get(next_link, headers=headers)
+            validate_response(response)
+            body = json.loads(response.text())
+            jobs.extend(BatchJob._from_rest_object(item) for item in (body.get("value") or []))
+            next_link = body.get("nextLink")
+        return jobs
 
     def _get_workspace_location(self) -> str:
         """Get the workspace location

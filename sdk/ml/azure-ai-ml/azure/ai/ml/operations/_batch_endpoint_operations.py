@@ -16,7 +16,6 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient102023
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml._scope_dependent_operations import (
@@ -34,7 +33,6 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
     is_private_preview_enabled,
-    modified_operation_client,
 )
 from azure.ai.ml.constants._common import (
     ARM_ID_FULL_PREFIX,
@@ -100,7 +98,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         ops_logger.update_filter()
         self._batch_operation = service_client_10_2023.batch_endpoints
         self._batch_deployment_operation = service_client_10_2023.batch_deployments
-        self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
@@ -349,21 +346,29 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         }
 
         batch_job = BatchJobSchema(context=context).load(data={})
-        # update output datastore to arm id if needed
+        # ``batch_job`` is the camelCase wire body (dict, JSON-direct). ``_output_dataset`` is carried separately
+        # so the datastore-id ARM check can run before it becomes wire.
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
+        output_dataset = batch_job.pop("_output_dataset", None)
         request = {}
         if (
-            batch_job.output_dataset
-            and batch_job.output_dataset.datastore_id
-            and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
+            output_dataset
+            and output_dataset.get("datastore_id")
+            and (not is_ARM_id_for_resource(output_dataset["datastore_id"]))
         ):
-            v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
-            batch_job.output_dataset = None
-            batch_job.output_file_name = None
-            request = BatchJobResource(properties=batch_job).serialize()
+            v2_dataset_dictionary = convert_v1_dataset_to_v2(output_dataset, batch_job.get("outputFileName"))
+            batch_job.pop("outputFileName", None)
+            request = {"properties": batch_job}
             request["properties"]["outputData"] = v2_dataset_dictionary
         else:
-            request = BatchJobResource(properties=batch_job).serialize()
+            if output_dataset is not None:
+                output_dataset_wire = {}
+                if output_dataset.get("datastore_id") is not None:
+                    output_dataset_wire["datastoreId"] = output_dataset["datastore_id"]
+                if output_dataset.get("path") is not None:
+                    output_dataset_wire["path"] = output_dataset["path"]
+                batch_job["outputDataset"] = output_dataset_wire
+            request = {"properties": batch_job}
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,
@@ -399,7 +404,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJobResource.deserialize(batch_job)
+        return BatchJob._from_rest_object(batch_job)
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
@@ -426,16 +431,29 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             workspace_operations, self._workspace_name, self._requests_pipeline
         )
 
-        with modified_operation_client(self._batch_job_endpoint, mfe_base_uri):
-            result = self._batch_job_endpoint.list(
-                endpoint_name=endpoint_name,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                **self._init_kwargs,
-            )
+        # The v2020_09 ``batch_job_endpoint`` dataplane op has no arm_ml_service equivalent; list the jobs against
+        # the MFE base uri via the raw requests pipeline and page over the arm-paginated result. On-the-wire
+        # request/response is unchanged (api-version 2020-09-01-dataplanepreview).
+        list_url = (
+            f"{mfe_base_uri.rstrip('/')}/subscriptions/{self._subscription_id}"
+            f"/resourceGroups/{self._resource_group_name}"
+            f"/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}"
+            f"/batchEndpoints/{endpoint_name}/jobs?api-version=2020-09-01-dataplanepreview"
+        )
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
+        ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        token = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
+        headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {token}"
 
-            # This is necessary as the paged result need to be resolved inside the context manager
-            return list(result)
+        jobs = []
+        next_link: Optional[str] = list_url
+        while next_link:
+            response = self._requests_pipeline.get(next_link, headers=headers)
+            validate_response(response)
+            body = json.loads(response.text())
+            jobs.extend(BatchJob._from_rest_object(item) for item in (body.get("value") or []))
+            next_link = body.get("nextLink")
+        return jobs
 
     def _get_workspace_location(self) -> str:
         return str(
