@@ -8,6 +8,7 @@
 
 from azure.mgmt.notificationhubs import NotificationHubsManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+import pytest
 
 AZURE_LOCATION = "eastus"
 
