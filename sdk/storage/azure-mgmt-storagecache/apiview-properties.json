@@ -260,5 +260,5 @@
         "azure.mgmt.storagecache.StorageCacheManagementClient.get_required_aml_fs_subnets_size": "Microsoft.StorageCache.getRequiredAmlFSSubnetsSize",
         "azure.mgmt.storagecache.aio.StorageCacheManagementClient.get_required_aml_fs_subnets_size": "Microsoft.StorageCache.getRequiredAmlFSSubnetsSize"
     },
-    "CrossLanguageVersion": "0fc82dfe07b2"
+    "CrossLanguageVersion": "fa957411003b"
 }

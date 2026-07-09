@@ -266,6 +266,168 @@ class TestJobOperations:
         mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
+    # -------------- jobs.update() (new public API) --------------
+
+    def test_update_no_field_raises_user_error(self, mock_job_operation: JobOperations) -> None:
+        """update() with no updatable keyword must raise UserErrorException without any service calls."""
+        from azure.ai.ml.exceptions import UserErrorException
+
+        with pytest.raises(UserErrorException, match="at least one"):
+            mock_job_operation.update(name="random_name")
+
+    @patch.object(Job, "_from_rest_object")
+    @patch.object(JobOperations, "_resolve_azureml_id")
+    @patch.object(JobOperations, "_get_job")
+    def test_update_routes_through_runhistory_patch(
+        self, mock_get_job, mock_resolve, mock_from_rest, mock_job_operation: JobOperations
+    ) -> None:
+        """update() with fields must invoke add_or_modify_by_experiment_name exactly once with
+        the correct experiment_name / run_id and a CreateRun body carrying the supplied fields.
+        The returned entity must also be routed through _resolve_azureml_id so callers get the
+        same resolved view they'd get from jobs.get()."""
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+
+        fake_job = Mock()
+        fake_job.properties.job_type = RestJobType.COMMAND
+        fake_job.properties.experiment_name = "exp1"
+        mock_get_job.return_value = fake_job
+        resolved_job = Command(component=None)
+        mock_from_rest.return_value = Command(component=None)
+        mock_resolve.return_value = resolved_job
+        # Force the property to return a fresh mock so add_or_modify_by_experiment_name is
+        # assertable (bypasses the lazy RunOperations construction that would fail on mocks).
+        mock_job_operation._runs_operations_client = Mock()
+
+        result = mock_job_operation.update(
+            name="random_name",
+            display_name="new dn",
+            description="new desc",
+            tags={"k": "v"},
+            properties={"pk": "pv"},
+        )
+
+        add_mod = mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name
+        add_mod.assert_called_once()
+        call_kwargs = add_mod.call_args.kwargs
+        assert call_kwargs["experiment_name"] == "exp1"
+        assert call_kwargs["run_id"] == "random_name"
+        body = call_kwargs["body"]
+        assert body.display_name == "new dn"
+        assert body.description == "new desc"
+        assert body.tags == {"k": "v"}
+        assert body.properties == {"pk": "pv"}
+        mock_resolve.assert_called_once()
+        assert result is resolved_job
+
+    @patch.object(Job, "_from_rest_object")
+    @patch.object(JobOperations, "_resolve_azureml_id")
+    @patch.object(JobOperations, "_get_job_2401")
+    @patch.object(JobOperations, "_get_job")
+    def test_update_pipeline_uses_2401_refetch(
+        self,
+        mock_get_job,
+        mock_get_job_2401,
+        mock_resolve,
+        mock_from_rest,
+        mock_job_operation: JobOperations,
+    ) -> None:
+        """PIPELINE jobs must be re-fetched via _get_job_2401 to obtain the non-projected view
+        before the RunHistory PATCH is issued. The refreshed entity is then resolved."""
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+
+        pipeline_job = Mock()
+        pipeline_job.properties.job_type = RestJobType.PIPELINE
+        pipeline_job.properties.experiment_name = "exp1"
+        mock_get_job.return_value = pipeline_job
+        mock_get_job_2401.return_value = pipeline_job
+        mock_from_rest.return_value = Command(component=None)
+        mock_resolve.return_value = Command(component=None)
+        mock_job_operation._runs_operations_client = Mock()
+
+        mock_job_operation.update(name="random_name", display_name="new dn")
+
+        # _get_job_2401 is called at least once (initial resolve + refresh both hit it for
+        # PIPELINE jobs); the RunHistory PATCH must still be issued.
+        assert mock_get_job_2401.call_count >= 1
+        mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name.assert_called_once()
+        mock_resolve.assert_called_once()
+
+    @patch.object(JobOperations, "_get_job_2401")
+    @patch.object(JobOperations, "_get_job")
+    def test_update_pipeline_child_raises(
+        self, mock_get_job, mock_get_job_2401, mock_job_operation: JobOperations
+    ) -> None:
+        """A pipeline child job (properties is None on the 2401 view) must raise
+        PipelineChildJobError and must NOT issue any RunHistory PATCH."""
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml.exceptions import PipelineChildJobError
+
+        parent_view = Mock()
+        parent_view.properties.job_type = RestJobType.PIPELINE
+        mock_get_job.return_value = parent_view
+
+        child = Mock()
+        child.properties = None  # _is_pipeline_child_job -> True
+        child.id = "/fake/child/id"
+        mock_get_job_2401.return_value = child
+
+        mock_job_operation._runs_operations_client = Mock()
+
+        with pytest.raises(PipelineChildJobError):
+            mock_job_operation.update(name="child_run", description="x")
+
+        mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name.assert_not_called()
+
+    # -------------- create_or_update metadata-only shortcut --------------
+
+    @patch.object(Job, "_from_rest_object")
+    @patch.object(JobOperations, "_resolve_azureml_id")
+    @patch.object(JobOperations, "_get_job")
+    def test_create_or_update_metadata_shortcut_uses_runhistory_patch(
+        self,
+        mock_get_job,
+        mock_resolve,
+        mock_from_rest,
+        mock_job_operation: JobOperations,
+    ) -> None:
+        """For a Job that was previously fetched (has an ARM id) and is being resubmitted with
+        only metadata edits (no compute/experiment_name change), create_or_update must route
+        through the RunHistory PATCH shortcut and skip the legacy MFE PUT round-trip."""
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+
+        fake_job = Mock()
+        fake_job.properties.job_type = RestJobType.COMMAND
+        fake_job.properties.experiment_name = "exp1"
+        mock_get_job.return_value = fake_job
+        mock_from_rest.return_value = Command(component=None)
+        mock_resolve.return_value = Command(component=None)
+        mock_job_operation._runs_operations_client = Mock()
+
+        input_job = Mock()
+        input_job.id = (
+            "/subscriptions/x/resourceGroups/y/providers/Microsoft.MachineLearningServices"
+            "/workspaces/z/jobs/random_name"
+        )
+        input_job.name = "random_name"
+        input_job.display_name = "edited dn"
+        input_job.description = "edited desc"
+        input_job.tags = {"k": "v"}
+        input_job.properties = {"pk": "pv"}
+        input_job.compute = None
+
+        mock_job_operation.create_or_update(job=input_job)
+
+        add_mod = mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name
+        add_mod.assert_called_once()
+        body = add_mod.call_args.kwargs["body"]
+        assert body.display_name == "edited dn"
+        assert body.description == "edited desc"
+        assert body.tags == {"k": "v"}
+        assert body.properties == {"pk": "pv"}
+        # Legacy MFE PUT paths must be untouched when the shortcut succeeds.
+        mock_job_operation.service_client_01_2024_preview.jobs.create_or_update.assert_not_called()
+        mock_job_operation._operation_2023_02_preview.create_or_update.assert_not_called()
+
     @pytest.mark.parametrize(
         "corrupt_job_data",
         [

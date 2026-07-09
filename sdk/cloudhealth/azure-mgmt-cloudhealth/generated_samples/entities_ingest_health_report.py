@@ -31,23 +31,23 @@ def main():
     )
 
     client.entities.ingest_health_report(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        entity_name="entity1",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        entity_name="orders-api",
         body={
-            "additionalContext": "CPU usage elevated due to batch processing job",
+            "additionalContext": "Elevated 5xx error rate during the checkout traffic spike.",
             "evaluationRules": {
-                "degradedRule": {"operator": "GreaterThan", "threshold": 70},
-                "unhealthyRule": {"operator": "GreaterThan", "threshold": 90},
+                "degradedRule": {"operator": "GreaterThan", "threshold": 1},
+                "unhealthyRule": {"operator": "GreaterThan", "threshold": 5},
             },
             "expiresInMinutes": 60,
-            "healthState": "Degraded",
-            "signalName": "uniqueSignalName1",
-            "value": 85.5,
+            "healthState": "Unhealthy",
+            "signalName": "error-rate",
+            "value": 6.5,
         },
     )
 
 
-# x-ms-original-file: 2026-01-01-preview/Entities_IngestHealthReport.json
+# x-ms-original-file: 2026-05-01-preview/Entities_IngestHealthReport.json
 if __name__ == "__main__":
     main()
