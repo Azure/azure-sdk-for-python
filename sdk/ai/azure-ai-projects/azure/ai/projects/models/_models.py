@@ -61,6 +61,97 @@ if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
+class _CreateAgentVersionFromCodeContent(_Model):
+    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
+    POST /agents/{name}/versions).
+
+    :ivar metadata: JSON metadata including description and hosted definition. Required.
+    :vartype metadata: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeMetadata
+    :ivar code: The code zip file (max 250 MB). Required.
+    :vartype code: ~azure.ai.projects._utils.utils.FileType
+    """
+
+    metadata: "_models._models._CreateAgentVersionFromCodeMetadata" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """JSON metadata including description and hosted definition. Required."""
+    code: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The code zip file (max 250 MB). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models._models._CreateAgentVersionFromCodeMetadata",
+        code: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class _CreateAgentVersionFromCodeMetadata(_Model):
+    """JSON metadata for code-based agent operations (create, update, create version). The agent name
+    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
+    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
+    header.
+
+    :ivar description: A human-readable description of the agent.
+    :vartype description: str
+    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters.
+    :vartype metadata: dict[str, str]
+    :ivar definition: The hosted agent definition including code_configuration (runtime,
+     entry_point), cpu, memory, and protocol_versions. Required.
+    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the agent."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+     
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters."""
+    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
+     and protocol_versions. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        definition: "_models.HostedAgentDefinition",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Tool(_Model):
     """A tool that can be used to generate a response.
 
@@ -70,7 +161,7 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, ReminderPreviewTool, SharepointPreviewTool, FunctionShellToolParam,
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
     ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
@@ -78,7 +169,7 @@ class Tool(_Model):
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
      "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
@@ -91,7 +182,7 @@ class Tool(_Model):
      \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
-     \"memory_search_preview\", \"reminder_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
+     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
      \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
      \"capture_structured_outputs\", and \"openapi\"."""
 
@@ -4113,97 +4204,6 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = IndexType.COSMOS_DB  # type: ignore
-
-
-class CreateAgentVersionFromCodeContent(_Model):
-    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
-    POST /agents/{name}/versions).
-
-    :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeMetadata
-    :ivar code: The code zip file (max 250 MB). Required.
-    :vartype code: ~azure.ai.projects._utils.utils.FileType
-    """
-
-    metadata: "_models.CreateAgentVersionFromCodeMetadata" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON metadata including description and hosted definition. Required."""
-    code: FileType = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
-    )
-    """The code zip file (max 250 MB). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: "_models.CreateAgentVersionFromCodeMetadata",
-        code: FileType,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateAgentVersionFromCodeMetadata(_Model):
-    """JSON metadata for code-based agent operations (create, update, create version). The agent name
-    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
-    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
-    header.
-
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar definition: The hosted agent definition including code_configuration (runtime,
-     entry_point), cpu, memory, and protocol_versions. Required.
-    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
-    """
-
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable description of the agent."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-     
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
-     and protocol_versions. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        definition: "_models.HostedAgentDefinition",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class CreateAsyncResponse(_Model):
@@ -12623,47 +12623,6 @@ class RedTeam(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ReminderPreviewTool(Tool, discriminator="reminder_preview"):
-    """A built-in tool that schedules the agent to re-invoke itself after a delay. The model passes a
-    single ``minutes`` argument (positive integer) when calling this tool. The service creates a
-    one-shot timer routine that fires after the specified delay and re-invokes the agent on the
-    same conversation thread. No pre-created routine is required.
-
-    :ivar type: The type of the tool. Always ``reminder_preview``. Required. REMINDER_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.REMINDER_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    """
-
-    type: Literal[ToolType.REMINDER_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``reminder_preview``. Required. REMINDER_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.REMINDER_PREVIEW  # type: ignore
 
 
 class ReminderPreviewToolboxTool(ToolboxTool, discriminator="reminder_preview"):

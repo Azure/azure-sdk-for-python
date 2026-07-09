@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-05-01/RoutingIntentDelete.json
+# x-ms-original-file: 2025-07-01/RoutingIntentDelete.json
 if __name__ == "__main__":
     main()

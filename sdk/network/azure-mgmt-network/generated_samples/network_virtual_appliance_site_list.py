@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/NetworkVirtualApplianceSiteList.json
+# x-ms-original-file: 2025-07-01/NetworkVirtualApplianceSiteList.json
 if __name__ == "__main__":
     main()

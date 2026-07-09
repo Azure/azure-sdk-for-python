@@ -826,7 +826,6 @@
 /.vscode/                                                            @danieljurek @mccoyp @benbp @mikeharder
 
 /scripts/                                                            @danieljurek @mccoyp
-/scripts/breaking_changes_checker/                                   @catalinaperalta
 /doc/                                                                @danieljurek @Azure/azure-python-sdk
 /conda/                                                              @danieljurek @xiangyan99 @xirzec
 
@@ -839,8 +838,8 @@
 /eng/pipelines/docindex.yml                                          @danieljurek @benbp
 
 # Add approvers for typespec-python emitter version updates
-/eng/emitter-package.json                                            @mccoyp @catalinaperalta @iscai-msft @msyyc @ChenxiJiang333
-/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package.json                                            @mccoyp @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package-lock.json                                       @mccoyp @iscai-msft @msyyc @ChenxiJiang333
 
 # TypeSpec Python generated tests and regeneration workflow
 /eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333

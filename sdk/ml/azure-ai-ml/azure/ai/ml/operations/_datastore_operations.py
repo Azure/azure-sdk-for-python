@@ -224,6 +224,9 @@ class DatastoreOperations(_ScopeDependentOperations):
         """
         try:
             ds_request = datastore._to_rest_object()
+            # ``_to_rest_object`` returns an arm_ml_service hybrid Datastore model, which the datastores
+            # operation's ``SdkJSONEncoder`` serializes directly (durable fix for ICM 829788361 / the 1.34.0
+            # regression). Do not call ``.serialize()`` here — hybrid models have no such method.
             datastore_resource = self._operation.create_or_update(
                 name=datastore.name,
                 resource_group_name=self._operation_scope.resource_group_name,
