@@ -4,11 +4,12 @@
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import itertools
 import json
 from contextvars import ContextVar
 from datetime import date, datetime, time, timedelta
-from typing import Any, Mapping
+from typing import Any, AsyncIterator, Mapping
 
 from ..models._generated import ResponseStreamEvent
 
@@ -177,3 +178,68 @@ def encode_keep_alive_comment(comment: str = "keep-alive") -> str:
     :rtype: str
     """
     return f": {comment}\n\n"
+
+
+async def with_keep_alive(
+    source: AsyncIterator[str],
+    interval_seconds: int | None,
+) -> AsyncIterator[str]:
+    """Interleave SSE keep-alive comment frames into ``source`` during idle gaps.
+
+    Passthrough when ``interval_seconds`` is falsy. A keep-alive comment frame is emitted
+    whenever no upstream item arrives within ``interval_seconds``; real items are never
+    dropped or reordered. Keep-alive is a transport concern, so this wraps the SSE byte
+    stream at the point it becomes an HTTP response rather than living in the event pipeline.
+
+    The source is advanced by a single dedicated task, so any ``contextvars`` the source sets
+    once and relies on across its whole lifetime (the request/platform context and the SSE
+    sequence-number counter) persist exactly as when the source is iterated directly.
+
+    :param source: The upstream async iterator of SSE-encoded strings.
+    :type source: AsyncIterator[str]
+    :param interval_seconds: Idle interval before emitting a keep-alive frame, or ``None`` to disable.
+    :type interval_seconds: int | None
+    :returns: An async iterator that yields the source's items plus periodic keep-alive frames.
+    :rtype: AsyncIterator[str]
+    """
+    if not interval_seconds:
+        async for item in source:
+            yield item
+        return
+
+    queue: asyncio.Queue[Any] = asyncio.Queue()
+    sentinel = object()
+
+    async def _pump() -> None:
+        try:
+            async for item in source:
+                queue.put_nowait(item)
+        finally:
+            queue.put_nowait(sentinel)
+
+    pump_task = asyncio.ensure_future(_pump())
+    get_task: "asyncio.Future[Any] | None" = None
+    try:
+        while True:
+            if get_task is None:
+                get_task = asyncio.ensure_future(queue.get())
+            done, _ = await asyncio.wait({get_task}, timeout=interval_seconds)
+            if get_task not in done:
+                # Idle interval elapsed with no item; emit a heartbeat. The pending
+                # get_task is preserved (not cancelled) so no item is ever dropped.
+                yield encode_keep_alive_comment()
+                continue
+            item = get_task.result()
+            get_task = None
+            if item is sentinel:
+                break
+            yield item
+    finally:
+        # Deterministic cleanup — including "client disconnects right after a real item"
+        # (consumer suspended at ``yield item`` with the pump still running): cancelling the
+        # pump throws CancelledError into the source at its yield point, so the source's own
+        # finally (finalize / reset_request_context) runs and is awaited here.
+        pending = [task for task in (pump_task, get_task) if task is not None]
+        for task in pending:
+            task.cancel()
+        await asyncio.gather(*pending, return_exceptions=True)
