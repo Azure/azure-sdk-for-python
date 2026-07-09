@@ -192,7 +192,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_request: JSON, 
+                bsl_request: BastionShareableLinkListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -225,7 +225,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_token_request: JSON, 
+                bsl_token_request: BastionShareableLinkTokenListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -258,7 +258,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                vpn_client_params: JSON, 
+                vpn_client_params: VirtualWanVpnProfileParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -300,7 +300,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_request: JSON, 
+                bsl_request: BastionShareableLinkListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -345,7 +345,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                session_ids: JSON, 
+                session_ids: SessionIds, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -386,7 +386,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_request: JSON, 
+                bsl_request: BastionShareableLinkListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -420,7 +420,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: ActiveConfigurationParameter, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -456,7 +456,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: ActiveConfigurationParameter, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -492,7 +492,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: QueryRequestOptions, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -528,7 +528,7 @@ namespace azure.mgmt.network
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: QueryRequestOptions, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -758,7 +758,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_request: JSON, 
+                bsl_request: BastionShareableLinkListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -791,7 +791,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_token_request: JSON, 
+                bsl_token_request: BastionShareableLinkTokenListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -824,7 +824,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                vpn_client_params: JSON, 
+                vpn_client_params: VirtualWanVpnProfileParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -866,7 +866,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_request: JSON, 
+                bsl_request: BastionShareableLinkListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -911,7 +911,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                session_ids: JSON, 
+                session_ids: SessionIds, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -952,7 +952,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                bsl_request: JSON, 
+                bsl_request: BastionShareableLinkListRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -986,7 +986,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: ActiveConfigurationParameter, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -1022,7 +1022,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: ActiveConfigurationParameter, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -1058,7 +1058,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: QueryRequestOptions, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -1094,7 +1094,7 @@ namespace azure.mgmt.network.aio
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: QueryRequestOptions, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -1173,7 +1173,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 configuration_name: str, 
                 rule_collection_name: str, 
-                rule_collection: JSON, 
+                rule_collection: AdminRuleCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1258,7 +1258,7 @@ namespace azure.mgmt.network.aio.operations
                 configuration_name: str, 
                 rule_collection_name: str, 
                 rule_name: str, 
-                admin_rule: JSON, 
+                admin_rule: BaseAdminRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1338,7 +1338,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 application_gateway_name: str, 
                 connection_name: str, 
-                parameters: JSON, 
+                parameters: ApplicationGatewayPrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1458,7 +1458,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 application_gateway_name: str, 
-                probe_request: JSON, 
+                probe_request: ApplicationGatewayOnDemandProbe, 
                 *, 
                 content_type: str = "application/json", 
                 expand: Optional[str] = ..., 
@@ -1493,7 +1493,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 application_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ApplicationGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1593,7 +1593,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 application_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1635,7 +1635,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 application_security_group_name: str, 
-                parameters: JSON, 
+                parameters: ApplicationSecurityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1694,7 +1694,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 application_security_group_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1846,7 +1846,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: AzureFirewall, 
                 *, 
                 content_type: str = "application/json", 
                 create_afc_control_plane: Optional[bool] = ..., 
@@ -1897,7 +1897,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPacketCaptureParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1930,7 +1930,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPacketCaptureParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1963,7 +1963,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2023,7 +2023,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: JSON, 
+                parameters: BastionHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2064,7 +2064,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2138,7 +2138,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 commit_name: str, 
-                resource: JSON, 
+                resource: Commit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2212,7 +2212,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 vpn_server_configuration_name: str, 
                 configuration_policy_group_name: str, 
-                vpn_server_configuration_policy_group_parameters: JSON, 
+                vpn_server_configuration_policy_group_parameters: VpnServerConfigurationPolicyGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2284,7 +2284,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 connection_monitor_name: str, 
-                parameters: JSON, 
+                parameters: ConnectionMonitor, 
                 *, 
                 content_type: str = "application/json", 
                 migrate: Optional[str] = ..., 
@@ -2357,7 +2357,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 connection_monitor_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2402,7 +2402,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 connection_policy_name: str, 
-                resource: JSON, 
+                resource: ConnectionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2484,7 +2484,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                connectivity_configuration: JSON, 
+                connectivity_configuration: ConnectivityConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2547,7 +2547,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 custom_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: CustomIpPrefix, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2608,7 +2608,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 custom_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2650,7 +2650,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ddos_custom_policy_name: str, 
-                parameters: JSON, 
+                parameters: DdosCustomPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2711,7 +2711,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ddos_custom_policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2753,7 +2753,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ddos_protection_plan_name: str, 
-                parameters: JSON, 
+                parameters: DdosProtectionPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2812,7 +2812,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ddos_protection_plan_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2880,7 +2880,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 dscp_configuration_name: str, 
-                parameters: JSON, 
+                parameters: DscpConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2950,7 +2950,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 circuit_name: str, 
                 authorization_name: str, 
-                authorization_parameters: JSON, 
+                authorization_parameters: ExpressRouteCircuitAuthorization, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3023,7 +3023,7 @@ namespace azure.mgmt.network.aio.operations
                 circuit_name: str, 
                 peering_name: str, 
                 connection_name: str, 
-                express_route_circuit_connection_parameters: JSON, 
+                express_route_circuit_connection_parameters: ExpressRouteCircuitConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3098,7 +3098,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 circuit_name: str, 
                 peering_name: str, 
-                peering_parameters: JSON, 
+                peering_parameters: ExpressRouteCircuitPeering, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3167,7 +3167,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 circuit_name: str, 
-                parameters: JSON, 
+                parameters: ExpressRouteCircuit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3275,7 +3275,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 circuit_name: str, 
-                stop_parameters: JSON, 
+                stop_parameters: ExpressRouteLinkFailoverStopApiParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3343,7 +3343,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 circuit_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3387,7 +3387,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
                 connection_name: str, 
-                put_express_route_connection_parameters: JSON, 
+                put_express_route_connection_parameters: ExpressRouteConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3458,7 +3458,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 cross_connection_name: str, 
                 peering_name: str, 
-                peering_parameters: JSON, 
+                peering_parameters: ExpressRouteCrossConnectionPeering, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3527,7 +3527,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 cross_connection_name: str, 
-                parameters: JSON, 
+                parameters: ExpressRouteCrossConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3613,7 +3613,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 cross_connection_name: str, 
-                cross_connection_parameters: JSON, 
+                cross_connection_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3655,7 +3655,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
-                put_express_route_gateway_parameters: JSON, 
+                put_express_route_gateway_parameters: ExpressRouteGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3753,7 +3753,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
-                stop_parameters: JSON, 
+                stop_parameters: ExpressRouteFailoverStopApiParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3786,7 +3786,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
-                express_route_gateway_parameters: JSON, 
+                express_route_gateway_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3874,7 +3874,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 express_route_port_name: str, 
                 authorization_name: str, 
-                authorization_parameters: JSON, 
+                authorization_parameters: ExpressRoutePortAuthorization, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3962,7 +3962,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 express_route_port_name: str, 
-                parameters: JSON, 
+                parameters: ExpressRoutePort, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4003,7 +4003,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 express_route_port_name: str, 
-                request: JSON, 
+                request: GenerateExpressRoutePortsLOARequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4054,7 +4054,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 express_route_port_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4125,7 +4125,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4186,7 +4186,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4245,7 +4245,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicyDraft, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4303,7 +4303,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: SignatureOverridesFilterValuesQuery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4345,7 +4345,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: IDPSQueryObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4403,7 +4403,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: SignaturesOverrides, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4436,7 +4436,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: SignaturesOverrides, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4480,7 +4480,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 firewall_policy_name: str, 
                 rule_collection_group_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicyRuleCollectionGroupDraft, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4543,7 +4543,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 firewall_policy_name: str, 
                 rule_collection_group_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicyRuleCollectionGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4614,7 +4614,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 flow_log_name: str, 
-                parameters: JSON, 
+                parameters: FlowLog, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4676,7 +4676,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 flow_log_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4721,7 +4721,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 route_table_name: str, 
-                route_table_parameters: JSON, 
+                route_table_parameters: HubRouteTable, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4792,7 +4792,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 connection_name: str, 
-                hub_virtual_network_connection_parameters: JSON, 
+                hub_virtual_network_connection_parameters: HubVirtualNetworkConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4863,7 +4863,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 load_balancer_name: str, 
                 inbound_nat_rule_name: str, 
-                inbound_nat_rule_parameters: JSON, 
+                inbound_nat_rule_parameters: InboundNatRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4936,7 +4936,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
                 rule_collection_name: str, 
-                parameters: JSON, 
+                parameters: InboundSecurityRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4996,7 +4996,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_group_name: str, 
-                parameters: JSON, 
+                parameters: InterconnectGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5055,7 +5055,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_group_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5097,7 +5097,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ip_allocation_name: str, 
-                parameters: JSON, 
+                parameters: IpAllocation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5158,7 +5158,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ip_allocation_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5200,7 +5200,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ip_groups_name: str, 
-                parameters: JSON, 
+                parameters: IpGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5261,7 +5261,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 ip_groups_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5307,7 +5307,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: IpamPool, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -5402,7 +5402,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 pool_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[IpamPoolUpdate] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -5451,7 +5451,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 load_balancer_name: str, 
                 backend_address_pool_name: str, 
-                parameters: JSON, 
+                parameters: BackendAddressPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5650,7 +5650,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 load_balancer_name: str, 
-                parameters: JSON, 
+                parameters: LoadBalancer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5693,7 +5693,7 @@ namespace azure.mgmt.network.aio.operations
                 group_name: str, 
                 load_balancer_name: str, 
                 backend_pool_name: str, 
-                parameters: JSON, 
+                parameters: QueryInboundNatRulePortMappingRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5725,7 +5725,7 @@ namespace azure.mgmt.network.aio.operations
         async def begin_swap_public_ip_addresses(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: LoadBalancerVipSwapRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5779,7 +5779,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 group_name: str, 
                 load_balancer_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[MigrateLoadBalancerToIpBasedRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5812,7 +5812,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 load_balancer_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5854,7 +5854,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 local_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: LocalNetworkGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5910,7 +5910,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 local_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5952,7 +5952,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 management_group_id: str, 
                 network_manager_connection_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6020,7 +6020,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 nat_gateway_name: str, 
-                parameters: JSON, 
+                parameters: NatGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6081,7 +6081,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 nat_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6125,7 +6125,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 nat_rule_name: str, 
-                nat_rule_parameters: JSON, 
+                nat_rule_parameters: VpnGatewayNatRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6209,7 +6209,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 network_group_name: str, 
-                parameters: JSON, 
+                parameters: NetworkGroup, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -6321,7 +6321,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_interface_name: str, 
                 tap_configuration_name: str, 
-                tap_configuration_parameters: JSON, 
+                tap_configuration_parameters: NetworkInterfaceTapConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6390,7 +6390,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_interface_name: str, 
-                parameters: JSON, 
+                parameters: NetworkInterface, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6550,7 +6550,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_interface_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6592,7 +6592,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerCommit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6635,7 +6635,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerDeploymentStatusParameter, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -6692,7 +6692,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                routing_configuration: JSON, 
+                routing_configuration: NetworkManagerRoutingConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6765,7 +6765,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManager, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6825,7 +6825,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: PatchObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6875,7 +6875,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_profile_name: str, 
-                parameters: JSON, 
+                parameters: NetworkProfile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6928,7 +6928,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_profile_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6970,7 +6970,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_security_group_name: str, 
-                parameters: JSON, 
+                parameters: NetworkSecurityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7031,7 +7031,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_security_group_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7077,7 +7077,7 @@ namespace azure.mgmt.network.aio.operations
                 network_security_perimeter_name: str, 
                 profile_name: str, 
                 access_rule_name: str, 
-                parameters: JSON, 
+                parameters: NspAccessRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7182,7 +7182,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 association_name: str, 
-                parameters: JSON, 
+                parameters: NspAssociation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7313,7 +7313,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 link_name: str, 
-                parameters: JSON, 
+                parameters: NspLink, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7378,7 +7378,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 logging_configuration_name: str, 
-                parameters: JSON, 
+                parameters: NspLoggingConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7466,7 +7466,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 profile_name: str, 
-                parameters: JSON, 
+                parameters: NspProfile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7564,7 +7564,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
-                parameters: JSON, 
+                parameters: NetworkSecurityPerimeter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7624,7 +7624,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
-                parameters: JSON, 
+                parameters: UpdateTagsRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7668,7 +7668,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
                 connection_name: str, 
-                network_virtual_appliance_connection_parameters: JSON, 
+                network_virtual_appliance_connection_parameters: NetworkVirtualApplianceConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7737,7 +7737,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                parameters: JSON, 
+                parameters: NetworkVirtualAppliance, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7778,7 +7778,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                request: JSON, 
+                request: NetworkVirtualApplianceBootDiagnosticParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7811,7 +7811,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                network_virtual_appliance_instance_ids: Optional[JSON] = None, 
+                network_virtual_appliance_instance_ids: Optional[NetworkVirtualApplianceInstanceIds] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7844,7 +7844,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                network_virtual_appliance_instance_ids: Optional[JSON] = None, 
+                network_virtual_appliance_instance_ids: Optional[NetworkVirtualApplianceInstanceIds] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7897,7 +7897,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7939,7 +7939,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: ConnectivityParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7980,7 +7980,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: AzureReachabilityReportParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8013,7 +8013,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: FlowLogStatusParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8046,7 +8046,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: NetworkConfigurationDiagnosticParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8079,7 +8079,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: NextHopParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8112,7 +8112,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: TroubleshootingParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8145,7 +8145,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: QueryTroubleshootingParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8178,7 +8178,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: SecurityGroupViewParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8211,7 +8211,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: AvailableProvidersListParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8244,7 +8244,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: FlowLogInformation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8277,7 +8277,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: VerificationIPFlowParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8310,7 +8310,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: NetworkWatcher, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8351,7 +8351,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: TopologyParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8394,7 +8394,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8448,7 +8448,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                p2_s_vpn_gateway_parameters: JSON, 
+                p2_s_vpn_gateway_parameters: P2SVpnGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8489,7 +8489,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 p2_s_vpn_gateway_name: str, 
-                request: JSON, 
+                request: P2SVpnConnectionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8522,7 +8522,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                parameters: JSON, 
+                parameters: P2SVpnProfileParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8563,7 +8563,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                request: JSON, 
+                request: P2SVpnConnectionHealthRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8604,7 +8604,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                p2_s_vpn_gateway_parameters: JSON, 
+                p2_s_vpn_gateway_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8666,7 +8666,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 packet_capture_name: str, 
-                parameters: JSON, 
+                parameters: PacketCapture, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8783,7 +8783,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 private_endpoint_name: str, 
                 private_dns_zone_group_name: str, 
-                parameters: JSON, 
+                parameters: PrivateDnsZoneGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8852,7 +8852,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 private_endpoint_name: str, 
-                parameters: JSON, 
+                parameters: PrivateEndpoint, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8920,7 +8920,7 @@ namespace azure.mgmt.network.aio.operations
         async def begin_check_private_link_service_visibility(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: CheckPrivateLinkServiceVisibilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8952,7 +8952,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 location: str, 
                 resource_group_name: str, 
-                parameters: JSON, 
+                parameters: CheckPrivateLinkServiceVisibilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8985,7 +8985,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_name: str, 
-                parameters: JSON, 
+                parameters: PrivateLinkService, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9091,7 +9091,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 service_name: str, 
                 pe_connection_name: str, 
-                parameters: JSON, 
+                parameters: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9134,7 +9134,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: PublicIPAddress, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9183,7 +9183,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: DisassociateCloudServicePublicIpRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9216,7 +9216,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: ReserveCloudServicePublicIpAddressRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9335,7 +9335,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9377,7 +9377,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: PublicIPPrefix, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9438,7 +9438,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9484,7 +9484,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 workspace_name: str, 
                 reachability_analysis_intent_name: str, 
-                body: JSON, 
+                body: ReachabilityAnalysisIntent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9577,7 +9577,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 workspace_name: str, 
                 reachability_analysis_run_name: str, 
-                body: JSON, 
+                body: ReachabilityAnalysisRun, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9666,7 +9666,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 route_filter_name: str, 
                 rule_name: str, 
-                route_filter_rule_parameters: JSON, 
+                route_filter_rule_parameters: RouteFilterRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9735,7 +9735,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 route_filter_name: str, 
-                route_filter_parameters: JSON, 
+                route_filter_parameters: RouteFilter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9796,7 +9796,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 route_filter_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9840,7 +9840,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 route_map_name: str, 
-                route_map_parameters: JSON, 
+                route_map_parameters: RouteMap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9909,7 +9909,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 route_table_name: str, 
-                parameters: JSON, 
+                parameters: RouteTable, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9970,7 +9970,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 route_table_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10014,7 +10014,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 route_table_name: str, 
                 route_name: str, 
-                route_parameters: JSON, 
+                route_parameters: Route, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10085,7 +10085,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 routing_intent_name: str, 
-                routing_intent_parameters: JSON, 
+                routing_intent_parameters: RoutingIntent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10170,7 +10170,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 configuration_name: str, 
                 rule_collection_name: str, 
-                rule_collection: JSON, 
+                rule_collection: RoutingRuleCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10255,7 +10255,7 @@ namespace azure.mgmt.network.aio.operations
                 configuration_name: str, 
                 rule_collection_name: str, 
                 rule_name: str, 
-                routing_rule: JSON, 
+                routing_rule: RoutingRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10326,7 +10326,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 scope_connection_name: str, 
-                parameters: JSON, 
+                parameters: ScopeConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10411,7 +10411,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                security_admin_configuration: JSON, 
+                security_admin_configuration: SecurityAdminConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10474,7 +10474,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 security_partner_provider_name: str, 
-                parameters: JSON, 
+                parameters: SecurityPartnerProvider, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10533,7 +10533,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 security_partner_provider_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10577,7 +10577,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_security_group_name: str, 
                 security_rule_name: str, 
-                security_rule_parameters: JSON, 
+                security_rule_parameters: SecurityRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10659,7 +10659,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                security_user_configuration: JSON, 
+                security_user_configuration: SecurityUserConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10738,7 +10738,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 configuration_name: str, 
                 rule_collection_name: str, 
-                security_user_rule_collection: JSON, 
+                security_user_rule_collection: SecurityUserRuleCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10823,7 +10823,7 @@ namespace azure.mgmt.network.aio.operations
                 configuration_name: str, 
                 rule_collection_name: str, 
                 rule_name: str, 
-                security_user_rule: JSON, 
+                security_user_rule: SecurityUserRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10910,7 +10910,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_endpoint_policy_name: str, 
-                parameters: JSON, 
+                parameters: ServiceEndpointPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10971,7 +10971,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_endpoint_policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11015,7 +11015,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 service_endpoint_policy_name: str, 
                 service_endpoint_policy_definition_name: str, 
-                service_endpoint_policy_definitions: JSON, 
+                service_endpoint_policy_definitions: ServiceEndpointPolicyDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11084,7 +11084,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ServiceGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11125,7 +11125,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ServiceGatewayUpdateAddressLocationsRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11158,7 +11158,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ServiceGatewayUpdateServicesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11225,7 +11225,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11316,7 +11316,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 pool_name: str, 
                 static_cidr_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[StaticCidr] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11389,7 +11389,7 @@ namespace azure.mgmt.network.aio.operations
                 network_manager_name: str, 
                 network_group_name: str, 
                 static_member_name: str, 
-                parameters: JSON, 
+                parameters: StaticMember, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11493,7 +11493,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 subnet_name: str, 
-                subnet_parameters: JSON, 
+                subnet_parameters: Subnet, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11538,7 +11538,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 subnet_name: str, 
-                prepare_network_policies_request_parameters: JSON, 
+                prepare_network_policies_request_parameters: PrepareNetworkPoliciesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11574,7 +11574,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 subnet_name: str, 
-                unprepare_network_policies_request_parameters: JSON, 
+                unprepare_network_policies_request_parameters: UnprepareNetworkPoliciesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11634,7 +11634,7 @@ namespace azure.mgmt.network.aio.operations
         async def create_or_update(
                 self, 
                 network_manager_connection_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11730,7 +11730,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 workspace_name: str, 
-                body: JSON, 
+                body: VerifierWorkspace, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -11795,7 +11795,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 workspace_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[VerifierWorkspaceUpdate] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -11842,7 +11842,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 group_name: str, 
                 resource_name: str, 
-                parameters: JSON, 
+                parameters: SwapResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11902,7 +11902,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
                 site_name: str, 
-                parameters: JSON, 
+                parameters: VirtualApplianceSite, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11992,7 +11992,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 connection_name: str, 
-                parameters: JSON, 
+                parameters: BgpConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12090,7 +12090,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 ip_config_name: str, 
-                parameters: JSON, 
+                parameters: HubIpConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12161,7 +12161,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 route_table_name: str, 
-                virtual_hub_route_table_v2_parameters: JSON, 
+                virtual_hub_route_table_v2_parameters: VirtualHubRouteTableV2, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12230,7 +12230,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                virtual_hub_parameters: JSON, 
+                virtual_hub_parameters: VirtualHub, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12271,7 +12271,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                effective_routes_parameters: Optional[JSON] = None, 
+                effective_routes_parameters: Optional[EffectiveRoutesParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12304,7 +12304,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                get_inbound_routes_parameters: JSON, 
+                get_inbound_routes_parameters: GetInboundRoutesParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12337,7 +12337,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                get_outbound_routes_parameters: JSON, 
+                get_outbound_routes_parameters: GetOutboundRoutesParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12388,7 +12388,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                virtual_hub_parameters: JSON, 
+                virtual_hub_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12430,7 +12430,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_appliance_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkAppliance, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12489,7 +12489,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_appliance_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12531,7 +12531,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkGatewayConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12588,7 +12588,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: ConnectionResetSharedKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12621,7 +12621,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: ConnectionSharedKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12654,7 +12654,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12687,7 +12687,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: VpnPacketCaptureStopParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12720,7 +12720,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12787,7 +12787,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
                 nat_rule_name: str, 
-                nat_rule_parameters: JSON, 
+                nat_rule_parameters: VirtualNetworkGatewayNatRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12856,7 +12856,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12897,7 +12897,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                request: JSON, 
+                request: P2SVpnConnectionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12930,7 +12930,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VpnClientParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -12963,7 +12963,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VpnClientParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13114,7 +13114,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                migration_params: JSON, 
+                migration_params: VirtualNetworkGatewayMigrationParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13165,7 +13165,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                vpnclient_ipsec_params: JSON, 
+                vpnclient_ipsec_params: VpnClientIPsecParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13208,7 +13208,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13241,7 +13241,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                stop_parameters: JSON, 
+                stop_parameters: ExpressRouteFailoverStopApiParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13274,7 +13274,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VpnPacketCaptureStopParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13307,7 +13307,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13379,7 +13379,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: VpnDeviceScriptParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13424,7 +13424,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 virtual_network_peering_name: str, 
-                virtual_network_peering_parameters: JSON, 
+                virtual_network_peering_parameters: VirtualNetworkPeering, 
                 *, 
                 content_type: str = "application/json", 
                 sync_remote_address_space: Optional[Union[str, SyncRemoteAddressSpace]] = ..., 
@@ -13495,7 +13495,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 tap_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkTap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13554,7 +13554,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 tap_name: str, 
-                tap_parameters: JSON, 
+                tap_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13596,7 +13596,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetwork, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13686,7 +13686,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13730,7 +13730,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 virtual_router_name: str, 
                 peering_name: str, 
-                parameters: JSON, 
+                parameters: VirtualRouterPeering, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13799,7 +13799,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_router_name: str, 
-                parameters: JSON, 
+                parameters: VirtualRouter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13869,7 +13869,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                wan_parameters: JSON, 
+                wan_parameters: VirtualWAN, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13928,7 +13928,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                wan_parameters: JSON, 
+                wan_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -13972,7 +13972,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 connection_name: str, 
-                vpn_connection_parameters: JSON, 
+                vpn_connection_parameters: VpnConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14017,7 +14017,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 vpn_connection_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnConnectionPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14053,7 +14053,7 @@ namespace azure.mgmt.network.aio.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 vpn_connection_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnConnectionPacketCaptureStopParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14113,7 +14113,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                vpn_gateway_parameters: JSON, 
+                vpn_gateway_parameters: VpnGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14164,7 +14164,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnGatewayPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14197,7 +14197,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnGatewayPacketCaptureStopParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14230,7 +14230,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                vpn_gateway_parameters: JSON, 
+                vpn_gateway_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14314,7 +14314,7 @@ namespace azure.mgmt.network.aio.operations
                 gateway_name: str, 
                 connection_name: str, 
                 link_connection_name: str, 
-                connection_shared_key_parameters: JSON, 
+                connection_shared_key_parameters: ConnectionSharedKeyResult, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14414,7 +14414,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 vpn_server_configuration_name: str, 
-                vpn_server_configuration_parameters: JSON, 
+                vpn_server_configuration_parameters: VpnServerConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14481,7 +14481,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 vpn_server_configuration_name: str, 
-                vpn_server_configuration_parameters: JSON, 
+                vpn_server_configuration_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14568,7 +14568,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                request: JSON, 
+                request: GetVpnSitesConfigurationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14610,7 +14610,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 vpn_site_name: str, 
-                vpn_site_parameters: JSON, 
+                vpn_site_parameters: VpnSite, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14669,7 +14669,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 vpn_site_name: str, 
-                vpn_site_parameters: JSON, 
+                vpn_site_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -14719,7 +14719,7 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 policy_name: str, 
-                parameters: JSON, 
+                parameters: WebApplicationFirewallPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -35853,7 +35853,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 configuration_name: str, 
                 rule_collection_name: str, 
-                rule_collection: JSON, 
+                rule_collection: AdminRuleCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -35938,7 +35938,7 @@ namespace azure.mgmt.network.operations
                 configuration_name: str, 
                 rule_collection_name: str, 
                 rule_name: str, 
-                admin_rule: JSON, 
+                admin_rule: BaseAdminRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36018,7 +36018,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 application_gateway_name: str, 
                 connection_name: str, 
-                parameters: JSON, 
+                parameters: ApplicationGatewayPrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36138,7 +36138,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 application_gateway_name: str, 
-                probe_request: JSON, 
+                probe_request: ApplicationGatewayOnDemandProbe, 
                 *, 
                 content_type: str = "application/json", 
                 expand: Optional[str] = ..., 
@@ -36173,7 +36173,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 application_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ApplicationGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36273,7 +36273,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 application_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36315,7 +36315,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 application_security_group_name: str, 
-                parameters: JSON, 
+                parameters: ApplicationSecurityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36374,7 +36374,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 application_security_group_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36526,7 +36526,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: AzureFirewall, 
                 *, 
                 content_type: str = "application/json", 
                 create_afc_control_plane: Optional[bool] = ..., 
@@ -36577,7 +36577,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPacketCaptureParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36610,7 +36610,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPacketCaptureParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36643,7 +36643,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 azure_firewall_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36703,7 +36703,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: JSON, 
+                parameters: BastionHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36744,7 +36744,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36818,7 +36818,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 commit_name: str, 
-                resource: JSON, 
+                resource: Commit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36892,7 +36892,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 vpn_server_configuration_name: str, 
                 configuration_policy_group_name: str, 
-                vpn_server_configuration_policy_group_parameters: JSON, 
+                vpn_server_configuration_policy_group_parameters: VpnServerConfigurationPolicyGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -36964,7 +36964,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 connection_monitor_name: str, 
-                parameters: JSON, 
+                parameters: ConnectionMonitor, 
                 *, 
                 content_type: str = "application/json", 
                 migrate: Optional[str] = ..., 
@@ -37037,7 +37037,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 connection_monitor_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37082,7 +37082,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 connection_policy_name: str, 
-                resource: JSON, 
+                resource: ConnectionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37164,7 +37164,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                connectivity_configuration: JSON, 
+                connectivity_configuration: ConnectivityConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37227,7 +37227,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 custom_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: CustomIpPrefix, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37288,7 +37288,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 custom_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37330,7 +37330,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ddos_custom_policy_name: str, 
-                parameters: JSON, 
+                parameters: DdosCustomPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37391,7 +37391,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ddos_custom_policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37433,7 +37433,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ddos_protection_plan_name: str, 
-                parameters: JSON, 
+                parameters: DdosProtectionPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37492,7 +37492,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ddos_protection_plan_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37560,7 +37560,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 dscp_configuration_name: str, 
-                parameters: JSON, 
+                parameters: DscpConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37630,7 +37630,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 circuit_name: str, 
                 authorization_name: str, 
-                authorization_parameters: JSON, 
+                authorization_parameters: ExpressRouteCircuitAuthorization, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37703,7 +37703,7 @@ namespace azure.mgmt.network.operations
                 circuit_name: str, 
                 peering_name: str, 
                 connection_name: str, 
-                express_route_circuit_connection_parameters: JSON, 
+                express_route_circuit_connection_parameters: ExpressRouteCircuitConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37778,7 +37778,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 circuit_name: str, 
                 peering_name: str, 
-                peering_parameters: JSON, 
+                peering_parameters: ExpressRouteCircuitPeering, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37847,7 +37847,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 circuit_name: str, 
-                parameters: JSON, 
+                parameters: ExpressRouteCircuit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -37955,7 +37955,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 circuit_name: str, 
-                stop_parameters: JSON, 
+                stop_parameters: ExpressRouteLinkFailoverStopApiParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38023,7 +38023,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 circuit_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38067,7 +38067,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
                 connection_name: str, 
-                put_express_route_connection_parameters: JSON, 
+                put_express_route_connection_parameters: ExpressRouteConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38138,7 +38138,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 cross_connection_name: str, 
                 peering_name: str, 
-                peering_parameters: JSON, 
+                peering_parameters: ExpressRouteCrossConnectionPeering, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38207,7 +38207,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 cross_connection_name: str, 
-                parameters: JSON, 
+                parameters: ExpressRouteCrossConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38293,7 +38293,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 cross_connection_name: str, 
-                cross_connection_parameters: JSON, 
+                cross_connection_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38335,7 +38335,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
-                put_express_route_gateway_parameters: JSON, 
+                put_express_route_gateway_parameters: ExpressRouteGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38433,7 +38433,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
-                stop_parameters: JSON, 
+                stop_parameters: ExpressRouteFailoverStopApiParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38466,7 +38466,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 express_route_gateway_name: str, 
-                express_route_gateway_parameters: JSON, 
+                express_route_gateway_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38554,7 +38554,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 express_route_port_name: str, 
                 authorization_name: str, 
-                authorization_parameters: JSON, 
+                authorization_parameters: ExpressRoutePortAuthorization, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38642,7 +38642,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 express_route_port_name: str, 
-                parameters: JSON, 
+                parameters: ExpressRoutePort, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38683,7 +38683,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 express_route_port_name: str, 
-                request: JSON, 
+                request: GenerateExpressRoutePortsLOARequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38734,7 +38734,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 express_route_port_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38805,7 +38805,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38866,7 +38866,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38925,7 +38925,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicyDraft, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -38983,7 +38983,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: SignatureOverridesFilterValuesQuery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39025,7 +39025,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: IDPSQueryObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39083,7 +39083,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: SignaturesOverrides, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39116,7 +39116,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 firewall_policy_name: str, 
-                parameters: JSON, 
+                parameters: SignaturesOverrides, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39160,7 +39160,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 firewall_policy_name: str, 
                 rule_collection_group_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicyRuleCollectionGroupDraft, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39223,7 +39223,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 firewall_policy_name: str, 
                 rule_collection_group_name: str, 
-                parameters: JSON, 
+                parameters: FirewallPolicyRuleCollectionGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39294,7 +39294,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 flow_log_name: str, 
-                parameters: JSON, 
+                parameters: FlowLog, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39356,7 +39356,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 flow_log_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39401,7 +39401,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 route_table_name: str, 
-                route_table_parameters: JSON, 
+                route_table_parameters: HubRouteTable, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39472,7 +39472,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 connection_name: str, 
-                hub_virtual_network_connection_parameters: JSON, 
+                hub_virtual_network_connection_parameters: HubVirtualNetworkConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39543,7 +39543,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 load_balancer_name: str, 
                 inbound_nat_rule_name: str, 
-                inbound_nat_rule_parameters: JSON, 
+                inbound_nat_rule_parameters: InboundNatRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39616,7 +39616,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
                 rule_collection_name: str, 
-                parameters: JSON, 
+                parameters: InboundSecurityRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39676,7 +39676,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_group_name: str, 
-                parameters: JSON, 
+                parameters: InterconnectGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39735,7 +39735,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_group_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39777,7 +39777,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ip_allocation_name: str, 
-                parameters: JSON, 
+                parameters: IpAllocation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39838,7 +39838,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ip_allocation_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39880,7 +39880,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ip_groups_name: str, 
-                parameters: JSON, 
+                parameters: IpGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39941,7 +39941,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 ip_groups_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -39987,7 +39987,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 pool_name: str, 
-                body: JSON, 
+                body: IpamPool, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -40082,7 +40082,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 pool_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[IpamPoolUpdate] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -40131,7 +40131,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 load_balancer_name: str, 
                 backend_address_pool_name: str, 
-                parameters: JSON, 
+                parameters: BackendAddressPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40330,7 +40330,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 load_balancer_name: str, 
-                parameters: JSON, 
+                parameters: LoadBalancer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40373,7 +40373,7 @@ namespace azure.mgmt.network.operations
                 group_name: str, 
                 load_balancer_name: str, 
                 backend_pool_name: str, 
-                parameters: JSON, 
+                parameters: QueryInboundNatRulePortMappingRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40405,7 +40405,7 @@ namespace azure.mgmt.network.operations
         def begin_swap_public_ip_addresses(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: LoadBalancerVipSwapRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40459,7 +40459,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 group_name: str, 
                 load_balancer_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[MigrateLoadBalancerToIpBasedRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40492,7 +40492,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 load_balancer_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40534,7 +40534,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 local_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: LocalNetworkGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40590,7 +40590,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 local_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40632,7 +40632,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 management_group_id: str, 
                 network_manager_connection_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40700,7 +40700,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 nat_gateway_name: str, 
-                parameters: JSON, 
+                parameters: NatGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40761,7 +40761,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 nat_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40805,7 +40805,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 nat_rule_name: str, 
-                nat_rule_parameters: JSON, 
+                nat_rule_parameters: VpnGatewayNatRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -40889,7 +40889,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 network_group_name: str, 
-                parameters: JSON, 
+                parameters: NetworkGroup, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -41001,7 +41001,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_interface_name: str, 
                 tap_configuration_name: str, 
-                tap_configuration_parameters: JSON, 
+                tap_configuration_parameters: NetworkInterfaceTapConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41070,7 +41070,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_interface_name: str, 
-                parameters: JSON, 
+                parameters: NetworkInterface, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41230,7 +41230,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_interface_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41272,7 +41272,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerCommit, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41315,7 +41315,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerDeploymentStatusParameter, 
                 *, 
                 content_type: str = "application/json", 
                 top: Optional[int] = ..., 
@@ -41372,7 +41372,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                routing_configuration: JSON, 
+                routing_configuration: NetworkManagerRoutingConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41445,7 +41445,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManager, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41505,7 +41505,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_manager_name: str, 
-                parameters: JSON, 
+                parameters: PatchObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41555,7 +41555,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_profile_name: str, 
-                parameters: JSON, 
+                parameters: NetworkProfile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41608,7 +41608,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_profile_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41650,7 +41650,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_security_group_name: str, 
-                parameters: JSON, 
+                parameters: NetworkSecurityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41711,7 +41711,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_security_group_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41757,7 +41757,7 @@ namespace azure.mgmt.network.operations
                 network_security_perimeter_name: str, 
                 profile_name: str, 
                 access_rule_name: str, 
-                parameters: JSON, 
+                parameters: NspAccessRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41862,7 +41862,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 association_name: str, 
-                parameters: JSON, 
+                parameters: NspAssociation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -41993,7 +41993,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 link_name: str, 
-                parameters: JSON, 
+                parameters: NspLink, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42058,7 +42058,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 logging_configuration_name: str, 
-                parameters: JSON, 
+                parameters: NspLoggingConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42146,7 +42146,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
                 profile_name: str, 
-                parameters: JSON, 
+                parameters: NspProfile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42244,7 +42244,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
-                parameters: JSON, 
+                parameters: NetworkSecurityPerimeter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42304,7 +42304,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_security_perimeter_name: str, 
-                parameters: JSON, 
+                parameters: UpdateTagsRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42348,7 +42348,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
                 connection_name: str, 
-                network_virtual_appliance_connection_parameters: JSON, 
+                network_virtual_appliance_connection_parameters: NetworkVirtualApplianceConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42417,7 +42417,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                parameters: JSON, 
+                parameters: NetworkVirtualAppliance, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42458,7 +42458,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                request: JSON, 
+                request: NetworkVirtualApplianceBootDiagnosticParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42491,7 +42491,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                network_virtual_appliance_instance_ids: Optional[JSON] = None, 
+                network_virtual_appliance_instance_ids: Optional[NetworkVirtualApplianceInstanceIds] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42524,7 +42524,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                network_virtual_appliance_instance_ids: Optional[JSON] = None, 
+                network_virtual_appliance_instance_ids: Optional[NetworkVirtualApplianceInstanceIds] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42577,7 +42577,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42619,7 +42619,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: ConnectivityParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42660,7 +42660,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: AzureReachabilityReportParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42693,7 +42693,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: FlowLogStatusParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42726,7 +42726,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: NetworkConfigurationDiagnosticParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42759,7 +42759,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: NextHopParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42792,7 +42792,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: TroubleshootingParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42825,7 +42825,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: QueryTroubleshootingParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42858,7 +42858,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: SecurityGroupViewParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42891,7 +42891,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: AvailableProvidersListParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42924,7 +42924,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: FlowLogInformation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42957,7 +42957,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: VerificationIPFlowParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -42990,7 +42990,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: NetworkWatcher, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43031,7 +43031,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: TopologyParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43074,7 +43074,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 network_watcher_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43128,7 +43128,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                p2_s_vpn_gateway_parameters: JSON, 
+                p2_s_vpn_gateway_parameters: P2SVpnGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43169,7 +43169,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 p2_s_vpn_gateway_name: str, 
-                request: JSON, 
+                request: P2SVpnConnectionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43202,7 +43202,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                parameters: JSON, 
+                parameters: P2SVpnProfileParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43243,7 +43243,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                request: JSON, 
+                request: P2SVpnConnectionHealthRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43284,7 +43284,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                p2_s_vpn_gateway_parameters: JSON, 
+                p2_s_vpn_gateway_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43346,7 +43346,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_watcher_name: str, 
                 packet_capture_name: str, 
-                parameters: JSON, 
+                parameters: PacketCapture, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43463,7 +43463,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 private_endpoint_name: str, 
                 private_dns_zone_group_name: str, 
-                parameters: JSON, 
+                parameters: PrivateDnsZoneGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43532,7 +43532,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 private_endpoint_name: str, 
-                parameters: JSON, 
+                parameters: PrivateEndpoint, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43600,7 +43600,7 @@ namespace azure.mgmt.network.operations
         def begin_check_private_link_service_visibility(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: CheckPrivateLinkServiceVisibilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43632,7 +43632,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 location: str, 
                 resource_group_name: str, 
-                parameters: JSON, 
+                parameters: CheckPrivateLinkServiceVisibilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43665,7 +43665,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_name: str, 
-                parameters: JSON, 
+                parameters: PrivateLinkService, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43771,7 +43771,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 service_name: str, 
                 pe_connection_name: str, 
-                parameters: JSON, 
+                parameters: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43814,7 +43814,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: PublicIPAddress, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43863,7 +43863,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: DisassociateCloudServicePublicIpRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -43896,7 +43896,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: ReserveCloudServicePublicIpAddressRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44015,7 +44015,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_address_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44057,7 +44057,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: PublicIPPrefix, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44118,7 +44118,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 public_ip_prefix_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44164,7 +44164,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 workspace_name: str, 
                 reachability_analysis_intent_name: str, 
-                body: JSON, 
+                body: ReachabilityAnalysisIntent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44257,7 +44257,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 workspace_name: str, 
                 reachability_analysis_run_name: str, 
-                body: JSON, 
+                body: ReachabilityAnalysisRun, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44346,7 +44346,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 route_filter_name: str, 
                 rule_name: str, 
-                route_filter_rule_parameters: JSON, 
+                route_filter_rule_parameters: RouteFilterRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44415,7 +44415,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 route_filter_name: str, 
-                route_filter_parameters: JSON, 
+                route_filter_parameters: RouteFilter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44476,7 +44476,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 route_filter_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44520,7 +44520,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 route_map_name: str, 
-                route_map_parameters: JSON, 
+                route_map_parameters: RouteMap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44589,7 +44589,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 route_table_name: str, 
-                parameters: JSON, 
+                parameters: RouteTable, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44650,7 +44650,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 route_table_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44694,7 +44694,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 route_table_name: str, 
                 route_name: str, 
-                route_parameters: JSON, 
+                route_parameters: Route, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44765,7 +44765,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 routing_intent_name: str, 
-                routing_intent_parameters: JSON, 
+                routing_intent_parameters: RoutingIntent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44850,7 +44850,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 configuration_name: str, 
                 rule_collection_name: str, 
-                rule_collection: JSON, 
+                rule_collection: RoutingRuleCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -44935,7 +44935,7 @@ namespace azure.mgmt.network.operations
                 configuration_name: str, 
                 rule_collection_name: str, 
                 rule_name: str, 
-                routing_rule: JSON, 
+                routing_rule: RoutingRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45006,7 +45006,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 scope_connection_name: str, 
-                parameters: JSON, 
+                parameters: ScopeConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45091,7 +45091,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                security_admin_configuration: JSON, 
+                security_admin_configuration: SecurityAdminConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45154,7 +45154,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 security_partner_provider_name: str, 
-                parameters: JSON, 
+                parameters: SecurityPartnerProvider, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45213,7 +45213,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 security_partner_provider_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45257,7 +45257,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_security_group_name: str, 
                 security_rule_name: str, 
-                security_rule_parameters: JSON, 
+                security_rule_parameters: SecurityRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45339,7 +45339,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 configuration_name: str, 
-                security_user_configuration: JSON, 
+                security_user_configuration: SecurityUserConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45418,7 +45418,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 configuration_name: str, 
                 rule_collection_name: str, 
-                security_user_rule_collection: JSON, 
+                security_user_rule_collection: SecurityUserRuleCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45503,7 +45503,7 @@ namespace azure.mgmt.network.operations
                 configuration_name: str, 
                 rule_collection_name: str, 
                 rule_name: str, 
-                security_user_rule: JSON, 
+                security_user_rule: SecurityUserRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45590,7 +45590,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_endpoint_policy_name: str, 
-                parameters: JSON, 
+                parameters: ServiceEndpointPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45651,7 +45651,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_endpoint_policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45695,7 +45695,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 service_endpoint_policy_name: str, 
                 service_endpoint_policy_definition_name: str, 
-                service_endpoint_policy_definitions: JSON, 
+                service_endpoint_policy_definitions: ServiceEndpointPolicyDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45764,7 +45764,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ServiceGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45805,7 +45805,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ServiceGatewayUpdateAddressLocationsRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45838,7 +45838,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: ServiceGatewayUpdateServicesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45905,7 +45905,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 service_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -45996,7 +45996,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 pool_name: str, 
                 static_cidr_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[StaticCidr] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46069,7 +46069,7 @@ namespace azure.mgmt.network.operations
                 network_manager_name: str, 
                 network_group_name: str, 
                 static_member_name: str, 
-                parameters: JSON, 
+                parameters: StaticMember, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46173,7 +46173,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 subnet_name: str, 
-                subnet_parameters: JSON, 
+                subnet_parameters: Subnet, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46218,7 +46218,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 subnet_name: str, 
-                prepare_network_policies_request_parameters: JSON, 
+                prepare_network_policies_request_parameters: PrepareNetworkPoliciesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46254,7 +46254,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 subnet_name: str, 
-                unprepare_network_policies_request_parameters: JSON, 
+                unprepare_network_policies_request_parameters: UnprepareNetworkPoliciesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46314,7 +46314,7 @@ namespace azure.mgmt.network.operations
         def create_or_update(
                 self, 
                 network_manager_connection_name: str, 
-                parameters: JSON, 
+                parameters: NetworkManagerConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46410,7 +46410,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 workspace_name: str, 
-                body: JSON, 
+                body: VerifierWorkspace, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -46475,7 +46475,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_manager_name: str, 
                 workspace_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[VerifierWorkspaceUpdate] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -46522,7 +46522,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 group_name: str, 
                 resource_name: str, 
-                parameters: JSON, 
+                parameters: SwapResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46582,7 +46582,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 network_virtual_appliance_name: str, 
                 site_name: str, 
-                parameters: JSON, 
+                parameters: VirtualApplianceSite, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46672,7 +46672,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 connection_name: str, 
-                parameters: JSON, 
+                parameters: BgpConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46770,7 +46770,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 ip_config_name: str, 
-                parameters: JSON, 
+                parameters: HubIpConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46841,7 +46841,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_hub_name: str, 
                 route_table_name: str, 
-                virtual_hub_route_table_v2_parameters: JSON, 
+                virtual_hub_route_table_v2_parameters: VirtualHubRouteTableV2, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46910,7 +46910,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                virtual_hub_parameters: JSON, 
+                virtual_hub_parameters: VirtualHub, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46951,7 +46951,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                effective_routes_parameters: Optional[JSON] = None, 
+                effective_routes_parameters: Optional[EffectiveRoutesParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -46984,7 +46984,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                get_inbound_routes_parameters: JSON, 
+                get_inbound_routes_parameters: GetInboundRoutesParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47017,7 +47017,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                get_outbound_routes_parameters: JSON, 
+                get_outbound_routes_parameters: GetOutboundRoutesParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47068,7 +47068,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_hub_name: str, 
-                virtual_hub_parameters: JSON, 
+                virtual_hub_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47110,7 +47110,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_appliance_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkAppliance, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47169,7 +47169,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_appliance_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47211,7 +47211,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkGatewayConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47268,7 +47268,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: ConnectionResetSharedKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47301,7 +47301,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: ConnectionSharedKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47334,7 +47334,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47367,7 +47367,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: VpnPacketCaptureStopParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47400,7 +47400,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47467,7 +47467,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
                 nat_rule_name: str, 
-                nat_rule_parameters: JSON, 
+                nat_rule_parameters: VirtualNetworkGatewayNatRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47536,7 +47536,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47577,7 +47577,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                request: JSON, 
+                request: P2SVpnConnectionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47610,7 +47610,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VpnClientParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47643,7 +47643,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VpnClientParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47794,7 +47794,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                migration_params: JSON, 
+                migration_params: VirtualNetworkGatewayMigrationParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47845,7 +47845,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                vpnclient_ipsec_params: JSON, 
+                vpnclient_ipsec_params: VpnClientIPsecParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47888,7 +47888,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47921,7 +47921,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                stop_parameters: JSON, 
+                stop_parameters: ExpressRouteFailoverStopApiParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47954,7 +47954,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: VpnPacketCaptureStopParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -47987,7 +47987,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48059,7 +48059,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_gateway_connection_name: str, 
-                parameters: JSON, 
+                parameters: VpnDeviceScriptParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48104,7 +48104,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_network_name: str, 
                 virtual_network_peering_name: str, 
-                virtual_network_peering_parameters: JSON, 
+                virtual_network_peering_parameters: VirtualNetworkPeering, 
                 *, 
                 content_type: str = "application/json", 
                 sync_remote_address_space: Optional[Union[str, SyncRemoteAddressSpace]] = ..., 
@@ -48175,7 +48175,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 tap_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkTap, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48234,7 +48234,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 tap_name: str, 
-                tap_parameters: JSON, 
+                tap_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48276,7 +48276,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetwork, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48366,7 +48366,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_network_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48410,7 +48410,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 virtual_router_name: str, 
                 peering_name: str, 
-                parameters: JSON, 
+                parameters: VirtualRouterPeering, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48479,7 +48479,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_router_name: str, 
-                parameters: JSON, 
+                parameters: VirtualRouter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48549,7 +48549,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                wan_parameters: JSON, 
+                wan_parameters: VirtualWAN, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48608,7 +48608,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                wan_parameters: JSON, 
+                wan_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48652,7 +48652,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 connection_name: str, 
-                vpn_connection_parameters: JSON, 
+                vpn_connection_parameters: VpnConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48697,7 +48697,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 vpn_connection_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnConnectionPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48733,7 +48733,7 @@ namespace azure.mgmt.network.operations
                 resource_group_name: str, 
                 gateway_name: str, 
                 vpn_connection_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnConnectionPacketCaptureStopParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48793,7 +48793,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                vpn_gateway_parameters: JSON, 
+                vpn_gateway_parameters: VpnGateway, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48844,7 +48844,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnGatewayPacketCaptureStartParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48877,7 +48877,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VpnGatewayPacketCaptureStopParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48910,7 +48910,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 gateway_name: str, 
-                vpn_gateway_parameters: JSON, 
+                vpn_gateway_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -48994,7 +48994,7 @@ namespace azure.mgmt.network.operations
                 gateway_name: str, 
                 connection_name: str, 
                 link_connection_name: str, 
-                connection_shared_key_parameters: JSON, 
+                connection_shared_key_parameters: ConnectionSharedKeyResult, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49094,7 +49094,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 vpn_server_configuration_name: str, 
-                vpn_server_configuration_parameters: JSON, 
+                vpn_server_configuration_parameters: VpnServerConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49161,7 +49161,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 vpn_server_configuration_name: str, 
-                vpn_server_configuration_parameters: JSON, 
+                vpn_server_configuration_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49248,7 +49248,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_wan_name: str, 
-                request: JSON, 
+                request: GetVpnSitesConfigurationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49290,7 +49290,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 vpn_site_name: str, 
-                vpn_site_parameters: JSON, 
+                vpn_site_parameters: VpnSite, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49349,7 +49349,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 vpn_site_name: str, 
-                vpn_site_parameters: JSON, 
+                vpn_site_parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49399,7 +49399,7 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 policy_name: str, 
-                parameters: JSON, 
+                parameters: WebApplicationFirewallPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -49454,6 +49454,8602 @@ namespace azure.mgmt.network.operations
 
         @distributed_trace
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[AzureWebCategory]: ...
+
+
+namespace azure.mgmt.network.types
+
+    class azure.mgmt.network.types.AadAuthenticationParameters(TypedDict, total=False):
+        key "aadAudience": str
+        key "aadIssuer": str
+        key "aadTenant": str
+        aad_audience: str
+        aad_issuer: str
+        aad_tenant: str
+
+
+    class azure.mgmt.network.types.Action(TypedDict, total=False):
+        key "type": Union[str, RouteMapActionType]
+        parameters: list[Parameter]
+        type: Union[str, RouteMapActionType]
+
+
+    class azure.mgmt.network.types.ActiveConfigurationParameter(TypedDict, total=False):
+        key "skipToken": str
+        regions: list[str]
+        skip_token: str
+
+
+    class azure.mgmt.network.types.AddressPrefixItem(TypedDict, total=False):
+        key "addressPrefix": str
+        key "addressPrefixType": Union[str, AddressPrefixType]
+        address_prefix: str
+        address_prefix_type: Union[str, AddressPrefixType]
+
+
+    class azure.mgmt.network.types.AddressSpace(TypedDict, total=False):
+        addressPrefixes: list[str]
+        address_prefixes: list[str]
+        ipamPoolPrefixAllocations: list[IpamPoolPrefixAllocation]
+        ipam_pool_prefix_allocations: list[IpamPoolPrefixAllocation]
+
+
+    class azure.mgmt.network.types.AdminPropertiesFormat(TypedDict, total=False):
+        key "access": Required[Union[str, SecurityConfigurationRuleAccess]]
+        key "description": str
+        key "direction": Required[Union[str, SecurityConfigurationRuleDirection]]
+        key "priority": Required[int]
+        key "protocol": Required[Union[str, SecurityConfigurationRuleProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        access: Union[str, SecurityConfigurationRuleAccess]
+        description: str
+        destinationPortRanges: list[str]
+        destination_port_ranges: list[str]
+        destinations: list[AddressPrefixItem]
+        direction: Union[str, SecurityConfigurationRuleDirection]
+        priority: int
+        protocol: Union[str, SecurityConfigurationRuleProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        sourcePortRanges: list[str]
+        source_port_ranges: list[str]
+        sources: list[AddressPrefixItem]
+
+
+    class azure.mgmt.network.types.AdminRule(TypedDict, total=False):
+        key "etag": str
+        key "id": str
+        key "kind": Required[Literal[AdminRuleKind.CUSTOM]]
+        key "name": str
+        key "properties": ForwardRef('AdminPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        kind: Literal[AdminRuleKind.CUSTOM]
+        name: str
+        properties: AdminPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.AdminRuleCollection(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdminRuleCollectionPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: AdminRuleCollectionPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.AdminRuleCollectionPropertiesFormat(TypedDict, total=False):
+        key "appliesToGroups": Required[list[NetworkManagerSecurityGroupItem]]
+        key "description": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        applies_to_groups: list[NetworkManagerSecurityGroupItem]
+        description: str
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.AdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM = "Custom"
+        DEFAULT = "Default"
+
+
+    class azure.mgmt.network.types.AdvertisedPublicPrefixProperties(TypedDict, total=False):
+        key "prefix": str
+        key "signature": str
+        key "validationId": str
+        key "validationState": Union[str, AdvertisedPublicPrefixPropertiesValidationState]
+        prefix: str
+        signature: str
+        validation_id: str
+        validation_state: Union[str, AdvertisedPublicPrefixPropertiesValidationState]
+
+
+    class azure.mgmt.network.types.AfcConfiguration(TypedDict, total=False):
+        key "serviceEndpoint": str
+        service_endpoint: str
+
+
+    class azure.mgmt.network.types.ApplicationGateway(Resource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: ApplicationGatewayPropertiesFormat
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAuthenticationCertificate(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayAuthenticationCertificatePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayAuthenticationCertificatePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAuthenticationCertificatePropertiesFormat(TypedDict, total=False):
+        key "data": str
+        key "provisioningState": Union[str, ProvisioningState]
+        data: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAutoscaleConfiguration(TypedDict, total=False):
+        key "maxCapacity": int
+        key "minCapacity": Required[int]
+        max_capacity: int
+        min_capacity: int
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendAddress(TypedDict, total=False):
+        key "fqdn": str
+        key "ipAddress": str
+        fqdn: str
+        ip_address: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendAddressPool(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayBackendAddressPoolPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayBackendAddressPoolPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendAddressPoolPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        backendAddresses: list[ApplicationGatewayBackendAddress]
+        backendIPConfigurations: list[NetworkInterfaceIPConfiguration]
+        backend_addresses: list[ApplicationGatewayBackendAddress]
+        backend_ip_configurations: list[NetworkInterfaceIPConfiguration]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendHttpSettings(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayBackendHttpSettingsPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayBackendHttpSettingsPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendHttpSettingsPropertiesFormat(TypedDict, total=False):
+        key "affinityCookieName": str
+        key "connectionDraining": ForwardRef('ApplicationGatewayConnectionDraining', module='types')
+        key "cookieBasedAffinity": Union[str, ApplicationGatewayCookieBasedAffinity]
+        key "dedicatedBackendConnection": bool
+        key "hostName": str
+        key "path": str
+        key "pickHostNameFromBackendAddress": bool
+        key "port": int
+        key "probe": ForwardRef('SubResource', module='types')
+        key "probeEnabled": bool
+        key "protocol": Union[str, ApplicationGatewayProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "requestTimeout": int
+        key "sniName": str
+        key "validateCertChainAndExpiry": bool
+        key "validateSNI": bool
+        affinity_cookie_name: str
+        authenticationCertificates: list[SubResource]
+        authentication_certificates: list[SubResource]
+        connection_draining: ApplicationGatewayConnectionDraining
+        cookie_based_affinity: Union[str, ApplicationGatewayCookieBasedAffinity]
+        dedicated_backend_connection: bool
+        host_name: str
+        path: str
+        pick_host_name_from_backend_address: bool
+        port: int
+        probe: SubResource
+        probe_enabled: bool
+        protocol: Union[str, ApplicationGatewayProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        request_timeout: int
+        sni_name: str
+        trustedRootCertificates: list[SubResource]
+        trusted_root_certificates: list[SubResource]
+        validate_cert_chain_and_expiry: bool
+        validate_sni: bool
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendSettings(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayBackendSettingsPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayBackendSettingsPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayBackendSettingsPropertiesFormat(TypedDict, total=False):
+        key "enableL4ClientIpPreservation": bool
+        key "hostName": str
+        key "pickHostNameFromBackendAddress": bool
+        key "port": int
+        key "probe": ForwardRef('SubResource', module='types')
+        key "protocol": Union[str, ApplicationGatewayProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "timeout": int
+        enable_l4_client_ip_preservation: bool
+        host_name: str
+        pick_host_name_from_backend_address: bool
+        port: int
+        probe: SubResource
+        protocol: Union[str, ApplicationGatewayProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        timeout: int
+        trustedRootCertificates: list[SubResource]
+        trusted_root_certificates: list[SubResource]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayClientAuthConfiguration(TypedDict, total=False):
+        key "verifyClientAuthMode": Union[str, ApplicationGatewayClientAuthVerificationModes]
+        key "verifyClientCertIssuerDN": bool
+        key "verifyClientRevocation": Union[str, ApplicationGatewayClientRevocationOptions]
+        verify_client_auth_mode: Union[str, ApplicationGatewayClientAuthVerificationModes]
+        verify_client_cert_issuer_dn: bool
+        verify_client_revocation: Union[str, ApplicationGatewayClientRevocationOptions]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayConnectionDraining(TypedDict, total=False):
+        key "drainTimeoutInSec": Required[int]
+        key "enabled": Required[bool]
+        drain_timeout_in_sec: int
+        enabled: bool
+
+
+    class azure.mgmt.network.types.ApplicationGatewayCustomError(TypedDict, total=False):
+        key "customErrorPageUrl": str
+        key "statusCode": Union[str, ApplicationGatewayCustomErrorStatusCode]
+        custom_error_page_url: str
+        status_code: Union[str, ApplicationGatewayCustomErrorStatusCode]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayEntraJWTValidationConfig(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayEntraJWTValidationConfigPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayEntraJWTValidationConfigPropertiesFormat
+
+
+    class azure.mgmt.network.types.ApplicationGatewayEntraJWTValidationConfigPropertiesFormat(TypedDict, total=False):
+        key "clientId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "tenantId": str
+        key "unAuthorizedRequestAction": Union[str, ApplicationGatewayUnAuthorizedRequestAction]
+        audiences: list[str]
+        client_id: str
+        provisioning_state: Union[str, ProvisioningState]
+        tenant_id: str
+        un_authorized_request_action: Union[str, ApplicationGatewayUnAuthorizedRequestAction]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayFirewallDisabledRuleGroup(TypedDict, total=False):
+        key "ruleGroupName": Required[str]
+        rule_group_name: str
+        rules: list[int]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayFirewallExclusion(TypedDict, total=False):
+        key "matchVariable": Required[str]
+        key "selector": Required[str]
+        key "selectorMatchOperator": Required[str]
+        match_variable: str
+        selector: str
+        selector_match_operator: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayForContainersReferenceDefinition(TypedDict, total=False):
+        key "id": Required[str]
+        id: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayFrontendIPConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayFrontendIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayFrontendIPConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayFrontendIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "privateLinkConfiguration": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('SubResource', module='types')
+        key "subnet": ForwardRef('SubResource', module='types')
+        private_ip_address: str
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        private_link_configuration: SubResource
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: SubResource
+        subnet: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayFrontendPort(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayFrontendPortPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayFrontendPortPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayFrontendPortPropertiesFormat(TypedDict, total=False):
+        key "port": int
+        key "provisioningState": Union[str, ProvisioningState]
+        port: int
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayGlobalConfiguration(TypedDict, total=False):
+        key "enableRequestBuffering": bool
+        key "enableResponseBuffering": bool
+        enable_request_buffering: bool
+        enable_response_buffering: bool
+
+
+    class azure.mgmt.network.types.ApplicationGatewayHeaderConfiguration(TypedDict, total=False):
+        key "headerName": str
+        key "headerValue": str
+        key "headerValueMatcher": ForwardRef('HeaderValueMatcher', module='types')
+        header_name: str
+        header_value: str
+        header_value_matcher: HeaderValueMatcher
+
+
+    class azure.mgmt.network.types.ApplicationGatewayHttpListener(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayHttpListenerPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayHttpListenerPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayHttpListenerPropertiesFormat(TypedDict, total=False):
+        key "firewallPolicy": ForwardRef('SubResource', module='types')
+        key "frontendIPConfiguration": ForwardRef('SubResource', module='types')
+        key "frontendPort": ForwardRef('SubResource', module='types')
+        key "hostName": str
+        key "protocol": Union[str, ApplicationGatewayProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "requireServerNameIndication": bool
+        key "sslCertificate": ForwardRef('SubResource', module='types')
+        key "sslProfile": ForwardRef('SubResource', module='types')
+        customErrorConfigurations: list[ApplicationGatewayCustomError]
+        custom_error_configurations: list[ApplicationGatewayCustomError]
+        firewall_policy: SubResource
+        frontend_ip_configuration: SubResource
+        frontend_port: SubResource
+        hostNames: list[str]
+        host_name: str
+        host_names: list[str]
+        protocol: Union[str, ApplicationGatewayProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        require_server_name_indication: bool
+        ssl_certificate: SubResource
+        ssl_profile: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayIPConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayIPConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "subnet": ForwardRef('SubResource', module='types')
+        provisioning_state: Union[str, ProvisioningState]
+        subnet: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayListener(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayListenerPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayListenerPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayListenerPropertiesFormat(TypedDict, total=False):
+        key "frontendIPConfiguration": ForwardRef('SubResource', module='types')
+        key "frontendPort": ForwardRef('SubResource', module='types')
+        key "protocol": Union[str, ApplicationGatewayProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sslCertificate": ForwardRef('SubResource', module='types')
+        key "sslProfile": ForwardRef('SubResource', module='types')
+        frontend_ip_configuration: SubResource
+        frontend_port: SubResource
+        hostNames: list[str]
+        host_names: list[str]
+        protocol: Union[str, ApplicationGatewayProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        ssl_certificate: SubResource
+        ssl_profile: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayLoadDistributionPolicy(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayLoadDistributionPolicyPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayLoadDistributionPolicyPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayLoadDistributionPolicyPropertiesFormat(TypedDict, total=False):
+        key "loadDistributionAlgorithm": Union[str, ApplicationGatewayLoadDistributionAlgorithm]
+        key "provisioningState": Union[str, ProvisioningState]
+        loadDistributionTargets: list[ApplicationGatewayLoadDistributionTarget]
+        load_distribution_algorithm: Union[str, ApplicationGatewayLoadDistributionAlgorithm]
+        load_distribution_targets: list[ApplicationGatewayLoadDistributionTarget]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayLoadDistributionTarget(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayLoadDistributionTargetPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayLoadDistributionTargetPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayLoadDistributionTargetPropertiesFormat(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "weightPerServer": int
+        backend_address_pool: SubResource
+        weight_per_server: int
+
+
+    class azure.mgmt.network.types.ApplicationGatewayManagedHsm(TypedDict, total=False):
+        key "keyId": str
+        key "publicCertData": str
+        key_id: str
+        public_cert_data: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayOnDemandProbe(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendHttpSettings": ForwardRef('SubResource', module='types')
+        key "enableProbeProxyProtocolHeader": bool
+        key "host": str
+        key "match": ForwardRef('ApplicationGatewayProbeHealthResponseMatch', module='types')
+        key "path": str
+        key "pickHostNameFromBackendHttpSettings": bool
+        key "protocol": Union[str, ApplicationGatewayProtocol]
+        key "timeout": int
+        backend_address_pool: SubResource
+        backend_http_settings: SubResource
+        enable_probe_proxy_protocol_header: bool
+        host: str
+        match: ApplicationGatewayProbeHealthResponseMatch
+        path: str
+        pick_host_name_from_backend_http_settings: bool
+        protocol: Union[str, ApplicationGatewayProtocol]
+        timeout: int
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPathRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayPathRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayPathRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPathRulePropertiesFormat(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendHttpSettings": ForwardRef('SubResource', module='types')
+        key "firewallPolicy": ForwardRef('SubResource', module='types')
+        key "loadDistributionPolicy": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "redirectConfiguration": ForwardRef('SubResource', module='types')
+        key "rewriteRuleSet": ForwardRef('SubResource', module='types')
+        backend_address_pool: SubResource
+        backend_http_settings: SubResource
+        firewall_policy: SubResource
+        load_distribution_policy: SubResource
+        paths: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        redirect_configuration: SubResource
+        rewrite_rule_set: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPrivateEndpointConnection(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayPrivateEndpointConnectionProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayPrivateEndpointConnectionProperties
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "linkIdentifier": str
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        link_identifier: str
+        private_endpoint: PrivateEndpoint
+        private_link_service_connection_state: PrivateLinkServiceConnectionState
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPrivateLinkConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayPrivateLinkConfigurationProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayPrivateLinkConfigurationProperties
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPrivateLinkConfigurationProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        ipConfigurations: list[ApplicationGatewayPrivateLinkIpConfiguration]
+        ip_configurations: list[ApplicationGatewayPrivateLinkIpConfiguration]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPrivateLinkIpConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayPrivateLinkIpConfigurationProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayPrivateLinkIpConfigurationProperties
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPrivateLinkIpConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        key "privateIPAddress": str
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "subnet": ForwardRef('SubResource', module='types')
+        primary: bool
+        private_ip_address: str
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        subnet: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayProbe(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayProbePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayProbePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayProbeHealthResponseMatch(TypedDict, total=False):
+        key "body": str
+        body: str
+        statusCodes: list[str]
+        status_codes: list[str]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayProbePropertiesFormat(TypedDict, total=False):
+        key "enableProbeProxyProtocolHeader": bool
+        key "host": str
+        key "interval": int
+        key "match": ForwardRef('ApplicationGatewayProbeHealthResponseMatch', module='types')
+        key "minServers": int
+        key "path": str
+        key "pickHostNameFromBackendHttpSettings": bool
+        key "pickHostNameFromBackendSettings": bool
+        key "port": int
+        key "protocol": Union[str, ApplicationGatewayProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "timeout": int
+        key "unhealthyThreshold": int
+        enable_probe_proxy_protocol_header: bool
+        host: str
+        interval: int
+        match: ApplicationGatewayProbeHealthResponseMatch
+        min_servers: int
+        path: str
+        pick_host_name_from_backend_http_settings: bool
+        pick_host_name_from_backend_settings: bool
+        port: int
+        protocol: Union[str, ApplicationGatewayProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        timeout: int
+        unhealthy_threshold: int
+
+
+    class azure.mgmt.network.types.ApplicationGatewayPropertiesFormat(TypedDict, total=False):
+        key "autoscaleConfiguration": ForwardRef('ApplicationGatewayAutoscaleConfiguration', module='types')
+        key "defaultPredefinedSslPolicy": Union[str, ApplicationGatewaySslPolicyName]
+        key "enableFips": bool
+        key "enableHttp2": bool
+        key "firewallPolicy": ForwardRef('SubResource', module='types')
+        key "forceFirewallPolicyAssociation": bool
+        key "globalConfiguration": ForwardRef('ApplicationGatewayGlobalConfiguration', module='types')
+        key "operationalState": Union[str, ApplicationGatewayOperationalState]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "sku": ForwardRef('ApplicationGatewaySku', module='types')
+        key "sslPolicy": ForwardRef('ApplicationGatewaySslPolicy', module='types')
+        key "webApplicationFirewallConfiguration": ForwardRef('ApplicationGatewayWebApplicationFirewallConfiguration', module='types')
+        authenticationCertificates: list[ApplicationGatewayAuthenticationCertificate]
+        authentication_certificates: list[ApplicationGatewayAuthenticationCertificate]
+        autoscale_configuration: ApplicationGatewayAutoscaleConfiguration
+        backendAddressPools: list[ApplicationGatewayBackendAddressPool]
+        backendHttpSettingsCollection: list[ApplicationGatewayBackendHttpSettings]
+        backendSettingsCollection: list[ApplicationGatewayBackendSettings]
+        backend_address_pools: list[ApplicationGatewayBackendAddressPool]
+        backend_http_settings_collection: list[ApplicationGatewayBackendHttpSettings]
+        backend_settings_collection: list[ApplicationGatewayBackendSettings]
+        customErrorConfigurations: list[ApplicationGatewayCustomError]
+        custom_error_configurations: list[ApplicationGatewayCustomError]
+        default_predefined_ssl_policy: Union[str, ApplicationGatewaySslPolicyName]
+        enable_fips: bool
+        enable_http2: bool
+        entraJWTValidationConfigs: list[ApplicationGatewayEntraJWTValidationConfig]
+        entra_jwt_validation_configs: list[ApplicationGatewayEntraJWTValidationConfig]
+        firewall_policy: SubResource
+        force_firewall_policy_association: bool
+        frontendIPConfigurations: list[ApplicationGatewayFrontendIPConfiguration]
+        frontendPorts: list[ApplicationGatewayFrontendPort]
+        frontend_ip_configurations: list[ApplicationGatewayFrontendIPConfiguration]
+        frontend_ports: list[ApplicationGatewayFrontendPort]
+        gatewayIPConfigurations: list[ApplicationGatewayIPConfiguration]
+        gateway_ip_configurations: list[ApplicationGatewayIPConfiguration]
+        global_configuration: ApplicationGatewayGlobalConfiguration
+        httpListeners: list[ApplicationGatewayHttpListener]
+        http_listeners: list[ApplicationGatewayHttpListener]
+        listeners: list[ApplicationGatewayListener]
+        loadDistributionPolicies: list[ApplicationGatewayLoadDistributionPolicy]
+        load_distribution_policies: list[ApplicationGatewayLoadDistributionPolicy]
+        operational_state: Union[str, ApplicationGatewayOperationalState]
+        privateEndpointConnections: list[ApplicationGatewayPrivateEndpointConnection]
+        privateLinkConfigurations: list[ApplicationGatewayPrivateLinkConfiguration]
+        private_endpoint_connections: list[ApplicationGatewayPrivateEndpointConnection]
+        private_link_configurations: list[ApplicationGatewayPrivateLinkConfiguration]
+        probes: list[ApplicationGatewayProbe]
+        provisioning_state: Union[str, ProvisioningState]
+        redirectConfigurations: list[ApplicationGatewayRedirectConfiguration]
+        redirect_configurations: list[ApplicationGatewayRedirectConfiguration]
+        requestRoutingRules: list[ApplicationGatewayRequestRoutingRule]
+        request_routing_rules: list[ApplicationGatewayRequestRoutingRule]
+        resource_guid: str
+        rewriteRuleSets: list[ApplicationGatewayRewriteRuleSet]
+        rewrite_rule_sets: list[ApplicationGatewayRewriteRuleSet]
+        routingRules: list[ApplicationGatewayRoutingRule]
+        routing_rules: list[ApplicationGatewayRoutingRule]
+        sku: ApplicationGatewaySku
+        sslCertificates: list[ApplicationGatewaySslCertificate]
+        sslProfiles: list[ApplicationGatewaySslProfile]
+        ssl_certificates: list[ApplicationGatewaySslCertificate]
+        ssl_policy: ApplicationGatewaySslPolicy
+        ssl_profiles: list[ApplicationGatewaySslProfile]
+        trustedClientCertificates: list[ApplicationGatewayTrustedClientCertificate]
+        trustedRootCertificates: list[ApplicationGatewayTrustedRootCertificate]
+        trusted_client_certificates: list[ApplicationGatewayTrustedClientCertificate]
+        trusted_root_certificates: list[ApplicationGatewayTrustedRootCertificate]
+        urlPathMaps: list[ApplicationGatewayUrlPathMap]
+        url_path_maps: list[ApplicationGatewayUrlPathMap]
+        web_application_firewall_configuration: ApplicationGatewayWebApplicationFirewallConfiguration
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRedirectConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayRedirectConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayRedirectConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRedirectConfigurationPropertiesFormat(TypedDict, total=False):
+        key "includePath": bool
+        key "includeQueryString": bool
+        key "redirectType": Union[str, ApplicationGatewayRedirectType]
+        key "targetListener": ForwardRef('SubResource', module='types')
+        key "targetUrl": str
+        include_path: bool
+        include_query_string: bool
+        pathRules: list[SubResource]
+        path_rules: list[SubResource]
+        redirect_type: Union[str, ApplicationGatewayRedirectType]
+        requestRoutingRules: list[SubResource]
+        request_routing_rules: list[SubResource]
+        target_listener: SubResource
+        target_url: str
+        urlPathMaps: list[SubResource]
+        url_path_maps: list[SubResource]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRequestRoutingRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayRequestRoutingRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayRequestRoutingRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendHttpSettings": ForwardRef('SubResource', module='types')
+        key "entraJWTValidationConfig": ForwardRef('SubResource', module='types')
+        key "httpListener": ForwardRef('SubResource', module='types')
+        key "loadDistributionPolicy": ForwardRef('SubResource', module='types')
+        key "priority": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "redirectConfiguration": ForwardRef('SubResource', module='types')
+        key "rewriteRuleSet": ForwardRef('SubResource', module='types')
+        key "ruleType": Union[str, ApplicationGatewayRequestRoutingRuleType]
+        key "urlPathMap": ForwardRef('SubResource', module='types')
+        backend_address_pool: SubResource
+        backend_http_settings: SubResource
+        entra_jwt_validation_config: SubResource
+        http_listener: SubResource
+        load_distribution_policy: SubResource
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        redirect_configuration: SubResource
+        rewrite_rule_set: SubResource
+        rule_type: Union[str, ApplicationGatewayRequestRoutingRuleType]
+        url_path_map: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRewriteRule(TypedDict, total=False):
+        key "actionSet": ForwardRef('ApplicationGatewayRewriteRuleActionSet', module='types')
+        key "name": str
+        key "ruleSequence": int
+        action_set: ApplicationGatewayRewriteRuleActionSet
+        conditions: list[ApplicationGatewayRewriteRuleCondition]
+        name: str
+        rule_sequence: int
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRewriteRuleActionSet(TypedDict, total=False):
+        key "urlConfiguration": ForwardRef('ApplicationGatewayUrlConfiguration', module='types')
+        requestHeaderConfigurations: list[ApplicationGatewayHeaderConfiguration]
+        request_header_configurations: list[ApplicationGatewayHeaderConfiguration]
+        responseHeaderConfigurations: list[ApplicationGatewayHeaderConfiguration]
+        response_header_configurations: list[ApplicationGatewayHeaderConfiguration]
+        url_configuration: ApplicationGatewayUrlConfiguration
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRewriteRuleCondition(TypedDict, total=False):
+        key "ignoreCase": bool
+        key "negate": bool
+        key "pattern": str
+        key "variable": str
+        ignore_case: bool
+        negate: bool
+        pattern: str
+        variable: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRewriteRuleSet(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayRewriteRuleSetPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayRewriteRuleSetPropertiesFormat
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRewriteRuleSetPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        provisioning_state: Union[str, ProvisioningState]
+        rewriteRules: list[ApplicationGatewayRewriteRule]
+        rewrite_rules: list[ApplicationGatewayRewriteRule]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRoutingRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayRoutingRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayRoutingRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayRoutingRulePropertiesFormat(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendSettings": ForwardRef('SubResource', module='types')
+        key "listener": ForwardRef('SubResource', module='types')
+        key "priority": Required[int]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "ruleType": Union[str, ApplicationGatewayRequestRoutingRuleType]
+        backend_address_pool: SubResource
+        backend_settings: SubResource
+        listener: SubResource
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        rule_type: Union[str, ApplicationGatewayRequestRoutingRuleType]
+
+
+    class azure.mgmt.network.types.ApplicationGatewaySku(TypedDict, total=False):
+        key "capacity": int
+        key "family": Union[str, ApplicationGatewaySkuFamily]
+        key "name": Union[str, ApplicationGatewaySkuName]
+        key "tier": Union[str, ApplicationGatewayTier]
+        capacity: int
+        family: Union[str, ApplicationGatewaySkuFamily]
+        name: Union[str, ApplicationGatewaySkuName]
+        tier: Union[str, ApplicationGatewayTier]
+
+
+    class azure.mgmt.network.types.ApplicationGatewaySslCertificate(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewaySslCertificatePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewaySslCertificatePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewaySslCertificatePropertiesFormat(TypedDict, total=False):
+        key "data": str
+        key "hsm": ForwardRef('ApplicationGatewayManagedHsm', module='types')
+        key "keyVaultSecretId": str
+        key "password": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicCertData": str
+        data: str
+        hsm: ApplicationGatewayManagedHsm
+        key_vault_secret_id: str
+        password: str
+        provisioning_state: Union[str, ProvisioningState]
+        public_cert_data: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewaySslPolicy(TypedDict, total=False):
+        key "minProtocolVersion": Union[str, ApplicationGatewaySslProtocol]
+        key "policyName": Union[str, ApplicationGatewaySslPolicyName]
+        key "policyType": Union[str, ApplicationGatewaySslPolicyType]
+        cipherSuites: list[Union[str, ApplicationGatewaySslCipherSuite]]
+        cipher_suites: list[Union[str, ApplicationGatewaySslCipherSuite]]
+        disabledSslProtocols: list[Union[str, ApplicationGatewaySslProtocol]]
+        disabled_ssl_protocols: list[Union[str, ApplicationGatewaySslProtocol]]
+        min_protocol_version: Union[str, ApplicationGatewaySslProtocol]
+        policy_name: Union[str, ApplicationGatewaySslPolicyName]
+        policy_type: Union[str, ApplicationGatewaySslPolicyType]
+
+
+    class azure.mgmt.network.types.ApplicationGatewaySslProfile(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewaySslProfilePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewaySslProfilePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewaySslProfilePropertiesFormat(TypedDict, total=False):
+        key "clientAuthConfiguration": ForwardRef('ApplicationGatewayClientAuthConfiguration', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sslPolicy": ForwardRef('ApplicationGatewaySslPolicy', module='types')
+        client_auth_configuration: ApplicationGatewayClientAuthConfiguration
+        provisioning_state: Union[str, ProvisioningState]
+        ssl_policy: ApplicationGatewaySslPolicy
+        trustedClientCertificates: list[SubResource]
+        trusted_client_certificates: list[SubResource]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayTrustedClientCertificate(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayTrustedClientCertificatePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayTrustedClientCertificatePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayTrustedClientCertificatePropertiesFormat(TypedDict, total=False):
+        key "clientCertIssuerDN": str
+        key "data": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "validatedCertData": str
+        client_cert_issuer_dn: str
+        data: str
+        provisioning_state: Union[str, ProvisioningState]
+        validated_cert_data: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayTrustedRootCertificate(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayTrustedRootCertificatePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayTrustedRootCertificatePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayTrustedRootCertificatePropertiesFormat(TypedDict, total=False):
+        key "data": str
+        key "keyVaultSecretId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        data: str
+        key_vault_secret_id: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayUrlConfiguration(TypedDict, total=False):
+        key "modifiedPath": str
+        key "modifiedQueryString": str
+        key "reroute": bool
+        modified_path: str
+        modified_query_string: str
+        reroute: bool
+
+
+    class azure.mgmt.network.types.ApplicationGatewayUrlPathMap(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayUrlPathMapPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayUrlPathMapPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayUrlPathMapPropertiesFormat(TypedDict, total=False):
+        key "defaultBackendAddressPool": ForwardRef('SubResource', module='types')
+        key "defaultBackendHttpSettings": ForwardRef('SubResource', module='types')
+        key "defaultLoadDistributionPolicy": ForwardRef('SubResource', module='types')
+        key "defaultRedirectConfiguration": ForwardRef('SubResource', module='types')
+        key "defaultRewriteRuleSet": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        default_backend_address_pool: SubResource
+        default_backend_http_settings: SubResource
+        default_load_distribution_policy: SubResource
+        default_redirect_configuration: SubResource
+        default_rewrite_rule_set: SubResource
+        pathRules: list[ApplicationGatewayPathRule]
+        path_rules: list[ApplicationGatewayPathRule]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayWebApplicationFirewallConfiguration(TypedDict, total=False):
+        key "enabled": Required[bool]
+        key "fileUploadLimitInMb": int
+        key "firewallMode": Required[Union[str, ApplicationGatewayFirewallMode]]
+        key "maxRequestBodySize": int
+        key "maxRequestBodySizeInKb": int
+        key "requestBodyCheck": bool
+        key "ruleSetType": Required[str]
+        key "ruleSetVersion": Required[str]
+        disabledRuleGroups: list[ApplicationGatewayFirewallDisabledRuleGroup]
+        disabled_rule_groups: list[ApplicationGatewayFirewallDisabledRuleGroup]
+        enabled: bool
+        exclusions: list[ApplicationGatewayFirewallExclusion]
+        file_upload_limit_in_mb: int
+        firewall_mode: Union[str, ApplicationGatewayFirewallMode]
+        max_request_body_size: int
+        max_request_body_size_in_kb: int
+        request_body_check: bool
+        rule_set_type: str
+        rule_set_version: str
+
+
+    class azure.mgmt.network.types.ApplicationRule(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        key "ruleType": Required[Literal[FirewallPolicyRuleType.APPLICATION_RULE]]
+        key "terminateTLS": bool
+        description: str
+        destinationAddresses: list[str]
+        destination_addresses: list[str]
+        fqdnTags: list[str]
+        fqdn_tags: list[str]
+        httpHeadersToInsert: list[FirewallPolicyHttpHeaderToInsert]
+        http_headers_to_insert: list[FirewallPolicyHttpHeaderToInsert]
+        name: str
+        protocols: list[FirewallPolicyRuleApplicationProtocol]
+        rule_type: Literal[FirewallPolicyRuleType.APPLICATION_RULE]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+        targetFqdns: list[str]
+        targetUrls: list[str]
+        target_fqdns: list[str]
+        target_urls: list[str]
+        terminate_tls: bool
+        webCategories: list[str]
+        web_categories: list[str]
+
+
+    class azure.mgmt.network.types.ApplicationSecurityGroup(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationSecurityGroupPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: ApplicationSecurityGroupPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationSecurityGroupPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.AuthorizationPropertiesFormat(TypedDict, total=False):
+        key "authorizationKey": str
+        key "authorizationUseStatus": Union[str, AuthorizationUseStatus]
+        key "connectionResourceUri": str
+        key "provisioningState": Union[str, ProvisioningState]
+        authorization_key: str
+        authorization_use_status: Union[str, AuthorizationUseStatus]
+        connection_resource_uri: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.AvailableProvidersListParameters(TypedDict, total=False):
+        key "city": str
+        key "country": str
+        key "state": str
+        azureLocations: list[str]
+        azure_locations: list[str]
+        city: str
+        country: str
+        state: str
+
+
+    class azure.mgmt.network.types.AzureFirewall(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('AzureFirewallPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: AzureFirewallPropertiesFormat
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.AzureFirewallApplicationRule(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        description: str
+        fqdnTags: list[str]
+        fqdn_tags: list[str]
+        name: str
+        protocols: list[AzureFirewallApplicationRuleProtocol]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+        targetFqdns: list[str]
+        target_fqdns: list[str]
+
+
+    class azure.mgmt.network.types.AzureFirewallApplicationRuleCollection(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AzureFirewallApplicationRuleCollectionPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: AzureFirewallApplicationRuleCollectionPropertiesFormat
+
+
+    class azure.mgmt.network.types.AzureFirewallApplicationRuleCollectionPropertiesFormat(TypedDict, total=False):
+        key "action": ForwardRef('AzureFirewallRCAction', module='types')
+        key "priority": int
+        key "provisioningState": Union[str, ProvisioningState]
+        action: AzureFirewallRCAction
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        rules: list[AzureFirewallApplicationRule]
+
+
+    class azure.mgmt.network.types.AzureFirewallApplicationRuleProtocol(TypedDict, total=False):
+        key "port": int
+        key "protocolType": Union[str, AzureFirewallApplicationRuleProtocolType]
+        port: int
+        protocol_type: Union[str, AzureFirewallApplicationRuleProtocolType]
+
+
+    class azure.mgmt.network.types.AzureFirewallAutoscaleConfiguration(TypedDict, total=False):
+        key "maxCapacity": Optional[int]
+        key "minCapacity": Optional[int]
+        max_capacity: int
+        min_capacity: int
+
+
+    class azure.mgmt.network.types.AzureFirewallIPConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AzureFirewallIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: AzureFirewallIPConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.AzureFirewallIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('SubResource', module='types')
+        key "subnet": ForwardRef('SubResource', module='types')
+        private_ip_address: str
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: SubResource
+        subnet: SubResource
+
+
+    class azure.mgmt.network.types.AzureFirewallIpGroups(TypedDict, total=False):
+        key "changeNumber": str
+        key "id": str
+        change_number: str
+        id: str
+
+
+    class azure.mgmt.network.types.AzureFirewallNatRCAction(TypedDict, total=False):
+        key "type": Union[str, AzureFirewallNatRCActionType]
+        type: Union[str, AzureFirewallNatRCActionType]
+
+
+    class azure.mgmt.network.types.AzureFirewallNatRule(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        key "translatedAddress": str
+        key "translatedFqdn": str
+        key "translatedPort": str
+        description: str
+        destinationAddresses: list[str]
+        destinationPorts: list[str]
+        destination_addresses: list[str]
+        destination_ports: list[str]
+        name: str
+        protocols: list[Union[str, AzureFirewallNetworkRuleProtocol]]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+        translated_address: str
+        translated_fqdn: str
+        translated_port: str
+
+
+    class azure.mgmt.network.types.AzureFirewallNatRuleCollection(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AzureFirewallNatRuleCollectionProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: AzureFirewallNatRuleCollectionProperties
+
+
+    class azure.mgmt.network.types.AzureFirewallNatRuleCollectionProperties(TypedDict, total=False):
+        key "action": ForwardRef('AzureFirewallNatRCAction', module='types')
+        key "priority": int
+        key "provisioningState": Union[str, ProvisioningState]
+        action: AzureFirewallNatRCAction
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        rules: list[AzureFirewallNatRule]
+
+
+    class azure.mgmt.network.types.AzureFirewallNetworkRule(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        description: str
+        destinationAddresses: list[str]
+        destinationFqdns: list[str]
+        destinationIpGroups: list[str]
+        destinationPorts: list[str]
+        destination_addresses: list[str]
+        destination_fqdns: list[str]
+        destination_ip_groups: list[str]
+        destination_ports: list[str]
+        name: str
+        protocols: list[Union[str, AzureFirewallNetworkRuleProtocol]]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+
+
+    class azure.mgmt.network.types.AzureFirewallNetworkRuleCollection(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AzureFirewallNetworkRuleCollectionPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: AzureFirewallNetworkRuleCollectionPropertiesFormat
+
+
+    class azure.mgmt.network.types.AzureFirewallNetworkRuleCollectionPropertiesFormat(TypedDict, total=False):
+        key "action": ForwardRef('AzureFirewallRCAction', module='types')
+        key "priority": int
+        key "provisioningState": Union[str, ProvisioningState]
+        action: AzureFirewallRCAction
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        rules: list[AzureFirewallNetworkRule]
+
+
+    class azure.mgmt.network.types.AzureFirewallPacketCaptureFlags(TypedDict, total=False):
+        key "type": Union[str, AzureFirewallPacketCaptureFlagsType]
+        type: Union[str, AzureFirewallPacketCaptureFlagsType]
+
+
+    class azure.mgmt.network.types.AzureFirewallPacketCaptureRule(TypedDict, total=False):
+        destinationPorts: list[str]
+        destination_ports: list[str]
+        destinations: list[str]
+        sources: list[str]
+
+
+    class azure.mgmt.network.types.AzureFirewallPropertiesFormat(TypedDict, total=False):
+        key "afcConfiguration": ForwardRef('AfcConfiguration', module='types')
+        key "autoscaleConfiguration": ForwardRef('AzureFirewallAutoscaleConfiguration', module='types')
+        key "firewallPolicy": ForwardRef('SubResource', module='types')
+        key "hubIPAddresses": ForwardRef('HubIPAddresses', module='types')
+        key "managementIpConfiguration": ForwardRef('AzureFirewallIPConfiguration', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sku": ForwardRef('AzureFirewallSku', module='types')
+        key "threatIntelMode": Union[str, AzureFirewallThreatIntelMode]
+        key "virtualHub": ForwardRef('SubResource', module='types')
+        additionalProperties: dict[str, str]
+        additional_properties: dict[str, str]
+        afc_configuration: AfcConfiguration
+        applicationRuleCollections: list[AzureFirewallApplicationRuleCollection]
+        application_rule_collections: list[AzureFirewallApplicationRuleCollection]
+        autoscale_configuration: AzureFirewallAutoscaleConfiguration
+        firewall_policy: SubResource
+        hub_ip_addresses: HubIPAddresses
+        ipConfigurations: list[AzureFirewallIPConfiguration]
+        ipGroups: list[AzureFirewallIpGroups]
+        ip_configurations: list[AzureFirewallIPConfiguration]
+        ip_groups: list[AzureFirewallIpGroups]
+        management_ip_configuration: AzureFirewallIPConfiguration
+        natRuleCollections: list[AzureFirewallNatRuleCollection]
+        nat_rule_collections: list[AzureFirewallNatRuleCollection]
+        networkRuleCollections: list[AzureFirewallNetworkRuleCollection]
+        network_rule_collections: list[AzureFirewallNetworkRuleCollection]
+        provisioning_state: Union[str, ProvisioningState]
+        sku: AzureFirewallSku
+        threat_intel_mode: Union[str, AzureFirewallThreatIntelMode]
+        virtual_hub: SubResource
+
+
+    class azure.mgmt.network.types.AzureFirewallPublicIPAddress(TypedDict, total=False):
+        key "address": str
+        address: str
+
+
+    class azure.mgmt.network.types.AzureFirewallRCAction(TypedDict, total=False):
+        key "type": Union[str, AzureFirewallRCActionType]
+        type: Union[str, AzureFirewallRCActionType]
+
+
+    class azure.mgmt.network.types.AzureFirewallSku(TypedDict, total=False):
+        key "name": Union[str, AzureFirewallSkuName]
+        key "tier": Union[str, AzureFirewallSkuTier]
+        name: Union[str, AzureFirewallSkuName]
+        tier: Union[str, AzureFirewallSkuTier]
+
+
+    class azure.mgmt.network.types.AzureReachabilityReportLocation(TypedDict, total=False):
+        key "city": str
+        key "country": Required[str]
+        key "state": str
+        city: str
+        country: str
+        state: str
+
+
+    class azure.mgmt.network.types.AzureReachabilityReportParameters(TypedDict, total=False):
+        key "endTime": Required[str]
+        key "providerLocation": Required[AzureReachabilityReportLocation]
+        key "startTime": Required[str]
+        azureLocations: list[str]
+        azure_locations: list[str]
+        end_time: str
+        provider_location: AzureReachabilityReportLocation
+        providers: list[str]
+        start_time: str
+
+
+    class azure.mgmt.network.types.BackendAddressPool(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BackendAddressPoolPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: BackendAddressPoolPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.BackendAddressPoolPropertiesFormat(TypedDict, total=False):
+        key "drainPeriodInSeconds": int
+        key "location": str
+        key "outboundRule": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "syncMode": Union[str, SyncMode]
+        key "virtualNetwork": ForwardRef('SubResource', module='types')
+        backendIPConfigurations: list[NetworkInterfaceIPConfiguration]
+        backend_ip_configurations: list[NetworkInterfaceIPConfiguration]
+        drain_period_in_seconds: int
+        inboundNatRules: list[SubResource]
+        inbound_nat_rules: list[SubResource]
+        loadBalancerBackendAddresses: list[LoadBalancerBackendAddress]
+        loadBalancingRules: list[SubResource]
+        load_balancer_backend_addresses: list[LoadBalancerBackendAddress]
+        load_balancing_rules: list[SubResource]
+        location: str
+        outboundRules: list[SubResource]
+        outbound_rule: SubResource
+        outbound_rules: list[SubResource]
+        provisioning_state: Union[str, ProvisioningState]
+        sync_mode: Union[str, SyncMode]
+        tunnelInterfaces: list[GatewayLoadBalancerTunnelInterface]
+        tunnel_interfaces: list[GatewayLoadBalancerTunnelInterface]
+        virtual_network: SubResource
+
+
+    class azure.mgmt.network.types.BastionHost(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('BastionHostPropertiesFormat', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: BastionHostPropertiesFormat
+        sku: Sku
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.BastionHostIPConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BastionHostIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: BastionHostIPConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.BastionHostIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('SubResource', module='types')
+        key "subnet": Required[SubResource]
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: SubResource
+        subnet: SubResource
+
+
+    class azure.mgmt.network.types.BastionHostPropertiesFormat(TypedDict, total=False):
+        key "disableCopyPaste": bool
+        key "dnsName": str
+        key "enableFileCopy": bool
+        key "enableIpConnect": bool
+        key "enableKerberos": bool
+        key "enablePrivateOnlyBastion": bool
+        key "enableSessionRecording": bool
+        key "enableShareableLink": bool
+        key "enableTunneling": bool
+        key "networkAcls": ForwardRef('BastionHostPropertiesFormatNetworkAcls', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "scaleUnits": int
+        key "virtualNetwork": ForwardRef('SubResource', module='types')
+        disable_copy_paste: bool
+        dns_name: str
+        enable_file_copy: bool
+        enable_ip_connect: bool
+        enable_kerberos: bool
+        enable_private_only_bastion: bool
+        enable_session_recording: bool
+        enable_shareable_link: bool
+        enable_tunneling: bool
+        ipConfigurations: list[BastionHostIPConfiguration]
+        ip_configurations: list[BastionHostIPConfiguration]
+        network_acls: BastionHostPropertiesFormatNetworkAcls
+        provisioning_state: Union[str, ProvisioningState]
+        scale_units: int
+        virtual_network: SubResource
+
+
+    class azure.mgmt.network.types.BastionHostPropertiesFormatNetworkAcls(TypedDict, total=False):
+        ipRules: list[IPRule]
+        ip_rules: list[IPRule]
+
+
+    class azure.mgmt.network.types.BastionShareableLink(TypedDict, total=False):
+        key "bsl": str
+        key "createdAt": str
+        key "message": str
+        key "vm": Required[VM]
+        bsl: str
+        created_at: str
+        message: str
+        vm: VM
+
+
+    class azure.mgmt.network.types.BastionShareableLinkListRequest(TypedDict, total=False):
+        vms: list[BastionShareableLink]
+
+
+    class azure.mgmt.network.types.BastionShareableLinkTokenListRequest(TypedDict, total=False):
+        tokens: list[str]
+
+
+    class azure.mgmt.network.types.BgpConnection(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BgpConnectionProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: BgpConnectionProperties
+        type: str
+
+
+    class azure.mgmt.network.types.BgpConnectionProperties(TypedDict, total=False):
+        key "connectionState": Union[str, HubBgpConnectionStatus]
+        key "hubVirtualNetworkConnection": ForwardRef('SubResource', module='types')
+        key "peerAsn": int
+        key "peerIp": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        connection_state: Union[str, HubBgpConnectionStatus]
+        hub_virtual_network_connection: SubResource
+        peer_asn: int
+        peer_ip: str
+        provisioning_state: Union[str, ProvisioningState]
+        routing_configuration: RoutingConfiguration
+
+
+    class azure.mgmt.network.types.BgpSettings(TypedDict, total=False):
+        key "asn": int
+        key "bgpPeeringAddress": str
+        key "peerWeight": int
+        asn: int
+        bgpPeeringAddresses: list[IPConfigurationBgpPeeringAddress]
+        bgp_peering_address: str
+        bgp_peering_addresses: list[IPConfigurationBgpPeeringAddress]
+        peer_weight: int
+
+
+    class azure.mgmt.network.types.BreakOutCategoryPolicies(TypedDict, total=False):
+        key "allow": bool
+        key "default": bool
+        key "optimize": bool
+        allow: bool
+        default: bool
+        optimize: bool
+
+
+    class azure.mgmt.network.types.CertificateAuthentication(TypedDict, total=False):
+        key "inboundAuthCertificateSubjectName": str
+        key "outboundAuthCertificate": str
+        inboundAuthCertificateChain: list[str]
+        inbound_auth_certificate_chain: list[str]
+        inbound_auth_certificate_subject_name: str
+        outbound_auth_certificate: str
+
+
+    class azure.mgmt.network.types.CheckPrivateLinkServiceVisibilityRequest(TypedDict, total=False):
+        key "privateLinkServiceAlias": str
+        private_link_service_alias: str
+
+
+    class azure.mgmt.network.types.ChildResource(TypedDict, total=False):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.network.types.Commit(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('CommitProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: CommitProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.CommitProperties(TypedDict, total=False):
+        key "commitType": Required[Union[str, ConfigurationType]]
+        key "description": str
+        key "forceUpdateTag": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "targetLocations": Required[list[str]]
+        activeLocations: list[str]
+        active_locations: list[str]
+        commit_type: Union[str, ConfigurationType]
+        configurationIds: list[str]
+        configuration_ids: list[str]
+        description: str
+        force_update_tag: str
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        target_locations: list[str]
+
+
+    class azure.mgmt.network.types.CommonProxyResource(CommonResource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.CommonResource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.CommonTrackedResource(CommonResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ConnectionMonitor(TypedDict, total=False):
+        key "location": str
+        key "properties": Required[ConnectionMonitorParameters]
+        location: str
+        properties: ConnectionMonitorParameters
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorDestination(TypedDict, total=False):
+        key "address": str
+        key "port": int
+        key "resourceId": str
+        address: str
+        port: int
+        resource_id: str
+
+
+    class azure.mgmt.network.types.ConnectionMonitorEndpoint(TypedDict, total=False):
+        key "address": str
+        key "coverageLevel": Union[str, CoverageLevel]
+        key "filter": ForwardRef('ConnectionMonitorEndpointFilter', module='types')
+        key "locationDetails": ForwardRef('ConnectionMonitorEndpointLocationDetails', module='types')
+        key "name": Required[str]
+        key "resourceId": str
+        key "scope": ForwardRef('ConnectionMonitorEndpointScope', module='types')
+        key "subscriptionId": str
+        key "type": Union[str, EndpointType]
+        address: str
+        coverage_level: Union[str, CoverageLevel]
+        filter: ConnectionMonitorEndpointFilter
+        location_details: ConnectionMonitorEndpointLocationDetails
+        name: str
+        resource_id: str
+        scope: ConnectionMonitorEndpointScope
+        subscription_id: str
+        type: Union[str, EndpointType]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorEndpointFilter(TypedDict, total=False):
+        key "type": Union[str, ConnectionMonitorEndpointFilterType]
+        items: list[ConnectionMonitorEndpointFilterItem]
+        items_property: list[ConnectionMonitorEndpointFilterItem]
+        type: Union[str, ConnectionMonitorEndpointFilterType]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorEndpointFilterItem(TypedDict, total=False):
+        key "address": str
+        key "type": Union[str, ConnectionMonitorEndpointFilterItemType]
+        address: str
+        type: Union[str, ConnectionMonitorEndpointFilterItemType]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorEndpointLocationDetails(TypedDict, total=False):
+        key "region": str
+        region: str
+
+
+    class azure.mgmt.network.types.ConnectionMonitorEndpointScope(TypedDict, total=False):
+        exclude: list[ConnectionMonitorEndpointScopeItem]
+        include: list[ConnectionMonitorEndpointScopeItem]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorEndpointScopeItem(TypedDict, total=False):
+        key "address": str
+        address: str
+
+
+    class azure.mgmt.network.types.ConnectionMonitorHttpConfiguration(TypedDict, total=False):
+        key "method": Union[str, HTTPConfigurationMethod]
+        key "path": str
+        key "port": int
+        key "preferHTTPS": bool
+        method: Union[str, HTTPConfigurationMethod]
+        path: str
+        port: int
+        prefer_https: bool
+        requestHeaders: list[HTTPHeader]
+        request_headers: list[HTTPHeader]
+        validStatusCodeRanges: list[str]
+        valid_status_code_ranges: list[str]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorIcmpConfiguration(TypedDict, total=False):
+        key "disableTraceRoute": bool
+        disable_trace_route: bool
+
+
+    class azure.mgmt.network.types.ConnectionMonitorOutput(TypedDict, total=False):
+        key "type": Union[str, OutputType]
+        key "workspaceSettings": ForwardRef('ConnectionMonitorWorkspaceSettings', module='types')
+        type: Union[str, OutputType]
+        workspace_settings: ConnectionMonitorWorkspaceSettings
+
+
+    class azure.mgmt.network.types.ConnectionMonitorParameters(TypedDict, total=False):
+        key "autoStart": bool
+        key "destination": ForwardRef('ConnectionMonitorDestination', module='types')
+        key "monitoringIntervalInSeconds": int
+        key "notes": str
+        key "source": ForwardRef('ConnectionMonitorSource', module='types')
+        auto_start: bool
+        destination: ConnectionMonitorDestination
+        endpoints: list[ConnectionMonitorEndpoint]
+        monitoring_interval_in_seconds: int
+        notes: str
+        outputs: list[ConnectionMonitorOutput]
+        source: ConnectionMonitorSource
+        testConfigurations: list[ConnectionMonitorTestConfiguration]
+        testGroups: list[ConnectionMonitorTestGroup]
+        test_configurations: list[ConnectionMonitorTestConfiguration]
+        test_groups: list[ConnectionMonitorTestGroup]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorSource(TypedDict, total=False):
+        key "port": int
+        key "resourceId": Required[str]
+        port: int
+        resource_id: str
+
+
+    class azure.mgmt.network.types.ConnectionMonitorSuccessThreshold(TypedDict, total=False):
+        key "checksFailedPercent": int
+        key "roundTripTimeMs": float
+        checks_failed_percent: int
+        round_trip_time_ms: float
+
+
+    class azure.mgmt.network.types.ConnectionMonitorTcpConfiguration(TypedDict, total=False):
+        key "destinationPortBehavior": Union[str, DestinationPortBehavior]
+        key "disableTraceRoute": bool
+        key "port": int
+        destination_port_behavior: Union[str, DestinationPortBehavior]
+        disable_trace_route: bool
+        port: int
+
+
+    class azure.mgmt.network.types.ConnectionMonitorTestConfiguration(TypedDict, total=False):
+        key "httpConfiguration": ForwardRef('ConnectionMonitorHttpConfiguration', module='types')
+        key "icmpConfiguration": ForwardRef('ConnectionMonitorIcmpConfiguration', module='types')
+        key "name": Required[str]
+        key "preferredIPVersion": Union[str, PreferredIPVersion]
+        key "protocol": Required[Union[str, ConnectionMonitorTestConfigurationProtocol]]
+        key "successThreshold": ForwardRef('ConnectionMonitorSuccessThreshold', module='types')
+        key "tcpConfiguration": ForwardRef('ConnectionMonitorTcpConfiguration', module='types')
+        key "testFrequencySec": int
+        http_configuration: ConnectionMonitorHttpConfiguration
+        icmp_configuration: ConnectionMonitorIcmpConfiguration
+        name: str
+        preferred_ip_version: Union[str, PreferredIPVersion]
+        protocol: Union[str, ConnectionMonitorTestConfigurationProtocol]
+        success_threshold: ConnectionMonitorSuccessThreshold
+        tcp_configuration: ConnectionMonitorTcpConfiguration
+        test_frequency_sec: int
+
+
+    class azure.mgmt.network.types.ConnectionMonitorTestGroup(TypedDict, total=False):
+        key "destinations": Required[list[str]]
+        key "disable": bool
+        key "name": Required[str]
+        key "sources": Required[list[str]]
+        key "testConfigurations": Required[list[str]]
+        destinations: list[str]
+        disable: bool
+        name: str
+        sources: list[str]
+        test_configurations: list[str]
+
+
+    class azure.mgmt.network.types.ConnectionMonitorWorkspaceSettings(TypedDict, total=False):
+        key "workspaceResourceId": str
+        workspace_resource_id: str
+
+
+    class azure.mgmt.network.types.ConnectionPolicy(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ConnectionPolicyProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ConnectionPolicyProperties
+        type: str
+
+
+    class azure.mgmt.network.types.ConnectionPolicyProperties(TypedDict, total=False):
+        key "enableInternetSecurity": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        associatedConnections: list[str]
+        associated_connections: list[str]
+        enable_internet_security: bool
+        provisioning_state: Union[str, ProvisioningState]
+        routing_configuration: RoutingConfiguration
+
+
+    class azure.mgmt.network.types.ConnectionResetSharedKey(TypedDict, total=False):
+        key "keyLength": Required[int]
+        key_length: int
+
+
+    class azure.mgmt.network.types.ConnectionSharedKey(SubResource):
+        key "id": str
+        key "value": Required[str]
+        id: str
+        value: str
+
+
+    class azure.mgmt.network.types.ConnectionSharedKeyResult(SubResourceModel):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SharedKeyProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SharedKeyProperties
+        type: str
+
+
+    class azure.mgmt.network.types.ConnectivityConfiguration(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ConnectivityConfigurationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ConnectivityConfigurationProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.ConnectivityConfigurationProperties(TypedDict, total=False):
+        key "appliesToGroups": Required[list[ConnectivityGroupItem]]
+        key "connectivityCapabilities": ForwardRef('ConnectivityConfigurationPropertiesConnectivityCapabilities', module='types')
+        key "connectivityTopology": Required[Union[str, ConnectivityTopology]]
+        key "deleteExistingPeering": Union[str, DeleteExistingPeering]
+        key "description": str
+        key "isGlobal": Union[str, IsGlobal]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        applies_to_groups: list[ConnectivityGroupItem]
+        connectivity_capabilities: ConnectivityConfigurationPropertiesConnectivityCapabilities
+        connectivity_topology: Union[str, ConnectivityTopology]
+        delete_existing_peering: Union[str, DeleteExistingPeering]
+        description: str
+        hubs: list[Hub]
+        is_global: Union[str, IsGlobal]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.ConnectivityConfigurationPropertiesConnectivityCapabilities(TypedDict, total=False):
+        key "connectedGroupAddressOverlap": Required[Union[str, ConnectedGroupAddressOverlap]]
+        key "connectedGroupPrivateEndpointsScale": Required[Union[str, ConnectedGroupPrivateEndpointsScale]]
+        key "peeringEnforcement": Required[Union[str, PeeringEnforcement]]
+        connected_group_address_overlap: Union[str, ConnectedGroupAddressOverlap]
+        connected_group_private_endpoints_scale: Union[str, ConnectedGroupPrivateEndpointsScale]
+        peering_enforcement: Union[str, PeeringEnforcement]
+
+
+    class azure.mgmt.network.types.ConnectivityDestination(TypedDict, total=False):
+        key "address": str
+        key "port": int
+        key "resourceId": str
+        address: str
+        port: int
+        resource_id: str
+
+
+    class azure.mgmt.network.types.ConnectivityGroupItem(TypedDict, total=False):
+        key "groupConnectivity": Required[Union[str, GroupConnectivity]]
+        key "isGlobal": Union[str, IsGlobal]
+        key "networkGroupId": Required[str]
+        key "useHubGateway": Union[str, UseHubGateway]
+        group_connectivity: Union[str, GroupConnectivity]
+        is_global: Union[str, IsGlobal]
+        network_group_id: str
+        use_hub_gateway: Union[str, UseHubGateway]
+
+
+    class azure.mgmt.network.types.ConnectivityParameters(TypedDict, total=False):
+        key "destination": Required[ConnectivityDestination]
+        key "preferredIPVersion": Union[str, IPVersion]
+        key "protocol": Union[str, Protocol]
+        key "protocolConfiguration": ForwardRef('ProtocolConfiguration', module='types')
+        key "source": Required[ConnectivitySource]
+        destination: ConnectivityDestination
+        preferred_ip_version: Union[str, IPVersion]
+        protocol: Union[str, Protocol]
+        protocol_configuration: ProtocolConfiguration
+        source: ConnectivitySource
+
+
+    class azure.mgmt.network.types.ConnectivitySource(TypedDict, total=False):
+        key "port": int
+        key "resourceId": Required[str]
+        port: int
+        resource_id: str
+
+
+    class azure.mgmt.network.types.Container(SubResource):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.ContainerNetworkInterface(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ContainerNetworkInterfacePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ContainerNetworkInterfacePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ContainerNetworkInterfaceConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ContainerNetworkInterfaceConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ContainerNetworkInterfaceConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ContainerNetworkInterfaceConfigurationPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        containerNetworkInterfaces: list[SubResource]
+        container_network_interfaces: list[SubResource]
+        ipConfigurations: list[IPConfigurationProfile]
+        ip_configurations: list[IPConfigurationProfile]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ContainerNetworkInterfaceIpConfiguration(TypedDict, total=False):
+        key "etag": str
+        key "name": str
+        key "properties": ForwardRef('ContainerNetworkInterfaceIpConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        name: str
+        properties: ContainerNetworkInterfaceIpConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ContainerNetworkInterfaceIpConfigurationPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ContainerNetworkInterfacePropertiesFormat(TypedDict, total=False):
+        key "container": ForwardRef('Container', module='types')
+        key "containerNetworkInterfaceConfiguration": ForwardRef('ContainerNetworkInterfaceConfiguration', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        container: Container
+        container_network_interface_configuration: ContainerNetworkInterfaceConfiguration
+        ipConfigurations: list[ContainerNetworkInterfaceIpConfiguration]
+        ip_configurations: list[ContainerNetworkInterfaceIpConfiguration]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.Criterion(TypedDict, total=False):
+        key "matchCondition": Union[str, RouteMapMatchCondition]
+        asPath: list[str]
+        as_path: list[str]
+        community: list[str]
+        match_condition: Union[str, RouteMapMatchCondition]
+        routePrefix: list[str]
+        route_prefix: list[str]
+
+
+    class azure.mgmt.network.types.CrossTenantScopes(TypedDict, total=False):
+        key "tenantId": str
+        managementGroups: list[str]
+        management_groups: list[str]
+        subscriptions: list[str]
+        tenant_id: str
+
+
+    class azure.mgmt.network.types.CustomDnsConfigPropertiesFormat(TypedDict, total=False):
+        key "fqdn": str
+        fqdn: str
+        ipAddresses: list[str]
+        ip_addresses: list[str]
+
+
+    class azure.mgmt.network.types.CustomIpPrefix(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('CustomIpPrefixPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: CustomIpPrefixPropertiesFormat
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.CustomIpPrefixPropertiesFormat(TypedDict, total=False):
+        key "asn": str
+        key "authorizationMessage": str
+        key "cidr": str
+        key "commissionedState": Union[str, CommissionedState]
+        key "customIpPrefixParent": ForwardRef('SubResource', module='types')
+        key "expressRouteAdvertise": bool
+        key "failedReason": str
+        key "geo": Union[str, Geo]
+        key "noInternetAdvertise": bool
+        key "prefixType": Union[str, CustomIpPrefixType]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "signedMessage": str
+        asn: str
+        authorization_message: str
+        childCustomIpPrefixes: list[SubResource]
+        child_custom_ip_prefixes: list[SubResource]
+        cidr: str
+        commissioned_state: Union[str, CommissionedState]
+        custom_ip_prefix_parent: SubResource
+        express_route_advertise: bool
+        failed_reason: str
+        geo: Union[str, Geo]
+        no_internet_advertise: bool
+        prefix_type: Union[str, CustomIpPrefixType]
+        provisioning_state: Union[str, ProvisioningState]
+        publicIpPrefixes: list[SubResource]
+        public_ip_prefixes: list[SubResource]
+        resource_guid: str
+        signed_message: str
+
+
+    class azure.mgmt.network.types.DdosCustomPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('DdosCustomPolicyPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: DdosCustomPolicyPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.DdosCustomPolicyPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        detectionRules: list[DdosDetectionRule]
+        detection_rules: list[DdosDetectionRule]
+        frontEndIpConfiguration: list[SubResource]
+        front_end_ip_configuration: list[SubResource]
+        provisioning_state: Union[str, ProvisioningState]
+        publicIPAddresses: list[SubResource]
+        public_ip_addresses: list[SubResource]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.DdosDetectionRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DdosDetectionRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: DdosDetectionRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.DdosDetectionRulePropertiesFormat(TypedDict, total=False):
+        key "detectionMode": Union[str, DdosDetectionMode]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "trafficDetectionRule": ForwardRef('TrafficDetectionRule', module='types')
+        detection_mode: Union[str, DdosDetectionMode]
+        provisioning_state: Union[str, ProvisioningState]
+        traffic_detection_rule: TrafficDetectionRule
+
+
+    class azure.mgmt.network.types.DdosFrontendIpConfigurationSettings(TypedDict, total=False):
+        key "ddosCustomPolicy": ForwardRef('SubResource', module='types')
+        ddos_custom_policy: SubResource
+
+
+    class azure.mgmt.network.types.DdosProtectionPlan(TrackedResourceWithOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('DdosProtectionPlanPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: DdosProtectionPlanPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.DdosProtectionPlanPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        provisioning_state: Union[str, ProvisioningState]
+        publicIPAddresses: list[SubResource]
+        public_ip_addresses: list[SubResource]
+        resource_guid: str
+        virtualNetworks: list[SubResource]
+        virtual_networks: list[SubResource]
+
+
+    class azure.mgmt.network.types.DdosSettings(TypedDict, total=False):
+        key "ddosCustomPolicy": ForwardRef('SubResource', module='types')
+        key "ddosProtectionPlan": ForwardRef('SubResource', module='types')
+        key "protectionMode": Union[str, DdosSettingsProtectionMode]
+        ddos_custom_policy: SubResource
+        ddos_protection_plan: SubResource
+        protection_mode: Union[str, DdosSettingsProtectionMode]
+
+
+    class azure.mgmt.network.types.DefaultAdminPropertiesFormat(TypedDict, total=False):
+        key "access": Union[str, SecurityConfigurationRuleAccess]
+        key "description": str
+        key "direction": Union[str, SecurityConfigurationRuleDirection]
+        key "flag": str
+        key "priority": int
+        key "protocol": Union[str, SecurityConfigurationRuleProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        access: Union[str, SecurityConfigurationRuleAccess]
+        description: str
+        destinationPortRanges: list[str]
+        destination_port_ranges: list[str]
+        destinations: list[AddressPrefixItem]
+        direction: Union[str, SecurityConfigurationRuleDirection]
+        flag: str
+        priority: int
+        protocol: Union[str, SecurityConfigurationRuleProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        sourcePortRanges: list[str]
+        source_port_ranges: list[str]
+        sources: list[AddressPrefixItem]
+
+
+    class azure.mgmt.network.types.DefaultAdminRule(TypedDict, total=False):
+        key "etag": str
+        key "id": str
+        key "kind": Required[Literal[AdminRuleKind.DEFAULT]]
+        key "name": str
+        key "properties": ForwardRef('DefaultAdminPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        kind: Literal[AdminRuleKind.DEFAULT]
+        name: str
+        properties: DefaultAdminPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.Delegation(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServiceDelegationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ServiceDelegationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.DelegationProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "serviceName": str
+        provisioning_state: Union[str, ProvisioningState]
+        service_name: str
+
+
+    class azure.mgmt.network.types.DeviceProperties(TypedDict, total=False):
+        key "deviceModel": str
+        key "deviceVendor": str
+        key "linkSpeedInMbps": int
+        device_model: str
+        device_vendor: str
+        link_speed_in_mbps: int
+
+
+    class azure.mgmt.network.types.DhcpOptions(TypedDict, total=False):
+        dnsServers: list[str]
+        dns_servers: list[str]
+
+
+    class azure.mgmt.network.types.DisassociateCloudServicePublicIpRequest(TypedDict, total=False):
+        key "publicIpArmId": Required[str]
+        public_ip_arm_id: str
+
+
+    class azure.mgmt.network.types.DnsSettings(TypedDict, total=False):
+        key "enableProxy": bool
+        key "requireProxyForNetworkRules": Optional[bool]
+        enable_proxy: bool
+        require_proxy_for_network_rules: bool
+        servers: list[str]
+
+
+    class azure.mgmt.network.types.DscpConfiguration(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('DscpConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: DscpConfigurationPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.DscpConfigurationPropertiesFormat(TypedDict, total=False):
+        key "protocol": Union[str, ProtocolType]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "qosCollectionId": str
+        key "resourceGuid": str
+        associatedNetworkInterfaces: list[NetworkInterface]
+        associated_network_interfaces: list[NetworkInterface]
+        destinationIpRanges: list[QosIpRange]
+        destinationPortRanges: list[QosPortRange]
+        destination_ip_ranges: list[QosIpRange]
+        destination_port_ranges: list[QosPortRange]
+        markings: list[int]
+        protocol: Union[str, ProtocolType]
+        provisioning_state: Union[str, ProvisioningState]
+        qosDefinitionCollection: list[QosDefinition]
+        qos_collection_id: str
+        qos_definition_collection: list[QosDefinition]
+        resource_guid: str
+        sourceIpRanges: list[QosIpRange]
+        sourcePortRanges: list[QosPortRange]
+        source_ip_ranges: list[QosIpRange]
+        source_port_ranges: list[QosPortRange]
+
+
+    class azure.mgmt.network.types.EffectiveRoutesParameters(TypedDict, total=False):
+        key "resourceId": str
+        key "virtualWanResourceType": str
+        resource_id: str
+        virtual_wan_resource_type: str
+
+
+    class azure.mgmt.network.types.ExceptionEntry(TypedDict, total=False):
+        key "matchVariable": Required[Union[str, ExceptionEntryMatchVariable]]
+        key "selector": str
+        key "selectorMatchOperator": Union[str, ExceptionEntrySelectorMatchOperator]
+        key "valueMatchOperator": Required[Union[str, ExceptionEntryValueMatchOperator]]
+        exceptionManagedRuleSets: list[ExclusionManagedRuleSet]
+        exception_managed_rule_sets: list[ExclusionManagedRuleSet]
+        match_variable: Union[str, ExceptionEntryMatchVariable]
+        selector: str
+        selector_match_operator: Union[str, ExceptionEntrySelectorMatchOperator]
+        value_match_operator: Union[str, ExceptionEntryValueMatchOperator]
+        values: list[str]
+        values_property: list[str]
+
+
+    class azure.mgmt.network.types.ExclusionManagedRule(TypedDict, total=False):
+        key "ruleId": Required[str]
+        rule_id: str
+
+
+    class azure.mgmt.network.types.ExclusionManagedRuleGroup(TypedDict, total=False):
+        key "ruleGroupName": Required[str]
+        rule_group_name: str
+        rules: list[ExclusionManagedRule]
+
+
+    class azure.mgmt.network.types.ExclusionManagedRuleSet(TypedDict, total=False):
+        key "ruleSetType": Required[str]
+        key "ruleSetVersion": Required[str]
+        ruleGroups: list[ExclusionManagedRuleGroup]
+        rule_groups: list[ExclusionManagedRuleGroup]
+        rule_set_type: str
+        rule_set_version: str
+
+
+    class azure.mgmt.network.types.ExplicitProxy(TypedDict, total=False):
+        key "enableExplicitProxy": Optional[bool]
+        key "enablePacFile": Optional[bool]
+        key "httpPort": int
+        key "httpsPort": int
+        key "pacFile": str
+        key "pacFilePort": int
+        enable_explicit_proxy: bool
+        enable_pac_file: bool
+        http_port: int
+        https_port: int
+        pac_file: str
+        pac_file_port: int
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuit(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteCircuitPropertiesFormat', module='types')
+        key "sku": ForwardRef('ExpressRouteCircuitSku', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: ExpressRouteCircuitPropertiesFormat
+        sku: ExpressRouteCircuitSku
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitAuthorization(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AuthorizationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: AuthorizationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitConnection(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteCircuitConnectionPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ExpressRouteCircuitConnectionPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitConnectionPropertiesFormat(TypedDict, total=False):
+        key "addressPrefix": str
+        key "authorizationKey": str
+        key "circuitConnectionStatus": Union[str, CircuitConnectionStatus]
+        key "expressRouteCircuitPeering": ForwardRef('SubResource', module='types')
+        key "ipv6CircuitConnectionConfig": ForwardRef('Ipv6CircuitConnectionConfig', module='types')
+        key "peerExpressRouteCircuitPeering": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        address_prefix: str
+        authorization_key: str
+        circuit_connection_status: Union[str, CircuitConnectionStatus]
+        express_route_circuit_peering: SubResource
+        ipv6_circuit_connection_config: Ipv6CircuitConnectionConfig
+        peer_express_route_circuit_peering: SubResource
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitPeering(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteCircuitPeeringPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ExpressRouteCircuitPeeringPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitPeeringConfig(TypedDict, total=False):
+        key "advertisedPublicPrefixesState": Union[str, ExpressRouteCircuitPeeringAdvertisedPublicPrefixState]
+        key "customerASN": int
+        key "legacyMode": int
+        key "routingRegistryName": str
+        advertisedCommunities: list[str]
+        advertisedPublicPrefixInfo: list[AdvertisedPublicPrefixProperties]
+        advertisedPublicPrefixes: list[str]
+        advertised_communities: list[str]
+        advertised_public_prefix_info: list[AdvertisedPublicPrefixProperties]
+        advertised_public_prefixes: list[str]
+        advertised_public_prefixes_state: Union[str, ExpressRouteCircuitPeeringAdvertisedPublicPrefixState]
+        customer_asn: int
+        legacy_mode: int
+        routing_registry_name: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitPeeringId(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitPeeringPropertiesFormat(TypedDict, total=False):
+        key "azureASN": int
+        key "expressRouteConnection": ForwardRef('ExpressRouteConnectionId', module='types')
+        key "gatewayManagerEtag": str
+        key "ipv6PeeringConfig": ForwardRef('Ipv6ExpressRouteCircuitPeeringConfig', module='types')
+        key "lastModifiedBy": str
+        key "microsoftPeeringConfig": ForwardRef('ExpressRouteCircuitPeeringConfig', module='types')
+        key "peerASN": int
+        key "peeringType": Union[str, ExpressRoutePeeringType]
+        key "primaryAzurePort": str
+        key "primaryPeerAddressPrefix": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routeFilter": ForwardRef('SubResource', module='types')
+        key "secondaryAzurePort": str
+        key "secondaryPeerAddressPrefix": str
+        key "sharedKey": str
+        key "state": Union[str, ExpressRoutePeeringState]
+        key "stats": ForwardRef('ExpressRouteCircuitStats', module='types')
+        key "vlanId": int
+        azure_asn: int
+        connections: list[ExpressRouteCircuitConnection]
+        express_route_connection: ExpressRouteConnectionId
+        gateway_manager_etag: str
+        ipv6_peering_config: Ipv6ExpressRouteCircuitPeeringConfig
+        last_modified_by: str
+        microsoft_peering_config: ExpressRouteCircuitPeeringConfig
+        peer_asn: int
+        peeredConnections: list[PeerExpressRouteCircuitConnection]
+        peered_connections: list[PeerExpressRouteCircuitConnection]
+        peering_type: Union[str, ExpressRoutePeeringType]
+        primary_azure_port: str
+        primary_peer_address_prefix: str
+        provisioning_state: Union[str, ProvisioningState]
+        route_filter: SubResource
+        secondary_azure_port: str
+        secondary_peer_address_prefix: str
+        shared_key: str
+        state: Union[str, ExpressRoutePeeringState]
+        stats: ExpressRouteCircuitStats
+        vlan_id: int
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitPropertiesFormat(TypedDict, total=False):
+        key "allowClassicOperations": bool
+        key "authorizationKey": str
+        key "authorizationStatus": str
+        key "bandwidthInGbps": float
+        key "circuitProvisioningState": str
+        key "enableDirectPortRateLimit": bool
+        key "expressRoutePort": ForwardRef('SubResource', module='types')
+        key "gatewayManagerEtag": str
+        key "globalReachEnabled": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "serviceKey": str
+        key "serviceProviderNotes": str
+        key "serviceProviderProperties": ForwardRef('ExpressRouteCircuitServiceProviderProperties', module='types')
+        key "serviceProviderProvisioningState": Union[str, ServiceProviderProvisioningState]
+        key "stag": int
+        allow_classic_operations: bool
+        authorization_key: str
+        authorization_status: str
+        authorizations: list[ExpressRouteCircuitAuthorization]
+        bandwidth_in_gbps: float
+        circuit_provisioning_state: str
+        enable_direct_port_rate_limit: bool
+        express_route_port: SubResource
+        gateway_manager_etag: str
+        global_reach_enabled: bool
+        peerings: list[ExpressRouteCircuitPeering]
+        provisioning_state: Union[str, ProvisioningState]
+        service_key: str
+        service_provider_notes: str
+        service_provider_properties: ExpressRouteCircuitServiceProviderProperties
+        service_provider_provisioning_state: Union[str, ServiceProviderProvisioningState]
+        stag: int
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitReference(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitServiceProviderProperties(TypedDict, total=False):
+        key "bandwidthInMbps": int
+        key "peeringLocation": str
+        key "serviceProviderName": str
+        bandwidth_in_mbps: int
+        peering_location: str
+        service_provider_name: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitSku(TypedDict, total=False):
+        key "family": Union[str, ExpressRouteCircuitSkuFamily]
+        key "name": str
+        key "tier": Union[str, ExpressRouteCircuitSkuTier]
+        family: Union[str, ExpressRouteCircuitSkuFamily]
+        name: str
+        tier: Union[str, ExpressRouteCircuitSkuTier]
+
+
+    class azure.mgmt.network.types.ExpressRouteCircuitStats(TypedDict, total=False):
+        key "primarybytesIn": int
+        key "primarybytesOut": int
+        key "secondarybytesIn": int
+        key "secondarybytesOut": int
+        primarybytes_in: int
+        primarybytes_out: int
+        secondarybytes_in: int
+        secondarybytes_out: int
+
+
+    class azure.mgmt.network.types.ExpressRouteConnection(SubResource):
+        key "id": str
+        key "name": Required[str]
+        key "properties": ForwardRef('ExpressRouteConnectionProperties', module='types')
+        id: str
+        name: str
+        properties: ExpressRouteConnectionProperties
+
+
+    class azure.mgmt.network.types.ExpressRouteConnectionId(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.ExpressRouteConnectionProperties(TypedDict, total=False):
+        key "authorizationKey": str
+        key "enableInternetSecurity": bool
+        key "enablePrivateLinkFastPath": bool
+        key "expressRouteCircuitPeering": Required[ExpressRouteCircuitPeeringId]
+        key "expressRouteGatewayBypass": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        key "routingWeight": int
+        authorization_key: str
+        enable_internet_security: bool
+        enable_private_link_fast_path: bool
+        express_route_circuit_peering: ExpressRouteCircuitPeeringId
+        express_route_gateway_bypass: bool
+        provisioning_state: Union[str, ProvisioningState]
+        routing_configuration: RoutingConfiguration
+        routing_weight: int
+
+
+    class azure.mgmt.network.types.ExpressRouteCrossConnection(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteCrossConnectionProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: ExpressRouteCrossConnectionProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteCrossConnectionPeering(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteCrossConnectionPeeringProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: ExpressRouteCrossConnectionPeeringProperties
+
+
+    class azure.mgmt.network.types.ExpressRouteCrossConnectionPeeringProperties(TypedDict, total=False):
+        key "azureASN": int
+        key "gatewayManagerEtag": str
+        key "ipv6PeeringConfig": ForwardRef('Ipv6ExpressRouteCircuitPeeringConfig', module='types')
+        key "lastModifiedBy": str
+        key "microsoftPeeringConfig": ForwardRef('ExpressRouteCircuitPeeringConfig', module='types')
+        key "peerASN": int
+        key "peeringType": Union[str, ExpressRoutePeeringType]
+        key "primaryAzurePort": str
+        key "primaryPeerAddressPrefix": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "secondaryAzurePort": str
+        key "secondaryPeerAddressPrefix": str
+        key "sharedKey": str
+        key "state": Union[str, ExpressRoutePeeringState]
+        key "vlanId": int
+        azure_asn: int
+        gateway_manager_etag: str
+        ipv6_peering_config: Ipv6ExpressRouteCircuitPeeringConfig
+        last_modified_by: str
+        microsoft_peering_config: ExpressRouteCircuitPeeringConfig
+        peer_asn: int
+        peering_type: Union[str, ExpressRoutePeeringType]
+        primary_azure_port: str
+        primary_peer_address_prefix: str
+        provisioning_state: Union[str, ProvisioningState]
+        secondary_azure_port: str
+        secondary_peer_address_prefix: str
+        shared_key: str
+        state: Union[str, ExpressRoutePeeringState]
+        vlan_id: int
+
+
+    class azure.mgmt.network.types.ExpressRouteCrossConnectionProperties(TypedDict, total=False):
+        key "bandwidthInMbps": int
+        key "expressRouteCircuit": ForwardRef('ExpressRouteCircuitReference', module='types')
+        key "peeringLocation": str
+        key "primaryAzurePort": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sTag": int
+        key "secondaryAzurePort": str
+        key "serviceProviderNotes": str
+        key "serviceProviderProvisioningState": Union[str, ServiceProviderProvisioningState]
+        bandwidth_in_mbps: int
+        express_route_circuit: ExpressRouteCircuitReference
+        peering_location: str
+        peerings: list[ExpressRouteCrossConnectionPeering]
+        primary_azure_port: str
+        provisioning_state: Union[str, ProvisioningState]
+        s_tag: int
+        secondary_azure_port: str
+        service_provider_notes: str
+        service_provider_provisioning_state: Union[str, ServiceProviderProvisioningState]
+
+
+    class azure.mgmt.network.types.ExpressRouteFailoverStopApiParameters(TypedDict, total=False):
+        key "peeringLocation": str
+        key "wasSimulationSuccessful": bool
+        details: list[FailoverConnectionDetails]
+        peering_location: str
+        was_simulation_successful: bool
+
+
+    class azure.mgmt.network.types.ExpressRouteGateway(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteGatewayProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: ExpressRouteGatewayProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteGatewayProperties(TypedDict, total=False):
+        key "allowNonVirtualWanTraffic": bool
+        key "autoScaleConfiguration": ForwardRef('ExpressRouteGatewayPropertiesAutoScaleConfiguration', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "virtualHub": Required[VirtualHubId]
+        allow_non_virtual_wan_traffic: bool
+        auto_scale_configuration: ExpressRouteGatewayPropertiesAutoScaleConfiguration
+        expressRouteConnections: list[ExpressRouteConnection]
+        express_route_connections: list[ExpressRouteConnection]
+        provisioning_state: Union[str, ProvisioningState]
+        virtual_hub: VirtualHubId
+
+
+    class azure.mgmt.network.types.ExpressRouteGatewayPropertiesAutoScaleConfiguration(TypedDict, total=False):
+        key "bounds": ForwardRef('ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds', module='types')
+        bounds: ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
+
+
+    class azure.mgmt.network.types.ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds(TypedDict, total=False):
+        key "max": int
+        key "min": int
+        max: int
+        min: int
+
+
+    class azure.mgmt.network.types.ExpressRouteLink(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteLinkPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: ExpressRouteLinkPropertiesFormat
+
+
+    class azure.mgmt.network.types.ExpressRouteLinkFailoverStopApiParameters(TypedDict, total=False):
+        key "circuitTestCategory": str
+        key "isVerified": bool
+        key "linkType": str
+        key "wasSimulationSuccessful": bool
+        circuit_test_category: str
+        is_verified: bool
+        link_type: str
+        was_simulation_successful: bool
+
+
+    class azure.mgmt.network.types.ExpressRouteLinkMacSecConfig(TypedDict, total=False):
+        key "cakSecretIdentifier": str
+        key "cipher": Union[str, ExpressRouteLinkMacSecCipher]
+        key "cknSecretIdentifier": str
+        key "sciState": Union[str, ExpressRouteLinkMacSecSciState]
+        cak_secret_identifier: str
+        cipher: Union[str, ExpressRouteLinkMacSecCipher]
+        ckn_secret_identifier: str
+        sci_state: Union[str, ExpressRouteLinkMacSecSciState]
+
+
+    class azure.mgmt.network.types.ExpressRouteLinkPropertiesFormat(TypedDict, total=False):
+        key "adminState": Union[str, ExpressRouteLinkAdminState]
+        key "coloLocation": str
+        key "connectorType": Union[str, ExpressRouteLinkConnectorType]
+        key "interfaceName": str
+        key "macSecConfig": ForwardRef('ExpressRouteLinkMacSecConfig', module='types')
+        key "patchPanelId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "rackId": str
+        key "routerName": str
+        admin_state: Union[str, ExpressRouteLinkAdminState]
+        colo_location: str
+        connector_type: Union[str, ExpressRouteLinkConnectorType]
+        interface_name: str
+        mac_sec_config: ExpressRouteLinkMacSecConfig
+        patch_panel_id: str
+        provisioning_state: Union[str, ProvisioningState]
+        rack_id: str
+        router_name: str
+
+
+    class azure.mgmt.network.types.ExpressRoutePort(Resource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRoutePortPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: ExpressRoutePortPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRoutePortAuthorization(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRoutePortAuthorizationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ExpressRoutePortAuthorizationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRoutePortAuthorizationPropertiesFormat(TypedDict, total=False):
+        key "authorizationKey": str
+        key "authorizationUseStatus": Union[str, ExpressRoutePortAuthorizationUseStatus]
+        key "circuitResourceUri": str
+        key "provisioningState": Union[str, ProvisioningState]
+        authorization_key: str
+        authorization_use_status: Union[str, ExpressRoutePortAuthorizationUseStatus]
+        circuit_resource_uri: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ExpressRoutePortPropertiesFormat(TypedDict, total=False):
+        key "allocationDate": str
+        key "bandwidthInGbps": int
+        key "billingType": Union[str, ExpressRoutePortsBillingType]
+        key "encapsulation": Union[str, ExpressRoutePortsEncapsulation]
+        key "etherType": str
+        key "mtu": str
+        key "peeringLocation": str
+        key "provisionedBandwidthInGbps": float
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        allocation_date: str
+        bandwidth_in_gbps: int
+        billing_type: Union[str, ExpressRoutePortsBillingType]
+        circuits: list[SubResource]
+        encapsulation: Union[str, ExpressRoutePortsEncapsulation]
+        ether_type: str
+        links: list[ExpressRouteLink]
+        mtu: str
+        peering_location: str
+        provisioned_bandwidth_in_gbps: float
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.ExtendedLocation(TypedDict, total=False):
+        key "name": str
+        key "type": Union[str, ExtendedLocationTypes]
+        name: str
+        type: Union[str, ExtendedLocationTypes]
+
+
+    class azure.mgmt.network.types.FailoverConnectionDetails(TypedDict, total=False):
+        key "failoverConnectionName": str
+        key "failoverLocation": str
+        key "isVerified": bool
+        failover_connection_name: str
+        failover_location: str
+        is_verified: bool
+
+
+    class azure.mgmt.network.types.FilterItems(TypedDict, total=False):
+        key "field": str
+        field: str
+        values: list[str]
+        values_property: list[str]
+
+
+    class azure.mgmt.network.types.FirewallPacketCaptureParameters(TypedDict, total=False):
+        key "durationInSeconds": int
+        key "fileName": str
+        key "numberOfPacketsToCapture": int
+        key "operation": Union[str, AzureFirewallPacketCaptureOperationType]
+        key "protocol": Union[str, AzureFirewallNetworkRuleProtocol]
+        key "sasUrl": str
+        duration_in_seconds: int
+        file_name: str
+        filters: list[AzureFirewallPacketCaptureRule]
+        flags: list[AzureFirewallPacketCaptureFlags]
+        number_of_packets_to_capture: int
+        operation: Union[str, AzureFirewallPacketCaptureOperationType]
+        protocol: Union[str, AzureFirewallNetworkRuleProtocol]
+        sas_url: str
+
+
+    class azure.mgmt.network.types.FirewallPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('FirewallPolicyPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: FirewallPolicyPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyCertificateAuthority(TypedDict, total=False):
+        key "keyVaultSecretId": str
+        key "name": str
+        key_vault_secret_id: str
+        name: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyDraft(Resource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('FirewallPolicyDraftProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: FirewallPolicyDraftProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyDraftProperties(TypedDict, total=False):
+        key "basePolicy": ForwardRef('SubResource', module='types')
+        key "dnsSettings": ForwardRef('DnsSettings', module='types')
+        key "explicitProxy": ForwardRef('ExplicitProxy', module='types')
+        key "insights": ForwardRef('FirewallPolicyInsights', module='types')
+        key "intrusionDetection": ForwardRef('FirewallPolicyIntrusionDetection', module='types')
+        key "snat": ForwardRef('FirewallPolicySNAT', module='types')
+        key "sql": ForwardRef('FirewallPolicySQL', module='types')
+        key "threatIntelMode": Union[str, AzureFirewallThreatIntelMode]
+        key "threatIntelWhitelist": ForwardRef('FirewallPolicyThreatIntelWhitelist', module='types')
+        base_policy: SubResource
+        dns_settings: DnsSettings
+        explicit_proxy: ExplicitProxy
+        insights: FirewallPolicyInsights
+        intrusion_detection: FirewallPolicyIntrusionDetection
+        snat: FirewallPolicySNAT
+        sql: FirewallPolicySQL
+        threat_intel_mode: Union[str, AzureFirewallThreatIntelMode]
+        threat_intel_whitelist: FirewallPolicyThreatIntelWhitelist
+
+
+    class azure.mgmt.network.types.FirewallPolicyFilterRuleCollection(TypedDict, total=False):
+        key "action": ForwardRef('FirewallPolicyFilterRuleCollectionAction', module='types')
+        key "name": str
+        key "priority": int
+        key "ruleCollectionType": Required[Literal[FirewallPolicyRuleCollectionType.FIREWALL_POLICY_FILTER_RULE_COLLECTION]]
+        action: FirewallPolicyFilterRuleCollectionAction
+        name: str
+        priority: int
+        rule_collection_type: Literal[FirewallPolicyRuleCollectionType.FIREWALL_POLICY_FILTER_RULE_COLLECTION]
+        rules: list[FirewallPolicyRule]
+
+
+    class azure.mgmt.network.types.FirewallPolicyFilterRuleCollectionAction(TypedDict, total=False):
+        key "type": Union[str, FirewallPolicyFilterRuleCollectionActionType]
+        type: Union[str, FirewallPolicyFilterRuleCollectionActionType]
+
+
+    class azure.mgmt.network.types.FirewallPolicyHttpHeaderToInsert(TypedDict, total=False):
+        key "headerName": str
+        key "headerValue": str
+        header_name: str
+        header_value: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyInsights(TypedDict, total=False):
+        key "isEnabled": bool
+        key "logAnalyticsResources": ForwardRef('FirewallPolicyLogAnalyticsResources', module='types')
+        key "retentionDays": int
+        is_enabled: bool
+        log_analytics_resources: FirewallPolicyLogAnalyticsResources
+        retention_days: int
+
+
+    class azure.mgmt.network.types.FirewallPolicyIntrusionDetection(TypedDict, total=False):
+        key "configuration": ForwardRef('FirewallPolicyIntrusionDetectionConfiguration', module='types')
+        key "mode": Union[str, FirewallPolicyIntrusionDetectionStateType]
+        key "profile": Union[str, FirewallPolicyIntrusionDetectionProfileType]
+        configuration: FirewallPolicyIntrusionDetectionConfiguration
+        mode: Union[str, FirewallPolicyIntrusionDetectionStateType]
+        profile: Union[str, FirewallPolicyIntrusionDetectionProfileType]
+
+
+    class azure.mgmt.network.types.FirewallPolicyIntrusionDetectionBypassTrafficSpecifications(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        key "protocol": Union[str, FirewallPolicyIntrusionDetectionProtocol]
+        description: str
+        destinationAddresses: list[str]
+        destinationIpGroups: list[str]
+        destinationPorts: list[str]
+        destination_addresses: list[str]
+        destination_ip_groups: list[str]
+        destination_ports: list[str]
+        name: str
+        protocol: Union[str, FirewallPolicyIntrusionDetectionProtocol]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+
+
+    class azure.mgmt.network.types.FirewallPolicyIntrusionDetectionConfiguration(TypedDict, total=False):
+        bypassTrafficSettings: list[FirewallPolicyIntrusionDetectionBypassTrafficSpecifications]
+        bypass_traffic_settings: list[FirewallPolicyIntrusionDetectionBypassTrafficSpecifications]
+        privateRanges: list[str]
+        private_ranges: list[str]
+        signatureOverrides: list[FirewallPolicyIntrusionDetectionSignatureSpecification]
+        signature_overrides: list[FirewallPolicyIntrusionDetectionSignatureSpecification]
+
+
+    class azure.mgmt.network.types.FirewallPolicyIntrusionDetectionSignatureSpecification(TypedDict, total=False):
+        key "id": str
+        key "mode": Union[str, FirewallPolicyIntrusionDetectionStateType]
+        id: str
+        mode: Union[str, FirewallPolicyIntrusionDetectionStateType]
+
+
+    class azure.mgmt.network.types.FirewallPolicyLogAnalyticsResources(TypedDict, total=False):
+        key "defaultWorkspaceId": ForwardRef('SubResource', module='types')
+        default_workspace_id: SubResource
+        workspaces: list[FirewallPolicyLogAnalyticsWorkspace]
+
+
+    class azure.mgmt.network.types.FirewallPolicyLogAnalyticsWorkspace(TypedDict, total=False):
+        key "region": str
+        key "workspaceId": ForwardRef('SubResource', module='types')
+        region: str
+        workspace_id: SubResource
+
+
+    class azure.mgmt.network.types.FirewallPolicyNatRuleCollection(TypedDict, total=False):
+        key "action": ForwardRef('FirewallPolicyNatRuleCollectionAction', module='types')
+        key "name": str
+        key "priority": int
+        key "ruleCollectionType": Required[Literal[FirewallPolicyRuleCollectionType.FIREWALL_POLICY_NAT_RULE_COLLECTION]]
+        action: FirewallPolicyNatRuleCollectionAction
+        name: str
+        priority: int
+        rule_collection_type: Literal[FirewallPolicyRuleCollectionType.FIREWALL_POLICY_NAT_RULE_COLLECTION]
+        rules: list[FirewallPolicyRule]
+
+
+    class azure.mgmt.network.types.FirewallPolicyNatRuleCollectionAction(TypedDict, total=False):
+        key "type": Union[str, FirewallPolicyNatRuleCollectionActionType]
+        type: Union[str, FirewallPolicyNatRuleCollectionActionType]
+
+
+    class azure.mgmt.network.types.FirewallPolicyPropertiesFormat(TypedDict, total=False):
+        key "basePolicy": ForwardRef('SubResource', module='types')
+        key "dnsSettings": ForwardRef('DnsSettings', module='types')
+        key "explicitProxy": ForwardRef('ExplicitProxy', module='types')
+        key "insights": ForwardRef('FirewallPolicyInsights', module='types')
+        key "intrusionDetection": ForwardRef('FirewallPolicyIntrusionDetection', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "size": str
+        key "sku": ForwardRef('FirewallPolicySku', module='types')
+        key "snat": ForwardRef('FirewallPolicySNAT', module='types')
+        key "sql": ForwardRef('FirewallPolicySQL', module='types')
+        key "threatIntelMode": Union[str, AzureFirewallThreatIntelMode]
+        key "threatIntelWhitelist": ForwardRef('FirewallPolicyThreatIntelWhitelist', module='types')
+        key "transportSecurity": ForwardRef('FirewallPolicyTransportSecurity', module='types')
+        base_policy: SubResource
+        childPolicies: list[SubResource]
+        child_policies: list[SubResource]
+        dns_settings: DnsSettings
+        explicit_proxy: ExplicitProxy
+        firewalls: list[SubResource]
+        insights: FirewallPolicyInsights
+        intrusion_detection: FirewallPolicyIntrusionDetection
+        provisioning_state: Union[str, ProvisioningState]
+        ruleCollectionGroups: list[SubResource]
+        rule_collection_groups: list[SubResource]
+        size: str
+        sku: FirewallPolicySku
+        snat: FirewallPolicySNAT
+        sql: FirewallPolicySQL
+        threat_intel_mode: Union[str, AzureFirewallThreatIntelMode]
+        threat_intel_whitelist: FirewallPolicyThreatIntelWhitelist
+        transport_security: FirewallPolicyTransportSecurity
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleApplicationProtocol(TypedDict, total=False):
+        key "port": int
+        key "protocolType": Union[str, FirewallPolicyRuleApplicationProtocolType]
+        port: int
+        protocol_type: Union[str, FirewallPolicyRuleApplicationProtocolType]
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleCollectionGroup(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('FirewallPolicyRuleCollectionGroupProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: FirewallPolicyRuleCollectionGroupProperties
+        type: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleCollectionGroupDraft(SubResourceModel):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('FirewallPolicyRuleCollectionGroupDraftProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: FirewallPolicyRuleCollectionGroupDraftProperties
+        type: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleCollectionGroupDraftProperties(TypedDict, total=False):
+        key "priority": int
+        key "size": str
+        priority: int
+        ruleCollections: list[FirewallPolicyRuleCollection]
+        rule_collections: list[FirewallPolicyRuleCollection]
+        size: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleCollectionGroupProperties(TypedDict, total=False):
+        key "priority": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "size": str
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        ruleCollections: list[FirewallPolicyRuleCollection]
+        rule_collections: list[FirewallPolicyRuleCollection]
+        size: str
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FIREWALL_POLICY_FILTER_RULE_COLLECTION = "FirewallPolicyFilterRuleCollection"
+        FIREWALL_POLICY_NAT_RULE_COLLECTION = "FirewallPolicyNatRuleCollection"
+
+
+    class azure.mgmt.network.types.FirewallPolicyRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLICATION_RULE = "ApplicationRule"
+        NAT_RULE = "NatRule"
+        NETWORK_RULE = "NetworkRule"
+
+
+    class azure.mgmt.network.types.FirewallPolicySNAT(TypedDict, total=False):
+        key "autoLearnPrivateRanges": Union[str, AutoLearnPrivateRangesMode]
+        auto_learn_private_ranges: Union[str, AutoLearnPrivateRangesMode]
+        privateRanges: list[str]
+        private_ranges: list[str]
+
+
+    class azure.mgmt.network.types.FirewallPolicySQL(TypedDict, total=False):
+        key "allowSqlRedirect": bool
+        allow_sql_redirect: bool
+
+
+    class azure.mgmt.network.types.FirewallPolicySku(TypedDict, total=False):
+        key "tier": Union[str, FirewallPolicySkuTier]
+        tier: Union[str, FirewallPolicySkuTier]
+
+
+    class azure.mgmt.network.types.FirewallPolicyThreatIntelWhitelist(TypedDict, total=False):
+        fqdns: list[str]
+        ipAddresses: list[str]
+        ip_addresses: list[str]
+
+
+    class azure.mgmt.network.types.FirewallPolicyTransportSecurity(TypedDict, total=False):
+        key "certificateAuthority": ForwardRef('FirewallPolicyCertificateAuthority', module='types')
+        certificate_authority: FirewallPolicyCertificateAuthority
+
+
+    class azure.mgmt.network.types.FlowLog(Resource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('FlowLogPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: FlowLogPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.FlowLogFormatParameters(TypedDict, total=False):
+        key "type": Union[str, FlowLogFormatType]
+        key "version": int
+        type: Union[str, FlowLogFormatType]
+        version: int
+
+
+    class azure.mgmt.network.types.FlowLogInformation(TypedDict, total=False):
+        key "flowAnalyticsConfiguration": ForwardRef('TrafficAnalyticsProperties', module='types')
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": Required[FlowLogProperties]
+        key "targetResourceId": Required[str]
+        flow_analytics_configuration: TrafficAnalyticsProperties
+        identity: ManagedServiceIdentity
+        properties: FlowLogProperties
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.FlowLogProperties(TypedDict, total=False):
+        key "enabled": Required[bool]
+        key "enabledFilteringCriteria": str
+        key "format": ForwardRef('FlowLogFormatParameters', module='types')
+        key "recordTypes": str
+        key "retentionPolicy": ForwardRef('RetentionPolicyParameters', module='types')
+        key "storageId": Required[str]
+        enabled: bool
+        enabled_filtering_criteria: str
+        format: FlowLogFormatParameters
+        record_types: str
+        retention_policy: RetentionPolicyParameters
+        storage_id: str
+
+
+    class azure.mgmt.network.types.FlowLogPropertiesFormat(TypedDict, total=False):
+        key "enabled": bool
+        key "enabledFilteringCriteria": str
+        key "flowAnalyticsConfiguration": ForwardRef('TrafficAnalyticsProperties', module='types')
+        key "format": ForwardRef('FlowLogFormatParameters', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "recordTypes": str
+        key "retentionPolicy": ForwardRef('RetentionPolicyParameters', module='types')
+        key "storageId": Required[str]
+        key "targetResourceGuid": str
+        key "targetResourceId": Required[str]
+        enabled: bool
+        enabled_filtering_criteria: str
+        flow_analytics_configuration: TrafficAnalyticsProperties
+        format: FlowLogFormatParameters
+        provisioning_state: Union[str, ProvisioningState]
+        record_types: str
+        retention_policy: RetentionPolicyParameters
+        storage_id: str
+        target_resource_guid: str
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.FlowLogStatusParameters(TypedDict, total=False):
+        key "targetResourceId": Required[str]
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.FrontendIPConfiguration(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('FrontendIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: FrontendIPConfigurationPropertiesFormat
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.FrontendIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "ddosSettings": ForwardRef('DdosFrontendIpConfigurationSettings', module='types')
+        key "gatewayLoadBalancer": ForwardRef('SubResource', module='types')
+        key "privateIPAddress": str
+        key "privateIPAddressVersion": Union[str, IPVersion]
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('PublicIPAddress', module='types')
+        key "publicIPPrefix": ForwardRef('SubResource', module='types')
+        key "subnet": ForwardRef('Subnet', module='types')
+        ddos_settings: DdosFrontendIpConfigurationSettings
+        gateway_load_balancer: SubResource
+        inboundNatPools: list[SubResource]
+        inboundNatRules: list[SubResource]
+        inbound_nat_pools: list[SubResource]
+        inbound_nat_rules: list[SubResource]
+        loadBalancingRules: list[SubResource]
+        load_balancing_rules: list[SubResource]
+        outboundRules: list[SubResource]
+        outbound_rules: list[SubResource]
+        private_ip_address: str
+        private_ip_address_version: Union[str, IPVersion]
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: PublicIPAddress
+        public_ip_prefix: SubResource
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.GatewayCustomBgpIpAddressIpConfiguration(TypedDict, total=False):
+        key "customBgpIpAddress": Required[str]
+        key "ipConfigurationId": Required[str]
+        custom_bgp_ip_address: str
+        ip_configuration_id: str
+
+
+    class azure.mgmt.network.types.GatewayLoadBalancerTunnelInterface(TypedDict, total=False):
+        key "identifier": int
+        key "port": int
+        key "protocol": Union[str, GatewayLoadBalancerTunnelProtocol]
+        key "type": Union[str, GatewayLoadBalancerTunnelInterfaceType]
+        identifier: int
+        port: int
+        protocol: Union[str, GatewayLoadBalancerTunnelProtocol]
+        type: Union[str, GatewayLoadBalancerTunnelInterfaceType]
+
+
+    class azure.mgmt.network.types.GenerateExpressRoutePortsLOARequest(TypedDict, total=False):
+        key "customerName": Required[str]
+        customer_name: str
+
+
+    class azure.mgmt.network.types.GetInboundRoutesParameters(TypedDict, total=False):
+        key "connectionType": str
+        key "resourceUri": str
+        connection_type: str
+        resource_uri: str
+
+
+    class azure.mgmt.network.types.GetOutboundRoutesParameters(TypedDict, total=False):
+        key "connectionType": str
+        key "resourceUri": str
+        connection_type: str
+        resource_uri: str
+
+
+    class azure.mgmt.network.types.GetVpnSitesConfigurationRequest(TypedDict, total=False):
+        key "outputBlobSasUrl": Required[str]
+        output_blob_sas_url: str
+        vpnSites: list[str]
+        vpn_sites: list[str]
+
+
+    class azure.mgmt.network.types.GroupByUserSession(TypedDict, total=False):
+        key "groupByVariables": Required[list[GroupByVariable]]
+        group_by_variables: list[GroupByVariable]
+
+
+    class azure.mgmt.network.types.GroupByVariable(TypedDict, total=False):
+        key "variableName": Required[Union[str, ApplicationGatewayFirewallUserSessionVariable]]
+        variable_name: Union[str, ApplicationGatewayFirewallUserSessionVariable]
+
+
+    class azure.mgmt.network.types.HTTPConfiguration(TypedDict, total=False):
+        key "method": Union[str, HTTPMethod]
+        headers: list[HTTPHeader]
+        method: Union[str, HTTPMethod]
+        validStatusCodes: list[int]
+        valid_status_codes: list[int]
+
+
+    class azure.mgmt.network.types.HTTPHeader(TypedDict, total=False):
+        key "name": str
+        key "value": str
+        name: str
+        value: str
+
+
+    class azure.mgmt.network.types.HeaderValueMatcher(TypedDict, total=False):
+        key "ignoreCase": bool
+        key "negate": bool
+        key "pattern": str
+        ignore_case: bool
+        negate: bool
+        pattern: str
+
+
+    class azure.mgmt.network.types.Hub(TypedDict, total=False):
+        key "resourceId": str
+        key "resourceType": str
+        resource_id: str
+        resource_type: str
+
+
+    class azure.mgmt.network.types.HubIPAddresses(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "publicIPs": ForwardRef('HubPublicIPAddresses', module='types')
+        private_ip_address: str
+        public_i_ps: HubPublicIPAddresses
+
+
+    class azure.mgmt.network.types.HubIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('PublicIPAddress', module='types')
+        key "subnet": ForwardRef('Subnet', module='types')
+        private_ip_address: str
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: PublicIPAddress
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.HubIpConfiguration(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('HubIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: HubIPConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.HubPublicIPAddresses(TypedDict, total=False):
+        key "count": int
+        addresses: list[AzureFirewallPublicIPAddress]
+        count: int
+
+
+    class azure.mgmt.network.types.HubRoute(TypedDict, total=False):
+        key "destinationType": Required[str]
+        key "destinations": Required[list[str]]
+        key "name": Required[str]
+        key "nextHop": Required[str]
+        key "nextHopType": Required[str]
+        destination_type: str
+        destinations: list[str]
+        name: str
+        next_hop: str
+        next_hop_type: str
+
+
+    class azure.mgmt.network.types.HubRouteTable(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('HubRouteTableProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: HubRouteTableProperties
+        type: str
+
+
+    class azure.mgmt.network.types.HubRouteTableProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        associatedConnections: list[str]
+        associated_connections: list[str]
+        labels: list[str]
+        propagatingConnections: list[str]
+        propagating_connections: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        routes: list[HubRoute]
+
+
+    class azure.mgmt.network.types.HubVirtualNetworkConnection(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('HubVirtualNetworkConnectionProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: HubVirtualNetworkConnectionProperties
+
+
+    class azure.mgmt.network.types.HubVirtualNetworkConnectionProperties(TypedDict, total=False):
+        key "allowHubToRemoteVnetTransit": bool
+        key "allowRemoteVnetToUseHubVnetGateways": bool
+        key "connectionPolicy": ForwardRef('SubResource', module='types')
+        key "enableInternetSecurity": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "remoteVirtualNetwork": ForwardRef('SubResource', module='types')
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        allow_hub_to_remote_vnet_transit: bool
+        allow_remote_vnet_to_use_hub_vnet_gateways: bool
+        connection_policy: SubResource
+        enable_internet_security: bool
+        provisioning_state: Union[str, ProvisioningState]
+        remote_virtual_network: SubResource
+        routing_configuration: RoutingConfiguration
+
+
+    class azure.mgmt.network.types.IDPSQueryObject(TypedDict, total=False):
+        key "orderBy": ForwardRef('OrderBy', module='types')
+        key "resultsPerPage": int
+        key "search": str
+        key "skip": int
+        filters: list[FilterItems]
+        order_by: OrderBy
+        results_per_page: int
+        search: str
+        skip: int
+
+
+    class azure.mgmt.network.types.IPConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('IPConfigurationPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: IPConfigurationPropertiesFormat
+
+
+    class azure.mgmt.network.types.IPConfigurationBgpPeeringAddress(TypedDict, total=False):
+        key "ipconfigurationId": str
+        customBgpIpAddresses: list[str]
+        custom_bgp_ip_addresses: list[str]
+        defaultBgpIpAddresses: list[str]
+        default_bgp_ip_addresses: list[str]
+        ipconfiguration_id: str
+        tunnelIpAddresses: list[str]
+        tunnel_ip_addresses: list[str]
+
+
+    class azure.mgmt.network.types.IPConfigurationProfile(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('IPConfigurationProfilePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: IPConfigurationProfilePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.IPConfigurationProfilePropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "subnet": ForwardRef('Subnet', module='types')
+        provisioning_state: Union[str, ProvisioningState]
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.IPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('PublicIPAddress', module='types')
+        key "subnet": ForwardRef('Subnet', module='types')
+        private_ip_address: str
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: PublicIPAddress
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.IPRule(TypedDict, total=False):
+        key "addressPrefix": str
+        address_prefix: str
+
+
+    class azure.mgmt.network.types.IPTraffic(TypedDict, total=False):
+        key "destinationIps": Required[list[str]]
+        key "destinationPorts": Required[list[str]]
+        key "protocols": Required[list[Union[str, NetworkProtocol]]]
+        key "sourceIps": Required[list[str]]
+        key "sourcePorts": Required[list[str]]
+        destination_ips: list[str]
+        destination_ports: list[str]
+        protocols: list[Union[str, NetworkProtocol]]
+        source_ips: list[str]
+        source_ports: list[str]
+
+
+    class azure.mgmt.network.types.InboundNatPool(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('InboundNatPoolPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: InboundNatPoolPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.InboundNatPoolPropertiesFormat(TypedDict, total=False):
+        key "backendPort": Required[int]
+        key "enableFloatingIP": bool
+        key "enableTcpReset": bool
+        key "frontendIPConfiguration": ForwardRef('SubResource', module='types')
+        key "frontendPortRangeEnd": Required[int]
+        key "frontendPortRangeStart": Required[int]
+        key "idleTimeoutInMinutes": int
+        key "protocol": Required[Union[str, TransportProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        backend_port: int
+        enable_floating_ip: bool
+        enable_tcp_reset: bool
+        frontend_ip_configuration: SubResource
+        frontend_port_range_end: int
+        frontend_port_range_start: int
+        idle_timeout_in_minutes: int
+        protocol: Union[str, TransportProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.InboundNatRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('InboundNatRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: InboundNatRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.InboundNatRulePropertiesFormat(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendIPConfiguration": ForwardRef('NetworkInterfaceIPConfiguration', module='types')
+        key "backendPort": int
+        key "enableFloatingIP": bool
+        key "enableTcpReset": bool
+        key "frontendIPConfiguration": ForwardRef('SubResource', module='types')
+        key "frontendPort": int
+        key "frontendPortRangeEnd": int
+        key "frontendPortRangeStart": int
+        key "idleTimeoutInMinutes": int
+        key "protocol": Union[str, TransportProtocol]
+        key "provisioningState": Union[str, ProvisioningState]
+        backend_address_pool: SubResource
+        backend_ip_configuration: NetworkInterfaceIPConfiguration
+        backend_port: int
+        enable_floating_ip: bool
+        enable_tcp_reset: bool
+        frontend_ip_configuration: SubResource
+        frontend_port: int
+        frontend_port_range_end: int
+        frontend_port_range_start: int
+        idle_timeout_in_minutes: int
+        protocol: Union[str, TransportProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.InboundSecurityRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('InboundSecurityRuleProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: InboundSecurityRuleProperties
+        type: str
+
+
+    class azure.mgmt.network.types.InboundSecurityRuleProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "ruleType": Union[str, InboundSecurityRuleType]
+        provisioning_state: Union[str, ProvisioningState]
+        rule_type: Union[str, InboundSecurityRuleType]
+        rules: list[InboundSecurityRules]
+
+
+    class azure.mgmt.network.types.InboundSecurityRules(TypedDict, total=False):
+        key "destinationPortRange": int
+        key "name": str
+        key "protocol": Union[str, InboundSecurityRulesProtocol]
+        key "sourceAddressPrefix": str
+        appliesOn: list[str]
+        applies_on: list[str]
+        destinationPortRanges: list[str]
+        destination_port_range: int
+        destination_port_ranges: list[str]
+        name: str
+        protocol: Union[str, InboundSecurityRulesProtocol]
+        source_address_prefix: str
+
+
+    class azure.mgmt.network.types.IntentContent(TypedDict, total=False):
+        key "description": str
+        key "destinationResourceId": Required[str]
+        key "ipTraffic": Required[IPTraffic]
+        key "sourceResourceId": Required[str]
+        description: str
+        destination_resource_id: str
+        ip_traffic: IPTraffic
+        source_resource_id: str
+
+
+    class azure.mgmt.network.types.InterconnectGroup(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('InterconnectGroupPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: InterconnectGroupPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.InterconnectGroupPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "scope": Union[str, InterconnectGroupScope]
+        key "subgroupProfile": Required[SubgroupProfile]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        scope: Union[str, InterconnectGroupScope]
+        subgroup_profile: SubgroupProfile
+        subgroups: list[Subgroup]
+
+
+    class azure.mgmt.network.types.InternetIngressPublicIpsProperties(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.IpAllocation(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('IpAllocationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: IpAllocationPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.IpAllocationPropertiesFormat(TypedDict, total=False):
+        key "ipamAllocationId": str
+        key "prefix": str
+        key "prefixLength": Optional[int]
+        key "prefixType": Union[str, IPVersion]
+        key "subnet": ForwardRef('SubResource', module='types')
+        key "type": Union[str, IpAllocationType]
+        key "virtualNetwork": ForwardRef('SubResource', module='types')
+        allocationTags: dict[str, str]
+        allocation_tags: dict[str, str]
+        ipam_allocation_id: str
+        prefix: str
+        prefix_length: int
+        prefix_type: Union[str, IPVersion]
+        subnet: SubResource
+        type: Union[str, IpAllocationType]
+        virtual_network: SubResource
+
+
+    class azure.mgmt.network.types.IpGroup(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('IpGroupPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: IpGroupPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.IpGroupPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        firewallPolicies: list[SubResource]
+        firewall_policies: list[SubResource]
+        firewalls: list[SubResource]
+        ipAddresses: list[str]
+        ip_addresses: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.IpTag(TypedDict, total=False):
+        key "ipTagType": str
+        key "tag": str
+        ip_tag_type: str
+        tag: str
+
+
+    class azure.mgmt.network.types.IpamPool(CommonTrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[IpamPoolProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: IpamPoolProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.IpamPoolPrefixAllocation(TypedDict, total=False):
+        key "numberOfIpAddresses": str
+        key "pool": ForwardRef('IpamPoolPrefixAllocationPool', module='types')
+        allocatedAddressPrefixes: list[str]
+        allocated_address_prefixes: list[str]
+        number_of_ip_addresses: str
+        pool: IpamPoolPrefixAllocationPool
+
+
+    class azure.mgmt.network.types.IpamPoolPrefixAllocationPool(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.IpamPoolProperties(TypedDict, total=False):
+        key "addressPrefixes": Required[list[str]]
+        key "description": str
+        key "displayName": str
+        key "parentPoolName": str
+        key "provisioningState": Union[str, ProvisioningState]
+        address_prefixes: list[str]
+        description: str
+        display_name: str
+        ipAddressType: list[Union[str, IpType]]
+        ip_address_type: list[Union[str, IpType]]
+        parent_pool_name: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.IpamPoolUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('IpamPoolUpdateProperties', module='types')
+        properties: IpamPoolUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.IpamPoolUpdateProperties(TypedDict, total=False):
+        key "description": str
+        key "displayName": str
+        description: str
+        display_name: str
+
+
+    class azure.mgmt.network.types.IpsecPolicy(TypedDict, total=False):
+        key "dhGroup": Required[Union[str, DhGroup]]
+        key "ikeEncryption": Required[Union[str, IkeEncryption]]
+        key "ikeIntegrity": Required[Union[str, IkeIntegrity]]
+        key "ipsecEncryption": Required[Union[str, IpsecEncryption]]
+        key "ipsecIntegrity": Required[Union[str, IpsecIntegrity]]
+        key "pfsGroup": Required[Union[str, PfsGroup]]
+        key "saDataSizeKilobytes": Required[int]
+        key "saLifeTimeSeconds": Required[int]
+        dh_group: Union[str, DhGroup]
+        ike_encryption: Union[str, IkeEncryption]
+        ike_integrity: Union[str, IkeIntegrity]
+        ipsec_encryption: Union[str, IpsecEncryption]
+        ipsec_integrity: Union[str, IpsecIntegrity]
+        pfs_group: Union[str, PfsGroup]
+        sa_data_size_kilobytes: int
+        sa_life_time_seconds: int
+
+
+    class azure.mgmt.network.types.Ipv6CircuitConnectionConfig(TypedDict, total=False):
+        key "addressPrefix": str
+        key "circuitConnectionStatus": Union[str, CircuitConnectionStatus]
+        address_prefix: str
+        circuit_connection_status: Union[str, CircuitConnectionStatus]
+
+
+    class azure.mgmt.network.types.Ipv6ExpressRouteCircuitPeeringConfig(TypedDict, total=False):
+        key "microsoftPeeringConfig": ForwardRef('ExpressRouteCircuitPeeringConfig', module='types')
+        key "primaryPeerAddressPrefix": str
+        key "routeFilter": ForwardRef('SubResource', module='types')
+        key "secondaryPeerAddressPrefix": str
+        key "state": Union[str, ExpressRouteCircuitPeeringState]
+        microsoft_peering_config: ExpressRouteCircuitPeeringConfig
+        primary_peer_address_prefix: str
+        route_filter: SubResource
+        secondary_peer_address_prefix: str
+        state: Union[str, ExpressRouteCircuitPeeringState]
+
+
+    class azure.mgmt.network.types.LoadBalancer(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('LoadBalancerPropertiesFormat', module='types')
+        key "sku": ForwardRef('LoadBalancerSku', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: LoadBalancerPropertiesFormat
+        sku: LoadBalancerSku
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.LoadBalancerBackendAddress(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('LoadBalancerBackendAddressPropertiesFormat', module='types')
+        name: str
+        properties: LoadBalancerBackendAddressPropertiesFormat
+
+
+    class azure.mgmt.network.types.LoadBalancerBackendAddressPropertiesFormat(TypedDict, total=False):
+        key "adminState": Union[str, LoadBalancerBackendAddressAdminState]
+        key "ipAddress": str
+        key "loadBalancerFrontendIPConfiguration": ForwardRef('SubResource', module='types')
+        key "networkInterfaceIPConfiguration": ForwardRef('SubResource', module='types')
+        key "subnet": ForwardRef('SubResource', module='types')
+        key "virtualNetwork": ForwardRef('SubResource', module='types')
+        admin_state: Union[str, LoadBalancerBackendAddressAdminState]
+        inboundNatRulesPortMapping: list[NatRulePortMapping]
+        inbound_nat_rules_port_mapping: list[NatRulePortMapping]
+        ip_address: str
+        load_balancer_frontend_ip_configuration: SubResource
+        network_interface_ip_configuration: SubResource
+        subnet: SubResource
+        virtual_network: SubResource
+
+
+    class azure.mgmt.network.types.LoadBalancerPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "scope": Union[str, LoadBalancerScope]
+        backendAddressPools: list[BackendAddressPool]
+        backend_address_pools: list[BackendAddressPool]
+        frontendIPConfigurations: list[FrontendIPConfiguration]
+        frontend_ip_configurations: list[FrontendIPConfiguration]
+        inboundNatPools: list[InboundNatPool]
+        inboundNatRules: list[InboundNatRule]
+        inbound_nat_pools: list[InboundNatPool]
+        inbound_nat_rules: list[InboundNatRule]
+        loadBalancingRules: list[LoadBalancingRule]
+        load_balancing_rules: list[LoadBalancingRule]
+        outboundRules: list[OutboundRule]
+        outbound_rules: list[OutboundRule]
+        probes: list[Probe]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        scope: Union[str, LoadBalancerScope]
+
+
+    class azure.mgmt.network.types.LoadBalancerSku(TypedDict, total=False):
+        key "name": Union[str, LoadBalancerSkuName]
+        key "tier": Union[str, LoadBalancerSkuTier]
+        name: Union[str, LoadBalancerSkuName]
+        tier: Union[str, LoadBalancerSkuTier]
+
+
+    class azure.mgmt.network.types.LoadBalancerVipSwapRequest(TypedDict, total=False):
+        frontendIPConfigurations: list[LoadBalancerVipSwapRequestFrontendIPConfiguration]
+        frontend_ip_configurations: list[LoadBalancerVipSwapRequestFrontendIPConfiguration]
+
+
+    class azure.mgmt.network.types.LoadBalancerVipSwapRequestFrontendIPConfiguration(TypedDict, total=False):
+        key "id": str
+        key "properties": ForwardRef('LoadBalancerVipSwapRequestFrontendIPConfigurationProperties', module='types')
+        id: str
+        properties: LoadBalancerVipSwapRequestFrontendIPConfigurationProperties
+
+
+    class azure.mgmt.network.types.LoadBalancerVipSwapRequestFrontendIPConfigurationProperties(TypedDict, total=False):
+        key "publicIPAddress": ForwardRef('SubResource', module='types')
+        public_ip_address: SubResource
+
+
+    class azure.mgmt.network.types.LoadBalancingRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('LoadBalancingRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: LoadBalancingRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.LoadBalancingRulePropertiesFormat(TypedDict, total=False):
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendPort": int
+        key "disableOutboundSnat": bool
+        key "enableConnectionTracking": bool
+        key "enableFloatingIP": bool
+        key "enableTcpReset": bool
+        key "frontendIPConfiguration": ForwardRef('SubResource', module='types')
+        key "frontendPort": Required[int]
+        key "idleTimeoutInMinutes": int
+        key "loadDistribution": Union[str, LoadDistribution]
+        key "probe": ForwardRef('SubResource', module='types')
+        key "protocol": Required[Union[str, TransportProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        backendAddressPools: list[SubResource]
+        backend_address_pool: SubResource
+        backend_address_pools: list[SubResource]
+        backend_port: int
+        disable_outbound_snat: bool
+        enable_connection_tracking: bool
+        enable_floating_ip: bool
+        enable_tcp_reset: bool
+        frontend_ip_configuration: SubResource
+        frontend_port: int
+        idle_timeout_in_minutes: int
+        load_distribution: Union[str, LoadDistribution]
+        probe: SubResource
+        protocol: Union[str, TransportProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.LocalNetworkGateway(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": Required[LocalNetworkGatewayPropertiesFormat]
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: LocalNetworkGatewayPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.LocalNetworkGatewayPropertiesFormat(TypedDict, total=False):
+        key "bgpSettings": ForwardRef('BgpSettings', module='types')
+        key "fqdn": str
+        key "gatewayIpAddress": str
+        key "localNetworkAddressSpace": ForwardRef('AddressSpace', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        bgp_settings: BgpSettings
+        fqdn: str
+        gateway_ip_address: str
+        local_network_address_space: AddressSpace
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.ManagedRuleGroupOverride(TypedDict, total=False):
+        key "ruleGroupName": Required[str]
+        rule_group_name: str
+        rules: list[ManagedRuleOverride]
+
+
+    class azure.mgmt.network.types.ManagedRuleOverride(TypedDict, total=False):
+        key "action": Union[str, ActionType]
+        key "ruleId": Required[str]
+        key "sensitivity": Union[str, SensitivityType]
+        key "state": Union[str, ManagedRuleEnabledState]
+        action: Union[str, ActionType]
+        rule_id: str
+        sensitivity: Union[str, SensitivityType]
+        state: Union[str, ManagedRuleEnabledState]
+
+
+    class azure.mgmt.network.types.ManagedRuleSet(TypedDict, total=False):
+        key "ruleSetType": Required[str]
+        key "ruleSetVersion": Required[str]
+        computedDisabledRules: list[ManagedRuleSetRuleGroup]
+        computed_disabled_rules: list[ManagedRuleSetRuleGroup]
+        ruleGroupOverrides: list[ManagedRuleGroupOverride]
+        rule_group_overrides: list[ManagedRuleGroupOverride]
+        rule_set_type: str
+        rule_set_version: str
+
+
+    class azure.mgmt.network.types.ManagedRuleSetRuleGroup(TypedDict, total=False):
+        key "ruleGroupName": Required[str]
+        rule_group_name: str
+        rules: list[str]
+
+
+    class azure.mgmt.network.types.ManagedRulesDefinition(TypedDict, total=False):
+        key "managedRuleSets": Required[list[ManagedRuleSet]]
+        exceptions: list[ExceptionEntry]
+        exclusions: list[OwaspCrsExclusionEntry]
+        managed_rule_sets: list[ManagedRuleSet]
+
+
+    class azure.mgmt.network.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, ResourceIdentityType]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ResourceIdentityType]
+        userAssignedIdentities: dict[str, ManagedServiceIdentityUserAssignedIdentities]
+        user_assigned_identities: dict[str, ManagedServiceIdentityUserAssignedIdentities]
+
+
+    class azure.mgmt.network.types.ManagedServiceIdentityUserAssignedIdentities(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        client_id: str
+        principal_id: str
+
+
+    class azure.mgmt.network.types.MatchCondition(TypedDict, total=False):
+        key "matchValues": Required[list[str]]
+        key "matchVariables": Required[list[MatchVariable]]
+        key "negationConditon": bool
+        key "operator": Required[Union[str, WebApplicationFirewallOperator]]
+        match_values: list[str]
+        match_variables: list[MatchVariable]
+        negation_conditon: bool
+        operator: Union[str, WebApplicationFirewallOperator]
+        transforms: list[Union[str, WebApplicationFirewallTransform]]
+
+
+    class azure.mgmt.network.types.MatchVariable(TypedDict, total=False):
+        key "selector": str
+        key "variableName": Required[Union[str, WebApplicationFirewallMatchVariable]]
+        selector: str
+        variable_name: Union[str, WebApplicationFirewallMatchVariable]
+
+
+    class azure.mgmt.network.types.MigrateLoadBalancerToIpBasedRequest(TypedDict, total=False):
+        pools: list[str]
+
+
+    class azure.mgmt.network.types.NatGateway(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NatGatewayPropertiesFormat', module='types')
+        key "sku": ForwardRef('NatGatewaySku', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: NatGatewayPropertiesFormat
+        sku: NatGatewaySku
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.NatGatewayPropertiesFormat(TypedDict, total=False):
+        key "idleTimeoutInMinutes": int
+        key "nat64": Union[str, Nat64State]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "serviceGateway": ForwardRef('SubResource', module='types')
+        key "sourceVirtualNetwork": ForwardRef('SubResource', module='types')
+        idle_timeout_in_minutes: int
+        nat64: Union[str, Nat64State]
+        provisioning_state: Union[str, ProvisioningState]
+        publicIpAddresses: list[SubResource]
+        publicIpAddressesV6: list[SubResource]
+        publicIpPrefixes: list[SubResource]
+        publicIpPrefixesV6: list[SubResource]
+        public_ip_addresses: list[SubResource]
+        public_ip_addresses_v6: list[SubResource]
+        public_ip_prefixes: list[SubResource]
+        public_ip_prefixes_v6: list[SubResource]
+        resource_guid: str
+        service_gateway: SubResource
+        source_virtual_network: SubResource
+        subnets: list[SubResource]
+
+
+    class azure.mgmt.network.types.NatGatewaySku(TypedDict, total=False):
+        key "name": Union[str, NatGatewaySkuName]
+        name: Union[str, NatGatewaySkuName]
+
+
+    class azure.mgmt.network.types.NatRule(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        key "ruleType": Required[Literal[FirewallPolicyRuleType.NAT_RULE]]
+        key "translatedAddress": str
+        key "translatedFqdn": str
+        key "translatedPort": str
+        description: str
+        destinationAddresses: list[str]
+        destinationPorts: list[str]
+        destination_addresses: list[str]
+        destination_ports: list[str]
+        ipProtocols: list[Union[str, FirewallPolicyRuleNetworkProtocol]]
+        ip_protocols: list[Union[str, FirewallPolicyRuleNetworkProtocol]]
+        name: str
+        rule_type: Literal[FirewallPolicyRuleType.NAT_RULE]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+        translated_address: str
+        translated_fqdn: str
+        translated_port: str
+
+
+    class azure.mgmt.network.types.NatRulePortMapping(TypedDict, total=False):
+        key "backendPort": int
+        key "frontendPort": int
+        key "inboundNatRuleName": str
+        backend_port: int
+        frontend_port: int
+        inbound_nat_rule_name: str
+
+
+    class azure.mgmt.network.types.NetworkConfigurationDiagnosticParameters(TypedDict, total=False):
+        key "profiles": Required[list[NetworkConfigurationDiagnosticProfile]]
+        key "targetResourceId": Required[str]
+        key "verbosityLevel": Union[str, VerbosityLevel]
+        profiles: list[NetworkConfigurationDiagnosticProfile]
+        target_resource_id: str
+        verbosity_level: Union[str, VerbosityLevel]
+
+
+    class azure.mgmt.network.types.NetworkConfigurationDiagnosticProfile(TypedDict, total=False):
+        key "destination": Required[str]
+        key "destinationPort": Required[str]
+        key "direction": Required[Union[str, Direction]]
+        key "protocol": Required[str]
+        key "source": Required[str]
+        destination: str
+        destination_port: str
+        direction: Union[str, Direction]
+        protocol: str
+        source: str
+
+
+    class azure.mgmt.network.types.NetworkGroup(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NetworkGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: NetworkGroupProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkGroupProperties(TypedDict, total=False):
+        key "description": str
+        key "memberType": Union[str, GroupMemberType]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        description: str
+        member_type: Union[str, GroupMemberType]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.NetworkIntentPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkIntentPolicyConfiguration(TypedDict, total=False):
+        key "networkIntentPolicyName": str
+        key "sourceNetworkIntentPolicy": ForwardRef('NetworkIntentPolicy', module='types')
+        network_intent_policy_name: str
+        source_network_intent_policy: NetworkIntentPolicy
+
+
+    class azure.mgmt.network.types.NetworkInterface(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NetworkInterfacePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: NetworkInterfacePropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkInterfaceDnsSettings(TypedDict, total=False):
+        key "internalDnsNameLabel": str
+        key "internalDomainNameSuffix": str
+        key "internalFqdn": str
+        appliedDnsServers: list[str]
+        applied_dns_servers: list[str]
+        dnsServers: list[str]
+        dns_servers: list[str]
+        internal_dns_name_label: str
+        internal_domain_name_suffix: str
+        internal_fqdn: str
+
+
+    class azure.mgmt.network.types.NetworkInterfaceIPConfiguration(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NetworkInterfaceIPConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: NetworkInterfaceIPConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties(TypedDict, total=False):
+        key "groupId": str
+        key "requiredMemberName": str
+        fqdns: list[str]
+        group_id: str
+        required_member_name: str
+
+
+    class azure.mgmt.network.types.NetworkInterfaceIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "gatewayLoadBalancer": ForwardRef('SubResource', module='types')
+        key "primary": bool
+        key "privateIPAddress": str
+        key "privateIPAddressPrefixLength": Optional[int]
+        key "privateIPAddressVersion": Union[str, IPVersion]
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "privateLinkConnectionProperties": ForwardRef('NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('PublicIPAddress', module='types')
+        key "subnet": ForwardRef('Subnet', module='types')
+        applicationGatewayBackendAddressPools: list[ApplicationGatewayBackendAddressPool]
+        applicationSecurityGroups: list[ApplicationSecurityGroup]
+        application_gateway_backend_address_pools: list[ApplicationGatewayBackendAddressPool]
+        application_security_groups: list[ApplicationSecurityGroup]
+        gateway_load_balancer: SubResource
+        loadBalancerBackendAddressPools: list[BackendAddressPool]
+        loadBalancerInboundNatRules: list[InboundNatRule]
+        load_balancer_backend_address_pools: list[BackendAddressPool]
+        load_balancer_inbound_nat_rules: list[InboundNatRule]
+        primary: bool
+        private_ip_address: str
+        private_ip_address_prefix_length: int
+        private_ip_address_version: Union[str, IPVersion]
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        private_link_connection_properties: NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: PublicIPAddress
+        subnet: Subnet
+        virtualNetworkTaps: list[VirtualNetworkTap]
+        virtual_network_taps: list[VirtualNetworkTap]
+
+
+    class azure.mgmt.network.types.NetworkInterfacePropertiesFormat(TypedDict, total=False):
+        key "auxiliaryMode": Union[str, NetworkInterfaceAuxiliaryMode]
+        key "auxiliarySku": Union[str, NetworkInterfaceAuxiliarySku]
+        key "defaultOutboundConnectivityEnabled": bool
+        key "disableTcpStateTracking": bool
+        key "dnsSettings": ForwardRef('NetworkInterfaceDnsSettings', module='types')
+        key "dscpConfiguration": ForwardRef('SubResource', module='types')
+        key "enableAcceleratedNetworking": bool
+        key "enableIPForwarding": bool
+        key "macAddress": str
+        key "migrationPhase": Union[str, NetworkInterfaceMigrationPhase]
+        key "networkSecurityGroup": ForwardRef('NetworkSecurityGroup', module='types')
+        key "nicType": Union[str, NetworkInterfaceNicType]
+        key "primary": bool
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateLinkService": ForwardRef('PrivateLinkService', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "virtualMachine": ForwardRef('SubResource', module='types')
+        key "vnetEncryptionSupported": bool
+        key "workloadType": str
+        auxiliary_mode: Union[str, NetworkInterfaceAuxiliaryMode]
+        auxiliary_sku: Union[str, NetworkInterfaceAuxiliarySku]
+        default_outbound_connectivity_enabled: bool
+        disable_tcp_state_tracking: bool
+        dns_settings: NetworkInterfaceDnsSettings
+        dscp_configuration: SubResource
+        enable_accelerated_networking: bool
+        enable_ip_forwarding: bool
+        hostedWorkloads: list[str]
+        hosted_workloads: list[str]
+        ipConfigurations: list[NetworkInterfaceIPConfiguration]
+        ip_configurations: list[NetworkInterfaceIPConfiguration]
+        mac_address: str
+        migration_phase: Union[str, NetworkInterfaceMigrationPhase]
+        network_security_group: NetworkSecurityGroup
+        nic_type: Union[str, NetworkInterfaceNicType]
+        primary: bool
+        private_endpoint: PrivateEndpoint
+        private_link_service: PrivateLinkService
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        tapConfigurations: list[NetworkInterfaceTapConfiguration]
+        tap_configurations: list[NetworkInterfaceTapConfiguration]
+        virtual_machine: SubResource
+        vnet_encryption_supported: bool
+        workload_type: str
+
+
+    class azure.mgmt.network.types.NetworkInterfaceTapConfiguration(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NetworkInterfaceTapConfigurationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: NetworkInterfaceTapConfigurationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkInterfaceTapConfigurationPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "virtualNetworkTap": ForwardRef('VirtualNetworkTap', module='types')
+        provisioning_state: Union[str, ProvisioningState]
+        virtual_network_tap: VirtualNetworkTap
+
+
+    class azure.mgmt.network.types.NetworkManager(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NetworkManagerProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: NetworkManagerProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkManagerCommit(TypedDict, total=False):
+        key "commitId": str
+        key "commitType": Required[Union[str, ConfigurationType]]
+        key "targetLocations": Required[list[str]]
+        commit_id: str
+        commit_type: Union[str, ConfigurationType]
+        configurationIds: list[str]
+        configuration_ids: list[str]
+        target_locations: list[str]
+
+
+    class azure.mgmt.network.types.NetworkManagerConnection(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NetworkManagerConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: NetworkManagerConnectionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkManagerConnectionProperties(TypedDict, total=False):
+        key "connectionState": Union[str, ScopeConnectionState]
+        key "description": str
+        key "networkManagerId": str
+        connection_state: Union[str, ScopeConnectionState]
+        description: str
+        network_manager_id: str
+
+
+    class azure.mgmt.network.types.NetworkManagerDeploymentStatusParameter(TypedDict, total=False):
+        key "skipToken": str
+        deploymentTypes: list[Union[str, ConfigurationType]]
+        deployment_types: list[Union[str, ConfigurationType]]
+        regions: list[str]
+        skip_token: str
+
+
+    class azure.mgmt.network.types.NetworkManagerProperties(TypedDict, total=False):
+        key "description": str
+        key "networkManagerScopes": Required[NetworkManagerPropertiesNetworkManagerScopes]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        description: str
+        networkManagerScopeAccesses: list[Union[str, ConfigurationType]]
+        network_manager_scope_accesses: list[Union[str, ConfigurationType]]
+        network_manager_scopes: NetworkManagerPropertiesNetworkManagerScopes
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.NetworkManagerPropertiesNetworkManagerScopes(TypedDict, total=False):
+        crossTenantScopes: list[CrossTenantScopes]
+        cross_tenant_scopes: list[CrossTenantScopes]
+        managementGroups: list[str]
+        management_groups: list[str]
+        subscriptions: list[str]
+
+
+    class azure.mgmt.network.types.NetworkManagerRoutingConfiguration(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NetworkManagerRoutingConfigurationPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: NetworkManagerRoutingConfigurationPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkManagerRoutingConfigurationPropertiesFormat(TypedDict, total=False):
+        key "description": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "routeTableUsageMode": Union[str, RouteTableUsageMode]
+        description: str
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        route_table_usage_mode: Union[str, RouteTableUsageMode]
+
+
+    class azure.mgmt.network.types.NetworkManagerRoutingGroupItem(TypedDict, total=False):
+        key "networkGroupId": Required[str]
+        network_group_id: str
+
+
+    class azure.mgmt.network.types.NetworkManagerSecurityGroupItem(TypedDict, total=False):
+        key "networkGroupId": Required[str]
+        network_group_id: str
+
+
+    class azure.mgmt.network.types.NetworkProfile(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NetworkProfilePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: NetworkProfilePropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkProfilePropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        containerNetworkInterfaceConfigurations: list[ContainerNetworkInterfaceConfiguration]
+        containerNetworkInterfaces: list[ContainerNetworkInterface]
+        container_network_interface_configurations: list[ContainerNetworkInterfaceConfiguration]
+        container_network_interfaces: list[ContainerNetworkInterface]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.NetworkRule(TypedDict, total=False):
+        key "description": str
+        key "name": str
+        key "ruleType": Required[Literal[FirewallPolicyRuleType.NETWORK_RULE]]
+        description: str
+        destinationAddresses: list[str]
+        destinationFqdns: list[str]
+        destinationIpGroups: list[str]
+        destinationPorts: list[str]
+        destination_addresses: list[str]
+        destination_fqdns: list[str]
+        destination_ip_groups: list[str]
+        destination_ports: list[str]
+        ipProtocols: list[Union[str, FirewallPolicyRuleNetworkProtocol]]
+        ip_protocols: list[Union[str, FirewallPolicyRuleNetworkProtocol]]
+        name: str
+        rule_type: Literal[FirewallPolicyRuleType.NETWORK_RULE]
+        sourceAddresses: list[str]
+        sourceIpGroups: list[str]
+        source_addresses: list[str]
+        source_ip_groups: list[str]
+
+
+    class azure.mgmt.network.types.NetworkSecurityGroup(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NetworkSecurityGroupPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: NetworkSecurityGroupPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkSecurityGroupPropertiesFormat(TypedDict, total=False):
+        key "flushConnection": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        defaultSecurityRules: list[SecurityRule]
+        default_security_rules: list[SecurityRule]
+        flowLogs: list[FlowLog]
+        flow_logs: list[FlowLog]
+        flush_connection: bool
+        networkInterfaces: list[NetworkInterface]
+        network_interfaces: list[NetworkInterface]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        securityRules: list[SecurityRule]
+        security_rules: list[SecurityRule]
+        subnets: list[Subnet]
+
+
+    class azure.mgmt.network.types.NetworkSecurityPerimeter(SecurityPerimeterTrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('NetworkSecurityPerimeterProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: NetworkSecurityPerimeterProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkSecurityPerimeterProperties(TypedDict, total=False):
+        key "perimeterGuid": str
+        key "provisioningState": Union[str, NspProvisioningState]
+        perimeter_guid: str
+        provisioning_state: Union[str, NspProvisioningState]
+
+
+    class azure.mgmt.network.types.NetworkVirtualAppliance(Resource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NetworkVirtualAppliancePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: NetworkVirtualAppliancePropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkVirtualApplianceBootDiagnosticParameters(TypedDict, total=False):
+        key "consoleScreenshotStorageSasUrl": str
+        key "instanceId": int
+        key "serialConsoleStorageSasUrl": str
+        console_screenshot_storage_sas_url: str
+        instance_id: int
+        serial_console_storage_sas_url: str
+
+
+    class azure.mgmt.network.types.NetworkVirtualApplianceConnection(SubResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NetworkVirtualApplianceConnectionProperties', module='types')
+        id: str
+        name: str
+        properties: NetworkVirtualApplianceConnectionProperties
+
+
+    class azure.mgmt.network.types.NetworkVirtualApplianceConnectionProperties(TypedDict, total=False):
+        key "asn": int
+        key "enableInternetSecurity": bool
+        key "name": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        key "tunnelIdentifier": int
+        asn: int
+        bgpPeerAddress: list[str]
+        bgp_peer_address: list[str]
+        enable_internet_security: bool
+        name: str
+        provisioning_state: Union[str, ProvisioningState]
+        routing_configuration: RoutingConfiguration
+        tunnel_identifier: int
+
+
+    class azure.mgmt.network.types.NetworkVirtualApplianceInstanceIds(TypedDict, total=False):
+        instanceIds: list[str]
+        instance_ids: list[str]
+
+
+    class azure.mgmt.network.types.NetworkVirtualAppliancePropertiesFormat(TypedDict, total=False):
+        key "addressPrefix": str
+        key "cloudInitConfiguration": str
+        key "delegation": ForwardRef('DelegationProperties', module='types')
+        key "deploymentType": str
+        key "networkProfile": ForwardRef('NetworkVirtualAppliancePropertiesFormatNetworkProfile', module='types')
+        key "nvaSku": ForwardRef('VirtualApplianceSkuProperties', module='types')
+        key "partnerManagedResource": ForwardRef('PartnerManagedResourceProperties', module='types')
+        key "privateIpAddress": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sshPublicKey": str
+        key "virtualApplianceAsn": int
+        key "virtualHub": ForwardRef('SubResource', module='types')
+        additionalNics: list[VirtualApplianceAdditionalNicProperties]
+        additional_nics: list[VirtualApplianceAdditionalNicProperties]
+        address_prefix: str
+        bootStrapConfigurationBlobs: list[str]
+        boot_strap_configuration_blobs: list[str]
+        cloudInitConfigurationBlobs: list[str]
+        cloud_init_configuration: str
+        cloud_init_configuration_blobs: list[str]
+        delegation: DelegationProperties
+        deployment_type: str
+        inboundSecurityRules: list[SubResource]
+        inbound_security_rules: list[SubResource]
+        internetIngressPublicIps: list[InternetIngressPublicIpsProperties]
+        internet_ingress_public_ips: list[InternetIngressPublicIpsProperties]
+        network_profile: NetworkVirtualAppliancePropertiesFormatNetworkProfile
+        nvaInterfaceConfigurations: list[NvaInterfaceConfigurationsProperties]
+        nva_interface_configurations: list[NvaInterfaceConfigurationsProperties]
+        nva_sku: VirtualApplianceSkuProperties
+        partner_managed_resource: PartnerManagedResourceProperties
+        private_ip_address: str
+        provisioning_state: Union[str, ProvisioningState]
+        ssh_public_key: str
+        virtualApplianceConnections: list[SubResource]
+        virtualApplianceNics: list[VirtualApplianceNicProperties]
+        virtualApplianceSites: list[SubResource]
+        virtual_appliance_asn: int
+        virtual_appliance_connections: list[SubResource]
+        virtual_appliance_nics: list[VirtualApplianceNicProperties]
+        virtual_appliance_sites: list[SubResource]
+        virtual_hub: SubResource
+
+
+    class azure.mgmt.network.types.NetworkVirtualAppliancePropertiesFormatNetworkProfile(TypedDict, total=False):
+        networkInterfaceConfigurations: list[VirtualApplianceNetworkInterfaceConfiguration]
+        network_interface_configurations: list[VirtualApplianceNetworkInterfaceConfiguration]
+
+
+    class azure.mgmt.network.types.NetworkWatcher(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('NetworkWatcherPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: NetworkWatcherPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.NetworkWatcherPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.NextHopParameters(TypedDict, total=False):
+        key "destinationIPAddress": Required[str]
+        key "sourceIPAddress": Required[str]
+        key "targetNicResourceId": str
+        key "targetResourceId": Required[str]
+        destination_ip_address: str
+        source_ip_address: str
+        target_nic_resource_id: str
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.NspAccessRule(SecurityPerimeterProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NspAccessRuleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: NspAccessRuleProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NspAccessRuleProperties(TypedDict, total=False):
+        key "direction": Union[str, AccessRuleDirection]
+        key "provisioningState": Union[str, NspProvisioningState]
+        addressPrefixes: list[str]
+        address_prefixes: list[str]
+        direction: Union[str, AccessRuleDirection]
+        emailAddresses: list[str]
+        email_addresses: list[str]
+        fullyQualifiedDomainNames: list[str]
+        fully_qualified_domain_names: list[str]
+        networkSecurityPerimeters: list[PerimeterBasedAccessRule]
+        network_security_perimeters: list[PerimeterBasedAccessRule]
+        phoneNumbers: list[str]
+        phone_numbers: list[str]
+        provisioning_state: Union[str, NspProvisioningState]
+        serviceTags: list[str]
+        service_tags: list[str]
+        subscriptions: list[SubscriptionId]
+
+
+    class azure.mgmt.network.types.NspAssociation(SecurityPerimeterProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NspAssociationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: NspAssociationProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NspAssociationProperties(TypedDict, total=False):
+        key "accessMode": Union[str, AssociationAccessMode]
+        key "hasProvisioningIssues": str
+        key "privateLinkResource": ForwardRef('SubResource', module='types')
+        key "profile": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, NspProvisioningState]
+        access_mode: Union[str, AssociationAccessMode]
+        has_provisioning_issues: str
+        private_link_resource: SubResource
+        profile: SubResource
+        provisioning_state: Union[str, NspProvisioningState]
+
+
+    class azure.mgmt.network.types.NspLink(SecurityPerimeterProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NspLinkProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: NspLinkProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NspLinkProperties(TypedDict, total=False):
+        key "autoApprovedRemotePerimeterResourceId": str
+        key "description": str
+        key "provisioningState": Union[str, NspLinkProvisioningState]
+        key "remotePerimeterGuid": str
+        key "remotePerimeterLocation": str
+        key "status": Union[str, NspLinkStatus]
+        auto_approved_remote_perimeter_resource_id: str
+        description: str
+        localInboundProfiles: list[str]
+        localOutboundProfiles: list[str]
+        local_inbound_profiles: list[str]
+        local_outbound_profiles: list[str]
+        provisioning_state: Union[str, NspLinkProvisioningState]
+        remoteInboundProfiles: list[str]
+        remoteOutboundProfiles: list[str]
+        remote_inbound_profiles: list[str]
+        remote_outbound_profiles: list[str]
+        remote_perimeter_guid: str
+        remote_perimeter_location: str
+        status: Union[str, NspLinkStatus]
+
+
+    class azure.mgmt.network.types.NspLoggingConfiguration(SecurityPerimeterProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NspLoggingConfigurationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: NspLoggingConfigurationProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NspLoggingConfigurationProperties(TypedDict, total=False):
+        key "version": str
+        enabledLogCategories: list[str]
+        enabled_log_categories: list[str]
+        version: str
+
+
+    class azure.mgmt.network.types.NspProfile(SecurityPerimeterProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('NspProfileProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: NspProfileProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.NspProfileProperties(TypedDict, total=False):
+        key "accessRulesVersion": str
+        key "diagnosticSettingsVersion": str
+        access_rules_version: str
+        diagnostic_settings_version: str
+
+
+    class azure.mgmt.network.types.NvaInVnetSubnetReferenceProperties(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.NvaInterfaceConfigurationsProperties(TypedDict, total=False):
+        key "name": str
+        key "subnet": ForwardRef('NvaInVnetSubnetReferenceProperties', module='types')
+        name: str
+        subnet: NvaInVnetSubnetReferenceProperties
+        type: list[Union[str, NvaNicType]]
+
+
+    class azure.mgmt.network.types.O365BreakOutCategoryPolicies(TypedDict, total=False):
+        key "allow": bool
+        key "default": bool
+        key "optimize": bool
+        allow: bool
+        default: bool
+        optimize: bool
+
+
+    class azure.mgmt.network.types.O365PolicyProperties(TypedDict, total=False):
+        key "breakOutCategories": ForwardRef('O365BreakOutCategoryPolicies', module='types')
+        break_out_categories: O365BreakOutCategoryPolicies
+
+
+    class azure.mgmt.network.types.Office365PolicyProperties(TypedDict, total=False):
+        key "breakOutCategories": ForwardRef('BreakOutCategoryPolicies', module='types')
+        break_out_categories: BreakOutCategoryPolicies
+
+
+    class azure.mgmt.network.types.OrderBy(TypedDict, total=False):
+        key "field": str
+        key "order": Union[str, FirewallPolicyIDPSQuerySortOrder]
+        field: str
+        order: Union[str, FirewallPolicyIDPSQuerySortOrder]
+
+
+    class azure.mgmt.network.types.OutboundRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('OutboundRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: OutboundRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.OutboundRulePropertiesFormat(TypedDict, total=False):
+        key "allocatedOutboundPorts": int
+        key "backendAddressPool": Required[SubResource]
+        key "enableTcpReset": bool
+        key "frontendIPConfigurations": Required[list[SubResource]]
+        key "idleTimeoutInMinutes": int
+        key "protocol": Required[Union[str, LoadBalancerOutboundRuleProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        allocated_outbound_ports: int
+        backend_address_pool: SubResource
+        enable_tcp_reset: bool
+        frontend_ip_configurations: list[SubResource]
+        idle_timeout_in_minutes: int
+        protocol: Union[str, LoadBalancerOutboundRuleProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.OwaspCrsExclusionEntry(TypedDict, total=False):
+        key "matchVariable": Required[Union[str, OwaspCrsExclusionEntryMatchVariable]]
+        key "selector": Required[str]
+        key "selectorMatchOperator": Required[Union[str, OwaspCrsExclusionEntrySelectorMatchOperator]]
+        exclusionManagedRuleSets: list[ExclusionManagedRuleSet]
+        exclusion_managed_rule_sets: list[ExclusionManagedRuleSet]
+        match_variable: Union[str, OwaspCrsExclusionEntryMatchVariable]
+        selector: str
+        selector_match_operator: Union[str, OwaspCrsExclusionEntrySelectorMatchOperator]
+
+
+    class azure.mgmt.network.types.P2SConnectionConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('P2SConnectionConfigurationProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: P2SConnectionConfigurationProperties
+
+
+    class azure.mgmt.network.types.P2SConnectionConfigurationProperties(TypedDict, total=False):
+        key "enableInternetSecurity": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        key "vpnClientAddressPool": ForwardRef('AddressSpace', module='types')
+        configurationPolicyGroupAssociations: list[SubResource]
+        configuration_policy_group_associations: list[SubResource]
+        enable_internet_security: bool
+        previousConfigurationPolicyGroupAssociations: list[VpnServerConfigurationPolicyGroup]
+        previous_configuration_policy_group_associations: list[VpnServerConfigurationPolicyGroup]
+        provisioning_state: Union[str, ProvisioningState]
+        routing_configuration: RoutingConfiguration
+        vpn_client_address_pool: AddressSpace
+
+
+    class azure.mgmt.network.types.P2SVpnConnectionHealthRequest(TypedDict, total=False):
+        key "outputBlobSasUrl": str
+        output_blob_sas_url: str
+        vpnUserNamesFilter: list[str]
+        vpn_user_names_filter: list[str]
+
+
+    class azure.mgmt.network.types.P2SVpnConnectionRequest(TypedDict, total=False):
+        vpnConnectionIds: list[str]
+        vpn_connection_ids: list[str]
+
+
+    class azure.mgmt.network.types.P2SVpnGateway(TrackedResourceWithSettableIdOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('P2SVpnGatewayProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: P2SVpnGatewayProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.P2SVpnGatewayProperties(TypedDict, total=False):
+        key "isRoutingPreferenceInternet": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "virtualHub": ForwardRef('SubResource', module='types')
+        key "vpnClientConnectionHealth": ForwardRef('VpnClientConnectionHealth', module='types')
+        key "vpnGatewayScaleUnit": int
+        key "vpnServerConfiguration": ForwardRef('SubResource', module='types')
+        customDnsServers: list[str]
+        custom_dns_servers: list[str]
+        is_routing_preference_internet: bool
+        p2SConnectionConfigurations: list[P2SConnectionConfiguration]
+        p2_s_connection_configurations: list[P2SConnectionConfiguration]
+        provisioning_state: Union[str, ProvisioningState]
+        virtual_hub: SubResource
+        vpn_client_connection_health: VpnClientConnectionHealth
+        vpn_gateway_scale_unit: int
+        vpn_server_configuration: SubResource
+
+
+    class azure.mgmt.network.types.P2SVpnProfileParameters(TypedDict, total=False):
+        key "authenticationMethod": Union[str, AuthenticationMethod]
+        authentication_method: Union[str, AuthenticationMethod]
+
+
+    class azure.mgmt.network.types.PacketCapture(TypedDict, total=False):
+        key "properties": Required[PacketCaptureParameters]
+        properties: PacketCaptureParameters
+
+
+    class azure.mgmt.network.types.PacketCaptureFilter(TypedDict, total=False):
+        key "localIPAddress": str
+        key "localPort": str
+        key "protocol": Union[str, PcProtocol]
+        key "remoteIPAddress": str
+        key "remotePort": str
+        local_ip_address: str
+        local_port: str
+        protocol: Union[str, PcProtocol]
+        remote_ip_address: str
+        remote_port: str
+
+
+    class azure.mgmt.network.types.PacketCaptureMachineScope(TypedDict, total=False):
+        exclude: list[str]
+        include: list[str]
+
+
+    class azure.mgmt.network.types.PacketCaptureParameters(TypedDict, total=False):
+        key "bytesToCapturePerPacket": int
+        key "captureSettings": ForwardRef('PacketCaptureSettings', module='types')
+        key "continuousCapture": bool
+        key "scope": ForwardRef('PacketCaptureMachineScope', module='types')
+        key "storageLocation": Required[PacketCaptureStorageLocation]
+        key "target": Required[str]
+        key "targetType": Union[str, PacketCaptureTargetType]
+        key "timeLimitInSeconds": int
+        key "totalBytesPerSession": int
+        bytes_to_capture_per_packet: int
+        capture_settings: PacketCaptureSettings
+        continuous_capture: bool
+        filters: list[PacketCaptureFilter]
+        scope: PacketCaptureMachineScope
+        storage_location: PacketCaptureStorageLocation
+        target: str
+        target_type: Union[str, PacketCaptureTargetType]
+        time_limit_in_seconds: int
+        total_bytes_per_session: int
+
+
+    class azure.mgmt.network.types.PacketCaptureSettings(TypedDict, total=False):
+        key "fileCount": int
+        key "fileSizeInBytes": int
+        key "sessionTimeLimitInSeconds": int
+        file_count: int
+        file_size_in_bytes: int
+        session_time_limit_in_seconds: int
+
+
+    class azure.mgmt.network.types.PacketCaptureStorageLocation(TypedDict, total=False):
+        key "filePath": str
+        key "localPath": str
+        key "storageId": str
+        key "storagePath": str
+        file_path: str
+        local_path: str
+        storage_id: str
+        storage_path: str
+
+
+    class azure.mgmt.network.types.Parameter(TypedDict, total=False):
+        asPath: list[str]
+        as_path: list[str]
+        community: list[str]
+        routePrefix: list[str]
+        route_prefix: list[str]
+
+
+    class azure.mgmt.network.types.PartnerManagedResourceProperties(TypedDict, total=False):
+        key "id": str
+        key "internalLoadBalancerId": str
+        key "standardLoadBalancerId": str
+        id: str
+        internal_load_balancer_id: str
+        standard_load_balancer_id: str
+
+
+    class azure.mgmt.network.types.PatchObject(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.PeerExpressRouteCircuitConnection(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PeerExpressRouteCircuitConnectionPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: PeerExpressRouteCircuitConnectionPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.PeerExpressRouteCircuitConnectionPropertiesFormat(TypedDict, total=False):
+        key "addressPrefix": str
+        key "authResourceGuid": str
+        key "circuitConnectionStatus": Union[str, CircuitConnectionStatus]
+        key "connectionName": str
+        key "expressRouteCircuitPeering": ForwardRef('SubResource', module='types')
+        key "peerExpressRouteCircuitPeering": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        address_prefix: str
+        auth_resource_guid: str
+        circuit_connection_status: Union[str, CircuitConnectionStatus]
+        connection_name: str
+        express_route_circuit_peering: SubResource
+        peer_express_route_circuit_peering: SubResource
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.PerimeterBasedAccessRule(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "perimeterGuid": str
+        id: str
+        location: str
+        perimeter_guid: str
+
+
+    class azure.mgmt.network.types.PolicySettings(TypedDict, total=False):
+        key "captchaExpirationInMins": int
+        key "customBlockResponseBody": str
+        key "customBlockResponseStatusCode": int
+        key "fileUploadEnforcement": bool
+        key "fileUploadLimitInMb": int
+        key "jsChallengeCookieExpirationInMins": int
+        key "logScrubbing": ForwardRef('PolicySettingsLogScrubbing', module='types')
+        key "maxRequestBodySizeInKb": int
+        key "mode": Union[str, WebApplicationFirewallMode]
+        key "requestBodyCheck": bool
+        key "requestBodyEnforcement": bool
+        key "requestBodyInspectLimitInKB": int
+        key "state": Union[str, WebApplicationFirewallEnabledState]
+        captcha_expiration_in_mins: int
+        custom_block_response_body: str
+        custom_block_response_status_code: int
+        file_upload_enforcement: bool
+        file_upload_limit_in_mb: int
+        js_challenge_cookie_expiration_in_mins: int
+        log_scrubbing: PolicySettingsLogScrubbing
+        max_request_body_size_in_kb: int
+        mode: Union[str, WebApplicationFirewallMode]
+        request_body_check: bool
+        request_body_enforcement: bool
+        request_body_inspect_limit_in_kb: int
+        state: Union[str, WebApplicationFirewallEnabledState]
+
+
+    class azure.mgmt.network.types.PolicySettingsLogScrubbing(TypedDict, total=False):
+        key "state": Union[str, WebApplicationFirewallScrubbingState]
+        scrubbingRules: list[WebApplicationFirewallScrubbingRules]
+        scrubbing_rules: list[WebApplicationFirewallScrubbingRules]
+        state: Union[str, WebApplicationFirewallScrubbingState]
+
+
+    class azure.mgmt.network.types.PrepareNetworkPoliciesRequest(TypedDict, total=False):
+        key "serviceName": str
+        networkIntentPolicyConfigurations: list[NetworkIntentPolicyConfiguration]
+        network_intent_policy_configurations: list[NetworkIntentPolicyConfiguration]
+        service_name: str
+
+
+    class azure.mgmt.network.types.PrivateDnsZoneConfig(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('PrivateDnsZonePropertiesFormat', module='types')
+        name: str
+        properties: PrivateDnsZonePropertiesFormat
+
+
+    class azure.mgmt.network.types.PrivateDnsZoneGroup(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateDnsZoneGroupPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: PrivateDnsZoneGroupPropertiesFormat
+
+
+    class azure.mgmt.network.types.PrivateDnsZoneGroupPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        privateDnsZoneConfigs: list[PrivateDnsZoneConfig]
+        private_dns_zone_configs: list[PrivateDnsZoneConfig]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.PrivateDnsZonePropertiesFormat(TypedDict, total=False):
+        key "privateDnsZoneId": str
+        private_dns_zone_id: str
+        recordSets: list[RecordSet]
+        record_sets: list[RecordSet]
+
+
+    class azure.mgmt.network.types.PrivateEndpoint(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointProperties', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: PrivateEndpointProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.PrivateEndpointConnection(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        type: str
+
+
+    class azure.mgmt.network.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "linkIdentifier": str
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateEndpointLocation": str
+        key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        link_identifier: str
+        private_endpoint: PrivateEndpoint
+        private_endpoint_location: str
+        private_link_service_connection_state: PrivateLinkServiceConnectionState
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.PrivateEndpointIPConfiguration(TypedDict, total=False):
+        key "etag": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointIPConfigurationProperties', module='types')
+        key "type": str
+        etag: str
+        name: str
+        properties: PrivateEndpointIPConfigurationProperties
+        type: str
+
+
+    class azure.mgmt.network.types.PrivateEndpointIPConfigurationProperties(TypedDict, total=False):
+        key "groupId": str
+        key "memberName": str
+        key "privateIPAddress": str
+        group_id: str
+        member_name: str
+        private_ip_address: str
+
+
+    class azure.mgmt.network.types.PrivateEndpointProperties(TypedDict, total=False):
+        key "billingSku": Union[str, PrivateEndpointBillingSku]
+        key "customNetworkInterfaceName": str
+        key "ipVersionType": Union[str, PrivateEndpointIPVersionType]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "subnet": ForwardRef('Subnet', module='types')
+        applicationSecurityGroups: list[ApplicationSecurityGroup]
+        application_security_groups: list[ApplicationSecurityGroup]
+        billing_sku: Union[str, PrivateEndpointBillingSku]
+        customDnsConfigs: list[CustomDnsConfigPropertiesFormat]
+        custom_dns_configs: list[CustomDnsConfigPropertiesFormat]
+        custom_network_interface_name: str
+        ipConfigurations: list[PrivateEndpointIPConfiguration]
+        ip_configurations: list[PrivateEndpointIPConfiguration]
+        ip_version_type: Union[str, PrivateEndpointIPVersionType]
+        manualPrivateLinkServiceConnections: list[PrivateLinkServiceConnection]
+        manual_private_link_service_connections: list[PrivateLinkServiceConnection]
+        networkInterfaces: list[NetworkInterface]
+        network_interfaces: list[NetworkInterface]
+        privateLinkServiceConnections: list[PrivateLinkServiceConnection]
+        private_link_service_connections: list[PrivateLinkServiceConnection]
+        provisioning_state: Union[str, ProvisioningState]
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.PrivateLinkService(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('PrivateLinkServiceProperties', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: PrivateLinkServiceProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.PrivateLinkServiceConnection(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateLinkServiceConnectionProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: PrivateLinkServiceConnectionProperties
+        type: str
+
+
+    class azure.mgmt.network.types.PrivateLinkServiceConnectionProperties(TypedDict, total=False):
+        key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
+        key "privateLinkServiceId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "requestMessage": str
+        groupIds: list[str]
+        group_ids: list[str]
+        private_link_service_connection_state: PrivateLinkServiceConnectionState
+        private_link_service_id: str
+        provisioning_state: Union[str, ProvisioningState]
+        request_message: str
+
+
+    class azure.mgmt.network.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
+        key "actionsRequired": str
+        key "description": str
+        key "status": str
+        actions_required: str
+        description: str
+        status: str
+
+
+    class azure.mgmt.network.types.PrivateLinkServiceIpConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateLinkServiceIpConfigurationProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: PrivateLinkServiceIpConfigurationProperties
+        type: str
+
+
+    class azure.mgmt.network.types.PrivateLinkServiceIpConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        key "privateIPAddress": str
+        key "privateIPAddressVersion": Union[str, IPVersion]
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "subnet": ForwardRef('Subnet', module='types')
+        primary: bool
+        private_ip_address: str
+        private_ip_address_version: Union[str, IPVersion]
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.PrivateLinkServiceProperties(TypedDict, total=False):
+        key "accessMode": Union[str, AccessMode]
+        key "alias": str
+        key "autoApproval": ForwardRef('PrivateLinkServicePropertiesAutoApproval', module='types')
+        key "destinationIPAddress": str
+        key "enableProxyProtocol": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "visibility": ForwardRef('PrivateLinkServicePropertiesVisibility', module='types')
+        access_mode: Union[str, AccessMode]
+        alias: str
+        auto_approval: PrivateLinkServicePropertiesAutoApproval
+        destination_ip_address: str
+        enable_proxy_protocol: bool
+        fqdns: list[str]
+        ipConfigurations: list[PrivateLinkServiceIpConfiguration]
+        ip_configurations: list[PrivateLinkServiceIpConfiguration]
+        loadBalancerFrontendIpConfigurations: list[FrontendIPConfiguration]
+        load_balancer_frontend_ip_configurations: list[FrontendIPConfiguration]
+        networkInterfaces: list[NetworkInterface]
+        network_interfaces: list[NetworkInterface]
+        privateEndpointConnections: list[PrivateEndpointConnection]
+        private_endpoint_connections: list[PrivateEndpointConnection]
+        provisioning_state: Union[str, ProvisioningState]
+        visibility: PrivateLinkServicePropertiesVisibility
+
+
+    class azure.mgmt.network.types.PrivateLinkServicePropertiesAutoApproval(ResourceSet):
+        subscriptions: list[str]
+
+
+    class azure.mgmt.network.types.PrivateLinkServicePropertiesVisibility(ResourceSet):
+        subscriptions: list[str]
+
+
+    class azure.mgmt.network.types.Probe(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ProbePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ProbePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ProbePropertiesFormat(TypedDict, total=False):
+        key "intervalInSeconds": int
+        key "noHealthyBackendsBehavior": Union[str, ProbeNoHealthyBackendsBehavior]
+        key "numberOfProbes": int
+        key "port": Required[int]
+        key "probeThreshold": int
+        key "protocol": Required[Union[str, ProbeProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "requestPath": str
+        interval_in_seconds: int
+        loadBalancingRules: list[SubResource]
+        load_balancing_rules: list[SubResource]
+        no_healthy_backends_behavior: Union[str, ProbeNoHealthyBackendsBehavior]
+        number_of_probes: int
+        port: int
+        probe_threshold: int
+        protocol: Union[str, ProbeProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        request_path: str
+
+
+    class azure.mgmt.network.types.PropagatedRouteTable(TypedDict, total=False):
+        ids: list[SubResource]
+        labels: list[str]
+
+
+    class azure.mgmt.network.types.ProtocolConfiguration(TypedDict, total=False):
+        key "HTTPConfiguration": ForwardRef('HTTPConfiguration', module='types')
+        http_configuration: HTTPConfiguration
+
+
+    class azure.mgmt.network.types.ProxyResource(TypedDict, total=False):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.network.types.ProxyResourceWithReadOnlyID(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.network.types.PublicIPAddress(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('PublicIPAddressPropertiesFormat', module='types')
+        key "sku": ForwardRef('PublicIPAddressSku', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: PublicIPAddressPropertiesFormat
+        sku: PublicIPAddressSku
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.PublicIPAddressDnsSettings(TypedDict, total=False):
+        key "domainNameLabel": str
+        key "domainNameLabelScope": Union[str, PublicIpAddressDnsSettingsDomainNameLabelScope]
+        key "fqdn": str
+        key "reverseFqdn": str
+        domain_name_label: str
+        domain_name_label_scope: Union[str, PublicIpAddressDnsSettingsDomainNameLabelScope]
+        fqdn: str
+        reverse_fqdn: str
+
+
+    class azure.mgmt.network.types.PublicIPAddressPropertiesFormat(TypedDict, total=False):
+        key "ddosSettings": ForwardRef('DdosSettings', module='types')
+        key "deleteOption": Union[str, DeleteOptions]
+        key "dnsSettings": ForwardRef('PublicIPAddressDnsSettings', module='types')
+        key "idleTimeoutInMinutes": int
+        key "ipAddress": str
+        key "ipConfiguration": ForwardRef('IPConfiguration', module='types')
+        key "linkedPublicIPAddress": ForwardRef('PublicIPAddress', module='types')
+        key "migrationPhase": Union[str, PublicIPAddressMigrationPhase]
+        key "natGateway": ForwardRef('NatGateway', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddressVersion": Union[str, IPVersion]
+        key "publicIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "publicIPPrefix": ForwardRef('SubResource', module='types')
+        key "resourceGuid": str
+        key "servicePublicIPAddress": ForwardRef('PublicIPAddress', module='types')
+        ddos_settings: DdosSettings
+        delete_option: Union[str, DeleteOptions]
+        dns_settings: PublicIPAddressDnsSettings
+        idle_timeout_in_minutes: int
+        ipTags: list[IpTag]
+        ip_address: str
+        ip_configuration: IPConfiguration
+        ip_tags: list[IpTag]
+        linked_public_ip_address: PublicIPAddress
+        migration_phase: Union[str, PublicIPAddressMigrationPhase]
+        nat_gateway: NatGateway
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address_version: Union[str, IPVersion]
+        public_ip_allocation_method: Union[str, IPAllocationMethod]
+        public_ip_prefix: SubResource
+        resource_guid: str
+        service_public_ip_address: PublicIPAddress
+
+
+    class azure.mgmt.network.types.PublicIPAddressSku(TypedDict, total=False):
+        key "name": Union[str, PublicIPAddressSkuName]
+        key "tier": Union[str, PublicIPAddressSkuTier]
+        name: Union[str, PublicIPAddressSkuName]
+        tier: Union[str, PublicIPAddressSkuTier]
+
+
+    class azure.mgmt.network.types.PublicIPPrefix(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('PublicIPPrefixPropertiesFormat', module='types')
+        key "sku": ForwardRef('PublicIPPrefixSku', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: PublicIPPrefixPropertiesFormat
+        sku: PublicIPPrefixSku
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.PublicIPPrefixPropertiesFormat(TypedDict, total=False):
+        key "customIPPrefix": ForwardRef('SubResource', module='types')
+        key "ipPrefix": str
+        key "loadBalancerFrontendIpConfiguration": ForwardRef('SubResource', module='types')
+        key "natGateway": ForwardRef('NatGateway', module='types')
+        key "prefixLength": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddressVersion": Union[str, IPVersion]
+        key "resourceGuid": str
+        custom_ip_prefix: SubResource
+        ipTags: list[IpTag]
+        ip_prefix: str
+        ip_tags: list[IpTag]
+        load_balancer_frontend_ip_configuration: SubResource
+        nat_gateway: NatGateway
+        prefix_length: int
+        provisioning_state: Union[str, ProvisioningState]
+        publicIPAddresses: list[ReferencedPublicIpAddress]
+        public_ip_address_version: Union[str, IPVersion]
+        public_ip_addresses: list[ReferencedPublicIpAddress]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.PublicIPPrefixSku(TypedDict, total=False):
+        key "name": Union[str, PublicIPPrefixSkuName]
+        key "tier": Union[str, PublicIPPrefixSkuTier]
+        name: Union[str, PublicIPPrefixSkuName]
+        tier: Union[str, PublicIPPrefixSkuTier]
+
+
+    class azure.mgmt.network.types.QosDefinition(TypedDict, total=False):
+        key "protocol": Union[str, ProtocolType]
+        destinationIpRanges: list[QosIpRange]
+        destinationPortRanges: list[QosPortRange]
+        destination_ip_ranges: list[QosIpRange]
+        destination_port_ranges: list[QosPortRange]
+        markings: list[int]
+        protocol: Union[str, ProtocolType]
+        sourceIpRanges: list[QosIpRange]
+        sourcePortRanges: list[QosPortRange]
+        source_ip_ranges: list[QosIpRange]
+        source_port_ranges: list[QosPortRange]
+
+
+    class azure.mgmt.network.types.QosIpRange(TypedDict, total=False):
+        key "endIP": str
+        key "startIP": str
+        end_ip: str
+        start_ip: str
+
+
+    class azure.mgmt.network.types.QosPortRange(TypedDict, total=False):
+        key "end": int
+        key "start": int
+        end: int
+        start: int
+
+
+    class azure.mgmt.network.types.QueryInboundNatRulePortMappingRequest(TypedDict, total=False):
+        key "ipAddress": str
+        key "ipConfiguration": ForwardRef('SubResource', module='types')
+        ip_address: str
+        ip_configuration: SubResource
+
+
+    class azure.mgmt.network.types.QueryRequestOptions(TypedDict, total=False):
+        key "skipToken": str
+        skip_token: str
+
+
+    class azure.mgmt.network.types.QueryTroubleshootingParameters(TypedDict, total=False):
+        key "targetResourceId": Required[str]
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.RadiusServer(TypedDict, total=False):
+        key "radiusServerAddress": Required[str]
+        key "radiusServerScore": int
+        key "radiusServerSecret": str
+        radius_server_address: str
+        radius_server_score: int
+        radius_server_secret: str
+
+
+    class azure.mgmt.network.types.ReachabilityAnalysisIntent(CommonProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[ReachabilityAnalysisIntentProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ReachabilityAnalysisIntentProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.ReachabilityAnalysisIntentProperties(TypedDict, total=False):
+        key "description": str
+        key "destinationResourceId": Required[str]
+        key "ipTraffic": Required[IPTraffic]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sourceResourceId": Required[str]
+        description: str
+        destination_resource_id: str
+        ip_traffic: IPTraffic
+        provisioning_state: Union[str, ProvisioningState]
+        source_resource_id: str
+
+
+    class azure.mgmt.network.types.ReachabilityAnalysisRun(CommonProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[ReachabilityAnalysisRunProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ReachabilityAnalysisRunProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.ReachabilityAnalysisRunProperties(TypedDict, total=False):
+        key "analysisResult": str
+        key "description": str
+        key "errorMessage": str
+        key "intentContent": ForwardRef('IntentContent', module='types')
+        key "intentId": Required[str]
+        key "provisioningState": Union[str, ProvisioningState]
+        analysis_result: str
+        description: str
+        error_message: str
+        intent_content: IntentContent
+        intent_id: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ReadOnlySubResourceModel(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.network.types.RecordSet(TypedDict, total=False):
+        key "fqdn": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "recordSetName": str
+        key "recordType": str
+        key "ttl": int
+        fqdn: str
+        ipAddresses: list[str]
+        ip_addresses: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        record_set_name: str
+        record_type: str
+        ttl: int
+
+
+    class azure.mgmt.network.types.ReferencedPublicIpAddress(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.ReserveCloudServicePublicIpAddressRequest(TypedDict, total=False):
+        key "isRollback": Required[Union[str, IsRollback]]
+        is_rollback: Union[str, IsRollback]
+
+
+    class azure.mgmt.network.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ResourceNavigationLink(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ResourceNavigationLinkFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ResourceNavigationLinkFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ResourceNavigationLinkFormat(TypedDict, total=False):
+        key "link": str
+        key "linkedResourceType": str
+        key "provisioningState": Union[str, ProvisioningState]
+        link: str
+        linked_resource_type: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ResourceSet(TypedDict, total=False):
+        subscriptions: list[str]
+
+
+    class azure.mgmt.network.types.RetentionPolicyParameters(TypedDict, total=False):
+        key "days": int
+        key "enabled": bool
+        days: int
+        enabled: bool
+
+
+    class azure.mgmt.network.types.Route(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RoutePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RoutePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.RouteFilter(TrackedResourceWithSettableIdOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('RouteFilterPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: RouteFilterPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.RouteFilterPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        ipv6Peerings: list[ExpressRouteCircuitPeering]
+        ipv6_peerings: list[ExpressRouteCircuitPeering]
+        peerings: list[ExpressRouteCircuitPeering]
+        provisioning_state: Union[str, ProvisioningState]
+        rules: list[RouteFilterRule]
+
+
+    class azure.mgmt.network.types.RouteFilterRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('RouteFilterRulePropertiesFormat', module='types')
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: RouteFilterRulePropertiesFormat
+
+
+    class azure.mgmt.network.types.RouteFilterRulePropertiesFormat(TypedDict, total=False):
+        key "access": Required[Union[str, Access]]
+        key "communities": Required[list[str]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routeFilterRuleType": Required[Union[str, RouteFilterRuleType]]
+        access: Union[str, Access]
+        communities: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        route_filter_rule_type: Union[str, RouteFilterRuleType]
+
+
+    class azure.mgmt.network.types.RouteMap(ReadOnlySubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RouteMapProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RouteMapProperties
+        type: str
+
+
+    class azure.mgmt.network.types.RouteMapProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        associatedInboundConnections: list[str]
+        associatedOutboundConnections: list[str]
+        associated_inbound_connections: list[str]
+        associated_outbound_connections: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        rules: list[RouteMapRule]
+
+
+    class azure.mgmt.network.types.RouteMapRule(TypedDict, total=False):
+        key "name": str
+        key "nextStepIfMatched": Union[str, NextStep]
+        actions: list[Action]
+        matchCriteria: list[Criterion]
+        match_criteria: list[Criterion]
+        name: str
+        next_step_if_matched: Union[str, NextStep]
+
+
+    class azure.mgmt.network.types.RouteNextHopEcmp(TypedDict, total=False):
+        key "nextHopIpAddresses": Required[list[str]]
+        next_hop_ip_addresses: list[str]
+
+
+    class azure.mgmt.network.types.RoutePropertiesFormat(TypedDict, total=False):
+        key "addressPrefix": str
+        key "hasBgpOverride": bool
+        key "nextHop": ForwardRef('RouteNextHopEcmp', module='types')
+        key "nextHopIpAddress": str
+        key "nextHopType": Required[Union[str, RouteNextHopType]]
+        key "provisioningState": Union[str, ProvisioningState]
+        address_prefix: str
+        has_bgp_override: bool
+        next_hop: RouteNextHopEcmp
+        next_hop_ip_address: str
+        next_hop_type: Union[str, RouteNextHopType]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.RouteTable(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('RouteTablePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: RouteTablePropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.RouteTablePropertiesFormat(TypedDict, total=False):
+        key "disableBgpRoutePropagation": bool
+        key "disablePeeringRoute": Union[str, DisablePeeringRoute]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        disable_bgp_route_propagation: bool
+        disable_peering_route: Union[str, DisablePeeringRoute]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        routes: list[Route]
+        subnets: list[Subnet]
+
+
+    class azure.mgmt.network.types.RouteTargetAddressPropertiesFormat(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "subnet": ForwardRef('Subnet', module='types')
+        private_ip_address: str
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.RoutingConfiguration(TypedDict, total=False):
+        key "associatedRouteTable": ForwardRef('SubResource', module='types')
+        key "inboundRouteMap": ForwardRef('SubResource', module='types')
+        key "outboundRouteMap": ForwardRef('SubResource', module='types')
+        key "propagatedRouteTables": ForwardRef('PropagatedRouteTable', module='types')
+        key "vnetRoutes": ForwardRef('VnetRoute', module='types')
+        associated_route_table: SubResource
+        inbound_route_map: SubResource
+        outbound_route_map: SubResource
+        propagated_route_tables: PropagatedRouteTable
+        vnet_routes: VnetRoute
+
+
+    class azure.mgmt.network.types.RoutingIntent(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RoutingIntentProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RoutingIntentProperties
+        type: str
+
+
+    class azure.mgmt.network.types.RoutingIntentProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        provisioning_state: Union[str, ProvisioningState]
+        routingPolicies: list[RoutingPolicy]
+        routing_policies: list[RoutingPolicy]
+
+
+    class azure.mgmt.network.types.RoutingPolicy(TypedDict, total=False):
+        key "destinations": Required[list[str]]
+        key "name": Required[str]
+        key "nextHop": Required[str]
+        destinations: list[str]
+        name: str
+        next_hop: str
+
+
+    class azure.mgmt.network.types.RoutingRule(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RoutingRulePropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RoutingRulePropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.RoutingRuleCollection(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RoutingRuleCollectionPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RoutingRuleCollectionPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.RoutingRuleCollectionPropertiesFormat(TypedDict, total=False):
+        key "appliesTo": Required[list[NetworkManagerRoutingGroupItem]]
+        key "description": str
+        key "disableBgpRoutePropagation": Union[str, DisableBgpRoutePropagation]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        applies_to: list[NetworkManagerRoutingGroupItem]
+        description: str
+        disable_bgp_route_propagation: Union[str, DisableBgpRoutePropagation]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.RoutingRuleNextHop(TypedDict, total=False):
+        key "nextHopAddress": str
+        key "nextHopType": Required[Union[str, RoutingRuleNextHopType]]
+        next_hop_address: str
+        next_hop_type: Union[str, RoutingRuleNextHopType]
+
+
+    class azure.mgmt.network.types.RoutingRulePropertiesFormat(TypedDict, total=False):
+        key "description": str
+        key "destination": Required[RoutingRuleRouteDestination]
+        key "nextHop": Required[RoutingRuleNextHop]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        description: str
+        destination: RoutingRuleRouteDestination
+        next_hop: RoutingRuleNextHop
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.RoutingRuleRouteDestination(TypedDict, total=False):
+        key "destinationAddress": Required[str]
+        key "type": Required[Union[str, RoutingRuleDestinationType]]
+        destination_address: str
+        type: Union[str, RoutingRuleDestinationType]
+
+
+    class azure.mgmt.network.types.ScopeConnection(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ScopeConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ScopeConnectionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.ScopeConnectionProperties(TypedDict, total=False):
+        key "connectionState": Union[str, ScopeConnectionState]
+        key "description": str
+        key "resourceId": str
+        key "tenantId": str
+        connection_state: Union[str, ScopeConnectionState]
+        description: str
+        resource_id: str
+        tenant_id: str
+
+
+    class azure.mgmt.network.types.SecurityAdminConfiguration(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityAdminConfigurationPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SecurityAdminConfigurationPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityAdminConfigurationPropertiesFormat(TypedDict, total=False):
+        key "description": str
+        key "networkGroupAddressSpaceAggregationOption": Union[str, AddressSpaceAggregationOption]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        applyOnNetworkIntentPolicyBasedServices: list[Union[str, NetworkIntentPolicyBasedService]]
+        apply_on_network_intent_policy_based_services: list[Union[str, NetworkIntentPolicyBasedService]]
+        description: str
+        network_group_address_space_aggregation_option: Union[str, AddressSpaceAggregationOption]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.SecurityGroupViewParameters(TypedDict, total=False):
+        key "targetResourceId": Required[str]
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.SecurityPartnerProvider(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('SecurityPartnerProviderPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: SecurityPartnerProviderPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityPartnerProviderPropertiesFormat(TypedDict, total=False):
+        key "connectionStatus": Union[str, SecurityPartnerProviderConnectionStatus]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "securityProviderName": Union[str, SecurityProviderName]
+        key "virtualHub": ForwardRef('SubResource', module='types')
+        connection_status: Union[str, SecurityPartnerProviderConnectionStatus]
+        provisioning_state: Union[str, ProvisioningState]
+        security_provider_name: Union[str, SecurityProviderName]
+        virtual_hub: SubResource
+
+
+    class azure.mgmt.network.types.SecurityPerimeterProxyResource(SecurityPerimeterResource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityPerimeterResource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityPerimeterTrackedResource(SecurityPerimeterResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SecurityRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityRulePropertiesFormat(TypedDict, total=False):
+        key "access": Required[Union[str, SecurityRuleAccess]]
+        key "description": str
+        key "destinationAddressPrefix": str
+        key "destinationPortRange": str
+        key "direction": Required[Union[str, SecurityRuleDirection]]
+        key "priority": Required[int]
+        key "protocol": Required[Union[str, SecurityRuleProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sourceAddressPrefix": str
+        key "sourcePortRange": str
+        access: Union[str, SecurityRuleAccess]
+        description: str
+        destinationAddressPrefixes: list[str]
+        destinationApplicationSecurityGroups: list[ApplicationSecurityGroup]
+        destinationPortRanges: list[str]
+        destination_address_prefix: str
+        destination_address_prefixes: list[str]
+        destination_application_security_groups: list[ApplicationSecurityGroup]
+        destination_port_range: str
+        destination_port_ranges: list[str]
+        direction: Union[str, SecurityRuleDirection]
+        priority: int
+        protocol: Union[str, SecurityRuleProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        sourceAddressPrefixes: list[str]
+        sourceApplicationSecurityGroups: list[ApplicationSecurityGroup]
+        sourcePortRanges: list[str]
+        source_address_prefix: str
+        source_address_prefixes: list[str]
+        source_application_security_groups: list[ApplicationSecurityGroup]
+        source_port_range: str
+        source_port_ranges: list[str]
+
+
+    class azure.mgmt.network.types.SecurityUserConfiguration(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityUserConfigurationPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SecurityUserConfigurationPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityUserConfigurationPropertiesFormat(TypedDict, total=False):
+        key "description": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        description: str
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.SecurityUserGroupItem(TypedDict, total=False):
+        key "networkGroupId": Required[str]
+        network_group_id: str
+
+
+    class azure.mgmt.network.types.SecurityUserRule(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityUserRulePropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SecurityUserRulePropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityUserRuleCollection(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityUserRuleCollectionPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SecurityUserRuleCollectionPropertiesFormat
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.SecurityUserRuleCollectionPropertiesFormat(TypedDict, total=False):
+        key "appliesToGroups": Required[list[SecurityUserGroupItem]]
+        key "description": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        applies_to_groups: list[SecurityUserGroupItem]
+        description: str
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.SecurityUserRulePropertiesFormat(TypedDict, total=False):
+        key "description": str
+        key "direction": Required[Union[str, SecurityConfigurationRuleDirection]]
+        key "protocol": Required[Union[str, SecurityConfigurationRuleProtocol]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        description: str
+        destinationPortRanges: list[str]
+        destination_port_ranges: list[str]
+        destinations: list[AddressPrefixItem]
+        direction: Union[str, SecurityConfigurationRuleDirection]
+        protocol: Union[str, SecurityConfigurationRuleProtocol]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        sourcePortRanges: list[str]
+        source_port_ranges: list[str]
+        sources: list[AddressPrefixItem]
+
+
+    class azure.mgmt.network.types.ServiceAssociationLink(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServiceAssociationLinkPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ServiceAssociationLinkPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ServiceAssociationLinkPropertiesFormat(TypedDict, total=False):
+        key "allowDelete": bool
+        key "link": str
+        key "linkedResourceType": str
+        key "provisioningState": Union[str, ProvisioningState]
+        allow_delete: bool
+        link: str
+        linked_resource_type: str
+        locations: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ServiceDelegationPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "serviceName": str
+        actions: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        service_name: str
+
+
+    class azure.mgmt.network.types.ServiceEndpointPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ServiceEndpointPolicyPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: ServiceEndpointPolicyPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.ServiceEndpointPolicyDefinition(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServiceEndpointPolicyDefinitionPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ServiceEndpointPolicyDefinitionPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ServiceEndpointPolicyDefinitionPropertiesFormat(TypedDict, total=False):
+        key "description": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "service": str
+        description: str
+        provisioning_state: Union[str, ProvisioningState]
+        service: str
+        serviceResources: list[str]
+        service_resources: list[str]
+
+
+    class azure.mgmt.network.types.ServiceEndpointPolicyPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "serviceAlias": str
+        contextualServiceEndpointPolicies: list[str]
+        contextual_service_endpoint_policies: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        serviceEndpointPolicyDefinitions: list[ServiceEndpointPolicyDefinition]
+        service_alias: str
+        service_endpoint_policy_definitions: list[ServiceEndpointPolicyDefinition]
+        subnets: list[Subnet]
+
+
+    class azure.mgmt.network.types.ServiceEndpointPropertiesFormat(TypedDict, total=False):
+        key "networkIdentifier": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "service": str
+        locations: list[str]
+        network_identifier: SubResource
+        provisioning_state: Union[str, ProvisioningState]
+        service: str
+
+
+    class azure.mgmt.network.types.ServiceGateway(SecurityPerimeterTrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ServiceGatewayPropertiesFormat', module='types')
+        key "sku": ForwardRef('ServiceGatewaySku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: ServiceGatewayPropertiesFormat
+        sku: ServiceGatewaySku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.network.types.ServiceGatewayAddress(TypedDict, total=False):
+        key "address": str
+        address: str
+        services: list[str]
+
+
+    class azure.mgmt.network.types.ServiceGatewayAddressLocation(TypedDict, total=False):
+        key "addressLocation": str
+        key "addressUpdateAction": Union[str, AddressUpdateAction]
+        address_location: str
+        address_update_action: Union[str, AddressUpdateAction]
+        addresses: list[ServiceGatewayAddress]
+
+
+    class azure.mgmt.network.types.ServiceGatewayPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "routeTargetAddress": ForwardRef('RouteTargetAddressPropertiesFormat', module='types')
+        key "routeTargetAddressV6": ForwardRef('RouteTargetAddressPropertiesFormat', module='types')
+        key "virtualNetwork": ForwardRef('VirtualNetwork', module='types')
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        route_target_address: RouteTargetAddressPropertiesFormat
+        route_target_address_v6: RouteTargetAddressPropertiesFormat
+        virtual_network: VirtualNetwork
+
+
+    class azure.mgmt.network.types.ServiceGatewayService(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('ServiceGatewayServicePropertiesFormat', module='types')
+        name: str
+        properties: ServiceGatewayServicePropertiesFormat
+
+
+    class azure.mgmt.network.types.ServiceGatewayServicePropertiesFormat(TypedDict, total=False):
+        key "isDefault": bool
+        key "publicNatGatewayId": str
+        key "serviceType": Union[str, ServiceType]
+        is_default: bool
+        loadBalancerBackendPools: list[BackendAddressPool]
+        load_balancer_backend_pools: list[BackendAddressPool]
+        public_nat_gateway_id: str
+        service_type: Union[str, ServiceType]
+
+
+    class azure.mgmt.network.types.ServiceGatewayServiceRequest(TypedDict, total=False):
+        key "isDelete": bool
+        key "service": ForwardRef('ServiceGatewayService', module='types')
+        is_delete: bool
+        service: ServiceGatewayService
+
+
+    class azure.mgmt.network.types.ServiceGatewaySku(TypedDict, total=False):
+        key "name": Union[str, ServiceGatewaySkuName]
+        key "tier": Union[str, ServiceGatewaySkuTier]
+        name: Union[str, ServiceGatewaySkuName]
+        tier: Union[str, ServiceGatewaySkuTier]
+
+
+    class azure.mgmt.network.types.ServiceGatewayUpdateAddressLocationsRequest(TypedDict, total=False):
+        key "action": Union[str, UpdateAction]
+        action: Union[str, UpdateAction]
+        addressLocations: list[ServiceGatewayAddressLocation]
+        address_locations: list[ServiceGatewayAddressLocation]
+
+
+    class azure.mgmt.network.types.ServiceGatewayUpdateServicesRequest(TypedDict, total=False):
+        key "action": Union[str, ServiceUpdateAction]
+        action: Union[str, ServiceUpdateAction]
+        serviceRequests: list[ServiceGatewayServiceRequest]
+        service_requests: list[ServiceGatewayServiceRequest]
+
+
+    class azure.mgmt.network.types.SessionIds(TypedDict, total=False):
+        sessionIds: list[str]
+        session_ids: list[str]
+
+
+    class azure.mgmt.network.types.SharedKeyProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sharedKey": str
+        key "sharedKeyLength": int
+        provisioning_state: Union[str, ProvisioningState]
+        shared_key: str
+        shared_key_length: int
+
+
+    class azure.mgmt.network.types.SignatureOverridesFilterValuesQuery(TypedDict, total=False):
+        key "filterName": str
+        filter_name: str
+
+
+    class azure.mgmt.network.types.SignaturesOverrides(WritableResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SignaturesOverridesProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SignaturesOverridesProperties
+        type: str
+
+
+    class azure.mgmt.network.types.SignaturesOverridesProperties(TypedDict, total=False):
+        signatures: dict[str, str]
+
+
+    class azure.mgmt.network.types.Sku(TypedDict, total=False):
+        key "name": Union[str, BastionHostSkuName]
+        name: Union[str, BastionHostSkuName]
+
+
+    class azure.mgmt.network.types.StaticCidr(CommonProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('StaticCidrProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: StaticCidrProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.StaticCidrProperties(TypedDict, total=False):
+        key "description": str
+        key "numberOfIPAddressesToAllocate": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "totalNumberOfIPAddresses": str
+        addressPrefixes: list[str]
+        address_prefixes: list[str]
+        description: str
+        number_of_ip_addresses_to_allocate: str
+        provisioning_state: Union[str, ProvisioningState]
+        total_number_of_ip_addresses: str
+
+
+    class azure.mgmt.network.types.StaticMember(ChildResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('StaticMemberProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: StaticMemberProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.StaticMemberProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "region": str
+        key "resourceId": str
+        provisioning_state: Union[str, ProvisioningState]
+        region: str
+        resource_id: str
+
+
+    class azure.mgmt.network.types.StaticRoute(TypedDict, total=False):
+        key "name": str
+        key "nextHopIpAddress": str
+        addressPrefixes: list[str]
+        address_prefixes: list[str]
+        name: str
+        next_hop_ip_address: str
+
+
+    class azure.mgmt.network.types.StaticRoutesConfig(TypedDict, total=False):
+        key "propagateStaticRoutes": bool
+        key "vnetLocalRouteOverrideCriteria": Union[str, VnetLocalRouteOverrideCriteria]
+        propagate_static_routes: bool
+        vnet_local_route_override_criteria: Union[str, VnetLocalRouteOverrideCriteria]
+
+
+    class azure.mgmt.network.types.StopCircuitLinkFailoverTestParameterBody(TypedDict, total=False):
+        key "stopParameters": Required[ExpressRouteLinkFailoverStopApiParameters]
+        stop_parameters: ExpressRouteLinkFailoverStopApiParameters
+
+
+    class azure.mgmt.network.types.StopSiteFailoverTestParameterBody(TypedDict, total=False):
+        key "stopParameters": Required[ExpressRouteFailoverStopApiParameters]
+        stop_parameters: ExpressRouteFailoverStopApiParameters
+
+
+    class azure.mgmt.network.types.SubResource(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.SubResourceModel(SubResource):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.network.types.Subgroup(SubResourceModel):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SubgroupProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SubgroupProperties
+        type: str
+
+
+    class azure.mgmt.network.types.SubgroupProfile(TypedDict, total=False):
+        key "scope": Union[str, SubgroupProfileScope]
+        key "size": int
+        key "vmSize": Required[str]
+        scope: Union[str, SubgroupProfileScope]
+        size: int
+        vm_size: str
+
+
+    class azure.mgmt.network.types.SubgroupProperties(TypedDict, total=False):
+        key "interconnectBlock": ForwardRef('SubResource', module='types')
+        key "internalSubgroupId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        interconnect_block: SubResource
+        internal_subgroup_id: str
+        provisioning_state: Union[str, ProvisioningState]
+        virtualMachines: list[SubResource]
+        virtual_machines: list[SubResource]
+
+
+    class azure.mgmt.network.types.Subnet(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SubnetPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SubnetPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.SubnetPropertiesFormat(TypedDict, total=False):
+        key "addressPrefix": str
+        key "defaultOutboundAccess": bool
+        key "natGateway": ForwardRef('SubResource', module='types')
+        key "networkSecurityGroup": ForwardRef('NetworkSecurityGroup', module='types')
+        key "privateEndpointNetworkPolicies": Union[str, VirtualNetworkPrivateEndpointNetworkPolicies]
+        key "privateLinkServiceNetworkPolicies": Union[str, VirtualNetworkPrivateLinkServiceNetworkPolicies]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "purpose": str
+        key "routeTable": ForwardRef('RouteTable', module='types')
+        key "serviceGateway": ForwardRef('SubResource', module='types')
+        key "sharingScope": Union[str, SharingScope]
+        addressPrefixes: list[str]
+        address_prefix: str
+        address_prefixes: list[str]
+        applicationGatewayIPConfigurations: list[ApplicationGatewayIPConfiguration]
+        application_gateway_ip_configurations: list[ApplicationGatewayIPConfiguration]
+        default_outbound_access: bool
+        delegations: list[Delegation]
+        ipAllocations: list[SubResource]
+        ipConfigurationProfiles: list[IPConfigurationProfile]
+        ipConfigurations: list[IPConfiguration]
+        ip_allocations: list[SubResource]
+        ip_configuration_profiles: list[IPConfigurationProfile]
+        ip_configurations: list[IPConfiguration]
+        ipamPoolPrefixAllocations: list[IpamPoolPrefixAllocation]
+        ipam_pool_prefix_allocations: list[IpamPoolPrefixAllocation]
+        nat_gateway: SubResource
+        network_security_group: NetworkSecurityGroup
+        privateEndpoints: list[PrivateEndpoint]
+        private_endpoint_network_policies: Union[str, VirtualNetworkPrivateEndpointNetworkPolicies]
+        private_endpoints: list[PrivateEndpoint]
+        private_link_service_network_policies: Union[str, VirtualNetworkPrivateLinkServiceNetworkPolicies]
+        provisioning_state: Union[str, ProvisioningState]
+        purpose: str
+        resourceNavigationLinks: list[ResourceNavigationLink]
+        resource_navigation_links: list[ResourceNavigationLink]
+        route_table: RouteTable
+        serviceAssociationLinks: list[ServiceAssociationLink]
+        serviceEndpointPolicies: list[ServiceEndpointPolicy]
+        serviceEndpoints: list[ServiceEndpointPropertiesFormat]
+        service_association_links: list[ServiceAssociationLink]
+        service_endpoint_policies: list[ServiceEndpointPolicy]
+        service_endpoints: list[ServiceEndpointPropertiesFormat]
+        service_gateway: SubResource
+        sharing_scope: Union[str, SharingScope]
+
+
+    class azure.mgmt.network.types.SubscriptionId(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.SwapResource(ProxyResourceWithReadOnlyID):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SwapResourceProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SwapResourceProperties
+        type: str
+
+
+    class azure.mgmt.network.types.SwapResourceProperties(TypedDict, total=False):
+        key "slotType": Union[str, SlotType]
+        slot_type: Union[str, SlotType]
+
+
+    class azure.mgmt.network.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
+
+
+    class azure.mgmt.network.types.TagsObject(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.TopologyParameters(TypedDict, total=False):
+        key "targetResourceGroupName": str
+        key "targetSubnet": ForwardRef('SubResource', module='types')
+        key "targetVirtualNetwork": ForwardRef('SubResource', module='types')
+        target_resource_group_name: str
+        target_subnet: SubResource
+        target_virtual_network: SubResource
+
+
+    class azure.mgmt.network.types.TrackedResourceWithOptionalLocation(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.TrackedResourceWithSettableIdOptionalLocation(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.TrackedResourceWithSettableName(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.TrafficAnalyticsConfigurationProperties(TypedDict, total=False):
+        key "enabled": bool
+        key "trafficAnalyticsInterval": int
+        key "workspaceId": str
+        key "workspaceRegion": str
+        key "workspaceResourceId": str
+        enabled: bool
+        traffic_analytics_interval: int
+        workspace_id: str
+        workspace_region: str
+        workspace_resource_id: str
+
+
+    class azure.mgmt.network.types.TrafficAnalyticsProperties(TypedDict, total=False):
+        key "networkWatcherFlowAnalyticsConfiguration": ForwardRef('TrafficAnalyticsConfigurationProperties', module='types')
+        network_watcher_flow_analytics_configuration: TrafficAnalyticsConfigurationProperties
+
+
+    class azure.mgmt.network.types.TrafficDetectionRule(TypedDict, total=False):
+        key "packetsPerSecond": int
+        key "trafficType": Union[str, DdosTrafficType]
+        packets_per_second: int
+        traffic_type: Union[str, DdosTrafficType]
+
+
+    class azure.mgmt.network.types.TrafficSelectorPolicy(TypedDict, total=False):
+        key "localAddressRanges": Required[list[str]]
+        key "remoteAddressRanges": Required[list[str]]
+        local_address_ranges: list[str]
+        remote_address_ranges: list[str]
+
+
+    class azure.mgmt.network.types.TroubleshootingParameters(TypedDict, total=False):
+        key "properties": Required[TroubleshootingProperties]
+        key "targetResourceId": Required[str]
+        properties: TroubleshootingProperties
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.TroubleshootingProperties(TypedDict, total=False):
+        key "storageId": Required[str]
+        key "storagePath": Required[str]
+        storage_id: str
+        storage_path: str
+
+
+    class azure.mgmt.network.types.TunnelConnectionHealth(TypedDict, total=False):
+        key "connectionStatus": Union[str, VirtualNetworkGatewayConnectionStatus]
+        key "egressBytesTransferred": int
+        key "ingressBytesTransferred": int
+        key "lastConnectionEstablishedUtcTime": str
+        key "tunnel": str
+        connection_status: Union[str, VirtualNetworkGatewayConnectionStatus]
+        egress_bytes_transferred: int
+        ingress_bytes_transferred: int
+        last_connection_established_utc_time: str
+        tunnel: str
+
+
+    class azure.mgmt.network.types.UnprepareNetworkPoliciesRequest(TypedDict, total=False):
+        key "serviceName": str
+        service_name: str
+
+
+    class azure.mgmt.network.types.UpdateTagsRequest(TypedDict, total=False):
+        key "id": str
+        id: str
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.VM(Resource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VerificationIPFlowParameters(TypedDict, total=False):
+        key "direction": Required[Union[str, Direction]]
+        key "localIPAddress": Required[str]
+        key "localPort": Required[str]
+        key "protocol": Required[Union[str, IpFlowProtocol]]
+        key "remoteIPAddress": Required[str]
+        key "remotePort": Required[str]
+        key "targetNicResourceId": str
+        key "targetResourceId": Required[str]
+        direction: Union[str, Direction]
+        local_ip_address: str
+        local_port: str
+        protocol: Union[str, IpFlowProtocol]
+        remote_ip_address: str
+        remote_port: str
+        target_nic_resource_id: str
+        target_resource_id: str
+
+
+    class azure.mgmt.network.types.VerifierWorkspace(CommonTrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('VerifierWorkspaceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VerifierWorkspaceProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VerifierWorkspaceProperties(TypedDict, total=False):
+        key "description": str
+        key "provisioningState": Union[str, ProvisioningState]
+        description: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.VerifierWorkspaceUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('VerifierWorkspaceUpdateProperties', module='types')
+        properties: VerifierWorkspaceUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.VerifierWorkspaceUpdateProperties(TypedDict, total=False):
+        key "description": str
+        description: str
+
+
+    class azure.mgmt.network.types.VirtualApplianceAdditionalNicProperties(TypedDict, total=False):
+        key "hasPublicIp": bool
+        key "name": str
+        has_public_ip: bool
+        name: str
+
+
+    class azure.mgmt.network.types.VirtualApplianceIPConfiguration(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('VirtualApplianceIPConfigurationProperties', module='types')
+        name: str
+        properties: VirtualApplianceIPConfigurationProperties
+
+
+    class azure.mgmt.network.types.VirtualApplianceIPConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        primary: bool
+
+
+    class azure.mgmt.network.types.VirtualApplianceNetworkInterfaceConfiguration(TypedDict, total=False):
+        key "properties": ForwardRef('VirtualApplianceNetworkInterfaceConfigurationProperties', module='types')
+        key "type": Union[str, NicTypeInRequest]
+        nic_type: Union[str, NicTypeInRequest]
+        properties: VirtualApplianceNetworkInterfaceConfigurationProperties
+
+
+    class azure.mgmt.network.types.VirtualApplianceNetworkInterfaceConfigurationProperties(TypedDict, total=False):
+        ipConfigurations: list[VirtualApplianceIPConfiguration]
+        ip_configurations: list[VirtualApplianceIPConfiguration]
+
+
+    class azure.mgmt.network.types.VirtualApplianceNicProperties(TypedDict, total=False):
+        key "instanceName": str
+        key "name": str
+        key "nicType": Union[str, NicTypeInResponse]
+        key "privateIpAddress": str
+        key "publicIpAddress": str
+        instance_name: str
+        name: str
+        nic_type: Union[str, NicTypeInResponse]
+        private_ip_address: str
+        public_ip_address: str
+
+
+    class azure.mgmt.network.types.VirtualApplianceSite(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualApplianceSiteProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VirtualApplianceSiteProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualApplianceSiteProperties(TypedDict, total=False):
+        key "addressPrefix": str
+        key "o365Policy": ForwardRef('Office365PolicyProperties', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        address_prefix: str
+        o365_policy: Office365PolicyProperties
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.VirtualApplianceSkuProperties(TypedDict, total=False):
+        key "bundledScaleUnit": str
+        key "marketPlaceVersion": str
+        key "vendor": str
+        bundled_scale_unit: str
+        market_place_version: str
+        vendor: str
+
+
+    class azure.mgmt.network.types.VirtualHub(TrackedResourceWithSettableIdOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualHubProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: VirtualHubProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualHubId(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.network.types.VirtualHubProperties(TypedDict, total=False):
+        key "addressPrefix": str
+        key "allowBranchToBranchTraffic": bool
+        key "azureFirewall": ForwardRef('SubResource', module='types')
+        key "expressRouteGateway": ForwardRef('SubResource', module='types')
+        key "hubRoutingPreference": Union[str, HubRoutingPreference]
+        key "p2SVpnGateway": ForwardRef('SubResource', module='types')
+        key "preferredRoutingGateway": Union[str, PreferredRoutingGateway]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routeTable": ForwardRef('VirtualHubRouteTable', module='types')
+        key "routingState": Union[str, RoutingState]
+        key "securityPartnerProvider": ForwardRef('SubResource', module='types')
+        key "securityProviderName": str
+        key "sku": str
+        key "virtualRouterAsn": int
+        key "virtualRouterAutoScaleConfiguration": ForwardRef('VirtualRouterAutoScaleConfiguration', module='types')
+        key "virtualWan": ForwardRef('SubResource', module='types')
+        key "vpnGateway": ForwardRef('SubResource', module='types')
+        address_prefix: str
+        allow_branch_to_branch_traffic: bool
+        azure_firewall: SubResource
+        bgpConnections: list[SubResource]
+        bgp_connections: list[SubResource]
+        express_route_gateway: SubResource
+        hub_routing_preference: Union[str, HubRoutingPreference]
+        ipConfigurations: list[SubResource]
+        ip_configurations: list[SubResource]
+        p2_s_vpn_gateway: SubResource
+        preferred_routing_gateway: Union[str, PreferredRoutingGateway]
+        provisioning_state: Union[str, ProvisioningState]
+        routeMaps: list[SubResource]
+        route_maps: list[SubResource]
+        route_table: VirtualHubRouteTable
+        routing_state: Union[str, RoutingState]
+        security_partner_provider: SubResource
+        security_provider_name: str
+        sku: str
+        virtualHubRouteTableV2s: list[VirtualHubRouteTableV2]
+        virtualRouterIps: list[str]
+        virtual_hub_route_table_v2_s: list[VirtualHubRouteTableV2]
+        virtual_router_asn: int
+        virtual_router_auto_scale_configuration: VirtualRouterAutoScaleConfiguration
+        virtual_router_ips: list[str]
+        virtual_wan: SubResource
+        vpn_gateway: SubResource
+
+
+    class azure.mgmt.network.types.VirtualHubRoute(TypedDict, total=False):
+        key "nextHopIpAddress": str
+        addressPrefixes: list[str]
+        address_prefixes: list[str]
+        next_hop_ip_address: str
+
+
+    class azure.mgmt.network.types.VirtualHubRouteTable(TypedDict, total=False):
+        routes: list[VirtualHubRoute]
+
+
+    class azure.mgmt.network.types.VirtualHubRouteTableV2(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualHubRouteTableV2Properties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: VirtualHubRouteTableV2Properties
+
+
+    class azure.mgmt.network.types.VirtualHubRouteTableV2Properties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        attachedConnections: list[str]
+        attached_connections: list[str]
+        provisioning_state: Union[str, ProvisioningState]
+        routes: list[VirtualHubRouteV2]
+
+
+    class azure.mgmt.network.types.VirtualHubRouteV2(TypedDict, total=False):
+        key "destinationType": str
+        key "nextHopType": str
+        destination_type: str
+        destinations: list[str]
+        nextHops: list[str]
+        next_hop_type: str
+        next_hops: list[str]
+
+
+    class azure.mgmt.network.types.VirtualNetwork(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: VirtualNetworkPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkAppliance(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkAppliancePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VirtualNetworkAppliancePropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkApplianceIpConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkApplianceIpConfigurationProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VirtualNetworkApplianceIpConfigurationProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkApplianceIpConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        key "privateIPAddress": str
+        key "privateIPAddressVersion": Union[str, IPVersion]
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        primary: bool
+        private_ip_address: str
+        private_ip_address_version: Union[str, IPVersion]
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.VirtualNetworkAppliancePropertiesFormat(TypedDict, total=False):
+        key "bandwidthInGbps": float
+        key "privateIPAddressVersion": Union[str, VirtualNetworkApplianceIpVersionType]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "subnet": ForwardRef('Subnet', module='types')
+        bandwidth_in_gbps: float
+        ipConfigurations: list[VirtualNetworkApplianceIpConfiguration]
+        ip_configurations: list[VirtualNetworkApplianceIpConfiguration]
+        private_ip_address_version: Union[str, VirtualNetworkApplianceIpVersionType]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        subnet: Subnet
+
+
+    class azure.mgmt.network.types.VirtualNetworkBgpCommunities(TypedDict, total=False):
+        key "regionalCommunity": str
+        key "virtualNetworkCommunity": Required[str]
+        regional_community: str
+        virtual_network_community: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkEncryption(TypedDict, total=False):
+        key "enabled": Required[bool]
+        key "enforcement": Union[str, VirtualNetworkEncryptionEnforcement]
+        enabled: bool
+        enforcement: Union[str, VirtualNetworkEncryptionEnforcement]
+
+
+    class azure.mgmt.network.types.VirtualNetworkGateway(Resource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": Required[VirtualNetworkGatewayPropertiesFormat]
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: VirtualNetworkGatewayPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayAutoScaleBounds(TypedDict, total=False):
+        key "max": int
+        key "min": int
+        max: int
+        min: int
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayAutoScaleConfiguration(TypedDict, total=False):
+        key "bounds": ForwardRef('VirtualNetworkGatewayAutoScaleBounds', module='types')
+        bounds: VirtualNetworkGatewayAutoScaleBounds
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayConnection(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": Required[VirtualNetworkGatewayConnectionPropertiesFormat]
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VirtualNetworkGatewayConnectionPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayConnectionPropertiesFormat(TypedDict, total=False):
+        key "authenticationType": Union[str, ConnectionAuthenticationType]
+        key "authorizationKey": str
+        key "certificateAuthentication": ForwardRef('CertificateAuthentication', module='types')
+        key "connectionMode": Union[str, VirtualNetworkGatewayConnectionMode]
+        key "connectionProtocol": Union[str, VirtualNetworkGatewayConnectionProtocol]
+        key "connectionStatus": Union[str, VirtualNetworkGatewayConnectionStatus]
+        key "connectionType": Required[Union[str, VirtualNetworkGatewayConnectionType]]
+        key "dpdTimeoutSeconds": int
+        key "egressBytesTransferred": int
+        key "enableBgp": bool
+        key "enablePrivateLinkFastPath": bool
+        key "expressRouteGatewayBypass": bool
+        key "ingressBytesTransferred": int
+        key "localNetworkGateway2": ForwardRef('LocalNetworkGateway', module='types')
+        key "peer": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        key "routingWeight": int
+        key "sharedKey": str
+        key "useLocalAzureIpAddress": bool
+        key "usePolicyBasedTrafficSelectors": bool
+        key "virtualNetworkGateway1": Required[VirtualNetworkGateway]
+        key "virtualNetworkGateway2": ForwardRef('VirtualNetworkGateway', module='types')
+        authentication_type: Union[str, ConnectionAuthenticationType]
+        authorization_key: str
+        certificate_authentication: CertificateAuthentication
+        connection_mode: Union[str, VirtualNetworkGatewayConnectionMode]
+        connection_protocol: Union[str, VirtualNetworkGatewayConnectionProtocol]
+        connection_status: Union[str, VirtualNetworkGatewayConnectionStatus]
+        connection_type: Union[str, VirtualNetworkGatewayConnectionType]
+        dpd_timeout_seconds: int
+        egressNatRules: list[SubResource]
+        egress_bytes_transferred: int
+        egress_nat_rules: list[SubResource]
+        enable_bgp: bool
+        enable_private_link_fast_path: bool
+        express_route_gateway_bypass: bool
+        gatewayCustomBgpIpAddresses: list[GatewayCustomBgpIpAddressIpConfiguration]
+        gateway_custom_bgp_ip_addresses: list[GatewayCustomBgpIpAddressIpConfiguration]
+        ingressNatRules: list[SubResource]
+        ingress_bytes_transferred: int
+        ingress_nat_rules: list[SubResource]
+        ipsecPolicies: list[IpsecPolicy]
+        ipsec_policies: list[IpsecPolicy]
+        local_network_gateway2: LocalNetworkGateway
+        peer: SubResource
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        routing_configuration: RoutingConfiguration
+        routing_weight: int
+        shared_key: str
+        trafficSelectorPolicies: list[TrafficSelectorPolicy]
+        traffic_selector_policies: list[TrafficSelectorPolicy]
+        tunnelConnectionStatus: list[TunnelConnectionHealth]
+        tunnelProperties: list[VirtualNetworkGatewayConnectionTunnelProperties]
+        tunnel_connection_status: list[TunnelConnectionHealth]
+        tunnel_properties: list[VirtualNetworkGatewayConnectionTunnelProperties]
+        use_local_azure_ip_address: bool
+        use_policy_based_traffic_selectors: bool
+        virtual_network_gateway1: VirtualNetworkGateway
+        virtual_network_gateway2: VirtualNetworkGateway
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayConnectionTunnelProperties(TypedDict, total=False):
+        key "bgpPeeringAddress": str
+        key "tunnelIpAddress": str
+        bgp_peering_address: str
+        tunnel_ip_address: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayIPConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkGatewayIPConfigurationPropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: VirtualNetworkGatewayIPConfigurationPropertiesFormat
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayIPConfigurationPropertiesFormat(TypedDict, total=False):
+        key "privateIPAddress": str
+        key "privateIPAllocationMethod": Union[str, IPAllocationMethod]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicIPAddress": ForwardRef('SubResource', module='types')
+        key "subnet": ForwardRef('SubResource', module='types')
+        private_ip_address: str
+        private_ip_allocation_method: Union[str, IPAllocationMethod]
+        provisioning_state: Union[str, ProvisioningState]
+        public_ip_address: SubResource
+        subnet: SubResource
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayMigrationParameters(TypedDict, total=False):
+        key "migrationType": Required[Union[str, VirtualNetworkGatewayMigrationType]]
+        key "resourceUrl": str
+        migration_type: Union[str, VirtualNetworkGatewayMigrationType]
+        resource_url: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayMigrationStatus(TypedDict, total=False):
+        key "errorMessage": str
+        key "phase": Union[str, VirtualNetworkGatewayMigrationPhase]
+        key "state": Union[str, VirtualNetworkGatewayMigrationState]
+        error_message: str
+        phase: Union[str, VirtualNetworkGatewayMigrationPhase]
+        state: Union[str, VirtualNetworkGatewayMigrationState]
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayNatRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkGatewayNatRuleProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VirtualNetworkGatewayNatRuleProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayNatRuleProperties(TypedDict, total=False):
+        key "ipConfigurationId": str
+        key "mode": Union[str, VpnNatRuleMode]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "type": Union[str, VpnNatRuleType]
+        externalMappings: list[VpnNatRuleMapping]
+        external_mappings: list[VpnNatRuleMapping]
+        internalMappings: list[VpnNatRuleMapping]
+        internal_mappings: list[VpnNatRuleMapping]
+        ip_configuration_id: str
+        mode: Union[str, VpnNatRuleMode]
+        provisioning_state: Union[str, ProvisioningState]
+        type: Union[str, VpnNatRuleType]
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayPolicyGroup(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkGatewayPolicyGroupProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: VirtualNetworkGatewayPolicyGroupProperties
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayPolicyGroupMember(TypedDict, total=False):
+        key "attributeType": Union[str, VpnPolicyMemberAttributeType]
+        key "attributeValue": str
+        key "name": str
+        attribute_type: Union[str, VpnPolicyMemberAttributeType]
+        attribute_value: str
+        name: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayPolicyGroupProperties(TypedDict, total=False):
+        key "isDefault": Required[bool]
+        key "policyMembers": Required[list[VirtualNetworkGatewayPolicyGroupMember]]
+        key "priority": Required[int]
+        key "provisioningState": Union[str, ProvisioningState]
+        is_default: bool
+        policy_members: list[VirtualNetworkGatewayPolicyGroupMember]
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+        vngClientConnectionConfigurations: list[SubResource]
+        vng_client_connection_configurations: list[SubResource]
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewayPropertiesFormat(TypedDict, total=False):
+        key "activeActive": bool
+        key "adminState": Union[str, AdminState]
+        key "allowRemoteVnetTraffic": bool
+        key "allowVirtualWanTraffic": bool
+        key "autoScaleConfiguration": ForwardRef('VirtualNetworkGatewayAutoScaleConfiguration', module='types')
+        key "bgpSettings": ForwardRef('BgpSettings', module='types')
+        key "customRoutes": ForwardRef('AddressSpace', module='types')
+        key "disableIPSecReplayProtection": bool
+        key "enableBgp": bool
+        key "enableBgpRouteTranslationForNat": bool
+        key "enableDnsForwarding": bool
+        key "enableHighBandwidthVpnGateway": bool
+        key "enablePrivateIpAddress": bool
+        key "gatewayDefaultSite": ForwardRef('SubResource', module='types')
+        key "gatewayType": Union[str, VirtualNetworkGatewayType]
+        key "inboundDnsForwardingEndpoint": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resiliencyModel": Union[str, ResiliencyModel]
+        key "resourceGuid": str
+        key "sku": ForwardRef('VirtualNetworkGatewaySku', module='types')
+        key "vNetExtendedLocationResourceId": str
+        key "virtualNetworkGatewayMigrationStatus": ForwardRef('VirtualNetworkGatewayMigrationStatus', module='types')
+        key "vpnClientConfiguration": ForwardRef('VpnClientConfiguration', module='types')
+        key "vpnGatewayGeneration": Union[str, VpnGatewayGeneration]
+        key "vpnType": Union[str, VpnType]
+        active_active: bool
+        admin_state: Union[str, AdminState]
+        allow_remote_vnet_traffic: bool
+        allow_virtual_wan_traffic: bool
+        auto_scale_configuration: VirtualNetworkGatewayAutoScaleConfiguration
+        bgp_settings: BgpSettings
+        custom_routes: AddressSpace
+        disable_ip_sec_replay_protection: bool
+        enable_bgp: bool
+        enable_bgp_route_translation_for_nat: bool
+        enable_dns_forwarding: bool
+        enable_high_bandwidth_vpn_gateway: bool
+        enable_private_ip_address: bool
+        gateway_default_site: SubResource
+        gateway_type: Union[str, VirtualNetworkGatewayType]
+        inbound_dns_forwarding_endpoint: str
+        ipConfigurations: list[VirtualNetworkGatewayIPConfiguration]
+        ip_configurations: list[VirtualNetworkGatewayIPConfiguration]
+        natRules: list[VirtualNetworkGatewayNatRule]
+        nat_rules: list[VirtualNetworkGatewayNatRule]
+        provisioning_state: Union[str, ProvisioningState]
+        resiliency_model: Union[str, ResiliencyModel]
+        resource_guid: str
+        sku: VirtualNetworkGatewaySku
+        v_net_extended_location_resource_id: str
+        virtualNetworkGatewayPolicyGroups: list[VirtualNetworkGatewayPolicyGroup]
+        virtual_network_gateway_migration_status: VirtualNetworkGatewayMigrationStatus
+        virtual_network_gateway_policy_groups: list[VirtualNetworkGatewayPolicyGroup]
+        vpn_client_configuration: VpnClientConfiguration
+        vpn_gateway_generation: Union[str, VpnGatewayGeneration]
+        vpn_type: Union[str, VpnType]
+
+
+    class azure.mgmt.network.types.VirtualNetworkGatewaySku(TypedDict, total=False):
+        key "capacity": int
+        key "name": Union[str, VirtualNetworkGatewaySkuName]
+        key "tier": Union[str, VirtualNetworkGatewaySkuTier]
+        capacity: int
+        name: Union[str, VirtualNetworkGatewaySkuName]
+        tier: Union[str, VirtualNetworkGatewaySkuTier]
+
+
+    class azure.mgmt.network.types.VirtualNetworkPeering(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkPeeringPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VirtualNetworkPeeringPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkPeeringPropertiesFormat(TypedDict, total=False):
+        key "allowForwardedTraffic": bool
+        key "allowGatewayTransit": bool
+        key "allowVirtualNetworkAccess": bool
+        key "doNotVerifyRemoteGateways": bool
+        key "enableOnlyIPv6Peering": bool
+        key "localAddressSpace": ForwardRef('AddressSpace', module='types')
+        key "localVirtualNetworkAddressSpace": ForwardRef('AddressSpace', module='types')
+        key "peerCompleteVnets": bool
+        key "peeringState": Union[str, VirtualNetworkPeeringState]
+        key "peeringSyncLevel": Union[str, VirtualNetworkPeeringLevel]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "remoteAddressSpace": ForwardRef('AddressSpace', module='types')
+        key "remoteBgpCommunities": ForwardRef('VirtualNetworkBgpCommunities', module='types')
+        key "remoteVirtualNetwork": ForwardRef('SubResource', module='types')
+        key "remoteVirtualNetworkAddressSpace": ForwardRef('AddressSpace', module='types')
+        key "remoteVirtualNetworkEncryption": ForwardRef('VirtualNetworkEncryption', module='types')
+        key "resourceGuid": str
+        key "useRemoteGateways": bool
+        allow_forwarded_traffic: bool
+        allow_gateway_transit: bool
+        allow_virtual_network_access: bool
+        do_not_verify_remote_gateways: bool
+        enable_only_i_pv6_peering: bool
+        localSubnetNames: list[str]
+        local_address_space: AddressSpace
+        local_subnet_names: list[str]
+        local_virtual_network_address_space: AddressSpace
+        peer_complete_vnets: bool
+        peering_state: Union[str, VirtualNetworkPeeringState]
+        peering_sync_level: Union[str, VirtualNetworkPeeringLevel]
+        provisioning_state: Union[str, ProvisioningState]
+        remoteSubnetNames: list[str]
+        remote_address_space: AddressSpace
+        remote_bgp_communities: VirtualNetworkBgpCommunities
+        remote_subnet_names: list[str]
+        remote_virtual_network: SubResource
+        remote_virtual_network_address_space: AddressSpace
+        remote_virtual_network_encryption: VirtualNetworkEncryption
+        resource_guid: str
+        use_remote_gateways: bool
+
+
+    class azure.mgmt.network.types.VirtualNetworkPropertiesFormat(TypedDict, total=False):
+        key "addressSpace": ForwardRef('AddressSpace', module='types')
+        key "bgpCommunities": ForwardRef('VirtualNetworkBgpCommunities', module='types')
+        key "ddosProtectionPlan": ForwardRef('SubResource', module='types')
+        key "defaultPublicNatGateway": ForwardRef('SubResource', module='types')
+        key "dhcpOptions": ForwardRef('DhcpOptions', module='types')
+        key "enableDdosProtection": bool
+        key "enableVmProtection": bool
+        key "encryption": ForwardRef('VirtualNetworkEncryption', module='types')
+        key "flowTimeoutInMinutes": int
+        key "privateEndpointVNetPolicies": Union[str, PrivateEndpointVNetPolicies]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "summarizedGatewayPrefixes": ForwardRef('AddressSpace', module='types')
+        address_space: AddressSpace
+        bgp_communities: VirtualNetworkBgpCommunities
+        ddos_protection_plan: SubResource
+        default_public_nat_gateway: SubResource
+        dhcp_options: DhcpOptions
+        enable_ddos_protection: bool
+        enable_vm_protection: bool
+        encryption: VirtualNetworkEncryption
+        flowLogs: list[FlowLog]
+        flow_logs: list[FlowLog]
+        flow_timeout_in_minutes: int
+        ipAllocations: list[SubResource]
+        ip_allocations: list[SubResource]
+        private_endpoint_v_net_policies: Union[str, PrivateEndpointVNetPolicies]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+        subnets: list[Subnet]
+        summarized_gateway_prefixes: AddressSpace
+        virtualNetworkPeerings: list[VirtualNetworkPeering]
+        virtual_network_peerings: list[VirtualNetworkPeering]
+
+
+    class azure.mgmt.network.types.VirtualNetworkTap(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkTapPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VirtualNetworkTapPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualNetworkTapPropertiesFormat(TypedDict, total=False):
+        key "destinationLoadBalancerFrontEndIPConfiguration": ForwardRef('FrontendIPConfiguration', module='types')
+        key "destinationNetworkInterfaceIPConfiguration": ForwardRef('NetworkInterfaceIPConfiguration', module='types')
+        key "destinationPort": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        destination_load_balancer_front_end_ip_configuration: FrontendIPConfiguration
+        destination_network_interface_ip_configuration: NetworkInterfaceIPConfiguration
+        destination_port: int
+        networkInterfaceTapConfigurations: list[NetworkInterfaceTapConfiguration]
+        network_interface_tap_configurations: list[NetworkInterfaceTapConfiguration]
+        provisioning_state: Union[str, ProvisioningState]
+        resource_guid: str
+
+
+    class azure.mgmt.network.types.VirtualRouter(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualRouterPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VirtualRouterPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualRouterAutoScaleConfiguration(TypedDict, total=False):
+        key "minCapacity": int
+        min_capacity: int
+
+
+    class azure.mgmt.network.types.VirtualRouterPeering(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualRouterPeeringProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VirtualRouterPeeringProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualRouterPeeringProperties(TypedDict, total=False):
+        key "peerAsn": int
+        key "peerIp": str
+        key "provisioningState": Union[str, ProvisioningState]
+        peer_asn: int
+        peer_ip: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.VirtualRouterPropertiesFormat(TypedDict, total=False):
+        key "hostedGateway": ForwardRef('SubResource', module='types')
+        key "hostedSubnet": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "virtualRouterAsn": int
+        hosted_gateway: SubResource
+        hosted_subnet: SubResource
+        peerings: list[SubResource]
+        provisioning_state: Union[str, ProvisioningState]
+        virtualRouterIps: list[str]
+        virtual_router_asn: int
+        virtual_router_ips: list[str]
+
+
+    class azure.mgmt.network.types.VirtualWAN(TrackedResourceWithSettableIdOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualWanProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VirtualWanProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VirtualWanProperties(TypedDict, total=False):
+        key "allowBranchToBranchTraffic": bool
+        key "allowVnetToVnetTraffic": bool
+        key "disableVpnEncryption": bool
+        key "office365LocalBreakoutCategory": Union[str, OfficeTrafficCategory]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "type": str
+        allow_branch_to_branch_traffic: bool
+        allow_vnet_to_vnet_traffic: bool
+        disable_vpn_encryption: bool
+        office365_local_breakout_category: Union[str, OfficeTrafficCategory]
+        provisioning_state: Union[str, ProvisioningState]
+        type: str
+        virtualHubs: list[SubResource]
+        virtual_hubs: list[SubResource]
+        vpnSites: list[SubResource]
+        vpn_sites: list[SubResource]
+
+
+    class azure.mgmt.network.types.VirtualWanVpnProfileParameters(TypedDict, total=False):
+        key "authenticationMethod": Union[str, AuthenticationMethod]
+        key "vpnServerConfigurationResourceId": str
+        authentication_method: Union[str, AuthenticationMethod]
+        vpn_server_configuration_resource_id: str
+
+
+    class azure.mgmt.network.types.VnetRoute(TypedDict, total=False):
+        key "staticRoutesConfig": ForwardRef('StaticRoutesConfig', module='types')
+        bgpConnections: list[SubResource]
+        bgp_connections: list[SubResource]
+        staticRoutes: list[StaticRoute]
+        static_routes: list[StaticRoute]
+        static_routes_config: StaticRoutesConfig
+
+
+    class azure.mgmt.network.types.VngClientConnectionConfiguration(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VngClientConnectionConfigurationProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: VngClientConnectionConfigurationProperties
+
+
+    class azure.mgmt.network.types.VngClientConnectionConfigurationProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "virtualNetworkGatewayPolicyGroups": Required[list[SubResource]]
+        key "vpnClientAddressPool": Required[AddressSpace]
+        provisioning_state: Union[str, ProvisioningState]
+        virtual_network_gateway_policy_groups: list[SubResource]
+        vpn_client_address_pool: AddressSpace
+
+
+    class azure.mgmt.network.types.VpnClientConfiguration(TypedDict, total=False):
+        key "aadAudience": str
+        key "aadIssuer": str
+        key "aadTenant": str
+        key "radiusServerAddress": str
+        key "radiusServerSecret": str
+        key "vpnClientAddressPool": ForwardRef('AddressSpace', module='types')
+        aad_audience: str
+        aad_issuer: str
+        aad_tenant: str
+        radiusServers: list[RadiusServer]
+        radius_server_address: str
+        radius_server_secret: str
+        radius_servers: list[RadiusServer]
+        vngClientConnectionConfigurations: list[VngClientConnectionConfiguration]
+        vng_client_connection_configurations: list[VngClientConnectionConfiguration]
+        vpnAuthenticationTypes: list[Union[str, VpnAuthenticationType]]
+        vpnClientIpsecPolicies: list[IpsecPolicy]
+        vpnClientProtocols: list[Union[str, VpnClientProtocol]]
+        vpnClientRevokedCertificates: list[VpnClientRevokedCertificate]
+        vpnClientRootCertificates: list[VpnClientRootCertificate]
+        vpn_authentication_types: list[Union[str, VpnAuthenticationType]]
+        vpn_client_address_pool: AddressSpace
+        vpn_client_ipsec_policies: list[IpsecPolicy]
+        vpn_client_protocols: list[Union[str, VpnClientProtocol]]
+        vpn_client_revoked_certificates: list[VpnClientRevokedCertificate]
+        vpn_client_root_certificates: list[VpnClientRootCertificate]
+
+
+    class azure.mgmt.network.types.VpnClientConnectionHealth(TypedDict, total=False):
+        key "totalEgressBytesTransferred": int
+        key "totalIngressBytesTransferred": int
+        key "vpnClientConnectionsCount": int
+        allocatedIpAddresses: list[str]
+        allocated_ip_addresses: list[str]
+        total_egress_bytes_transferred: int
+        total_ingress_bytes_transferred: int
+        vpn_client_connections_count: int
+
+
+    class azure.mgmt.network.types.VpnClientIPsecParameters(TypedDict, total=False):
+        key "dhGroup": Required[Union[str, DhGroup]]
+        key "ikeEncryption": Required[Union[str, IkeEncryption]]
+        key "ikeIntegrity": Required[Union[str, IkeIntegrity]]
+        key "ipsecEncryption": Required[Union[str, IpsecEncryption]]
+        key "ipsecIntegrity": Required[Union[str, IpsecIntegrity]]
+        key "pfsGroup": Required[Union[str, PfsGroup]]
+        key "saDataSizeKilobytes": Required[int]
+        key "saLifeTimeSeconds": Required[int]
+        dh_group: Union[str, DhGroup]
+        ike_encryption: Union[str, IkeEncryption]
+        ike_integrity: Union[str, IkeIntegrity]
+        ipsec_encryption: Union[str, IpsecEncryption]
+        ipsec_integrity: Union[str, IpsecIntegrity]
+        pfs_group: Union[str, PfsGroup]
+        sa_data_size_kilobytes: int
+        sa_life_time_seconds: int
+
+
+    class azure.mgmt.network.types.VpnClientParameters(TypedDict, total=False):
+        key "authenticationMethod": Union[str, AuthenticationMethod]
+        key "processorArchitecture": Union[str, ProcessorArchitecture]
+        key "radiusServerAuthCertificate": str
+        authentication_method: Union[str, AuthenticationMethod]
+        clientRootCertificates: list[str]
+        client_root_certificates: list[str]
+        processor_architecture: Union[str, ProcessorArchitecture]
+        radius_server_auth_certificate: str
+
+
+    class azure.mgmt.network.types.VpnClientRevokedCertificate(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VpnClientRevokedCertificatePropertiesFormat', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: VpnClientRevokedCertificatePropertiesFormat
+
+
+    class azure.mgmt.network.types.VpnClientRevokedCertificatePropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "thumbprint": str
+        provisioning_state: Union[str, ProvisioningState]
+        thumbprint: str
+
+
+    class azure.mgmt.network.types.VpnClientRootCertificate(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": Required[VpnClientRootCertificatePropertiesFormat]
+        etag: str
+        id: str
+        name: str
+        properties: VpnClientRootCertificatePropertiesFormat
+
+
+    class azure.mgmt.network.types.VpnClientRootCertificatePropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicCertData": Required[str]
+        provisioning_state: Union[str, ProvisioningState]
+        public_cert_data: str
+
+
+    class azure.mgmt.network.types.VpnConnection(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VpnConnectionProperties', module='types')
+        etag: str
+        id: str
+        name: str
+        properties: VpnConnectionProperties
+
+
+    class azure.mgmt.network.types.VpnConnectionPacketCaptureStartParameters(TypedDict, total=False):
+        key "filterData": str
+        filter_data: str
+        linkConnectionNames: list[str]
+        link_connection_names: list[str]
+
+
+    class azure.mgmt.network.types.VpnConnectionPacketCaptureStopParameters(TypedDict, total=False):
+        key "sasUrl": str
+        linkConnectionNames: list[str]
+        link_connection_names: list[str]
+        sas_url: str
+
+
+    class azure.mgmt.network.types.VpnConnectionProperties(TypedDict, total=False):
+        key "connectionBandwidth": int
+        key "connectionStatus": Union[str, VpnConnectionStatus]
+        key "dpdTimeoutSeconds": int
+        key "egressBytesTransferred": int
+        key "enableBgp": bool
+        key "enableInternetSecurity": bool
+        key "enableRateLimiting": bool
+        key "ingressBytesTransferred": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "remoteVpnSite": ForwardRef('SubResource', module='types')
+        key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
+        key "routingWeight": int
+        key "sharedKey": str
+        key "useLocalAzureIpAddress": bool
+        key "usePolicyBasedTrafficSelectors": bool
+        key "vpnConnectionProtocolType": Union[str, VirtualNetworkGatewayConnectionProtocol]
+        connection_bandwidth: int
+        connection_status: Union[str, VpnConnectionStatus]
+        dpd_timeout_seconds: int
+        egress_bytes_transferred: int
+        enable_bgp: bool
+        enable_internet_security: bool
+        enable_rate_limiting: bool
+        ingress_bytes_transferred: int
+        ipsecPolicies: list[IpsecPolicy]
+        ipsec_policies: list[IpsecPolicy]
+        provisioning_state: Union[str, ProvisioningState]
+        remote_vpn_site: SubResource
+        routing_configuration: RoutingConfiguration
+        routing_weight: int
+        shared_key: str
+        trafficSelectorPolicies: list[TrafficSelectorPolicy]
+        traffic_selector_policies: list[TrafficSelectorPolicy]
+        use_local_azure_ip_address: bool
+        use_policy_based_traffic_selectors: bool
+        vpnLinkConnections: list[VpnSiteLinkConnection]
+        vpn_connection_protocol_type: Union[str, VirtualNetworkGatewayConnectionProtocol]
+        vpn_link_connections: list[VpnSiteLinkConnection]
+
+
+    class azure.mgmt.network.types.VpnDeviceScriptParameters(TypedDict, total=False):
+        key "deviceFamily": str
+        key "firmwareVersion": str
+        key "vendor": str
+        device_family: str
+        firmware_version: str
+        vendor: str
+
+
+    class azure.mgmt.network.types.VpnGateway(TrackedResourceWithSettableIdOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VpnGatewayProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VpnGatewayProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VpnGatewayIpConfiguration(TypedDict, total=False):
+        key "id": str
+        key "privateIpAddress": str
+        key "publicIpAddress": str
+        id: str
+        private_ip_address: str
+        public_ip_address: str
+
+
+    class azure.mgmt.network.types.VpnGatewayNatRule(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VpnGatewayNatRuleProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VpnGatewayNatRuleProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VpnGatewayNatRuleProperties(TypedDict, total=False):
+        key "ipConfigurationId": str
+        key "mode": Union[str, VpnNatRuleMode]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "type": Union[str, VpnNatRuleType]
+        egressVpnSiteLinkConnections: list[SubResource]
+        egress_vpn_site_link_connections: list[SubResource]
+        externalMappings: list[VpnNatRuleMapping]
+        external_mappings: list[VpnNatRuleMapping]
+        ingressVpnSiteLinkConnections: list[SubResource]
+        ingress_vpn_site_link_connections: list[SubResource]
+        internalMappings: list[VpnNatRuleMapping]
+        internal_mappings: list[VpnNatRuleMapping]
+        ip_configuration_id: str
+        mode: Union[str, VpnNatRuleMode]
+        provisioning_state: Union[str, ProvisioningState]
+        type: Union[str, VpnNatRuleType]
+
+
+    class azure.mgmt.network.types.VpnGatewayPacketCaptureStartParameters(TypedDict, total=False):
+        key "filterData": str
+        filter_data: str
+
+
+    class azure.mgmt.network.types.VpnGatewayPacketCaptureStopParameters(TypedDict, total=False):
+        key "sasUrl": str
+        sas_url: str
+
+
+    class azure.mgmt.network.types.VpnGatewayProperties(TypedDict, total=False):
+        key "bgpSettings": ForwardRef('BgpSettings', module='types')
+        key "enableBgpRouteTranslationForNat": bool
+        key "isRoutingPreferenceInternet": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "virtualHub": ForwardRef('SubResource', module='types')
+        key "vpnGatewayScaleUnit": int
+        bgp_settings: BgpSettings
+        connections: list[VpnConnection]
+        enable_bgp_route_translation_for_nat: bool
+        ipConfigurations: list[VpnGatewayIpConfiguration]
+        ip_configurations: list[VpnGatewayIpConfiguration]
+        is_routing_preference_internet: bool
+        natRules: list[VpnGatewayNatRule]
+        nat_rules: list[VpnGatewayNatRule]
+        provisioning_state: Union[str, ProvisioningState]
+        virtual_hub: SubResource
+        vpn_gateway_scale_unit: int
+
+
+    class azure.mgmt.network.types.VpnLinkBgpSettings(TypedDict, total=False):
+        key "asn": int
+        key "bgpPeeringAddress": str
+        asn: int
+        bgp_peering_address: str
+
+
+    class azure.mgmt.network.types.VpnLinkProviderProperties(TypedDict, total=False):
+        key "linkProviderName": str
+        key "linkSpeedInMbps": int
+        link_provider_name: str
+        link_speed_in_mbps: int
+
+
+    class azure.mgmt.network.types.VpnNatRuleMapping(TypedDict, total=False):
+        key "addressSpace": str
+        key "portRange": str
+        address_space: str
+        port_range: str
+
+
+    class azure.mgmt.network.types.VpnPacketCaptureStartParameters(TypedDict, total=False):
+        key "filterData": str
+        filter_data: str
+
+
+    class azure.mgmt.network.types.VpnPacketCaptureStopParameters(TypedDict, total=False):
+        key "sasUrl": str
+        sas_url: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigRadiusClientRootCertificate(TypedDict, total=False):
+        key "name": str
+        key "thumbprint": str
+        name: str
+        thumbprint: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigRadiusServerRootCertificate(TypedDict, total=False):
+        key "name": str
+        key "publicCertData": str
+        name: str
+        public_cert_data: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigVpnClientRevokedCertificate(TypedDict, total=False):
+        key "name": str
+        key "thumbprint": str
+        name: str
+        thumbprint: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigVpnClientRootCertificate(TypedDict, total=False):
+        key "name": str
+        key "publicCertData": str
+        name: str
+        public_cert_data: str
+
+
+    class azure.mgmt.network.types.VpnServerConfiguration(TrackedResourceWithSettableName):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VpnServerConfigurationProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VpnServerConfigurationProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigurationPolicyGroup(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VpnServerConfigurationPolicyGroupProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VpnServerConfigurationPolicyGroupProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigurationPolicyGroupMember(TypedDict, total=False):
+        key "attributeType": Union[str, VpnPolicyMemberAttributeType]
+        key "attributeValue": str
+        key "name": str
+        attribute_type: Union[str, VpnPolicyMemberAttributeType]
+        attribute_value: str
+        name: str
+
+
+    class azure.mgmt.network.types.VpnServerConfigurationPolicyGroupProperties(TypedDict, total=False):
+        key "isDefault": bool
+        key "priority": int
+        key "provisioningState": Union[str, ProvisioningState]
+        is_default: bool
+        p2SConnectionConfigurations: list[SubResource]
+        p2_s_connection_configurations: list[SubResource]
+        policyMembers: list[VpnServerConfigurationPolicyGroupMember]
+        policy_members: list[VpnServerConfigurationPolicyGroupMember]
+        priority: int
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.VpnServerConfigurationProperties(TypedDict, total=False):
+        key "aadAuthenticationParameters": ForwardRef('AadAuthenticationParameters', module='types')
+        key "etag": str
+        key "name": str
+        key "provisioningState": str
+        key "radiusServerAddress": str
+        key "radiusServerSecret": str
+        aad_authentication_parameters: AadAuthenticationParameters
+        configurationPolicyGroups: list[VpnServerConfigurationPolicyGroup]
+        configuration_policy_groups: list[VpnServerConfigurationPolicyGroup]
+        etag: str
+        name: str
+        p2SVpnGateways: list[P2SVpnGateway]
+        p2_s_vpn_gateways: list[P2SVpnGateway]
+        provisioning_state: str
+        radiusClientRootCertificates: list[VpnServerConfigRadiusClientRootCertificate]
+        radiusServerRootCertificates: list[VpnServerConfigRadiusServerRootCertificate]
+        radiusServers: list[RadiusServer]
+        radius_client_root_certificates: list[VpnServerConfigRadiusClientRootCertificate]
+        radius_server_address: str
+        radius_server_root_certificates: list[VpnServerConfigRadiusServerRootCertificate]
+        radius_server_secret: str
+        radius_servers: list[RadiusServer]
+        vpnAuthenticationTypes: list[Union[str, VpnAuthenticationType]]
+        vpnClientIpsecPolicies: list[IpsecPolicy]
+        vpnClientRevokedCertificates: list[VpnServerConfigVpnClientRevokedCertificate]
+        vpnClientRootCertificates: list[VpnServerConfigVpnClientRootCertificate]
+        vpnProtocols: list[Union[str, VpnGatewayTunnelingProtocol]]
+        vpn_authentication_types: list[Union[str, VpnAuthenticationType]]
+        vpn_client_ipsec_policies: list[IpsecPolicy]
+        vpn_client_revoked_certificates: list[VpnServerConfigVpnClientRevokedCertificate]
+        vpn_client_root_certificates: list[VpnServerConfigVpnClientRootCertificate]
+        vpn_protocols: list[Union[str, VpnGatewayTunnelingProtocol]]
+
+
+    class azure.mgmt.network.types.VpnSite(TrackedResourceWithSettableIdOptionalLocation):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VpnSiteProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: VpnSiteProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.VpnSiteLink(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VpnSiteLinkProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VpnSiteLinkProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VpnSiteLinkConnection(SubResourceModel):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VpnSiteLinkConnectionProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: VpnSiteLinkConnectionProperties
+        type: str
+
+
+    class azure.mgmt.network.types.VpnSiteLinkConnectionProperties(TypedDict, total=False):
+        key "connectionBandwidth": int
+        key "connectionStatus": Union[str, VpnConnectionStatus]
+        key "dpdTimeoutSeconds": int
+        key "egressBytesTransferred": int
+        key "enableBgp": bool
+        key "enableRateLimiting": bool
+        key "ingressBytesTransferred": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingWeight": int
+        key "sharedKey": str
+        key "useLocalAzureIpAddress": bool
+        key "usePolicyBasedTrafficSelectors": bool
+        key "vpnConnectionProtocolType": Union[str, VirtualNetworkGatewayConnectionProtocol]
+        key "vpnLinkConnectionMode": Union[str, VpnLinkConnectionMode]
+        key "vpnSiteLink": ForwardRef('SubResource', module='types')
+        connection_bandwidth: int
+        connection_status: Union[str, VpnConnectionStatus]
+        dpd_timeout_seconds: int
+        egressNatRules: list[SubResource]
+        egress_bytes_transferred: int
+        egress_nat_rules: list[SubResource]
+        enable_bgp: bool
+        enable_rate_limiting: bool
+        ingressNatRules: list[SubResource]
+        ingress_bytes_transferred: int
+        ingress_nat_rules: list[SubResource]
+        ipsecPolicies: list[IpsecPolicy]
+        ipsec_policies: list[IpsecPolicy]
+        provisioning_state: Union[str, ProvisioningState]
+        routing_weight: int
+        shared_key: str
+        use_local_azure_ip_address: bool
+        use_policy_based_traffic_selectors: bool
+        vpnGatewayCustomBgpAddresses: list[GatewayCustomBgpIpAddressIpConfiguration]
+        vpn_connection_protocol_type: Union[str, VirtualNetworkGatewayConnectionProtocol]
+        vpn_gateway_custom_bgp_addresses: list[GatewayCustomBgpIpAddressIpConfiguration]
+        vpn_link_connection_mode: Union[str, VpnLinkConnectionMode]
+        vpn_site_link: SubResource
+
+
+    class azure.mgmt.network.types.VpnSiteLinkProperties(TypedDict, total=False):
+        key "bgpProperties": ForwardRef('VpnLinkBgpSettings', module='types')
+        key "fqdn": str
+        key "ipAddress": str
+        key "linkProperties": ForwardRef('VpnLinkProviderProperties', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        bgp_properties: VpnLinkBgpSettings
+        fqdn: str
+        ip_address: str
+        link_properties: VpnLinkProviderProperties
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.VpnSiteProperties(TypedDict, total=False):
+        key "addressSpace": ForwardRef('AddressSpace', module='types')
+        key "bgpProperties": ForwardRef('BgpSettings', module='types')
+        key "deviceProperties": ForwardRef('DeviceProperties', module='types')
+        key "ipAddress": str
+        key "isSecuritySite": bool
+        key "o365Policy": ForwardRef('O365PolicyProperties', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "siteKey": str
+        key "virtualWan": ForwardRef('SubResource', module='types')
+        address_space: AddressSpace
+        bgp_properties: BgpSettings
+        device_properties: DeviceProperties
+        ip_address: str
+        is_security_site: bool
+        o365_policy: O365PolicyProperties
+        provisioning_state: Union[str, ProvisioningState]
+        site_key: str
+        virtual_wan: SubResource
+        vpnSiteLinks: list[VpnSiteLink]
+        vpn_site_links: list[VpnSiteLink]
+
+
+    class azure.mgmt.network.types.WebApplicationFirewallCustomRule(TypedDict, total=False):
+        key "action": Required[Union[str, WebApplicationFirewallAction]]
+        key "etag": str
+        key "matchConditions": Required[list[MatchCondition]]
+        key "name": str
+        key "priority": Required[int]
+        key "rateLimitDuration": Union[str, ApplicationGatewayFirewallRateLimitDuration]
+        key "rateLimitThreshold": int
+        key "ruleType": Required[Union[str, WebApplicationFirewallRuleType]]
+        key "state": Union[str, WebApplicationFirewallState]
+        action: Union[str, WebApplicationFirewallAction]
+        etag: str
+        groupByUserSession: list[GroupByUserSession]
+        group_by_user_session: list[GroupByUserSession]
+        match_conditions: list[MatchCondition]
+        name: str
+        priority: int
+        rate_limit_duration: Union[str, ApplicationGatewayFirewallRateLimitDuration]
+        rate_limit_threshold: int
+        rule_type: Union[str, WebApplicationFirewallRuleType]
+        state: Union[str, WebApplicationFirewallState]
+
+
+    class azure.mgmt.network.types.WebApplicationFirewallPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('WebApplicationFirewallPolicyPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: WebApplicationFirewallPolicyPropertiesFormat
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.WebApplicationFirewallPolicyPropertiesFormat(TypedDict, total=False):
+        key "managedRules": Required[ManagedRulesDefinition]
+        key "policySettings": ForwardRef('PolicySettings', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceState": Union[str, WebApplicationFirewallPolicyResourceState]
+        applicationGatewayForContainers: list[ApplicationGatewayForContainersReferenceDefinition]
+        applicationGateways: list[ApplicationGateway]
+        application_gateway_for_containers: list[ApplicationGatewayForContainersReferenceDefinition]
+        application_gateways: list[ApplicationGateway]
+        customRules: list[WebApplicationFirewallCustomRule]
+        custom_rules: list[WebApplicationFirewallCustomRule]
+        httpListeners: list[SubResource]
+        http_listeners: list[SubResource]
+        managed_rules: ManagedRulesDefinition
+        pathBasedRules: list[SubResource]
+        path_based_rules: list[SubResource]
+        policy_settings: PolicySettings
+        provisioning_state: Union[str, ProvisioningState]
+        resource_state: Union[str, WebApplicationFirewallPolicyResourceState]
+
+
+    class azure.mgmt.network.types.WebApplicationFirewallScrubbingRules(TypedDict, total=False):
+        key "matchVariable": Required[Union[str, ScrubbingRuleEntryMatchVariable]]
+        key "selector": str
+        key "selectorMatchOperator": Required[Union[str, ScrubbingRuleEntryMatchOperator]]
+        key "state": Union[str, ScrubbingRuleEntryState]
+        match_variable: Union[str, ScrubbingRuleEntryMatchVariable]
+        selector: str
+        selector_match_operator: Union[str, ScrubbingRuleEntryMatchOperator]
+        state: Union[str, ScrubbingRuleEntryState]
+
+
+    class azure.mgmt.network.types.WritableResource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
 
 
 ```

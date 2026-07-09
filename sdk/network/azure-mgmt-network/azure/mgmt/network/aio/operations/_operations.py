@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -820,7 +820,6 @@ from .._configuration import NetworkManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -1015,7 +1014,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: Union[_models.ApplicationGateway, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationGateway, _types.ApplicationGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1123,7 +1122,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1137,7 +1136,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type application_gateway_name: str
         :param parameters: Parameters supplied to the create or update application gateway operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ApplicationGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1181,7 +1180,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: Union[_models.ApplicationGateway, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationGateway, _types.ApplicationGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationGateway]:
         """Creates or updates the specified application gateway.
@@ -1192,8 +1191,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
         :param parameters: Parameters supplied to the create or update application gateway operation.
-         Is one of the following types: ApplicationGateway, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ApplicationGateway or JSON or IO[bytes]
+         Is either a ApplicationGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ApplicationGateway or
+         ~azure.mgmt.network.types.ApplicationGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ApplicationGateway. The ApplicationGateway
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationGateway]
@@ -1285,7 +1285,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1298,7 +1298,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
         :param parameters: Parameters supplied to update application gateway tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1339,7 +1339,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationGateway:
         """Updates the specified application gateway tags.
@@ -1349,9 +1349,10 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :param parameters: Parameters supplied to update application gateway tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update application gateway tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ApplicationGateway. The ApplicationGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ApplicationGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2096,7 +2097,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        probe_request: Union[_models.ApplicationGatewayOnDemandProbe, JSON, IO[bytes]],
+        probe_request: Union[
+            _models.ApplicationGatewayOnDemandProbe, _types.ApplicationGatewayOnDemandProbe, IO[bytes]
+        ],
         *,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -2210,7 +2213,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        probe_request: JSON,
+        probe_request: _types.ApplicationGatewayOnDemandProbe,
         *,
         expand: Optional[str] = None,
         content_type: str = "application/json",
@@ -2225,7 +2228,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
         :param probe_request: Request body for on-demand test probe operation. Required.
-        :type probe_request: JSON
+        :type probe_request: ~azure.mgmt.network.types.ApplicationGatewayOnDemandProbe
         :keyword expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend
          health. Default value is None.
         :paramtype expand: str
@@ -2278,7 +2281,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        probe_request: Union[_models.ApplicationGatewayOnDemandProbe, JSON, IO[bytes]],
+        probe_request: Union[
+            _models.ApplicationGatewayOnDemandProbe, _types.ApplicationGatewayOnDemandProbe, IO[bytes]
+        ],
         *,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -2291,10 +2296,10 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :param probe_request: Request body for on-demand test probe operation. Is one of the following
-         types: ApplicationGatewayOnDemandProbe, JSON, IO[bytes] Required.
-        :type probe_request: ~azure.mgmt.network.models.ApplicationGatewayOnDemandProbe or JSON or
-         IO[bytes]
+        :param probe_request: Request body for on-demand test probe operation. Is either a
+         ApplicationGatewayOnDemandProbe type or a IO[bytes] type. Required.
+        :type probe_request: ~azure.mgmt.network.models.ApplicationGatewayOnDemandProbe or
+         ~azure.mgmt.network.types.ApplicationGatewayOnDemandProbe or IO[bytes]
         :keyword expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend
          health. Default value is None.
         :paramtype expand: str
@@ -2935,7 +2940,11 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         application_gateway_name: str,
         connection_name: str,
-        parameters: Union[_models.ApplicationGatewayPrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApplicationGatewayPrivateEndpointConnection,
+            _types.ApplicationGatewayPrivateEndpointConnection,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3051,7 +3060,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         application_gateway_name: str,
         connection_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationGatewayPrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3068,7 +3077,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         :type connection_name: str
         :param parameters: Parameters supplied to update application gateway private endpoint
          connection operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ApplicationGatewayPrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3121,7 +3130,11 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         application_gateway_name: str,
         connection_name: str,
-        parameters: Union[_models.ApplicationGatewayPrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApplicationGatewayPrivateEndpointConnection,
+            _types.ApplicationGatewayPrivateEndpointConnection,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationGatewayPrivateEndpointConnection]:
         """Updates the specified private endpoint connection on application gateway.
@@ -3135,10 +3148,10 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
          Required.
         :type connection_name: str
         :param parameters: Parameters supplied to update application gateway private endpoint
-         connection operation. Is one of the following types:
-         ApplicationGatewayPrivateEndpointConnection, JSON, IO[bytes] Required.
+         connection operation. Is either a ApplicationGatewayPrivateEndpointConnection type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.network.models.ApplicationGatewayPrivateEndpointConnection or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ApplicationGatewayPrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          ApplicationGatewayPrivateEndpointConnection. The ApplicationGatewayPrivateEndpointConnection is
          compatible with MutableMapping
@@ -3515,7 +3528,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        parameters: Union[_models.ApplicationSecurityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationSecurityGroup, _types.ApplicationSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3623,7 +3636,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationSecurityGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3637,7 +3650,7 @@ class ApplicationSecurityGroupsOperations:
         :type application_security_group_name: str
         :param parameters: Parameters supplied to the create or update ApplicationSecurityGroup
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ApplicationSecurityGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3681,7 +3694,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        parameters: Union[_models.ApplicationSecurityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationSecurityGroup, _types.ApplicationSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationSecurityGroup]:
         """Creates or updates an application security group.
@@ -3692,8 +3705,9 @@ class ApplicationSecurityGroupsOperations:
         :param application_security_group_name: The name of the application security group. Required.
         :type application_security_group_name: str
         :param parameters: Parameters supplied to the create or update ApplicationSecurityGroup
-         operation. Is one of the following types: ApplicationSecurityGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ApplicationSecurityGroup or JSON or IO[bytes]
+         operation. Is either a ApplicationSecurityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ApplicationSecurityGroup or
+         ~azure.mgmt.network.types.ApplicationSecurityGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ApplicationSecurityGroup. The
          ApplicationSecurityGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationSecurityGroup]
@@ -3786,7 +3800,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3799,7 +3813,7 @@ class ApplicationSecurityGroupsOperations:
         :param application_security_group_name: The name of the application security group. Required.
         :type application_security_group_name: str
         :param parameters: Parameters supplied to update application security group tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3842,7 +3856,7 @@ class ApplicationSecurityGroupsOperations:
         self,
         resource_group_name: str,
         application_security_group_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationSecurityGroup:
         """Updates an application security group's tags.
@@ -3852,9 +3866,10 @@ class ApplicationSecurityGroupsOperations:
         :type resource_group_name: str
         :param application_security_group_name: The name of the application security group. Required.
         :type application_security_group_name: str
-        :param parameters: Parameters supplied to update application security group tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update application security group tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ApplicationSecurityGroup. The ApplicationSecurityGroup is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.ApplicationSecurityGroup
@@ -4314,7 +4329,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.AzureFirewall, JSON, IO[bytes]],
+        parameters: Union[_models.AzureFirewall, _types.AzureFirewall, IO[bytes]],
         *,
         create_afc_control_plane: Optional[bool] = None,
         **kwargs: Any
@@ -4429,7 +4444,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: JSON,
+        parameters: _types.AzureFirewall,
         *,
         create_afc_control_plane: Optional[bool] = None,
         content_type: str = "application/json",
@@ -4444,7 +4459,7 @@ class AzureFirewallsOperations:
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to the create or update Azure Firewall operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.AzureFirewall
         :keyword create_afc_control_plane: When set to true, creates an AFC control plane for the Azure
          Firewall. Default value is None.
         :paramtype create_afc_control_plane: bool
@@ -4499,7 +4514,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.AzureFirewall, JSON, IO[bytes]],
+        parameters: Union[_models.AzureFirewall, _types.AzureFirewall, IO[bytes]],
         *,
         create_afc_control_plane: Optional[bool] = None,
         **kwargs: Any
@@ -4511,9 +4526,10 @@ class AzureFirewallsOperations:
         :type resource_group_name: str
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
-        :param parameters: Parameters supplied to the create or update Azure Firewall operation. Is one
-         of the following types: AzureFirewall, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.AzureFirewall or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update Azure Firewall operation. Is
+         either a AzureFirewall type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.AzureFirewall or
+         ~azure.mgmt.network.types.AzureFirewall or IO[bytes]
         :keyword create_afc_control_plane: When set to true, creates an AFC control plane for the Azure
          Firewall. Default value is None.
         :paramtype create_afc_control_plane: bool
@@ -4581,7 +4597,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4688,7 +4704,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4701,7 +4717,7 @@ class AzureFirewallsOperations:
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to update azure firewall tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4744,7 +4760,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AzureFirewall]:
         """Updates tags of an Azure Firewall resource.
@@ -4754,9 +4770,10 @@ class AzureFirewallsOperations:
         :type resource_group_name: str
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
-        :param parameters: Parameters supplied to update azure firewall tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update azure firewall tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AzureFirewall. The AzureFirewall is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureFirewall]
@@ -5236,7 +5253,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.FirewallPacketCaptureParameters, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPacketCaptureParameters, _types.FirewallPacketCaptureParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5339,7 +5356,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallPacketCaptureParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5352,7 +5369,7 @@ class AzureFirewallsOperations:
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to run packet capture on azure firewall. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FirewallPacketCaptureParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5393,7 +5410,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.FirewallPacketCaptureParameters, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPacketCaptureParameters, _types.FirewallPacketCaptureParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Runs a packet capture on AzureFirewall.
@@ -5403,10 +5420,10 @@ class AzureFirewallsOperations:
         :type resource_group_name: str
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
-        :param parameters: Parameters supplied to run packet capture on azure firewall. Is one of the
-         following types: FirewallPacketCaptureParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FirewallPacketCaptureParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to run packet capture on azure firewall. Is either a
+         FirewallPacketCaptureParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPacketCaptureParameters or
+         ~azure.mgmt.network.types.FirewallPacketCaptureParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5464,7 +5481,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.FirewallPacketCaptureParameters, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPacketCaptureParameters, _types.FirewallPacketCaptureParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5570,7 +5587,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallPacketCaptureParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5583,7 +5600,7 @@ class AzureFirewallsOperations:
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to run packet capture on azure firewall. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FirewallPacketCaptureParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5628,7 +5645,7 @@ class AzureFirewallsOperations:
         self,
         resource_group_name: str,
         azure_firewall_name: str,
-        parameters: Union[_models.FirewallPacketCaptureParameters, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPacketCaptureParameters, _types.FirewallPacketCaptureParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AzureFirewallPacketCaptureResponse]:
         """Runs a packet capture operation on AzureFirewall.
@@ -5638,10 +5655,10 @@ class AzureFirewallsOperations:
         :type resource_group_name: str
         :param azure_firewall_name: The name of the Azure Firewall. Required.
         :type azure_firewall_name: str
-        :param parameters: Parameters supplied to run packet capture on azure firewall. Is one of the
-         following types: FirewallPacketCaptureParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FirewallPacketCaptureParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to run packet capture on azure firewall. Is either a
+         FirewallPacketCaptureParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPacketCaptureParameters or
+         ~azure.mgmt.network.types.FirewallPacketCaptureParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AzureFirewallPacketCaptureResponse. The
          AzureFirewallPacketCaptureResponse is compatible with MutableMapping
         :rtype:
@@ -5795,7 +5812,7 @@ class BastionHostsOperations:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        parameters: Union[_models.BastionHost, JSON, IO[bytes]],
+        parameters: Union[_models.BastionHost, _types.BastionHost, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5903,7 +5920,7 @@ class BastionHostsOperations:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        parameters: JSON,
+        parameters: _types.BastionHost,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5917,7 +5934,7 @@ class BastionHostsOperations:
         :type bastion_host_name: str
         :param parameters: Parameters supplied to the create or update Bastion Host operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.BastionHost
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5961,7 +5978,7 @@ class BastionHostsOperations:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        parameters: Union[_models.BastionHost, JSON, IO[bytes]],
+        parameters: Union[_models.BastionHost, _types.BastionHost, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BastionHost]:
         """Creates or updates the specified Bastion Host.
@@ -5971,9 +5988,10 @@ class BastionHostsOperations:
         :type resource_group_name: str
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param parameters: Parameters supplied to the create or update Bastion Host operation. Is one
-         of the following types: BastionHost, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.BastionHost or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update Bastion Host operation. Is
+         either a BastionHost type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.BastionHost or
+         ~azure.mgmt.network.types.BastionHost or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BastionHost. The BastionHost is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BastionHost]
@@ -6037,7 +6055,7 @@ class BastionHostsOperations:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6144,7 +6162,7 @@ class BastionHostsOperations:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6157,7 +6175,7 @@ class BastionHostsOperations:
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
         :param parameters: Parameters supplied to update BastionHost tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6200,7 +6218,7 @@ class BastionHostsOperations:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BastionHost]:
         """Updates Tags for BastionHost resource.
@@ -6210,9 +6228,10 @@ class BastionHostsOperations:
         :type resource_group_name: str
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param parameters: Parameters supplied to update BastionHost tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update BastionHost tags. Is either a TagsObject type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BastionHost. The BastionHost is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BastionHost]
@@ -7020,7 +7039,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: Union[_models.NetworkInterface, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkInterface, _types.NetworkInterface, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7128,7 +7147,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkInterface,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7142,7 +7161,7 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :param parameters: Parameters supplied to the create or update network interface operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkInterface
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7186,7 +7205,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: Union[_models.NetworkInterface, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkInterface, _types.NetworkInterface, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkInterface]:
         """Creates or updates a network interface.
@@ -7197,8 +7216,9 @@ class NetworkInterfacesOperations:
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
         :param parameters: Parameters supplied to the create or update network interface operation. Is
-         one of the following types: NetworkInterface, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkInterface or JSON or IO[bytes]
+         either a NetworkInterface type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkInterface or
+         ~azure.mgmt.network.types.NetworkInterface or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkInterface. The NetworkInterface is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkInterface]
@@ -7290,7 +7310,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7303,7 +7323,7 @@ class NetworkInterfacesOperations:
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
         :param parameters: Parameters supplied to update network interface tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7344,7 +7364,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkInterface:
         """Updates a network interface tags.
@@ -7354,9 +7374,10 @@ class NetworkInterfacesOperations:
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
-        :param parameters: Parameters supplied to update network interface tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update network interface tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: NetworkInterface. The NetworkInterface is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8855,7 +8876,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.PublicIPAddress, JSON, IO[bytes]],
+        parameters: Union[_models.PublicIPAddress, _types.PublicIPAddress, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8963,7 +8984,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: JSON,
+        parameters: _types.PublicIPAddress,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8977,7 +8998,7 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to the create or update public IP address operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PublicIPAddress
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9021,7 +9042,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.PublicIPAddress, JSON, IO[bytes]],
+        parameters: Union[_models.PublicIPAddress, _types.PublicIPAddress, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PublicIPAddress]:
         """Creates or updates a static or dynamic public IP address.
@@ -9032,8 +9053,9 @@ class PublicIPAddressesOperations:
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to the create or update public IP address operation. Is
-         one of the following types: PublicIPAddress, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PublicIPAddress or JSON or IO[bytes]
+         either a PublicIPAddress type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PublicIPAddress or
+         ~azure.mgmt.network.types.PublicIPAddress or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PublicIPAddress. The PublicIPAddress is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
@@ -9125,7 +9147,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9138,7 +9160,7 @@ class PublicIPAddressesOperations:
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to update public IP address tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9179,7 +9201,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.PublicIPAddress:
         """Updates public IP address tags.
@@ -9189,9 +9211,10 @@ class PublicIPAddressesOperations:
         :type resource_group_name: str
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
-        :param parameters: Parameters supplied to update public IP address tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update public IP address tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: PublicIPAddress. The PublicIPAddress is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.PublicIPAddress
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9685,7 +9708,11 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.ReserveCloudServicePublicIpAddressRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ReserveCloudServicePublicIpAddressRequest,
+            _types.ReserveCloudServicePublicIpAddressRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9795,7 +9822,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: JSON,
+        parameters: _types.ReserveCloudServicePublicIpAddressRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9810,7 +9837,7 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameter that define which Public IP Address should be associated in place
          of given Public IP Address. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ReserveCloudServicePublicIpAddressRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9855,7 +9882,11 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.ReserveCloudServicePublicIpAddressRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ReserveCloudServicePublicIpAddressRequest,
+            _types.ReserveCloudServicePublicIpAddressRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PublicIPAddress]:
         """Reserves the specified Cloud Service Public IP by switching its allocation method to Static. If
@@ -9867,10 +9898,10 @@ class PublicIPAddressesOperations:
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
         :param parameters: Parameter that define which Public IP Address should be associated in place
-         of given Public IP Address. Is one of the following types:
-         ReserveCloudServicePublicIpAddressRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ReserveCloudServicePublicIpAddressRequest or JSON
-         or IO[bytes]
+         of given Public IP Address. Is either a ReserveCloudServicePublicIpAddressRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ReserveCloudServicePublicIpAddressRequest or
+         ~azure.mgmt.network.types.ReserveCloudServicePublicIpAddressRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PublicIPAddress. The PublicIPAddress is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
@@ -9934,7 +9965,9 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.DisassociateCloudServicePublicIpRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DisassociateCloudServicePublicIpRequest, _types.DisassociateCloudServicePublicIpRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10044,7 +10077,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: JSON,
+        parameters: _types.DisassociateCloudServicePublicIpRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10059,7 +10092,7 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameter that define which Public IP Address should be associated in place
          of given Public IP Address. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.DisassociateCloudServicePublicIpRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10104,7 +10137,9 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: Union[_models.DisassociateCloudServicePublicIpRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DisassociateCloudServicePublicIpRequest, _types.DisassociateCloudServicePublicIpRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PublicIPAddress]:
         """Disassociates the Cloud Service reserved Public IP and associates the specified Standalone
@@ -10116,10 +10151,10 @@ class PublicIPAddressesOperations:
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
         :param parameters: Parameter that define which Public IP Address should be associated in place
-         of given Public IP Address. Is one of the following types:
-         DisassociateCloudServicePublicIpRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.DisassociateCloudServicePublicIpRequest or JSON or
-         IO[bytes]
+         of given Public IP Address. Is either a DisassociateCloudServicePublicIpRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.DisassociateCloudServicePublicIpRequest or
+         ~azure.mgmt.network.types.DisassociateCloudServicePublicIpRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PublicIPAddress. The PublicIPAddress is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
@@ -10452,7 +10487,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: Union[_models.DdosCustomPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.DdosCustomPolicy, _types.DdosCustomPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10559,7 +10594,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: JSON,
+        parameters: _types.DdosCustomPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10572,7 +10607,7 @@ class DdosCustomPoliciesOperations:
         :param ddos_custom_policy_name: The name of the DDoS custom policy. Required.
         :type ddos_custom_policy_name: str
         :param parameters: Parameters supplied to the create or update operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.DdosCustomPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10615,7 +10650,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: Union[_models.DdosCustomPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.DdosCustomPolicy, _types.DdosCustomPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DdosCustomPolicy]:
         """Creates or updates a DDoS custom policy.
@@ -10625,9 +10660,10 @@ class DdosCustomPoliciesOperations:
         :type resource_group_name: str
         :param ddos_custom_policy_name: The name of the DDoS custom policy. Required.
         :type ddos_custom_policy_name: str
-        :param parameters: Parameters supplied to the create or update operation. Is one of the
-         following types: DdosCustomPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.DdosCustomPolicy or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update operation. Is either a
+         DdosCustomPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.DdosCustomPolicy or
+         ~azure.mgmt.network.types.DdosCustomPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DdosCustomPolicy. The DdosCustomPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DdosCustomPolicy]
@@ -10719,7 +10755,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10732,7 +10768,7 @@ class DdosCustomPoliciesOperations:
         :param ddos_custom_policy_name: The name of the DDoS custom policy. Required.
         :type ddos_custom_policy_name: str
         :param parameters: Parameters supplied to update DDoS custom policy resource tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10773,7 +10809,7 @@ class DdosCustomPoliciesOperations:
         self,
         resource_group_name: str,
         ddos_custom_policy_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.DdosCustomPolicy:
         """Update a DDoS custom policy tags.
@@ -10783,9 +10819,10 @@ class DdosCustomPoliciesOperations:
         :type resource_group_name: str
         :param ddos_custom_policy_name: The name of the DDoS custom policy. Required.
         :type ddos_custom_policy_name: str
-        :param parameters: Parameters supplied to update DDoS custom policy resource tags. Is one of
-         the following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update DDoS custom policy resource tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: DdosCustomPolicy. The DdosCustomPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.DdosCustomPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11250,7 +11287,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: Union[_models.DdosProtectionPlan, JSON, IO[bytes]],
+        parameters: Union[_models.DdosProtectionPlan, _types.DdosProtectionPlan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11357,7 +11394,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: JSON,
+        parameters: _types.DdosProtectionPlan,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11370,7 +11407,7 @@ class DdosProtectionPlansOperations:
         :param ddos_protection_plan_name: The name of the DDoS protection plan. Required.
         :type ddos_protection_plan_name: str
         :param parameters: Parameters supplied to the create or update operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.DdosProtectionPlan
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11413,7 +11450,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: Union[_models.DdosProtectionPlan, JSON, IO[bytes]],
+        parameters: Union[_models.DdosProtectionPlan, _types.DdosProtectionPlan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DdosProtectionPlan]:
         """Creates or updates a DDoS protection plan.
@@ -11423,9 +11460,10 @@ class DdosProtectionPlansOperations:
         :type resource_group_name: str
         :param ddos_protection_plan_name: The name of the DDoS protection plan. Required.
         :type ddos_protection_plan_name: str
-        :param parameters: Parameters supplied to the create or update operation. Is one of the
-         following types: DdosProtectionPlan, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.DdosProtectionPlan or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update operation. Is either a
+         DdosProtectionPlan type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.DdosProtectionPlan or
+         ~azure.mgmt.network.types.DdosProtectionPlan or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DdosProtectionPlan. The DdosProtectionPlan
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DdosProtectionPlan]
@@ -11518,7 +11556,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11532,7 +11570,7 @@ class DdosProtectionPlansOperations:
         :type ddos_protection_plan_name: str
         :param parameters: Parameters supplied to the update DDoS protection plan resource tags.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11574,7 +11612,7 @@ class DdosProtectionPlansOperations:
         self,
         resource_group_name: str,
         ddos_protection_plan_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.DdosProtectionPlan:
         """Update a DDoS protection plan tags.
@@ -11584,9 +11622,10 @@ class DdosProtectionPlansOperations:
         :type resource_group_name: str
         :param ddos_protection_plan_name: The name of the DDoS protection plan. Required.
         :type ddos_protection_plan_name: str
-        :param parameters: Parameters supplied to the update DDoS protection plan resource tags. Is one
-         of the following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the update DDoS protection plan resource tags. Is
+         either a TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: DdosProtectionPlan. The DdosProtectionPlan is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.DdosProtectionPlan
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12048,7 +12087,9 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: Union[_models.ExpressRouteCircuitAuthorization, JSON, IO[bytes]],
+        authorization_parameters: Union[
+            _models.ExpressRouteCircuitAuthorization, _types.ExpressRouteCircuitAuthorization, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12162,7 +12203,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: JSON,
+        authorization_parameters: _types.ExpressRouteCircuitAuthorization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12178,7 +12219,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the create or update express route
          circuit authorization operation. Required.
-        :type authorization_parameters: JSON
+        :type authorization_parameters: ~azure.mgmt.network.types.ExpressRouteCircuitAuthorization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12228,7 +12269,9 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: Union[_models.ExpressRouteCircuitAuthorization, JSON, IO[bytes]],
+        authorization_parameters: Union[
+            _models.ExpressRouteCircuitAuthorization, _types.ExpressRouteCircuitAuthorization, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteCircuitAuthorization]:
         """Creates or updates an authorization in the specified express route circuit.
@@ -12241,10 +12284,10 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         :param authorization_name: The name of the authorization. Required.
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the create or update express route
-         circuit authorization operation. Is one of the following types:
-         ExpressRouteCircuitAuthorization, JSON, IO[bytes] Required.
+         circuit authorization operation. Is either a ExpressRouteCircuitAuthorization type or a
+         IO[bytes] type. Required.
         :type authorization_parameters: ~azure.mgmt.network.models.ExpressRouteCircuitAuthorization or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ExpressRouteCircuitAuthorization or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteCircuitAuthorization. The
          ExpressRouteCircuitAuthorization is compatible with MutableMapping
         :rtype:
@@ -12616,7 +12659,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: Union[_models.ExpressRouteCircuit, JSON, IO[bytes]],
+        parameters: Union[_models.ExpressRouteCircuit, _types.ExpressRouteCircuit, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12724,7 +12767,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: JSON,
+        parameters: _types.ExpressRouteCircuit,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12738,7 +12781,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         :type circuit_name: str
         :param parameters: Parameters supplied to the create or update express route circuit operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ExpressRouteCircuit
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12782,7 +12825,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: Union[_models.ExpressRouteCircuit, JSON, IO[bytes]],
+        parameters: Union[_models.ExpressRouteCircuit, _types.ExpressRouteCircuit, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteCircuit]:
         """Creates or updates an express route circuit.
@@ -12793,8 +12836,9 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         :param circuit_name: The name of express route circuit. Required.
         :type circuit_name: str
         :param parameters: Parameters supplied to the create or update express route circuit operation.
-         Is one of the following types: ExpressRouteCircuit, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ExpressRouteCircuit or JSON or IO[bytes]
+         Is either a ExpressRouteCircuit type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ExpressRouteCircuit or
+         ~azure.mgmt.network.types.ExpressRouteCircuit or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteCircuit. The
          ExpressRouteCircuit is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuit]
@@ -12886,7 +12930,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12899,7 +12943,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         :param circuit_name: The name of express route circuit. Required.
         :type circuit_name: str
         :param parameters: Parameters supplied to update express route circuit tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12940,7 +12984,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExpressRouteCircuit:
         """Updates an express route circuit tags.
@@ -12950,9 +12994,10 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param circuit_name: The name of express route circuit. Required.
         :type circuit_name: str
-        :param parameters: Parameters supplied to update express route circuit tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update express route circuit tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ExpressRouteCircuit. The ExpressRouteCircuit is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ExpressRouteCircuit
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13946,7 +13991,11 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        stop_parameters: Union[_models.ExpressRouteLinkFailoverStopApiParameters, JSON, IO[bytes]],
+        stop_parameters: Union[
+            _models.ExpressRouteLinkFailoverStopApiParameters,
+            _types.ExpressRouteLinkFailoverStopApiParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14051,7 +14100,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        stop_parameters: JSON,
+        stop_parameters: _types.ExpressRouteLinkFailoverStopApiParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14065,7 +14114,7 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         :type circuit_name: str
         :param stop_parameters: Parameters supplied to stop the link failover simulation on the express
          route circuit. Required.
-        :type stop_parameters: JSON
+        :type stop_parameters: ~azure.mgmt.network.types.ExpressRouteLinkFailoverStopApiParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14121,7 +14170,11 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         circuit_name: str,
-        stop_parameters: Union[_models.ExpressRouteLinkFailoverStopApiParameters, JSON, IO[bytes]],
+        stop_parameters: Union[
+            _models.ExpressRouteLinkFailoverStopApiParameters,
+            _types.ExpressRouteLinkFailoverStopApiParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Stops link failover simulation on the express route circuit.
@@ -14132,10 +14185,10 @@ class ExpressRouteCircuitsOperations:  # pylint: disable=too-many-public-methods
         :param circuit_name: The name of express route circuit. Required.
         :type circuit_name: str
         :param stop_parameters: Parameters supplied to stop the link failover simulation on the express
-         route circuit. Is one of the following types: ExpressRouteLinkFailoverStopApiParameters, JSON,
-         IO[bytes] Required.
+         route circuit. Is either a ExpressRouteLinkFailoverStopApiParameters type or a IO[bytes] type.
+         Required.
         :type stop_parameters: ~azure.mgmt.network.models.ExpressRouteLinkFailoverStopApiParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ExpressRouteLinkFailoverStopApiParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14791,7 +14844,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        peering_parameters: Union[_models.ExpressRouteCircuitPeering, JSON, IO[bytes]],
+        peering_parameters: Union[_models.ExpressRouteCircuitPeering, _types.ExpressRouteCircuitPeering, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14905,7 +14958,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        peering_parameters: JSON,
+        peering_parameters: _types.ExpressRouteCircuitPeering,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14921,7 +14974,7 @@ class ExpressRouteCircuitPeeringsOperations:
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update express route circuit
          peering operation. Required.
-        :type peering_parameters: JSON
+        :type peering_parameters: ~azure.mgmt.network.types.ExpressRouteCircuitPeering
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14971,7 +15024,7 @@ class ExpressRouteCircuitPeeringsOperations:
         resource_group_name: str,
         circuit_name: str,
         peering_name: str,
-        peering_parameters: Union[_models.ExpressRouteCircuitPeering, JSON, IO[bytes]],
+        peering_parameters: Union[_models.ExpressRouteCircuitPeering, _types.ExpressRouteCircuitPeering, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteCircuitPeering]:
         """Creates or updates a peering in the specified express route circuits.
@@ -14984,10 +15037,9 @@ class ExpressRouteCircuitPeeringsOperations:
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update express route circuit
-         peering operation. Is one of the following types: ExpressRouteCircuitPeering, JSON, IO[bytes]
-         Required.
-        :type peering_parameters: ~azure.mgmt.network.models.ExpressRouteCircuitPeering or JSON or
-         IO[bytes]
+         peering operation. Is either a ExpressRouteCircuitPeering type or a IO[bytes] type. Required.
+        :type peering_parameters: ~azure.mgmt.network.models.ExpressRouteCircuitPeering or
+         ~azure.mgmt.network.types.ExpressRouteCircuitPeering or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteCircuitPeering. The
          ExpressRouteCircuitPeering is compatible with MutableMapping
         :rtype:
@@ -15370,7 +15422,9 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        express_route_circuit_connection_parameters: Union[_models.ExpressRouteCircuitConnection, JSON, IO[bytes]],
+        express_route_circuit_connection_parameters: Union[
+            _models.ExpressRouteCircuitConnection, _types.ExpressRouteCircuitConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15490,7 +15544,7 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        express_route_circuit_connection_parameters: JSON,
+        express_route_circuit_connection_parameters: _types.ExpressRouteCircuitConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15508,7 +15562,8 @@ class ExpressRouteCircuitConnectionsOperations:
         :type connection_name: str
         :param express_route_circuit_connection_parameters: Parameters supplied to the create or update
          express route circuit connection operation. Required.
-        :type express_route_circuit_connection_parameters: JSON
+        :type express_route_circuit_connection_parameters:
+         ~azure.mgmt.network.types.ExpressRouteCircuitConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15562,7 +15617,9 @@ class ExpressRouteCircuitConnectionsOperations:
         circuit_name: str,
         peering_name: str,
         connection_name: str,
-        express_route_circuit_connection_parameters: Union[_models.ExpressRouteCircuitConnection, JSON, IO[bytes]],
+        express_route_circuit_connection_parameters: Union[
+            _models.ExpressRouteCircuitConnection, _types.ExpressRouteCircuitConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteCircuitConnection]:
         """Creates or updates a Express Route Circuit Connection in the specified express route circuits.
@@ -15577,10 +15634,11 @@ class ExpressRouteCircuitConnectionsOperations:
         :param connection_name: The name of the express route circuit connection. Required.
         :type connection_name: str
         :param express_route_circuit_connection_parameters: Parameters supplied to the create or update
-         express route circuit connection operation. Is one of the following types:
-         ExpressRouteCircuitConnection, JSON, IO[bytes] Required.
+         express route circuit connection operation. Is either a ExpressRouteCircuitConnection type or a
+         IO[bytes] type. Required.
         :type express_route_circuit_connection_parameters:
-         ~azure.mgmt.network.models.ExpressRouteCircuitConnection or JSON or IO[bytes]
+         ~azure.mgmt.network.models.ExpressRouteCircuitConnection or
+         ~azure.mgmt.network.types.ExpressRouteCircuitConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteCircuitConnection. The
          ExpressRouteCircuitConnection is compatible with MutableMapping
         :rtype:
@@ -16160,7 +16218,7 @@ class ExpressRouteCrossConnectionsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        parameters: Union[_models.ExpressRouteCrossConnection, JSON, IO[bytes]],
+        parameters: Union[_models.ExpressRouteCrossConnection, _types.ExpressRouteCrossConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16268,7 +16326,7 @@ class ExpressRouteCrossConnectionsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        parameters: JSON,
+        parameters: _types.ExpressRouteCrossConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16283,7 +16341,7 @@ class ExpressRouteCrossConnectionsOperations:
         :type cross_connection_name: str
         :param parameters: Parameters supplied to the update express route crossConnection operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ExpressRouteCrossConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16330,7 +16388,7 @@ class ExpressRouteCrossConnectionsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        parameters: Union[_models.ExpressRouteCrossConnection, JSON, IO[bytes]],
+        parameters: Union[_models.ExpressRouteCrossConnection, _types.ExpressRouteCrossConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteCrossConnection]:
         """Update the specified ExpressRouteCrossConnection.
@@ -16342,8 +16400,9 @@ class ExpressRouteCrossConnectionsOperations:
          circuit). Required.
         :type cross_connection_name: str
         :param parameters: Parameters supplied to the update express route crossConnection operation.
-         Is one of the following types: ExpressRouteCrossConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ExpressRouteCrossConnection or JSON or IO[bytes]
+         Is either a ExpressRouteCrossConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ExpressRouteCrossConnection or
+         ~azure.mgmt.network.types.ExpressRouteCrossConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteCrossConnection. The
          ExpressRouteCrossConnection is compatible with MutableMapping
         :rtype:
@@ -16444,7 +16503,7 @@ class ExpressRouteCrossConnectionsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        cross_connection_parameters: JSON,
+        cross_connection_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16459,7 +16518,7 @@ class ExpressRouteCrossConnectionsOperations:
         :type cross_connection_name: str
         :param cross_connection_parameters: Parameters supplied to update express route cross
          connection tags. Required.
-        :type cross_connection_parameters: JSON
+        :type cross_connection_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16504,7 +16563,7 @@ class ExpressRouteCrossConnectionsOperations:
         self,
         resource_group_name: str,
         cross_connection_name: str,
-        cross_connection_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        cross_connection_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExpressRouteCrossConnection:
         """Updates an express route cross connection tags.
@@ -16516,8 +16575,9 @@ class ExpressRouteCrossConnectionsOperations:
          circuit). Required.
         :type cross_connection_name: str
         :param cross_connection_parameters: Parameters supplied to update express route cross
-         connection tags. Is one of the following types: TagsObject, JSON, IO[bytes] Required.
-        :type cross_connection_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+         connection tags. Is either a TagsObject type or a IO[bytes] type. Required.
+        :type cross_connection_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: ExpressRouteCrossConnection. The ExpressRouteCrossConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.ExpressRouteCrossConnection
@@ -17455,7 +17515,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        parameters: Union[_models.ExpressRoutePort, JSON, IO[bytes]],
+        parameters: Union[_models.ExpressRoutePort, _types.ExpressRoutePort, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17562,7 +17622,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        parameters: JSON,
+        parameters: _types.ExpressRoutePort,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17575,7 +17635,7 @@ class ExpressRoutePortsOperations:
         :param express_route_port_name: The name of ExpressRoutePort. Required.
         :type express_route_port_name: str
         :param parameters: Parameters supplied to the create ExpressRoutePort operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ExpressRoutePort
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17618,7 +17678,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        parameters: Union[_models.ExpressRoutePort, JSON, IO[bytes]],
+        parameters: Union[_models.ExpressRoutePort, _types.ExpressRoutePort, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRoutePort]:
         """Creates or updates the specified ExpressRoutePort resource.
@@ -17628,9 +17688,10 @@ class ExpressRoutePortsOperations:
         :type resource_group_name: str
         :param express_route_port_name: The name of ExpressRoutePort. Required.
         :type express_route_port_name: str
-        :param parameters: Parameters supplied to the create ExpressRoutePort operation. Is one of the
-         following types: ExpressRoutePort, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ExpressRoutePort or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create ExpressRoutePort operation. Is either a
+         ExpressRoutePort type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ExpressRoutePort or
+         ~azure.mgmt.network.types.ExpressRoutePort or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRoutePort. The ExpressRoutePort is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRoutePort]
@@ -17722,7 +17783,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17735,7 +17796,7 @@ class ExpressRoutePortsOperations:
         :param express_route_port_name: The name of ExpressRoutePort. Required.
         :type express_route_port_name: str
         :param parameters: Parameters supplied to update ExpressRoutePort resource tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17776,7 +17837,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExpressRoutePort:
         """Update ExpressRoutePort tags.
@@ -17786,9 +17847,10 @@ class ExpressRoutePortsOperations:
         :type resource_group_name: str
         :param express_route_port_name: The name of ExpressRoutePort. Required.
         :type express_route_port_name: str
-        :param parameters: Parameters supplied to update ExpressRoutePort resource tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update ExpressRoutePort resource tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ExpressRoutePort. The ExpressRoutePort is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ExpressRoutePort
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18186,7 +18248,7 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        request: JSON,
+        request: _types.GenerateExpressRoutePortsLOARequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18199,7 +18261,7 @@ class ExpressRoutePortsOperations:
         :param express_route_port_name: The name of ExpressRoutePort. Required.
         :type express_route_port_name: str
         :param request: Request parameters supplied to generate a letter of authorization. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.network.types.GenerateExpressRoutePortsLOARequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18242,7 +18304,9 @@ class ExpressRoutePortsOperations:
         self,
         resource_group_name: str,
         express_route_port_name: str,
-        request: Union[_models.GenerateExpressRoutePortsLOARequest, JSON, IO[bytes]],
+        request: Union[
+            _models.GenerateExpressRoutePortsLOARequest, _types.GenerateExpressRoutePortsLOARequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.GenerateExpressRoutePortsLOAResult:
         """Generate a letter of authorization for the requested ExpressRoutePort resource.
@@ -18252,10 +18316,10 @@ class ExpressRoutePortsOperations:
         :type resource_group_name: str
         :param express_route_port_name: The name of ExpressRoutePort. Required.
         :type express_route_port_name: str
-        :param request: Request parameters supplied to generate a letter of authorization. Is one of
-         the following types: GenerateExpressRoutePortsLOARequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.network.models.GenerateExpressRoutePortsLOARequest or JSON or
-         IO[bytes]
+        :param request: Request parameters supplied to generate a letter of authorization. Is either a
+         GenerateExpressRoutePortsLOARequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.network.models.GenerateExpressRoutePortsLOARequest or
+         ~azure.mgmt.network.types.GenerateExpressRoutePortsLOARequest or IO[bytes]
         :return: GenerateExpressRoutePortsLOAResult. The GenerateExpressRoutePortsLOAResult is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.GenerateExpressRoutePortsLOAResult
@@ -18429,7 +18493,9 @@ class ExpressRoutePortAuthorizationsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         authorization_name: str,
-        authorization_parameters: Union[_models.ExpressRoutePortAuthorization, JSON, IO[bytes]],
+        authorization_parameters: Union[
+            _models.ExpressRoutePortAuthorization, _types.ExpressRoutePortAuthorization, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18543,7 +18609,7 @@ class ExpressRoutePortAuthorizationsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         authorization_name: str,
-        authorization_parameters: JSON,
+        authorization_parameters: _types.ExpressRoutePortAuthorization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18559,7 +18625,7 @@ class ExpressRoutePortAuthorizationsOperations:
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the create or update express route port
          authorization operation. Required.
-        :type authorization_parameters: JSON
+        :type authorization_parameters: ~azure.mgmt.network.types.ExpressRoutePortAuthorization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18609,7 +18675,9 @@ class ExpressRoutePortAuthorizationsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         authorization_name: str,
-        authorization_parameters: Union[_models.ExpressRoutePortAuthorization, JSON, IO[bytes]],
+        authorization_parameters: Union[
+            _models.ExpressRoutePortAuthorization, _types.ExpressRoutePortAuthorization, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRoutePortAuthorization]:
         """Creates or updates an authorization in the specified express route port.
@@ -18622,10 +18690,10 @@ class ExpressRoutePortAuthorizationsOperations:
         :param authorization_name: The name of the authorization. Required.
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the create or update express route port
-         authorization operation. Is one of the following types: ExpressRoutePortAuthorization, JSON,
-         IO[bytes] Required.
+         authorization operation. Is either a ExpressRoutePortAuthorization type or a IO[bytes] type.
+         Required.
         :type authorization_parameters: ~azure.mgmt.network.models.ExpressRoutePortAuthorization or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ExpressRoutePortAuthorization or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRoutePortAuthorization. The
          ExpressRoutePortAuthorization is compatible with MutableMapping
         :rtype:
@@ -19005,7 +19073,7 @@ class FirewallPoliciesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.FirewallPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPolicy, _types.FirewallPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19113,7 +19181,7 @@ class FirewallPoliciesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19127,7 +19195,7 @@ class FirewallPoliciesOperations:
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to the create or update Firewall Policy operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FirewallPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19171,7 +19239,7 @@ class FirewallPoliciesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.FirewallPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPolicy, _types.FirewallPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallPolicy]:
         """Creates or updates the specified Firewall Policy.
@@ -19182,8 +19250,9 @@ class FirewallPoliciesOperations:
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to the create or update Firewall Policy operation. Is
-         one of the following types: FirewallPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FirewallPolicy or JSON or IO[bytes]
+         either a FirewallPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicy or
+         ~azure.mgmt.network.types.FirewallPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FirewallPolicy. The FirewallPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FirewallPolicy]
@@ -19275,7 +19344,7 @@ class FirewallPoliciesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19288,7 +19357,7 @@ class FirewallPoliciesOperations:
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to update Azure Firewall Policy tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19329,7 +19398,7 @@ class FirewallPoliciesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.FirewallPolicy:
         """Updates tags of a Azure Firewall Policy resource.
@@ -19339,9 +19408,10 @@ class FirewallPoliciesOperations:
         :type resource_group_name: str
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
-        :param parameters: Parameters supplied to update Azure Firewall Policy tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update Azure Firewall Policy tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: FirewallPolicy. The FirewallPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.FirewallPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19802,7 +19872,9 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        parameters: Union[_models.FirewallPolicyRuleCollectionGroup, JSON, IO[bytes]],
+        parameters: Union[
+            _models.FirewallPolicyRuleCollectionGroup, _types.FirewallPolicyRuleCollectionGroup, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19917,7 +19989,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallPolicyRuleCollectionGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19934,7 +20006,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         :type rule_collection_group_name: str
         :param parameters: Parameters supplied to the create or update
          FirewallPolicyRuleCollectionGroup operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FirewallPolicyRuleCollectionGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19985,7 +20057,9 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        parameters: Union[_models.FirewallPolicyRuleCollectionGroup, JSON, IO[bytes]],
+        parameters: Union[
+            _models.FirewallPolicyRuleCollectionGroup, _types.FirewallPolicyRuleCollectionGroup, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallPolicyRuleCollectionGroup]:
         """Creates or updates the specified FirewallPolicyRuleCollectionGroup.
@@ -19999,10 +20073,10 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
          group. This name can be used to access the resource. Required.
         :type rule_collection_group_name: str
         :param parameters: Parameters supplied to the create or update
-         FirewallPolicyRuleCollectionGroup operation. Is one of the following types:
-         FirewallPolicyRuleCollectionGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroup or JSON or
-         IO[bytes]
+         FirewallPolicyRuleCollectionGroup operation. Is either a FirewallPolicyRuleCollectionGroup type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroup or
+         ~azure.mgmt.network.types.FirewallPolicyRuleCollectionGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FirewallPolicyRuleCollectionGroup. The
          FirewallPolicyRuleCollectionGroup is compatible with MutableMapping
         :rtype:
@@ -20405,7 +20479,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.SignaturesOverrides,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20418,7 +20492,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Will contain all properties of the object to put. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.SignaturesOverrides
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20459,7 +20533,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.SignaturesOverrides, JSON, IO[bytes]],
+        parameters: Union[_models.SignaturesOverrides, _types.SignaturesOverrides, IO[bytes]],
         **kwargs: Any
     ) -> _models.SignaturesOverrides:
         """Will override/create a new signature overrides for the policy's IDPS.
@@ -20469,9 +20543,10 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         :type resource_group_name: str
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
-        :param parameters: Will contain all properties of the object to put. Is one of the following
-         types: SignaturesOverrides, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.SignaturesOverrides or JSON or IO[bytes]
+        :param parameters: Will contain all properties of the object to put. Is either a
+         SignaturesOverrides type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.SignaturesOverrides or
+         ~azure.mgmt.network.types.SignaturesOverrides or IO[bytes]
         :return: SignaturesOverrides. The SignaturesOverrides is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.SignaturesOverrides
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20576,7 +20651,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.SignaturesOverrides,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20589,7 +20664,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Will contain all properties of the object to put. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.SignaturesOverrides
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20630,7 +20705,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.SignaturesOverrides, JSON, IO[bytes]],
+        parameters: Union[_models.SignaturesOverrides, _types.SignaturesOverrides, IO[bytes]],
         **kwargs: Any
     ) -> _models.SignaturesOverrides:
         """Will update the status of policy's signature overrides for IDPS.
@@ -20640,9 +20715,10 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         :type resource_group_name: str
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
-        :param parameters: Will contain all properties of the object to put. Is one of the following
-         types: SignaturesOverrides, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.SignaturesOverrides or JSON or IO[bytes]
+        :param parameters: Will contain all properties of the object to put. Is either a
+         SignaturesOverrides type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.SignaturesOverrides or
+         ~azure.mgmt.network.types.SignaturesOverrides or IO[bytes]
         :return: SignaturesOverrides. The SignaturesOverrides is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.SignaturesOverrides
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20913,7 +20989,7 @@ class FirewallPolicyDraftsOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallPolicyDraft,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20927,7 +21003,7 @@ class FirewallPolicyDraftsOperations:
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to the create or update Firewall Policy Draft operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FirewallPolicyDraft
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20969,7 +21045,7 @@ class FirewallPolicyDraftsOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.FirewallPolicyDraft, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallPolicyDraft, _types.FirewallPolicyDraft, IO[bytes]],
         **kwargs: Any
     ) -> _models.FirewallPolicyDraft:
         """Create or update a draft Firewall Policy.
@@ -20980,8 +21056,9 @@ class FirewallPolicyDraftsOperations:
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to the create or update Firewall Policy Draft operation.
-         Is one of the following types: FirewallPolicyDraft, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FirewallPolicyDraft or JSON or IO[bytes]
+         Is either a FirewallPolicyDraft type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicyDraft or
+         ~azure.mgmt.network.types.FirewallPolicyDraft or IO[bytes]
         :return: FirewallPolicyDraft. The FirewallPolicyDraft is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.FirewallPolicyDraft
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21247,7 +21324,7 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallPolicyRuleCollectionGroupDraft,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21264,7 +21341,7 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
         :type rule_collection_group_name: str
         :param parameters: Parameters supplied to the create or update
          FirewallPolicyRuleCollectionGroup operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FirewallPolicyRuleCollectionGroupDraft
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21313,7 +21390,9 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
         resource_group_name: str,
         firewall_policy_name: str,
         rule_collection_group_name: str,
-        parameters: Union[_models.FirewallPolicyRuleCollectionGroupDraft, JSON, IO[bytes]],
+        parameters: Union[
+            _models.FirewallPolicyRuleCollectionGroupDraft, _types.FirewallPolicyRuleCollectionGroupDraft, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.FirewallPolicyRuleCollectionGroupDraft:
         """Create or Update Rule Collection Group Draft.
@@ -21327,10 +21406,10 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
          group. This name can be used to access the resource. Required.
         :type rule_collection_group_name: str
         :param parameters: Parameters supplied to the create or update
-         FirewallPolicyRuleCollectionGroup operation. Is one of the following types:
-         FirewallPolicyRuleCollectionGroupDraft, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroupDraft or JSON or
-         IO[bytes]
+         FirewallPolicyRuleCollectionGroup operation. Is either a FirewallPolicyRuleCollectionGroupDraft
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroupDraft or
+         ~azure.mgmt.network.types.FirewallPolicyRuleCollectionGroupDraft or IO[bytes]
         :return: FirewallPolicyRuleCollectionGroupDraft. The FirewallPolicyRuleCollectionGroupDraft is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroupDraft
@@ -21570,7 +21649,7 @@ class IpamPoolsOperations:
         resource_group_name: str,
         network_manager_name: str,
         pool_name: str,
-        body: Union[_models.IpamPool, JSON, IO[bytes]],
+        body: Union[_models.IpamPool, _types.IpamPool, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -21702,7 +21781,7 @@ class IpamPoolsOperations:
         resource_group_name: str,
         network_manager_name: str,
         pool_name: str,
-        body: JSON,
+        body: _types.IpamPool,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -21721,7 +21800,7 @@ class IpamPoolsOperations:
         :param pool_name: Pool resource name. Required.
         :type pool_name: str
         :param body: Pool resource object to create/update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.IpamPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21782,7 +21861,7 @@ class IpamPoolsOperations:
         resource_group_name: str,
         network_manager_name: str,
         pool_name: str,
-        body: Union[_models.IpamPool, JSON, IO[bytes]],
+        body: Union[_models.IpamPool, _types.IpamPool, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -21799,9 +21878,10 @@ class IpamPoolsOperations:
         :type network_manager_name: str
         :param pool_name: Pool resource name. Required.
         :type pool_name: str
-        :param body: Pool resource object to create/update. Is one of the following types: IpamPool,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.network.models.IpamPool or JSON or IO[bytes]
+        :param body: Pool resource object to create/update. Is either a IpamPool type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.network.models.IpamPool or ~azure.mgmt.network.types.IpamPool or
+         IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -21914,7 +21994,7 @@ class IpamPoolsOperations:
         resource_group_name: str,
         network_manager_name: str,
         pool_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.IpamPoolUpdate] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -21933,7 +22013,7 @@ class IpamPoolsOperations:
         :param pool_name: Pool resource name. Required.
         :type pool_name: str
         :param body: Pool resource object to update partially. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.IpamPoolUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21992,7 +22072,7 @@ class IpamPoolsOperations:
         resource_group_name: str,
         network_manager_name: str,
         pool_name: str,
-        body: Optional[Union[_models.IpamPoolUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.IpamPoolUpdate, _types.IpamPoolUpdate, IO[bytes]]] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -22009,9 +22089,10 @@ class IpamPoolsOperations:
         :type network_manager_name: str
         :param pool_name: Pool resource name. Required.
         :type pool_name: str
-        :param body: Pool resource object to update partially. Is one of the following types:
-         IpamPoolUpdate, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.network.models.IpamPoolUpdate or JSON or IO[bytes]
+        :param body: Pool resource object to update partially. Is either a IpamPoolUpdate type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.network.models.IpamPoolUpdate or
+         ~azure.mgmt.network.types.IpamPoolUpdate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -22668,7 +22749,7 @@ class NetworkManagersOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkManager,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22681,7 +22762,7 @@ class NetworkManagersOperations:
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which network manager is. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkManager
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22722,7 +22803,7 @@ class NetworkManagersOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.NetworkManager, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkManager, _types.NetworkManager, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkManager:
         """Creates or updates a Network Manager.
@@ -22732,9 +22813,10 @@ class NetworkManagersOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Parameters supplied to specify which network manager is. Is one of the
-         following types: NetworkManager, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkManager or JSON or IO[bytes]
+        :param parameters: Parameters supplied to specify which network manager is. Is either a
+         NetworkManager type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkManager or
+         ~azure.mgmt.network.types.NetworkManager or IO[bytes]
         :return: NetworkManager. The NetworkManager is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkManager
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22839,7 +22921,7 @@ class NetworkManagersOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: JSON,
+        parameters: _types.PatchObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22852,7 +22934,7 @@ class NetworkManagersOperations:
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which network manager is. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PatchObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22893,7 +22975,7 @@ class NetworkManagersOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.PatchObject, JSON, IO[bytes]],
+        parameters: Union[_models.PatchObject, _types.PatchObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkManager:
         """Patch NetworkManager.
@@ -22903,9 +22985,10 @@ class NetworkManagersOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Parameters supplied to specify which network manager is. Is one of the
-         following types: PatchObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PatchObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to specify which network manager is. Is either a
+         PatchObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PatchObject or
+         ~azure.mgmt.network.types.PatchObject or IO[bytes]
         :return: NetworkManager. The NetworkManager is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkManager
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23436,7 +23519,7 @@ class StaticCidrsOperations:
         network_manager_name: str,
         pool_name: str,
         static_cidr_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.StaticCidr] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23455,7 +23538,7 @@ class StaticCidrsOperations:
         :param static_cidr_name: Name for the static CIDR. Required.
         :type static_cidr_name: str
         :param body: StaticCidr resource object to create/update. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.StaticCidr
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23506,7 +23589,7 @@ class StaticCidrsOperations:
         network_manager_name: str,
         pool_name: str,
         static_cidr_name: str,
-        body: Optional[Union[_models.StaticCidr, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.StaticCidr, _types.StaticCidr, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.StaticCidr:
         """Creates/Updates the Static CIDR resource.
@@ -23522,9 +23605,10 @@ class StaticCidrsOperations:
         :type pool_name: str
         :param static_cidr_name: Name for the static CIDR. Required.
         :type static_cidr_name: str
-        :param body: StaticCidr resource object to create/update. Is one of the following types:
-         StaticCidr, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.network.models.StaticCidr or JSON or IO[bytes]
+        :param body: StaticCidr resource object to create/update. Is either a StaticCidr type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.network.models.StaticCidr or ~azure.mgmt.network.types.StaticCidr or
+         IO[bytes]
         :return: StaticCidr. The StaticCidr is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.StaticCidr
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23953,7 +24037,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        parameters: Union[_models.IpAllocation, JSON, IO[bytes]],
+        parameters: Union[_models.IpAllocation, _types.IpAllocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24061,7 +24145,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        parameters: JSON,
+        parameters: _types.IpAllocation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24075,7 +24159,7 @@ class IpAllocationsOperations:
         :type ip_allocation_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.IpAllocation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24119,7 +24203,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        parameters: Union[_models.IpAllocation, JSON, IO[bytes]],
+        parameters: Union[_models.IpAllocation, _types.IpAllocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpAllocation]:
         """Creates or updates an IpAllocation in the specified resource group.
@@ -24130,8 +24214,9 @@ class IpAllocationsOperations:
         :param ip_allocation_name: The name of the IpAllocation. Required.
         :type ip_allocation_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation. Is
-         one of the following types: IpAllocation, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.IpAllocation or JSON or IO[bytes]
+         either a IpAllocation type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.IpAllocation or
+         ~azure.mgmt.network.types.IpAllocation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpAllocation. The IpAllocation is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.IpAllocation]
@@ -24223,7 +24308,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24236,7 +24321,7 @@ class IpAllocationsOperations:
         :param ip_allocation_name: The name of the IpAllocation. Required.
         :type ip_allocation_name: str
         :param parameters: Parameters supplied to update IpAllocation tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24277,7 +24362,7 @@ class IpAllocationsOperations:
         self,
         resource_group_name: str,
         ip_allocation_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.IpAllocation:
         """Updates a IpAllocation tags.
@@ -24287,9 +24372,10 @@ class IpAllocationsOperations:
         :type resource_group_name: str
         :param ip_allocation_name: The name of the IpAllocation. Required.
         :type ip_allocation_name: str
-        :param parameters: Parameters supplied to update IpAllocation tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update IpAllocation tags. Is either a TagsObject type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: IpAllocation. The IpAllocation is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.IpAllocation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24748,7 +24834,7 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: Union[_models.IpGroup, JSON, IO[bytes]],
+        parameters: Union[_models.IpGroup, _types.IpGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24855,7 +24941,7 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: JSON,
+        parameters: _types.IpGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24868,7 +24954,7 @@ class IpGroupsOperations:
         :param ip_groups_name: The name of the ipGroups. Required.
         :type ip_groups_name: str
         :param parameters: Parameters supplied to the create or update IpGroups operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.IpGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24911,7 +24997,7 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: Union[_models.IpGroup, JSON, IO[bytes]],
+        parameters: Union[_models.IpGroup, _types.IpGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpGroup]:
         """Creates or updates an ipGroups in a specified resource group.
@@ -24921,9 +25007,10 @@ class IpGroupsOperations:
         :type resource_group_name: str
         :param ip_groups_name: The name of the ipGroups. Required.
         :type ip_groups_name: str
-        :param parameters: Parameters supplied to the create or update IpGroups operation. Is one of
-         the following types: IpGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.IpGroup or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update IpGroups operation. Is either a
+         IpGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.IpGroup or ~azure.mgmt.network.types.IpGroup or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpGroup. The IpGroup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.IpGroup]
@@ -25015,7 +25102,7 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25028,7 +25115,7 @@ class IpGroupsOperations:
         :param ip_groups_name: The name of the ipGroups. Required.
         :type ip_groups_name: str
         :param parameters: Parameters supplied to the update ipGroups operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25069,7 +25156,7 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.IpGroup:
         """Updates tags of an IpGroups resource.
@@ -25079,9 +25166,10 @@ class IpGroupsOperations:
         :type resource_group_name: str
         :param ip_groups_name: The name of the ipGroups. Required.
         :type ip_groups_name: str
-        :param parameters: Parameters supplied to the update ipGroups operation. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the update ipGroups operation. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: IpGroup. The IpGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.IpGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25552,7 +25640,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: Union[_models.LoadBalancer, JSON, IO[bytes]],
+        parameters: Union[_models.LoadBalancer, _types.LoadBalancer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25660,7 +25748,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: JSON,
+        parameters: _types.LoadBalancer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25674,7 +25762,7 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :param parameters: Parameters supplied to the create or update load balancer operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.LoadBalancer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25718,7 +25806,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: Union[_models.LoadBalancer, JSON, IO[bytes]],
+        parameters: Union[_models.LoadBalancer, _types.LoadBalancer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LoadBalancer]:
         """Creates or updates a load balancer.
@@ -25728,9 +25816,10 @@ class LoadBalancersOperations:
         :type resource_group_name: str
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
-        :param parameters: Parameters supplied to the create or update load balancer operation. Is one
-         of the following types: LoadBalancer, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.LoadBalancer or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update load balancer operation. Is
+         either a LoadBalancer type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.LoadBalancer or
+         ~azure.mgmt.network.types.LoadBalancer or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LoadBalancer. The LoadBalancer is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.LoadBalancer]
@@ -25822,7 +25911,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25835,7 +25924,7 @@ class LoadBalancersOperations:
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
         :param parameters: Parameters supplied to update load balancer tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25876,7 +25965,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.LoadBalancer:
         """Updates a load balancer tags.
@@ -25886,9 +25975,10 @@ class LoadBalancersOperations:
         :type resource_group_name: str
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
-        :param parameters: Parameters supplied to update load balancer tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update load balancer tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: LoadBalancer. The LoadBalancer is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.LoadBalancer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26279,7 +26369,7 @@ class LoadBalancersOperations:
         self,
         group_name: str,
         load_balancer_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.MigrateLoadBalancerToIpBasedRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26291,7 +26381,7 @@ class LoadBalancersOperations:
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
         :param parameters: Parameters supplied to the migrateToIpBased Api. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.MigrateLoadBalancerToIpBasedRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26331,7 +26421,9 @@ class LoadBalancersOperations:
         self,
         group_name: str,
         load_balancer_name: str,
-        parameters: Optional[Union[_models.MigrateLoadBalancerToIpBasedRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.MigrateLoadBalancerToIpBasedRequest, _types.MigrateLoadBalancerToIpBasedRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.MigratedPools:
         """Migrate load balancer to IP Based.
@@ -26340,10 +26432,10 @@ class LoadBalancersOperations:
         :type group_name: str
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
-        :param parameters: Parameters supplied to the migrateToIpBased Api. Is one of the following
-         types: MigrateLoadBalancerToIpBasedRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.network.models.MigrateLoadBalancerToIpBasedRequest or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to the migrateToIpBased Api. Is either a
+         MigrateLoadBalancerToIpBasedRequest type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.network.models.MigrateLoadBalancerToIpBasedRequest or
+         ~azure.mgmt.network.types.MigrateLoadBalancerToIpBasedRequest or IO[bytes]
         :return: MigratedPools. The MigratedPools is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.MigratedPools
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26425,7 +26517,9 @@ class LoadBalancersOperations:
         group_name: str,
         load_balancer_name: str,
         backend_pool_name: str,
-        parameters: Union[_models.QueryInboundNatRulePortMappingRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.QueryInboundNatRulePortMappingRequest, _types.QueryInboundNatRulePortMappingRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -26535,7 +26629,7 @@ class LoadBalancersOperations:
         group_name: str,
         load_balancer_name: str,
         backend_pool_name: str,
-        parameters: JSON,
+        parameters: _types.QueryInboundNatRulePortMappingRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26549,7 +26643,7 @@ class LoadBalancersOperations:
         :param backend_pool_name: The name of the backend address pool. Required.
         :type backend_pool_name: str
         :param parameters: Query inbound NAT rule port mapping request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.QueryInboundNatRulePortMappingRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26597,7 +26691,9 @@ class LoadBalancersOperations:
         group_name: str,
         load_balancer_name: str,
         backend_pool_name: str,
-        parameters: Union[_models.QueryInboundNatRulePortMappingRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.QueryInboundNatRulePortMappingRequest, _types.QueryInboundNatRulePortMappingRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackendAddressInboundNatRulePortMappings]:
         """List of inbound NAT rule port mappings.
@@ -26608,10 +26704,10 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :param backend_pool_name: The name of the backend address pool. Required.
         :type backend_pool_name: str
-        :param parameters: Query inbound NAT rule port mapping request. Is one of the following types:
-         QueryInboundNatRulePortMappingRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.QueryInboundNatRulePortMappingRequest or JSON or
-         IO[bytes]
+        :param parameters: Query inbound NAT rule port mapping request. Is either a
+         QueryInboundNatRulePortMappingRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.QueryInboundNatRulePortMappingRequest or
+         ~azure.mgmt.network.types.QueryInboundNatRulePortMappingRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackendAddressInboundNatRulePortMappings.
          The BackendAddressInboundNatRulePortMappings is compatible with MutableMapping
         :rtype:
@@ -26674,7 +26770,10 @@ class LoadBalancersOperations:
         )
 
     async def _swap_public_ip_addresses_initial(
-        self, location: str, parameters: Union[_models.LoadBalancerVipSwapRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        parameters: Union[_models.LoadBalancerVipSwapRequest, _types.LoadBalancerVipSwapRequest, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -26769,14 +26868,19 @@ class LoadBalancersOperations:
 
     @overload
     async def begin_swap_public_ip_addresses(
-        self, location: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        parameters: _types.LoadBalancerVipSwapRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps VIPs between two load balancers.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.LoadBalancerVipSwapRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26805,15 +26909,18 @@ class LoadBalancersOperations:
 
     @distributed_trace_async
     async def begin_swap_public_ip_addresses(
-        self, location: str, parameters: Union[_models.LoadBalancerVipSwapRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        parameters: Union[_models.LoadBalancerVipSwapRequest, _types.LoadBalancerVipSwapRequest, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps VIPs between two load balancers.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Is one of the following types: LoadBalancerVipSwapRequest, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.LoadBalancerVipSwapRequest or JSON or IO[bytes]
+        :param parameters: Is either a LoadBalancerVipSwapRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.LoadBalancerVipSwapRequest or
+         ~azure.mgmt.network.types.LoadBalancerVipSwapRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26974,7 +27081,7 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         inbound_nat_rule_name: str,
-        inbound_nat_rule_parameters: Union[_models.InboundNatRule, JSON, IO[bytes]],
+        inbound_nat_rule_parameters: Union[_models.InboundNatRule, _types.InboundNatRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27087,7 +27194,7 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         inbound_nat_rule_name: str,
-        inbound_nat_rule_parameters: JSON,
+        inbound_nat_rule_parameters: _types.InboundNatRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27103,7 +27210,7 @@ class InboundNatRulesOperations:
         :type inbound_nat_rule_name: str
         :param inbound_nat_rule_parameters: Parameters supplied to the create or update inbound NAT
          rule operation. Required.
-        :type inbound_nat_rule_parameters: JSON
+        :type inbound_nat_rule_parameters: ~azure.mgmt.network.types.InboundNatRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27151,7 +27258,7 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         inbound_nat_rule_name: str,
-        inbound_nat_rule_parameters: Union[_models.InboundNatRule, JSON, IO[bytes]],
+        inbound_nat_rule_parameters: Union[_models.InboundNatRule, _types.InboundNatRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InboundNatRule]:
         """Creates or updates a load balancer inbound NAT rule.
@@ -27164,9 +27271,9 @@ class InboundNatRulesOperations:
         :param inbound_nat_rule_name: The name of the inbound NAT rule. Required.
         :type inbound_nat_rule_name: str
         :param inbound_nat_rule_parameters: Parameters supplied to the create or update inbound NAT
-         rule operation. Is one of the following types: InboundNatRule, JSON, IO[bytes] Required.
-        :type inbound_nat_rule_parameters: ~azure.mgmt.network.models.InboundNatRule or JSON or
-         IO[bytes]
+         rule operation. Is either a InboundNatRule type or a IO[bytes] type. Required.
+        :type inbound_nat_rule_parameters: ~azure.mgmt.network.models.InboundNatRule or
+         ~azure.mgmt.network.types.InboundNatRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InboundNatRule. The InboundNatRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.InboundNatRule]
@@ -27541,7 +27648,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: Union[_models.NatGateway, JSON, IO[bytes]],
+        parameters: Union[_models.NatGateway, _types.NatGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27651,7 +27758,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.NatGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27664,7 +27771,7 @@ class NatGatewaysOperations:
         :param nat_gateway_name: The name of the nat gateway. Required.
         :type nat_gateway_name: str
         :param parameters: Parameters supplied to the create or update nat gateway operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NatGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27707,7 +27814,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: Union[_models.NatGateway, JSON, IO[bytes]],
+        parameters: Union[_models.NatGateway, _types.NatGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NatGateway]:
         """Creates or updates a nat gateway.
@@ -27717,9 +27824,10 @@ class NatGatewaysOperations:
         :type resource_group_name: str
         :param nat_gateway_name: The name of the nat gateway. Required.
         :type nat_gateway_name: str
-        :param parameters: Parameters supplied to the create or update nat gateway operation. Is one of
-         the following types: NatGateway, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NatGateway or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update nat gateway operation. Is either
+         a NatGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NatGateway or ~azure.mgmt.network.types.NatGateway
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NatGateway. The NatGateway is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NatGateway]
@@ -27811,7 +27919,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27824,7 +27932,7 @@ class NatGatewaysOperations:
         :param nat_gateway_name: The name of the nat gateway. Required.
         :type nat_gateway_name: str
         :param parameters: Parameters supplied to update nat gateway tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27865,7 +27973,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NatGateway:
         """Updates nat gateway tags.
@@ -27875,9 +27983,10 @@ class NatGatewaysOperations:
         :type resource_group_name: str
         :param nat_gateway_name: The name of the nat gateway. Required.
         :type nat_gateway_name: str
-        :param parameters: Parameters supplied to update nat gateway tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update nat gateway tags. Is either a TagsObject type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: NatGateway. The NatGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NatGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28523,7 +28632,9 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        tap_configuration_parameters: Union[_models.NetworkInterfaceTapConfiguration, JSON, IO[bytes]],
+        tap_configuration_parameters: Union[
+            _models.NetworkInterfaceTapConfiguration, _types.NetworkInterfaceTapConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28638,7 +28749,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        tap_configuration_parameters: JSON,
+        tap_configuration_parameters: _types.NetworkInterfaceTapConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28655,7 +28766,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         :type tap_configuration_name: str
         :param tap_configuration_parameters: Parameters supplied to the create or update tap
          configuration operation. Required.
-        :type tap_configuration_parameters: JSON
+        :type tap_configuration_parameters: ~azure.mgmt.network.types.NetworkInterfaceTapConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28706,7 +28817,9 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         network_interface_name: str,
         tap_configuration_name: str,
-        tap_configuration_parameters: Union[_models.NetworkInterfaceTapConfiguration, JSON, IO[bytes]],
+        tap_configuration_parameters: Union[
+            _models.NetworkInterfaceTapConfiguration, _types.NetworkInterfaceTapConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkInterfaceTapConfiguration]:
         """Creates or updates a Tap configuration in the specified NetworkInterface.
@@ -28720,10 +28833,10 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
          This name can be used to access the resource. Required.
         :type tap_configuration_name: str
         :param tap_configuration_parameters: Parameters supplied to the create or update tap
-         configuration operation. Is one of the following types: NetworkInterfaceTapConfiguration, JSON,
-         IO[bytes] Required.
+         configuration operation. Is either a NetworkInterfaceTapConfiguration type or a IO[bytes] type.
+         Required.
         :type tap_configuration_parameters: ~azure.mgmt.network.models.NetworkInterfaceTapConfiguration
-         or JSON or IO[bytes]
+         or ~azure.mgmt.network.types.NetworkInterfaceTapConfiguration or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkInterfaceTapConfiguration. The
          NetworkInterfaceTapConfiguration is compatible with MutableMapping
         :rtype:
@@ -29125,7 +29238,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         self,
         management_group_id: str,
         network_manager_connection_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkManagerConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29137,7 +29250,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         :param network_manager_connection_name: Name for the network manager connection. Required.
         :type network_manager_connection_name: str
         :param parameters: Network manager connection to be created/updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkManagerConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29179,7 +29292,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         self,
         management_group_id: str,
         network_manager_connection_name: str,
-        parameters: Union[_models.NetworkManagerConnection, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkManagerConnection, _types.NetworkManagerConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkManagerConnection:
         """Create a network manager connection on this management group.
@@ -29188,9 +29301,10 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         :type management_group_id: str
         :param network_manager_connection_name: Name for the network manager connection. Required.
         :type network_manager_connection_name: str
-        :param parameters: Network manager connection to be created/updated. Is one of the following
-         types: NetworkManagerConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkManagerConnection or JSON or IO[bytes]
+        :param parameters: Network manager connection to be created/updated. Is either a
+         NetworkManagerConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerConnection or
+         ~azure.mgmt.network.types.NetworkManagerConnection or IO[bytes]
         :return: NetworkManagerConnection. The NetworkManagerConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkManagerConnection
@@ -29550,7 +29664,7 @@ class ConnectivityConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        connectivity_configuration: JSON,
+        connectivity_configuration: _types.ConnectivityConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29567,7 +29681,7 @@ class ConnectivityConfigurationsOperations:
         :type configuration_name: str
         :param connectivity_configuration: Parameters supplied to create/update a network manager
          connectivity configuration. Required.
-        :type connectivity_configuration: JSON
+        :type connectivity_configuration: ~azure.mgmt.network.types.ConnectivityConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29616,7 +29730,9 @@ class ConnectivityConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        connectivity_configuration: Union[_models.ConnectivityConfiguration, JSON, IO[bytes]],
+        connectivity_configuration: Union[
+            _models.ConnectivityConfiguration, _types.ConnectivityConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ConnectivityConfiguration:
         """Creates/Updates a new network manager connectivity configuration.
@@ -29630,10 +29746,10 @@ class ConnectivityConfigurationsOperations:
          Required.
         :type configuration_name: str
         :param connectivity_configuration: Parameters supplied to create/update a network manager
-         connectivity configuration. Is one of the following types: ConnectivityConfiguration, JSON,
-         IO[bytes] Required.
-        :type connectivity_configuration: ~azure.mgmt.network.models.ConnectivityConfiguration or JSON
-         or IO[bytes]
+         connectivity configuration. Is either a ConnectivityConfiguration type or a IO[bytes] type.
+         Required.
+        :type connectivity_configuration: ~azure.mgmt.network.models.ConnectivityConfiguration or
+         ~azure.mgmt.network.types.ConnectivityConfiguration or IO[bytes]
         :return: ConnectivityConfiguration. The ConnectivityConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.ConnectivityConfiguration
@@ -30099,7 +30215,7 @@ class NetworkGroupsOperations:
         resource_group_name: str,
         network_manager_name: str,
         network_group_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkGroup,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -30117,7 +30233,7 @@ class NetworkGroupsOperations:
         :type network_group_name: str
         :param parameters: Parameters supplied to the specify which network group need to create.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30175,7 +30291,7 @@ class NetworkGroupsOperations:
         resource_group_name: str,
         network_manager_name: str,
         network_group_name: str,
-        parameters: Union[_models.NetworkGroup, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkGroup, _types.NetworkGroup, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -30191,8 +30307,9 @@ class NetworkGroupsOperations:
         :param network_group_name: The name of the network group. Required.
         :type network_group_name: str
         :param parameters: Parameters supplied to the specify which network group need to create. Is
-         one of the following types: NetworkGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkGroup or JSON or IO[bytes]
+         either a NetworkGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkGroup or
+         ~azure.mgmt.network.types.NetworkGroup or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -30674,7 +30791,7 @@ class StaticMembersOperations:
         network_manager_name: str,
         network_group_name: str,
         static_member_name: str,
-        parameters: JSON,
+        parameters: _types.StaticMember,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30691,7 +30808,7 @@ class StaticMembersOperations:
         :param static_member_name: The name of the static member. Required.
         :type static_member_name: str
         :param parameters: Parameters supplied to the specify the static member to create. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.StaticMember
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30740,7 +30857,7 @@ class StaticMembersOperations:
         network_manager_name: str,
         network_group_name: str,
         static_member_name: str,
-        parameters: Union[_models.StaticMember, JSON, IO[bytes]],
+        parameters: Union[_models.StaticMember, _types.StaticMember, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticMember:
         """Creates or updates a static member.
@@ -30754,9 +30871,10 @@ class StaticMembersOperations:
         :type network_group_name: str
         :param static_member_name: The name of the static member. Required.
         :type static_member_name: str
-        :param parameters: Parameters supplied to the specify the static member to create. Is one of
-         the following types: StaticMember, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.StaticMember or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the specify the static member to create. Is either a
+         StaticMember type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.StaticMember or
+         ~azure.mgmt.network.types.StaticMember or IO[bytes]
         :return: StaticMember. The StaticMember is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.StaticMember
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31143,7 +31261,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        routing_configuration: JSON,
+        routing_configuration: _types.NetworkManagerRoutingConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31158,7 +31276,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         :param configuration_name: The name of the network manager Routing Configuration. Required.
         :type configuration_name: str
         :param routing_configuration: The routing configuration to create or update. Required.
-        :type routing_configuration: JSON
+        :type routing_configuration: ~azure.mgmt.network.types.NetworkManagerRoutingConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31205,7 +31323,9 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        routing_configuration: Union[_models.NetworkManagerRoutingConfiguration, JSON, IO[bytes]],
+        routing_configuration: Union[
+            _models.NetworkManagerRoutingConfiguration, _types.NetworkManagerRoutingConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.NetworkManagerRoutingConfiguration:
         """Creates or updates a network manager routing configuration.
@@ -31217,10 +31337,10 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         :type network_manager_name: str
         :param configuration_name: The name of the network manager Routing Configuration. Required.
         :type configuration_name: str
-        :param routing_configuration: The routing configuration to create or update. Is one of the
-         following types: NetworkManagerRoutingConfiguration, JSON, IO[bytes] Required.
+        :param routing_configuration: The routing configuration to create or update. Is either a
+         NetworkManagerRoutingConfiguration type or a IO[bytes] type. Required.
         :type routing_configuration: ~azure.mgmt.network.models.NetworkManagerRoutingConfiguration or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.NetworkManagerRoutingConfiguration or IO[bytes]
         :return: NetworkManagerRoutingConfiguration. The NetworkManagerRoutingConfiguration is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkManagerRoutingConfiguration
@@ -31691,7 +31811,7 @@ class RoutingRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
-        rule_collection: JSON,
+        rule_collection: _types.RoutingRuleCollection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31709,7 +31829,7 @@ class RoutingRuleCollectionsOperations:
          collection. Required.
         :type rule_collection_name: str
         :param rule_collection: The Rule Collection to create or update. Required.
-        :type rule_collection: JSON
+        :type rule_collection: ~azure.mgmt.network.types.RoutingRuleCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31759,7 +31879,7 @@ class RoutingRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
-        rule_collection: Union[_models.RoutingRuleCollection, JSON, IO[bytes]],
+        rule_collection: Union[_models.RoutingRuleCollection, _types.RoutingRuleCollection, IO[bytes]],
         **kwargs: Any
     ) -> _models.RoutingRuleCollection:
         """Creates or updates a routing rule collection.
@@ -31774,9 +31894,10 @@ class RoutingRuleCollectionsOperations:
         :param rule_collection_name: The name of the network manager routing Configuration rule
          collection. Required.
         :type rule_collection_name: str
-        :param rule_collection: The Rule Collection to create or update. Is one of the following types:
-         RoutingRuleCollection, JSON, IO[bytes] Required.
-        :type rule_collection: ~azure.mgmt.network.models.RoutingRuleCollection or JSON or IO[bytes]
+        :param rule_collection: The Rule Collection to create or update. Is either a
+         RoutingRuleCollection type or a IO[bytes] type. Required.
+        :type rule_collection: ~azure.mgmt.network.models.RoutingRuleCollection or
+         ~azure.mgmt.network.types.RoutingRuleCollection or IO[bytes]
         :return: RoutingRuleCollection. The RoutingRuleCollection is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.RoutingRuleCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32265,7 +32386,7 @@ class RoutingRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
-        routing_rule: JSON,
+        routing_rule: _types.RoutingRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32285,7 +32406,7 @@ class RoutingRulesOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param routing_rule: The routing rule to create or update. Required.
-        :type routing_rule: JSON
+        :type routing_rule: ~azure.mgmt.network.types.RoutingRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32339,7 +32460,7 @@ class RoutingRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
-        routing_rule: Union[_models.RoutingRule, JSON, IO[bytes]],
+        routing_rule: Union[_models.RoutingRule, _types.RoutingRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.RoutingRule:
         """Creates or updates an routing rule.
@@ -32356,9 +32477,10 @@ class RoutingRulesOperations:
         :type rule_collection_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param routing_rule: The routing rule to create or update. Is one of the following types:
-         RoutingRule, JSON, IO[bytes] Required.
-        :type routing_rule: ~azure.mgmt.network.models.RoutingRule or JSON or IO[bytes]
+        :param routing_rule: The routing rule to create or update. Is either a RoutingRule type or a
+         IO[bytes] type. Required.
+        :type routing_rule: ~azure.mgmt.network.models.RoutingRule or
+         ~azure.mgmt.network.types.RoutingRule or IO[bytes]
         :return: RoutingRule. The RoutingRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.RoutingRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32836,7 +32958,7 @@ class ScopeConnectionsOperations:
         resource_group_name: str,
         network_manager_name: str,
         scope_connection_name: str,
-        parameters: JSON,
+        parameters: _types.ScopeConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32851,7 +32973,7 @@ class ScopeConnectionsOperations:
         :param scope_connection_name: Name for the cross-tenant connection. Required.
         :type scope_connection_name: str
         :param parameters: Scope connection to be created/updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ScopeConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32896,7 +33018,7 @@ class ScopeConnectionsOperations:
         resource_group_name: str,
         network_manager_name: str,
         scope_connection_name: str,
-        parameters: Union[_models.ScopeConnection, JSON, IO[bytes]],
+        parameters: Union[_models.ScopeConnection, _types.ScopeConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.ScopeConnection:
         """Creates or updates scope connection from Network Manager.
@@ -32908,9 +33030,10 @@ class ScopeConnectionsOperations:
         :type network_manager_name: str
         :param scope_connection_name: Name for the cross-tenant connection. Required.
         :type scope_connection_name: str
-        :param parameters: Scope connection to be created/updated. Is one of the following types:
-         ScopeConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ScopeConnection or JSON or IO[bytes]
+        :param parameters: Scope connection to be created/updated. Is either a ScopeConnection type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ScopeConnection or
+         ~azure.mgmt.network.types.ScopeConnection or IO[bytes]
         :return: ScopeConnection. The ScopeConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ScopeConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -33251,7 +33374,7 @@ class CommitsOperations:
         resource_group_name: str,
         network_manager_name: str,
         commit_name: str,
-        resource: Union[_models.Commit, JSON, IO[bytes]],
+        resource: Union[_models.Commit, _types.Commit, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -33363,7 +33486,7 @@ class CommitsOperations:
         resource_group_name: str,
         network_manager_name: str,
         commit_name: str,
-        resource: JSON,
+        resource: _types.Commit,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33378,7 +33501,7 @@ class CommitsOperations:
         :param commit_name: The name of the commit. Required.
         :type commit_name: str
         :param resource: Parameters supplied to specify which commit to create. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.network.types.Commit
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33425,7 +33548,7 @@ class CommitsOperations:
         resource_group_name: str,
         network_manager_name: str,
         commit_name: str,
-        resource: Union[_models.Commit, JSON, IO[bytes]],
+        resource: Union[_models.Commit, _types.Commit, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Commit]:
         """Creates or updates a commit.
@@ -33437,9 +33560,10 @@ class CommitsOperations:
         :type network_manager_name: str
         :param commit_name: The name of the commit. Required.
         :type commit_name: str
-        :param resource: Parameters supplied to specify which commit to create. Is one of the following
-         types: Commit, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.network.models.Commit or JSON or IO[bytes]
+        :param resource: Parameters supplied to specify which commit to create. Is either a Commit type
+         or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.network.models.Commit or ~azure.mgmt.network.types.Commit or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Commit. The Commit is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.Commit]
@@ -33865,7 +33989,7 @@ class SecurityAdminConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        security_admin_configuration: JSON,
+        security_admin_configuration: _types.SecurityAdminConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33881,7 +34005,7 @@ class SecurityAdminConfigurationsOperations:
         :type configuration_name: str
         :param security_admin_configuration: The security admin configuration to create or update.
          Required.
-        :type security_admin_configuration: JSON
+        :type security_admin_configuration: ~azure.mgmt.network.types.SecurityAdminConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33929,7 +34053,9 @@ class SecurityAdminConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        security_admin_configuration: Union[_models.SecurityAdminConfiguration, JSON, IO[bytes]],
+        security_admin_configuration: Union[
+            _models.SecurityAdminConfiguration, _types.SecurityAdminConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SecurityAdminConfiguration:
         """Creates or updates a network manager security admin configuration.
@@ -33942,9 +34068,9 @@ class SecurityAdminConfigurationsOperations:
         :param configuration_name: The name of the network manager Security Configuration. Required.
         :type configuration_name: str
         :param security_admin_configuration: The security admin configuration to create or update. Is
-         one of the following types: SecurityAdminConfiguration, JSON, IO[bytes] Required.
+         either a SecurityAdminConfiguration type or a IO[bytes] type. Required.
         :type security_admin_configuration: ~azure.mgmt.network.models.SecurityAdminConfiguration or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.SecurityAdminConfiguration or IO[bytes]
         :return: SecurityAdminConfiguration. The SecurityAdminConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.SecurityAdminConfiguration
@@ -34415,7 +34541,7 @@ class AdminRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
-        rule_collection: JSON,
+        rule_collection: _types.AdminRuleCollection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34433,7 +34559,7 @@ class AdminRuleCollectionsOperations:
          collection. Required.
         :type rule_collection_name: str
         :param rule_collection: The Rule Collection to create or update. Required.
-        :type rule_collection: JSON
+        :type rule_collection: ~azure.mgmt.network.types.AdminRuleCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34483,7 +34609,7 @@ class AdminRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
-        rule_collection: Union[_models.AdminRuleCollection, JSON, IO[bytes]],
+        rule_collection: Union[_models.AdminRuleCollection, _types.AdminRuleCollection, IO[bytes]],
         **kwargs: Any
     ) -> _models.AdminRuleCollection:
         """Creates or updates an admin rule collection.
@@ -34498,9 +34624,10 @@ class AdminRuleCollectionsOperations:
         :param rule_collection_name: The name of the network manager security Configuration rule
          collection. Required.
         :type rule_collection_name: str
-        :param rule_collection: The Rule Collection to create or update. Is one of the following types:
-         AdminRuleCollection, JSON, IO[bytes] Required.
-        :type rule_collection: ~azure.mgmt.network.models.AdminRuleCollection or JSON or IO[bytes]
+        :param rule_collection: The Rule Collection to create or update. Is either a
+         AdminRuleCollection type or a IO[bytes] type. Required.
+        :type rule_collection: ~azure.mgmt.network.models.AdminRuleCollection or
+         ~azure.mgmt.network.types.AdminRuleCollection or IO[bytes]
         :return: AdminRuleCollection. The AdminRuleCollection is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.AdminRuleCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34969,7 +35096,7 @@ class SecurityUserConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        security_user_configuration: JSON,
+        security_user_configuration: _types.SecurityUserConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34985,7 +35112,7 @@ class SecurityUserConfigurationsOperations:
         :type configuration_name: str
         :param security_user_configuration: The security user configuration to create or update.
          Required.
-        :type security_user_configuration: JSON
+        :type security_user_configuration: ~azure.mgmt.network.types.SecurityUserConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35033,7 +35160,9 @@ class SecurityUserConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
-        security_user_configuration: Union[_models.SecurityUserConfiguration, JSON, IO[bytes]],
+        security_user_configuration: Union[
+            _models.SecurityUserConfiguration, _types.SecurityUserConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SecurityUserConfiguration:
         """Creates or updates a network manager security user configuration.
@@ -35045,10 +35174,10 @@ class SecurityUserConfigurationsOperations:
         :type network_manager_name: str
         :param configuration_name: The name of the network manager Security Configuration. Required.
         :type configuration_name: str
-        :param security_user_configuration: The security user configuration to create or update. Is one
-         of the following types: SecurityUserConfiguration, JSON, IO[bytes] Required.
-        :type security_user_configuration: ~azure.mgmt.network.models.SecurityUserConfiguration or JSON
-         or IO[bytes]
+        :param security_user_configuration: The security user configuration to create or update. Is
+         either a SecurityUserConfiguration type or a IO[bytes] type. Required.
+        :type security_user_configuration: ~azure.mgmt.network.models.SecurityUserConfiguration or
+         ~azure.mgmt.network.types.SecurityUserConfiguration or IO[bytes]
         :return: SecurityUserConfiguration. The SecurityUserConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.SecurityUserConfiguration
@@ -35522,7 +35651,7 @@ class SecurityUserRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
-        security_user_rule_collection: JSON,
+        security_user_rule_collection: _types.SecurityUserRuleCollection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35541,7 +35670,7 @@ class SecurityUserRuleCollectionsOperations:
         :type rule_collection_name: str
         :param security_user_rule_collection: The Security User Rule Collection to create or update.
          Required.
-        :type security_user_rule_collection: JSON
+        :type security_user_rule_collection: ~azure.mgmt.network.types.SecurityUserRuleCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35594,7 +35723,9 @@ class SecurityUserRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
-        security_user_rule_collection: Union[_models.SecurityUserRuleCollection, JSON, IO[bytes]],
+        security_user_rule_collection: Union[
+            _models.SecurityUserRuleCollection, _types.SecurityUserRuleCollection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SecurityUserRuleCollection:
         """Creates or updates a security user rule collection.
@@ -35610,9 +35741,9 @@ class SecurityUserRuleCollectionsOperations:
          collection. Required.
         :type rule_collection_name: str
         :param security_user_rule_collection: The Security User Rule Collection to create or update. Is
-         one of the following types: SecurityUserRuleCollection, JSON, IO[bytes] Required.
+         either a SecurityUserRuleCollection type or a IO[bytes] type. Required.
         :type security_user_rule_collection: ~azure.mgmt.network.models.SecurityUserRuleCollection or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.SecurityUserRuleCollection or IO[bytes]
         :return: SecurityUserRuleCollection. The SecurityUserRuleCollection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.SecurityUserRuleCollection
@@ -36103,7 +36234,7 @@ class SecurityUserRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
-        security_user_rule: JSON,
+        security_user_rule: _types.SecurityUserRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36123,7 +36254,7 @@ class SecurityUserRulesOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param security_user_rule: The security user rule to create or update. Required.
-        :type security_user_rule: JSON
+        :type security_user_rule: ~azure.mgmt.network.types.SecurityUserRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36177,7 +36308,7 @@ class SecurityUserRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
-        security_user_rule: Union[_models.SecurityUserRule, JSON, IO[bytes]],
+        security_user_rule: Union[_models.SecurityUserRule, _types.SecurityUserRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityUserRule:
         """Creates or updates a security user rule.
@@ -36194,9 +36325,10 @@ class SecurityUserRulesOperations:
         :type rule_collection_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param security_user_rule: The security user rule to create or update. Is one of the following
-         types: SecurityUserRule, JSON, IO[bytes] Required.
-        :type security_user_rule: ~azure.mgmt.network.models.SecurityUserRule or JSON or IO[bytes]
+        :param security_user_rule: The security user rule to create or update. Is either a
+         SecurityUserRule type or a IO[bytes] type. Required.
+        :type security_user_rule: ~azure.mgmt.network.models.SecurityUserRule or
+         ~azure.mgmt.network.types.SecurityUserRule or IO[bytes]
         :return: SecurityUserRule. The SecurityUserRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.SecurityUserRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -36671,7 +36803,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkProfile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36685,7 +36817,7 @@ class NetworkProfilesOperations:
         :type network_profile_name: str
         :param parameters: Parameters supplied to the create or update network profile operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36727,7 +36859,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        parameters: Union[_models.NetworkProfile, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkProfile, _types.NetworkProfile, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkProfile:
         """Creates or updates a network profile.
@@ -36738,8 +36870,9 @@ class NetworkProfilesOperations:
         :param network_profile_name: The name of the public IP prefix. Required.
         :type network_profile_name: str
         :param parameters: Parameters supplied to the create or update network profile operation. Is
-         one of the following types: NetworkProfile, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkProfile or JSON or IO[bytes]
+         either a NetworkProfile type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkProfile or
+         ~azure.mgmt.network.types.NetworkProfile or IO[bytes]
         :return: NetworkProfile. The NetworkProfile is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -36844,7 +36977,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36857,7 +36990,7 @@ class NetworkProfilesOperations:
         :param network_profile_name: The name of the public IP prefix. Required.
         :type network_profile_name: str
         :param parameters: Parameters supplied to update network profile tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36898,7 +37031,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkProfile:
         """Updates network profile tags.
@@ -36908,9 +37041,10 @@ class NetworkProfilesOperations:
         :type resource_group_name: str
         :param network_profile_name: The name of the public IP prefix. Required.
         :type network_profile_name: str
-        :param parameters: Parameters supplied to update network profile tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update network profile tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: NetworkProfile. The NetworkProfile is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -37368,7 +37502,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: Union[_models.NetworkSecurityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkSecurityGroup, _types.NetworkSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -37476,7 +37610,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkSecurityGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37490,7 +37624,7 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :param parameters: Parameters supplied to the create or update network security group
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkSecurityGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37534,7 +37668,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: Union[_models.NetworkSecurityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkSecurityGroup, _types.NetworkSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkSecurityGroup]:
         """Creates or updates a network security group in the specified resource group.
@@ -37545,8 +37679,9 @@ class NetworkSecurityGroupsOperations:
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
         :param parameters: Parameters supplied to the create or update network security group
-         operation. Is one of the following types: NetworkSecurityGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkSecurityGroup or JSON or IO[bytes]
+         operation. Is either a NetworkSecurityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkSecurityGroup or
+         ~azure.mgmt.network.types.NetworkSecurityGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkSecurityGroup. The
          NetworkSecurityGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkSecurityGroup]
@@ -37638,7 +37773,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37651,7 +37786,7 @@ class NetworkSecurityGroupsOperations:
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
         :param parameters: Parameters supplied to update network security group tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37692,7 +37827,7 @@ class NetworkSecurityGroupsOperations:
         self,
         resource_group_name: str,
         network_security_group_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkSecurityGroup:
         """Updates a network security group tags.
@@ -37702,9 +37837,10 @@ class NetworkSecurityGroupsOperations:
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
-        :param parameters: Parameters supplied to update network security group tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update network security group tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: NetworkSecurityGroup. The NetworkSecurityGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38165,7 +38301,7 @@ class SecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         security_rule_name: str,
-        security_rule_parameters: Union[_models.SecurityRule, JSON, IO[bytes]],
+        security_rule_parameters: Union[_models.SecurityRule, _types.SecurityRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -38278,7 +38414,7 @@ class SecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         security_rule_name: str,
-        security_rule_parameters: JSON,
+        security_rule_parameters: _types.SecurityRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38294,7 +38430,7 @@ class SecurityRulesOperations:
         :type security_rule_name: str
         :param security_rule_parameters: Parameters supplied to the create or update network security
          rule operation. Required.
-        :type security_rule_parameters: JSON
+        :type security_rule_parameters: ~azure.mgmt.network.types.SecurityRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38342,7 +38478,7 @@ class SecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         security_rule_name: str,
-        security_rule_parameters: Union[_models.SecurityRule, JSON, IO[bytes]],
+        security_rule_parameters: Union[_models.SecurityRule, _types.SecurityRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityRule]:
         """Creates or updates a security rule in the specified network security group.
@@ -38355,8 +38491,9 @@ class SecurityRulesOperations:
         :param security_rule_name: The name of the security rule. Required.
         :type security_rule_name: str
         :param security_rule_parameters: Parameters supplied to the create or update network security
-         rule operation. Is one of the following types: SecurityRule, JSON, IO[bytes] Required.
-        :type security_rule_parameters: ~azure.mgmt.network.models.SecurityRule or JSON or IO[bytes]
+         rule operation. Is either a SecurityRule type or a IO[bytes] type. Required.
+        :type security_rule_parameters: ~azure.mgmt.network.models.SecurityRule or
+         ~azure.mgmt.network.types.SecurityRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SecurityRule. The SecurityRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.SecurityRule]
@@ -38942,7 +39079,7 @@ class NetworkSecurityPerimetersOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkSecurityPerimeter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38956,7 +39093,7 @@ class NetworkSecurityPerimetersOperations:
         :type network_security_perimeter_name: str
         :param parameters: Parameter supplied to create or update the network security perimeter.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkSecurityPerimeter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39000,7 +39137,7 @@ class NetworkSecurityPerimetersOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
-        parameters: Union[_models.NetworkSecurityPerimeter, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkSecurityPerimeter, _types.NetworkSecurityPerimeter, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkSecurityPerimeter:
         """Creates or updates a Network Security Perimeter.
@@ -39011,8 +39148,9 @@ class NetworkSecurityPerimetersOperations:
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
         :param parameters: Parameter supplied to create or update the network security perimeter. Is
-         one of the following types: NetworkSecurityPerimeter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkSecurityPerimeter or JSON or IO[bytes]
+         either a NetworkSecurityPerimeter type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkSecurityPerimeter or
+         ~azure.mgmt.network.types.NetworkSecurityPerimeter or IO[bytes]
         :return: NetworkSecurityPerimeter. The NetworkSecurityPerimeter is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkSecurityPerimeter
@@ -39119,7 +39257,7 @@ class NetworkSecurityPerimetersOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
-        parameters: JSON,
+        parameters: _types.UpdateTagsRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39132,7 +39270,7 @@ class NetworkSecurityPerimetersOperations:
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
         :param parameters: Parameter supplied to the network security perimeter. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.UpdateTagsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39175,7 +39313,7 @@ class NetworkSecurityPerimetersOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
-        parameters: Union[_models.UpdateTagsRequest, JSON, IO[bytes]],
+        parameters: Union[_models.UpdateTagsRequest, _types.UpdateTagsRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkSecurityPerimeter:
         """Patch Tags for a Network Security Perimeter.
@@ -39185,9 +39323,10 @@ class NetworkSecurityPerimetersOperations:
         :type resource_group_name: str
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
-        :param parameters: Parameter supplied to the network security perimeter. Is one of the
-         following types: UpdateTagsRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.UpdateTagsRequest or JSON or IO[bytes]
+        :param parameters: Parameter supplied to the network security perimeter. Is either a
+         UpdateTagsRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.UpdateTagsRequest or
+         ~azure.mgmt.network.types.UpdateTagsRequest or IO[bytes]
         :return: NetworkSecurityPerimeter. The NetworkSecurityPerimeter is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkSecurityPerimeter
@@ -39739,7 +39878,7 @@ class ReachabilityAnalysisIntentsOperations:
         network_manager_name: str,
         workspace_name: str,
         reachability_analysis_intent_name: str,
-        body: JSON,
+        body: _types.ReachabilityAnalysisIntent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39758,7 +39897,7 @@ class ReachabilityAnalysisIntentsOperations:
         :param reachability_analysis_intent_name: Reachability Analysis Intent name. Required.
         :type reachability_analysis_intent_name: str
         :param body: Reachability Analysis Intent object to create/update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.ReachabilityAnalysisIntent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39811,7 +39950,7 @@ class ReachabilityAnalysisIntentsOperations:
         network_manager_name: str,
         workspace_name: str,
         reachability_analysis_intent_name: str,
-        body: Union[_models.ReachabilityAnalysisIntent, JSON, IO[bytes]],
+        body: Union[_models.ReachabilityAnalysisIntent, _types.ReachabilityAnalysisIntent, IO[bytes]],
         **kwargs: Any
     ) -> _models.ReachabilityAnalysisIntent:
         """Creates Reachability Analysis Intent.
@@ -39827,9 +39966,10 @@ class ReachabilityAnalysisIntentsOperations:
         :type workspace_name: str
         :param reachability_analysis_intent_name: Reachability Analysis Intent name. Required.
         :type reachability_analysis_intent_name: str
-        :param body: Reachability Analysis Intent object to create/update. Is one of the following
-         types: ReachabilityAnalysisIntent, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.network.models.ReachabilityAnalysisIntent or JSON or IO[bytes]
+        :param body: Reachability Analysis Intent object to create/update. Is either a
+         ReachabilityAnalysisIntent type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.network.models.ReachabilityAnalysisIntent or
+         ~azure.mgmt.network.types.ReachabilityAnalysisIntent or IO[bytes]
         :return: ReachabilityAnalysisIntent. The ReachabilityAnalysisIntent is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.ReachabilityAnalysisIntent
@@ -40239,7 +40379,7 @@ class VerifierWorkspacesOperations:
         resource_group_name: str,
         network_manager_name: str,
         workspace_name: str,
-        body: JSON,
+        body: _types.VerifierWorkspace,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -40258,7 +40398,7 @@ class VerifierWorkspacesOperations:
         :param workspace_name: The name of the resource. Required.
         :type workspace_name: str
         :param body: Verifier Workspace object to create/update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.VerifierWorkspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40317,7 +40457,7 @@ class VerifierWorkspacesOperations:
         resource_group_name: str,
         network_manager_name: str,
         workspace_name: str,
-        body: Union[_models.VerifierWorkspace, JSON, IO[bytes]],
+        body: Union[_models.VerifierWorkspace, _types.VerifierWorkspace, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -40334,9 +40474,10 @@ class VerifierWorkspacesOperations:
         :type network_manager_name: str
         :param workspace_name: The name of the resource. Required.
         :type workspace_name: str
-        :param body: Verifier Workspace object to create/update. Is one of the following types:
-         VerifierWorkspace, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.network.models.VerifierWorkspace or JSON or IO[bytes]
+        :param body: Verifier Workspace object to create/update. Is either a VerifierWorkspace type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.network.models.VerifierWorkspace or
+         ~azure.mgmt.network.types.VerifierWorkspace or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -40468,7 +40609,7 @@ class VerifierWorkspacesOperations:
         resource_group_name: str,
         network_manager_name: str,
         workspace_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.VerifierWorkspaceUpdate] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -40487,7 +40628,7 @@ class VerifierWorkspacesOperations:
         :param workspace_name: The name of the resource. Required.
         :type workspace_name: str
         :param body: Verifier Workspace object to create/update. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.VerifierWorkspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40546,7 +40687,7 @@ class VerifierWorkspacesOperations:
         resource_group_name: str,
         network_manager_name: str,
         workspace_name: str,
-        body: Optional[Union[_models.VerifierWorkspaceUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.VerifierWorkspaceUpdate, _types.VerifierWorkspaceUpdate, IO[bytes]]] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -40563,9 +40704,10 @@ class VerifierWorkspacesOperations:
         :type network_manager_name: str
         :param workspace_name: The name of the resource. Required.
         :type workspace_name: str
-        :param body: Verifier Workspace object to create/update. Is one of the following types:
-         VerifierWorkspaceUpdate, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.network.models.VerifierWorkspaceUpdate or JSON or IO[bytes]
+        :param body: Verifier Workspace object to create/update. Is either a VerifierWorkspaceUpdate
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.network.models.VerifierWorkspaceUpdate or
+         ~azure.mgmt.network.types.VerifierWorkspaceUpdate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -41075,7 +41217,7 @@ class ReachabilityAnalysisRunsOperations:
         network_manager_name: str,
         workspace_name: str,
         reachability_analysis_run_name: str,
-        body: JSON,
+        body: _types.ReachabilityAnalysisRun,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41094,7 +41236,7 @@ class ReachabilityAnalysisRunsOperations:
         :param reachability_analysis_run_name: Reachability Analysis Run name. Required.
         :type reachability_analysis_run_name: str
         :param body: Analysis Run resource object to create/update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.network.types.ReachabilityAnalysisRun
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41145,7 +41287,7 @@ class ReachabilityAnalysisRunsOperations:
         network_manager_name: str,
         workspace_name: str,
         reachability_analysis_run_name: str,
-        body: Union[_models.ReachabilityAnalysisRun, JSON, IO[bytes]],
+        body: Union[_models.ReachabilityAnalysisRun, _types.ReachabilityAnalysisRun, IO[bytes]],
         **kwargs: Any
     ) -> _models.ReachabilityAnalysisRun:
         """Creates Reachability Analysis Runs.
@@ -41161,9 +41303,10 @@ class ReachabilityAnalysisRunsOperations:
         :type workspace_name: str
         :param reachability_analysis_run_name: Reachability Analysis Run name. Required.
         :type reachability_analysis_run_name: str
-        :param body: Analysis Run resource object to create/update. Is one of the following types:
-         ReachabilityAnalysisRun, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.network.models.ReachabilityAnalysisRun or JSON or IO[bytes]
+        :param body: Analysis Run resource object to create/update. Is either a ReachabilityAnalysisRun
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.network.models.ReachabilityAnalysisRun or
+         ~azure.mgmt.network.types.ReachabilityAnalysisRun or IO[bytes]
         :return: ReachabilityAnalysisRun. The ReachabilityAnalysisRun is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ReachabilityAnalysisRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -41525,7 +41668,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         network_virtual_appliance_name: str,
         connection_name: str,
         network_virtual_appliance_connection_parameters: Union[
-            _models.NetworkVirtualApplianceConnection, JSON, IO[bytes]
+            _models.NetworkVirtualApplianceConnection, _types.NetworkVirtualApplianceConnection, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -41642,7 +41785,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         network_virtual_appliance_name: str,
         connection_name: str,
-        network_virtual_appliance_connection_parameters: JSON,
+        network_virtual_appliance_connection_parameters: _types.NetworkVirtualApplianceConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41659,7 +41802,8 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         :type connection_name: str
         :param network_virtual_appliance_connection_parameters: Parameters supplied in an
          NetworkVirtualApplianceConnection PUT operation. Required.
-        :type network_virtual_appliance_connection_parameters: JSON
+        :type network_virtual_appliance_connection_parameters:
+         ~azure.mgmt.network.types.NetworkVirtualApplianceConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41711,7 +41855,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         network_virtual_appliance_name: str,
         connection_name: str,
         network_virtual_appliance_connection_parameters: Union[
-            _models.NetworkVirtualApplianceConnection, JSON, IO[bytes]
+            _models.NetworkVirtualApplianceConnection, _types.NetworkVirtualApplianceConnection, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkVirtualApplianceConnection]:
@@ -41726,10 +41870,11 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         :param connection_name: Required.
         :type connection_name: str
         :param network_virtual_appliance_connection_parameters: Parameters supplied in an
-         NetworkVirtualApplianceConnection PUT operation. Is one of the following types:
-         NetworkVirtualApplianceConnection, JSON, IO[bytes] Required.
+         NetworkVirtualApplianceConnection PUT operation. Is either a NetworkVirtualApplianceConnection
+         type or a IO[bytes] type. Required.
         :type network_virtual_appliance_connection_parameters:
-         ~azure.mgmt.network.models.NetworkVirtualApplianceConnection or JSON or IO[bytes]
+         ~azure.mgmt.network.models.NetworkVirtualApplianceConnection or
+         ~azure.mgmt.network.types.NetworkVirtualApplianceConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkVirtualApplianceConnection. The
          NetworkVirtualApplianceConnection is compatible with MutableMapping
         :rtype:
@@ -42187,7 +42332,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        parameters: Union[_models.NetworkVirtualAppliance, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkVirtualAppliance, _types.NetworkVirtualAppliance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -42296,7 +42441,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkVirtualAppliance,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42310,7 +42455,7 @@ class NetworkVirtualAppliancesOperations:
         :type network_virtual_appliance_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkVirtualAppliance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42354,7 +42499,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        parameters: Union[_models.NetworkVirtualAppliance, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkVirtualAppliance, _types.NetworkVirtualAppliance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkVirtualAppliance]:
         """Creates or updates the specified Network Virtual Appliance.
@@ -42365,8 +42510,9 @@ class NetworkVirtualAppliancesOperations:
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance. Is
-         one of the following types: NetworkVirtualAppliance, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkVirtualAppliance or JSON or IO[bytes]
+         either a NetworkVirtualAppliance type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkVirtualAppliance or
+         ~azure.mgmt.network.types.NetworkVirtualAppliance or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkVirtualAppliance. The
          NetworkVirtualAppliance is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkVirtualAppliance]
@@ -42458,7 +42604,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42471,7 +42617,7 @@ class NetworkVirtualAppliancesOperations:
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
         :param parameters: Parameters supplied to Update Network Virtual Appliance Tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42512,7 +42658,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkVirtualAppliance:
         """Updates a Network Virtual Appliance.
@@ -42522,9 +42668,10 @@ class NetworkVirtualAppliancesOperations:
         :type resource_group_name: str
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
-        :param parameters: Parameters supplied to Update Network Virtual Appliance Tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to Update Network Virtual Appliance Tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: NetworkVirtualAppliance. The NetworkVirtualAppliance is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkVirtualAppliance
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -42893,7 +43040,7 @@ class NetworkVirtualAppliancesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         network_virtual_appliance_instance_ids: Optional[
-            Union[_models.NetworkVirtualApplianceInstanceIds, JSON, IO[bytes]]
+            Union[_models.NetworkVirtualApplianceInstanceIds, _types.NetworkVirtualApplianceInstanceIds, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -43006,7 +43153,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        network_virtual_appliance_instance_ids: Optional[JSON] = None,
+        network_virtual_appliance_instance_ids: Optional[_types.NetworkVirtualApplianceInstanceIds] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43020,7 +43167,8 @@ class NetworkVirtualAppliancesOperations:
         :type network_virtual_appliance_name: str
         :param network_virtual_appliance_instance_ids: Specifies a list of virtual machine instance IDs
          from the Network Virtual Appliance VM instances. Default value is None.
-        :type network_virtual_appliance_instance_ids: JSON
+        :type network_virtual_appliance_instance_ids:
+         ~azure.mgmt.network.types.NetworkVirtualApplianceInstanceIds
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43067,7 +43215,7 @@ class NetworkVirtualAppliancesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         network_virtual_appliance_instance_ids: Optional[
-            Union[_models.NetworkVirtualApplianceInstanceIds, JSON, IO[bytes]]
+            Union[_models.NetworkVirtualApplianceInstanceIds, _types.NetworkVirtualApplianceInstanceIds, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkVirtualApplianceInstanceIds]:
@@ -43079,10 +43227,11 @@ class NetworkVirtualAppliancesOperations:
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
         :param network_virtual_appliance_instance_ids: Specifies a list of virtual machine instance IDs
-         from the Network Virtual Appliance VM instances. Is one of the following types:
-         NetworkVirtualApplianceInstanceIds, JSON, IO[bytes] Default value is None.
+         from the Network Virtual Appliance VM instances. Is either a NetworkVirtualApplianceInstanceIds
+         type or a IO[bytes] type. Default value is None.
         :type network_virtual_appliance_instance_ids:
-         ~azure.mgmt.network.models.NetworkVirtualApplianceInstanceIds or JSON or IO[bytes]
+         ~azure.mgmt.network.models.NetworkVirtualApplianceInstanceIds or
+         ~azure.mgmt.network.types.NetworkVirtualApplianceInstanceIds or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkVirtualApplianceInstanceIds. The
          NetworkVirtualApplianceInstanceIds is compatible with MutableMapping
         :rtype:
@@ -43149,7 +43298,7 @@ class NetworkVirtualAppliancesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         network_virtual_appliance_instance_ids: Optional[
-            Union[_models.NetworkVirtualApplianceInstanceIds, JSON, IO[bytes]]
+            Union[_models.NetworkVirtualApplianceInstanceIds, _types.NetworkVirtualApplianceInstanceIds, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -43262,7 +43411,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        network_virtual_appliance_instance_ids: Optional[JSON] = None,
+        network_virtual_appliance_instance_ids: Optional[_types.NetworkVirtualApplianceInstanceIds] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43276,7 +43425,8 @@ class NetworkVirtualAppliancesOperations:
         :type network_virtual_appliance_name: str
         :param network_virtual_appliance_instance_ids: Specifies a list of virtual machine instance IDs
          from the Network Virtual Appliance VM instances. Default value is None.
-        :type network_virtual_appliance_instance_ids: JSON
+        :type network_virtual_appliance_instance_ids:
+         ~azure.mgmt.network.types.NetworkVirtualApplianceInstanceIds
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43323,7 +43473,7 @@ class NetworkVirtualAppliancesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         network_virtual_appliance_instance_ids: Optional[
-            Union[_models.NetworkVirtualApplianceInstanceIds, JSON, IO[bytes]]
+            Union[_models.NetworkVirtualApplianceInstanceIds, _types.NetworkVirtualApplianceInstanceIds, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkVirtualApplianceInstanceIds]:
@@ -43335,10 +43485,11 @@ class NetworkVirtualAppliancesOperations:
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
         :param network_virtual_appliance_instance_ids: Specifies a list of virtual machine instance IDs
-         from the Network Virtual Appliance VM instances. Is one of the following types:
-         NetworkVirtualApplianceInstanceIds, JSON, IO[bytes] Default value is None.
+         from the Network Virtual Appliance VM instances. Is either a NetworkVirtualApplianceInstanceIds
+         type or a IO[bytes] type. Default value is None.
         :type network_virtual_appliance_instance_ids:
-         ~azure.mgmt.network.models.NetworkVirtualApplianceInstanceIds or JSON or IO[bytes]
+         ~azure.mgmt.network.models.NetworkVirtualApplianceInstanceIds or
+         ~azure.mgmt.network.types.NetworkVirtualApplianceInstanceIds or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkVirtualApplianceInstanceIds. The
          NetworkVirtualApplianceInstanceIds is compatible with MutableMapping
         :rtype:
@@ -43404,7 +43555,11 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        request: Union[_models.NetworkVirtualApplianceBootDiagnosticParameters, JSON, IO[bytes]],
+        request: Union[
+            _models.NetworkVirtualApplianceBootDiagnosticParameters,
+            _types.NetworkVirtualApplianceBootDiagnosticParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -43512,7 +43667,7 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        request: JSON,
+        request: _types.NetworkVirtualApplianceBootDiagnosticParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43527,7 +43682,7 @@ class NetworkVirtualAppliancesOperations:
         :type network_virtual_appliance_name: str
         :param request: Parameters supplied to retrieve boot diagnostic logs for a NVA VM instance.
          Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.network.types.NetworkVirtualApplianceBootDiagnosticParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43574,7 +43729,11 @@ class NetworkVirtualAppliancesOperations:
         self,
         resource_group_name: str,
         network_virtual_appliance_name: str,
-        request: Union[_models.NetworkVirtualApplianceBootDiagnosticParameters, JSON, IO[bytes]],
+        request: Union[
+            _models.NetworkVirtualApplianceBootDiagnosticParameters,
+            _types.NetworkVirtualApplianceBootDiagnosticParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkVirtualApplianceInstanceId]:
         """Retrieves the boot diagnostic logs for a VM instance belonging to the specified Network Virtual
@@ -43586,10 +43745,9 @@ class NetworkVirtualAppliancesOperations:
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
         :param request: Parameters supplied to retrieve boot diagnostic logs for a NVA VM instance. Is
-         one of the following types: NetworkVirtualApplianceBootDiagnosticParameters, JSON, IO[bytes]
-         Required.
+         either a NetworkVirtualApplianceBootDiagnosticParameters type or a IO[bytes] type. Required.
         :type request: ~azure.mgmt.network.models.NetworkVirtualApplianceBootDiagnosticParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.NetworkVirtualApplianceBootDiagnosticParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkVirtualApplianceInstanceId. The
          NetworkVirtualApplianceInstanceId is compatible with MutableMapping
         :rtype:
@@ -43750,7 +43908,7 @@ class VirtualApplianceSitesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         site_name: str,
-        parameters: Union[_models.VirtualApplianceSite, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualApplianceSite, _types.VirtualApplianceSite, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -43864,7 +44022,7 @@ class VirtualApplianceSitesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         site_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualApplianceSite,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43881,7 +44039,7 @@ class VirtualApplianceSitesOperations:
         :type site_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance Site
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualApplianceSite
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43930,7 +44088,7 @@ class VirtualApplianceSitesOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         site_name: str,
-        parameters: Union[_models.VirtualApplianceSite, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualApplianceSite, _types.VirtualApplianceSite, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualApplianceSite]:
         """Creates or updates the specified Network Virtual Appliance Site.
@@ -43944,8 +44102,9 @@ class VirtualApplianceSitesOperations:
          can be used to access the resource. Required.
         :type site_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance Site
-         operation. Is one of the following types: VirtualApplianceSite, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualApplianceSite or JSON or IO[bytes]
+         operation. Is either a VirtualApplianceSite type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualApplianceSite or
+         ~azure.mgmt.network.types.VirtualApplianceSite or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualApplianceSite. The
          VirtualApplianceSite is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualApplianceSite]
@@ -44345,7 +44504,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkWatcher,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44358,7 +44517,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the network watcher resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkWatcher
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44399,7 +44558,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.NetworkWatcher, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkWatcher, _types.NetworkWatcher, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkWatcher:
         """Creates or updates a network watcher in the specified resource group.
@@ -44409,9 +44568,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the network watcher resource. Is one of the following
-         types: NetworkWatcher, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkWatcher or JSON or IO[bytes]
+        :param parameters: Parameters that define the network watcher resource. Is either a
+         NetworkWatcher type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkWatcher or
+         ~azure.mgmt.network.types.NetworkWatcher or IO[bytes]
         :return: NetworkWatcher. The NetworkWatcher is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkWatcher
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44516,7 +44676,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44529,7 +44689,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters supplied to update network watcher tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44570,7 +44730,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkWatcher:
         """Updates a network watcher tags.
@@ -44580,9 +44740,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters supplied to update network watcher tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update network watcher tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: NetworkWatcher. The NetworkWatcher is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkWatcher
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44974,7 +45135,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.TopologyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44987,7 +45148,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the representation of topology. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TopologyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45028,7 +45189,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.TopologyParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TopologyParameters, _types.TopologyParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Topology:
         """Gets the current network topology by resource group.
@@ -45038,9 +45199,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the representation of topology. Is one of the
-         following types: TopologyParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TopologyParameters or JSON or IO[bytes]
+        :param parameters: Parameters that define the representation of topology. Is either a
+         TopologyParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TopologyParameters or
+         ~azure.mgmt.network.types.TopologyParameters or IO[bytes]
         :return: Topology. The Topology is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.Topology
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45117,7 +45279,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.VerificationIPFlowParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VerificationIPFlowParameters, _types.VerificationIPFlowParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -45222,7 +45384,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.VerificationIPFlowParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45235,7 +45397,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the IP flow to be verified. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VerificationIPFlowParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45278,7 +45440,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.VerificationIPFlowParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VerificationIPFlowParameters, _types.VerificationIPFlowParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VerificationIPFlowResult]:
         """Verify IP flow from the specified VM to a location given the currently configured NSG rules.
@@ -45288,9 +45450,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the IP flow to be verified. Is one of the following
-         types: VerificationIPFlowParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VerificationIPFlowParameters or JSON or IO[bytes]
+        :param parameters: Parameters that define the IP flow to be verified. Is either a
+         VerificationIPFlowParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VerificationIPFlowParameters or
+         ~azure.mgmt.network.types.VerificationIPFlowParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VerificationIPFlowResult. The
          VerificationIPFlowResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VerificationIPFlowResult]
@@ -45354,7 +45517,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.NextHopParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NextHopParameters, _types.NextHopParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -45459,7 +45622,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.NextHopParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45472,7 +45635,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the source and destination endpoint. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NextHopParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45515,7 +45678,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.NextHopParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NextHopParameters, _types.NextHopParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NextHopResult]:
         """Gets the next hop from the specified VM.
@@ -45525,9 +45688,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the source and destination endpoint. Is one of the
-         following types: NextHopParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NextHopParameters or JSON or IO[bytes]
+        :param parameters: Parameters that define the source and destination endpoint. Is either a
+         NextHopParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NextHopParameters or
+         ~azure.mgmt.network.types.NextHopParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NextHopResult. The NextHopResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NextHopResult]
@@ -45591,7 +45755,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.SecurityGroupViewParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecurityGroupViewParameters, _types.SecurityGroupViewParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -45696,7 +45860,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.SecurityGroupViewParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45709,7 +45873,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the VM to check security groups for. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.SecurityGroupViewParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45752,7 +45916,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.SecurityGroupViewParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecurityGroupViewParameters, _types.SecurityGroupViewParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityGroupViewResult]:
         """Gets the configured and effective security group rules on the specified VM.
@@ -45762,9 +45926,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the VM to check security groups for. Is one of the
-         following types: SecurityGroupViewParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.SecurityGroupViewParameters or JSON or IO[bytes]
+        :param parameters: Parameters that define the VM to check security groups for. Is either a
+         SecurityGroupViewParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.SecurityGroupViewParameters or
+         ~azure.mgmt.network.types.SecurityGroupViewParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SecurityGroupViewResult. The
          SecurityGroupViewResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.SecurityGroupViewResult]
@@ -45828,7 +45993,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.TroubleshootingParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TroubleshootingParameters, _types.TroubleshootingParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -45933,7 +46098,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.TroubleshootingParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45946,7 +46111,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the resource to troubleshoot. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TroubleshootingParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45989,7 +46154,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.TroubleshootingParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TroubleshootingParameters, _types.TroubleshootingParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TroubleshootingResult]:
         """Initiate troubleshooting on a specified resource.
@@ -45999,9 +46164,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the resource to troubleshoot. Is one of the following
-         types: TroubleshootingParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TroubleshootingParameters or JSON or IO[bytes]
+        :param parameters: Parameters that define the resource to troubleshoot. Is either a
+         TroubleshootingParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TroubleshootingParameters or
+         ~azure.mgmt.network.types.TroubleshootingParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TroubleshootingResult. The
          TroubleshootingResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.TroubleshootingResult]
@@ -46065,7 +46231,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.QueryTroubleshootingParameters, JSON, IO[bytes]],
+        parameters: Union[_models.QueryTroubleshootingParameters, _types.QueryTroubleshootingParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -46171,7 +46337,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.QueryTroubleshootingParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -46185,7 +46351,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type network_watcher_name: str
         :param parameters: Parameters that define the resource to query the troubleshooting result.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.QueryTroubleshootingParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46229,7 +46395,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.QueryTroubleshootingParameters, JSON, IO[bytes]],
+        parameters: Union[_models.QueryTroubleshootingParameters, _types.QueryTroubleshootingParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TroubleshootingResult]:
         """Get the last completed troubleshooting result on a specified resource.
@@ -46240,9 +46406,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the resource to query the troubleshooting result. Is
-         one of the following types: QueryTroubleshootingParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.QueryTroubleshootingParameters or JSON or
-         IO[bytes]
+         either a QueryTroubleshootingParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.QueryTroubleshootingParameters or
+         ~azure.mgmt.network.types.QueryTroubleshootingParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TroubleshootingResult. The
          TroubleshootingResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.TroubleshootingResult]
@@ -46306,7 +46472,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.FlowLogInformation, JSON, IO[bytes]],
+        parameters: Union[_models.FlowLogInformation, _types.FlowLogInformation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -46411,7 +46577,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.FlowLogInformation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -46424,7 +46590,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define the configuration of flow log. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FlowLogInformation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46467,7 +46633,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.FlowLogInformation, JSON, IO[bytes]],
+        parameters: Union[_models.FlowLogInformation, _types.FlowLogInformation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FlowLogInformation]:
         """Configures flow log and traffic analytics (optional) on a specified resource.
@@ -46477,9 +46643,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that define the configuration of flow log. Is one of the
-         following types: FlowLogInformation, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FlowLogInformation or JSON or IO[bytes]
+        :param parameters: Parameters that define the configuration of flow log. Is either a
+         FlowLogInformation type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FlowLogInformation or
+         ~azure.mgmt.network.types.FlowLogInformation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FlowLogInformation. The FlowLogInformation
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FlowLogInformation]
@@ -46543,7 +46710,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.FlowLogStatusParameters, JSON, IO[bytes]],
+        parameters: Union[_models.FlowLogStatusParameters, _types.FlowLogStatusParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -46649,7 +46816,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.FlowLogStatusParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -46663,7 +46830,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type network_watcher_name: str
         :param parameters: Parameters that define a resource to query flow log and traffic analytics
          (optional) status. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FlowLogStatusParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46707,7 +46874,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.FlowLogStatusParameters, JSON, IO[bytes]],
+        parameters: Union[_models.FlowLogStatusParameters, _types.FlowLogStatusParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FlowLogInformation]:
         """Queries status of flow log and traffic analytics (optional) on a specified resource.
@@ -46718,9 +46885,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that define a resource to query flow log and traffic analytics
-         (optional) status. Is one of the following types: FlowLogStatusParameters, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.FlowLogStatusParameters or JSON or IO[bytes]
+         (optional) status. Is either a FlowLogStatusParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FlowLogStatusParameters or
+         ~azure.mgmt.network.types.FlowLogStatusParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FlowLogInformation. The FlowLogInformation
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FlowLogInformation]
@@ -46784,7 +46951,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.ConnectivityParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectivityParameters, _types.ConnectivityParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -46891,7 +47058,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectivityParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -46906,7 +47073,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type network_watcher_name: str
         :param parameters: Parameters that determine how the connectivity check will be performed.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ConnectivityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46951,7 +47118,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.ConnectivityParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectivityParameters, _types.ConnectivityParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectivityInformation]:
         """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a
@@ -46963,8 +47130,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that determine how the connectivity check will be performed. Is
-         one of the following types: ConnectivityParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ConnectivityParameters or JSON or IO[bytes]
+         either a ConnectivityParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ConnectivityParameters or
+         ~azure.mgmt.network.types.ConnectivityParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectivityInformation. The
          ConnectivityInformation is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectivityInformation]
@@ -47028,7 +47196,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.AzureReachabilityReportParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AzureReachabilityReportParameters, _types.AzureReachabilityReportParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -47135,7 +47305,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.AzureReachabilityReportParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47150,7 +47320,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that determine Azure reachability report configuration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.AzureReachabilityReportParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47195,7 +47365,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.AzureReachabilityReportParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AzureReachabilityReportParameters, _types.AzureReachabilityReportParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AzureReachabilityReport]:
         """NOTE: This feature is currently in preview and still being tested for stability. Gets the
@@ -47207,10 +47379,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that determine Azure reachability report configuration. Is one of
-         the following types: AzureReachabilityReportParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.AzureReachabilityReportParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters that determine Azure reachability report configuration. Is either
+         a AzureReachabilityReportParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.AzureReachabilityReportParameters or
+         ~azure.mgmt.network.types.AzureReachabilityReportParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AzureReachabilityReport. The
          AzureReachabilityReport is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureReachabilityReport]
@@ -47274,7 +47446,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.AvailableProvidersListParameters, JSON, IO[bytes]],
+        parameters: Union[_models.AvailableProvidersListParameters, _types.AvailableProvidersListParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -47380,7 +47552,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.AvailableProvidersListParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47394,7 +47566,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters that scope the list of available providers. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.AvailableProvidersListParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47438,7 +47610,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.AvailableProvidersListParameters, JSON, IO[bytes]],
+        parameters: Union[_models.AvailableProvidersListParameters, _types.AvailableProvidersListParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AvailableProvidersList]:
         """NOTE: This feature is currently in preview and still being tested for stability. Lists all
@@ -47449,10 +47621,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters that scope the list of available providers. Is one of the
-         following types: AvailableProvidersListParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.AvailableProvidersListParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters that scope the list of available providers. Is either a
+         AvailableProvidersListParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.AvailableProvidersListParameters or
+         ~azure.mgmt.network.types.AvailableProvidersListParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AvailableProvidersList. The
          AvailableProvidersList is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AvailableProvidersList]
@@ -47516,7 +47688,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.NetworkConfigurationDiagnosticParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.NetworkConfigurationDiagnosticParameters, _types.NetworkConfigurationDiagnosticParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -47626,7 +47800,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkConfigurationDiagnosticParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47643,7 +47817,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
         :param parameters: Parameters to get network configuration diagnostic. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkConfigurationDiagnosticParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47692,7 +47866,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: Union[_models.NetworkConfigurationDiagnosticParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.NetworkConfigurationDiagnosticParameters, _types.NetworkConfigurationDiagnosticParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkConfigurationDiagnosticResponse]:
         """Gets Network Configuration Diagnostic data to help customers understand and debug network
@@ -47706,10 +47882,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher. Required.
         :type network_watcher_name: str
-        :param parameters: Parameters to get network configuration diagnostic. Is one of the following
-         types: NetworkConfigurationDiagnosticParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkConfigurationDiagnosticParameters or JSON
-         or IO[bytes]
+        :param parameters: Parameters to get network configuration diagnostic. Is either a
+         NetworkConfigurationDiagnosticParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkConfigurationDiagnosticParameters or
+         ~azure.mgmt.network.types.NetworkConfigurationDiagnosticParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkConfigurationDiagnosticResponse. The
          NetworkConfigurationDiagnosticResponse is compatible with MutableMapping
         :rtype:
@@ -47869,7 +48045,7 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: Union[_models.FlowLog, JSON, IO[bytes]],
+        parameters: Union[_models.FlowLog, _types.FlowLog, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -47981,7 +48157,7 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: JSON,
+        parameters: _types.FlowLog,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47996,7 +48172,7 @@ class FlowLogsOperations:
         :param flow_log_name: The name of the flow log resource. Required.
         :type flow_log_name: str
         :param parameters: Parameters that define the create or update flow log resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.FlowLog
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48043,7 +48219,7 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: Union[_models.FlowLog, JSON, IO[bytes]],
+        parameters: Union[_models.FlowLog, _types.FlowLog, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FlowLog]:
         """Create or update a flow log for the specified network security group.
@@ -48055,9 +48231,10 @@ class FlowLogsOperations:
         :type network_watcher_name: str
         :param flow_log_name: The name of the flow log resource. Required.
         :type flow_log_name: str
-        :param parameters: Parameters that define the create or update flow log resource. Is one of the
-         following types: FlowLog, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.FlowLog or JSON or IO[bytes]
+        :param parameters: Parameters that define the create or update flow log resource. Is either a
+         FlowLog type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FlowLog or ~azure.mgmt.network.types.FlowLog or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns FlowLog. The FlowLog is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FlowLog]
@@ -48154,7 +48331,7 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -48169,7 +48346,7 @@ class FlowLogsOperations:
         :param flow_log_name: The name of the flow log resource. Required.
         :type flow_log_name: str
         :param parameters: Parameters supplied to update flow log tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48214,7 +48391,7 @@ class FlowLogsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         flow_log_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.FlowLog:
         """Update tags of the specified flow log.
@@ -48226,9 +48403,10 @@ class FlowLogsOperations:
         :type network_watcher_name: str
         :param flow_log_name: The name of the flow log resource. Required.
         :type flow_log_name: str
-        :param parameters: Parameters supplied to update flow log tags. Is one of the following types:
-         TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update flow log tags. Is either a TagsObject type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: FlowLog. The FlowLog is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.FlowLog
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -48616,7 +48794,7 @@ class PrivateEndpointsOperations:
         self,
         resource_group_name: str,
         private_endpoint_name: str,
-        parameters: Union[_models.PrivateEndpoint, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpoint, _types.PrivateEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -48724,7 +48902,7 @@ class PrivateEndpointsOperations:
         self,
         resource_group_name: str,
         private_endpoint_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -48738,7 +48916,7 @@ class PrivateEndpointsOperations:
         :type private_endpoint_name: str
         :param parameters: Parameters supplied to the create or update private endpoint operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PrivateEndpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48782,7 +48960,7 @@ class PrivateEndpointsOperations:
         self,
         resource_group_name: str,
         private_endpoint_name: str,
-        parameters: Union[_models.PrivateEndpoint, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpoint, _types.PrivateEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpoint]:
         """Creates or updates an private endpoint in the specified resource group.
@@ -48793,8 +48971,9 @@ class PrivateEndpointsOperations:
         :param private_endpoint_name: The name of the private endpoint. Required.
         :type private_endpoint_name: str
         :param parameters: Parameters supplied to the create or update private endpoint operation. Is
-         one of the following types: PrivateEndpoint, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PrivateEndpoint or JSON or IO[bytes]
+         either a PrivateEndpoint type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PrivateEndpoint or
+         ~azure.mgmt.network.types.PrivateEndpoint or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpoint. The PrivateEndpoint is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateEndpoint]
@@ -49239,7 +49418,7 @@ class PrivateLinkServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PrivateLinkService, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateLinkService, _types.PrivateLinkService, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -49347,7 +49526,7 @@ class PrivateLinkServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateLinkService,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -49361,7 +49540,7 @@ class PrivateLinkServicesOperations:
         :type service_name: str
         :param parameters: Parameters supplied to the create or update private link service operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PrivateLinkService
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -49405,7 +49584,7 @@ class PrivateLinkServicesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PrivateLinkService, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateLinkService, _types.PrivateLinkService, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateLinkService]:
         """Creates or updates an private link service in the specified resource group.
@@ -49416,8 +49595,9 @@ class PrivateLinkServicesOperations:
         :param service_name: The name of the private link service. Required.
         :type service_name: str
         :param parameters: Parameters supplied to the create or update private link service operation.
-         Is one of the following types: PrivateLinkService, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PrivateLinkService or JSON or IO[bytes]
+         Is either a PrivateLinkService type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PrivateLinkService or
+         ~azure.mgmt.network.types.PrivateLinkService or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateLinkService. The PrivateLinkService
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateLinkService]
@@ -49887,7 +50067,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         pe_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -49904,7 +50084,7 @@ class PrivateLinkServicesOperations:
         :type pe_connection_name: str
         :param parameters: Parameters supplied to approve or reject the private end point connection.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -49953,7 +50133,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         pe_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Approve or reject private end point connection for a private link service in a subscription.
@@ -49967,8 +50147,9 @@ class PrivateLinkServicesOperations:
          This name can be used to access the resource. Required.
         :type pe_connection_name: str
         :param parameters: Parameters supplied to approve or reject the private end point connection.
-         Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PrivateEndpointConnection or JSON or IO[bytes]
+         Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PrivateEndpointConnection or
+         ~azure.mgmt.network.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.PrivateEndpointConnection
@@ -50264,7 +50445,9 @@ class PrivateLinkServicesOperations:
     async def _check_private_link_service_visibility_initial(  # pylint: disable=name-too-long
         self,
         location: str,
-        parameters: Union[_models.CheckPrivateLinkServiceVisibilityRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CheckPrivateLinkServiceVisibilityRequest, _types.CheckPrivateLinkServiceVisibilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -50362,14 +50545,19 @@ class PrivateLinkServicesOperations:
 
     @overload
     async def begin_check_private_link_service_visibility(  # pylint: disable=name-too-long
-        self, location: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        parameters: _types.CheckPrivateLinkServiceVisibilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateLinkServiceVisibility]:
         """Checks whether the subscription is visible to private link service.
 
         :param location: The location name. Required.
         :type location: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.CheckPrivateLinkServiceVisibilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50404,17 +50592,19 @@ class PrivateLinkServicesOperations:
     async def begin_check_private_link_service_visibility(  # pylint: disable=name-too-long
         self,
         location: str,
-        parameters: Union[_models.CheckPrivateLinkServiceVisibilityRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CheckPrivateLinkServiceVisibilityRequest, _types.CheckPrivateLinkServiceVisibilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateLinkServiceVisibility]:
         """Checks whether the subscription is visible to private link service.
 
         :param location: The location name. Required.
         :type location: str
-        :param parameters: The request body. Is one of the following types:
-         CheckPrivateLinkServiceVisibilityRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.CheckPrivateLinkServiceVisibilityRequest or JSON
-         or IO[bytes]
+        :param parameters: The request body. Is either a CheckPrivateLinkServiceVisibilityRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.CheckPrivateLinkServiceVisibilityRequest or
+         ~azure.mgmt.network.types.CheckPrivateLinkServiceVisibilityRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateLinkServiceVisibility. The
          PrivateLinkServiceVisibility is compatible with MutableMapping
         :rtype:
@@ -50478,7 +50668,9 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         resource_group_name: str,
-        parameters: Union[_models.CheckPrivateLinkServiceVisibilityRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CheckPrivateLinkServiceVisibilityRequest, _types.CheckPrivateLinkServiceVisibilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -50585,7 +50777,7 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.CheckPrivateLinkServiceVisibilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -50599,7 +50791,7 @@ class PrivateLinkServicesOperations:
          Required.
         :type resource_group_name: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.CheckPrivateLinkServiceVisibilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50645,7 +50837,9 @@ class PrivateLinkServicesOperations:
         self,
         location: str,
         resource_group_name: str,
-        parameters: Union[_models.CheckPrivateLinkServiceVisibilityRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CheckPrivateLinkServiceVisibilityRequest, _types.CheckPrivateLinkServiceVisibilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateLinkServiceVisibility]:
         """Checks whether the subscription is visible to private link service in the specified resource
@@ -50656,10 +50850,10 @@ class PrivateLinkServicesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: The request body. Is one of the following types:
-         CheckPrivateLinkServiceVisibilityRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.CheckPrivateLinkServiceVisibilityRequest or JSON
-         or IO[bytes]
+        :param parameters: The request body. Is either a CheckPrivateLinkServiceVisibilityRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.CheckPrivateLinkServiceVisibilityRequest or
+         ~azure.mgmt.network.types.CheckPrivateLinkServiceVisibilityRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateLinkServiceVisibility. The
          PrivateLinkServiceVisibility is compatible with MutableMapping
         :rtype:
@@ -50998,7 +51192,7 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: Union[_models.PublicIPPrefix, JSON, IO[bytes]],
+        parameters: Union[_models.PublicIPPrefix, _types.PublicIPPrefix, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -51104,7 +51298,7 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: JSON,
+        parameters: _types.PublicIPPrefix,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51118,7 +51312,7 @@ class PublicIPPrefixesOperations:
         :type public_ip_prefix_name: str
         :param parameters: Parameters supplied to the create or update public IP prefix operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PublicIPPrefix
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51162,7 +51356,7 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: Union[_models.PublicIPPrefix, JSON, IO[bytes]],
+        parameters: Union[_models.PublicIPPrefix, _types.PublicIPPrefix, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PublicIPPrefix]:
         """Creates or updates a static or dynamic public IP prefix.
@@ -51173,8 +51367,9 @@ class PublicIPPrefixesOperations:
         :param public_ip_prefix_name: The name of the public IP prefix. Required.
         :type public_ip_prefix_name: str
         :param parameters: Parameters supplied to the create or update public IP prefix operation. Is
-         one of the following types: PublicIPPrefix, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PublicIPPrefix or JSON or IO[bytes]
+         either a PublicIPPrefix type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PublicIPPrefix or
+         ~azure.mgmt.network.types.PublicIPPrefix or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PublicIPPrefix. The PublicIPPrefix is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPPrefix]
@@ -51266,7 +51461,7 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51279,7 +51474,7 @@ class PublicIPPrefixesOperations:
         :param public_ip_prefix_name: The name of the public IP prefix. Required.
         :type public_ip_prefix_name: str
         :param parameters: Parameters supplied to update public IP prefix tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51320,7 +51515,7 @@ class PublicIPPrefixesOperations:
         self,
         resource_group_name: str,
         public_ip_prefix_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.PublicIPPrefix:
         """Updates public IP prefix tags.
@@ -51330,9 +51525,10 @@ class PublicIPPrefixesOperations:
         :type resource_group_name: str
         :param public_ip_prefix_name: The name of the public IP prefix. Required.
         :type public_ip_prefix_name: str
-        :param parameters: Parameters supplied to update public IP prefix tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update public IP prefix tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: PublicIPPrefix. The PublicIPPrefix is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.PublicIPPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -51790,7 +51986,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        route_filter_parameters: Union[_models.RouteFilter, JSON, IO[bytes]],
+        route_filter_parameters: Union[_models.RouteFilter, _types.RouteFilter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -51898,7 +52094,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        route_filter_parameters: JSON,
+        route_filter_parameters: _types.RouteFilter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51912,7 +52108,7 @@ class RouteFiltersOperations:
         :type route_filter_name: str
         :param route_filter_parameters: Parameters supplied to the create or update route filter
          operation. Required.
-        :type route_filter_parameters: JSON
+        :type route_filter_parameters: ~azure.mgmt.network.types.RouteFilter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51956,7 +52152,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        route_filter_parameters: Union[_models.RouteFilter, JSON, IO[bytes]],
+        route_filter_parameters: Union[_models.RouteFilter, _types.RouteFilter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RouteFilter]:
         """Creates or updates a route filter in a specified resource group.
@@ -51967,8 +52163,9 @@ class RouteFiltersOperations:
         :param route_filter_name: The name of the route filter. Required.
         :type route_filter_name: str
         :param route_filter_parameters: Parameters supplied to the create or update route filter
-         operation. Is one of the following types: RouteFilter, JSON, IO[bytes] Required.
-        :type route_filter_parameters: ~azure.mgmt.network.models.RouteFilter or JSON or IO[bytes]
+         operation. Is either a RouteFilter type or a IO[bytes] type. Required.
+        :type route_filter_parameters: ~azure.mgmt.network.models.RouteFilter or
+         ~azure.mgmt.network.types.RouteFilter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RouteFilter. The RouteFilter is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteFilter]
@@ -52060,7 +52257,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52073,7 +52270,7 @@ class RouteFiltersOperations:
         :param route_filter_name: The name of the route filter. Required.
         :type route_filter_name: str
         :param parameters: Parameters supplied to update route filter tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52114,7 +52311,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.RouteFilter:
         """Updates tags of a route filter.
@@ -52124,9 +52321,10 @@ class RouteFiltersOperations:
         :type resource_group_name: str
         :param route_filter_name: The name of the route filter. Required.
         :type route_filter_name: str
-        :param parameters: Parameters supplied to update route filter tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update route filter tags. Is either a TagsObject type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: RouteFilter. The RouteFilter is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.RouteFilter
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -52587,7 +52785,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: Union[_models.RouteTable, JSON, IO[bytes]],
+        parameters: Union[_models.RouteTable, _types.RouteTable, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -52694,7 +52892,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: JSON,
+        parameters: _types.RouteTable,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52707,7 +52905,7 @@ class RouteTablesOperations:
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
         :param parameters: Parameters supplied to the create or update route table operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.RouteTable
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52750,7 +52948,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: Union[_models.RouteTable, JSON, IO[bytes]],
+        parameters: Union[_models.RouteTable, _types.RouteTable, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RouteTable]:
         """Create or updates a route table in a specified resource group.
@@ -52760,9 +52958,10 @@ class RouteTablesOperations:
         :type resource_group_name: str
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
-        :param parameters: Parameters supplied to the create or update route table operation. Is one of
-         the following types: RouteTable, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.RouteTable or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update route table operation. Is either
+         a RouteTable type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.RouteTable or ~azure.mgmt.network.types.RouteTable
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RouteTable. The RouteTable is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteTable]
@@ -52854,7 +53053,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52867,7 +53066,7 @@ class RouteTablesOperations:
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
         :param parameters: Parameters supplied to update route table tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52908,7 +53107,7 @@ class RouteTablesOperations:
         self,
         resource_group_name: str,
         route_table_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.RouteTable:
         """Updates a route table tags.
@@ -52918,9 +53117,10 @@ class RouteTablesOperations:
         :type resource_group_name: str
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
-        :param parameters: Parameters supplied to update route table tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update route table tags. Is either a TagsObject type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: RouteTable. The RouteTable is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.RouteTable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -53379,7 +53579,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: Union[_models.Route, JSON, IO[bytes]],
+        route_parameters: Union[_models.Route, _types.Route, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -53491,7 +53691,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: JSON,
+        route_parameters: _types.Route,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -53506,7 +53706,7 @@ class RoutesOperations:
         :param route_name: The name of the route. Required.
         :type route_name: str
         :param route_parameters: Parameters supplied to the create or update route operation. Required.
-        :type route_parameters: JSON
+        :type route_parameters: ~azure.mgmt.network.types.Route
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -53553,7 +53753,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: Union[_models.Route, JSON, IO[bytes]],
+        route_parameters: Union[_models.Route, _types.Route, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Route]:
         """Creates or updates a route in the specified route table.
@@ -53565,9 +53765,10 @@ class RoutesOperations:
         :type route_table_name: str
         :param route_name: The name of the route. Required.
         :type route_name: str
-        :param route_parameters: Parameters supplied to the create or update route operation. Is one of
-         the following types: Route, JSON, IO[bytes] Required.
-        :type route_parameters: ~azure.mgmt.network.models.Route or JSON or IO[bytes]
+        :param route_parameters: Parameters supplied to the create or update route operation. Is either
+         a Route type or a IO[bytes] type. Required.
+        :type route_parameters: ~azure.mgmt.network.models.Route or ~azure.mgmt.network.types.Route or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Route. The Route is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.Route]
@@ -53937,7 +54138,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: Union[_models.SecurityPartnerProvider, JSON, IO[bytes]],
+        parameters: Union[_models.SecurityPartnerProvider, _types.SecurityPartnerProvider, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -54045,7 +54246,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: JSON,
+        parameters: _types.SecurityPartnerProvider,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54059,7 +54260,7 @@ class SecurityPartnerProvidersOperations:
         :type security_partner_provider_name: str
         :param parameters: Parameters supplied to the create or update Security Partner Provider
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.SecurityPartnerProvider
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54103,7 +54304,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: Union[_models.SecurityPartnerProvider, JSON, IO[bytes]],
+        parameters: Union[_models.SecurityPartnerProvider, _types.SecurityPartnerProvider, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityPartnerProvider]:
         """Creates or updates the specified Security Partner Provider.
@@ -54114,8 +54315,9 @@ class SecurityPartnerProvidersOperations:
         :param security_partner_provider_name: The name of the Security Partner Provider. Required.
         :type security_partner_provider_name: str
         :param parameters: Parameters supplied to the create or update Security Partner Provider
-         operation. Is one of the following types: SecurityPartnerProvider, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.SecurityPartnerProvider or JSON or IO[bytes]
+         operation. Is either a SecurityPartnerProvider type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.SecurityPartnerProvider or
+         ~azure.mgmt.network.types.SecurityPartnerProvider or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SecurityPartnerProvider. The
          SecurityPartnerProvider is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.SecurityPartnerProvider]
@@ -54207,7 +54409,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54220,7 +54422,7 @@ class SecurityPartnerProvidersOperations:
         :param security_partner_provider_name: The name of the Security Partner Provider. Required.
         :type security_partner_provider_name: str
         :param parameters: Parameters supplied to update Security Partner Provider tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54261,7 +54463,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityPartnerProvider:
         """Updates tags of a Security Partner Provider resource.
@@ -54271,9 +54473,10 @@ class SecurityPartnerProvidersOperations:
         :type resource_group_name: str
         :param security_partner_provider_name: The name of the Security Partner Provider. Required.
         :type security_partner_provider_name: str
-        :param parameters: Parameters supplied to update Security Partner Provider tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update Security Partner Provider tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: SecurityPartnerProvider. The SecurityPartnerProvider is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.SecurityPartnerProvider
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -54740,7 +54943,7 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: Union[_models.ServiceEndpointPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceEndpointPolicy, _types.ServiceEndpointPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -54848,7 +55051,7 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceEndpointPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54862,7 +55065,7 @@ class ServiceEndpointPoliciesOperations:
         :type service_endpoint_policy_name: str
         :param parameters: Parameters supplied to the create or update service endpoint policy
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ServiceEndpointPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54906,7 +55109,7 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: Union[_models.ServiceEndpointPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceEndpointPolicy, _types.ServiceEndpointPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceEndpointPolicy]:
         """Creates or updates a service Endpoint Policies.
@@ -54917,8 +55120,9 @@ class ServiceEndpointPoliciesOperations:
         :param service_endpoint_policy_name: The name of the service endpoint policy. Required.
         :type service_endpoint_policy_name: str
         :param parameters: Parameters supplied to the create or update service endpoint policy
-         operation. Is one of the following types: ServiceEndpointPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ServiceEndpointPolicy or JSON or IO[bytes]
+         operation. Is either a ServiceEndpointPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceEndpointPolicy or
+         ~azure.mgmt.network.types.ServiceEndpointPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceEndpointPolicy. The
          ServiceEndpointPolicy is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceEndpointPolicy]
@@ -55010,7 +55214,7 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55023,7 +55227,7 @@ class ServiceEndpointPoliciesOperations:
         :param service_endpoint_policy_name: The name of the service endpoint policy. Required.
         :type service_endpoint_policy_name: str
         :param parameters: Parameters supplied to update service endpoint policy tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55064,7 +55268,7 @@ class ServiceEndpointPoliciesOperations:
         self,
         resource_group_name: str,
         service_endpoint_policy_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServiceEndpointPolicy:
         """Updates tags of a service endpoint policy.
@@ -55074,9 +55278,10 @@ class ServiceEndpointPoliciesOperations:
         :type resource_group_name: str
         :param service_endpoint_policy_name: The name of the service endpoint policy. Required.
         :type service_endpoint_policy_name: str
-        :param parameters: Parameters supplied to update service endpoint policy tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update service endpoint policy tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ServiceEndpointPolicy. The ServiceEndpointPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ServiceEndpointPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -55545,7 +55750,9 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
-        service_endpoint_policy_definitions: Union[_models.ServiceEndpointPolicyDefinition, JSON, IO[bytes]],
+        service_endpoint_policy_definitions: Union[
+            _models.ServiceEndpointPolicyDefinition, _types.ServiceEndpointPolicyDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -55662,7 +55869,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
-        service_endpoint_policy_definitions: JSON,
+        service_endpoint_policy_definitions: _types.ServiceEndpointPolicyDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55680,7 +55887,8 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         :type service_endpoint_policy_definition_name: str
         :param service_endpoint_policy_definitions: Parameters supplied to the create or update service
          endpoint policy operation. Required.
-        :type service_endpoint_policy_definitions: JSON
+        :type service_endpoint_policy_definitions:
+         ~azure.mgmt.network.types.ServiceEndpointPolicyDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55732,7 +55940,9 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         service_endpoint_policy_name: str,
         service_endpoint_policy_definition_name: str,
-        service_endpoint_policy_definitions: Union[_models.ServiceEndpointPolicyDefinition, JSON, IO[bytes]],
+        service_endpoint_policy_definitions: Union[
+            _models.ServiceEndpointPolicyDefinition, _types.ServiceEndpointPolicyDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceEndpointPolicyDefinition]:
         """Creates or updates a service endpoint policy definition in the specified service endpoint
@@ -55747,10 +55957,11 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
          a resource group. This name can be used to access the resource. Required.
         :type service_endpoint_policy_definition_name: str
         :param service_endpoint_policy_definitions: Parameters supplied to the create or update service
-         endpoint policy operation. Is one of the following types: ServiceEndpointPolicyDefinition,
-         JSON, IO[bytes] Required.
+         endpoint policy operation. Is either a ServiceEndpointPolicyDefinition type or a IO[bytes]
+         type. Required.
         :type service_endpoint_policy_definitions:
-         ~azure.mgmt.network.models.ServiceEndpointPolicyDefinition or JSON or IO[bytes]
+         ~azure.mgmt.network.models.ServiceEndpointPolicyDefinition or
+         ~azure.mgmt.network.types.ServiceEndpointPolicyDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceEndpointPolicyDefinition. The
          ServiceEndpointPolicyDefinition is compatible with MutableMapping
         :rtype:
@@ -56136,7 +56347,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.VirtualNetwork, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetwork, _types.VirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -56244,7 +56455,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56258,7 +56469,7 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -56302,7 +56513,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.VirtualNetwork, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetwork, _types.VirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetwork]:
         """Creates or updates a virtual network in the specified resource group.
@@ -56313,8 +56524,9 @@ class VirtualNetworksOperations:
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation. Is
-         one of the following types: VirtualNetwork, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualNetwork or JSON or IO[bytes]
+         either a VirtualNetwork type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetwork or
+         ~azure.mgmt.network.types.VirtualNetwork or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetwork. The VirtualNetwork is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetwork]
@@ -56406,7 +56618,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56419,7 +56631,7 @@ class VirtualNetworksOperations:
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
         :param parameters: Parameters supplied to update virtual network tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -56460,7 +56672,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetwork:
         """Updates a virtual network tags.
@@ -56470,9 +56682,10 @@ class VirtualNetworksOperations:
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to update virtual network tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update virtual network tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: VirtualNetwork. The VirtualNetwork is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -57327,7 +57540,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        subnet_parameters: Union[_models.Subnet, JSON, IO[bytes]],
+        subnet_parameters: Union[_models.Subnet, _types.Subnet, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -57440,7 +57653,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        subnet_parameters: JSON,
+        subnet_parameters: _types.Subnet,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -57456,7 +57669,7 @@ class SubnetsOperations:
         :type subnet_name: str
         :param subnet_parameters: Parameters supplied to the create or update subnet operation.
          Required.
-        :type subnet_parameters: JSON
+        :type subnet_parameters: ~azure.mgmt.network.types.Subnet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -57504,7 +57717,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        subnet_parameters: Union[_models.Subnet, JSON, IO[bytes]],
+        subnet_parameters: Union[_models.Subnet, _types.Subnet, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Subnet]:
         """Creates or updates a subnet in the specified virtual network.
@@ -57516,9 +57729,10 @@ class SubnetsOperations:
         :type virtual_network_name: str
         :param subnet_name: The name of the subnet. Required.
         :type subnet_name: str
-        :param subnet_parameters: Parameters supplied to the create or update subnet operation. Is one
-         of the following types: Subnet, JSON, IO[bytes] Required.
-        :type subnet_parameters: ~azure.mgmt.network.models.Subnet or JSON or IO[bytes]
+        :param subnet_parameters: Parameters supplied to the create or update subnet operation. Is
+         either a Subnet type or a IO[bytes] type. Required.
+        :type subnet_parameters: ~azure.mgmt.network.models.Subnet or ~azure.mgmt.network.types.Subnet
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Subnet. The Subnet is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.Subnet]
@@ -57800,7 +58014,9 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        prepare_network_policies_request_parameters: Union[_models.PrepareNetworkPoliciesRequest, JSON, IO[bytes]],
+        prepare_network_policies_request_parameters: Union[
+            _models.PrepareNetworkPoliciesRequest, _types.PrepareNetworkPoliciesRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -57911,7 +58127,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        prepare_network_policies_request_parameters: JSON,
+        prepare_network_policies_request_parameters: _types.PrepareNetworkPoliciesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -57927,7 +58143,8 @@ class SubnetsOperations:
         :type subnet_name: str
         :param prepare_network_policies_request_parameters: Parameters supplied to prepare subnet by
          applying network intent policies. Required.
-        :type prepare_network_policies_request_parameters: JSON
+        :type prepare_network_policies_request_parameters:
+         ~azure.mgmt.network.types.PrepareNetworkPoliciesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -57973,7 +58190,9 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        prepare_network_policies_request_parameters: Union[_models.PrepareNetworkPoliciesRequest, JSON, IO[bytes]],
+        prepare_network_policies_request_parameters: Union[
+            _models.PrepareNetworkPoliciesRequest, _types.PrepareNetworkPoliciesRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Prepares a subnet by applying network intent policies.
@@ -57986,10 +58205,11 @@ class SubnetsOperations:
         :param subnet_name: The name of the subnet. Required.
         :type subnet_name: str
         :param prepare_network_policies_request_parameters: Parameters supplied to prepare subnet by
-         applying network intent policies. Is one of the following types: PrepareNetworkPoliciesRequest,
-         JSON, IO[bytes] Required.
+         applying network intent policies. Is either a PrepareNetworkPoliciesRequest type or a IO[bytes]
+         type. Required.
         :type prepare_network_policies_request_parameters:
-         ~azure.mgmt.network.models.PrepareNetworkPoliciesRequest or JSON or IO[bytes]
+         ~azure.mgmt.network.models.PrepareNetworkPoliciesRequest or
+         ~azure.mgmt.network.types.PrepareNetworkPoliciesRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -58049,7 +58269,9 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        unprepare_network_policies_request_parameters: Union[_models.UnprepareNetworkPoliciesRequest, JSON, IO[bytes]],
+        unprepare_network_policies_request_parameters: Union[
+            _models.UnprepareNetworkPoliciesRequest, _types.UnprepareNetworkPoliciesRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -58160,7 +58382,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        unprepare_network_policies_request_parameters: JSON,
+        unprepare_network_policies_request_parameters: _types.UnprepareNetworkPoliciesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -58176,7 +58398,8 @@ class SubnetsOperations:
         :type subnet_name: str
         :param unprepare_network_policies_request_parameters: Parameters supplied to unprepare subnet
          to remove network intent policies. Required.
-        :type unprepare_network_policies_request_parameters: JSON
+        :type unprepare_network_policies_request_parameters:
+         ~azure.mgmt.network.types.UnprepareNetworkPoliciesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -58222,7 +58445,9 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        unprepare_network_policies_request_parameters: Union[_models.UnprepareNetworkPoliciesRequest, JSON, IO[bytes]],
+        unprepare_network_policies_request_parameters: Union[
+            _models.UnprepareNetworkPoliciesRequest, _types.UnprepareNetworkPoliciesRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Unprepares a subnet by removing network intent policies.
@@ -58235,10 +58460,11 @@ class SubnetsOperations:
         :param subnet_name: The name of the subnet. Required.
         :type subnet_name: str
         :param unprepare_network_policies_request_parameters: Parameters supplied to unprepare subnet
-         to remove network intent policies. Is one of the following types:
-         UnprepareNetworkPoliciesRequest, JSON, IO[bytes] Required.
+         to remove network intent policies. Is either a UnprepareNetworkPoliciesRequest type or a
+         IO[bytes] type. Required.
         :type unprepare_network_policies_request_parameters:
-         ~azure.mgmt.network.models.UnprepareNetworkPoliciesRequest or JSON or IO[bytes]
+         ~azure.mgmt.network.models.UnprepareNetworkPoliciesRequest or
+         ~azure.mgmt.network.types.UnprepareNetworkPoliciesRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -58392,7 +58618,9 @@ class VirtualNetworkPeeringsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         virtual_network_peering_name: str,
-        virtual_network_peering_parameters: Union[_models.VirtualNetworkPeering, JSON, IO[bytes]],
+        virtual_network_peering_parameters: Union[
+            _models.VirtualNetworkPeering, _types.VirtualNetworkPeering, IO[bytes]
+        ],
         *,
         sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         **kwargs: Any
@@ -58512,7 +58740,7 @@ class VirtualNetworkPeeringsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         virtual_network_peering_name: str,
-        virtual_network_peering_parameters: JSON,
+        virtual_network_peering_parameters: _types.VirtualNetworkPeering,
         *,
         sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         content_type: str = "application/json",
@@ -58529,7 +58757,7 @@ class VirtualNetworkPeeringsOperations:
         :type virtual_network_peering_name: str
         :param virtual_network_peering_parameters: Parameters supplied to the create or update virtual
          network peering operation. Required.
-        :type virtual_network_peering_parameters: JSON
+        :type virtual_network_peering_parameters: ~azure.mgmt.network.types.VirtualNetworkPeering
         :keyword sync_remote_address_space: Parameter indicates the intention to sync the peering with
          the current address space on the remote vNet after it's updated. "true" Default value is None.
         :paramtype sync_remote_address_space: str or ~azure.mgmt.network.models.SyncRemoteAddressSpace
@@ -58584,7 +58812,9 @@ class VirtualNetworkPeeringsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         virtual_network_peering_name: str,
-        virtual_network_peering_parameters: Union[_models.VirtualNetworkPeering, JSON, IO[bytes]],
+        virtual_network_peering_parameters: Union[
+            _models.VirtualNetworkPeering, _types.VirtualNetworkPeering, IO[bytes]
+        ],
         *,
         sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         **kwargs: Any
@@ -58599,10 +58829,10 @@ class VirtualNetworkPeeringsOperations:
         :param virtual_network_peering_name: The name of the virtual network peering. Required.
         :type virtual_network_peering_name: str
         :param virtual_network_peering_parameters: Parameters supplied to the create or update virtual
-         network peering operation. Is one of the following types: VirtualNetworkPeering, JSON,
-         IO[bytes] Required.
+         network peering operation. Is either a VirtualNetworkPeering type or a IO[bytes] type.
+         Required.
         :type virtual_network_peering_parameters: ~azure.mgmt.network.models.VirtualNetworkPeering or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.VirtualNetworkPeering or IO[bytes]
         :keyword sync_remote_address_space: Parameter indicates the intention to sync the peering with
          the current address space on the remote vNet after it's updated. "true" Default value is None.
         :paramtype sync_remote_address_space: str or ~azure.mgmt.network.models.SyncRemoteAddressSpace
@@ -58979,7 +59209,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VirtualNetworkGateway, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkGateway, _types.VirtualNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -59087,7 +59317,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualNetworkGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59101,7 +59331,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to create or update virtual network gateway operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualNetworkGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59145,7 +59375,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VirtualNetworkGateway, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkGateway, _types.VirtualNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkGateway]:
         """Creates or updates a virtual network gateway in the specified resource group.
@@ -59156,8 +59386,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to create or update virtual network gateway operation.
-         Is one of the following types: VirtualNetworkGateway, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualNetworkGateway or JSON or IO[bytes]
+         Is either a VirtualNetworkGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkGateway or
+         ~azure.mgmt.network.types.VirtualNetworkGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkGateway. The
          VirtualNetworkGateway is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGateway]
@@ -59221,7 +59452,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -59328,7 +59559,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59341,7 +59572,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to update virtual network gateway tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59384,7 +59615,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkGateway]:
         """Updates a virtual network gateway tags.
@@ -59394,9 +59625,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :param parameters: Parameters supplied to update virtual network gateway tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update virtual network gateway tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkGateway. The
          VirtualNetworkGateway is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGateway]
@@ -60026,7 +60258,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnClientParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnClientParameters, _types.VpnClientParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -60132,7 +60364,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.VpnClientParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60147,7 +60379,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
          package operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnClientParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60190,7 +60422,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnClientParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnClientParameters, _types.VpnClientParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Generates VPN client package for P2S client of the virtual network gateway in the specified
@@ -60202,9 +60434,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
-         package operation. Is one of the following types: VpnClientParameters, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.VpnClientParameters or JSON or IO[bytes]
+         package operation. Is either a VpnClientParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VpnClientParameters or
+         ~azure.mgmt.network.types.VpnClientParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -60269,7 +60501,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnClientParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnClientParameters, _types.VpnClientParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -60375,7 +60607,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.VpnClientParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60390,7 +60622,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
          package operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnClientParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60433,7 +60665,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnClientParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnClientParameters, _types.VpnClientParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Generates VPN profile for P2S client of the virtual network gateway in the specified resource
@@ -60445,9 +60677,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
-         package operation. Is one of the following types: VpnClientParameters, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.VpnClientParameters or JSON or IO[bytes]
+         package operation. Is either a VpnClientParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VpnClientParameters or
+         ~azure.mgmt.network.types.VpnClientParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -61480,7 +61712,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        vpnclient_ipsec_params: Union[_models.VpnClientIPsecParameters, JSON, IO[bytes]],
+        vpnclient_ipsec_params: Union[_models.VpnClientIPsecParameters, _types.VpnClientIPsecParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -61587,7 +61819,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        vpnclient_ipsec_params: JSON,
+        vpnclient_ipsec_params: _types.VpnClientIPsecParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -61602,7 +61834,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param vpnclient_ipsec_params: Parameters supplied to the Begin Set vpnclient ipsec parameters
          of Virtual Network Gateway P2S client operation through Network resource provider. Required.
-        :type vpnclient_ipsec_params: JSON
+        :type vpnclient_ipsec_params: ~azure.mgmt.network.types.VpnClientIPsecParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -61647,7 +61879,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        vpnclient_ipsec_params: Union[_models.VpnClientIPsecParameters, JSON, IO[bytes]],
+        vpnclient_ipsec_params: Union[_models.VpnClientIPsecParameters, _types.VpnClientIPsecParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnClientIPsecParameters]:
         """The Set VpnclientIpsecParameters operation sets the vpnclient ipsec policy for P2S client of
@@ -61659,10 +61891,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param vpnclient_ipsec_params: Parameters supplied to the Begin Set vpnclient ipsec parameters
-         of Virtual Network Gateway P2S client operation through Network resource provider. Is one of
-         the following types: VpnClientIPsecParameters, JSON, IO[bytes] Required.
-        :type vpnclient_ipsec_params: ~azure.mgmt.network.models.VpnClientIPsecParameters or JSON or
-         IO[bytes]
+         of Virtual Network Gateway P2S client operation through Network resource provider. Is either a
+         VpnClientIPsecParameters type or a IO[bytes] type. Required.
+        :type vpnclient_ipsec_params: ~azure.mgmt.network.models.VpnClientIPsecParameters or
+         ~azure.mgmt.network.types.VpnClientIPsecParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnClientIPsecParameters. The
          VpnClientIPsecParameters is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnClientIPsecParameters]
@@ -61860,7 +62092,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Optional[Union[_models.VpnPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.VpnPacketCaptureStartParameters, _types.VpnPacketCaptureStartParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -61969,7 +62203,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.VpnPacketCaptureStartParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -61983,7 +62217,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to start packet
          capture on gateway. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnPacketCaptureStartParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62025,7 +62259,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Optional[Union[_models.VpnPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.VpnPacketCaptureStartParameters, _types.VpnPacketCaptureStartParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Starts packet capture on virtual network gateway in the specified resource group.
@@ -62036,10 +62272,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to start packet
-         capture on gateway. Is one of the following types: VpnPacketCaptureStartParameters, JSON,
-         IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStartParameters or JSON or
-         IO[bytes]
+         capture on gateway. Is either a VpnPacketCaptureStartParameters type or a IO[bytes] type.
+         Default value is None.
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStartParameters or
+         ~azure.mgmt.network.types.VpnPacketCaptureStartParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -62105,7 +62341,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnPacketCaptureStopParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnPacketCaptureStopParameters, _types.VpnPacketCaptureStopParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -62210,7 +62446,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.VpnPacketCaptureStopParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62224,7 +62460,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
          capture on gateway. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnPacketCaptureStopParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62266,7 +62502,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        parameters: Union[_models.VpnPacketCaptureStopParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnPacketCaptureStopParameters, _types.VpnPacketCaptureStopParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Stops packet capture on virtual network gateway in the specified resource group.
@@ -62277,10 +62513,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
-         capture on gateway. Is one of the following types: VpnPacketCaptureStopParameters, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStopParameters or JSON or
-         IO[bytes]
+         capture on gateway. Is either a VpnPacketCaptureStopParameters type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStopParameters or
+         ~azure.mgmt.network.types.VpnPacketCaptureStopParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -62788,7 +63024,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        stop_parameters: Union[_models.ExpressRouteFailoverStopApiParameters, JSON, IO[bytes]],
+        stop_parameters: Union[
+            _models.ExpressRouteFailoverStopApiParameters, _types.ExpressRouteFailoverStopApiParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -62893,7 +63131,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        stop_parameters: JSON,
+        stop_parameters: _types.ExpressRouteFailoverStopApiParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62907,7 +63145,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param stop_parameters: Virtual network gateway stop simulation parameters supplied to stop
          failover simulation on gateway. Required.
-        :type stop_parameters: JSON
+        :type stop_parameters: ~azure.mgmt.network.types.ExpressRouteFailoverStopApiParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62949,7 +63187,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        stop_parameters: Union[_models.ExpressRouteFailoverStopApiParameters, JSON, IO[bytes]],
+        stop_parameters: Union[
+            _models.ExpressRouteFailoverStopApiParameters, _types.ExpressRouteFailoverStopApiParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """This operation stops failover simulation on the gateway for the specified peering location.
@@ -62960,10 +63200,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param stop_parameters: Virtual network gateway stop simulation parameters supplied to stop
-         failover simulation on gateway. Is one of the following types:
-         ExpressRouteFailoverStopApiParameters, JSON, IO[bytes] Required.
-        :type stop_parameters: ~azure.mgmt.network.models.ExpressRouteFailoverStopApiParameters or JSON
-         or IO[bytes]
+         failover simulation on gateway. Is either a ExpressRouteFailoverStopApiParameters type or a
+         IO[bytes] type. Required.
+        :type stop_parameters: ~azure.mgmt.network.models.ExpressRouteFailoverStopApiParameters or
+         ~azure.mgmt.network.types.ExpressRouteFailoverStopApiParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -63159,7 +63399,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        request: Union[_models.P2SVpnConnectionRequest, JSON, IO[bytes]],
+        request: Union[_models.P2SVpnConnectionRequest, _types.P2SVpnConnectionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -63263,7 +63503,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        request: JSON,
+        request: _types.P2SVpnConnectionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -63276,7 +63516,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param request: The parameters are supplied to disconnect vpn connections. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.network.types.P2SVpnConnectionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63317,7 +63557,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        request: Union[_models.P2SVpnConnectionRequest, JSON, IO[bytes]],
+        request: Union[_models.P2SVpnConnectionRequest, _types.P2SVpnConnectionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Disconnect vpn connections of virtual network gateway in the specified resource group.
@@ -63327,9 +63567,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :param request: The parameters are supplied to disconnect vpn connections. Is one of the
-         following types: P2SVpnConnectionRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.network.models.P2SVpnConnectionRequest or JSON or IO[bytes]
+        :param request: The parameters are supplied to disconnect vpn connections. Is either a
+         P2SVpnConnectionRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.network.models.P2SVpnConnectionRequest or
+         ~azure.mgmt.network.types.P2SVpnConnectionRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -63387,7 +63628,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        migration_params: Union[_models.VirtualNetworkGatewayMigrationParameters, JSON, IO[bytes]],
+        migration_params: Union[
+            _models.VirtualNetworkGatewayMigrationParameters, _types.VirtualNetworkGatewayMigrationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -63491,7 +63734,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        migration_params: JSON,
+        migration_params: _types.VirtualNetworkGatewayMigrationParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -63505,7 +63748,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type virtual_network_gateway_name: str
         :param migration_params: Parameters supplied to the Begin Prepare migration on basic vpn
          gateway through Network resource provider. Required.
-        :type migration_params: JSON
+        :type migration_params: ~azure.mgmt.network.types.VirtualNetworkGatewayMigrationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63547,7 +63790,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
-        migration_params: Union[_models.VirtualNetworkGatewayMigrationParameters, JSON, IO[bytes]],
+        migration_params: Union[
+            _models.VirtualNetworkGatewayMigrationParameters, _types.VirtualNetworkGatewayMigrationParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Trigger prepare migration for the virtual network gateway.
@@ -63558,10 +63803,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
         :param migration_params: Parameters supplied to the Begin Prepare migration on basic vpn
-         gateway through Network resource provider. Is one of the following types:
-         VirtualNetworkGatewayMigrationParameters, JSON, IO[bytes] Required.
+         gateway through Network resource provider. Is either a VirtualNetworkGatewayMigrationParameters
+         type or a IO[bytes] type. Required.
         :type migration_params: ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.VirtualNetworkGatewayMigrationParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -64014,7 +64259,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: JSON,
+        parameters: _types.VpnDeviceScriptParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -64028,7 +64273,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the generate vpn device script operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnDeviceScriptParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64070,7 +64315,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VpnDeviceScriptParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnDeviceScriptParameters, _types.VpnDeviceScriptParameters, IO[bytes]],
         **kwargs: Any
     ) -> str:
         """Gets a xml format representation for vpn device configuration script.
@@ -64081,9 +64326,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :param virtual_network_gateway_connection_name: The name of the virtual network gateway
          connection. Required.
         :type virtual_network_gateway_connection_name: str
-        :param parameters: Parameters supplied to the generate vpn device script operation. Is one of
-         the following types: VpnDeviceScriptParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VpnDeviceScriptParameters or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the generate vpn device script operation. Is either a
+         VpnDeviceScriptParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VpnDeviceScriptParameters or
+         ~azure.mgmt.network.types.VpnDeviceScriptParameters or IO[bytes]
         :return: str
         :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -64253,7 +64499,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VirtualNetworkGatewayConnection, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkGatewayConnection, _types.VirtualNetworkGatewayConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -64363,7 +64609,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualNetworkGatewayConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -64378,7 +64624,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the create or update virtual network gateway
          connection operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualNetworkGatewayConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64425,7 +64671,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VirtualNetworkGatewayConnection, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkGatewayConnection, _types.VirtualNetworkGatewayConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkGatewayConnection]:
         """Creates or updates a virtual network gateway connection in the specified resource group.
@@ -64437,10 +64683,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the create or update virtual network gateway
-         connection operation. Is one of the following types: VirtualNetworkGatewayConnection, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualNetworkGatewayConnection or JSON or
-         IO[bytes]
+         connection operation. Is either a VirtualNetworkGatewayConnection type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkGatewayConnection or
+         ~azure.mgmt.network.types.VirtualNetworkGatewayConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkGatewayConnection. The
          VirtualNetworkGatewayConnection is compatible with MutableMapping
         :rtype:
@@ -64505,7 +64751,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -64615,7 +64861,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -64630,7 +64876,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to update virtual network gateway connection tags.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64677,7 +64923,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkGatewayConnection]:
         """Updates a virtual network gateway connection tags.
@@ -64689,8 +64935,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to update virtual network gateway connection tags. Is
-         one of the following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+         either a TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkGatewayConnection. The
          VirtualNetworkGatewayConnection is compatible with MutableMapping
         :rtype:
@@ -64967,7 +65214,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionSharedKey, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionSharedKey, _types.ConnectionSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -65078,7 +65325,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectionSharedKey,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65095,7 +65342,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the Begin Set Virtual Network Gateway connection
          Shared key operation throughNetwork resource provider. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ConnectionSharedKey
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65142,7 +65389,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionSharedKey, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionSharedKey, _types.ConnectionSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionSharedKey]:
         """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the virtual network gateway
@@ -65156,9 +65403,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the Begin Set Virtual Network Gateway connection
-         Shared key operation throughNetwork resource provider. Is one of the following types:
-         ConnectionSharedKey, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ConnectionSharedKey or JSON or IO[bytes]
+         Shared key operation throughNetwork resource provider. Is either a ConnectionSharedKey type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ConnectionSharedKey or
+         ~azure.mgmt.network.types.ConnectionSharedKey or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectionSharedKey. The
          ConnectionSharedKey is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionSharedKey]
@@ -65297,7 +65545,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionResetSharedKey, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionResetSharedKey, _types.ConnectionResetSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -65406,7 +65654,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectionResetSharedKey,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65423,7 +65671,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the begin reset virtual network gateway connection
          shared key operation through network resource provider. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ConnectionResetSharedKey
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65470,7 +65718,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.ConnectionResetSharedKey, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionResetSharedKey, _types.ConnectionResetSharedKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionResetSharedKey]:
         """The VirtualNetworkGatewayConnectionResetSharedKey operation resets the virtual network gateway
@@ -65484,9 +65732,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the begin reset virtual network gateway connection
-         shared key operation through network resource provider. Is one of the following types:
-         ConnectionResetSharedKey, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ConnectionResetSharedKey or JSON or IO[bytes]
+         shared key operation through network resource provider. Is either a ConnectionResetSharedKey
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ConnectionResetSharedKey or
+         ~azure.mgmt.network.types.ConnectionResetSharedKey or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectionResetSharedKey. The
          ConnectionResetSharedKey is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionResetSharedKey]
@@ -65550,7 +65799,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Optional[Union[_models.VpnPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.VpnPacketCaptureStartParameters, _types.VpnPacketCaptureStartParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -65660,7 +65911,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.VpnPacketCaptureStartParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65675,7 +65926,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         :type virtual_network_gateway_connection_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to start packet
          capture on gateway connection. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnPacketCaptureStartParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65718,7 +65969,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Optional[Union[_models.VpnPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.VpnPacketCaptureStartParameters, _types.VpnPacketCaptureStartParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Starts packet capture on virtual network gateway connection in the specified resource group.
@@ -65730,10 +65983,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to start packet
-         capture on gateway connection. Is one of the following types: VpnPacketCaptureStartParameters,
-         JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStartParameters or JSON or
-         IO[bytes]
+         capture on gateway connection. Is either a VpnPacketCaptureStartParameters type or a IO[bytes]
+         type. Default value is None.
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStartParameters or
+         ~azure.mgmt.network.types.VpnPacketCaptureStartParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -65799,7 +66052,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VpnPacketCaptureStopParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnPacketCaptureStopParameters, _types.VpnPacketCaptureStopParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -65905,7 +66158,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: JSON,
+        parameters: _types.VpnPacketCaptureStopParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65920,7 +66173,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         :type virtual_network_gateway_connection_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
          capture on gateway connection. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnPacketCaptureStopParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65963,7 +66216,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         self,
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
-        parameters: Union[_models.VpnPacketCaptureStopParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VpnPacketCaptureStopParameters, _types.VpnPacketCaptureStopParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Stops packet capture on virtual network gateway connection in the specified resource group.
@@ -65975,10 +66228,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
          connection. Required.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
-         capture on gateway connection. Is one of the following types: VpnPacketCaptureStopParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStopParameters or JSON or
-         IO[bytes]
+         capture on gateway connection. Is either a VpnPacketCaptureStopParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStopParameters or
+         ~azure.mgmt.network.types.VpnPacketCaptureStopParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -66389,7 +66642,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: Union[_models.LocalNetworkGateway, JSON, IO[bytes]],
+        parameters: Union[_models.LocalNetworkGateway, _types.LocalNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -66497,7 +66750,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.LocalNetworkGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -66511,7 +66764,7 @@ class LocalNetworkGatewaysOperations:
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to the create or update local network gateway operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.LocalNetworkGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -66555,7 +66808,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: Union[_models.LocalNetworkGateway, JSON, IO[bytes]],
+        parameters: Union[_models.LocalNetworkGateway, _types.LocalNetworkGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LocalNetworkGateway]:
         """Creates or updates a local network gateway in the specified resource group.
@@ -66566,8 +66819,9 @@ class LocalNetworkGatewaysOperations:
         :param local_network_gateway_name: The name of the local network gateway. Required.
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to the create or update local network gateway operation.
-         Is one of the following types: LocalNetworkGateway, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.LocalNetworkGateway or JSON or IO[bytes]
+         Is either a LocalNetworkGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.LocalNetworkGateway or
+         ~azure.mgmt.network.types.LocalNetworkGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LocalNetworkGateway. The
          LocalNetworkGateway is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.LocalNetworkGateway]
@@ -66659,7 +66913,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -66672,7 +66926,7 @@ class LocalNetworkGatewaysOperations:
         :param local_network_gateway_name: The name of the local network gateway. Required.
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to update local network gateway tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -66713,7 +66967,7 @@ class LocalNetworkGatewaysOperations:
         self,
         resource_group_name: str,
         local_network_gateway_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.LocalNetworkGateway:
         """Updates a local network gateway tags.
@@ -66723,9 +66977,10 @@ class LocalNetworkGatewaysOperations:
         :type resource_group_name: str
         :param local_network_gateway_name: The name of the local network gateway. Required.
         :type local_network_gateway_name: str
-        :param parameters: Parameters supplied to update local network gateway tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update local network gateway tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: LocalNetworkGateway. The LocalNetworkGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.LocalNetworkGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -67106,7 +67361,9 @@ class VirtualNetworkGatewayNatRulesOperations:
         resource_group_name: str,
         virtual_network_gateway_name: str,
         nat_rule_name: str,
-        nat_rule_parameters: Union[_models.VirtualNetworkGatewayNatRule, JSON, IO[bytes]],
+        nat_rule_parameters: Union[
+            _models.VirtualNetworkGatewayNatRule, _types.VirtualNetworkGatewayNatRule, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -67221,7 +67478,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         resource_group_name: str,
         virtual_network_gateway_name: str,
         nat_rule_name: str,
-        nat_rule_parameters: JSON,
+        nat_rule_parameters: _types.VirtualNetworkGatewayNatRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67238,7 +67495,7 @@ class VirtualNetworkGatewayNatRulesOperations:
          name can be used to access the resource. Required.
         :type nat_rule_name: str
         :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Required.
-        :type nat_rule_parameters: JSON
+        :type nat_rule_parameters: ~azure.mgmt.network.types.VirtualNetworkGatewayNatRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67289,7 +67546,9 @@ class VirtualNetworkGatewayNatRulesOperations:
         resource_group_name: str,
         virtual_network_gateway_name: str,
         nat_rule_name: str,
-        nat_rule_parameters: Union[_models.VirtualNetworkGatewayNatRule, JSON, IO[bytes]],
+        nat_rule_parameters: Union[
+            _models.VirtualNetworkGatewayNatRule, _types.VirtualNetworkGatewayNatRule, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkGatewayNatRule]:
         """Creates a nat rule to a scalable virtual network gateway if it doesn't exist else updates the
@@ -67303,10 +67562,10 @@ class VirtualNetworkGatewayNatRulesOperations:
         :param nat_rule_name: The name of the resource that is unique within a resource group. This
          name can be used to access the resource. Required.
         :type nat_rule_name: str
-        :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Is one of the
-         following types: VirtualNetworkGatewayNatRule, JSON, IO[bytes] Required.
-        :type nat_rule_parameters: ~azure.mgmt.network.models.VirtualNetworkGatewayNatRule or JSON or
-         IO[bytes]
+        :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Is either a
+         VirtualNetworkGatewayNatRule type or a IO[bytes] type. Required.
+        :type nat_rule_parameters: ~azure.mgmt.network.models.VirtualNetworkGatewayNatRule or
+         ~azure.mgmt.network.types.VirtualNetworkGatewayNatRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkGatewayNatRule. The
          VirtualNetworkGatewayNatRule is compatible with MutableMapping
         :rtype:
@@ -67679,7 +67938,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        parameters: Union[_models.VirtualNetworkTap, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkTap, _types.VirtualNetworkTap, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -67787,7 +68046,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualNetworkTap,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67801,7 +68060,7 @@ class VirtualNetworkTapsOperations:
         :type tap_name: str
         :param parameters: Parameters supplied to the create or update virtual network tap operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualNetworkTap
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67845,7 +68104,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        parameters: Union[_models.VirtualNetworkTap, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkTap, _types.VirtualNetworkTap, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkTap]:
         """Create a VirtualNetworkTap.
@@ -67856,8 +68115,9 @@ class VirtualNetworkTapsOperations:
         :param tap_name: The name of virtual network tap. Required.
         :type tap_name: str
         :param parameters: Parameters supplied to the create or update virtual network tap operation.
-         Is one of the following types: VirtualNetworkTap, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualNetworkTap or JSON or IO[bytes]
+         Is either a VirtualNetworkTap type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkTap or
+         ~azure.mgmt.network.types.VirtualNetworkTap or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkTap. The VirtualNetworkTap is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkTap]
@@ -67949,7 +68209,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        tap_parameters: JSON,
+        tap_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67962,7 +68222,7 @@ class VirtualNetworkTapsOperations:
         :param tap_name: The name of virtual network tap. Required.
         :type tap_name: str
         :param tap_parameters: Parameters supplied to update VirtualNetworkTap tags. Required.
-        :type tap_parameters: JSON
+        :type tap_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -68003,7 +68263,7 @@ class VirtualNetworkTapsOperations:
         self,
         resource_group_name: str,
         tap_name: str,
-        tap_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        tap_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetworkTap:
         """Update a VirtualNetworkTap.
@@ -68013,9 +68273,10 @@ class VirtualNetworkTapsOperations:
         :type resource_group_name: str
         :param tap_name: The name of virtual network tap. Required.
         :type tap_name: str
-        :param tap_parameters: Parameters supplied to update VirtualNetworkTap tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type tap_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param tap_parameters: Parameters supplied to update VirtualNetworkTap tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type tap_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: VirtualNetworkTap. The VirtualNetworkTap is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VirtualNetworkTap
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -68471,7 +68732,7 @@ class VirtualRoutersOperations:
         self,
         resource_group_name: str,
         virtual_router_name: str,
-        parameters: Union[_models.VirtualRouter, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualRouter, _types.VirtualRouter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -68578,7 +68839,7 @@ class VirtualRoutersOperations:
         self,
         resource_group_name: str,
         virtual_router_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualRouter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -68591,7 +68852,7 @@ class VirtualRoutersOperations:
         :param virtual_router_name: The name of the Virtual Router. Required.
         :type virtual_router_name: str
         :param parameters: Parameters supplied to the create or update Virtual Router. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualRouter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -68634,7 +68895,7 @@ class VirtualRoutersOperations:
         self,
         resource_group_name: str,
         virtual_router_name: str,
-        parameters: Union[_models.VirtualRouter, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualRouter, _types.VirtualRouter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualRouter]:
         """Creates or updates the specified Virtual Router.
@@ -68644,9 +68905,10 @@ class VirtualRoutersOperations:
         :type resource_group_name: str
         :param virtual_router_name: The name of the Virtual Router. Required.
         :type virtual_router_name: str
-        :param parameters: Parameters supplied to the create or update Virtual Router. Is one of the
-         following types: VirtualRouter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualRouter or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update Virtual Router. Is either a
+         VirtualRouter type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualRouter or
+         ~azure.mgmt.network.types.VirtualRouter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualRouter. The VirtualRouter is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualRouter]
@@ -69095,7 +69357,7 @@ class VirtualRouterPeeringsOperations:
         resource_group_name: str,
         virtual_router_name: str,
         peering_name: str,
-        parameters: Union[_models.VirtualRouterPeering, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualRouterPeering, _types.VirtualRouterPeering, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -69209,7 +69471,7 @@ class VirtualRouterPeeringsOperations:
         resource_group_name: str,
         virtual_router_name: str,
         peering_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualRouterPeering,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69226,7 +69488,7 @@ class VirtualRouterPeeringsOperations:
         :type peering_name: str
         :param parameters: Parameters supplied to the create or update Virtual Router Peering
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualRouterPeering
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69275,7 +69537,7 @@ class VirtualRouterPeeringsOperations:
         resource_group_name: str,
         virtual_router_name: str,
         peering_name: str,
-        parameters: Union[_models.VirtualRouterPeering, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualRouterPeering, _types.VirtualRouterPeering, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualRouterPeering]:
         """Creates or updates the specified Virtual Router Peering.
@@ -69289,8 +69551,9 @@ class VirtualRouterPeeringsOperations:
          can be used to access the resource. Required.
         :type peering_name: str
         :param parameters: Parameters supplied to the create or update Virtual Router Peering
-         operation. Is one of the following types: VirtualRouterPeering, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualRouterPeering or JSON or IO[bytes]
+         operation. Is either a VirtualRouterPeering type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualRouterPeering or
+         ~azure.mgmt.network.types.VirtualRouterPeering or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualRouterPeering. The
          VirtualRouterPeering is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualRouterPeering]
@@ -69662,7 +69925,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        wan_parameters: Union[_models.VirtualWAN, JSON, IO[bytes]],
+        wan_parameters: Union[_models.VirtualWAN, _types.VirtualWAN, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -69769,7 +70032,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        wan_parameters: JSON,
+        wan_parameters: _types.VirtualWAN,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69782,7 +70045,7 @@ class VirtualWansOperations:
         :param virtual_wan_name: The name of the VirtualWAN being retrieved. Required.
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to create or update VirtualWAN. Required.
-        :type wan_parameters: JSON
+        :type wan_parameters: ~azure.mgmt.network.types.VirtualWAN
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69825,7 +70088,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        wan_parameters: Union[_models.VirtualWAN, JSON, IO[bytes]],
+        wan_parameters: Union[_models.VirtualWAN, _types.VirtualWAN, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualWAN]:
         """Creates a VirtualWAN resource if it doesn't exist else updates the existing VirtualWAN.
@@ -69835,9 +70098,10 @@ class VirtualWansOperations:
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN being retrieved. Required.
         :type virtual_wan_name: str
-        :param wan_parameters: Parameters supplied to create or update VirtualWAN. Is one of the
-         following types: VirtualWAN, JSON, IO[bytes] Required.
-        :type wan_parameters: ~azure.mgmt.network.models.VirtualWAN or JSON or IO[bytes]
+        :param wan_parameters: Parameters supplied to create or update VirtualWAN. Is either a
+         VirtualWAN type or a IO[bytes] type. Required.
+        :type wan_parameters: ~azure.mgmt.network.models.VirtualWAN or
+         ~azure.mgmt.network.types.VirtualWAN or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualWAN. The VirtualWAN is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualWAN]
@@ -69929,7 +70193,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        wan_parameters: JSON,
+        wan_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69942,7 +70206,7 @@ class VirtualWansOperations:
         :param virtual_wan_name: The name of the VirtualWAN being retrieved. Required.
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to Update VirtualWAN tags. Required.
-        :type wan_parameters: JSON
+        :type wan_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69983,7 +70247,7 @@ class VirtualWansOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        wan_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        wan_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualWAN:
         """Updates a VirtualWAN tags.
@@ -69993,9 +70257,10 @@ class VirtualWansOperations:
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN being retrieved. Required.
         :type virtual_wan_name: str
-        :param wan_parameters: Parameters supplied to Update VirtualWAN tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type wan_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param wan_parameters: Parameters supplied to Update VirtualWAN tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type wan_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: VirtualWAN. The VirtualWAN is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VirtualWAN
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70448,7 +70713,7 @@ class VpnSitesOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        vpn_site_parameters: Union[_models.VpnSite, JSON, IO[bytes]],
+        vpn_site_parameters: Union[_models.VpnSite, _types.VpnSite, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -70555,7 +70820,7 @@ class VpnSitesOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        vpn_site_parameters: JSON,
+        vpn_site_parameters: _types.VpnSite,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70568,7 +70833,7 @@ class VpnSitesOperations:
         :param vpn_site_name: The name of the VpnSite being retrieved. Required.
         :type vpn_site_name: str
         :param vpn_site_parameters: Parameters supplied to create or update VpnSite. Required.
-        :type vpn_site_parameters: JSON
+        :type vpn_site_parameters: ~azure.mgmt.network.types.VpnSite
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70611,7 +70876,7 @@ class VpnSitesOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        vpn_site_parameters: Union[_models.VpnSite, JSON, IO[bytes]],
+        vpn_site_parameters: Union[_models.VpnSite, _types.VpnSite, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnSite]:
         """Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
@@ -70621,9 +70886,10 @@ class VpnSitesOperations:
         :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being retrieved. Required.
         :type vpn_site_name: str
-        :param vpn_site_parameters: Parameters supplied to create or update VpnSite. Is one of the
-         following types: VpnSite, JSON, IO[bytes] Required.
-        :type vpn_site_parameters: ~azure.mgmt.network.models.VpnSite or JSON or IO[bytes]
+        :param vpn_site_parameters: Parameters supplied to create or update VpnSite. Is either a
+         VpnSite type or a IO[bytes] type. Required.
+        :type vpn_site_parameters: ~azure.mgmt.network.models.VpnSite or
+         ~azure.mgmt.network.types.VpnSite or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnSite. The VpnSite is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnSite]
@@ -70715,7 +70981,7 @@ class VpnSitesOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        vpn_site_parameters: JSON,
+        vpn_site_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70728,7 +70994,7 @@ class VpnSitesOperations:
         :param vpn_site_name: The name of the VpnSite being retrieved. Required.
         :type vpn_site_name: str
         :param vpn_site_parameters: Parameters supplied to update VpnSite tags. Required.
-        :type vpn_site_parameters: JSON
+        :type vpn_site_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70769,7 +71035,7 @@ class VpnSitesOperations:
         self,
         resource_group_name: str,
         vpn_site_name: str,
-        vpn_site_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        vpn_site_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VpnSite:
         """Updates VpnSite tags.
@@ -70779,9 +71045,10 @@ class VpnSitesOperations:
         :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being retrieved. Required.
         :type vpn_site_name: str
-        :param vpn_site_parameters: Parameters supplied to update VpnSite tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type vpn_site_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param vpn_site_parameters: Parameters supplied to update VpnSite tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type vpn_site_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: VpnSite. The VpnSite is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VpnSite
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -71419,7 +71686,9 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: Union[_models.VpnServerConfiguration, JSON, IO[bytes]],
+        vpn_server_configuration_parameters: Union[
+            _models.VpnServerConfiguration, _types.VpnServerConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -71529,7 +71798,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: JSON,
+        vpn_server_configuration_parameters: _types.VpnServerConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71545,7 +71814,7 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_name: str
         :param vpn_server_configuration_parameters: Parameters supplied to create or update
          VpnServerConfiguration. Required.
-        :type vpn_server_configuration_parameters: JSON
+        :type vpn_server_configuration_parameters: ~azure.mgmt.network.types.VpnServerConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71591,7 +71860,9 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: Union[_models.VpnServerConfiguration, JSON, IO[bytes]],
+        vpn_server_configuration_parameters: Union[
+            _models.VpnServerConfiguration, _types.VpnServerConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnServerConfiguration]:
         """Creates a VpnServerConfiguration resource if it doesn't exist else updates the existing
@@ -71604,10 +71875,9 @@ class VpnServerConfigurationsOperations:
          group. This name can be used to access the resource. Required.
         :type vpn_server_configuration_name: str
         :param vpn_server_configuration_parameters: Parameters supplied to create or update
-         VpnServerConfiguration. Is one of the following types: VpnServerConfiguration, JSON, IO[bytes]
-         Required.
+         VpnServerConfiguration. Is either a VpnServerConfiguration type or a IO[bytes] type. Required.
         :type vpn_server_configuration_parameters: ~azure.mgmt.network.models.VpnServerConfiguration or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.VpnServerConfiguration or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnServerConfiguration. The
          VpnServerConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnServerConfiguration]
@@ -71701,7 +71971,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: JSON,
+        vpn_server_configuration_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71716,7 +71986,7 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_name: str
         :param vpn_server_configuration_parameters: Parameters supplied to update
          VpnServerConfiguration tags. Required.
-        :type vpn_server_configuration_parameters: JSON
+        :type vpn_server_configuration_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71759,7 +72029,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        vpn_server_configuration_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        vpn_server_configuration_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VpnServerConfiguration:
         """Updates VpnServerConfiguration tags.
@@ -71771,10 +72041,9 @@ class VpnServerConfigurationsOperations:
          group. This name can be used to access the resource. Required.
         :type vpn_server_configuration_name: str
         :param vpn_server_configuration_parameters: Parameters supplied to update
-         VpnServerConfiguration tags. Is one of the following types: TagsObject, JSON, IO[bytes]
-         Required.
-        :type vpn_server_configuration_parameters: ~azure.mgmt.network.models.TagsObject or JSON or
-         IO[bytes]
+         VpnServerConfiguration tags. Is either a TagsObject type or a IO[bytes] type. Required.
+        :type vpn_server_configuration_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: VpnServerConfiguration. The VpnServerConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VpnServerConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -72307,7 +72576,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: Union[_models.VirtualHub, JSON, IO[bytes]],
+        virtual_hub_parameters: Union[_models.VirtualHub, _types.VirtualHub, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -72414,7 +72683,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: JSON,
+        virtual_hub_parameters: _types.VirtualHub,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -72427,7 +72696,7 @@ class VirtualHubsOperations:
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
         :param virtual_hub_parameters: Parameters supplied to create or update VirtualHub. Required.
-        :type virtual_hub_parameters: JSON
+        :type virtual_hub_parameters: ~azure.mgmt.network.types.VirtualHub
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72470,7 +72739,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: Union[_models.VirtualHub, JSON, IO[bytes]],
+        virtual_hub_parameters: Union[_models.VirtualHub, _types.VirtualHub, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualHub]:
         """Creates a VirtualHub resource if it doesn't exist else updates the existing VirtualHub.
@@ -72480,9 +72749,10 @@ class VirtualHubsOperations:
         :type resource_group_name: str
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
-        :param virtual_hub_parameters: Parameters supplied to create or update VirtualHub. Is one of
-         the following types: VirtualHub, JSON, IO[bytes] Required.
-        :type virtual_hub_parameters: ~azure.mgmt.network.models.VirtualHub or JSON or IO[bytes]
+        :param virtual_hub_parameters: Parameters supplied to create or update VirtualHub. Is either a
+         VirtualHub type or a IO[bytes] type. Required.
+        :type virtual_hub_parameters: ~azure.mgmt.network.models.VirtualHub or
+         ~azure.mgmt.network.types.VirtualHub or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualHub. The VirtualHub is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualHub]
@@ -72574,7 +72844,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: JSON,
+        virtual_hub_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -72587,7 +72857,7 @@ class VirtualHubsOperations:
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
         :param virtual_hub_parameters: Parameters supplied to update VirtualHub tags. Required.
-        :type virtual_hub_parameters: JSON
+        :type virtual_hub_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72628,7 +72898,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        virtual_hub_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualHub:
         """Updates VirtualHub tags.
@@ -72638,9 +72908,10 @@ class VirtualHubsOperations:
         :type resource_group_name: str
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
-        :param virtual_hub_parameters: Parameters supplied to update VirtualHub tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type virtual_hub_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param virtual_hub_parameters: Parameters supplied to update VirtualHub tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type virtual_hub_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: VirtualHub. The VirtualHub is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VirtualHub
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -73004,7 +73275,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        effective_routes_parameters: Optional[Union[_models.EffectiveRoutesParameters, JSON, IO[bytes]]] = None,
+        effective_routes_parameters: Optional[
+            Union[_models.EffectiveRoutesParameters, _types.EffectiveRoutesParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -73115,7 +73388,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        effective_routes_parameters: Optional[JSON] = None,
+        effective_routes_parameters: Optional[_types.EffectiveRoutesParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -73129,7 +73402,7 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :param effective_routes_parameters: Parameters supplied to get the effective routes for a
          specific resource. Default value is None.
-        :type effective_routes_parameters: JSON
+        :type effective_routes_parameters: ~azure.mgmt.network.types.EffectiveRoutesParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73175,7 +73448,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        effective_routes_parameters: Optional[Union[_models.EffectiveRoutesParameters, JSON, IO[bytes]]] = None,
+        effective_routes_parameters: Optional[
+            Union[_models.EffectiveRoutesParameters, _types.EffectiveRoutesParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualHubEffectiveRouteList]:
         """Gets the effective routes configured for the Virtual Hub resource or the specified resource .
@@ -73186,10 +73461,10 @@ class VirtualHubsOperations:
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
         :param effective_routes_parameters: Parameters supplied to get the effective routes for a
-         specific resource. Is one of the following types: EffectiveRoutesParameters, JSON, IO[bytes]
-         Default value is None.
-        :type effective_routes_parameters: ~azure.mgmt.network.models.EffectiveRoutesParameters or JSON
-         or IO[bytes]
+         specific resource. Is either a EffectiveRoutesParameters type or a IO[bytes] type. Default
+         value is None.
+        :type effective_routes_parameters: ~azure.mgmt.network.models.EffectiveRoutesParameters or
+         ~azure.mgmt.network.types.EffectiveRoutesParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualHubEffectiveRouteList. The
          VirtualHubEffectiveRouteList is compatible with MutableMapping
         :rtype:
@@ -73255,7 +73530,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        get_inbound_routes_parameters: Union[_models.GetInboundRoutesParameters, JSON, IO[bytes]],
+        get_inbound_routes_parameters: Union[
+            _models.GetInboundRoutesParameters, _types.GetInboundRoutesParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -73362,7 +73639,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        get_inbound_routes_parameters: JSON,
+        get_inbound_routes_parameters: _types.GetInboundRoutesParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -73376,7 +73653,7 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :param get_inbound_routes_parameters: Parameters supplied to get the inbound routes for a
          connection resource. Required.
-        :type get_inbound_routes_parameters: JSON
+        :type get_inbound_routes_parameters: ~azure.mgmt.network.types.GetInboundRoutesParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73422,7 +73699,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        get_inbound_routes_parameters: Union[_models.GetInboundRoutesParameters, JSON, IO[bytes]],
+        get_inbound_routes_parameters: Union[
+            _models.GetInboundRoutesParameters, _types.GetInboundRoutesParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EffectiveRouteMapRouteList]:
         """Gets the inbound routes configured for the Virtual Hub on a particular connection.
@@ -73433,10 +73712,9 @@ class VirtualHubsOperations:
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
         :param get_inbound_routes_parameters: Parameters supplied to get the inbound routes for a
-         connection resource. Is one of the following types: GetInboundRoutesParameters, JSON, IO[bytes]
-         Required.
+         connection resource. Is either a GetInboundRoutesParameters type or a IO[bytes] type. Required.
         :type get_inbound_routes_parameters: ~azure.mgmt.network.models.GetInboundRoutesParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.GetInboundRoutesParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EffectiveRouteMapRouteList. The
          EffectiveRouteMapRouteList is compatible with MutableMapping
         :rtype:
@@ -73501,7 +73779,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        get_outbound_routes_parameters: Union[_models.GetOutboundRoutesParameters, JSON, IO[bytes]],
+        get_outbound_routes_parameters: Union[
+            _models.GetOutboundRoutesParameters, _types.GetOutboundRoutesParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -73608,7 +73888,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        get_outbound_routes_parameters: JSON,
+        get_outbound_routes_parameters: _types.GetOutboundRoutesParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -73622,7 +73902,7 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :param get_outbound_routes_parameters: Parameters supplied to get the outbound routes for a
          connection resource. Required.
-        :type get_outbound_routes_parameters: JSON
+        :type get_outbound_routes_parameters: ~azure.mgmt.network.types.GetOutboundRoutesParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73668,7 +73948,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        get_outbound_routes_parameters: Union[_models.GetOutboundRoutesParameters, JSON, IO[bytes]],
+        get_outbound_routes_parameters: Union[
+            _models.GetOutboundRoutesParameters, _types.GetOutboundRoutesParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EffectiveRouteMapRouteList]:
         """Gets the outbound routes configured for the Virtual Hub on a particular connection.
@@ -73679,10 +73961,10 @@ class VirtualHubsOperations:
         :param virtual_hub_name: The name of the VirtualHub. Required.
         :type virtual_hub_name: str
         :param get_outbound_routes_parameters: Parameters supplied to get the outbound routes for a
-         connection resource. Is one of the following types: GetOutboundRoutesParameters, JSON,
-         IO[bytes] Required.
+         connection resource. Is either a GetOutboundRoutesParameters type or a IO[bytes] type.
+         Required.
         :type get_outbound_routes_parameters: ~azure.mgmt.network.models.GetOutboundRoutesParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.GetOutboundRoutesParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EffectiveRouteMapRouteList. The
          EffectiveRouteMapRouteList is compatible with MutableMapping
         :rtype:
@@ -73843,7 +74125,7 @@ class RouteMapsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_map_name: str,
-        route_map_parameters: Union[_models.RouteMap, JSON, IO[bytes]],
+        route_map_parameters: Union[_models.RouteMap, _types.RouteMap, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -73956,7 +74238,7 @@ class RouteMapsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_map_name: str,
-        route_map_parameters: JSON,
+        route_map_parameters: _types.RouteMap,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -73972,7 +74254,7 @@ class RouteMapsOperations:
          name can be used to access the resource. Required.
         :type route_map_name: str
         :param route_map_parameters: Parameters supplied to create or update a RouteMap. Required.
-        :type route_map_parameters: JSON
+        :type route_map_parameters: ~azure.mgmt.network.types.RouteMap
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74020,7 +74302,7 @@ class RouteMapsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_map_name: str,
-        route_map_parameters: Union[_models.RouteMap, JSON, IO[bytes]],
+        route_map_parameters: Union[_models.RouteMap, _types.RouteMap, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RouteMap]:
         """Creates a RouteMap if it doesn't exist else updates the existing one.
@@ -74033,9 +74315,10 @@ class RouteMapsOperations:
         :param route_map_name: The name of the resource that is unique within a resource group. This
          name can be used to access the resource. Required.
         :type route_map_name: str
-        :param route_map_parameters: Parameters supplied to create or update a RouteMap. Is one of the
-         following types: RouteMap, JSON, IO[bytes] Required.
-        :type route_map_parameters: ~azure.mgmt.network.models.RouteMap or JSON or IO[bytes]
+        :param route_map_parameters: Parameters supplied to create or update a RouteMap. Is either a
+         RouteMap type or a IO[bytes] type. Required.
+        :type route_map_parameters: ~azure.mgmt.network.models.RouteMap or
+         ~azure.mgmt.network.types.RouteMap or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RouteMap. The RouteMap is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteMap]
@@ -74406,7 +74689,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        vpn_gateway_parameters: Union[_models.VpnGateway, JSON, IO[bytes]],
+        vpn_gateway_parameters: Union[_models.VpnGateway, _types.VpnGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -74514,7 +74797,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        vpn_gateway_parameters: JSON,
+        vpn_gateway_parameters: _types.VpnGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -74528,7 +74811,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to create or Update a virtual wan vpn
          gateway. Required.
-        :type vpn_gateway_parameters: JSON
+        :type vpn_gateway_parameters: ~azure.mgmt.network.types.VpnGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74572,7 +74855,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        vpn_gateway_parameters: Union[_models.VpnGateway, JSON, IO[bytes]],
+        vpn_gateway_parameters: Union[_models.VpnGateway, _types.VpnGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnGateway]:
         """Creates a virtual wan vpn gateway if it doesn't exist else updates the existing gateway.
@@ -74583,8 +74866,9 @@ class VpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to create or Update a virtual wan vpn
-         gateway. Is one of the following types: VpnGateway, JSON, IO[bytes] Required.
-        :type vpn_gateway_parameters: ~azure.mgmt.network.models.VpnGateway or JSON or IO[bytes]
+         gateway. Is either a VpnGateway type or a IO[bytes] type. Required.
+        :type vpn_gateway_parameters: ~azure.mgmt.network.models.VpnGateway or
+         ~azure.mgmt.network.types.VpnGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnGateway. The VpnGateway is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGateway]
@@ -74648,7 +74932,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        vpn_gateway_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        vpn_gateway_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -74756,7 +75040,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        vpn_gateway_parameters: JSON,
+        vpn_gateway_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -74770,7 +75054,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to update a virtual wan vpn gateway tags.
          Required.
-        :type vpn_gateway_parameters: JSON
+        :type vpn_gateway_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74814,7 +75098,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        vpn_gateway_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        vpn_gateway_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnGateway]:
         """Updates virtual wan vpn gateway tags.
@@ -74825,8 +75109,9 @@ class VpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to update a virtual wan vpn gateway tags. Is
-         one of the following types: TagsObject, JSON, IO[bytes] Required.
-        :type vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+         either a TagsObject type or a IO[bytes] type. Required.
+        :type vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnGateway. The VpnGateway is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGateway]
@@ -75307,7 +75592,11 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Optional[Union[_models.VpnGatewayPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnGatewayPacketCaptureStartParameters, _types.VpnGatewayPacketCaptureStartParameters, IO[bytes]
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -75416,7 +75705,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.VpnGatewayPacketCaptureStartParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -75430,7 +75719,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param parameters: Vpn gateway packet capture parameters supplied to start packet capture on
          vpn gateway. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnGatewayPacketCaptureStartParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75472,7 +75761,11 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Optional[Union[_models.VpnGatewayPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnGatewayPacketCaptureStartParameters, _types.VpnGatewayPacketCaptureStartParameters, IO[bytes]
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Starts packet capture on vpn gateway in the specified resource group.
@@ -75483,10 +75776,10 @@ class VpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param parameters: Vpn gateway packet capture parameters supplied to start packet capture on
-         vpn gateway. Is one of the following types: VpnGatewayPacketCaptureStartParameters, JSON,
-         IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.network.models.VpnGatewayPacketCaptureStartParameters or JSON or
-         IO[bytes]
+         vpn gateway. Is either a VpnGatewayPacketCaptureStartParameters type or a IO[bytes] type.
+         Default value is None.
+        :type parameters: ~azure.mgmt.network.models.VpnGatewayPacketCaptureStartParameters or
+         ~azure.mgmt.network.types.VpnGatewayPacketCaptureStartParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75552,7 +75845,11 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Optional[Union[_models.VpnGatewayPacketCaptureStopParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnGatewayPacketCaptureStopParameters, _types.VpnGatewayPacketCaptureStopParameters, IO[bytes]
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -75661,7 +75958,7 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.VpnGatewayPacketCaptureStopParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -75675,7 +75972,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param parameters: Vpn gateway packet capture parameters supplied to stop packet capture on vpn
          gateway. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnGatewayPacketCaptureStopParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75717,7 +76014,11 @@ class VpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Optional[Union[_models.VpnGatewayPacketCaptureStopParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnGatewayPacketCaptureStopParameters, _types.VpnGatewayPacketCaptureStopParameters, IO[bytes]
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Stops packet capture on vpn gateway in the specified resource group.
@@ -75728,10 +76029,10 @@ class VpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param parameters: Vpn gateway packet capture parameters supplied to stop packet capture on vpn
-         gateway. Is one of the following types: VpnGatewayPacketCaptureStopParameters, JSON, IO[bytes]
-         Default value is None.
-        :type parameters: ~azure.mgmt.network.models.VpnGatewayPacketCaptureStopParameters or JSON or
-         IO[bytes]
+         gateway. Is either a VpnGatewayPacketCaptureStopParameters type or a IO[bytes] type. Default
+         value is None.
+        :type parameters: ~azure.mgmt.network.models.VpnGatewayPacketCaptureStopParameters or
+         ~azure.mgmt.network.types.VpnGatewayPacketCaptureStopParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75988,7 +76289,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        p2_s_vpn_gateway_parameters: Union[_models.P2SVpnGateway, JSON, IO[bytes]],
+        p2_s_vpn_gateway_parameters: Union[_models.P2SVpnGateway, _types.P2SVpnGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -76096,7 +76397,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        p2_s_vpn_gateway_parameters: JSON,
+        p2_s_vpn_gateway_parameters: _types.P2SVpnGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -76110,7 +76411,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to create or Update a virtual wan p2s
          vpn gateway. Required.
-        :type p2_s_vpn_gateway_parameters: JSON
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.types.P2SVpnGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -76154,7 +76455,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        p2_s_vpn_gateway_parameters: Union[_models.P2SVpnGateway, JSON, IO[bytes]],
+        p2_s_vpn_gateway_parameters: Union[_models.P2SVpnGateway, _types.P2SVpnGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.P2SVpnGateway]:
         """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates the existing gateway.
@@ -76165,9 +76466,9 @@ class P2SVpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to create or Update a virtual wan p2s
-         vpn gateway. Is one of the following types: P2SVpnGateway, JSON, IO[bytes] Required.
-        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.P2SVpnGateway or JSON or
-         IO[bytes]
+         vpn gateway. Is either a P2SVpnGateway type or a IO[bytes] type. Required.
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.P2SVpnGateway or
+         ~azure.mgmt.network.types.P2SVpnGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns P2SVpnGateway. The P2SVpnGateway is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnGateway]
@@ -76231,7 +76532,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        p2_s_vpn_gateway_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        p2_s_vpn_gateway_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -76339,7 +76640,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        p2_s_vpn_gateway_parameters: JSON,
+        p2_s_vpn_gateway_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -76353,7 +76654,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to update a virtual wan p2s vpn gateway
          tags. Required.
-        :type p2_s_vpn_gateway_parameters: JSON
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -76397,7 +76698,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        p2_s_vpn_gateway_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        p2_s_vpn_gateway_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.P2SVpnGateway]:
         """Updates virtual wan p2s vpn gateway tags.
@@ -76408,8 +76709,9 @@ class P2SVpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to update a virtual wan p2s vpn gateway
-         tags. Is one of the following types: TagsObject, JSON, IO[bytes] Required.
-        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+         tags. Is either a TagsObject type or a IO[bytes] type. Required.
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns P2SVpnGateway. The P2SVpnGateway is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnGateway]
@@ -76885,7 +77187,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.P2SVpnProfileParameters, JSON, IO[bytes]],
+        parameters: Union[_models.P2SVpnProfileParameters, _types.P2SVpnProfileParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -76991,7 +77293,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: JSON,
+        parameters: _types.P2SVpnProfileParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -77005,7 +77307,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param parameters: Parameters supplied to the generate P2SVpnGateway VPN client package
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.P2SVpnProfileParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -77049,7 +77351,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.P2SVpnProfileParameters, JSON, IO[bytes]],
+        parameters: Union[_models.P2SVpnProfileParameters, _types.P2SVpnProfileParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnProfileResponse]:
         """Generates VPN profile for P2S client of the P2SVpnGateway in the specified resource group.
@@ -77060,8 +77362,9 @@ class P2SVpnGatewaysOperations:
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
         :param parameters: Parameters supplied to the generate P2SVpnGateway VPN client package
-         operation. Is one of the following types: P2SVpnProfileParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.P2SVpnProfileParameters or JSON or IO[bytes]
+         operation. Is either a P2SVpnProfileParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.P2SVpnProfileParameters or
+         ~azure.mgmt.network.types.P2SVpnProfileParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnProfileResponse. The VpnProfileResponse
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnProfileResponse]
@@ -77255,7 +77558,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        request: Union[_models.P2SVpnConnectionHealthRequest, JSON, IO[bytes]],
+        request: Union[_models.P2SVpnConnectionHealthRequest, _types.P2SVpnConnectionHealthRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -77362,7 +77665,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        request: JSON,
+        request: _types.P2SVpnConnectionHealthRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -77377,7 +77680,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param request: Request parameters supplied to get p2s vpn connections detailed health.
          Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.network.types.P2SVpnConnectionHealthRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -77422,7 +77725,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        request: Union[_models.P2SVpnConnectionHealthRequest, JSON, IO[bytes]],
+        request: Union[_models.P2SVpnConnectionHealthRequest, _types.P2SVpnConnectionHealthRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.P2SVpnConnectionHealth]:
         """Gets the sas url to get the connection health detail of P2S clients of the virtual wan
@@ -77433,9 +77736,10 @@ class P2SVpnGatewaysOperations:
         :type resource_group_name: str
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
-        :param request: Request parameters supplied to get p2s vpn connections detailed health. Is one
-         of the following types: P2SVpnConnectionHealthRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.network.models.P2SVpnConnectionHealthRequest or JSON or IO[bytes]
+        :param request: Request parameters supplied to get p2s vpn connections detailed health. Is
+         either a P2SVpnConnectionHealthRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.network.models.P2SVpnConnectionHealthRequest or
+         ~azure.mgmt.network.types.P2SVpnConnectionHealthRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns P2SVpnConnectionHealth. The
          P2SVpnConnectionHealth is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnConnectionHealth]
@@ -77499,7 +77803,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         p2_s_vpn_gateway_name: str,
-        request: Union[_models.P2SVpnConnectionRequest, JSON, IO[bytes]],
+        request: Union[_models.P2SVpnConnectionRequest, _types.P2SVpnConnectionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -77604,7 +77908,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         p2_s_vpn_gateway_name: str,
-        request: JSON,
+        request: _types.P2SVpnConnectionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -77618,7 +77922,7 @@ class P2SVpnGatewaysOperations:
         :param p2_s_vpn_gateway_name: The name of the P2S Vpn Gateway. Required.
         :type p2_s_vpn_gateway_name: str
         :param request: The parameters are supplied to disconnect p2s vpn connections. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.network.types.P2SVpnConnectionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -77660,7 +77964,7 @@ class P2SVpnGatewaysOperations:
         self,
         resource_group_name: str,
         p2_s_vpn_gateway_name: str,
-        request: Union[_models.P2SVpnConnectionRequest, JSON, IO[bytes]],
+        request: Union[_models.P2SVpnConnectionRequest, _types.P2SVpnConnectionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Disconnect P2S vpn connections of the virtual wan P2SVpnGateway in the specified resource
@@ -77671,9 +77975,10 @@ class P2SVpnGatewaysOperations:
         :type resource_group_name: str
         :param p2_s_vpn_gateway_name: The name of the P2S Vpn Gateway. Required.
         :type p2_s_vpn_gateway_name: str
-        :param request: The parameters are supplied to disconnect p2s vpn connections. Is one of the
-         following types: P2SVpnConnectionRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.network.models.P2SVpnConnectionRequest or JSON or IO[bytes]
+        :param request: The parameters are supplied to disconnect p2s vpn connections. Is either a
+         P2SVpnConnectionRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.network.models.P2SVpnConnectionRequest or
+         ~azure.mgmt.network.types.P2SVpnConnectionRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -77822,7 +78127,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        put_express_route_gateway_parameters: Union[_models.ExpressRouteGateway, JSON, IO[bytes]],
+        put_express_route_gateway_parameters: Union[_models.ExpressRouteGateway, _types.ExpressRouteGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -77930,7 +78235,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        put_express_route_gateway_parameters: JSON,
+        put_express_route_gateway_parameters: _types.ExpressRouteGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -77944,7 +78249,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type express_route_gateway_name: str
         :param put_express_route_gateway_parameters: Parameters required in an ExpressRoute gateway PUT
          operation. Required.
-        :type put_express_route_gateway_parameters: JSON
+        :type put_express_route_gateway_parameters: ~azure.mgmt.network.types.ExpressRouteGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -77988,7 +78293,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        put_express_route_gateway_parameters: Union[_models.ExpressRouteGateway, JSON, IO[bytes]],
+        put_express_route_gateway_parameters: Union[_models.ExpressRouteGateway, _types.ExpressRouteGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteGateway]:
         """Creates or updates a ExpressRoute gateway in a specified resource group.
@@ -77999,9 +78304,9 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         :param express_route_gateway_name: The name of the ExpressRoute gateway. Required.
         :type express_route_gateway_name: str
         :param put_express_route_gateway_parameters: Parameters required in an ExpressRoute gateway PUT
-         operation. Is one of the following types: ExpressRouteGateway, JSON, IO[bytes] Required.
+         operation. Is either a ExpressRouteGateway type or a IO[bytes] type. Required.
         :type put_express_route_gateway_parameters: ~azure.mgmt.network.models.ExpressRouteGateway or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ExpressRouteGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteGateway. The
          ExpressRouteGateway is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteGateway]
@@ -78065,7 +78370,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        express_route_gateway_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        express_route_gateway_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -78173,7 +78478,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        express_route_gateway_parameters: JSON,
+        express_route_gateway_parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -78187,7 +78492,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type express_route_gateway_name: str
         :param express_route_gateway_parameters: Parameters supplied to update a virtual wan express
          route gateway tags. Required.
-        :type express_route_gateway_parameters: JSON
+        :type express_route_gateway_parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -78231,7 +78536,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        express_route_gateway_parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        express_route_gateway_parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteGateway]:
         """Updates express route gateway tags.
@@ -78242,9 +78547,9 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         :param express_route_gateway_name: The name of the ExpressRoute gateway. Required.
         :type express_route_gateway_name: str
         :param express_route_gateway_parameters: Parameters supplied to update a virtual wan express
-         route gateway tags. Is one of the following types: TagsObject, JSON, IO[bytes] Required.
-        :type express_route_gateway_parameters: ~azure.mgmt.network.models.TagsObject or JSON or
-         IO[bytes]
+         route gateway tags. Is either a TagsObject type or a IO[bytes] type. Required.
+        :type express_route_gateway_parameters: ~azure.mgmt.network.models.TagsObject or
+         ~azure.mgmt.network.types.TagsObject or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteGateway. The
          ExpressRouteGateway is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteGateway]
@@ -79110,7 +79415,9 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        stop_parameters: Union[_models.ExpressRouteFailoverStopApiParameters, JSON, IO[bytes]],
+        stop_parameters: Union[
+            _models.ExpressRouteFailoverStopApiParameters, _types.ExpressRouteFailoverStopApiParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -79215,7 +79522,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        stop_parameters: JSON,
+        stop_parameters: _types.ExpressRouteFailoverStopApiParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -79229,7 +79536,7 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type express_route_gateway_name: str
         :param stop_parameters: Parameters supplied to stop the failover simulation on the express
          route gateway. Required.
-        :type stop_parameters: JSON
+        :type stop_parameters: ~azure.mgmt.network.types.ExpressRouteFailoverStopApiParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79285,7 +79592,9 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         express_route_gateway_name: str,
-        stop_parameters: Union[_models.ExpressRouteFailoverStopApiParameters, JSON, IO[bytes]],
+        stop_parameters: Union[
+            _models.ExpressRouteFailoverStopApiParameters, _types.ExpressRouteFailoverStopApiParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Stops failover simulation on the ExpressRoute gateway for the specified peering location.
@@ -79296,10 +79605,10 @@ class ExpressRouteGatewaysOperations:  # pylint: disable=too-many-public-methods
         :param express_route_gateway_name: The name of the ExpressRoute gateway. Required.
         :type express_route_gateway_name: str
         :param stop_parameters: Parameters supplied to stop the failover simulation on the express
-         route gateway. Is one of the following types: ExpressRouteFailoverStopApiParameters, JSON,
-         IO[bytes] Required.
-        :type stop_parameters: ~azure.mgmt.network.models.ExpressRouteFailoverStopApiParameters or JSON
-         or IO[bytes]
+         route gateway. Is either a ExpressRouteFailoverStopApiParameters type or a IO[bytes] type.
+         Required.
+        :type stop_parameters: ~azure.mgmt.network.models.ExpressRouteFailoverStopApiParameters or
+         ~azure.mgmt.network.types.ExpressRouteFailoverStopApiParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -79814,7 +80123,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        route_table_parameters: Union[_models.HubRouteTable, JSON, IO[bytes]],
+        route_table_parameters: Union[_models.HubRouteTable, _types.HubRouteTable, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -79927,7 +80236,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        route_table_parameters: JSON,
+        route_table_parameters: _types.HubRouteTable,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -79943,7 +80252,7 @@ class HubRouteTablesOperations:
          name can be used to access the resource. Required.
         :type route_table_name: str
         :param route_table_parameters: Parameters supplied to create or update RouteTable. Required.
-        :type route_table_parameters: JSON
+        :type route_table_parameters: ~azure.mgmt.network.types.HubRouteTable
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79991,7 +80300,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        route_table_parameters: Union[_models.HubRouteTable, JSON, IO[bytes]],
+        route_table_parameters: Union[_models.HubRouteTable, _types.HubRouteTable, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.HubRouteTable]:
         """Creates a RouteTable resource if it doesn't exist else updates the existing RouteTable.
@@ -80004,9 +80313,10 @@ class HubRouteTablesOperations:
         :param route_table_name: The name of the resource that is unique within a resource group. This
          name can be used to access the resource. Required.
         :type route_table_name: str
-        :param route_table_parameters: Parameters supplied to create or update RouteTable. Is one of
-         the following types: HubRouteTable, JSON, IO[bytes] Required.
-        :type route_table_parameters: ~azure.mgmt.network.models.HubRouteTable or JSON or IO[bytes]
+        :param route_table_parameters: Parameters supplied to create or update RouteTable. Is either a
+         HubRouteTable type or a IO[bytes] type. Required.
+        :type route_table_parameters: ~azure.mgmt.network.models.HubRouteTable or
+         ~azure.mgmt.network.types.HubRouteTable or IO[bytes]
         :return: An instance of AsyncLROPoller that returns HubRouteTable. The HubRouteTable is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.HubRouteTable]
@@ -80384,7 +80694,7 @@ class ConnectionPoliciesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_policy_name: str,
-        resource: Union[_models.ConnectionPolicy, JSON, IO[bytes]],
+        resource: Union[_models.ConnectionPolicy, _types.ConnectionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -80497,7 +80807,7 @@ class ConnectionPoliciesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_policy_name: str,
-        resource: JSON,
+        resource: _types.ConnectionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -80513,7 +80823,7 @@ class ConnectionPoliciesOperations:
          VirtualHub. This name can be used to access the resource. Required.
         :type connection_policy_name: str
         :param resource: Parameters supplied to create or update a ConnectionPolicy. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.network.types.ConnectionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80561,7 +80871,7 @@ class ConnectionPoliciesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_policy_name: str,
-        resource: Union[_models.ConnectionPolicy, JSON, IO[bytes]],
+        resource: Union[_models.ConnectionPolicy, _types.ConnectionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionPolicy]:
         """Creates a ConnectionPolicy if it doesn't exist else updates the existing one.
@@ -80574,9 +80884,10 @@ class ConnectionPoliciesOperations:
         :param connection_policy_name: The name of the ConnectionPolicy that is unique within a
          VirtualHub. This name can be used to access the resource. Required.
         :type connection_policy_name: str
-        :param resource: Parameters supplied to create or update a ConnectionPolicy. Is one of the
-         following types: ConnectionPolicy, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.network.models.ConnectionPolicy or JSON or IO[bytes]
+        :param resource: Parameters supplied to create or update a ConnectionPolicy. Is either a
+         ConnectionPolicy type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.network.models.ConnectionPolicy or
+         ~azure.mgmt.network.types.ConnectionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectionPolicy. The ConnectionPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionPolicy]
@@ -80979,7 +81290,7 @@ class WebApplicationFirewallPoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: JSON,
+        parameters: _types.WebApplicationFirewallPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -80992,7 +81303,7 @@ class WebApplicationFirewallPoliciesOperations:
         :param policy_name: The name of the policy. Required.
         :type policy_name: str
         :param parameters: Policy to be created. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.WebApplicationFirewallPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81035,7 +81346,7 @@ class WebApplicationFirewallPoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.WebApplicationFirewallPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.WebApplicationFirewallPolicy, _types.WebApplicationFirewallPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.WebApplicationFirewallPolicy:
         """Creates or update policy with specified rule set name within a resource group.
@@ -81045,9 +81356,10 @@ class WebApplicationFirewallPoliciesOperations:
         :type resource_group_name: str
         :param policy_name: The name of the policy. Required.
         :type policy_name: str
-        :param parameters: Policy to be created. Is one of the following types:
-         WebApplicationFirewallPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.WebApplicationFirewallPolicy or JSON or IO[bytes]
+        :param parameters: Policy to be created. Is either a WebApplicationFirewallPolicy type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.WebApplicationFirewallPolicy or
+         ~azure.mgmt.network.types.WebApplicationFirewallPolicy or IO[bytes]
         :return: WebApplicationFirewallPolicy. The WebApplicationFirewallPolicy is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.WebApplicationFirewallPolicy
@@ -81501,7 +81813,7 @@ class VirtualNetworkAppliancesOperations:
         self,
         resource_group_name: str,
         virtual_network_appliance_name: str,
-        parameters: Union[_models.VirtualNetworkAppliance, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkAppliance, _types.VirtualNetworkAppliance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -81609,7 +81921,7 @@ class VirtualNetworkAppliancesOperations:
         self,
         resource_group_name: str,
         virtual_network_appliance_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualNetworkAppliance,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -81623,7 +81935,7 @@ class VirtualNetworkAppliancesOperations:
         :type virtual_network_appliance_name: str
         :param parameters: Parameters supplied to the create or update virtual network appliance
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VirtualNetworkAppliance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81667,7 +81979,7 @@ class VirtualNetworkAppliancesOperations:
         self,
         resource_group_name: str,
         virtual_network_appliance_name: str,
-        parameters: Union[_models.VirtualNetworkAppliance, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkAppliance, _types.VirtualNetworkAppliance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkAppliance]:
         """Creates or updates a virtual network appliance.
@@ -81678,8 +81990,9 @@ class VirtualNetworkAppliancesOperations:
         :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
         :type virtual_network_appliance_name: str
         :param parameters: Parameters supplied to the create or update virtual network appliance
-         operation. Is one of the following types: VirtualNetworkAppliance, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.VirtualNetworkAppliance or JSON or IO[bytes]
+         operation. Is either a VirtualNetworkAppliance type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkAppliance or
+         ~azure.mgmt.network.types.VirtualNetworkAppliance or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkAppliance. The
          VirtualNetworkAppliance is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkAppliance]
@@ -81771,7 +82084,7 @@ class VirtualNetworkAppliancesOperations:
         self,
         resource_group_name: str,
         virtual_network_appliance_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -81784,7 +82097,7 @@ class VirtualNetworkAppliancesOperations:
         :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
         :type virtual_network_appliance_name: str
         :param parameters: Parameters supplied to update virtual network appliance tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81825,7 +82138,7 @@ class VirtualNetworkAppliancesOperations:
         self,
         resource_group_name: str,
         virtual_network_appliance_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.VirtualNetworkAppliance:
         """Updates a virtual network appliance tags.
@@ -81835,9 +82148,10 @@ class VirtualNetworkAppliancesOperations:
         :type resource_group_name: str
         :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
         :type virtual_network_appliance_name: str
-        :param parameters: Parameters supplied to update virtual network appliance tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update virtual network appliance tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: VirtualNetworkAppliance. The VirtualNetworkAppliance is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.VirtualNetworkAppliance
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82292,7 +82606,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.ServiceGateway, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceGateway, _types.ServiceGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -82400,7 +82714,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -82414,7 +82728,7 @@ class ServiceGatewaysOperations:
         :type service_gateway_name: str
         :param parameters: Parameters supplied to the create or update service gateway operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ServiceGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -82458,7 +82772,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.ServiceGateway, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceGateway, _types.ServiceGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceGateway]:
         """Creates or updates a service gateway.
@@ -82469,8 +82783,9 @@ class ServiceGatewaysOperations:
         :param service_gateway_name: The name of the service gateway. Required.
         :type service_gateway_name: str
         :param parameters: Parameters supplied to the create or update service gateway operation. Is
-         one of the following types: ServiceGateway, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ServiceGateway or JSON or IO[bytes]
+         either a ServiceGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGateway or
+         ~azure.mgmt.network.types.ServiceGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceGateway. The ServiceGateway is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceGateway]
@@ -82562,7 +82877,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -82575,7 +82890,7 @@ class ServiceGatewaysOperations:
         :param service_gateway_name: The name of the service gateway. Required.
         :type service_gateway_name: str
         :param parameters: Parameters supplied to update service gateway tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -82616,7 +82931,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServiceGateway:
         """Updates a service gateway tags.
@@ -82626,9 +82941,10 @@ class ServiceGatewaysOperations:
         :type resource_group_name: str
         :param service_gateway_name: The name of the service gateway. Required.
         :type service_gateway_name: str
-        :param parameters: Parameters supplied to update service gateway tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update service gateway tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ServiceGateway. The ServiceGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ServiceGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82992,7 +83308,11 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.ServiceGatewayUpdateAddressLocationsRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ServiceGatewayUpdateAddressLocationsRequest,
+            _types.ServiceGatewayUpdateAddressLocationsRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -83109,7 +83429,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceGatewayUpdateAddressLocationsRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -83135,7 +83455,7 @@ class ServiceGatewaysOperations:
         :type service_gateway_name: str
         :param parameters: Parameters supplied to the create or updates address locations in service
          gateway operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ServiceGatewayUpdateAddressLocationsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -83189,7 +83509,11 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.ServiceGatewayUpdateAddressLocationsRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ServiceGatewayUpdateAddressLocationsRequest,
+            _types.ServiceGatewayUpdateAddressLocationsRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates or updates address locations within the service gateway.
@@ -83212,10 +83536,10 @@ class ServiceGatewaysOperations:
         :param service_gateway_name: The name of the service gateway. Required.
         :type service_gateway_name: str
         :param parameters: Parameters supplied to the create or updates address locations in service
-         gateway operation. Is one of the following types: ServiceGatewayUpdateAddressLocationsRequest,
-         JSON, IO[bytes] Required.
+         gateway operation. Is either a ServiceGatewayUpdateAddressLocationsRequest type or a IO[bytes]
+         type. Required.
         :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateAddressLocationsRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ServiceGatewayUpdateAddressLocationsRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -83273,7 +83597,9 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.ServiceGatewayUpdateServicesRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ServiceGatewayUpdateServicesRequest, _types.ServiceGatewayUpdateServicesRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -83382,7 +83708,7 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceGatewayUpdateServicesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -83400,7 +83726,7 @@ class ServiceGatewaysOperations:
         :type service_gateway_name: str
         :param parameters: Parameters supplied to the create or updates services in service gateway
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ServiceGatewayUpdateServicesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -83446,7 +83772,9 @@ class ServiceGatewaysOperations:
         self,
         resource_group_name: str,
         service_gateway_name: str,
-        parameters: Union[_models.ServiceGatewayUpdateServicesRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ServiceGatewayUpdateServicesRequest, _types.ServiceGatewayUpdateServicesRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates, updates, or deletes services within the service gateway.
@@ -83461,10 +83789,9 @@ class ServiceGatewaysOperations:
         :param service_gateway_name: The name of the service gateway. Required.
         :type service_gateway_name: str
         :param parameters: Parameters supplied to the create or updates services in service gateway
-         operation. Is one of the following types: ServiceGatewayUpdateServicesRequest, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateServicesRequest or JSON or
-         IO[bytes]
+         operation. Is either a ServiceGatewayUpdateServicesRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateServicesRequest or
+         ~azure.mgmt.network.types.ServiceGatewayUpdateServicesRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -83822,7 +84149,7 @@ class InterconnectGroupsOperations:
         self,
         resource_group_name: str,
         interconnect_group_name: str,
-        parameters: JSON,
+        parameters: _types.InterconnectGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -83836,7 +84163,7 @@ class InterconnectGroupsOperations:
         :type interconnect_group_name: str
         :param parameters: Parameters supplied to the create or update interconnect group operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.InterconnectGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -83878,7 +84205,7 @@ class InterconnectGroupsOperations:
         self,
         resource_group_name: str,
         interconnect_group_name: str,
-        parameters: Union[_models.InterconnectGroup, JSON, IO[bytes]],
+        parameters: Union[_models.InterconnectGroup, _types.InterconnectGroup, IO[bytes]],
         **kwargs: Any
     ) -> _models.InterconnectGroup:
         """Creates or updates an interconnect group.
@@ -83889,8 +84216,9 @@ class InterconnectGroupsOperations:
         :param interconnect_group_name: The name of the interconnect group. Required.
         :type interconnect_group_name: str
         :param parameters: Parameters supplied to the create or update interconnect group operation. Is
-         one of the following types: InterconnectGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.InterconnectGroup or JSON or IO[bytes]
+         either a InterconnectGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.InterconnectGroup or
+         ~azure.mgmt.network.types.InterconnectGroup or IO[bytes]
         :return: InterconnectGroup. The InterconnectGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.InterconnectGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -83995,7 +84323,7 @@ class InterconnectGroupsOperations:
         self,
         resource_group_name: str,
         interconnect_group_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -84008,7 +84336,7 @@ class InterconnectGroupsOperations:
         :param interconnect_group_name: The name of the interconnect group. Required.
         :type interconnect_group_name: str
         :param parameters: Parameters supplied to update interconnect group tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -84049,7 +84377,7 @@ class InterconnectGroupsOperations:
         self,
         resource_group_name: str,
         interconnect_group_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.InterconnectGroup:
         """Updates interconnect group tags.
@@ -84059,9 +84387,10 @@ class InterconnectGroupsOperations:
         :type resource_group_name: str
         :param interconnect_group_name: The name of the interconnect group. Required.
         :type interconnect_group_name: str
-        :param parameters: Parameters supplied to update interconnect group tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update interconnect group tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: InterconnectGroup. The InterconnectGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.InterconnectGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -85423,7 +85752,7 @@ class VipSwapOperations:
         self,
         group_name: str,
         resource_name: str,
-        parameters: Union[_models.SwapResource, JSON, IO[bytes]],
+        parameters: Union[_models.SwapResource, _types.SwapResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -85529,7 +85858,7 @@ class VipSwapOperations:
         self,
         group_name: str,
         resource_name: str,
-        parameters: JSON,
+        parameters: _types.SwapResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -85542,7 +85871,7 @@ class VipSwapOperations:
         :type resource_name: str
         :param parameters: SwapResource object where slot type should be the target slot after vip swap
          for the specified cloud service. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.SwapResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85583,7 +85912,7 @@ class VipSwapOperations:
         self,
         group_name: str,
         resource_name: str,
-        parameters: Union[_models.SwapResource, JSON, IO[bytes]],
+        parameters: Union[_models.SwapResource, _types.SwapResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Performs vip swap operation on swappable cloud services.
@@ -85593,9 +85922,9 @@ class VipSwapOperations:
         :param resource_name: The name of the cloud service. Required.
         :type resource_name: str
         :param parameters: SwapResource object where slot type should be the target slot after vip swap
-         for the specified cloud service. Is one of the following types: SwapResource, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.SwapResource or JSON or IO[bytes]
+         for the specified cloud service. Is either a SwapResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.SwapResource or
+         ~azure.mgmt.network.types.SwapResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -85820,7 +86149,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        parameters: Union[_models.CustomIpPrefix, JSON, IO[bytes]],
+        parameters: Union[_models.CustomIpPrefix, _types.CustomIpPrefix, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -85926,7 +86255,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        parameters: JSON,
+        parameters: _types.CustomIpPrefix,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -85940,7 +86269,7 @@ class CustomIPPrefixesOperations:
         :type custom_ip_prefix_name: str
         :param parameters: Parameters supplied to the create or update custom IP prefix operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.CustomIpPrefix
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85984,7 +86313,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        parameters: Union[_models.CustomIpPrefix, JSON, IO[bytes]],
+        parameters: Union[_models.CustomIpPrefix, _types.CustomIpPrefix, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CustomIpPrefix]:
         """Creates or updates a custom IP prefix.
@@ -85995,8 +86324,9 @@ class CustomIPPrefixesOperations:
         :param custom_ip_prefix_name: The name of the custom IP prefix. Required.
         :type custom_ip_prefix_name: str
         :param parameters: Parameters supplied to the create or update custom IP prefix operation. Is
-         one of the following types: CustomIpPrefix, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.CustomIpPrefix or JSON or IO[bytes]
+         either a CustomIpPrefix type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.CustomIpPrefix or
+         ~azure.mgmt.network.types.CustomIpPrefix or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CustomIpPrefix. The CustomIpPrefix is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.CustomIpPrefix]
@@ -86088,7 +86418,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -86101,7 +86431,7 @@ class CustomIPPrefixesOperations:
         :param custom_ip_prefix_name: The name of the custom IP prefix. Required.
         :type custom_ip_prefix_name: str
         :param parameters: Parameters supplied to update custom IP prefix tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -86142,7 +86472,7 @@ class CustomIPPrefixesOperations:
         self,
         resource_group_name: str,
         custom_ip_prefix_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.CustomIpPrefix:
         """Updates custom IP prefix tags.
@@ -86152,9 +86482,10 @@ class CustomIPPrefixesOperations:
         :type resource_group_name: str
         :param custom_ip_prefix_name: The name of the custom IP prefix. Required.
         :type custom_ip_prefix_name: str
-        :param parameters: Parameters supplied to update custom IP prefix tags. Is one of the following
-         types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update custom IP prefix tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: CustomIpPrefix. The CustomIpPrefix is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.CustomIpPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -86609,7 +86940,7 @@ class DscpConfigurationOperations:
         self,
         resource_group_name: str,
         dscp_configuration_name: str,
-        parameters: Union[_models.DscpConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.DscpConfiguration, _types.DscpConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -86715,7 +87046,7 @@ class DscpConfigurationOperations:
         self,
         resource_group_name: str,
         dscp_configuration_name: str,
-        parameters: JSON,
+        parameters: _types.DscpConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -86729,7 +87060,7 @@ class DscpConfigurationOperations:
         :type dscp_configuration_name: str
         :param parameters: Parameters supplied to the create or update DscpConfiguration operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.DscpConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -86773,7 +87104,7 @@ class DscpConfigurationOperations:
         self,
         resource_group_name: str,
         dscp_configuration_name: str,
-        parameters: Union[_models.DscpConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.DscpConfiguration, _types.DscpConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DscpConfiguration]:
         """Creates or updates a DSCP Configuration.
@@ -86784,8 +87115,9 @@ class DscpConfigurationOperations:
         :param dscp_configuration_name: The name of the resource. Required.
         :type dscp_configuration_name: str
         :param parameters: Parameters supplied to the create or update DscpConfiguration operation. Is
-         one of the following types: DscpConfiguration, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.DscpConfiguration or JSON or IO[bytes]
+         either a DscpConfiguration type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.DscpConfiguration or
+         ~azure.mgmt.network.types.DscpConfiguration or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DscpConfiguration. The DscpConfiguration is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DscpConfiguration]
@@ -87450,7 +87782,9 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         cross_connection_name: str,
         peering_name: str,
-        peering_parameters: Union[_models.ExpressRouteCrossConnectionPeering, JSON, IO[bytes]],
+        peering_parameters: Union[
+            _models.ExpressRouteCrossConnectionPeering, _types.ExpressRouteCrossConnectionPeering, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -87564,7 +87898,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         cross_connection_name: str,
         peering_name: str,
-        peering_parameters: JSON,
+        peering_parameters: _types.ExpressRouteCrossConnectionPeering,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -87580,7 +87914,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update
          ExpressRouteCrossConnection peering operation. Required.
-        :type peering_parameters: JSON
+        :type peering_parameters: ~azure.mgmt.network.types.ExpressRouteCrossConnectionPeering
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -87630,7 +87964,9 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         cross_connection_name: str,
         peering_name: str,
-        peering_parameters: Union[_models.ExpressRouteCrossConnectionPeering, JSON, IO[bytes]],
+        peering_parameters: Union[
+            _models.ExpressRouteCrossConnectionPeering, _types.ExpressRouteCrossConnectionPeering, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteCrossConnectionPeering]:
         """Creates or updates a peering in the specified ExpressRouteCrossConnection.
@@ -87643,10 +87979,10 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update
-         ExpressRouteCrossConnection peering operation. Is one of the following types:
-         ExpressRouteCrossConnectionPeering, JSON, IO[bytes] Required.
-        :type peering_parameters: ~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering or JSON
-         or IO[bytes]
+         ExpressRouteCrossConnection peering operation. Is either a ExpressRouteCrossConnectionPeering
+         type or a IO[bytes] type. Required.
+        :type peering_parameters: ~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering or
+         ~azure.mgmt.network.types.ExpressRouteCrossConnectionPeering or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteCrossConnectionPeering. The
          ExpressRouteCrossConnectionPeering is compatible with MutableMapping
         :rtype:
@@ -87942,7 +88278,7 @@ class FirewallPolicyIdpsSignaturesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.IDPSQueryObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -87956,7 +88292,7 @@ class FirewallPolicyIdpsSignaturesOperations:
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.IDPSQueryObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -87998,7 +88334,7 @@ class FirewallPolicyIdpsSignaturesOperations:
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.IDPSQueryObject, JSON, IO[bytes]],
+        parameters: Union[_models.IDPSQueryObject, _types.IDPSQueryObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.QueryResults:
         """Retrieves the current status of IDPS signatures for the relevant policy. Maximal amount of
@@ -88009,8 +88345,9 @@ class FirewallPolicyIdpsSignaturesOperations:
         :type resource_group_name: str
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
-        :param parameters: Is one of the following types: IDPSQueryObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.IDPSQueryObject or JSON or IO[bytes]
+        :param parameters: Is either a IDPSQueryObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.IDPSQueryObject or
+         ~azure.mgmt.network.types.IDPSQueryObject or IO[bytes]
         :return: QueryResults. The QueryResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.QueryResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -88134,7 +88471,7 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:  # pylint: disable=nam
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: JSON,
+        parameters: _types.SignatureOverridesFilterValuesQuery,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -88147,7 +88484,7 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:  # pylint: disable=nam
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.SignatureOverridesFilterValuesQuery
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -88190,7 +88527,9 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:  # pylint: disable=nam
         self,
         resource_group_name: str,
         firewall_policy_name: str,
-        parameters: Union[_models.SignatureOverridesFilterValuesQuery, JSON, IO[bytes]],
+        parameters: Union[
+            _models.SignatureOverridesFilterValuesQuery, _types.SignatureOverridesFilterValuesQuery, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SignatureOverridesFilterValuesResponse:
         """Retrieves the current filter values for the signatures overrides.
@@ -88200,10 +88539,10 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:  # pylint: disable=nam
         :type resource_group_name: str
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
-        :param parameters: Is one of the following types: SignatureOverridesFilterValuesQuery, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.SignatureOverridesFilterValuesQuery or JSON or
-         IO[bytes]
+        :param parameters: Is either a SignatureOverridesFilterValuesQuery type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.network.models.SignatureOverridesFilterValuesQuery or
+         ~azure.mgmt.network.types.SignatureOverridesFilterValuesQuery or IO[bytes]
         :return: SignatureOverridesFilterValuesResponse. The SignatureOverridesFilterValuesResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.SignatureOverridesFilterValuesResponse
@@ -88442,7 +88781,7 @@ class NetworkManagerCommitsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.NetworkManagerCommit, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkManagerCommit, _types.NetworkManagerCommit, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -88547,7 +88886,7 @@ class NetworkManagerCommitsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkManagerCommit,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -88560,7 +88899,7 @@ class NetworkManagerCommitsOperations:
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which Managed Network commit is. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkManagerCommit
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -88603,7 +88942,7 @@ class NetworkManagerCommitsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.NetworkManagerCommit, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkManagerCommit, _types.NetworkManagerCommit, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkManagerCommit]:
         """Post a Network Manager Commit.
@@ -88613,9 +88952,10 @@ class NetworkManagerCommitsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Parameters supplied to specify which Managed Network commit is. Is one of
-         the following types: NetworkManagerCommit, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkManagerCommit or JSON or IO[bytes]
+        :param parameters: Parameters supplied to specify which Managed Network commit is. Is either a
+         NetworkManagerCommit type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerCommit or
+         ~azure.mgmt.network.types.NetworkManagerCommit or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkManagerCommit. The
          NetworkManagerCommit is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkManagerCommit]
@@ -88731,7 +89071,7 @@ class NetworkManagerDeploymentStatusOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkManagerDeploymentStatusParameter,
         *,
         top: Optional[int] = None,
         content_type: str = "application/json",
@@ -88746,7 +89086,7 @@ class NetworkManagerDeploymentStatusOperations:
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which Managed Network deployment status is.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkManagerDeploymentStatusParameter
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -88797,7 +89137,9 @@ class NetworkManagerDeploymentStatusOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.NetworkManagerDeploymentStatusParameter, JSON, IO[bytes]],
+        parameters: Union[
+            _models.NetworkManagerDeploymentStatusParameter, _types.NetworkManagerDeploymentStatusParameter, IO[bytes]
+        ],
         *,
         top: Optional[int] = None,
         **kwargs: Any
@@ -88810,10 +89152,9 @@ class NetworkManagerDeploymentStatusOperations:
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which Managed Network deployment status is.
-         Is one of the following types: NetworkManagerDeploymentStatusParameter, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkManagerDeploymentStatusParameter or JSON or
-         IO[bytes]
+         Is either a NetworkManagerDeploymentStatusParameter type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerDeploymentStatusParameter or
+         ~azure.mgmt.network.types.NetworkManagerDeploymentStatusParameter or IO[bytes]
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -89097,7 +89438,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         resource_group_name: str,
         load_balancer_name: str,
         backend_address_pool_name: str,
-        parameters: Union[_models.BackendAddressPool, JSON, IO[bytes]],
+        parameters: Union[_models.BackendAddressPool, _types.BackendAddressPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -89210,7 +89551,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         resource_group_name: str,
         load_balancer_name: str,
         backend_address_pool_name: str,
-        parameters: JSON,
+        parameters: _types.BackendAddressPool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -89226,7 +89567,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         :type backend_address_pool_name: str
         :param parameters: Parameters supplied to the create or update load balancer backend address
          pool operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.BackendAddressPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -89274,7 +89615,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         resource_group_name: str,
         load_balancer_name: str,
         backend_address_pool_name: str,
-        parameters: Union[_models.BackendAddressPool, JSON, IO[bytes]],
+        parameters: Union[_models.BackendAddressPool, _types.BackendAddressPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackendAddressPool]:
         """Creates or updates a load balancer backend address pool.
@@ -89287,8 +89628,9 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         :param backend_address_pool_name: The name of the backend address pool. Required.
         :type backend_address_pool_name: str
         :param parameters: Parameters supplied to the create or update load balancer backend address
-         pool operation. Is one of the following types: BackendAddressPool, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.BackendAddressPool or JSON or IO[bytes]
+         pool operation. Is either a BackendAddressPool type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.BackendAddressPool or
+         ~azure.mgmt.network.types.BackendAddressPool or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackendAddressPool. The BackendAddressPool
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BackendAddressPool]
@@ -90545,7 +90887,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
     async def create_or_update(
         self,
         network_manager_connection_name: str,
-        parameters: JSON,
+        parameters: _types.NetworkManagerConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -90555,7 +90897,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
         :param network_manager_connection_name: Name for the network manager connection. Required.
         :type network_manager_connection_name: str
         :param parameters: Network manager connection to be created/updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NetworkManagerConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -90593,16 +90935,17 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
     async def create_or_update(
         self,
         network_manager_connection_name: str,
-        parameters: Union[_models.NetworkManagerConnection, JSON, IO[bytes]],
+        parameters: Union[_models.NetworkManagerConnection, _types.NetworkManagerConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.NetworkManagerConnection:
         """Create a network manager connection on this subscription.
 
         :param network_manager_connection_name: Name for the network manager connection. Required.
         :type network_manager_connection_name: str
-        :param parameters: Network manager connection to be created/updated. Is one of the following
-         types: NetworkManagerConnection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NetworkManagerConnection or JSON or IO[bytes]
+        :param parameters: Network manager connection to be created/updated. Is either a
+         NetworkManagerConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerConnection or
+         ~azure.mgmt.network.types.NetworkManagerConnection or IO[bytes]
         :return: NetworkManagerConnection. The NetworkManagerConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.network.models.NetworkManagerConnection
@@ -90974,7 +91317,7 @@ class AdminRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
-        admin_rule: JSON,
+        admin_rule: _types.BaseAdminRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -90994,7 +91337,7 @@ class AdminRulesOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param admin_rule: The admin rule to create or update. Required.
-        :type admin_rule: JSON
+        :type admin_rule: ~azure.mgmt.network.types.BaseAdminRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -91048,7 +91391,7 @@ class AdminRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
-        admin_rule: Union[_models.BaseAdminRule, JSON, IO[bytes]],
+        admin_rule: Union[_models.BaseAdminRule, _types.BaseAdminRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.BaseAdminRule:
         """Creates or updates an admin rule.
@@ -91065,9 +91408,10 @@ class AdminRulesOperations:
         :type rule_collection_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param admin_rule: The admin rule to create or update. Is one of the following types:
-         BaseAdminRule, JSON, IO[bytes] Required.
-        :type admin_rule: ~azure.mgmt.network.models.BaseAdminRule or JSON or IO[bytes]
+        :param admin_rule: The admin rule to create or update. Is either a BaseAdminRule type or a
+         IO[bytes] type. Required.
+        :type admin_rule: ~azure.mgmt.network.models.BaseAdminRule or
+         ~azure.mgmt.network.types.BaseAdminRule or IO[bytes]
         :return: BaseAdminRule. The BaseAdminRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.BaseAdminRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -91546,7 +91890,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         network_security_perimeter_name: str,
         profile_name: str,
-        parameters: JSON,
+        parameters: _types.NspProfile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -91562,7 +91906,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         :type profile_name: str
         :param parameters: Parameters that hold the NspProfile resource to be created/updated.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NspProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -91608,7 +91952,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         network_security_perimeter_name: str,
         profile_name: str,
-        parameters: Union[_models.NspProfile, JSON, IO[bytes]],
+        parameters: Union[_models.NspProfile, _types.NspProfile, IO[bytes]],
         **kwargs: Any
     ) -> _models.NspProfile:
         """Creates or updates a network profile.
@@ -91620,9 +91964,10 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         :type network_security_perimeter_name: str
         :param profile_name: The name of the NSP profile. Required.
         :type profile_name: str
-        :param parameters: Parameters that hold the NspProfile resource to be created/updated. Is one
-         of the following types: NspProfile, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NspProfile or JSON or IO[bytes]
+        :param parameters: Parameters that hold the NspProfile resource to be created/updated. Is
+         either a NspProfile type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NspProfile or ~azure.mgmt.network.types.NspProfile
+         or IO[bytes]
         :return: NspProfile. The NspProfile is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NspProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -92007,7 +92352,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         network_security_perimeter_name: str,
         profile_name: str,
         access_rule_name: str,
-        parameters: JSON,
+        parameters: _types.NspAccessRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -92025,7 +92370,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         :type access_rule_name: str
         :param parameters: Parameters that hold the NspAccessRule resource to be created/updated.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NspAccessRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -92075,7 +92420,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         network_security_perimeter_name: str,
         profile_name: str,
         access_rule_name: str,
-        parameters: Union[_models.NspAccessRule, JSON, IO[bytes]],
+        parameters: Union[_models.NspAccessRule, _types.NspAccessRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.NspAccessRule:
         """Creates or updates a network access rule.
@@ -92090,8 +92435,9 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         :param access_rule_name: The name of the NSP access rule. Required.
         :type access_rule_name: str
         :param parameters: Parameters that hold the NspAccessRule resource to be created/updated. Is
-         one of the following types: NspAccessRule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NspAccessRule or JSON or IO[bytes]
+         either a NspAccessRule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NspAccessRule or
+         ~azure.mgmt.network.types.NspAccessRule or IO[bytes]
         :return: NspAccessRule. The NspAccessRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NspAccessRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -92537,7 +92883,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         resource_group_name: str,
         network_security_perimeter_name: str,
         association_name: str,
-        parameters: Union[_models.NspAssociation, JSON, IO[bytes]],
+        parameters: Union[_models.NspAssociation, _types.NspAssociation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -92653,7 +92999,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         resource_group_name: str,
         network_security_perimeter_name: str,
         association_name: str,
-        parameters: JSON,
+        parameters: _types.NspAssociation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -92669,7 +93015,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         :type association_name: str
         :param parameters: Parameters that hold the NspAssociation resource to be created/updated.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NspAssociation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -92717,7 +93063,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         resource_group_name: str,
         network_security_perimeter_name: str,
         association_name: str,
-        parameters: Union[_models.NspAssociation, JSON, IO[bytes]],
+        parameters: Union[_models.NspAssociation, _types.NspAssociation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NspAssociation]:
         """Creates or updates a NSP resource association.
@@ -92730,8 +93076,9 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         :param association_name: The name of the NSP association. Required.
         :type association_name: str
         :param parameters: Parameters that hold the NspAssociation resource to be created/updated. Is
-         one of the following types: NspAssociation, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NspAssociation or JSON or IO[bytes]
+         either a NspAssociation type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NspAssociation or
+         ~azure.mgmt.network.types.NspAssociation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NspAssociation. The NspAssociation is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NspAssociation]
@@ -93244,7 +93591,7 @@ class NetworkSecurityPerimeterLinksOperations:
         resource_group_name: str,
         network_security_perimeter_name: str,
         link_name: str,
-        parameters: JSON,
+        parameters: _types.NspLink,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -93259,7 +93606,7 @@ class NetworkSecurityPerimeterLinksOperations:
         :param link_name: The name of the NSP link. Required.
         :type link_name: str
         :param parameters: Parameters that hold the NspLink resource to be created/updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NspLink
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -93304,7 +93651,7 @@ class NetworkSecurityPerimeterLinksOperations:
         resource_group_name: str,
         network_security_perimeter_name: str,
         link_name: str,
-        parameters: Union[_models.NspLink, JSON, IO[bytes]],
+        parameters: Union[_models.NspLink, _types.NspLink, IO[bytes]],
         **kwargs: Any
     ) -> _models.NspLink:
         """Creates or updates NSP link resource.
@@ -93316,9 +93663,10 @@ class NetworkSecurityPerimeterLinksOperations:
         :type network_security_perimeter_name: str
         :param link_name: The name of the NSP link. Required.
         :type link_name: str
-        :param parameters: Parameters that hold the NspLink resource to be created/updated. Is one of
-         the following types: NspLink, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NspLink or JSON or IO[bytes]
+        :param parameters: Parameters that hold the NspLink resource to be created/updated. Is either a
+         NspLink type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NspLink or ~azure.mgmt.network.types.NspLink or
+         IO[bytes]
         :return: NspLink. The NspLink is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NspLink
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -94087,7 +94435,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         resource_group_name: str,
         network_security_perimeter_name: str,
         logging_configuration_name: str,
-        parameters: JSON,
+        parameters: _types.NspLoggingConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -94104,7 +94452,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         :type logging_configuration_name: str
         :param parameters: Parameters that hold the NspLoggingConfiguration to be created/updated.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.NspLoggingConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -94151,7 +94499,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         resource_group_name: str,
         network_security_perimeter_name: str,
         logging_configuration_name: str,
-        parameters: Union[_models.NspLoggingConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.NspLoggingConfiguration, _types.NspLoggingConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> _models.NspLoggingConfiguration:
         """Creates or updates NSP logging configuration.
@@ -94165,8 +94513,9 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
          'instance' as name. Required.
         :type logging_configuration_name: str
         :param parameters: Parameters that hold the NspLoggingConfiguration to be created/updated. Is
-         one of the following types: NspLoggingConfiguration, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.NspLoggingConfiguration or JSON or IO[bytes]
+         either a NspLoggingConfiguration type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.NspLoggingConfiguration or
+         ~azure.mgmt.network.types.NspLoggingConfiguration or IO[bytes]
         :return: NspLoggingConfiguration. The NspLoggingConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.NspLoggingConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -94665,7 +95014,7 @@ class InboundSecurityRuleOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         rule_collection_name: str,
-        parameters: Union[_models.InboundSecurityRule, JSON, IO[bytes]],
+        parameters: Union[_models.InboundSecurityRule, _types.InboundSecurityRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -94779,7 +95128,7 @@ class InboundSecurityRuleOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         rule_collection_name: str,
-        parameters: JSON,
+        parameters: _types.InboundSecurityRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -94796,7 +95145,7 @@ class InboundSecurityRuleOperations:
         :type rule_collection_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance
          Inbound Security Rules operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.InboundSecurityRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -94845,7 +95194,7 @@ class InboundSecurityRuleOperations:
         resource_group_name: str,
         network_virtual_appliance_name: str,
         rule_collection_name: str,
-        parameters: Union[_models.InboundSecurityRule, JSON, IO[bytes]],
+        parameters: Union[_models.InboundSecurityRule, _types.InboundSecurityRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InboundSecurityRule]:
         """Creates or updates the specified Network Virtual Appliance Inbound Security Rules.
@@ -94859,9 +95208,10 @@ class InboundSecurityRuleOperations:
          This name can be used to access the resource. Required.
         :type rule_collection_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance
-         Inbound Security Rules operation. Is one of the following types: InboundSecurityRule, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.InboundSecurityRule or JSON or IO[bytes]
+         Inbound Security Rules operation. Is either a InboundSecurityRule type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.network.models.InboundSecurityRule or
+         ~azure.mgmt.network.types.InboundSecurityRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InboundSecurityRule. The
          InboundSecurityRule is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.InboundSecurityRule]
@@ -94945,7 +95295,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        parameters: Union[_models.PacketCapture, JSON, IO[bytes]],
+        parameters: Union[_models.PacketCapture, _types.PacketCapture, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -95056,7 +95406,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        parameters: JSON,
+        parameters: _types.PacketCapture,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -95071,7 +95421,7 @@ class PacketCapturesOperations:
         :param packet_capture_name: The name of the packet capture session. Required.
         :type packet_capture_name: str
         :param parameters: Parameters that define the create packet capture operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PacketCapture
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -95118,7 +95468,7 @@ class PacketCapturesOperations:
         resource_group_name: str,
         network_watcher_name: str,
         packet_capture_name: str,
-        parameters: Union[_models.PacketCapture, JSON, IO[bytes]],
+        parameters: Union[_models.PacketCapture, _types.PacketCapture, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PacketCaptureResult]:
         """Create and start a packet capture on the specified VM.
@@ -95130,9 +95480,10 @@ class PacketCapturesOperations:
         :type network_watcher_name: str
         :param packet_capture_name: The name of the packet capture session. Required.
         :type packet_capture_name: str
-        :param parameters: Parameters that define the create packet capture operation. Is one of the
-         following types: PacketCapture, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PacketCapture or JSON or IO[bytes]
+        :param parameters: Parameters that define the create packet capture operation. Is either a
+         PacketCapture type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PacketCapture or
+         ~azure.mgmt.network.types.PacketCapture or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PacketCaptureResult. The
          PacketCaptureResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PacketCaptureResult]
@@ -95851,7 +96202,7 @@ class ConnectionMonitorsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         connection_monitor_name: str,
-        parameters: Union[_models.ConnectionMonitor, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionMonitor, _types.ConnectionMonitor, IO[bytes]],
         *,
         migrate: Optional[str] = None,
         **kwargs: Any
@@ -95971,7 +96322,7 @@ class ConnectionMonitorsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         connection_monitor_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectionMonitor,
         *,
         migrate: Optional[str] = None,
         content_type: str = "application/json",
@@ -95988,7 +96339,7 @@ class ConnectionMonitorsOperations:
         :type connection_monitor_name: str
         :param parameters: Parameters that define the operation to create a connection monitor.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ConnectionMonitor
         :keyword migrate: Value indicating whether connection monitor V1 should be migrated to V2
          format. Default value is None.
         :paramtype migrate: str
@@ -96043,7 +96394,7 @@ class ConnectionMonitorsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         connection_monitor_name: str,
-        parameters: Union[_models.ConnectionMonitor, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionMonitor, _types.ConnectionMonitor, IO[bytes]],
         *,
         migrate: Optional[str] = None,
         **kwargs: Any
@@ -96057,9 +96408,10 @@ class ConnectionMonitorsOperations:
         :type network_watcher_name: str
         :param connection_monitor_name: The name of the connection monitor. Required.
         :type connection_monitor_name: str
-        :param parameters: Parameters that define the operation to create a connection monitor. Is one
-         of the following types: ConnectionMonitor, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ConnectionMonitor or JSON or IO[bytes]
+        :param parameters: Parameters that define the operation to create a connection monitor. Is
+         either a ConnectionMonitor type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ConnectionMonitor or
+         ~azure.mgmt.network.types.ConnectionMonitor or IO[bytes]
         :keyword migrate: Value indicating whether connection monitor V1 should be migrated to V2
          format. Default value is None.
         :paramtype migrate: str
@@ -96160,7 +96512,7 @@ class ConnectionMonitorsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         connection_monitor_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -96175,7 +96527,7 @@ class ConnectionMonitorsOperations:
         :param connection_monitor_name: The name of the connection monitor. Required.
         :type connection_monitor_name: str
         :param parameters: Parameters supplied to update connection monitor tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -96220,7 +96572,7 @@ class ConnectionMonitorsOperations:
         resource_group_name: str,
         network_watcher_name: str,
         connection_monitor_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConnectionMonitorResult:
         """Update tags of the specified connection monitor.
@@ -96232,9 +96584,10 @@ class ConnectionMonitorsOperations:
         :type network_watcher_name: str
         :param connection_monitor_name: The name of the connection monitor. Required.
         :type connection_monitor_name: str
-        :param parameters: Parameters supplied to update connection monitor tags. Is one of the
-         following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.TagsObject or JSON or IO[bytes]
+        :param parameters: Parameters supplied to update connection monitor tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or ~azure.mgmt.network.types.TagsObject
+         or IO[bytes]
         :return: ConnectionMonitorResult. The ConnectionMonitorResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.network.models.ConnectionMonitorResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -96878,7 +97231,7 @@ class PrivateDnsZoneGroupsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
-        parameters: Union[_models.PrivateDnsZoneGroup, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateDnsZoneGroup, _types.PrivateDnsZoneGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -96991,7 +97344,7 @@ class PrivateDnsZoneGroupsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateDnsZoneGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -97007,7 +97360,7 @@ class PrivateDnsZoneGroupsOperations:
         :type private_dns_zone_group_name: str
         :param parameters: Parameters supplied to the create or update private dns zone group
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.PrivateDnsZoneGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -97055,7 +97408,7 @@ class PrivateDnsZoneGroupsOperations:
         resource_group_name: str,
         private_endpoint_name: str,
         private_dns_zone_group_name: str,
-        parameters: Union[_models.PrivateDnsZoneGroup, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateDnsZoneGroup, _types.PrivateDnsZoneGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateDnsZoneGroup]:
         """Creates or updates a private dns zone group in the specified private endpoint.
@@ -97068,8 +97421,9 @@ class PrivateDnsZoneGroupsOperations:
         :param private_dns_zone_group_name: The name of the private endpoint. Required.
         :type private_dns_zone_group_name: str
         :param parameters: Parameters supplied to the create or update private dns zone group
-         operation. Is one of the following types: PrivateDnsZoneGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.PrivateDnsZoneGroup or JSON or IO[bytes]
+         operation. Is either a PrivateDnsZoneGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.PrivateDnsZoneGroup or
+         ~azure.mgmt.network.types.PrivateDnsZoneGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateDnsZoneGroup. The
          PrivateDnsZoneGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateDnsZoneGroup]
@@ -97448,7 +97802,7 @@ class RouteFilterRulesOperations:
         resource_group_name: str,
         route_filter_name: str,
         rule_name: str,
-        route_filter_rule_parameters: Union[_models.RouteFilterRule, JSON, IO[bytes]],
+        route_filter_rule_parameters: Union[_models.RouteFilterRule, _types.RouteFilterRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -97561,7 +97915,7 @@ class RouteFilterRulesOperations:
         resource_group_name: str,
         route_filter_name: str,
         rule_name: str,
-        route_filter_rule_parameters: JSON,
+        route_filter_rule_parameters: _types.RouteFilterRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -97577,7 +97931,7 @@ class RouteFilterRulesOperations:
         :type rule_name: str
         :param route_filter_rule_parameters: Parameters supplied to the create or update route filter
          rule operation. Required.
-        :type route_filter_rule_parameters: JSON
+        :type route_filter_rule_parameters: ~azure.mgmt.network.types.RouteFilterRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -97625,7 +97979,7 @@ class RouteFilterRulesOperations:
         resource_group_name: str,
         route_filter_name: str,
         rule_name: str,
-        route_filter_rule_parameters: Union[_models.RouteFilterRule, JSON, IO[bytes]],
+        route_filter_rule_parameters: Union[_models.RouteFilterRule, _types.RouteFilterRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RouteFilterRule]:
         """Creates or updates a route in the specified route filter.
@@ -97638,9 +97992,9 @@ class RouteFilterRulesOperations:
         :param rule_name: The name of the route filter rule. Required.
         :type rule_name: str
         :param route_filter_rule_parameters: Parameters supplied to the create or update route filter
-         rule operation. Is one of the following types: RouteFilterRule, JSON, IO[bytes] Required.
-        :type route_filter_rule_parameters: ~azure.mgmt.network.models.RouteFilterRule or JSON or
-         IO[bytes]
+         rule operation. Is either a RouteFilterRule type or a IO[bytes] type. Required.
+        :type route_filter_rule_parameters: ~azure.mgmt.network.models.RouteFilterRule or
+         ~azure.mgmt.network.types.RouteFilterRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RouteFilterRule. The RouteFilterRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteFilterRule]
@@ -98002,7 +98356,7 @@ class VpnSitesConfigurationOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        request: Union[_models.GetVpnSitesConfigurationRequest, JSON, IO[bytes]],
+        request: Union[_models.GetVpnSitesConfigurationRequest, _types.GetVpnSitesConfigurationRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -98106,7 +98460,7 @@ class VpnSitesConfigurationOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        request: JSON,
+        request: _types.GetVpnSitesConfigurationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -98119,7 +98473,7 @@ class VpnSitesConfigurationOperations:
         :param virtual_wan_name: The name of the VirtualWAN. Required.
         :type virtual_wan_name: str
         :param request: Parameters supplied to download vpn-sites configuration. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.network.types.GetVpnSitesConfigurationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -98160,7 +98514,7 @@ class VpnSitesConfigurationOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        request: Union[_models.GetVpnSitesConfigurationRequest, JSON, IO[bytes]],
+        request: Union[_models.GetVpnSitesConfigurationRequest, _types.GetVpnSitesConfigurationRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Gives the sas-url to download the configurations for vpn-sites in a resource group.
@@ -98170,9 +98524,10 @@ class VpnSitesConfigurationOperations:
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN. Required.
         :type virtual_wan_name: str
-        :param request: Parameters supplied to download vpn-sites configuration. Is one of the
-         following types: GetVpnSitesConfigurationRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.network.models.GetVpnSitesConfigurationRequest or JSON or IO[bytes]
+        :param request: Parameters supplied to download vpn-sites configuration. Is either a
+         GetVpnSitesConfigurationRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.network.models.GetVpnSitesConfigurationRequest or
+         ~azure.mgmt.network.types.GetVpnSitesConfigurationRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -98481,7 +98836,7 @@ class ConfigurationPolicyGroupsOperations:
         vpn_server_configuration_name: str,
         configuration_policy_group_name: str,
         vpn_server_configuration_policy_group_parameters: Union[
-            _models.VpnServerConfigurationPolicyGroup, JSON, IO[bytes]
+            _models.VpnServerConfigurationPolicyGroup, _types.VpnServerConfigurationPolicyGroup, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -98599,7 +98954,7 @@ class ConfigurationPolicyGroupsOperations:
         resource_group_name: str,
         vpn_server_configuration_name: str,
         configuration_policy_group_name: str,
-        vpn_server_configuration_policy_group_parameters: JSON,
+        vpn_server_configuration_policy_group_parameters: _types.VpnServerConfigurationPolicyGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -98617,7 +98972,8 @@ class ConfigurationPolicyGroupsOperations:
         :type configuration_policy_group_name: str
         :param vpn_server_configuration_policy_group_parameters: Parameters supplied to create or
          update a VpnServerConfiguration PolicyGroup. Required.
-        :type vpn_server_configuration_policy_group_parameters: JSON
+        :type vpn_server_configuration_policy_group_parameters:
+         ~azure.mgmt.network.types.VpnServerConfigurationPolicyGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -98670,7 +99026,7 @@ class ConfigurationPolicyGroupsOperations:
         vpn_server_configuration_name: str,
         configuration_policy_group_name: str,
         vpn_server_configuration_policy_group_parameters: Union[
-            _models.VpnServerConfigurationPolicyGroup, JSON, IO[bytes]
+            _models.VpnServerConfigurationPolicyGroup, _types.VpnServerConfigurationPolicyGroup, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnServerConfigurationPolicyGroup]:
@@ -98686,10 +99042,11 @@ class ConfigurationPolicyGroupsOperations:
          resource group. This name can be used to access the resource. Required.
         :type configuration_policy_group_name: str
         :param vpn_server_configuration_policy_group_parameters: Parameters supplied to create or
-         update a VpnServerConfiguration PolicyGroup. Is one of the following types:
-         VpnServerConfigurationPolicyGroup, JSON, IO[bytes] Required.
+         update a VpnServerConfiguration PolicyGroup. Is either a VpnServerConfigurationPolicyGroup type
+         or a IO[bytes] type. Required.
         :type vpn_server_configuration_policy_group_parameters:
-         ~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup or JSON or IO[bytes]
+         ~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup or
+         ~azure.mgmt.network.types.VpnServerConfigurationPolicyGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnServerConfigurationPolicyGroup. The
          VpnServerConfigurationPolicyGroup is compatible with MutableMapping
         :rtype:
@@ -99002,7 +99359,9 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        hub_virtual_network_connection_parameters: Union[_models.HubVirtualNetworkConnection, JSON, IO[bytes]],
+        hub_virtual_network_connection_parameters: Union[
+            _models.HubVirtualNetworkConnection, _types.HubVirtualNetworkConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -99117,7 +99476,7 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        hub_virtual_network_connection_parameters: JSON,
+        hub_virtual_network_connection_parameters: _types.HubVirtualNetworkConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -99133,7 +99492,8 @@ class HubVirtualNetworkConnectionsOperations:
         :type connection_name: str
         :param hub_virtual_network_connection_parameters: Parameters supplied to create or update a hub
          virtual network connection. Required.
-        :type hub_virtual_network_connection_parameters: JSON
+        :type hub_virtual_network_connection_parameters:
+         ~azure.mgmt.network.types.HubVirtualNetworkConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99183,7 +99543,9 @@ class HubVirtualNetworkConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        hub_virtual_network_connection_parameters: Union[_models.HubVirtualNetworkConnection, JSON, IO[bytes]],
+        hub_virtual_network_connection_parameters: Union[
+            _models.HubVirtualNetworkConnection, _types.HubVirtualNetworkConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.HubVirtualNetworkConnection]:
         """Creates a hub virtual network connection if it doesn't exist else updates the existing one.
@@ -99196,10 +99558,11 @@ class HubVirtualNetworkConnectionsOperations:
         :param connection_name: Required.
         :type connection_name: str
         :param hub_virtual_network_connection_parameters: Parameters supplied to create or update a hub
-         virtual network connection. Is one of the following types: HubVirtualNetworkConnection, JSON,
-         IO[bytes] Required.
+         virtual network connection. Is either a HubVirtualNetworkConnection type or a IO[bytes] type.
+         Required.
         :type hub_virtual_network_connection_parameters:
-         ~azure.mgmt.network.models.HubVirtualNetworkConnection or JSON or IO[bytes]
+         ~azure.mgmt.network.models.HubVirtualNetworkConnection or
+         ~azure.mgmt.network.types.HubVirtualNetworkConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns HubVirtualNetworkConnection. The
          HubVirtualNetworkConnection is compatible with MutableMapping
         :rtype:
@@ -99654,7 +100017,9 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        virtual_hub_route_table_v2_parameters: Union[_models.VirtualHubRouteTableV2, JSON, IO[bytes]],
+        virtual_hub_route_table_v2_parameters: Union[
+            _models.VirtualHubRouteTableV2, _types.VirtualHubRouteTableV2, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -99768,7 +100133,7 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        virtual_hub_route_table_v2_parameters: JSON,
+        virtual_hub_route_table_v2_parameters: _types.VirtualHubRouteTableV2,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -99785,7 +100150,7 @@ class VirtualHubRouteTableV2SOperations:
         :type route_table_name: str
         :param virtual_hub_route_table_v2_parameters: Parameters supplied to create or update
          VirtualHubRouteTableV2. Required.
-        :type virtual_hub_route_table_v2_parameters: JSON
+        :type virtual_hub_route_table_v2_parameters: ~azure.mgmt.network.types.VirtualHubRouteTableV2
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99834,7 +100199,9 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        virtual_hub_route_table_v2_parameters: Union[_models.VirtualHubRouteTableV2, JSON, IO[bytes]],
+        virtual_hub_route_table_v2_parameters: Union[
+            _models.VirtualHubRouteTableV2, _types.VirtualHubRouteTableV2, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualHubRouteTableV2]:
         """Creates a VirtualHubRouteTableV2 resource if it doesn't exist else updates the existing
@@ -99848,10 +100215,9 @@ class VirtualHubRouteTableV2SOperations:
         :param route_table_name: The name of the VirtualHubRouteTableV2. Required.
         :type route_table_name: str
         :param virtual_hub_route_table_v2_parameters: Parameters supplied to create or update
-         VirtualHubRouteTableV2. Is one of the following types: VirtualHubRouteTableV2, JSON, IO[bytes]
-         Required.
+         VirtualHubRouteTableV2. Is either a VirtualHubRouteTableV2 type or a IO[bytes] type. Required.
         :type virtual_hub_route_table_v2_parameters: ~azure.mgmt.network.models.VirtualHubRouteTableV2
-         or JSON or IO[bytes]
+         or ~azure.mgmt.network.types.VirtualHubRouteTableV2 or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualHubRouteTableV2. The
          VirtualHubRouteTableV2 is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualHubRouteTableV2]
@@ -100228,7 +100594,7 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        vpn_connection_parameters: Union[_models.VpnConnection, JSON, IO[bytes]],
+        vpn_connection_parameters: Union[_models.VpnConnection, _types.VpnConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -100342,7 +100708,7 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        vpn_connection_parameters: JSON,
+        vpn_connection_parameters: _types.VpnConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -100359,7 +100725,7 @@ class VpnConnectionsOperations:
         :type connection_name: str
         :param vpn_connection_parameters: Parameters supplied to create or Update a VPN Connection.
          Required.
-        :type vpn_connection_parameters: JSON
+        :type vpn_connection_parameters: ~azure.mgmt.network.types.VpnConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -100408,7 +100774,7 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        vpn_connection_parameters: Union[_models.VpnConnection, JSON, IO[bytes]],
+        vpn_connection_parameters: Union[_models.VpnConnection, _types.VpnConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnConnection]:
         """Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the
@@ -100422,8 +100788,9 @@ class VpnConnectionsOperations:
         :param connection_name: The name of the vpn connection. Required.
         :type connection_name: str
         :param vpn_connection_parameters: Parameters supplied to create or Update a VPN Connection. Is
-         one of the following types: VpnConnection, JSON, IO[bytes] Required.
-        :type vpn_connection_parameters: ~azure.mgmt.network.models.VpnConnection or JSON or IO[bytes]
+         either a VpnConnection type or a IO[bytes] type. Required.
+        :type vpn_connection_parameters: ~azure.mgmt.network.models.VpnConnection or
+         ~azure.mgmt.network.types.VpnConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnConnection. The VpnConnection is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnConnection]
@@ -100616,7 +100983,13 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_connection_name: str,
-        parameters: Optional[Union[_models.VpnConnectionPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnConnectionPacketCaptureStartParameters,
+                _types.VpnConnectionPacketCaptureStartParameters,
+                IO[bytes],
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -100730,7 +101103,7 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_connection_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.VpnConnectionPacketCaptureStartParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -100746,7 +101119,7 @@ class VpnConnectionsOperations:
         :type vpn_connection_name: str
         :param parameters: Vpn Connection packet capture parameters supplied to start packet capture on
          gateway connection. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnConnectionPacketCaptureStartParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -100792,7 +101165,13 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_connection_name: str,
-        parameters: Optional[Union[_models.VpnConnectionPacketCaptureStartParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnConnectionPacketCaptureStartParameters,
+                _types.VpnConnectionPacketCaptureStartParameters,
+                IO[bytes],
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Starts packet capture on Vpn connection in the specified resource group.
@@ -100805,10 +101184,10 @@ class VpnConnectionsOperations:
         :param vpn_connection_name: The name of the vpn connection. Required.
         :type vpn_connection_name: str
         :param parameters: Vpn Connection packet capture parameters supplied to start packet capture on
-         gateway connection. Is one of the following types: VpnConnectionPacketCaptureStartParameters,
-         JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.network.models.VpnConnectionPacketCaptureStartParameters or JSON
-         or IO[bytes]
+         gateway connection. Is either a VpnConnectionPacketCaptureStartParameters type or a IO[bytes]
+         type. Default value is None.
+        :type parameters: ~azure.mgmt.network.models.VpnConnectionPacketCaptureStartParameters or
+         ~azure.mgmt.network.types.VpnConnectionPacketCaptureStartParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -100876,7 +101255,13 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_connection_name: str,
-        parameters: Optional[Union[_models.VpnConnectionPacketCaptureStopParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnConnectionPacketCaptureStopParameters,
+                _types.VpnConnectionPacketCaptureStopParameters,
+                IO[bytes],
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -100990,7 +101375,7 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_connection_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.VpnConnectionPacketCaptureStopParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -101006,7 +101391,7 @@ class VpnConnectionsOperations:
         :type vpn_connection_name: str
         :param parameters: Vpn Connection packet capture parameters supplied to stop packet capture on
          gateway connection. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.VpnConnectionPacketCaptureStopParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -101052,7 +101437,13 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         vpn_connection_name: str,
-        parameters: Optional[Union[_models.VpnConnectionPacketCaptureStopParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[
+                _models.VpnConnectionPacketCaptureStopParameters,
+                _types.VpnConnectionPacketCaptureStopParameters,
+                IO[bytes],
+            ]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[str]:
         """Stops packet capture on Vpn connection in the specified resource group.
@@ -101065,10 +101456,10 @@ class VpnConnectionsOperations:
         :param vpn_connection_name: The name of the vpn connection. Required.
         :type vpn_connection_name: str
         :param parameters: Vpn Connection packet capture parameters supplied to stop packet capture on
-         gateway connection. Is one of the following types: VpnConnectionPacketCaptureStopParameters,
-         JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.network.models.VpnConnectionPacketCaptureStopParameters or JSON
-         or IO[bytes]
+         gateway connection. Is either a VpnConnectionPacketCaptureStopParameters type or a IO[bytes]
+         type. Default value is None.
+        :type parameters: ~azure.mgmt.network.models.VpnConnectionPacketCaptureStopParameters or
+         ~azure.mgmt.network.types.VpnConnectionPacketCaptureStopParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns str
         :rtype: ~azure.core.polling.AsyncLROPoller[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -101329,7 +101720,9 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        connection_shared_key_parameters: Union[_models.ConnectionSharedKeyResult, JSON, IO[bytes]],
+        connection_shared_key_parameters: Union[
+            _models.ConnectionSharedKeyResult, _types.ConnectionSharedKeyResult, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -101450,7 +101843,7 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        connection_shared_key_parameters: JSON,
+        connection_shared_key_parameters: _types.ConnectionSharedKeyResult,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -101470,7 +101863,7 @@ class VpnLinkConnectionsOperations:
         :type link_connection_name: str
         :param connection_shared_key_parameters: Parameters supplied to set or auto generate the shared
          key for the vpn link connection. Required.
-        :type connection_shared_key_parameters: JSON
+        :type connection_shared_key_parameters: ~azure.mgmt.network.types.ConnectionSharedKeyResult
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -101526,7 +101919,9 @@ class VpnLinkConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         link_connection_name: str,
-        connection_shared_key_parameters: Union[_models.ConnectionSharedKeyResult, JSON, IO[bytes]],
+        connection_shared_key_parameters: Union[
+            _models.ConnectionSharedKeyResult, _types.ConnectionSharedKeyResult, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionSharedKeyResult]:
         """Sets or auto generates the shared key based on the user input. If users give a shared key
@@ -101543,10 +101938,10 @@ class VpnLinkConnectionsOperations:
         :param link_connection_name: The name of the vpn link connection. Required.
         :type link_connection_name: str
         :param connection_shared_key_parameters: Parameters supplied to set or auto generate the shared
-         key for the vpn link connection. Is one of the following types: ConnectionSharedKeyResult,
-         JSON, IO[bytes] Required.
+         key for the vpn link connection. Is either a ConnectionSharedKeyResult type or a IO[bytes]
+         type. Required.
         :type connection_shared_key_parameters: ~azure.mgmt.network.models.ConnectionSharedKeyResult or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.ConnectionSharedKeyResult or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectionSharedKeyResult. The
          ConnectionSharedKeyResult is compatible with MutableMapping
         :rtype:
@@ -102277,7 +102672,7 @@ class NatRulesOperations:
         resource_group_name: str,
         gateway_name: str,
         nat_rule_name: str,
-        nat_rule_parameters: Union[_models.VpnGatewayNatRule, JSON, IO[bytes]],
+        nat_rule_parameters: Union[_models.VpnGatewayNatRule, _types.VpnGatewayNatRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -102391,7 +102786,7 @@ class NatRulesOperations:
         resource_group_name: str,
         gateway_name: str,
         nat_rule_name: str,
-        nat_rule_parameters: JSON,
+        nat_rule_parameters: _types.VpnGatewayNatRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -102408,7 +102803,7 @@ class NatRulesOperations:
          name can be used to access the resource. Required.
         :type nat_rule_name: str
         :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Required.
-        :type nat_rule_parameters: JSON
+        :type nat_rule_parameters: ~azure.mgmt.network.types.VpnGatewayNatRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -102457,7 +102852,7 @@ class NatRulesOperations:
         resource_group_name: str,
         gateway_name: str,
         nat_rule_name: str,
-        nat_rule_parameters: Union[_models.VpnGatewayNatRule, JSON, IO[bytes]],
+        nat_rule_parameters: Union[_models.VpnGatewayNatRule, _types.VpnGatewayNatRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnGatewayNatRule]:
         """Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat
@@ -102471,9 +102866,10 @@ class NatRulesOperations:
         :param nat_rule_name: The name of the resource that is unique within a resource group. This
          name can be used to access the resource. Required.
         :type nat_rule_name: str
-        :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Is one of the
-         following types: VpnGatewayNatRule, JSON, IO[bytes] Required.
-        :type nat_rule_parameters: ~azure.mgmt.network.models.VpnGatewayNatRule or JSON or IO[bytes]
+        :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Is either a
+         VpnGatewayNatRule type or a IO[bytes] type. Required.
+        :type nat_rule_parameters: ~azure.mgmt.network.models.VpnGatewayNatRule or
+         ~azure.mgmt.network.types.VpnGatewayNatRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnGatewayNatRule. The VpnGatewayNatRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGatewayNatRule]
@@ -102774,7 +103170,9 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        put_express_route_connection_parameters: Union[_models.ExpressRouteConnection, JSON, IO[bytes]],
+        put_express_route_connection_parameters: Union[
+            _models.ExpressRouteConnection, _types.ExpressRouteConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -102888,7 +103286,7 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        put_express_route_connection_parameters: JSON,
+        put_express_route_connection_parameters: _types.ExpressRouteConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -102904,7 +103302,7 @@ class ExpressRouteConnectionsOperations:
         :type connection_name: str
         :param put_express_route_connection_parameters: Parameters required in an
          ExpressRouteConnection PUT operation. Required.
-        :type put_express_route_connection_parameters: JSON
+        :type put_express_route_connection_parameters: ~azure.mgmt.network.types.ExpressRouteConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -102952,7 +103350,9 @@ class ExpressRouteConnectionsOperations:
         resource_group_name: str,
         express_route_gateway_name: str,
         connection_name: str,
-        put_express_route_connection_parameters: Union[_models.ExpressRouteConnection, JSON, IO[bytes]],
+        put_express_route_connection_parameters: Union[
+            _models.ExpressRouteConnection, _types.ExpressRouteConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteConnection]:
         """Creates a connection between an ExpressRoute gateway and an ExpressRoute circuit.
@@ -102965,10 +103365,11 @@ class ExpressRouteConnectionsOperations:
         :param connection_name: The name of the express route connection. Required.
         :type connection_name: str
         :param put_express_route_connection_parameters: Parameters required in an
-         ExpressRouteConnection PUT operation. Is one of the following types: ExpressRouteConnection,
-         JSON, IO[bytes] Required.
+         ExpressRouteConnection PUT operation. Is either a ExpressRouteConnection type or a IO[bytes]
+         type. Required.
         :type put_express_route_connection_parameters:
-         ~azure.mgmt.network.models.ExpressRouteConnection or JSON or IO[bytes]
+         ~azure.mgmt.network.models.ExpressRouteConnection or
+         ~azure.mgmt.network.types.ExpressRouteConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteConnection. The
          ExpressRouteConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteConnection]
@@ -103405,7 +103806,7 @@ class VirtualHubBgpConnectionOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        parameters: Union[_models.BgpConnection, JSON, IO[bytes]],
+        parameters: Union[_models.BgpConnection, _types.BgpConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -103518,7 +103919,7 @@ class VirtualHubBgpConnectionOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        parameters: JSON,
+        parameters: _types.BgpConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -103534,7 +103935,7 @@ class VirtualHubBgpConnectionOperations:
         :param connection_name: The name of the connection. Required.
         :type connection_name: str
         :param parameters: Parameters of Bgp connection. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.BgpConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -103582,7 +103983,7 @@ class VirtualHubBgpConnectionOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         connection_name: str,
-        parameters: Union[_models.BgpConnection, JSON, IO[bytes]],
+        parameters: Union[_models.BgpConnection, _types.BgpConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BgpConnection]:
         """Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing
@@ -103595,9 +103996,10 @@ class VirtualHubBgpConnectionOperations:
         :type virtual_hub_name: str
         :param connection_name: The name of the connection. Required.
         :type connection_name: str
-        :param parameters: Parameters of Bgp connection. Is one of the following types: BgpConnection,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.BgpConnection or JSON or IO[bytes]
+        :param parameters: Parameters of Bgp connection. Is either a BgpConnection type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.network.models.BgpConnection or
+         ~azure.mgmt.network.types.BgpConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BgpConnection. The BgpConnection is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BgpConnection]
@@ -104258,7 +104660,7 @@ class VirtualHubIpConfigurationOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         ip_config_name: str,
-        parameters: Union[_models.HubIpConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.HubIpConfiguration, _types.HubIpConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -104372,7 +104774,7 @@ class VirtualHubIpConfigurationOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         ip_config_name: str,
-        parameters: JSON,
+        parameters: _types.HubIpConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -104389,7 +104791,7 @@ class VirtualHubIpConfigurationOperations:
          name can be used to access the resource. Required.
         :type ip_config_name: str
         :param parameters: Hub Ip Configuration parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.HubIpConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -104438,7 +104840,7 @@ class VirtualHubIpConfigurationOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         ip_config_name: str,
-        parameters: Union[_models.HubIpConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.HubIpConfiguration, _types.HubIpConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.HubIpConfiguration]:
         """Creates a VirtualHubIpConfiguration resource if it doesn't exist else updates the existing
@@ -104452,9 +104854,10 @@ class VirtualHubIpConfigurationOperations:
         :param ip_config_name: The name of the resource that is unique within a resource group. This
          name can be used to access the resource. Required.
         :type ip_config_name: str
-        :param parameters: Hub Ip Configuration parameters. Is one of the following types:
-         HubIpConfiguration, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.HubIpConfiguration or JSON or IO[bytes]
+        :param parameters: Hub Ip Configuration parameters. Is either a HubIpConfiguration type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.HubIpConfiguration or
+         ~azure.mgmt.network.types.HubIpConfiguration or IO[bytes]
         :return: An instance of AsyncLROPoller that returns HubIpConfiguration. The HubIpConfiguration
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.HubIpConfiguration]
@@ -104832,7 +105235,7 @@ class RoutingIntentOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         routing_intent_name: str,
-        routing_intent_parameters: Union[_models.RoutingIntent, JSON, IO[bytes]],
+        routing_intent_parameters: Union[_models.RoutingIntent, _types.RoutingIntent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -104946,7 +105349,7 @@ class RoutingIntentOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         routing_intent_name: str,
-        routing_intent_parameters: JSON,
+        routing_intent_parameters: _types.RoutingIntent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -104963,7 +105366,7 @@ class RoutingIntentOperations:
         :type routing_intent_name: str
         :param routing_intent_parameters: Parameters supplied to create or update RoutingIntent.
          Required.
-        :type routing_intent_parameters: JSON
+        :type routing_intent_parameters: ~azure.mgmt.network.types.RoutingIntent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -105012,7 +105415,7 @@ class RoutingIntentOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         routing_intent_name: str,
-        routing_intent_parameters: Union[_models.RoutingIntent, JSON, IO[bytes]],
+        routing_intent_parameters: Union[_models.RoutingIntent, _types.RoutingIntent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RoutingIntent]:
         """Creates a RoutingIntent resource if it doesn't exist else updates the existing RoutingIntent.
@@ -105025,9 +105428,10 @@ class RoutingIntentOperations:
         :param routing_intent_name: The name of the resource that is unique within a resource group.
          This name can be used to access the resource. Required.
         :type routing_intent_name: str
-        :param routing_intent_parameters: Parameters supplied to create or update RoutingIntent. Is one
-         of the following types: RoutingIntent, JSON, IO[bytes] Required.
-        :type routing_intent_parameters: ~azure.mgmt.network.models.RoutingIntent or JSON or IO[bytes]
+        :param routing_intent_parameters: Parameters supplied to create or update RoutingIntent. Is
+         either a RoutingIntent type or a IO[bytes] type. Required.
+        :type routing_intent_parameters: ~azure.mgmt.network.models.RoutingIntent or
+         ~azure.mgmt.network.types.RoutingIntent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RoutingIntent. The RoutingIntent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RoutingIntent]
@@ -106916,7 +107320,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: Union[_models.BastionShareableLinkListRequest, JSON, IO[bytes]],
+        bsl_request: Union[_models.BastionShareableLinkListRequest, _types.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -107023,7 +107427,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: JSON,
+        bsl_request: _types.BastionShareableLinkListRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -107037,7 +107441,7 @@ class _NetworkManagementClientOperationsMixin(
         :type bastion_host_name: str
         :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints.
          Required.
-        :type bsl_request: JSON
+        :type bsl_request: ~azure.mgmt.network.types.BastionShareableLinkListRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107097,7 +107501,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: Union[_models.BastionShareableLinkListRequest, JSON, IO[bytes]],
+        bsl_request: Union[_models.BastionShareableLinkListRequest, _types.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
@@ -107107,10 +107511,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints. Is one
-         of the following types: BastionShareableLinkListRequest, JSON, IO[bytes] Required.
-        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or JSON or
-         IO[bytes]
+        :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints. Is
+         either a BastionShareableLinkListRequest type or a IO[bytes] type. Required.
+        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or
+         ~azure.mgmt.network.types.BastionShareableLinkListRequest or IO[bytes]
         :return: An instance of LROPoller that returns an iterator like instance of list of
          BastionShareableLink
         :rtype:
@@ -107259,7 +107663,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: Union[_models.BastionShareableLinkListRequest, JSON, IO[bytes]],
+        bsl_request: Union[_models.BastionShareableLinkListRequest, _types.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -107364,7 +107768,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: JSON,
+        bsl_request: _types.BastionShareableLinkListRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -107378,7 +107782,7 @@ class _NetworkManagementClientOperationsMixin(
         :type bastion_host_name: str
         :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints.
          Required.
-        :type bsl_request: JSON
+        :type bsl_request: ~azure.mgmt.network.types.BastionShareableLinkListRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107427,7 +107831,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: Union[_models.BastionShareableLinkListRequest, JSON, IO[bytes]],
+        bsl_request: Union[_models.BastionShareableLinkListRequest, _types.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
@@ -107437,10 +107841,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints. Is one
-         of the following types: BastionShareableLinkListRequest, JSON, IO[bytes] Required.
-        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or JSON or
-         IO[bytes]
+        :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints. Is
+         either a BastionShareableLinkListRequest type or a IO[bytes] type. Required.
+        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or
+         ~azure.mgmt.network.types.BastionShareableLinkListRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -107505,7 +107909,9 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_token_request: Union[_models.BastionShareableLinkTokenListRequest, JSON, IO[bytes]],
+        bsl_token_request: Union[
+            _models.BastionShareableLinkTokenListRequest, _types.BastionShareableLinkTokenListRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -107609,7 +108015,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_token_request: JSON,
+        bsl_token_request: _types.BastionShareableLinkTokenListRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -107623,7 +108029,7 @@ class _NetworkManagementClientOperationsMixin(
         :type bastion_host_name: str
         :param bsl_token_request: Post request for Delete Bastion Shareable Link By Token endpoint.
          Required.
-        :type bsl_token_request: JSON
+        :type bsl_token_request: ~azure.mgmt.network.types.BastionShareableLinkTokenListRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107672,7 +108078,9 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_token_request: Union[_models.BastionShareableLinkTokenListRequest, JSON, IO[bytes]],
+        bsl_token_request: Union[
+            _models.BastionShareableLinkTokenListRequest, _types.BastionShareableLinkTokenListRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Bastion Shareable Links for all the tokens specified in the request.
@@ -107683,9 +108091,9 @@ class _NetworkManagementClientOperationsMixin(
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
         :param bsl_token_request: Post request for Delete Bastion Shareable Link By Token endpoint. Is
-         one of the following types: BastionShareableLinkTokenListRequest, JSON, IO[bytes] Required.
+         either a BastionShareableLinkTokenListRequest type or a IO[bytes] type. Required.
         :type bsl_token_request: ~azure.mgmt.network.models.BastionShareableLinkTokenListRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.network.types.BastionShareableLinkTokenListRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -107773,7 +108181,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: JSON,
+        bsl_request: _types.BastionShareableLinkListRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -107787,7 +108195,7 @@ class _NetworkManagementClientOperationsMixin(
         :type bastion_host_name: str
         :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints.
          Required.
-        :type bsl_request: JSON
+        :type bsl_request: ~azure.mgmt.network.types.BastionShareableLinkListRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107845,7 +108253,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        bsl_request: Union[_models.BastionShareableLinkListRequest, JSON, IO[bytes]],
+        bsl_request: Union[_models.BastionShareableLinkListRequest, _types.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
@@ -107855,10 +108263,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints. Is one
-         of the following types: BastionShareableLinkListRequest, JSON, IO[bytes] Required.
-        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or JSON or
-         IO[bytes]
+        :param bsl_request: Post request for Create/Delete/Get Bastion Shareable Link endpoints. Is
+         either a BastionShareableLinkListRequest type or a IO[bytes] type. Required.
+        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or
+         ~azure.mgmt.network.types.BastionShareableLinkListRequest or IO[bytes]
         :return: An iterator like instance of BastionShareableLink
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionShareableLink]
@@ -108192,7 +108600,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        session_ids: JSON,
+        session_ids: _types.SessionIds,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -108205,7 +108613,7 @@ class _NetworkManagementClientOperationsMixin(
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
         :param session_ids: The list of sessionids to disconnect. Required.
-        :type session_ids: JSON
+        :type session_ids: ~azure.mgmt.network.types.SessionIds
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -108260,7 +108668,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        session_ids: Union[_models.SessionIds, JSON, IO[bytes]],
+        session_ids: Union[_models.SessionIds, _types.SessionIds, IO[bytes]],
         **kwargs: Any
     ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
@@ -108270,9 +108678,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param session_ids: The list of sessionids to disconnect. Is one of the following types:
-         SessionIds, JSON, IO[bytes] Required.
-        :type session_ids: ~azure.mgmt.network.models.SessionIds or JSON or IO[bytes]
+        :param session_ids: The list of sessionids to disconnect. Is either a SessionIds type or a
+         IO[bytes] type. Required.
+        :type session_ids: ~azure.mgmt.network.models.SessionIds or
+         ~azure.mgmt.network.types.SessionIds or IO[bytes]
         :return: An iterator like instance of BastionSessionState
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionSessionState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -108470,7 +108879,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: JSON,
+        parameters: _types.ActiveConfigurationParameter,
         *,
         top: Optional[int] = None,
         content_type: str = "application/json",
@@ -108484,7 +108893,7 @@ class _NetworkManagementClientOperationsMixin(
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ActiveConfigurationParameter
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -108549,7 +108958,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.ActiveConfigurationParameter, JSON, IO[bytes]],
+        parameters: Union[_models.ActiveConfigurationParameter, _types.ActiveConfigurationParameter, IO[bytes]],
         *,
         top: Optional[int] = None,
         **kwargs: Any
@@ -108561,9 +108970,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Active Configuration Parameter. Is one of the following types:
-         ActiveConfigurationParameter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter or JSON or IO[bytes]
+        :param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter or
+         ~azure.mgmt.network.types.ActiveConfigurationParameter or IO[bytes]
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -108678,7 +109088,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: JSON,
+        parameters: _types.ActiveConfigurationParameter,
         *,
         top: Optional[int] = None,
         content_type: str = "application/json",
@@ -108692,7 +109102,7 @@ class _NetworkManagementClientOperationsMixin(
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.ActiveConfigurationParameter
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -108757,7 +109167,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         network_manager_name: str,
-        parameters: Union[_models.ActiveConfigurationParameter, JSON, IO[bytes]],
+        parameters: Union[_models.ActiveConfigurationParameter, _types.ActiveConfigurationParameter, IO[bytes]],
         *,
         top: Optional[int] = None,
         **kwargs: Any
@@ -108769,9 +109179,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Active Configuration Parameter. Is one of the following types:
-         ActiveConfigurationParameter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter or JSON or IO[bytes]
+        :param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter or
+         ~azure.mgmt.network.types.ActiveConfigurationParameter or IO[bytes]
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -108886,7 +109297,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: JSON,
+        parameters: _types.QueryRequestOptions,
         *,
         top: Optional[int] = None,
         content_type: str = "application/json",
@@ -108900,7 +109311,7 @@ class _NetworkManagementClientOperationsMixin(
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.QueryRequestOptions
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -108965,7 +109376,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.QueryRequestOptions, JSON, IO[bytes]],
+        parameters: Union[_models.QueryRequestOptions, _types.QueryRequestOptions, IO[bytes]],
         *,
         top: Optional[int] = None,
         **kwargs: Any
@@ -108977,9 +109388,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to list correct page. Is one of the following types:
-         QueryRequestOptions, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or JSON or IO[bytes]
+        :param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or
+         ~azure.mgmt.network.types.QueryRequestOptions or IO[bytes]
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -109096,7 +109508,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: JSON,
+        parameters: _types.QueryRequestOptions,
         *,
         top: Optional[int] = None,
         content_type: str = "application/json",
@@ -109110,7 +109522,7 @@ class _NetworkManagementClientOperationsMixin(
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.network.types.QueryRequestOptions
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -109175,7 +109587,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: Union[_models.QueryRequestOptions, JSON, IO[bytes]],
+        parameters: Union[_models.QueryRequestOptions, _types.QueryRequestOptions, IO[bytes]],
         *,
         top: Optional[int] = None,
         **kwargs: Any
@@ -109187,9 +109599,10 @@ class _NetworkManagementClientOperationsMixin(
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to list correct page. Is one of the following types:
-         QueryRequestOptions, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or JSON or IO[bytes]
+        :param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or
+         ~azure.mgmt.network.types.QueryRequestOptions or IO[bytes]
         :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :paramtype top: int
@@ -109366,7 +109779,9 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        vpn_client_params: Union[_models.VirtualWanVpnProfileParameters, JSON, IO[bytes]],
+        vpn_client_params: Union[
+            _models.VirtualWanVpnProfileParameters, _types.VirtualWanVpnProfileParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -109473,7 +109888,7 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        vpn_client_params: JSON,
+        vpn_client_params: _types.VirtualWanVpnProfileParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -109488,7 +109903,7 @@ class _NetworkManagementClientOperationsMixin(
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
          operation. Required.
-        :type vpn_client_params: JSON
+        :type vpn_client_params: ~azure.mgmt.network.types.VirtualWanVpnProfileParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -109547,7 +109962,9 @@ class _NetworkManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        vpn_client_params: Union[_models.VirtualWanVpnProfileParameters, JSON, IO[bytes]],
+        vpn_client_params: Union[
+            _models.VirtualWanVpnProfileParameters, _types.VirtualWanVpnProfileParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnProfileResponse]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
@@ -109559,10 +109976,9 @@ class _NetworkManagementClientOperationsMixin(
         :param virtual_wan_name: The name of the VirtualWAN. Required.
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
-         operation. Is one of the following types: VirtualWanVpnProfileParameters, JSON, IO[bytes]
-         Required.
-        :type vpn_client_params: ~azure.mgmt.network.models.VirtualWanVpnProfileParameters or JSON or
-         IO[bytes]
+         operation. Is either a VirtualWanVpnProfileParameters type or a IO[bytes] type. Required.
+        :type vpn_client_params: ~azure.mgmt.network.models.VirtualWanVpnProfileParameters or
+         ~azure.mgmt.network.types.VirtualWanVpnProfileParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VpnProfileResponse. The VpnProfileResponse
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnProfileResponse]
