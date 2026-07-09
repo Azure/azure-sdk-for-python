@@ -8,7 +8,7 @@ Steps:
   3. Write the results (unreleased versions only) to a Markdown table.
 
 Usage:
-    python scripts/check_unreleased_mgmt.py [--repo-root PATH] [--output PATH]
+    python check_unreleased_mgmt.py [--repo-root PATH] [--output PATH]
 """
 
 import argparse
@@ -85,8 +85,8 @@ def main() -> int:
     parser.add_argument(
         "--repo-root",
         type=Path,
-        default=Path(__file__).resolve().parents[1],
-        help="Path to the repository root (default: parent of this script).",
+        default=Path(__file__).resolve().parent,
+        help="Path to the repository root (default: parent directory of this script).",
     )
     parser.add_argument(
         "--output",
