@@ -126,6 +126,29 @@ async def on_shutdown():
     pass
 ```
 
+### Durable state storage
+
+`FoundryStateStore` is a durable, server-backed key-value store for agent state
+— session memory, per-user preferences, counters, and checkpoints — with
+optimistic concurrency, tag filtering, key listing, and optional per-item TTL.
+
+```python
+from azure.ai.agentserver.core.storage import FoundryStateStore
+
+# Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
+async with FoundryStateStore() as store:
+    etag = await store.set("counters", "page-views", 1)
+    item = await store.get("counters", "page-views")
+    print(item.value)  # 1
+```
+
+Reads return typed `StateItem` values; writes are expressed as typed `Upsert` /
+`Delete` changes. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
+for the full API, the concurrency model, and common gotchas, and
+[state_store_sample.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/state_store_sample.py)
+for a runnable end-to-end example.
+
+
 ### Configuring tracing
 
 Tracing is enabled automatically when an Application Insights connection string is available:

@@ -54,6 +54,16 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 app = ActivityAgentServerHost(storage=MemoryStorage())
 ```
 
+**Foundry durable storage** — drop-in durable state for the M365 bridge, backed by
+Foundry-managed Activity state storage instead of the in-memory default:
+
+```python
+from azure.ai.agentserver.activity import ActivityAgentServerHost, FoundryStorage
+
+storage = FoundryStorage()
+app = ActivityAgentServerHost(storage=storage)
+```
+
 **Inject a pre-built `AgentApplication`** — host an M365 `AgentApplication` you built yourself:
 
 ```python
@@ -108,6 +118,14 @@ app.run()
   the `03-self-hosted-app` sample.
 - `ActivityAgentServerHost.adapter` — the channel adapter for the underlying
   `AgentApplication`.
+- `FoundryStorage` — platform-managed durable storage for M365 conversation, user,
+  and proactive state. Implements the M365 Agents SDK `Storage` interface. Each
+  M365 storage key is already a scope identifier (for example
+  `f"{channel_id}/conversations/{conversation_id}"` or
+  `f"{channel_id}/users/{user_id}"`), so `FoundryStorage` backs each one with its
+  own lazily-created `azure.ai.agentserver.core.storage.FoundryStateStore`
+  ("store name = scope" — no shared namespace); user-shaped keys automatically
+  get `user_isolation=True` (override via `is_user_scoped=`).
 
 ## Examples
 
@@ -118,6 +136,9 @@ See the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/m
 - `03-self-hosted-app` — build the M365 `AgentApplication` yourself and host it with `from_agent_application`.
 - `04-custom-handler` — own the request pipeline with `from_request_handler` (the M365 SDK is not initialized).
 - `05-multi-protocol` — compose the Activity and Invocations protocols on a single server.
+- `06-foundry-storage-state` — durable conversation and user state with `FoundryStorage`.
+- `07-foundry-storage-proactive` — durable proactive conversation references with `FoundryStorage`.
+- `08-foundry-storage-history` — persist the full conversation transcript with `FoundryStorage` (`/history` and `/clear` commands).
 
 ## Troubleshooting
 

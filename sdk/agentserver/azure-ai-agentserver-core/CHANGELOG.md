@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b8 (Unreleased)
+
+### Features Added
+
+- Added `azure.ai.agentserver.core.storage` package providing the protocol-neutral Foundry storage layer: `FoundryStorageClient` (transport, endpoint, pipeline policies, error hierarchy) and `FoundryStateStore`, a generic durable key-value store. Every operation is scoped to exactly one caller-supplied `namespace`, carried as a percent-encoded URL path segment (`POST /storage/namespaces/{namespace}/state:read|:write|:listKeys`); server-side isolation is selected by the trusted `x-ms-internal-state-session-isolation` / `x-ms-internal-state-user-isolation` headers (`isolate_sessions` / `isolate_users` knobs; disabling both is rejected). Batch `write` is atomic and reports per-key `WriteResult` metadata (etag + `created_at` / `updated_at`); `read` and `list_keys` return the same server-managed timestamps. Supports optional `if_match` optimistic concurrency, optional per-item `ttl_seconds` (surfaced as `StateItem.expires_at`), and ordered, paged `list_keys` (keys + metadata only). `FoundryStateStore.for_namespace(...)` returns a namespace-bound `NamespaceStateStore` handle. Writes use the strongly-typed `Upsert` / `Delete` change objects (`WriteChange`) and stored values are typed as `JSONValue`. Protocol packages can build resource-specific clients on top of `FoundryStorageClient`. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md) and `samples/state_store_sample.py`.
+
 ## 2.0.0b7 (2026-06-28)
 
 ### Features Added

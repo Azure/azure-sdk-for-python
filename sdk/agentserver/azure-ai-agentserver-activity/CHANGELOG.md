@@ -2,6 +2,18 @@
 
 ## 1.0.0b4 (Unreleased)
 
+### Features Added
+
+- Added `FoundryStorage`, an M365 Agents SDK `Storage` adapter backed by
+  `azure.ai.agentserver.core.storage.FoundryStateStore`. Each M365 storage key
+  (already a scope identifier, e.g. `f"{channel_id}/conversations/{conversation_id}"`
+  or `f"{channel_id}/users/{user_id}"`) gets its own lazily-created, lazily-cached
+  `FoundryStateStore` — "store name = scope", not a single shared namespace.
+  Keys matching the M365 `UserState` shape automatically get
+  `user_isolation=True` (override via `is_user_scoped=`). Conversation, user, and
+  proactive-reference state written through the M365 bridge persists across
+  restarts and scale-out. Requires `azure-ai-agentserver-core>=2.0.0b8`.
+
 ### Other Changes
 
 - Internal refactor only; no public API changes. Consolidated the default storage
