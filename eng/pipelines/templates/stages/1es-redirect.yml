@@ -51,6 +51,11 @@ extends:
         os: windows
       # Turn off the build warnings caused by disabling some sdl checks
       createAdoIssuesForJustificationsForDisablement: false
+      # Upgrade BinSkim from the deprecated v1.9.5 to v4.3.1. The automatic
+      # upgrade only applies to pipelines with auto-baselining enabled, which is
+      # disabled here for everything except 'python - core', so set it manually.
+      binskim:
+        preReleaseVersion: '4.3.1'
       eslint:
         enabled: false
         justificationForDisabling: "ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azur     19 e-sdk/internal/_build/results?buildId=3556850"
