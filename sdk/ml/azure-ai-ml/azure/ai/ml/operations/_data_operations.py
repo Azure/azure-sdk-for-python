@@ -875,7 +875,7 @@ class DataOperations(_ScopeDependentOperations):
         data_versions_operation_ = self._operation
 
         try:
-            _client, _rg, _sub, _model_client = get_registry_client(
+            _client, _rg, _sub, _model_client, _ = get_registry_client(
                 self._service_client._config.credential, registry_name
             )
             self._operation_scope.registry_name = registry_name

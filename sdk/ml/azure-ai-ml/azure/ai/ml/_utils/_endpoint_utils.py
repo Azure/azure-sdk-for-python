@@ -64,7 +64,7 @@ def check_default_deployment_template(deployment: Deployment, credential: Option
         model_version = match.group(4)
 
         try:
-            service_client, resource_group_name, _, _ = get_registry_client(
+            service_client, resource_group_name, _, _, _ = get_registry_client(
                 credential=credential,
                 registry_name=registry_name,
             )

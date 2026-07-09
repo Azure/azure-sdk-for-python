@@ -89,7 +89,8 @@ class RegistryDiscovery:
         :return: The registry data-plane hybrid client.
         :rtype: ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
         """
-        self._get_registry_details()
+        if self._base_url is None:
+            self._get_registry_details()
         kwargs = dict(self.kwargs)
         kwargs.pop("subscription_id", None)
         kwargs.pop("resource_group", None)
@@ -248,6 +249,9 @@ def get_registry_client(credential, registry_name, workspace_location: Optional[
     service_client_10_2021_dataplanepreview, service_model_client_10_2021_dataplanepreview = (
         registry_discovery.get_registry_service_client()
     )
+    # Byte-identical hybrid client bound to the same discovered MFE endpoint + registry data-plane api-version.
+    # Registry consumers are being migrated off the msrest client above to this client's ``send_request``.
+    service_client_registry_arm = registry_discovery.get_registry_arm_service_client()
     subscription_id = registry_discovery.subscription_id
     resource_group_name = registry_discovery.resource_group
     return (
@@ -255,6 +259,7 @@ def get_registry_client(credential, registry_name, workspace_location: Optional[
         resource_group_name,
         subscription_id,
         service_model_client_10_2021_dataplanepreview,
+        service_client_registry_arm,
     )
 
 
