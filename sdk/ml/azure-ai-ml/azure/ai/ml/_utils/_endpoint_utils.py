@@ -51,9 +51,9 @@ def check_default_deployment_template(deployment: Deployment, credential: Option
     try:
         import re
 
-        from azure.ai.ml._utils._registry_utils import get_registry_client
+        from azure.ai.ml._utils._registry_utils import REGISTRY_DATAPLANE_API_VERSION, get_registry_client
         from azure.ai.ml.constants._common import REGISTRY_VERSION_PATTERN
-        from azure.ai.ml.entities._assets._artifacts.model import Model
+        from azure.core.rest import HttpRequest
 
         match = re.match(REGISTRY_VERSION_PATTERN, deployment.model, re.IGNORECASE)
         if not match:
@@ -64,25 +64,29 @@ def check_default_deployment_template(deployment: Deployment, credential: Option
         model_version = match.group(4)
 
         try:
-            service_client, resource_group_name, _, _, _ = get_registry_client(
+            _, resource_group_name, subscription_id, _, registry_arm_client = get_registry_client(
                 credential=credential,
                 registry_name=registry_name,
             )
 
-            model_version_data = service_client.model_versions.get(
-                name=model_name,
-                version=model_version,
-                registry_name=registry_name,
-                resource_group_name=resource_group_name,
+            # Byte-identical to the legacy v2021_10 msrest ``model_versions.get`` (same MFE endpoint + api-version).
+            request = HttpRequest(
+                "GET",
+                f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}"
+                f"/providers/Microsoft.MachineLearningServices/registries/{registry_name}"
+                f"/models/{model_name}/versions/{model_version}",
+                params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+                headers={"Accept": "application/json"},
             )
+            response = registry_arm_client.send_request(request)
+            response.raise_for_status()
+            model_version_data = response.json()
 
-            model = Model._from_rest_object(model_version_data)
+            properties = model_version_data.get("properties", {}) or {}
+            default_deployment_template = properties.get("defaultDeploymentTemplate") or {}
+            asset_id = default_deployment_template.get("assetId") or default_deployment_template.get("asset_id")
 
-            if (
-                hasattr(model, "default_deployment_template")
-                and model.default_deployment_template
-                and model.default_deployment_template.asset_id
-            ):
+            if asset_id:
                 module_logger.info(
                     "\nModel '%s' (version %s) from registry '%s' has a "
                     "default deployment template configured.\n"
@@ -92,7 +96,7 @@ def check_default_deployment_template(deployment: Deployment, credential: Option
                     model_name,
                     model_version,
                     registry_name,
-                    model.default_deployment_template.asset_id,
+                    asset_id,
                 )
         except Exception:  # pylint: disable=broad-except
             pass
