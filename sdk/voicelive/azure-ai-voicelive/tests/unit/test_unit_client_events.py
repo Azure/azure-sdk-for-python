@@ -20,7 +20,6 @@ from azure.ai.voicelive.models import (
     ClientEventResponseCancel,
     ClientEventInputTextDelta,
     ClientEventInputTextDone,
-    ClientEventRtcCallSdpCreate,
     # Event Types
     ClientEventType,
     # Supporting Models
@@ -248,30 +247,6 @@ class TestClientEventResponse:
         event = ClientEventResponseCancel(event_id=event_id)
 
         assert event.event_id == event_id
-
-
-class TestClientEventRtcCall:
-    """Test RTC call client events."""
-
-    def test_rtc_call_sdp_create_basic(self):
-        """Test creating an RTC SDP offer event."""
-        event = ClientEventRtcCallSdpCreate(sdp_offer="v=0\r\no=- 1 2 IN IP4 127.0.0.1")
-
-        assert event.type == ClientEventType.RTC_CALL_SDP_CREATE
-        assert event.sdp_offer.startswith("v=0")
-        assert event.session is None
-
-    def test_rtc_call_sdp_create_with_session(self):
-        """Test creating an RTC SDP offer event with an initial session."""
-        session = RequestSession(model="gpt-4o-realtime-preview", modalities=[Modality.AUDIO])
-        event = ClientEventRtcCallSdpCreate(
-            sdp_offer="v=0\r\no=- 1 2 IN IP4 127.0.0.1",
-            session=session,
-            event_id="rtc-evt-1",
-        )
-
-        assert event.event_id == "rtc-evt-1"
-        assert event.session == session
 
 
 class TestClientEventInputText:

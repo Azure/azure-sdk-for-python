@@ -6,26 +6,20 @@
 
 - **Azure Realtime Native Voice Support**: Added `AzureRealtimeNativeVoice` and
   `AzureRealtimeNativeVoiceName`, and expanded `voice` fields to accept Azure realtime native voices.
-- **WebRTC Call Negotiation Support**: Added `ClientEventRtcCallSdpCreate`, `ServerEventRtcCallSdpCreated`,
-  `ServerEventRtcCallError`, and `RtcCallErrorDetails` for SDP-based WebRTC call setup.
 - **Input Text Streaming Support**: Added `ClientEventInputTextDelta` and `ClientEventInputTextDone`
   for incrementally streaming text input into existing conversation items.
 - **Hosted Agent Invocation Input**: Added `invoke_input` to `ResponseCreateParams` and
   `ServerEventResponseInvocationDelta` for hosted agent invocation passthrough data.
-- **Audio Playback Lifecycle Events**: Added `ServerEventOutputAudioBufferStarted` and
-  `ServerEventOutputAudioBufferStopped` to track model audio playback start and stop.
 - **Echo Cancellation Configuration**: Added `EchoCancellationReferenceSource` and new
   `reference_source` / `channels` options on `AudioEchoCancellation` to support both the default
   server loopback reference path and client-provided stereo echo reference input.
-- **Smart End-of-Turn Detection**: Added `SmartEndOfTurnDetection` as an audio-based end-of-turn
-  detection option.
 - **Parallel Tool Call Control**: Added `parallel_tool_calls` to session models so callers can
   control whether tool calls may run in parallel.
 
 ### Breaking Changes
 
-- **Default API Version Update**: Changed the SDK default API version from `2026-04-10` to
-  the GA version `2026-07-15`. Pass `api_version="2026-04-10"` explicitly to keep the previous
+- **Default API Version Update**: Changed the SDK default API version from `2026-06-01-preview` to
+  the GA version `2026-07-15`. Pass `api_version="2026-06-01-preview"` explicitly to keep the previous
   default behavior.
 
 ### Bugs Fixed
