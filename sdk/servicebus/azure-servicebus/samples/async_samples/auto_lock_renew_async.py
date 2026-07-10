@@ -28,6 +28,8 @@ from azure.identity.aio import DefaultAzureCredential
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
+TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
+SUBSCRIPTION_NAME = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
 
 
 async def renew_lock_on_message_received_from_non_sessionful_entity():
@@ -62,8 +64,9 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
 
 async def renew_lock_via_receiver_auto_lock_renewer_keyword() -> None:
     # The `-> None` return annotation is intentional: it makes mypy type-check this
-    # function body (untyped bodies are skipped), so the auto_lock_renewer= call below
-    # acts as a static regression guard for the receiver-factory annotation.
+    # function body (untyped bodies are skipped), so the auto_lock_renewer= calls below
+    # act as a static regression guard for both receiver-factory annotations
+    # (get_queue_receiver and get_subscription_receiver).
     credential = DefaultAzureCredential()
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
@@ -86,7 +89,28 @@ async def renew_lock_via_receiver_auto_lock_renewer_keyword() -> None:
 
                 for msg in received_msgs:
                     await receiver.complete_message(msg)
-                print("Complete messages.")
+                print("Complete queue messages.")
+
+        async with servicebus_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
+            await sender.send_messages(ServiceBusMessage("message"))
+            print("Send message to topic.")
+
+        # The auto_lock_renewer keyword behaves the same on the subscription receiver factory,
+        # so the type check also covers the get_subscription_receiver annotation from issue #47948.
+        async with AutoLockRenewer() as renewer:
+            async with servicebus_client.get_subscription_receiver(
+                topic_name=TOPIC_NAME,
+                subscription_name=SUBSCRIPTION_NAME,
+                auto_lock_renewer=renewer,
+                prefetch_count=10,
+            ) as receiver:
+                received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
+
+                await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
+
+                for msg in received_msgs:
+                    await receiver.complete_message(msg)
+                print("Complete subscription messages.")
 
 
 async def renew_lock_on_session_of_the_sessionful_entity():
