@@ -370,18 +370,10 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
-        # Dedicated temp directory so no other test/worker shares this path.
-        test_path = tempfile.mkdtemp()
-        self.addCleanup(shutil.rmtree, test_path, ignore_errors=True)
+        test_path = os.path.join(TEST_FOLDER, "asd2")
+        os.makedirs(test_path, exist_ok=True)
         with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
             with LocalFileStorage(test_path, 1) as stor:
-                # Stop the background maintenance thread so it cannot rename or
-                # remove the blob file while _check_storage_size() walks the
-                # folder (which would surface as an OSError -> uncounted file ->
-                # _check_storage_size() incorrectly returning True).
-                stor._maintenance_task.cancel()
-                # Use lease_period=0 so a stable ".blob" file is written that
-                # nothing in the background will touch.
                 stor.put(test_input, lease_period=0)
                 self.assertFalse(stor._check_storage_size())
 
@@ -475,13 +467,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_success_returns_localfileblob(self):
         test_input = (1, 2, 3)
-        # Dedicated temp directory so no other test/worker shares this path.
-        test_path = tempfile.mkdtemp()
-        self.addCleanup(shutil.rmtree, test_path, ignore_errors=True)
-        with LocalFileStorage(test_path) as stor:
-            # Stop the background maintenance thread so it cannot remove the
-            # blob before it is read back.
-            stor._maintenance_task.cancel()
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "success_test")) as stor:
             result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
             self.assertIsInstance(result, StorageExportResult)
             self.assertEqual(stor.get().get(), test_input)
@@ -540,15 +526,11 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put_default_lease_period(self):
         test_input = (1, 2, 3)
-        # Dedicated temp directory so no other test/worker shares this path.
-        test_path = tempfile.mkdtemp()
-        self.addCleanup(shutil.rmtree, test_path, ignore_errors=True)
+        test_path = os.path.join(TEST_FOLDER, "default_lease_test")
+        os.makedirs(test_path, exist_ok=True)
 
         with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
             with LocalFileStorage(test_path, lease_period=90) as stor:
-                # Stop the background maintenance thread so it cannot interfere
-                # with the blob written below.
-                stor._maintenance_task.cancel()
                 result = stor.put(test_input)
                 self.assertIsInstance(result, StorageExportResult)
                 # File should be created with lease (since default lease_period > 0)
