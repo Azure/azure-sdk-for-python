@@ -7,15 +7,6 @@ from typing import Dict, List, Tuple, Type, Union
 from azure.ai.ml._restclient.arm_ml_service.models import InputDeliveryMode
 from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
-
-# Ray has no arm_ml_service subtype (arm DistributionType only has PyTorch/TensorFlow/Mpi), so the
-# distribution helper below must keep building the msrest v2023_04 distribution models.
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    Mpi,
-    PyTorch,
-    Ray,
-    TensorFlow,
-)
 from azure.ai.ml._utils.utils import snake_to_camel
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -178,24 +169,3 @@ def from_dict_to_rest_io(
                 error_category=ErrorCategory.USER_ERROR,
             )
     return io_bindings, rest_io_objects
-
-
-def from_dict_to_rest_distribution(
-    distribution_dict: Dict,
-) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
-    target_type = distribution_dict["distribution_type"].lower()
-    if target_type == "pytorch":
-        return PyTorch(**distribution_dict)
-    if target_type == "mpi":
-        return Mpi(**distribution_dict)
-    if target_type == "tensorflow":
-        return TensorFlow(**distribution_dict)
-    if target_type == "ray":
-        return Ray(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
-    raise ValidationException(
-        message=msg,
-        no_personal_data_message=msg,
-        target=ErrorTarget.PIPELINE,
-        error_category=ErrorCategory.USER_ERROR,
-    )

@@ -9,27 +9,13 @@ from typing import Any, Dict, Optional, Union
 from azure.ai.ml._restclient.arm_ml_service.models import (
     DistributionConfiguration as RestDistributionConfiguration,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    DistributionType as RestDistributionType,
-)
 from azure.ai.ml._restclient.arm_ml_service.models import Mpi as RestMpi
 from azure.ai.ml._restclient.arm_ml_service.models import PyTorch as RestPyTorch
-
-# ``Ray`` distribution is not modeled on the shared arm_ml_service client yet, so keep the legacy msrest
-# model for that subtype; the ``to_hybrid_rest_model`` boundary converts it when embedded in an arm envelope.
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Ray as RestRay
 from azure.ai.ml._restclient.arm_ml_service.models import TensorFlow as RestTensorFlow
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
-SDK_TO_REST = {
-    DistributionType.MPI: RestDistributionType.MPI,
-    DistributionType.TENSORFLOW: RestDistributionType.TENSOR_FLOW,
-    DistributionType.PYTORCH: RestDistributionType.PY_TORCH,
-    DistributionType.RAY: RestDistributionType.RAY,
-}
 
 
 class DistributionConfiguration(RestTranslatableMixin):
@@ -225,15 +211,24 @@ class RayDistribution(DistributionConfiguration):
         self.head_node_additional_args = head_node_additional_args
         self.worker_node_additional_args = worker_node_additional_args
 
-    def _to_rest_object(self) -> RestRay:
-        return RestRay(
-            port=self.port,
-            address=self.address,
-            include_dashboard=self.include_dashboard,
-            dashboard_port=self.dashboard_port,
-            head_node_additional_args=self.head_node_additional_args,
-            worker_node_additional_args=self.worker_node_additional_args,
-        )
+    def _to_rest_object(self) -> RestDistributionConfiguration:
+        # ``Ray`` is not modeled on the shared arm_ml_service client. Build the wire dict directly (omitting
+        # None fields to match the legacy msrest ``Ray.serialize()`` output) and deserialize it into the arm
+        # ``DistributionConfiguration`` hybrid so it serializes byte-identically inside an arm job envelope.
+        wire: Dict[str, Any] = {"distributionType": "Ray"}
+        if self.port is not None:
+            wire["port"] = self.port
+        if self.address is not None:
+            wire["address"] = self.address
+        if self.include_dashboard is not None:
+            wire["includeDashboard"] = self.include_dashboard
+        if self.dashboard_port is not None:
+            wire["dashboardPort"] = self.dashboard_port
+        if self.head_node_additional_args is not None:
+            wire["headNodeAdditionalArgs"] = self.head_node_additional_args
+        if self.worker_node_additional_args is not None:
+            wire["workerNodeAdditionalArgs"] = self.worker_node_additional_args
+        return RestDistributionConfiguration._deserialize(wire, [])
 
 
 DISTRIBUTION_TYPE_MAP = {
