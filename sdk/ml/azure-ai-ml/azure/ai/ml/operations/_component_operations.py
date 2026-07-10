@@ -18,7 +18,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012024
-from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion, ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentContainer, ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -26,6 +26,10 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
+from azure.ai.ml._utils._registry_utils import (
+    get_registry_versioned_asset,
+    list_registry_assets,
+)
 from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _archive_or_restore,
@@ -110,6 +114,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self._version_operation = service_client.component_versions
         self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._all_operations = all_operations
         self._init_args = kwargs
         # Maps a label to a function which given an asset name,
@@ -185,12 +190,14 @@ class ComponentOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Component],
                 (
-                    self._version_operation.list(
-                        name=name,
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        **self._init_args,
-                        cls=lambda objs: [Component._from_rest_object(obj) for obj in objs],
+                    list_registry_assets(
+                        self._registry_service_client,
+                        "components",
+                        name,
+                        self._resource_group_name,
+                        self._registry_name,
+                        ComponentVersion,
+                        Component._from_rest_object,
                     )
                     if self._registry_name
                     else self._version_operation.list(
@@ -206,11 +213,14 @@ class ComponentOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Component],
             (
-                self._container_operation.list(
-                    resource_group_name=self._resource_group_name,
-                    registry_name=self._registry_name,
-                    **self._init_args,
-                    cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
+                list_registry_assets(
+                    self._registry_service_client,
+                    "components",
+                    None,
+                    self._resource_group_name,
+                    self._registry_name,
+                    ComponentContainer,
+                    Component._from_container_rest_object,
                 )
                 if self._registry_name
                 else self._container_operation.list(
@@ -235,12 +245,16 @@ class ComponentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.ComponentVersion
         """
         result = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_args,
+            ComponentVersion._deserialize(
+                get_registry_versioned_asset(
+                    self._registry_service_client,
+                    "components",
+                    name,
+                    version,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._version_operation.get(

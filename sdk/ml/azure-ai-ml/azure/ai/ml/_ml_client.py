@@ -674,6 +674,7 @@ class MLClient:
             ),
             self._operation_container,
             self._preflight,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)
