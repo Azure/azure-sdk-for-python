@@ -65,7 +65,7 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-    from .._common.auto_lock_renewer import AutoLockRenewer
+    from ._async_auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 
