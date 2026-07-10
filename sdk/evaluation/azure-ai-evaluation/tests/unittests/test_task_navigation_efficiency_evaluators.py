@@ -5,7 +5,7 @@ from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
     _TaskNavigationEfficiencyEvaluator,
     _TaskNavigationEfficiencyMatchingMode,
 )
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 @pytest.mark.unittest
@@ -398,12 +398,70 @@ class TestTaskNavigationEfficiencyEvaluator:
         assert evaluator2.matching_mode == _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
 
         # Test invalid string mode
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
 
         # Test invalid type for mode
-        with pytest.raises(Exception):  # EvaluationException
+        with pytest.raises(EvaluationException):
             _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
+
+    def test_matching_mode_validation_error_metadata(self):
+        """Test that invalid matching_mode raises EvaluationException with correct metadata."""
+        # Invalid string mode
+        with pytest.raises(EvaluationException) as exc_info:
+            _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+        # Invalid type for mode
+        with pytest.raises(EvaluationException) as exc_info:
+            _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+    def test_empty_ground_truth_error_metadata(self):
+        """Test that empty ground_truth raises EvaluationException with correct metadata."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(response=response, ground_truth=[])
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+    def test_invalid_ground_truth_type_error_metadata(self):
+        """Test that an invalid ground_truth type raises EvaluationException with correct metadata."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(response=response, ground_truth="not-a-valid-ground-truth")  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
 
     # ==================== ALIAS INPUT NORMALIZATION TESTS ====================
 

@@ -97,11 +97,14 @@ def trim_changelog_if_needed(
     def trim_proc(content: list[str]):
         nonlocal trimmed
         version_indices = [i for i, line in enumerate(content) if _VERSION_HEADER_RE.match(line)]
+        # main() inserts 0.0.0 as an unreleased placeholder; keep it, but don't use it as the
+        # cutoff version in the trim note.
+        trimmable_version_indices = [i for i in version_indices if content[i].split()[1] != "0.0.0"]
         # Nothing to trim if there is at most one entry. Return before mutating content so an
         # existing trim note is preserved on this no-op path (modify_file always writes content
         # back). The note is appended after all version headers and never matches the version
         # header regex, so its presence does not affect version_indices.
-        if len(version_indices) < 2:
+        if len(trimmable_version_indices) < 2:
             return
 
         # Remove any previous trim note so repeated runs don't accumulate duplicates. It lives
@@ -109,9 +112,9 @@ def trim_changelog_if_needed(
         content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
 
         # Boundaries of each version section; the header (before the first entry) is always kept.
-        n = len(version_indices)
-        bounds = version_indices + [len(content)]
-        header_bytes = byte_len(content[: version_indices[0]])
+        n = len(trimmable_version_indices)
+        bounds = trimmable_version_indices + [len(content)]
+        header_bytes = byte_len(content[: trimmable_version_indices[0]])
         seg_bytes = [byte_len(content[bounds[j] : bounds[j + 1]]) for j in range(n)]
         # Reserve room for the note line so the trimmed file stays under the target/limit.
         note_reserve = 256
@@ -135,12 +138,12 @@ def trim_changelog_if_needed(
         if keep_count >= n:
             return
 
-        oldest_kept = content[version_indices[keep_count - 1]].split()[1]
+        oldest_kept = content[trimmable_version_indices[keep_count - 1]].split()[1]
         note = (
             f"{_TRIM_NOTE_PREFIX} {oldest_kept} were removed to reduce file size. "
             f"See https://pypi.org/project/{package_name}/{oldest_kept}/ for the older history.\n"
         )
-        del content[version_indices[keep_count] :]
+        del content[trimmable_version_indices[keep_count] :]
         # Ensure a blank line separates the last kept entry from the note.
         if content and content[-1].strip():
             content.append("\n")

@@ -33,7 +33,7 @@ def create_package(prefolder, name):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = "azpysdk breaking . --changelog"
+    cmd = "azpysdk breaking . --changelog --use-apistub "
     if lastest_pypi_version:
         cmd += " --latest-pypi-version"
     try:
@@ -232,7 +232,7 @@ class CheckFile:
                 toml_data = toml.load(fd)
             if "packaging" not in toml_data:
                 toml_data["packaging"] = {}
-            if title and not toml_data["packaging"].get("title"):
+            if title:
                 toml_data["packaging"]["title"] = title
             toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:

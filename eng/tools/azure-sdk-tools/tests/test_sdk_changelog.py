@@ -377,6 +377,21 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
     assert note in content
 
 
+def test_trim_changelog_note_ignores_unreleased_placeholder(temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    changelog = _make_changelog(5, body_per_version="  - " + "x" * 200 + "\n")
+    placeholder = "## 0.0.0 (UnReleased)\n" "\n" "### Features Added\n" "\n" f"  - {'x' * 2000}\n" "\n"
+    changelog_path.write_text(changelog.replace("\n\n", f"\n\n{placeholder}", 1), encoding="utf-8")
+
+    trimmed = trim_changelog_if_needed(package_path, size_limit=2300, trim_target=1024)
+
+    assert trimmed is True
+    content = changelog_path.read_text(encoding="utf-8")
+    assert "## 0.0.0 (UnReleased)" in content
+    assert "> Changelog entries prior to 0.0.0 were removed" not in content
+    assert "> Changelog entries prior to 5.0.0 were removed" in content
+
+
 def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest, kept_count):
     # Real-world fixtures (~210 KB) trigger trimming (over the 128 KB limit). Trimming aims for the
     # 64 KB target but always keeps at least CHANGELOG_MIN_KEEP_ENTRIES (4) newest entries for

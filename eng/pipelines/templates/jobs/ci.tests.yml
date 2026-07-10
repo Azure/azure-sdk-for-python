@@ -73,6 +73,15 @@ jobs:
         image: $(OSVmImage)
       os: ${{ parameters.OSName }}
 
+    templateContext:
+      # See eng/common/pipelines/templates/steps/upload-llm-artifacts.yml for corresponding file copy step
+      outputs:
+        - output: pipelineArtifact
+          targetPath: '$(Build.ArtifactStagingDirectory)/llm-artifacts'
+          artifactName: "LLM Artifacts - $(System.JobName) - $(System.JobAttempt)"
+          condition: eq(variables['uploadLlmArtifacts'], 'true')
+          sbomEnabled: false
+
     variables:
     - template: ../variables/globals.yml
     - name: InjectedPackages

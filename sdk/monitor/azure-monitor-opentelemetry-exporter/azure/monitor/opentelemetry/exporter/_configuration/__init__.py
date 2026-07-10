@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 import logging
 from threading import Lock
 
@@ -27,7 +27,6 @@ class _ConfigurationState:
 
     etag: str = ""
     refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-    version_cache: int = -1
     settings_cache: Dict[str, str] = field(default_factory=dict)
 
     def with_updates(self, **kwargs) -> "_ConfigurationState":  # pylint: disable=C4741,C4742
@@ -35,7 +34,6 @@ class _ConfigurationState:
         return _ConfigurationState(
             etag=kwargs.get("etag", self.etag),
             refresh_interval=kwargs.get("refresh_interval", self.refresh_interval),
-            version_cache=kwargs.get("version_cache", self.version_cache),
             settings_cache=kwargs.get("settings_cache", self.settings_cache.copy()),
         )
 
@@ -81,7 +79,7 @@ class _ConfigurationManager(metaclass=Singleton):
             try:
                 cb(settings)
             except Exception as ex:  # pylint: disable=broad-except
-                logger.warning("Callback failed: %s", ex)  # pylint: disable=do-not-log-exceptions-if-not-debug
+                logger.debug("Callback failed: %s", ex)
 
     def _is_transient_error(self, response: OneSettingsResponse) -> bool:
         """Check if the response indicates a transient error.
@@ -98,76 +96,23 @@ class _ConfigurationManager(metaclass=Singleton):
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
 
-        This method performs a conditional HTTP request to OneSettings using the
-        current ETag for efficient caching. It atomically updates the local configuration
-        state with any new settings and manages version tracking for change detection.
+        This method implements the change detection mechanism per the OneSettings spec:
+        - Polls CHANGE endpoint (e2) with cached ETag via if-none-match header.
+          - If 304 Not Modified: no changes, update refresh interval only.
+          - If 200 (new ETag or no cached ETag): fetch from CONFIG endpoint (e1) for settings.
 
-        When transient errors are encountered (timeouts, network exceptions, or HTTP status
-        codes 429, 500-504) from the CHANGE endpoint, the method doubles the current refresh
-        interval to reduce load on the failing service and returns immediately. The refresh
-        interval is capped at 24 hours (86,400 seconds) to prevent excessively long delays.
-
-        The method implements a check-and-set pattern for thread safety:
-        1. Reads current state atomically to prepare request headers
-        2. Makes HTTP request to OneSettings CHANGE endpoint outside locks
-        3. If transient error (including timeouts/exceptions), doubles refresh interval
-        (capped at 24 hours) and returns immediately
-        4. Re-reads current state to make version comparison decisions
-        5. Conditionally fetches from CONFIG endpoint if version increased
-        6. Updates all state fields atomically in a single operation
-
-        Version comparison logic:
-        - Version increase: New configuration available, fetches and caches new settings
-        - Version same: No changes detected, ETag and refresh interval updated safely
-        - Version decrease: Unexpected rollback state, logged as warning, no updates applied
-
-        Error handling:
-        - Transient errors (timeouts, exceptions, retryable HTTP codes) from CHANGE endpoint:
-        Refresh interval doubled (capped), immediate return
-        - CONFIG endpoint failure: ETag not updated to preserve retry capability on next call
-        - Network failures: Handled by make_onesettings_request with error indicators
-        - Missing settings/version: Logged as warning, only ETag and refresh interval updated
+        When transient errors are encountered (timeouts, network exceptions, or retryable
+        HTTP status codes) from the CHANGE endpoint, the method doubles the current refresh
+        interval (capped at 24 hours) and returns immediately.
 
         :param query_dict: Optional query parameters to include in the OneSettings request.
-            Commonly used for targeting specific configuration namespaces or environments.
-            If None, defaults to empty dictionary.
         :type query_dict: Optional[Dict[str, str]]
 
         :return: Updated refresh interval in seconds for the next configuration check.
-            This value comes from the OneSettings response or is doubled (capped at 24 hours)
-            if transient errors are encountered from the CHANGE endpoint, determining how
-            frequently the background worker should call this method.
         :rtype: int
-
-        Thread Safety:
-            This method is thread-safe using atomic state updates. Multiple threads can
-            call this method concurrently without data corruption. The implementation uses
-            a single state lock with minimal critical sections to reduce lock contention.
-
-            HTTP requests are performed outside locks to prevent blocking other threads
-            during potentially slow network operations.
-
-        Caching Behavior:
-            The method automatically includes ETag headers for conditional requests to
-            minimize unnecessary data transfer. If the server responds with 304 Not Modified,
-            only the refresh interval is updated while preserving existing configuration.
-
-            On CONFIG endpoint failures, the ETag is intentionally not updated to ensure
-            the next request can retry fetching the same configuration version.
-
-        State Consistency:
-            All configuration state (ETag, refresh interval, version, settings) is updated
-            atomically using immutable state objects. This prevents race conditions where
-            different threads might observe inconsistent combinations of these values.
-
-        Transient Error Handling:
-            When transient errors are detected from the CHANGE endpoint (including timeouts,
-            network exceptions, or retryable HTTP status codes), the refresh interval is
-            doubled and the method returns immediately, preserving current state for retry.
-            The refresh interval is capped at 24 hours to ensure eventual recovery attempts.
         """
         query_dict = query_dict or {}
-        headers = {}
+        headers: Dict[str, str] = {}
 
         # Read current state atomically
         with self._state_lock:
@@ -177,77 +122,45 @@ class _ConfigurationManager(metaclass=Singleton):
             if current_state.refresh_interval:
                 headers["x-ms-onesetinterval"] = str(current_state.refresh_interval)
 
-        # Make the OneSettings request
+        # Poll CHANGE endpoint (e2)
         response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
 
-        # Check for transient errors from CHANGE endpoint - return immediately if found
+        # Check for transient errors - double interval and return
         if self._is_transient_error(response):
             with self._state_lock:
-                # Double the refresh interval and cap it at 24 hours
                 doubled_interval = self._current_state.refresh_interval * 2
                 current_refresh_interval = min(doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
 
-            # Create appropriate log message based on error type
             if response.has_exception:
                 error_description = "network error"
             else:
                 error_description = f"HTTP {response.status_code}"
 
-            logger.warning("OneSettings CHANGE request failed with transient error (%s). Retrying. ", error_description)
+            logger.debug("OneSettings CHANGE request failed with transient error (%s). Retrying. ", error_description)
             return current_refresh_interval  # type: ignore
 
         # Prepare new state updates
-        new_state_updates = {}
+        new_state_updates: Dict[str, Any] = {}
         if response.etag is not None:
             new_state_updates["etag"] = response.etag
         if response.refresh_interval and response.refresh_interval > 0:  # type: ignore
             new_state_updates["refresh_interval"] = response.refresh_interval  # type: ignore
 
         if response.status_code == 304:
-            # Not modified: Settings unchanged, but update etag and refresh interval if provided
+            # Not modified: no configuration changes published
             pass
-        # Handle version and settings updates
-        elif response.settings and response.version is not None:
-            needs_config_fetch = False
-            with self._state_lock:
-                current_state = self._current_state
-
-                if response.version > current_state.version_cache:
-                    # Version increase: new config available
-                    needs_config_fetch = True
-                elif response.version < current_state.version_cache:
-                    # Version rollback: Erroneous state
-                    logger.warning("Fetched version is lower than cached version. No configurations updated.")
-                    needs_config_fetch = False
-                else:
-                    # Version unchanged: No new config
-                    needs_config_fetch = False
-
-            # Fetch config
-            if needs_config_fetch:
-                config_response = make_onesettings_request(_ONE_SETTINGS_CONFIG_URL, query_dict)
-                if config_response.status_code == 200 and config_response.settings:
-                    # Validate that the versions from change and config match
-                    if config_response.version == response.version:
-                        new_state_updates.update(
-                            {
-                                "version_cache": response.version,  # type: ignore
-                                "settings_cache": config_response.settings,  # type: ignore
-                            }
-                        )
-                    else:
-                        logger.warning(
-                            "Version mismatch between change and config responses. No configurations updated."
-                        )
-                        # We do not update etag to allow retry on next call
-                        new_state_updates.pop("etag", None)
-                else:
-                    logger.warning("Unexpected response status: %d", config_response.status_code)
-                    # We do not update etag to allow retry on next call
-                    new_state_updates.pop("etag", None)
+        elif response.status_code == 200:
+            # New ETag (or first call with no cached ETag) - fetch config from e1
+            config_response = make_onesettings_request(_ONE_SETTINGS_CONFIG_URL, query_dict)
+            if config_response.status_code == 200 and config_response.settings:
+                new_state_updates["settings_cache"] = config_response.settings
+            else:
+                logger.debug("Unexpected response status from CONFIG endpoint: %d", config_response.status_code)
+                # Do not update etag to allow retry on next call
+                new_state_updates.pop("etag", None)
         else:
-            # No settings or version provided
-            logger.warning("No settings or version provided in config response. Config not updated.")
+            # Unexpected non-transient status code
+            logger.debug("Unexpected response status from CHANGE endpoint: %d", response.status_code)
 
         notify_callbacks = False
         current_refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
@@ -255,7 +168,7 @@ class _ConfigurationManager(metaclass=Singleton):
 
         # Atomic state update
         with self._state_lock:
-            latest_state = self._current_state  # Always use latest state
+            latest_state = self._current_state
             self._current_state = latest_state.with_updates(**new_state_updates)
             current_refresh_interval = self._current_state.refresh_interval
             if "settings_cache" in new_state_updates:
@@ -272,11 +185,6 @@ class _ConfigurationManager(metaclass=Singleton):
         """Get current settings cache."""
         with self._state_lock:
             return self._current_state.settings_cache.copy()  # type: ignore
-
-    def get_current_version(self) -> int:  # type: ignore # pylint: disable=C4741,C4742
-        """Get current version."""
-        with self._state_lock:
-            return self._current_state.version_cache  # type: ignore
 
     def shutdown(self) -> None:
         """Shutdown the configuration worker."""
