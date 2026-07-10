@@ -22,6 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 
@@ -192,6 +193,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
+    :keyword dict[str, Any] mirror_config: **provisional** Fabric mirror configuration for per-request query routing.
+        When provided, individual queries can use ``use_mirror_serving=True`` to route through Fabric mirror.
+        Fabric mirroring is only supported with CosmosDB Fabric native accounts.
+        Required keys: server (Fabric SQL endpoint), database (database name).
+        Optional keys: credential, fabric_table, fabric_schema.
+        Requires azure-cosmos-fabric-mapper package: ``pip install azure-cosmos-fabric-mapper[sql]``
 
     .. admonition:: Example:
 
@@ -241,9 +248,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return await self.client_connection.pipeline_client.__aexit__(*args)
         finally:
             try:
-                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
-            except Exception:  # pylint: disable=broad-except
-                pass
+                mirror_driver = self.client_connection._mirror_driver_client  # pylint: disable=protected-access
+                if mirror_driver is not None:
+                    await asyncio.to_thread(mirror_driver.close)
+            finally:
+                self.client_connection._mirror_driver_client = None  # pylint: disable=protected-access
+                try:
+                    self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+                except Exception:  # pylint: disable=broad-except
+                    pass
 
     async def close(self) -> None:
         """Close this instance of CosmosClient."""
