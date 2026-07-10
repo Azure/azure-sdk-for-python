@@ -182,7 +182,7 @@ def encode_keep_alive_comment(comment: str = "keep-alive") -> str:
 
 async def with_keep_alive(
     source: AsyncIterator[str],
-    interval_seconds: int | None,
+    interval_seconds: float | None,
 ) -> AsyncIterator[str]:
     """Interleave SSE keep-alive comment frames into ``source`` during idle gaps.
 
@@ -195,7 +195,7 @@ async def with_keep_alive(
     :param source: The upstream async iterator of SSE-encoded strings.
     :type source: AsyncIterator[str]
     :param interval_seconds: Idle interval before emitting a keep-alive frame, or ``None`` to disable.
-    :type interval_seconds: int | None
+    :type interval_seconds: float | None
     :returns: An async iterator that yields the source's items plus periodic keep-alive frames.
     :rtype: AsyncIterator[str]
     """
@@ -206,11 +206,15 @@ async def with_keep_alive(
 
     queue: asyncio.Queue[Any] = asyncio.Queue()
     sentinel = object()
+    pump_error: BaseException | None = None
 
     async def _pump() -> None:
+        nonlocal pump_error
         try:
             async for item in source:
                 queue.put_nowait(item)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            pump_error = exc
         finally:
             queue.put_nowait(sentinel)
 
@@ -231,6 +235,8 @@ async def with_keep_alive(
             if item is sentinel:
                 break
             yield item
+        if pump_error is not None:
+            raise pump_error
     finally:
         # Stop the pump and any pending get, and await them so the source's finally
         # (finalize, request-context reset) runs before returning.

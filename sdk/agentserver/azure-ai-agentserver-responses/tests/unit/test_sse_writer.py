@@ -8,6 +8,8 @@ import asyncio
 import contextvars
 from typing import AsyncIterator, List
 
+import pytest
+
 from azure.ai.agentserver.responses.streaming import _sse
 from azure.ai.agentserver.responses.streaming._sse import encode_keep_alive_comment, with_keep_alive
 
@@ -68,8 +70,8 @@ def test_sse_writer__injects_monotonic_sequence_numbers() -> None:
     assert seq_second == 1, f"second sequence_number must be 1 for a new stream, got {seq_second}"
 
 
-async def _collect(agen: AsyncIterator[str]) -> List[str]:
-    return [item async for item in agen]
+async def _collect(stream: AsyncIterator[str]) -> List[str]:
+    return [item async for item in stream]
 
 
 async def test_with_keep_alive__passthrough_when_disabled() -> None:
@@ -130,9 +132,9 @@ async def test_with_keep_alive__runs_source_finally_on_early_close() -> None:
         finally:
             finalized.set()
 
-    agen = with_keep_alive(source(), 5)
-    assert await agen.__anext__() == "a"
-    await agen.aclose()
+    stream = with_keep_alive(source(), 5)
+    assert await stream.__anext__() == "a"
+    await stream.aclose()
     await asyncio.wait_for(finalized.wait(), timeout=1.0)
 
 
@@ -144,6 +146,21 @@ async def test_with_keep_alive__emits_heartbeat_while_source_idle_from_start() -
         await asyncio.Event().wait()
         yield "never"  # pragma: no cover
 
-    agen = with_keep_alive(idle_source(), 0.05)
-    assert await asyncio.wait_for(agen.__anext__(), timeout=1.0) == _KA
-    await agen.aclose()
+    stream = with_keep_alive(idle_source(), 0.05)
+    assert await asyncio.wait_for(stream.__anext__(), timeout=1.0) == _KA
+    await stream.aclose()
+
+
+async def test_with_keep_alive__propagates_source_error() -> None:
+    """An error raised by the source surfaces to the consumer after buffered items."""
+
+    async def source() -> AsyncIterator[str]:
+        yield "a"
+        raise RuntimeError("boom")
+
+    collected: List[str] = []
+    with pytest.raises(RuntimeError, match="boom"):
+        async for item in with_keep_alive(source(), 5):
+            collected.append(item)
+
+    assert collected == ["a"]

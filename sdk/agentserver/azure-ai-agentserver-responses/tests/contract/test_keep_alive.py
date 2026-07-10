@@ -183,7 +183,6 @@ def test_keep_alive__does_not_disrupt_event_stream_integrity() -> None:
     assert len(seq_nums) >= 2
     assert all(isinstance(n, int) for n in seq_nums)
     assert len(set(seq_nums)) == len(seq_nums), f"sequence numbers not unique: {seq_nums}"
-    assert seq_nums == sorted(seq_nums)
     assert all(b > a for a, b in zip(seq_nums, seq_nums[1:])), f"sequence numbers not strictly increasing: {seq_nums}"
 
 

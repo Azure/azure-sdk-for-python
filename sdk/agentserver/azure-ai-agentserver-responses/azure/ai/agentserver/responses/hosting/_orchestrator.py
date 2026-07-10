@@ -1499,8 +1499,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
 
-        # The orchestrator emits only real events; keep-alive frames are added by the
-        # transport layer (streaming._sse.with_keep_alive in the endpoint handler).
         if not (ctx.background and ctx.store):
             # Simple path for non-background (or non-store) streaming.
             _stream_completed = False
