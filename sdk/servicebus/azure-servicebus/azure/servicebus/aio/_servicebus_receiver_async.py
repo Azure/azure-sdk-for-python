@@ -527,6 +527,15 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
     async def _close_handler(self):
         self._message_iter = None
+        if (
+            self._handler
+            and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK
+            and not self._session
+        ):
+            # Drain the link and release buffered/in-flight messages so they are not
+            # left locked at the broker until lock expiry (delaying redelivery,
+            # inflating delivery count).
+            await self._amqp_transport.drain_receive_link_and_release_messages_async(self._handler)
         await super(ServiceBusReceiver, self)._close_handler()
 
     @property

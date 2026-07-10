@@ -157,6 +157,10 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
     ERROR_CODE_TIMEOUT: OperationTimeoutError,
 }
 
+# Safety cap (seconds) for draining a receive link on close; the drain loop exits
+# early on quiescence, so a normal close returns well before this.
+RECEIVE_LINK_DRAIN_TIMEOUT = 5
+
 
 class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     """
@@ -798,6 +802,36 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
+
+    @staticmethod
+    def drain_receive_link_and_release_messages(handler: "ReceiveClient") -> None:
+        """
+        Drain the receive link and release buffered/in-flight messages on close, so
+        they are not left locked at the broker until lock expiry. Intended for
+        non-session PEEK_LOCK receivers only (gated by the caller).
+        :param ReceiveClient handler: Client whose receive link to drain.
+        :rtype: None
+        """
+        # pylint: disable=protected-access
+        link = handler._link
+        if link is None or link._is_closed or link.current_link_credit <= 0:
+            return
+        try:
+            link.flow(link_credit=0, drain=True)
+            deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
+            while time.time() < deadline:
+                before = handler._received_messages.qsize()
+                # listen() directly, not do_work(): do_work re-issues credit at 0
+                # and would undo the drain. Stop on quiescence (no new transfers).
+                handler._connection.listen(wait=handler._socket_timeout)
+                if handler._received_messages.qsize() == before:
+                    break
+            while not handler._received_messages.empty():
+                frame, _ = handler._received_messages.get_nowait()
+                handler.settle_messages(frame[1], frame[2], "released")
+                handler._received_messages.task_done()
+        except Exception:  # pylint: disable=broad-except
+            pass  # a faulted/detached link must not block close
 
     @staticmethod
     def settle_message_via_receiver_link(
