@@ -32,6 +32,7 @@ import pytest
 
 from azure.cosmos._backend.base import (
     BackendResponse,
+    OP_FEED_RANGE_FROM_PARTITION_KEY,
     OP_QUERY_ITEMS,
     OP_READ_FEED_RANGES,
     PreparedClientConfig,
@@ -73,6 +74,7 @@ from azure.cosmos.aio._backend.factory import make_async_backend
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos.partition_key import NonePartitionKeyValue
 
 
 @pytest.fixture(autouse=True)
@@ -341,6 +343,33 @@ def test_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
     assert b"PartitionKeyRanges" in resp.body
 
 
+def test_rust_backend_dispatches_feed_range_from_partition_key_to_binding(monkeypatch):
+    """A feed_range_from_partition_key prepared request routes to the matching binding entry point."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_FEED_RANGE_FROM_PARTITION_KEY,
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.feed_range_from_partition_key.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert b'"Range"' in resp.body
+
+
 def test_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
     """The backend accepts diagnostics returned by the binding."""
     fake_module = MagicMock()
@@ -586,6 +615,37 @@ def test_async_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
         fake_module.read_feed_ranges_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 200
         assert b"PartitionKeyRanges" in resp.body
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_feed_range_from_partition_key_to_binding(monkeypatch):
+    """Async feed_range_from_partition_key prepared requests route to the async binding entry point."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_FEED_RANGE_FROM_PARTITION_KEY,
+            container_link="dbs/d/colls/c",
+            body_bytes=b"",
+            partition_key_header='["a"]',
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.feed_range_from_partition_key_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert b'"Range"' in resp.body
 
     asyncio.run(_run())
 
@@ -2241,6 +2301,242 @@ def test_async_container_read_feed_ranges_rust_payload_must_include_partition_ke
 
     with pytest.raises(ValueError, match="PartitionKeyRanges"):
         asyncio.run(_run())
+
+
+def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypatch):
+    """feed_range_from_partition_key uses Rust backend when available."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container._get_properties = MagicMock(side_effect=AssertionError("legacy fallback should not run"))
+
+    feed_range = container.feed_range_from_partition_key("pk-a")
+    assert feed_range["Range"]["min"] == "3C"
+    assert feed_range["Range"]["isMaxInclusive"] is True
+    assert fake_module.feed_range_from_partition_key.called
+
+    prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+    assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+    assert prepared.container_link == "dbs/test/colls/test"
+    assert prepared.partition_key_header == '["pk-a"]'
+    assert prepared.body_bytes == b""
+
+
+def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (200, 0, {}, b'{"unexpected":{}}')
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    with pytest.raises(ValueError, match="Range"):
+        container.feed_range_from_partition_key("pk-a")
+
+
+def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"00000000000000000000000000000000","max":"00000000000000000000000000000000","isMinInclusive":true,"isMaxInclusive":true}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container._is_system_key = True
+    container._get_properties = MagicMock(
+        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+    )
+
+    feed_range = container.feed_range_from_partition_key(NonePartitionKeyValue)
+
+    assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
+    assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
+    assert feed_range["Range"]["isMinInclusive"] is True
+    assert feed_range["Range"]["isMaxInclusive"] is True
+    assert fake_module.feed_range_from_partition_key.call_count == 1
+    prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+    assert prepared.partition_key_header == "[]"
+
+
+def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key.return_value = (
+        200,
+        0,
+        {},
+        b'{"Range":{"min":"","max":"","isMinInclusive":true,"isMaxInclusive":false}}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container._get_properties = MagicMock(
+        return_value={
+            "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
+        }
+    )
+
+    feed_range = container.feed_range_from_partition_key([])
+
+    assert feed_range["Range"]["min"] == ""
+    assert feed_range["Range"]["max"] == ""
+    assert feed_range["Range"]["isMinInclusive"] is True
+    assert feed_range["Range"]["isMaxInclusive"] is False
+    assert fake_module.feed_range_from_partition_key.call_count == 1
+    prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+    assert prepared.partition_key_header == "[[]]"
+
+
+def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypatch):
+    """Async feed_range_from_partition_key uses Rust backend when available."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"3C","max":"3C","isMinInclusive":true,"isMaxInclusive":true}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+
+    async def _run():
+        return await container.feed_range_from_partition_key("pk-a")
+
+    feed_range = asyncio.run(_run())
+    assert feed_range["Range"]["min"] == "3C"
+    assert feed_range["Range"]["isMaxInclusive"] is True
+    assert fake_module.feed_range_from_partition_key_async.await_count == 1
+
+    prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+    assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+    assert prepared.container_link == "dbs/test/colls/test"
+    assert prepared.partition_key_header == '["pk-a"]'
+    assert prepared.body_bytes == b""
+
+
+def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(200, 0, {}, b'{"unexpected":{}}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+
+    async def _run():
+        return await container.feed_range_from_partition_key("pk-a")
+
+    with pytest.raises(ValueError, match="Range"):
+        asyncio.run(_run())
+
+
+def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"00000000000000000000000000000000","max":"00000000000000000000000000000000","isMinInclusive":true,"isMaxInclusive":true}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+    container._is_system_key = True
+    container._get_properties_with_options = AsyncMock(
+        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+    )
+
+    async def _run():
+        return await container.feed_range_from_partition_key(NonePartitionKeyValue)
+
+    feed_range = asyncio.run(_run())
+    assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
+    assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
+    assert feed_range["Range"]["isMinInclusive"] is True
+    assert feed_range["Range"]["isMaxInclusive"] is True
+    assert fake_module.feed_range_from_partition_key_async.await_count == 1
+    prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+    assert prepared.partition_key_header == "[]"
+
+
+def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.feed_range_from_partition_key_async = AsyncMock(
+        return_value=(
+            200,
+            0,
+            {},
+            b'{"Range":{"min":"","max":"","isMinInclusive":true,"isMaxInclusive":false}}',
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    mock_cc = MagicMock()
+    mock_cc._backend = _new_async_rust_backend()
+    mock_cc._core_python_backend = None
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.client_connection = mock_cc
+    container.id = "test"
+    container.database_link = "dbs/test"
+    container.container_link = "dbs/test/colls/test"
+    container._get_properties_with_options = AsyncMock(
+        return_value={
+            "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
+        }
+    )
+
+    async def _run():
+        return await container.feed_range_from_partition_key([])
+
+    feed_range = asyncio.run(_run())
+    assert feed_range["Range"]["min"] == ""
+    assert feed_range["Range"]["max"] == ""
+    assert feed_range["Range"]["isMinInclusive"] is True
+    assert feed_range["Range"]["isMaxInclusive"] is False
+    assert fake_module.feed_range_from_partition_key_async.await_count == 1
+    prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+    assert prepared.partition_key_header == "[[]]"
 
 
 # ---------------------------------------------------------------------------

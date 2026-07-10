@@ -326,6 +326,25 @@ def _aio_read_feed_ranges_target() -> Tuple[Any, str, str]:
 _register_op("read_feed_ranges", sync=_sync_read_feed_ranges_target, aio=_aio_read_feed_ranges_target)
 
 
+# feed_range_from_partition_key ------------------------------------------------
+
+def _sync_feed_range_from_partition_key_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "feed_range_from_partition_key"
+
+
+def _aio_feed_range_from_partition_key_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "feed_range_from_partition_key"
+
+
+_register_op(
+    "feed_range_from_partition_key",
+    sync=_sync_feed_range_from_partition_key_target,
+    aio=_aio_feed_range_from_partition_key_target,
+)
+
+
 # ---------------------------------------------------------------------------
 # Capture state (per pytest session)
 # ---------------------------------------------------------------------------

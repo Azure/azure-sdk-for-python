@@ -53,7 +53,9 @@ from .._helpers._item_dispatch import (
 )
 from ._helpers.item_helper import AsyncItemHelper
 from .._feed_ranges_rust_routing import (
+    can_use_rust_backend_for_feed_range_from_partition_key,
     can_use_rust_backend_for_read_feed_ranges,
+    try_feed_range_from_partition_key_with_rust_backend_async,
     try_read_feed_ranges_with_rust_backend_async,
 )
 from .._constants import _Constants as Constants, TimeoutScope
@@ -2191,6 +2193,22 @@ class ContainerProxy:
 
         """
         partition_key_value = await self._set_partition_key(partition_key)
+        backend = pick_backend(self.client_connection)
+        # The returned dict is an opaque label for the slice this key hashes into; customers save
+        # it, compare it against earlier-saved values and the read_feed_ranges slice list, and hand
+        # it to get_latest_session_token. Try Rust first, but it must return the value byte-for-byte
+        # identical to the legacy path below (see parse_feed_range_from_partition_key_payload), or
+        # those comparisons and session-token lookups silently break. Fall through to legacy on None.
+        if can_use_rust_backend_for_feed_range_from_partition_key(
+            backend=backend,
+        ):
+            rust_feed_range = await try_feed_range_from_partition_key_with_rust_backend_async(
+                client_connection=self.client_connection,
+                container_link=self.container_link,
+                partition_key_value=partition_key_value,
+            )
+            if rust_feed_range is not None:
+                return rust_feed_range
         return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key_value)).to_dict()
 
     async def is_feed_range_subset(self, parent_feed_range: dict[str, Any],

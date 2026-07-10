@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The binding's front counter for the eight migrated operations:
+//! The binding's front counter for the nine migrated operations:
 //! create / upsert / replace / delete / read / patch / query_items /
-//! read_feed_ranges -- each in a synchronous and an async version (16 functions
+//! read_feed_ranges / feed_range_from_partition_key -- each in a synchronous and an async version (18 functions
 //! in all).
 //!
 //! Where this fits in the layering (same direction as a normal call):
@@ -59,10 +59,11 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
-    extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id, extract_required_item_id,
-    extract_read_feed_ranges_force_refresh, run_item_operation, run_item_operation_async,
-    run_query_operation, run_query_operation_async, run_read_feed_ranges_operation,
-    run_read_feed_ranges_operation_async, OpModifiers,
+    extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
+    extract_read_feed_ranges_force_refresh, extract_required_item_id,
+    run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
+    run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
+    run_read_feed_ranges_operation, run_read_feed_ranges_operation_async, OpModifiers,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
@@ -77,13 +78,17 @@ type ItemInputs = (String, String, OpModifiers, String);
 type ItemBodyInputs = (String, String, OpModifiers, String, Vec<u8>);
 type QueryInputs = (String, String, OpModifiers, Vec<u8>);
 type ReadFeedRangesInputs = (String, bool);
+type FeedRangeFromPartitionKeyInputs = (String, String);
 
 /// Pull the common fields (container link, partition-key header, per-request
 /// modifiers) plus a *required* item id off the PreparedRequest. Used by the
 /// bodiless ops (delete, read), where the id comes from the request. Without a
 /// single shared extractor each op would re-derive the same inputs and could
 /// drift apart on which fields it reads or which error it raises.
-fn extract_item_inputs(prepared: &Bound<'_, PyAny>, error_message: &'static str) -> PyResult<ItemInputs> {
+fn extract_item_inputs(
+    prepared: &Bound<'_, PyAny>,
+    error_message: &'static str,
+) -> PyResult<ItemInputs> {
     let (container_link, partition_key_header, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
     let item_id = extract_required_item_id(prepared, error_message)?;
@@ -142,6 +147,15 @@ fn extract_read_feed_ranges_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<Read
     let container_link: String = prepared.getattr("container_link")?.extract()?;
     let force_refresh = extract_read_feed_ranges_force_refresh(prepared)?;
     Ok((container_link, force_refresh))
+}
+
+/// Fields for `feed_range_from_partition_key` (container link + partition-key header).
+fn extract_feed_range_from_partition_key_inputs(
+    prepared: &Bound<'_, PyAny>,
+) -> PyResult<FeedRangeFromPartitionKeyInputs> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let partition_key_header: String = prepared.getattr("partition_key_header")?.extract()?;
+    Ok((container_link, partition_key_header))
 }
 
 /// create_item: write-with-body; the id is read from the body. Maps to
@@ -323,7 +337,8 @@ pub(crate) fn query_items<'py>(
     handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, body_bytes) = extract_query_inputs(prepared)?;
+    let (container_link, partition_key_header, modifiers, body_bytes) =
+        extract_query_inputs(prepared)?;
     run_query_operation(
         py,
         handle,
@@ -352,6 +367,24 @@ pub(crate) fn read_feed_ranges<'py>(
         &container_link,
         force_refresh,
         "read_feed_ranges",
+    )
+}
+
+/// feed_range_from_partition_key: compute the feed-range envelope for one partition key.
+#[pyfunction]
+pub(crate) fn feed_range_from_partition_key<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (container_link, partition_key_header) =
+        extract_feed_range_from_partition_key_inputs(prepared)?;
+    run_feed_range_from_partition_key_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        "feed_range_from_partition_key",
     )
 }
 
@@ -546,7 +579,8 @@ pub(crate) fn query_items_async<'py>(
     handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, body_bytes) = extract_query_inputs(prepared)?;
+    let (container_link, partition_key_header, modifiers, body_bytes) =
+        extract_query_inputs(prepared)?;
     run_query_operation_async(
         py,
         handle,
@@ -572,5 +606,23 @@ pub(crate) fn read_feed_ranges_async<'py>(
         &container_link,
         force_refresh,
         "read_feed_ranges",
+    )
+}
+
+/// Async twin of `feed_range_from_partition_key`.
+#[pyfunction]
+pub(crate) fn feed_range_from_partition_key_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header) =
+        extract_feed_range_from_partition_key_inputs(prepared)?;
+    run_feed_range_from_partition_key_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        "feed_range_from_partition_key",
     )
 }

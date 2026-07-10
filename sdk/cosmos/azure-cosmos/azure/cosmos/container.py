@@ -50,7 +50,9 @@ from ._helpers._item_dispatch import (
 )
 from ._helpers.item_helper import ItemHelper
 from ._feed_ranges_rust_routing import (
+    can_use_rust_backend_for_feed_range_from_partition_key,
     can_use_rust_backend_for_read_feed_ranges,
+    try_feed_range_from_partition_key_with_rust_backend,
     try_read_feed_ranges_with_rust_backend,
 )
 from ._routing.routing_range import Range
@@ -2189,8 +2191,24 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
-        container_properties = self._get_properties()
         partition_key_value = self._set_partition_key(partition_key)
+        backend = pick_backend(self.client_connection)
+        # The returned dict is an opaque label for the slice this key hashes into; customers save
+        # it, compare it against earlier-saved values and the read_feed_ranges slice list, and hand
+        # it to get_latest_session_token. Try Rust first, but it must return the value byte-for-byte
+        # identical to the legacy path below (see parse_feed_range_from_partition_key_payload), or
+        # those comparisons and session-token lookups silently break. Fall through to legacy on None.
+        if can_use_rust_backend_for_feed_range_from_partition_key(
+            backend=backend,
+        ):
+            rust_feed_range = try_feed_range_from_partition_key_with_rust_backend(
+                client_connection=self.client_connection,
+                container_link=self.container_link,
+                partition_key_value=partition_key_value,
+            )
+            if rust_feed_range is not None:
+                return rust_feed_range
+        container_properties = self._get_properties()
         epk_range_for_partition_key = _get_epk_range_for_partition_key(container_properties, partition_key_value)
         return FeedRangeInternalEpk(epk_range_for_partition_key).to_dict()
 

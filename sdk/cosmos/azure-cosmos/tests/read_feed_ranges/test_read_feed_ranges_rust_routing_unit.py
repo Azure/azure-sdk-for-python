@@ -3,23 +3,38 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Backend-agnostic unit tests for the shared read_feed_ranges Rust-routing helpers.
+"""Backend-agnostic unit tests for the shared Rust-routing helpers used by both
+read_feed_ranges and feed_range_from_partition_key (gate / prepared-request builder /
+payload parser).
 
 These tests do not need the emulator or the Rust binding. They lock in exact
 parity between the Rust payload parser and the legacy routing-map builder,
 including the multi-partition / mixed-case EPK cases the end-to-end emulator
 suites cannot reach (the emulator container is single-partition, so its only
 range is ("", "FF"), which is invariant under upper-casing).
+
+This is layer 1 of a three-layer defense for the Rust migration: unit (here) ->
+emulator parity -> legacy snapshot. It runs in milliseconds with no network and guards
+the one line that makes the migration safe -- the parser up-casing both EPK bounds so the
+Rust feed-range value stays byte-for-byte identical to legacy -- and proves a malformed
+Rust payload fails with a clear ValueError, not a bare KeyError. Without this layer, a
+regression in that normalization would surface only in a slow emulator run, or in
+production as a silently mismatched feed-range value.
 """
 from __future__ import annotations
 
 import pytest
 
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
+from azure.cosmos._backend.base import OP_FEED_RANGE_FROM_PARTITION_KEY
 from azure.cosmos._feed_ranges_rust_routing import (
+    build_feed_range_from_partition_key_prepared_request,
+    can_use_rust_backend_for_feed_range_from_partition_key,
     can_use_rust_backend_for_read_feed_ranges,
+    parse_feed_range_from_partition_key_payload,
     parse_read_feed_ranges_payload,
 )
+
 from azure.cosmos._routing.routing_range import PartitionKeyRange, Range
 
 
@@ -114,3 +129,60 @@ def test_gate_falls_back_to_legacy_when_kwargs_present():
         )
         is False
     )
+
+
+def test_feed_range_from_partition_key_gate_requires_backend():
+    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=None) is False
+
+
+def test_feed_range_from_partition_key_gate_allows_backend():
+    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=object()) is True
+
+
+def test_feed_range_from_partition_key_builds_prepared_request():
+    prepared = build_feed_range_from_partition_key_prepared_request(
+        container_link="/dbs/d/colls/c/",
+        partition_key_value="customerA",
+    )
+    assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+    assert prepared.container_link == "dbs/d/colls/c"
+    assert prepared.partition_key_header == '["customerA"]'
+    assert prepared.body_bytes == b""
+
+
+def test_feed_range_from_partition_key_payload_round_trips_and_normalizes_case():
+    parsed = parse_feed_range_from_partition_key_payload(
+        {"Range": {"min": "3c", "max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
+    )
+    assert parsed == {
+        "Range": {"min": "3C", "max": "3CFF", "isMinInclusive": True, "isMaxInclusive": False}
+    }
+
+
+def test_feed_range_from_partition_key_payload_requires_range_object():
+    with pytest.raises(ValueError):
+        parse_feed_range_from_partition_key_payload({})
+    with pytest.raises(ValueError):
+        parse_feed_range_from_partition_key_payload({"Range": "not-an-object"})
+
+
+def test_feed_range_from_partition_key_payload_requires_string_bounds():
+    with pytest.raises(ValueError):
+        parse_feed_range_from_partition_key_payload(
+            {"Range": {"max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
+        )
+    with pytest.raises(ValueError):
+        parse_feed_range_from_partition_key_payload(
+            {"Range": {"min": 60, "max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
+        )
+
+
+def test_feed_range_from_partition_key_payload_requires_boolean_flags():
+    with pytest.raises(ValueError):
+        parse_feed_range_from_partition_key_payload(
+            {"Range": {"min": "3c", "max": "3cff", "isMaxInclusive": False}}
+        )
+    with pytest.raises(ValueError):
+        parse_feed_range_from_partition_key_payload(
+            {"Range": {"min": "3c", "max": "3cff", "isMinInclusive": "true", "isMaxInclusive": False}}
+        )

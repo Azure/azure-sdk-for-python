@@ -38,7 +38,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 
-use pyo3::exceptions::{PyRuntimeError, PyValueError};
+use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 
@@ -48,7 +48,8 @@ use azure_data_cosmos_driver::{
     error::CosmosError,
     models::{
         ActivityId, CosmosOperation, CosmosResponse, FeedRange, ItemReference, PartitionKey,
-        PartitionKeyValue, ResponseBody, SessionToken,
+        PartitionKeyDefinition, PartitionKeyKind, PartitionKeyValue, PartitionKeyVersion,
+        ResponseBody, SessionToken,
     },
     options::{
         ContentResponseOnWrite, EndToEndOperationLatencyPolicy, ExcludedRegions,
@@ -332,6 +333,66 @@ enum QueryTarget {
     CrossPartition,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum FeedRangePartitionKeySource {
+    Standard,
+    EmptySentinel,
+    ExplicitEmptySequence,
+}
+
+#[derive(Clone, Debug)]
+struct FeedRangePartitionKeyInput {
+    partition_key: PartitionKey,
+    source: FeedRangePartitionKeySource,
+}
+
+#[derive(Debug)]
+struct FeedRangeFromPartitionKeyPayload {
+    min: String,
+    max: String,
+    is_max_inclusive: bool,
+}
+
+#[derive(Debug)]
+enum FeedRangeFromPartitionKeyError {
+    Cosmos(CosmosError),
+    Validation(String),
+    LegacyAttribute(String),
+    LegacyType(String),
+}
+
+fn maybe_handle_feed_range_partition_key_special_case(
+    definition: &PartitionKeyDefinition,
+    source: FeedRangePartitionKeySource,
+) -> Result<Option<FeedRangeFromPartitionKeyPayload>, FeedRangeFromPartitionKeyError> {
+    match source {
+        FeedRangePartitionKeySource::Standard => Ok(None),
+        FeedRangePartitionKeySource::EmptySentinel => {
+            if definition.version() == PartitionKeyVersion::V1 {
+                return Err(FeedRangeFromPartitionKeyError::LegacyType(
+                    "Unexpected type for PK component: <class 'azure.cosmos.partition_key._Empty'>"
+                        .to_string(),
+                ));
+            }
+            let epk = "00000000000000000000000000000000".to_string();
+            Ok(Some(FeedRangeFromPartitionKeyPayload {
+                min: epk.clone(),
+                max: epk,
+                is_max_inclusive: true,
+            }))
+        }
+        FeedRangePartitionKeySource::ExplicitEmptySequence => {
+            if definition.kind() == PartitionKeyKind::MultiHash {
+                Ok(None)
+            } else {
+                Err(FeedRangeFromPartitionKeyError::LegacyAttribute(
+                    "'int' object has no attribute 'upper'".to_string(),
+                ))
+            }
+        }
+    }
+}
+
 /// Entry point the binding calls to run one query page and wait for it. Finds the
 /// driver for this client, splits the container link into database + container
 /// names, works out the query scope, then runs the driver work below and converts
@@ -472,6 +533,74 @@ pub(crate) fn run_read_feed_ranges_operation_async<'py>(
     })
 }
 
+/// Entry point that computes the feed-range envelope for one partition key.
+pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let partition_key_input = parse_feed_range_partition_key_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let response_result = py.allow_threads(|| {
+        runtime_ctx
+            .tokio_rt
+            .block_on(run_feed_range_from_partition_key_future(
+                driver,
+                database_name,
+                container_name,
+                partition_key_input,
+            ))
+    });
+
+    tuple_from_feed_range_from_partition_key_result(py, response_result)
+}
+
+/// Async sibling of `run_feed_range_from_partition_key_operation`.
+pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let partition_key_input = parse_feed_range_partition_key_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let join = runtime_ctx
+        .tokio_rt
+        .spawn(run_feed_range_from_partition_key_future(
+            driver,
+            database_name,
+            container_name,
+            partition_key_input,
+        ));
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_feed_range_from_partition_key_result(py, response_result)
+                .map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}
+
 /// Look up the cached driver for a client handle, or raise if `init_client`
 /// has not run yet (or the client was already closed).
 fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
@@ -587,13 +716,72 @@ async fn run_read_feed_ranges_future(
     database_name: String,
     container_name: String,
     force_refresh: bool,
-) -> Result<Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>, CosmosError> {
+) -> Result<
+    Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>,
+    CosmosError,
+> {
     let container = driver
         .resolve_container(&database_name, &container_name)
         .await?;
     Ok(driver
         .resolve_all_partition_key_ranges(&container, force_refresh)
         .await)
+}
+
+/// Driver work for `feed_range_from_partition_key`: resolve container metadata,
+/// compute the effective-partition-key envelope for the supplied partition key,
+/// and return it in the legacy Python feed-range shape.
+async fn run_feed_range_from_partition_key_future(
+    driver: Arc<CosmosDriver>,
+    database_name: String,
+    container_name: String,
+    partition_key_input: FeedRangePartitionKeyInput,
+) -> Result<FeedRangeFromPartitionKeyPayload, FeedRangeFromPartitionKeyError> {
+    let container = driver
+        .resolve_container(&database_name, &container_name)
+        .await
+        .map_err(FeedRangeFromPartitionKeyError::Cosmos)?;
+    let definition = container.partition_key_definition();
+    if let Some(payload) =
+        maybe_handle_feed_range_partition_key_special_case(definition, partition_key_input.source)?
+    {
+        return Ok(payload);
+    }
+    let partition_key = partition_key_input.partition_key;
+    let pk_len = partition_key.len();
+    let path_len = definition.paths().len();
+    if definition.kind() == PartitionKeyKind::MultiHash && pk_len > path_len {
+        return Err(FeedRangeFromPartitionKeyError::Validation(format!(
+            "{pk_len} partition key components provided. Expected less than {path_len} components (number of container partition key definition components)."
+        )));
+    }
+
+    let epk = FeedRange::for_partition(partition_key, definition)
+        .min_inclusive()
+        .as_str()
+        .to_owned();
+
+    let (max, is_max_inclusive) =
+        if definition.kind() == PartitionKeyKind::MultiHash && pk_len < path_len {
+            // Prefix key semantics on MultiHash match the legacy Python helper:
+            // normal prefix -> max = min + "FF"; MIN/ MAX sentinels keep their
+            // dedicated closed forms.
+            if epk.is_empty() {
+                (String::new(), false)
+            } else if epk == "FF" {
+                ("FF".to_string(), false)
+            } else {
+                (format!("{epk}FF"), false)
+            }
+        } else {
+            (epk.clone(), true)
+        };
+
+    Ok(FeedRangeFromPartitionKeyPayload {
+        min: epk,
+        max,
+        is_max_inclusive,
+    })
 }
 
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
@@ -639,14 +827,7 @@ fn tuple_from_feed_result<'py>(
         Ok(Some(response)) => backend_response_tuple_from_feed_success(py, response),
         Ok(None) => {
             let response_headers = PyDict::new_bound(py);
-            backend_response_tuple(
-                py,
-                200,
-                0,
-                response_headers,
-                br#"{"Documents":[]}"#,
-                None,
-            )
+            backend_response_tuple(py, 200, 0, response_headers, br#"{"Documents":[]}"#, None)
         }
         Err(cosmos_error) => {
             if let Some(raw_http_error) =
@@ -666,8 +847,10 @@ fn tuple_from_feed_result<'py>(
 /// `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"}, ...]}`.
 fn tuple_from_partition_key_ranges_result<'py>(
     py: Python<'py>,
-    response_result:
-        Result<Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>, CosmosError>,
+    response_result: Result<
+        Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>,
+        CosmosError,
+    >,
 ) -> PyResult<Bound<'py, PyTuple>> {
     match response_result {
         Ok(Some(ranges)) => {
@@ -690,6 +873,41 @@ fn tuple_from_partition_key_ranges_result<'py>(
             } else {
                 Err(DriverTransportError::new_err(format!(
                     "driver resolve_all_partition_key_ranges failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+/// feed_range_from_partition_key variant: returns a JSON body in the shape
+/// `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
+fn tuple_from_feed_range_from_partition_key_result<'py>(
+    py: Python<'py>,
+    response_result: Result<FeedRangeFromPartitionKeyPayload, FeedRangeFromPartitionKeyError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match response_result {
+        Ok(payload) => {
+            let response_headers = PyDict::new_bound(py);
+            let body = feed_range_to_response_body(&payload)?;
+            backend_response_tuple(py, 200, 0, response_headers, &body, None)
+        }
+        Err(FeedRangeFromPartitionKeyError::Validation(message)) => {
+            Err(PyValueError::new_err(message))
+        }
+        Err(FeedRangeFromPartitionKeyError::LegacyAttribute(message)) => {
+            Err(PyAttributeError::new_err(message))
+        }
+        Err(FeedRangeFromPartitionKeyError::LegacyType(message)) => {
+            Err(PyTypeError::new_err(message))
+        }
+        Err(FeedRangeFromPartitionKeyError::Cosmos(cosmos_error)) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(DriverTransportError::new_err(format!(
+                    "driver feed_range_from_partition_key failed: {cosmos_error}"
                 )))
             }
         }
@@ -1146,6 +1364,22 @@ struct PartitionKeyRangeWire<'a> {
     max_exclusive: &'a str,
 }
 
+#[derive(Serialize)]
+struct FeedRangeEnvelope<'a> {
+    #[serde(rename = "Range")]
+    range: FeedRangeWire<'a>,
+}
+
+#[derive(Serialize)]
+struct FeedRangeWire<'a> {
+    min: &'a str,
+    max: &'a str,
+    #[serde(rename = "isMinInclusive")]
+    is_min_inclusive: bool,
+    #[serde(rename = "isMaxInclusive")]
+    is_max_inclusive: bool,
+}
+
 /// Serialize the driver's partition-key ranges into the
 /// `{"PartitionKeyRanges":[{id,minInclusive,maxExclusive}, ...]}` body the
 /// read_feed_ranges wrapper parses.
@@ -1166,6 +1400,22 @@ fn partition_key_ranges_to_response_body(
     serde_json::to_vec(&envelope).map_err(|e| {
         PyRuntimeError::new_err(format!(
             "failed to serialize read_feed_ranges response body: {e}"
+        ))
+    })
+}
+
+fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> PyResult<Vec<u8>> {
+    let envelope = FeedRangeEnvelope {
+        range: FeedRangeWire {
+            min: payload.min.as_str(),
+            max: payload.max.as_str(),
+            is_min_inclusive: true,
+            is_max_inclusive: payload.is_max_inclusive,
+        },
+    };
+    serde_json::to_vec(&envelope).map_err(|e| {
+        PyRuntimeError::new_err(format!(
+            "failed to serialize feed_range_from_partition_key response body: {e}"
         ))
     })
 }
@@ -1448,6 +1698,51 @@ fn parse_partition_key_header(header: &str) -> PyResult<PartitionKey> {
     Ok(PartitionKey::from(components))
 }
 
+/// Partition-key header parser for feed_range_from_partition_key.
+///
+/// Unlike point operations, this API intentionally accepts:
+/// - `[]` for the `_Empty` sentinel path (`NonePartitionKeyValue` on system-key containers),
+/// - `[[]]` for an explicitly empty sequence value (`partition_key=[]`).
+/// Both shapes are carried through with source metadata so run-time logic can preserve
+/// legacy per-container semantics.
+fn parse_feed_range_partition_key_header(header: &str) -> PyResult<FeedRangePartitionKeyInput> {
+    let parsed: Vec<serde_json::Value> = serde_json::from_str(header).map_err(|e| {
+        PyValueError::new_err(format!("invalid partition_key_header {header:?}: {e}"))
+    })?;
+
+    if parsed.len() > 3 {
+        return Err(PyValueError::new_err(format!(
+            "partition_key_header has {} components; Cosmos partition keys can have at most 3 levels",
+            parsed.len()
+        )));
+    }
+    if parsed.is_empty() {
+        return Ok(FeedRangePartitionKeyInput {
+            partition_key: PartitionKey::from(Vec::<PartitionKeyValue>::new()),
+            source: FeedRangePartitionKeySource::EmptySentinel,
+        });
+    }
+    if parsed.len() == 1 {
+        if let serde_json::Value::Array(inner) = &parsed[0] {
+            if inner.is_empty() {
+                return Ok(FeedRangePartitionKeyInput {
+                    partition_key: PartitionKey::from(Vec::<PartitionKeyValue>::new()),
+                    source: FeedRangePartitionKeySource::ExplicitEmptySequence,
+                });
+            }
+        }
+    }
+
+    let mut components: Vec<PartitionKeyValue> = Vec::with_capacity(parsed.len());
+    for value in parsed {
+        components.push(json_value_to_pk_component(value)?);
+    }
+    Ok(FeedRangePartitionKeyInput {
+        partition_key: PartitionKey::from(components),
+        source: FeedRangePartitionKeySource::Standard,
+    })
+}
+
 /// Work out the query scope from the partition-key header string the wrapper set.
 /// `[]` means search the whole container (cross-partition); a non-empty value like
 /// `["alice-123"]` means search that one logical partition. Allows the 1-3 levels a
@@ -1557,14 +1852,18 @@ pub(crate) fn extract_create_item_id<'py>(
 #[cfg(test)]
 mod tests {
     use super::{
-        extract_item_id, extract_op_modifiers, is_intentionally_ignored_option_key,
-        json_value_to_pk_component, parse_container_link, parse_partition_key_header,
+        extract_item_id, extract_op_modifiers, feed_range_to_response_body,
+        is_intentionally_ignored_option_key, json_value_to_pk_component,
+        maybe_handle_feed_range_partition_key_special_case, parse_container_link,
+        parse_feed_range_partition_key_header, parse_partition_key_header,
         parse_query_target_header, parse_read_feed_ranges_force_refresh, response_body_to_vec,
-        tuple_from_partition_key_ranges_result, write_response_headers, QueryTarget,
+        tuple_from_partition_key_ranges_result, write_response_headers,
+        FeedRangeFromPartitionKeyPayload, FeedRangePartitionKeySource, QueryTarget,
     };
     use azure_core::Bytes;
     use azure_data_cosmos_driver::models::{
-        partition_key_range::PartitionKeyRange, CosmosResponseHeaders, ResponseBody,
+        partition_key_range::PartitionKeyRange, CosmosResponseHeaders, PartitionKeyDefinition,
+        PartitionKeyKind, PartitionKeyVersion, ResponseBody,
     };
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
@@ -1674,6 +1973,104 @@ mod tests {
         assert!(parse_query_target_header("nonsense").is_err());
     }
 
+    // ---- parse_feed_range_partition_key_header -------------------------------
+
+    #[test]
+    fn feed_range_partition_key_header_accepts_empty_and_partition_shapes() {
+        let empty = parse_feed_range_partition_key_header("[]").unwrap();
+        assert_eq!(empty.partition_key.len(), 0);
+        assert_eq!(empty.source, FeedRangePartitionKeySource::EmptySentinel);
+        let explicit_empty_sequence = parse_feed_range_partition_key_header("[[]]").unwrap();
+        assert_eq!(explicit_empty_sequence.partition_key.len(), 0);
+        assert_eq!(
+            explicit_empty_sequence.source,
+            FeedRangePartitionKeySource::ExplicitEmptySequence
+        );
+        for header in [
+            r#"["customerA"]"#,
+            "[123]",
+            "[true]",
+            "[null]",
+            "[{}]",
+            r#"["t1","r1"]"#,
+        ] {
+            let parsed = parse_feed_range_partition_key_header(header).unwrap();
+            assert_eq!(parsed.source, FeedRangePartitionKeySource::Standard);
+            assert!(
+                parsed.partition_key.len() >= 1,
+                "standard header must produce partition-key components"
+            );
+        }
+    }
+
+    #[test]
+    fn feed_range_partition_key_header_rejects_overflow_and_garbage() {
+        assert!(parse_feed_range_partition_key_header(r#"["a","b","c","d"]"#).is_err());
+        assert!(parse_feed_range_partition_key_header("nonsense").is_err());
+    }
+
+    #[test]
+    fn feed_range_special_case_empty_sentinel_matches_legacy_v2_hashing() {
+        let hash_v2 = PartitionKeyDefinition::from("/pk")
+            .with_kind(PartitionKeyKind::Hash)
+            .with_version(PartitionKeyVersion::V2);
+        let payload = maybe_handle_feed_range_partition_key_special_case(
+            &hash_v2,
+            FeedRangePartitionKeySource::EmptySentinel,
+        )
+        .expect("v2 hash _Empty should be supported")
+        .expect("v2 hash _Empty should short-circuit with payload");
+        assert_eq!(payload.min, "00000000000000000000000000000000");
+        assert_eq!(payload.max, "00000000000000000000000000000000");
+        assert!(payload.is_max_inclusive);
+    }
+
+    #[test]
+    fn feed_range_special_case_empty_sentinel_v1_matches_legacy_type_error() {
+        let hash_v1 = PartitionKeyDefinition::from("/pk")
+            .with_kind(PartitionKeyKind::Hash)
+            .with_version(PartitionKeyVersion::V1);
+        let err = maybe_handle_feed_range_partition_key_special_case(
+            &hash_v1,
+            FeedRangePartitionKeySource::EmptySentinel,
+        )
+        .expect_err("v1 hash _Empty should raise legacy type error");
+        match err {
+            super::FeedRangeFromPartitionKeyError::LegacyType(message) => {
+                assert!(message.contains("Unexpected type for PK component"));
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn feed_range_special_case_explicit_empty_sequence_matches_legacy_routing() {
+        let hash_v2 = PartitionKeyDefinition::from("/pk")
+            .with_kind(PartitionKeyKind::Hash)
+            .with_version(PartitionKeyVersion::V2);
+        let hash_err = maybe_handle_feed_range_partition_key_special_case(
+            &hash_v2,
+            FeedRangePartitionKeySource::ExplicitEmptySequence,
+        )
+        .expect_err("hash container should reject explicit empty sequence");
+        match hash_err {
+            super::FeedRangeFromPartitionKeyError::LegacyAttribute(message) => {
+                assert!(message.contains("'int' object has no attribute 'upper'"));
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+
+        let multihash_v2 = PartitionKeyDefinition::new(vec!["/a".into(), "/b".into()])
+            .with_kind(PartitionKeyKind::MultiHash)
+            .with_version(PartitionKeyVersion::V2);
+        let passthrough = maybe_handle_feed_range_partition_key_special_case(
+            &multihash_v2,
+            FeedRangePartitionKeySource::ExplicitEmptySequence,
+        )
+        .expect("multihash explicit empty sequence should not error");
+        assert!(passthrough.is_none());
+    }
+
     // ---- read_feed_ranges body parsing ----------------------------------------
 
     #[test]
@@ -1693,10 +2090,8 @@ mod tests {
             !parse_read_feed_ranges_force_refresh(br#"{"forceRefresh":false}"#)
                 .expect("false should parse")
         );
-        assert!(
-            !parse_read_feed_ranges_force_refresh(br#"{}"#)
-                .expect("missing forceRefresh should default to false")
-        );
+        assert!(!parse_read_feed_ranges_force_refresh(br#"{}"#)
+            .expect("missing forceRefresh should default to false"));
     }
 
     #[test]
@@ -1713,9 +2108,7 @@ mod tests {
             let ranges = vec![PartitionKeyRange::new("0".to_string(), "", "FF")];
             let tuple = tuple_from_partition_key_ranges_result(py, Ok(Some(ranges)))
                 .expect("successful read_feed_ranges should map to backend tuple");
-            let headers_any = tuple
-                .get_item(2)
-                .expect("headers slot must exist");
+            let headers_any = tuple.get_item(2).expect("headers slot must exist");
             let headers = headers_any
                 .downcast::<PyDict>()
                 .expect("headers slot must be a dict");
@@ -1752,6 +2145,22 @@ mod tests {
                 "unexpected error: {err}"
             );
         });
+    }
+
+    #[test]
+    fn feed_range_payload_serializes_expected_shape() {
+        let payload = FeedRangeFromPartitionKeyPayload {
+            min: "3C".to_string(),
+            max: "3CFF".to_string(),
+            is_max_inclusive: false,
+        };
+        let body = feed_range_to_response_body(&payload).expect("serialization should succeed");
+        let json: serde_json::Value =
+            serde_json::from_slice(&body).expect("body must be valid JSON");
+        assert_eq!(json["Range"]["min"], "3C");
+        assert_eq!(json["Range"]["max"], "3CFF");
+        assert_eq!(json["Range"]["isMinInclusive"], true);
+        assert_eq!(json["Range"]["isMaxInclusive"], false);
     }
 
     // ---- json_value_to_pk_component -------------------------------------------
