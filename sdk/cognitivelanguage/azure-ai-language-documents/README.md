@@ -184,6 +184,7 @@ Use `get_job_state` to retrieve the current state of a submitted job:
 ```python
 def sample_get_job_state() -> None:
     import os
+    from urllib.parse import urlparse
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.documents import AnalyzeDocumentsClient
 
