@@ -9,6 +9,8 @@
 Example to show usage of AutoLockRenewer asynchronously:
     1. Automatically renew locks on messages received from non-sessionful entity
     2. Automatically renew locks on the session of sessionful entity
+    3. Automatically renew locks by passing the AutoLockRenewer to the receiver factory
+       via the ``auto_lock_renewer`` keyword
 
 We do not guarantee that this SDK is thread-safe. We do not recommend reusing the ServiceBusClient,
  ServiceBusSender, ServiceBusReceiver across threads. It is up to the running 
@@ -48,6 +50,37 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
                 # automatically renew the lock on each message for 100 seconds
                 renewer.register(receiver, msg, max_lock_renewal_duration=100)
             print("Register messages into AutoLockRenewer done.")
+
+            await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
+
+            for msg in received_msgs:
+                await receiver.complete_message(msg)
+            print("Complete messages.")
+
+        await renewer.close()
+
+
+async def renew_lock_via_receiver_auto_lock_renewer_keyword() -> None:
+    # The `-> None` return annotation is intentional: it makes mypy type-check this
+    # function body (untyped bodies are skipped), so the auto_lock_renewer= call below
+    # acts as a static regression guard for the receiver-factory annotation.
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
+
+    async with servicebus_client:
+        async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
+            await sender.send_messages(ServiceBusMessage("message"))
+            print("Send message to non-sessionful queue.")
+
+        # Pass the AutoLockRenewer directly to the receiver factory via the auto_lock_renewer
+        # keyword. Received messages are then automatically registered for lock renewal on
+        # receipt, without a manual renewer.register(...) call.
+        renewer = AutoLockRenewer()
+
+        async with servicebus_client.get_queue_receiver(
+            queue_name=QUEUE_NAME, auto_lock_renewer=renewer, prefetch_count=10
+        ) as receiver:
+            received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
 
             await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
 
@@ -134,5 +167,6 @@ async def renew_lock_with_lock_renewal_failure_callback():
 
 
 asyncio.run(renew_lock_on_message_received_from_non_sessionful_entity())
+asyncio.run(renew_lock_via_receiver_auto_lock_renewer_keyword())
 asyncio.run(renew_lock_on_session_of_the_sessionful_entity())
 asyncio.run(renew_lock_with_lock_renewal_failure_callback())
