@@ -3,33 +3,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""TypedDict-safe customizations injected into the generated models package."""
+"""Customize generated code here.
 
-from enum import Enum
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
 
-from azure.core import CaseInsensitiveEnumMeta
+
+__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
 
 
-class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Reason a response finished as incomplete.
+def patch_sdk():
+    """Do not remove from this file.
 
-    The upstream TypeSpec defines this as an inline literal union
-    (``"max_output_tokens" | "content_filter"``), so the code generator
-    emits ``Literal[...]`` instead of a named enum. This hand-written enum
-    provides a friendlier symbolic constant for SDK consumers without adding
-    generated runtime model classes.
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
-    MAX_OUTPUT_TOKENS = "max_output_tokens"
-    """The response was cut short because the maximum output token limit was reached."""
-    CONTENT_FILTER = "content_filter"
-    """The response was cut short because of a content filter."""
-
-
-__all__: list[str] = [
-    "ResponseIncompleteReason",
-]
-
-
-def patch_sdk() -> None:
-    """Hook retained for generated package initialization compatibility."""

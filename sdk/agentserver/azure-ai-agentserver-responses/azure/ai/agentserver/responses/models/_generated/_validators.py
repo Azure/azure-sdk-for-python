@@ -3231,6 +3231,8 @@ def _validate_OpenAI_ItemFunctionToolCall_call_id(value: Any, path: str, errors:
         return
 
 def _validate_OpenAI_ItemFunctionToolCall_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if value is None:
+        return
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
@@ -3684,7 +3686,7 @@ def _validate_OpenAI_ItemWebSearchToolCall_id(value: Any, path: str, errors: lis
         return
 
 def _validate_OpenAI_ItemWebSearchToolCall_status(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values = ('in_progress', 'searching', 'completed', 'failed')
+    _allowed_values = ('in_progress', 'searching', 'completed', 'failed', 'incomplete')
     if value not in _allowed_values:
         _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
     if not _is_type(value, 'string'):

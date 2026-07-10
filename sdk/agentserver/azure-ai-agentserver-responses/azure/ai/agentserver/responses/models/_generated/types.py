@@ -471,6 +471,21 @@ RankerVersionType = Literal["auto", "default-2024-11-15"]
 RealtimeMcpErrorType = Literal["protocol_error", "tool_execution_error", "http_error"]
 """Type of RealtimeMcpErrorType."""
 
+ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh"]
+"""Constrains effort on reasoning for
+`reasoning models <https://platform.openai.com/docs/guides/reasoning>`_.
+Currently supported values are ``none``, ``minimal``, ``low``, ``medium``, ``high``, and
+``xhigh``. Reducing
+reasoning effort can result in faster responses and fewer tokens used
+on reasoning in a response.
+
+* `gpt-5.1` defaults to `none`, which does not perform reasoning. The supported reasoning
+values for `gpt-5.1` are `none`, `low`, `medium`, and `high`. Tool calls are supported for all
+reasoning values in gpt-5.1.
+* All models before `gpt-5.1` default to `medium` reasoning effort, and do not support `none`.
+* The `gpt-5-pro` model defaults to (and only supports) `high` reasoning effort.
+* `xhigh` is supported for all models after `gpt-5.1-codex-max`."""
+
 ResponseErrorCode = Literal[
     "server_error",
     "rate_limit_exceeded",
@@ -621,77 +636,11 @@ ToolType = Literal[
 """Type of ToolType."""
 
 
-class _EnumMemberFallbackValue(str):
-    @property
-    def value(self) -> str:
-        return str(self)
-
-
-_RESPONSE_STREAM_EVENT_VALUE_BY_MEMBER = {
-    value.upper().replace(".", "_"): value
-    for value in getattr(ResponseStreamEventType, "__args__", ())
-    if isinstance(value, str)
-}
-
-
-def _enum_member_value(enum_name: str, member_name: str) -> str:
-    if enum_name == "ResponseStreamEventType":
-        return _RESPONSE_STREAM_EVENT_VALUE_BY_MEMBER.get(member_name, member_name.lower())
-    return member_name.lower()
-
-
-class _EnumMemberFallbackMeta(type):
-    def __getattr__(cls, name: str) -> _EnumMemberFallbackValue:
-        return _EnumMemberFallbackValue(_enum_member_value(cls.__name__, name))
-
-
-class _EnumMemberFallback(str, metaclass=_EnumMemberFallbackMeta):
-    pass
-
-
-def _enum_member_fallback(name: str) -> type[_EnumMemberFallback]:
-    return type(name, (_EnumMemberFallback,), {})
-
-
-# TypedDict POC workaround: generated code below references enum aliases as
-# enum classes (for example ``ToolType.FUNCTION``) after assigning them to
-# ``Literal[...]``. Restore enum-like runtime objects so module import can
-# continue and SDK-owned blockers can be audited.
-AnnotationType = _enum_member_fallback("AnnotationType")  # type: ignore[assignment]
-ApplyPatchFileOperationType = _enum_member_fallback("ApplyPatchFileOperationType")  # type: ignore[assignment]
-ApplyPatchOperationParamType = _enum_member_fallback("ApplyPatchOperationParamType")  # type: ignore[assignment]
-ComputerActionType = _enum_member_fallback("ComputerActionType")  # type: ignore[assignment]
-ContainerNetworkPolicyParamType = _enum_member_fallback("ContainerNetworkPolicyParamType")  # type: ignore[assignment]
-ContainerSkillType = _enum_member_fallback("ContainerSkillType")  # type: ignore[assignment]
-CustomToolParamFormatType = _enum_member_fallback("CustomToolParamFormatType")  # type: ignore[assignment]
-FunctionAndCustomToolCallOutputType = _enum_member_fallback("FunctionAndCustomToolCallOutputType")  # type: ignore[assignment]
-FunctionShellCallEnvironmentType = _enum_member_fallback("FunctionShellCallEnvironmentType")  # type: ignore[assignment]
-FunctionShellCallItemParamEnvironmentType = _enum_member_fallback("FunctionShellCallItemParamEnvironmentType")  # type: ignore[assignment]
-FunctionShellCallOutputOutcomeParamType = _enum_member_fallback("FunctionShellCallOutputOutcomeParamType")  # type: ignore[assignment]
-FunctionShellCallOutputOutcomeType = _enum_member_fallback("FunctionShellCallOutputOutcomeType")  # type: ignore[assignment]
-FunctionShellToolParamEnvironmentType = _enum_member_fallback("FunctionShellToolParamEnvironmentType")  # type: ignore[assignment]
-ItemFieldType = _enum_member_fallback("ItemFieldType")  # type: ignore[assignment]
-ItemType = _enum_member_fallback("ItemType")  # type: ignore[assignment]
-MemoryItemKind = _enum_member_fallback("MemoryItemKind")  # type: ignore[assignment]
-MessageContentType = _enum_member_fallback("MessageContentType")  # type: ignore[assignment]
-MessageRole = _enum_member_fallback("MessageRole")  # type: ignore[assignment]
-ModerationEntryType = _enum_member_fallback("ModerationEntryType")  # type: ignore[assignment]
-OpenApiAuthType = _enum_member_fallback("OpenApiAuthType")  # type: ignore[assignment]
-OutputContentType = _enum_member_fallback("OutputContentType")  # type: ignore[assignment]
-OutputItemType = _enum_member_fallback("OutputItemType")  # type: ignore[assignment]
-OutputMessageContentType = _enum_member_fallback("OutputMessageContentType")  # type: ignore[assignment]
-RealtimeMcpErrorType = _enum_member_fallback("RealtimeMcpErrorType")  # type: ignore[assignment]
-ResponseStreamEventType = _enum_member_fallback("ResponseStreamEventType")  # type: ignore[assignment]
-TextResponseFormatConfigurationType = _enum_member_fallback("TextResponseFormatConfigurationType")  # type: ignore[assignment]
-ToolChoiceParamType = _enum_member_fallback("ToolChoiceParamType")  # type: ignore[assignment]
-ToolType = _enum_member_fallback("ToolType")  # type: ignore[assignment]
-
-
 class A2APreviewTool(TypedDict, total=False):
     """An agent implementing the A2A protocol.
 
     :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2_A_PREVIEW.
-    :vartype type: Literal[ToolType.A2_A_PREVIEW]
+    :vartype type: Literal["a2a_preview"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -707,7 +656,7 @@ class A2APreviewTool(TypedDict, total=False):
     :vartype project_connection_id: str
     """
 
-    type: Required[Literal[ToolType.A2_A_PREVIEW]]
+    type: Required[Literal["a2a_preview"]]
     """The type of the tool. Always ``\"a2a_preview``. Required. A2_A_PREVIEW."""
     name: str
     """Optional user-defined name for this tool or configuration."""
@@ -731,7 +680,7 @@ class A2AToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. A2_A_PREVIEW_CALL.
-    :vartype type: Literal[OutputItemType.A2_A_PREVIEW_CALL]
+    :vartype type: Literal["a2a_preview_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar name: The name of the A2A agent card being called. Required.
@@ -749,7 +698,7 @@ class A2AToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.A2_A_PREVIEW_CALL]]
+    type: Required[Literal["a2a_preview_call"]]
     """Required. A2_A_PREVIEW_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -772,7 +721,7 @@ class A2AToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. A2_A_PREVIEW_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.A2_A_PREVIEW_CALL_OUTPUT]
+    :vartype type: Literal["a2a_preview_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar name: The name of the A2A agent card that was called. Required.
@@ -791,7 +740,7 @@ class A2AToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.A2_A_PREVIEW_CALL_OUTPUT]]
+    type: Required[Literal["a2a_preview_call_output"]]
     """Required. A2_A_PREVIEW_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -812,7 +761,7 @@ class AdditionalToolsItemParam(TypedDict, total=False):
     :ivar id:
     :vartype id: str
     :ivar type: The item type. Always ``additional_tools``. Required. ADDITIONAL_TOOLS.
-    :vartype type: Literal[ItemType.ADDITIONAL_TOOLS]
+    :vartype type: Literal["additional_tools"]
     :ivar role: The role that provided the additional tools. Only ``developer`` is supported.
      Required. Default value is "developer".
     :vartype role: Literal["developer"]
@@ -821,7 +770,7 @@ class AdditionalToolsItemParam(TypedDict, total=False):
     """
 
     id: Optional[str]
-    type: Required[Literal[ItemType.ADDITIONAL_TOOLS]]
+    type: Required[Literal["additional_tools"]]
     """The item type. Always ``additional_tools``. Required. ADDITIONAL_TOOLS."""
     role: Required[Literal["developer"]]
     """The role that provided the additional tools. Only ``developer`` is supported. Required. Default
@@ -907,14 +856,14 @@ class ApplyPatchCreateFileOperation(TypedDict, total=False):
     """Apply patch create file operation.
 
     :ivar type: Create a new file with the provided diff. Required. CREATE_FILE.
-    :vartype type: Literal[ApplyPatchFileOperationType.CREATE_FILE]
+    :vartype type: Literal["create_file"]
     :ivar path: Path of the file to create. Required.
     :vartype path: str
     :ivar diff: Diff to apply. Required.
     :vartype diff: str
     """
 
-    type: Required[Literal[ApplyPatchFileOperationType.CREATE_FILE]]
+    type: Required[Literal["create_file"]]
     """Create a new file with the provided diff. Required. CREATE_FILE."""
     path: Required[str]
     """Path of the file to create. Required."""
@@ -926,14 +875,14 @@ class ApplyPatchCreateFileOperationParam(TypedDict, total=False):
     """Apply patch create file operation.
 
     :ivar type: The operation type. Always ``create_file``. Required. CREATE_FILE.
-    :vartype type: Literal[ApplyPatchOperationParamType.CREATE_FILE]
+    :vartype type: Literal["create_file"]
     :ivar path: Path of the file to create relative to the workspace root. Required.
     :vartype path: str
     :ivar diff: Unified diff content to apply when creating the file. Required.
     :vartype diff: str
     """
 
-    type: Required[Literal[ApplyPatchOperationParamType.CREATE_FILE]]
+    type: Required[Literal["create_file"]]
     """The operation type. Always ``create_file``. Required. CREATE_FILE."""
     path: Required[str]
     """Path of the file to create relative to the workspace root. Required."""
@@ -945,12 +894,12 @@ class ApplyPatchDeleteFileOperation(TypedDict, total=False):
     """Apply patch delete file operation.
 
     :ivar type: Delete the specified file. Required. DELETE_FILE.
-    :vartype type: Literal[ApplyPatchFileOperationType.DELETE_FILE]
+    :vartype type: Literal["delete_file"]
     :ivar path: Path of the file to delete. Required.
     :vartype path: str
     """
 
-    type: Required[Literal[ApplyPatchFileOperationType.DELETE_FILE]]
+    type: Required[Literal["delete_file"]]
     """Delete the specified file. Required. DELETE_FILE."""
     path: Required[str]
     """Path of the file to delete. Required."""
@@ -960,12 +909,12 @@ class ApplyPatchDeleteFileOperationParam(TypedDict, total=False):
     """Apply patch delete file operation.
 
     :ivar type: The operation type. Always ``delete_file``. Required. DELETE_FILE.
-    :vartype type: Literal[ApplyPatchOperationParamType.DELETE_FILE]
+    :vartype type: Literal["delete_file"]
     :ivar path: Path of the file to delete relative to the workspace root. Required.
     :vartype path: str
     """
 
-    type: Required[Literal[ApplyPatchOperationParamType.DELETE_FILE]]
+    type: Required[Literal["delete_file"]]
     """The operation type. Always ``delete_file``. Required. DELETE_FILE."""
     path: Required[str]
     """Path of the file to delete relative to the workspace root. Required."""
@@ -975,7 +924,7 @@ class ApplyPatchToolCallItemParam(TypedDict, total=False):
     """Apply patch tool call.
 
     :ivar type: The type of the item. Always ``apply_patch_call``. Required. APPLY_PATCH_CALL.
-    :vartype type: Literal[ItemType.APPLY_PATCH_CALL]
+    :vartype type: Literal["apply_patch_call"]
     :ivar id:
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
@@ -988,7 +937,7 @@ class ApplyPatchToolCallItemParam(TypedDict, total=False):
     :vartype operation: "ApplyPatchOperationParam"
     """
 
-    type: Required[Literal[ItemType.APPLY_PATCH_CALL]]
+    type: Required[Literal["apply_patch_call"]]
     """The type of the item. Always ``apply_patch_call``. Required. APPLY_PATCH_CALL."""
     id: Optional[str]
     call_id: Required[str]
@@ -1005,7 +954,7 @@ class ApplyPatchToolCallOutputItemParam(TypedDict, total=False):
 
     :ivar type: The type of the item. Always ``apply_patch_call_output``. Required.
      APPLY_PATCH_CALL_OUTPUT.
-    :vartype type: Literal[ItemType.APPLY_PATCH_CALL_OUTPUT]
+    :vartype type: Literal["apply_patch_call_output"]
     :ivar id:
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
@@ -1017,7 +966,7 @@ class ApplyPatchToolCallOutputItemParam(TypedDict, total=False):
     :vartype output: str
     """
 
-    type: Required[Literal[ItemType.APPLY_PATCH_CALL_OUTPUT]]
+    type: Required[Literal["apply_patch_call_output"]]
     """The type of the item. Always ``apply_patch_call_output``. Required. APPLY_PATCH_CALL_OUTPUT."""
     id: Optional[str]
     call_id: Required[str]
@@ -1032,10 +981,10 @@ class ApplyPatchToolParam(TypedDict, total=False):
     """Apply patch tool.
 
     :ivar type: The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH.
-    :vartype type: Literal[ToolType.APPLY_PATCH]
+    :vartype type: Literal["apply_patch"]
     """
 
-    type: Required[Literal[ToolType.APPLY_PATCH]]
+    type: Required[Literal["apply_patch"]]
     """The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH."""
 
 
@@ -1043,14 +992,14 @@ class ApplyPatchUpdateFileOperation(TypedDict, total=False):
     """Apply patch update file operation.
 
     :ivar type: Update an existing file with the provided diff. Required. UPDATE_FILE.
-    :vartype type: Literal[ApplyPatchFileOperationType.UPDATE_FILE]
+    :vartype type: Literal["update_file"]
     :ivar path: Path of the file to update. Required.
     :vartype path: str
     :ivar diff: Diff to apply. Required.
     :vartype diff: str
     """
 
-    type: Required[Literal[ApplyPatchFileOperationType.UPDATE_FILE]]
+    type: Required[Literal["update_file"]]
     """Update an existing file with the provided diff. Required. UPDATE_FILE."""
     path: Required[str]
     """Path of the file to update. Required."""
@@ -1062,14 +1011,14 @@ class ApplyPatchUpdateFileOperationParam(TypedDict, total=False):
     """Apply patch update file operation.
 
     :ivar type: The operation type. Always ``update_file``. Required. UPDATE_FILE.
-    :vartype type: Literal[ApplyPatchOperationParamType.UPDATE_FILE]
+    :vartype type: Literal["update_file"]
     :ivar path: Path of the file to update relative to the workspace root. Required.
     :vartype path: str
     :ivar diff: Unified diff content to apply to the existing file. Required.
     :vartype diff: str
     """
 
-    type: Required[Literal[ApplyPatchOperationParamType.UPDATE_FILE]]
+    type: Required[Literal["update_file"]]
     """The operation type. Always ``update_file``. Required. UPDATE_FILE."""
     path: Required[str]
     """Path of the file to update relative to the workspace root. Required."""
@@ -1128,7 +1077,7 @@ class AzureAISearchTool(TypedDict, total=False):
     """The input definition information for an Azure AI search tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH.
-    :vartype type: Literal[ToolType.AZURE_AI_SEARCH]
+    :vartype type: Literal["azure_ai_search"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -1137,7 +1086,7 @@ class AzureAISearchTool(TypedDict, total=False):
     :vartype azure_ai_search: "AzureAISearchToolResource"
     """
 
-    type: Required[Literal[ToolType.AZURE_AI_SEARCH]]
+    type: Required[Literal["azure_ai_search"]]
     """The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH."""
     name: str
     """Optional user-defined name for this tool or configuration."""
@@ -1155,7 +1104,7 @@ class AzureAISearchToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. AZURE_AI_SEARCH_CALL.
-    :vartype type: Literal[OutputItemType.AZURE_AI_SEARCH_CALL]
+    :vartype type: Literal["azure_ai_search_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar arguments: A JSON string of the arguments to pass to the tool. Required.
@@ -1171,7 +1120,7 @@ class AzureAISearchToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.AZURE_AI_SEARCH_CALL]]
+    type: Required[Literal["azure_ai_search_call"]]
     """Required. AZURE_AI_SEARCH_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1192,7 +1141,7 @@ class AzureAISearchToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. AZURE_AI_SEARCH_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.AZURE_AI_SEARCH_CALL_OUTPUT]
+    :vartype type: Literal["azure_ai_search_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the Azure AI Search tool call. Is one of the following types:
@@ -1209,7 +1158,7 @@ class AzureAISearchToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.AZURE_AI_SEARCH_CALL_OUTPUT]]
+    type: Required[Literal["azure_ai_search_call_output"]]
     """Required. AZURE_AI_SEARCH_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1326,12 +1275,12 @@ class AzureFunctionTool(TypedDict, total=False):
     """The input definition information for an Azure Function Tool, as used to configure an Agent.
 
     :ivar type: The object type, which is always 'browser_automation'. Required. AZURE_FUNCTION.
-    :vartype type: Literal[ToolType.AZURE_FUNCTION]
+    :vartype type: Literal["azure_function"]
     :ivar azure_function: The Azure Function Tool definition. Required.
     :vartype azure_function: "AzureFunctionDefinition"
     """
 
-    type: Required[Literal[ToolType.AZURE_FUNCTION]]
+    type: Required[Literal["azure_function"]]
     """The object type, which is always 'browser_automation'. Required. AZURE_FUNCTION."""
     azure_function: Required["AzureFunctionDefinition"]
     """The Azure Function Tool definition. Required."""
@@ -1345,7 +1294,7 @@ class AzureFunctionToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. AZURE_FUNCTION_CALL.
-    :vartype type: Literal[OutputItemType.AZURE_FUNCTION_CALL]
+    :vartype type: Literal["azure_function_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar name: The name of the Azure Function being called. Required.
@@ -1363,7 +1312,7 @@ class AzureFunctionToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.AZURE_FUNCTION_CALL]]
+    type: Required[Literal["azure_function_call"]]
     """Required. AZURE_FUNCTION_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1386,7 +1335,7 @@ class AzureFunctionToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. AZURE_FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.AZURE_FUNCTION_CALL_OUTPUT]
+    :vartype type: Literal["azure_function_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar name: The name of the Azure Function that was called. Required.
@@ -1405,7 +1354,7 @@ class AzureFunctionToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.AZURE_FUNCTION_CALL_OUTPUT]]
+    type: Required[Literal["azure_function_call_output"]]
     """Required. AZURE_FUNCTION_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1467,7 +1416,7 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW.
-    :vartype type: Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]
+    :vartype type: Literal["bing_custom_search_preview"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -1476,7 +1425,7 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
     :vartype bing_custom_search_preview: "BingCustomSearchToolParameters"
     """
 
-    type: Required[Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]]
+    type: Required[Literal["bing_custom_search_preview"]]
     """The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW."""
     name: str
@@ -1495,7 +1444,7 @@ class BingCustomSearchToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. BING_CUSTOM_SEARCH_PREVIEW_CALL.
-    :vartype type: Literal[OutputItemType.BING_CUSTOM_SEARCH_PREVIEW_CALL]
+    :vartype type: Literal["bing_custom_search_preview_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar arguments: A JSON string of the arguments to pass to the tool. Required.
@@ -1511,7 +1460,7 @@ class BingCustomSearchToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.BING_CUSTOM_SEARCH_PREVIEW_CALL]]
+    type: Required[Literal["bing_custom_search_preview_call"]]
     """Required. BING_CUSTOM_SEARCH_PREVIEW_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1532,7 +1481,7 @@ class BingCustomSearchToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. BING_CUSTOM_SEARCH_PREVIEW_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.BING_CUSTOM_SEARCH_PREVIEW_CALL_OUTPUT]
+    :vartype type: Literal["bing_custom_search_preview_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the Bing custom search tool call. Is one of the following types:
@@ -1549,7 +1498,7 @@ class BingCustomSearchToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.BING_CUSTOM_SEARCH_PREVIEW_CALL_OUTPUT]]
+    type: Required[Literal["bing_custom_search_preview_call_output"]]
     """Required. BING_CUSTOM_SEARCH_PREVIEW_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1647,7 +1596,7 @@ class BingGroundingTool(TypedDict, total=False):
     agent.
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. BING_GROUNDING.
-    :vartype type: Literal[ToolType.BING_GROUNDING]
+    :vartype type: Literal["bing_grounding"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -1656,7 +1605,7 @@ class BingGroundingTool(TypedDict, total=False):
     :vartype bing_grounding: "BingGroundingSearchToolParameters"
     """
 
-    type: Required[Literal[ToolType.BING_GROUNDING]]
+    type: Required[Literal["bing_grounding"]]
     """The object type, which is always 'bing_grounding'. Required. BING_GROUNDING."""
     name: str
     """Optional user-defined name for this tool or configuration."""
@@ -1674,7 +1623,7 @@ class BingGroundingToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. BING_GROUNDING_CALL.
-    :vartype type: Literal[OutputItemType.BING_GROUNDING_CALL]
+    :vartype type: Literal["bing_grounding_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar arguments: A JSON string of the arguments to pass to the tool. Required.
@@ -1690,7 +1639,7 @@ class BingGroundingToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.BING_GROUNDING_CALL]]
+    type: Required[Literal["bing_grounding_call"]]
     """Required. BING_GROUNDING_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1711,7 +1660,7 @@ class BingGroundingToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. BING_GROUNDING_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.BING_GROUNDING_CALL_OUTPUT]
+    :vartype type: Literal["bing_grounding_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the Bing grounding tool call. Is one of the following types:
@@ -1728,7 +1677,7 @@ class BingGroundingToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.BING_GROUNDING_CALL_OUTPUT]]
+    type: Required[Literal["bing_grounding_call_output"]]
     """Required. BING_GROUNDING_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1747,7 +1696,7 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
-    :vartype type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]
+    :vartype type: Literal["browser_automation_preview"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -1756,7 +1705,7 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
     :vartype browser_automation_preview: "BrowserAutomationToolParameters"
     """
 
-    type: Required[Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]]
+    type: Required[Literal["browser_automation_preview"]]
     """The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW."""
     name: str
@@ -1775,7 +1724,7 @@ class BrowserAutomationToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. BROWSER_AUTOMATION_PREVIEW_CALL.
-    :vartype type: Literal[OutputItemType.BROWSER_AUTOMATION_PREVIEW_CALL]
+    :vartype type: Literal["browser_automation_preview_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar arguments: A JSON string of the arguments to pass to the tool. Required.
@@ -1791,7 +1740,7 @@ class BrowserAutomationToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.BROWSER_AUTOMATION_PREVIEW_CALL]]
+    type: Required[Literal["browser_automation_preview_call"]]
     """Required. BROWSER_AUTOMATION_PREVIEW_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1812,7 +1761,7 @@ class BrowserAutomationToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. BROWSER_AUTOMATION_PREVIEW_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.BROWSER_AUTOMATION_PREVIEW_CALL_OUTPUT]
+    :vartype type: Literal["browser_automation_preview_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the browser automation tool call. Is one of the following types:
@@ -1829,7 +1778,7 @@ class BrowserAutomationToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.BROWSER_AUTOMATION_PREVIEW_CALL_OUTPUT]]
+    type: Required[Literal["browser_automation_preview_call_output"]]
     """Required. BROWSER_AUTOMATION_PREVIEW_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -1888,12 +1837,12 @@ class CaptureStructuredOutputsTool(TypedDict, total=False):
 
     :ivar type: The type of the tool. Always ``capture_structured_outputs``. Required.
      CAPTURE_STRUCTURED_OUTPUTS.
-    :vartype type: Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]
+    :vartype type: Literal["capture_structured_outputs"]
     :ivar outputs: The structured outputs to capture from the model. Required.
     :vartype outputs: "StructuredOutputDefinition"
     """
 
-    type: Required[Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]]
+    type: Required[Literal["capture_structured_outputs"]]
     """The type of the tool. Always ``capture_structured_outputs``. Required.
      CAPTURE_STRUCTURED_OUTPUTS."""
     outputs: Required["StructuredOutputDefinition"]
@@ -1913,7 +1862,7 @@ class ChatSummaryMemoryItem(TypedDict, total=False):
     :ivar content: The content of the memory. Required.
     :vartype content: str
     :ivar kind: The kind of the memory item. Required. Summary of chat conversations.
-    :vartype kind: Literal[MemoryItemKind.CHAT_SUMMARY]
+    :vartype kind: Literal["chat_summary"]
     """
 
     memory_id: Required[str]
@@ -1924,7 +1873,7 @@ class ChatSummaryMemoryItem(TypedDict, total=False):
     """The namespace that logically groups and isolates memories, such as a user ID. Required."""
     content: Required[str]
     """The content of the memory. Required."""
-    kind: Required[Literal[MemoryItemKind.CHAT_SUMMARY]]
+    kind: Required[Literal["chat_summary"]]
     """The kind of the memory item. Required. Summary of chat conversations."""
 
 
@@ -1933,7 +1882,7 @@ class ClickParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a click action, this property is always ``click``.
      Required. CLICK.
-    :vartype type: Literal[ComputerActionType.CLICK]
+    :vartype type: Literal["click"]
     :ivar button: Indicates which mouse button was pressed during the click. One of ``left``,
      ``right``, ``wheel``, ``back``, or ``forward``. Required. Known values are: "left", "right",
      "wheel", "back", and "forward".
@@ -1946,7 +1895,7 @@ class ClickParam(TypedDict, total=False):
     :vartype keys_property: list[str]
     """
 
-    type: Required[Literal[ComputerActionType.CLICK]]
+    type: Required[Literal["click"]]
     """Specifies the event type. For a click action, this property is always ``click``. Required.
      CLICK."""
     button: Required[ClickButtonType]
@@ -1995,7 +1944,7 @@ class CodeInterpreterTool(TypedDict, total=False):
 
     :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
      CODE_INTERPRETER.
-    :vartype type: Literal[ToolType.CODE_INTERPRETER]
+    :vartype type: Literal["code_interpreter"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -2007,7 +1956,7 @@ class CodeInterpreterTool(TypedDict, total=False):
     :vartype container: Union[str, "AutoCodeInterpreterToolParam"]
     """
 
-    type: Required[Literal[ToolType.CODE_INTERPRETER]]
+    type: Required[Literal["code_interpreter"]]
     """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
     name: str
     """Optional user-defined name for this tool or configuration."""
@@ -2026,13 +1975,13 @@ class CompactionSummaryItemParam(TypedDict, total=False):
     :ivar id:
     :vartype id: str
     :ivar type: The type of the item. Always ``compaction``. Required. COMPACTION.
-    :vartype type: Literal[ItemType.COMPACTION]
+    :vartype type: Literal["compaction"]
     :ivar encrypted_content: The encrypted content of the compaction summary. Required.
     :vartype encrypted_content: str
     """
 
     id: Optional[str]
-    type: Required[Literal[ItemType.COMPACTION]]
+    type: Required[Literal["compaction"]]
     """The type of the item. Always ``compaction``. Required. COMPACTION."""
     encrypted_content: Required[str]
     """The encrypted content of the compaction summary. Required."""
@@ -2141,7 +2090,7 @@ class ComputerCallOutputItemParam(TypedDict, total=False):
     :vartype call_id: str
     :ivar type: The type of the computer tool call output. Always ``computer_call_output``.
      Required. COMPUTER_CALL_OUTPUT.
-    :vartype type: Literal[ItemType.COMPUTER_CALL_OUTPUT]
+    :vartype type: Literal["computer_call_output"]
     :ivar output: Required.
     :vartype output: "ComputerScreenshotImage"
     :ivar acknowledged_safety_checks:
@@ -2153,7 +2102,7 @@ class ComputerCallOutputItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The ID of the computer tool call that produced the output. Required."""
-    type: Required[Literal[ItemType.COMPUTER_CALL_OUTPUT]]
+    type: Required[Literal["computer_call_output"]]
     """The type of the computer tool call output. Always ``computer_call_output``. Required.
      COMPUTER_CALL_OUTPUT."""
     output: Required["ComputerScreenshotImage"]
@@ -2185,7 +2134,7 @@ class ComputerScreenshotContent(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a computer screenshot, this property is always set to
      ``computer_screenshot``. Required. COMPUTER_SCREENSHOT.
-    :vartype type: Literal[MessageContentType.COMPUTER_SCREENSHOT]
+    :vartype type: Literal["computer_screenshot"]
     :ivar image_url: Required.
     :vartype image_url: str
     :ivar file_id: Required.
@@ -2196,7 +2145,7 @@ class ComputerScreenshotContent(TypedDict, total=False):
     :vartype detail: ImageDetail
     """
 
-    type: Required[Literal[MessageContentType.COMPUTER_SCREENSHOT]]
+    type: Required[Literal["computer_screenshot"]]
     """Specifies the event type. For a computer screenshot, this property is always set to
      ``computer_screenshot``. Required. COMPUTER_SCREENSHOT."""
     image_url: Required[Optional[str]]
@@ -2234,10 +2183,10 @@ class ComputerTool(TypedDict, total=False):
     """Computer.
 
     :ivar type: The type of the computer tool. Always ``computer``. Required. COMPUTER.
-    :vartype type: Literal[ToolType.COMPUTER]
+    :vartype type: Literal["computer"]
     """
 
-    type: Required[Literal[ToolType.COMPUTER]]
+    type: Required[Literal["computer"]]
     """The type of the computer tool. Always ``computer``. Required. COMPUTER."""
 
 
@@ -2246,7 +2195,7 @@ class ComputerUsePreviewTool(TypedDict, total=False):
 
     :ivar type: The type of the computer use tool. Always ``computer_use_preview``. Required.
      COMPUTER_USE_PREVIEW.
-    :vartype type: Literal[ToolType.COMPUTER_USE_PREVIEW]
+    :vartype type: Literal["computer_use_preview"]
     :ivar environment: The type of computer environment to control. Required. Known values are:
      "windows", "mac", "linux", "ubuntu", and "browser".
     :vartype environment: ComputerEnvironment
@@ -2256,7 +2205,7 @@ class ComputerUsePreviewTool(TypedDict, total=False):
     :vartype display_height: int
     """
 
-    type: Required[Literal[ToolType.COMPUTER_USE_PREVIEW]]
+    type: Required[Literal["computer_use_preview"]]
     """The type of the computer use tool. Always ``computer_use_preview``. Required.
      COMPUTER_USE_PREVIEW."""
     environment: Required[ComputerEnvironment]
@@ -2272,7 +2221,7 @@ class ContainerAutoParam(TypedDict, total=False):
     """ContainerAutoParam.
 
     :ivar type: Automatically creates a container for this request. Required. CONTAINER_AUTO.
-    :vartype type: Literal[FunctionShellToolParamEnvironmentType.CONTAINER_AUTO]
+    :vartype type: Literal["container_auto"]
     :ivar file_ids: An optional list of uploaded files to make available to your code.
     :vartype file_ids: list[str]
     :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
@@ -2283,7 +2232,7 @@ class ContainerAutoParam(TypedDict, total=False):
     :vartype network_policy: "ContainerNetworkPolicyParam"
     """
 
-    type: Required[Literal[FunctionShellToolParamEnvironmentType.CONTAINER_AUTO]]
+    type: Required[Literal["container_auto"]]
     """Automatically creates a container for this request. Required. CONTAINER_AUTO."""
     file_ids: list[str]
     """An optional list of uploaded files to make available to your code."""
@@ -2299,7 +2248,7 @@ class ContainerFileCitationBody(TypedDict, total=False):
 
     :ivar type: The type of the container file citation. Always ``container_file_citation``.
      Required. CONTAINER_FILE_CITATION.
-    :vartype type: Literal[AnnotationType.CONTAINER_FILE_CITATION]
+    :vartype type: Literal["container_file_citation"]
     :ivar container_id: The ID of the container file. Required.
     :vartype container_id: str
     :ivar file_id: The ID of the file. Required.
@@ -2314,7 +2263,7 @@ class ContainerFileCitationBody(TypedDict, total=False):
     :vartype filename: str
     """
 
-    type: Required[Literal[AnnotationType.CONTAINER_FILE_CITATION]]
+    type: Required[Literal["container_file_citation"]]
     """The type of the container file citation. Always ``container_file_citation``. Required.
      CONTAINER_FILE_CITATION."""
     container_id: Required[str]
@@ -2334,14 +2283,14 @@ class ContainerNetworkPolicyAllowlistParam(TypedDict, total=False):
 
     :ivar type: Allow outbound network access only to specified domains. Always ``allowlist``.
      Required. ALLOWLIST.
-    :vartype type: Literal[ContainerNetworkPolicyParamType.ALLOWLIST]
+    :vartype type: Literal["allowlist"]
     :ivar allowed_domains: A list of allowed domains when type is ``allowlist``. Required.
     :vartype allowed_domains: list[str]
     :ivar domain_secrets: Optional domain-scoped secrets for allowlisted domains.
     :vartype domain_secrets: list["ContainerNetworkPolicyDomainSecretParam"]
     """
 
-    type: Required[Literal[ContainerNetworkPolicyParamType.ALLOWLIST]]
+    type: Required[Literal["allowlist"]]
     """Allow outbound network access only to specified domains. Always ``allowlist``. Required.
      ALLOWLIST."""
     allowed_domains: Required[list[str]]
@@ -2354,10 +2303,10 @@ class ContainerNetworkPolicyDisabledParam(TypedDict, total=False):
     """ContainerNetworkPolicyDisabledParam.
 
     :ivar type: Disable outbound network access. Always ``disabled``. Required. DISABLED.
-    :vartype type: Literal[ContainerNetworkPolicyParamType.DISABLED]
+    :vartype type: Literal["disabled"]
     """
 
-    type: Required[Literal[ContainerNetworkPolicyParamType.DISABLED]]
+    type: Required[Literal["disabled"]]
     """Disable outbound network access. Always ``disabled``. Required. DISABLED."""
 
 
@@ -2385,12 +2334,12 @@ class ContainerReferenceResource(TypedDict, total=False):
 
     :ivar type: The environment type. Always ``container_reference``. Required.
      CONTAINER_REFERENCE.
-    :vartype type: Literal[FunctionShellCallEnvironmentType.CONTAINER_REFERENCE]
+    :vartype type: Literal["container_reference"]
     :ivar container_id: Required.
     :vartype container_id: str
     """
 
-    type: Required[Literal[FunctionShellCallEnvironmentType.CONTAINER_REFERENCE]]
+    type: Required[Literal["container_reference"]]
     """The environment type. Always ``container_reference``. Required. CONTAINER_REFERENCE."""
     container_id: Required[str]
     """Required."""
@@ -2590,7 +2539,7 @@ class CustomGrammarFormatParam(TypedDict, total=False):
     """Grammar format.
 
     :ivar type: Grammar format. Always ``grammar``. Required. GRAMMAR.
-    :vartype type: Literal[CustomToolParamFormatType.GRAMMAR]
+    :vartype type: Literal["grammar"]
     :ivar syntax: The syntax of the grammar definition. One of ``lark`` or ``regex``. Required.
      Known values are: "lark" and "regex".
     :vartype syntax: GrammarSyntax1
@@ -2598,7 +2547,7 @@ class CustomGrammarFormatParam(TypedDict, total=False):
     :vartype definition: str
     """
 
-    type: Required[Literal[CustomToolParamFormatType.GRAMMAR]]
+    type: Required[Literal["grammar"]]
     """Grammar format. Always ``grammar``. Required. GRAMMAR."""
     syntax: Required[GrammarSyntax1]
     """The syntax of the grammar definition. One of ``lark`` or ``regex``. Required. Known values are:
@@ -2611,10 +2560,10 @@ class CustomTextFormatParam(TypedDict, total=False):
     """Text format.
 
     :ivar type: Unconstrained text format. Always ``text``. Required. TEXT.
-    :vartype type: Literal[CustomToolParamFormatType.TEXT]
+    :vartype type: Literal["text"]
     """
 
-    type: Required[Literal[CustomToolParamFormatType.TEXT]]
+    type: Required[Literal["text"]]
     """Unconstrained text format. Always ``text``. Required. TEXT."""
 
 
@@ -2627,7 +2576,7 @@ class CustomToolCallOutputResource(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the custom tool call output. Always ``custom_tool_call_output``.
      Required. CUSTOM_TOOL_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.CUSTOM_TOOL_CALL_OUTPUT]
+    :vartype type: Literal["custom_tool_call_output"]
     :ivar id: The unique ID of the custom tool call output in the OpenAI platform.
     :vartype id: str
     :ivar call_id: The call ID, used to map this custom tool call output to a custom tool call.
@@ -2649,7 +2598,7 @@ class CustomToolCallOutputResource(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.CUSTOM_TOOL_CALL_OUTPUT]]
+    type: Required[Literal["custom_tool_call_output"]]
     """The type of the custom tool call output. Always ``custom_tool_call_output``. Required.
      CUSTOM_TOOL_CALL_OUTPUT."""
     id: str
@@ -2676,7 +2625,7 @@ class CustomToolCallResource(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the custom tool call. Always ``custom_tool_call``. Required.
      CUSTOM_TOOL_CALL.
-    :vartype type: Literal[OutputItemType.CUSTOM_TOOL_CALL]
+    :vartype type: Literal["custom_tool_call"]
     :ivar id: The unique ID of the custom tool call in the OpenAI platform.
     :vartype id: str
     :ivar call_id: An identifier used to map this custom tool call to a tool call output. Required.
@@ -2699,7 +2648,7 @@ class CustomToolCallResource(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.CUSTOM_TOOL_CALL]]
+    type: Required[Literal["custom_tool_call"]]
     """The type of the custom tool call. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL."""
     id: str
     """The unique ID of the custom tool call in the OpenAI platform."""
@@ -2723,7 +2672,7 @@ class CustomToolParam(TypedDict, total=False):
     """Custom tool.
 
     :ivar type: The type of the custom tool. Always ``custom``. Required. CUSTOM.
-    :vartype type: Literal[ToolType.CUSTOM]
+    :vartype type: Literal["custom"]
     :ivar name: The name of the custom tool, used to identify it in tool calls. Required.
     :vartype name: str
     :ivar description: Optional description of the custom tool, used to provide more context.
@@ -2734,7 +2683,7 @@ class CustomToolParam(TypedDict, total=False):
     :vartype defer_loading: bool
     """
 
-    type: Required[Literal[ToolType.CUSTOM]]
+    type: Required[Literal["custom"]]
     """The type of the custom tool. Always ``custom``. Required. CUSTOM."""
     name: Required[str]
     """The name of the custom tool, used to identify it in tool calls. Required."""
@@ -2770,7 +2719,7 @@ class DoubleClickAction(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a double click action, this property is always set to
      ``double_click``. Required. DOUBLE_CLICK.
-    :vartype type: Literal[ComputerActionType.DOUBLE_CLICK]
+    :vartype type: Literal["double_click"]
     :ivar x: The x-coordinate where the double click occurred. Required.
     :vartype x: int
     :ivar y: The y-coordinate where the double click occurred. Required.
@@ -2779,7 +2728,7 @@ class DoubleClickAction(TypedDict, total=False):
     :vartype keys_property: list[str]
     """
 
-    type: Required[Literal[ComputerActionType.DOUBLE_CLICK]]
+    type: Required[Literal["double_click"]]
     """Specifies the event type. For a double click action, this property is always set to
      ``double_click``. Required. DOUBLE_CLICK."""
     x: Required[int]
@@ -2795,7 +2744,7 @@ class DragParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a drag action, this property is always set to
      ``drag``. Required. DRAG.
-    :vartype type: Literal[ComputerActionType.DRAG]
+    :vartype type: Literal["drag"]
     :ivar path: Required. An array of coordinates representing the path of the drag action.
      Coordinates will appear as an array of objects, eg
 
@@ -2810,7 +2759,7 @@ class DragParam(TypedDict, total=False):
     :vartype keys_property: list[str]
     """
 
-    type: Required[Literal[ComputerActionType.DRAG]]
+    type: Required[Literal["drag"]]
     """Specifies the event type. For a drag action, this property is always set to ``drag``. Required.
      DRAG."""
     path: Required[list["CoordParam"]]
@@ -2868,7 +2817,7 @@ class FabricDataAgentToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. FABRIC_DATAAGENT_PREVIEW_CALL.
-    :vartype type: Literal[OutputItemType.FABRIC_DATAAGENT_PREVIEW_CALL]
+    :vartype type: Literal["fabric_dataagent_preview_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar arguments: A JSON string of the arguments to pass to the tool. Required.
@@ -2884,7 +2833,7 @@ class FabricDataAgentToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.FABRIC_DATAAGENT_PREVIEW_CALL]]
+    type: Required[Literal["fabric_dataagent_preview_call"]]
     """Required. FABRIC_DATAAGENT_PREVIEW_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -2905,7 +2854,7 @@ class FabricDataAgentToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. FABRIC_DATAAGENT_PREVIEW_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.FABRIC_DATAAGENT_PREVIEW_CALL_OUTPUT]
+    :vartype type: Literal["fabric_dataagent_preview_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the Fabric data agent tool call. Is one of the following types:
@@ -2922,7 +2871,7 @@ class FabricDataAgentToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.FABRIC_DATAAGENT_PREVIEW_CALL_OUTPUT]]
+    type: Required[Literal["fabric_dataagent_preview_call_output"]]
     """Required. FABRIC_DATAAGENT_PREVIEW_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -2961,7 +2910,7 @@ class FileCitationBody(TypedDict, total=False):
     """File citation.
 
     :ivar type: The type of the file citation. Always ``file_citation``. Required. FILE_CITATION.
-    :vartype type: Literal[AnnotationType.FILE_CITATION]
+    :vartype type: Literal["file_citation"]
     :ivar file_id: The ID of the file. Required.
     :vartype file_id: str
     :ivar index: The index of the file in the list of files. Required.
@@ -2970,7 +2919,7 @@ class FileCitationBody(TypedDict, total=False):
     :vartype filename: str
     """
 
-    type: Required[Literal[AnnotationType.FILE_CITATION]]
+    type: Required[Literal["file_citation"]]
     """The type of the file citation. Always ``file_citation``. Required. FILE_CITATION."""
     file_id: Required[str]
     """The ID of the file. Required."""
@@ -2984,14 +2933,14 @@ class FilePath(TypedDict, total=False):
     """File path.
 
     :ivar type: The type of the file path. Always ``file_path``. Required. FILE_PATH.
-    :vartype type: Literal[AnnotationType.FILE_PATH]
+    :vartype type: Literal["file_path"]
     :ivar file_id: The ID of the file. Required.
     :vartype file_id: str
     :ivar index: The index of the file in the list of files. Required.
     :vartype index: int
     """
 
-    type: Required[Literal[AnnotationType.FILE_PATH]]
+    type: Required[Literal["file_path"]]
     """The type of the file path. Always ``file_path``. Required. FILE_PATH."""
     file_id: Required[str]
     """The ID of the file. Required."""
@@ -3003,7 +2952,7 @@ class FileSearchTool(TypedDict, total=False):
     """File search.
 
     :ivar type: The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH.
-    :vartype type: Literal[ToolType.FILE_SEARCH]
+    :vartype type: Literal["file_search"]
     :ivar vector_store_ids: The IDs of the vector stores to search. Required.
     :vartype vector_store_ids: list[str]
     :ivar max_num_results: The maximum number of results to return. This number should be between 1
@@ -3019,7 +2968,7 @@ class FileSearchTool(TypedDict, total=False):
     :vartype description: str
     """
 
-    type: Required[Literal[ToolType.FILE_SEARCH]]
+    type: Required[Literal["file_search"]]
     """The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH."""
     vector_store_ids: Required[list[str]]
     """The IDs of the vector stores to search. Required."""
@@ -3061,7 +3010,7 @@ class FunctionAndCustomToolCallOutputInputFileContent(TypedDict, total=False):  
     """Input file.
 
     :ivar type: The type of the input item. Always ``input_file``. Required. INPUT_FILE.
-    :vartype type: Literal[FunctionAndCustomToolCallOutputType.INPUT_FILE]
+    :vartype type: Literal["input_file"]
     :ivar file_id:
     :vartype file_id: str
     :ivar filename: The name of the file to be sent to the model.
@@ -3076,7 +3025,7 @@ class FunctionAndCustomToolCallOutputInputFileContent(TypedDict, total=False):  
     :vartype detail: FileInputDetail
     """
 
-    type: Required[Literal[FunctionAndCustomToolCallOutputType.INPUT_FILE]]
+    type: Required[Literal["input_file"]]
     """The type of the input item. Always ``input_file``. Required. INPUT_FILE."""
     file_id: Optional[str]
     filename: str
@@ -3095,7 +3044,7 @@ class FunctionAndCustomToolCallOutputInputImageContent(TypedDict, total=False): 
     """Input image.
 
     :ivar type: The type of the input item. Always ``input_image``. Required. INPUT_IMAGE.
-    :vartype type: Literal[FunctionAndCustomToolCallOutputType.INPUT_IMAGE]
+    :vartype type: Literal["input_image"]
     :ivar image_url:
     :vartype image_url: str
     :ivar file_id:
@@ -3106,7 +3055,7 @@ class FunctionAndCustomToolCallOutputInputImageContent(TypedDict, total=False): 
     :vartype detail: ImageDetail
     """
 
-    type: Required[Literal[FunctionAndCustomToolCallOutputType.INPUT_IMAGE]]
+    type: Required[Literal["input_image"]]
     """The type of the input item. Always ``input_image``. Required. INPUT_IMAGE."""
     image_url: Optional[str]
     file_id: Optional[str]
@@ -3120,12 +3069,12 @@ class FunctionAndCustomToolCallOutputInputTextContent(TypedDict, total=False):  
     """Input text.
 
     :ivar type: The type of the input item. Always ``input_text``. Required. INPUT_TEXT.
-    :vartype type: Literal[FunctionAndCustomToolCallOutputType.INPUT_TEXT]
+    :vartype type: Literal["input_text"]
     :ivar text: The text input to the model. Required.
     :vartype text: str
     """
 
-    type: Required[Literal[FunctionAndCustomToolCallOutputType.INPUT_TEXT]]
+    type: Required[Literal["input_text"]]
     """The type of the input item. Always ``input_text``. Required. INPUT_TEXT."""
     text: Required[str]
     """The text input to the model. Required."""
@@ -3140,7 +3089,7 @@ class FunctionCallOutputItemParam(TypedDict, total=False):
     :vartype call_id: str
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required. FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[ItemType.FUNCTION_CALL_OUTPUT]
+    :vartype type: Literal["function_call_output"]
     :ivar output: Text, image, or file output of the function tool call. Required. Is either a str
      type or a [Union["_types.InputTextContentParam", "_types.InputImageContentParamAutoParam",
      "_types.InputFileContentParam"]] type.
@@ -3153,7 +3102,7 @@ class FunctionCallOutputItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
-    type: Required[Literal[ItemType.FUNCTION_CALL_OUTPUT]]
+    type: Required[Literal["function_call_output"]]
     """The type of the function tool call output. Always ``function_call_output``. Required.
      FUNCTION_CALL_OUTPUT."""
     output: Required[
@@ -3210,7 +3159,7 @@ class FunctionShellCallItemParam(TypedDict, total=False):
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
     :ivar type: The type of the item. Always ``shell_call``. Required. SHELL_CALL.
-    :vartype type: Literal[ItemType.SHELL_CALL]
+    :vartype type: Literal["shell_call"]
     :ivar action: The shell commands and limits that describe how to run the tool call. Required.
     :vartype action: "FunctionShellActionParam"
     :ivar status: Known values are: "in_progress", "completed", and "incomplete".
@@ -3222,7 +3171,7 @@ class FunctionShellCallItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
-    type: Required[Literal[ItemType.SHELL_CALL]]
+    type: Required[Literal["shell_call"]]
     """The type of the item. Always ``shell_call``. Required. SHELL_CALL."""
     action: Required["FunctionShellActionParam"]
     """The shell commands and limits that describe how to run the tool call. Required."""
@@ -3238,12 +3187,12 @@ class FunctionShellCallItemParamEnvironmentContainerReferenceParam(
 
     :ivar type: References a container created with the /v1/containers endpoint. Required.
      CONTAINER_REFERENCE.
-    :vartype type: Literal[FunctionShellCallItemParamEnvironmentType.CONTAINER_REFERENCE]
+    :vartype type: Literal["container_reference"]
     :ivar container_id: The ID of the referenced container. Required.
     :vartype container_id: str
     """
 
-    type: Required[Literal[FunctionShellCallItemParamEnvironmentType.CONTAINER_REFERENCE]]
+    type: Required[Literal["container_reference"]]
     """References a container created with the /v1/containers endpoint. Required. CONTAINER_REFERENCE."""
     container_id: Required[str]
     """The ID of the referenced container. Required."""
@@ -3255,12 +3204,12 @@ class FunctionShellCallItemParamEnvironmentLocalEnvironmentParam(
     """FunctionShellCallItemParamEnvironmentLocalEnvironmentParam.
 
     :ivar type: Use a local computer environment. Required. LOCAL.
-    :vartype type: Literal[FunctionShellCallItemParamEnvironmentType.LOCAL]
+    :vartype type: Literal["local"]
     :ivar skills: An optional list of skills.
     :vartype skills: list["LocalSkillParam"]
     """
 
-    type: Required[Literal[FunctionShellCallItemParamEnvironmentType.LOCAL]]
+    type: Required[Literal["local"]]
     """Use a local computer environment. Required. LOCAL."""
     skills: list["LocalSkillParam"]
     """An optional list of skills."""
@@ -3312,12 +3261,12 @@ class FunctionShellCallOutputExitOutcome(TypedDict, total=False):
     """Shell call exit outcome.
 
     :ivar type: The outcome type. Always ``exit``. Required. EXIT.
-    :vartype type: Literal[FunctionShellCallOutputOutcomeType.EXIT]
+    :vartype type: Literal["exit"]
     :ivar exit_code: Exit code from the shell process. Required.
     :vartype exit_code: int
     """
 
-    type: Required[Literal[FunctionShellCallOutputOutcomeType.EXIT]]
+    type: Required[Literal["exit"]]
     """The outcome type. Always ``exit``. Required. EXIT."""
     exit_code: Required[int]
     """Exit code from the shell process. Required."""
@@ -3327,12 +3276,12 @@ class FunctionShellCallOutputExitOutcomeParam(TypedDict, total=False):
     """Shell call exit outcome.
 
     :ivar type: The outcome type. Always ``exit``. Required. EXIT.
-    :vartype type: Literal[FunctionShellCallOutputOutcomeParamType.EXIT]
+    :vartype type: Literal["exit"]
     :ivar exit_code: The exit code returned by the shell process. Required.
     :vartype exit_code: int
     """
 
-    type: Required[Literal[FunctionShellCallOutputOutcomeParamType.EXIT]]
+    type: Required[Literal["exit"]]
     """The outcome type. Always ``exit``. Required. EXIT."""
     exit_code: Required[int]
     """The exit code returned by the shell process. Required."""
@@ -3346,7 +3295,7 @@ class FunctionShellCallOutputItemParam(TypedDict, total=False):
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
     :ivar type: The type of the item. Always ``shell_call_output``. Required. SHELL_CALL_OUTPUT.
-    :vartype type: Literal[ItemType.SHELL_CALL_OUTPUT]
+    :vartype type: Literal["shell_call_output"]
     :ivar output: Captured chunks of stdout and stderr output, along with their associated
      outcomes. Required.
     :vartype output: list["FunctionShellCallOutputContentParam"]
@@ -3359,7 +3308,7 @@ class FunctionShellCallOutputItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
-    type: Required[Literal[ItemType.SHELL_CALL_OUTPUT]]
+    type: Required[Literal["shell_call_output"]]
     """The type of the item. Always ``shell_call_output``. Required. SHELL_CALL_OUTPUT."""
     output: Required[list["FunctionShellCallOutputContentParam"]]
     """Captured chunks of stdout and stderr output, along with their associated outcomes. Required."""
@@ -3372,10 +3321,10 @@ class FunctionShellCallOutputTimeoutOutcome(TypedDict, total=False):
     """Shell call timeout outcome.
 
     :ivar type: The outcome type. Always ``timeout``. Required. TIMEOUT.
-    :vartype type: Literal[FunctionShellCallOutputOutcomeType.TIMEOUT]
+    :vartype type: Literal["timeout"]
     """
 
-    type: Required[Literal[FunctionShellCallOutputOutcomeType.TIMEOUT]]
+    type: Required[Literal["timeout"]]
     """The outcome type. Always ``timeout``. Required. TIMEOUT."""
 
 
@@ -3383,10 +3332,10 @@ class FunctionShellCallOutputTimeoutOutcomeParam(TypedDict, total=False):  # pyl
     """Shell call timeout outcome.
 
     :ivar type: The outcome type. Always ``timeout``. Required. TIMEOUT.
-    :vartype type: Literal[FunctionShellCallOutputOutcomeParamType.TIMEOUT]
+    :vartype type: Literal["timeout"]
     """
 
-    type: Required[Literal[FunctionShellCallOutputOutcomeParamType.TIMEOUT]]
+    type: Required[Literal["timeout"]]
     """The outcome type. Always ``timeout``. Required. TIMEOUT."""
 
 
@@ -3394,7 +3343,7 @@ class FunctionShellToolParam(TypedDict, total=False):
     """Shell tool.
 
     :ivar type: The type of the shell tool. Always ``shell``. Required. SHELL.
-    :vartype type: Literal[ToolType.SHELL]
+    :vartype type: Literal["shell"]
     :ivar environment:
     :vartype environment: "FunctionShellToolParamEnvironment"
     :ivar name: Optional user-defined name for this tool or configuration.
@@ -3403,7 +3352,7 @@ class FunctionShellToolParam(TypedDict, total=False):
     :vartype description: str
     """
 
-    type: Required[Literal[ToolType.SHELL]]
+    type: Required[Literal["shell"]]
     """The type of the shell tool. Always ``shell``. Required. SHELL."""
     environment: Optional["FunctionShellToolParamEnvironment"]
     name: str
@@ -3417,12 +3366,12 @@ class FunctionShellToolParamEnvironmentContainerReferenceParam(TypedDict, total=
 
     :ivar type: References a container created with the /v1/containers endpoint. Required.
      CONTAINER_REFERENCE.
-    :vartype type: Literal[FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE]
+    :vartype type: Literal["container_reference"]
     :ivar container_id: The ID of the referenced container. Required.
     :vartype container_id: str
     """
 
-    type: Required[Literal[FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE]]
+    type: Required[Literal["container_reference"]]
     """References a container created with the /v1/containers endpoint. Required. CONTAINER_REFERENCE."""
     container_id: Required[str]
     """The ID of the referenced container. Required."""
@@ -3432,12 +3381,12 @@ class FunctionShellToolParamEnvironmentLocalEnvironmentParam(TypedDict, total=Fa
     """FunctionShellToolParamEnvironmentLocalEnvironmentParam.
 
     :ivar type: Use a local computer environment. Required. LOCAL.
-    :vartype type: Literal[FunctionShellToolParamEnvironmentType.LOCAL]
+    :vartype type: Literal["local"]
     :ivar skills: An optional list of skills.
     :vartype skills: list["LocalSkillParam"]
     """
 
-    type: Required[Literal[FunctionShellToolParamEnvironmentType.LOCAL]]
+    type: Required[Literal["local"]]
     """Use a local computer environment. Required. LOCAL."""
     skills: list["LocalSkillParam"]
     """An optional list of skills."""
@@ -3447,7 +3396,7 @@ class FunctionTool(TypedDict, total=False):
     """Function.
 
     :ivar type: The type of the function tool. Always ``function``. Required. FUNCTION.
-    :vartype type: Literal[ToolType.FUNCTION]
+    :vartype type: Literal["function"]
     :ivar name: The name of the function to call. Required.
     :vartype name: str
     :ivar description:
@@ -3460,7 +3409,7 @@ class FunctionTool(TypedDict, total=False):
     :vartype defer_loading: bool
     """
 
-    type: Required[Literal[ToolType.FUNCTION]]
+    type: Required[Literal["function"]]
     """The type of the function tool. Always ``function``. Required. FUNCTION."""
     name: Required[str]
     """The name of the function to call. Required."""
@@ -3471,44 +3420,6 @@ class FunctionTool(TypedDict, total=False):
     """Required."""
     defer_loading: bool
     """Whether this function is deferred and loaded via tool search."""
-
-
-class FunctionToolCallOutput(TypedDict, total=False):
-    """Function tool call output.
-
-    :ivar id: The unique ID of the function tool call output. Populated when this item is returned
-     via API. Required.
-    :vartype id: str
-    :ivar type: The type of the function tool call output. Always ``function_call_output``.
-     Required. Default value is "function_call_output".
-    :vartype type: Literal["function_call_output"]
-    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
-    :vartype call_id: str
-    :ivar output: The output from the function call generated by your code. Can be a string or an
-     list of output content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput]
-     type.
-    :vartype output: Union[str, list["FunctionAndCustomToolCallOutput"]]
-    :ivar status: The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``.
-     Populated when items are returned via API. Is one of the following types:
-     Literal["in_progress"], Literal["completed"], Literal["incomplete"]
-    :vartype status: Literal["in_progress", "completed", "incomplete"]
-    """
-
-    id: Required[str]
-    """The unique ID of the function tool call output. Populated when this item is returned via API.
-     Required."""
-    type: Required[Literal["function_call_output"]]
-    """The type of the function tool call output. Always ``function_call_output``. Required. Default
-     value is \"function_call_output\"."""
-    call_id: Required[str]
-    """The unique ID of the function tool call generated by the model. Required."""
-    output: Required[Union[str, list["FunctionAndCustomToolCallOutput"]]]
-    """The output from the function call generated by your code. Can be a string or an list of output
-     content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput] type."""
-    status: Literal["in_progress", "completed", "incomplete"]
-    """The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``. Populated
-     when items are returned via API. Is one of the following types: Literal[\"in_progress\"],
-     Literal[\"completed\"], Literal[\"incomplete\"]"""
 
 
 class FunctionToolParam(TypedDict, total=False):
@@ -3559,7 +3470,7 @@ class ImageGenTool(TypedDict, total=False):
 
     :ivar type: The type of the image generation tool. Always ``image_generation``. Required.
      IMAGE_GENERATION.
-    :vartype type: Literal[ToolType.IMAGE_GENERATION]
+    :vartype type: Literal["image_generation"]
     :ivar model: Is one of the following types: Literal["gpt-image-1"],
      Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str
     :vartype model: Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"],
@@ -3611,7 +3522,7 @@ class ImageGenTool(TypedDict, total=False):
     :vartype description: str
     """
 
-    type: Required[Literal[ToolType.IMAGE_GENERATION]]
+    type: Required[Literal["image_generation"]]
     """The type of the image generation tool. Always ``image_generation``. Required. IMAGE_GENERATION."""
     model: Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]
     """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
@@ -3676,7 +3587,7 @@ class InlineSkillParam(TypedDict, total=False):
     """InlineSkillParam.
 
     :ivar type: Defines an inline skill for this request. Required. INLINE.
-    :vartype type: Literal[ContainerSkillType.INLINE]
+    :vartype type: Literal["inline"]
     :ivar name: The name of the skill. Required.
     :vartype name: str
     :ivar description: The description of the skill. Required.
@@ -3685,7 +3596,7 @@ class InlineSkillParam(TypedDict, total=False):
     :vartype source: "InlineSkillSourceParam"
     """
 
-    type: Required[Literal[ContainerSkillType.INLINE]]
+    type: Required[Literal["inline"]]
     """Defines an inline skill for this request. Required. INLINE."""
     name: Required[str]
     """The name of the skill. Required."""
@@ -3869,7 +3780,7 @@ class ItemCodeInterpreterToolCall(TypedDict, total=False):
 
     :ivar type: The type of the code interpreter tool call. Always ``code_interpreter_call``.
      Required. CODE_INTERPRETER_CALL.
-    :vartype type: Literal[ItemType.CODE_INTERPRETER_CALL]
+    :vartype type: Literal["code_interpreter_call"]
     :ivar id: The unique ID of the code interpreter tool call. Required.
     :vartype id: str
     :ivar status: The status of the code interpreter tool call. Valid values are ``in_progress``,
@@ -3885,7 +3796,7 @@ class ItemCodeInterpreterToolCall(TypedDict, total=False):
     :vartype outputs: list[Union["CodeInterpreterOutputLogs", "CodeInterpreterOutputImage"]]
     """
 
-    type: Required[Literal[ItemType.CODE_INTERPRETER_CALL]]
+    type: Required[Literal["code_interpreter_call"]]
     """The type of the code interpreter tool call. Always ``code_interpreter_call``. Required.
      CODE_INTERPRETER_CALL."""
     id: Required[str]
@@ -3907,7 +3818,7 @@ class ItemComputerToolCall(TypedDict, total=False):
     """Computer tool call.
 
     :ivar type: The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL.
-    :vartype type: Literal[ItemType.COMPUTER_CALL]
+    :vartype type: Literal["computer_call"]
     :ivar id: The unique ID of the computer call. Required.
     :vartype id: str
     :ivar call_id: An identifier used when responding to the tool call with output. Required.
@@ -3924,7 +3835,7 @@ class ItemComputerToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemType.COMPUTER_CALL]]
+    type: Required[Literal["computer_call"]]
     """The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL."""
     id: Required[str]
     """The unique ID of the computer call. Required."""
@@ -3945,7 +3856,7 @@ class ItemCustomToolCall(TypedDict, total=False):
 
     :ivar type: The type of the custom tool call. Always ``custom_tool_call``. Required.
      CUSTOM_TOOL_CALL.
-    :vartype type: Literal[ItemType.CUSTOM_TOOL_CALL]
+    :vartype type: Literal["custom_tool_call"]
     :ivar id: The unique ID of the custom tool call in the OpenAI platform.
     :vartype id: str
     :ivar call_id: An identifier used to map this custom tool call to a tool call output. Required.
@@ -3958,7 +3869,7 @@ class ItemCustomToolCall(TypedDict, total=False):
     :vartype input: str
     """
 
-    type: Required[Literal[ItemType.CUSTOM_TOOL_CALL]]
+    type: Required[Literal["custom_tool_call"]]
     """The type of the custom tool call. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL."""
     id: str
     """The unique ID of the custom tool call in the OpenAI platform."""
@@ -3977,7 +3888,7 @@ class ItemCustomToolCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the custom tool call output. Always ``custom_tool_call_output``.
      Required. CUSTOM_TOOL_CALL_OUTPUT.
-    :vartype type: Literal[ItemType.CUSTOM_TOOL_CALL_OUTPUT]
+    :vartype type: Literal["custom_tool_call_output"]
     :ivar id: The unique ID of the custom tool call output in the OpenAI platform.
     :vartype id: str
     :ivar call_id: The call ID, used to map this custom tool call output to a custom tool call.
@@ -3989,7 +3900,7 @@ class ItemCustomToolCallOutput(TypedDict, total=False):
     :vartype output: Union[str, list["FunctionAndCustomToolCallOutput"]]
     """
 
-    type: Required[Literal[ItemType.CUSTOM_TOOL_CALL_OUTPUT]]
+    type: Required[Literal["custom_tool_call_output"]]
     """The type of the custom tool call output. Always ``custom_tool_call_output``. Required.
      CUSTOM_TOOL_CALL_OUTPUT."""
     id: str
@@ -4005,7 +3916,7 @@ class ItemFieldAdditionalTools(TypedDict, total=False):
     """ItemFieldAdditionalTools.
 
     :ivar type: The type of the item. Always ``additional_tools``. Required. ADDITIONAL_TOOLS.
-    :vartype type: Literal[ItemFieldType.ADDITIONAL_TOOLS]
+    :vartype type: Literal["additional_tools"]
     :ivar id: The unique ID of the additional tools item. Required.
     :vartype id: str
     :ivar role: The role that provided the additional tools. Required. Known values are: "unknown",
@@ -4015,7 +3926,7 @@ class ItemFieldAdditionalTools(TypedDict, total=False):
     :vartype tools: list["Tool"]
     """
 
-    type: Required[Literal[ItemFieldType.ADDITIONAL_TOOLS]]
+    type: Required[Literal["additional_tools"]]
     """The type of the item. Always ``additional_tools``. Required. ADDITIONAL_TOOLS."""
     id: Required[str]
     """The unique ID of the additional tools item. Required."""
@@ -4030,7 +3941,7 @@ class ItemFieldApplyPatchToolCall(TypedDict, total=False):
     """Apply patch tool call.
 
     :ivar type: The type of the item. Always ``apply_patch_call``. Required. APPLY_PATCH_CALL.
-    :vartype type: Literal[ItemFieldType.APPLY_PATCH_CALL]
+    :vartype type: Literal["apply_patch_call"]
     :ivar id: The unique ID of the apply patch tool call. Populated when this item is returned via
      API. Required.
     :vartype id: str
@@ -4045,7 +3956,7 @@ class ItemFieldApplyPatchToolCall(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.APPLY_PATCH_CALL]]
+    type: Required[Literal["apply_patch_call"]]
     """The type of the item. Always ``apply_patch_call``. Required. APPLY_PATCH_CALL."""
     id: Required[str]
     """The unique ID of the apply patch tool call. Populated when this item is returned via API.
@@ -4066,7 +3977,7 @@ class ItemFieldApplyPatchToolCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the item. Always ``apply_patch_call_output``. Required.
      APPLY_PATCH_CALL_OUTPUT.
-    :vartype type: Literal[ItemFieldType.APPLY_PATCH_CALL_OUTPUT]
+    :vartype type: Literal["apply_patch_call_output"]
     :ivar id: The unique ID of the apply patch tool call output. Populated when this item is
      returned via API. Required.
     :vartype id: str
@@ -4081,7 +3992,7 @@ class ItemFieldApplyPatchToolCallOutput(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.APPLY_PATCH_CALL_OUTPUT]]
+    type: Required[Literal["apply_patch_call_output"]]
     """The type of the item. Always ``apply_patch_call_output``. Required. APPLY_PATCH_CALL_OUTPUT."""
     id: Required[str]
     """The unique ID of the apply patch tool call output. Populated when this item is returned via
@@ -4101,7 +4012,7 @@ class ItemFieldCodeInterpreterToolCall(TypedDict, total=False):
 
     :ivar type: The type of the code interpreter tool call. Always ``code_interpreter_call``.
      Required. CODE_INTERPRETER_CALL.
-    :vartype type: Literal[ItemFieldType.CODE_INTERPRETER_CALL]
+    :vartype type: Literal["code_interpreter_call"]
     :ivar id: The unique ID of the code interpreter tool call. Required.
     :vartype id: str
     :ivar status: The status of the code interpreter tool call. Valid values are ``in_progress``,
@@ -4117,7 +4028,7 @@ class ItemFieldCodeInterpreterToolCall(TypedDict, total=False):
     :vartype outputs: list[Union["CodeInterpreterOutputLogs", "CodeInterpreterOutputImage"]]
     """
 
-    type: Required[Literal[ItemFieldType.CODE_INTERPRETER_CALL]]
+    type: Required[Literal["code_interpreter_call"]]
     """The type of the code interpreter tool call. Always ``code_interpreter_call``. Required.
      CODE_INTERPRETER_CALL."""
     id: Required[str]
@@ -4139,7 +4050,7 @@ class ItemFieldCompactionBody(TypedDict, total=False):
     """Compaction item.
 
     :ivar type: The type of the item. Always ``compaction``. Required. COMPACTION.
-    :vartype type: Literal[ItemFieldType.COMPACTION]
+    :vartype type: Literal["compaction"]
     :ivar id: The unique ID of the compaction item. Required.
     :vartype id: str
     :ivar encrypted_content: The encrypted content that was produced by compaction. Required.
@@ -4148,7 +4059,7 @@ class ItemFieldCompactionBody(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.COMPACTION]]
+    type: Required[Literal["compaction"]]
     """The type of the item. Always ``compaction``. Required. COMPACTION."""
     id: Required[str]
     """The unique ID of the compaction item. Required."""
@@ -4162,7 +4073,7 @@ class ItemFieldComputerToolCall(TypedDict, total=False):
     """Computer tool call.
 
     :ivar type: The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL.
-    :vartype type: Literal[ItemFieldType.COMPUTER_CALL]
+    :vartype type: Literal["computer_call"]
     :ivar id: The unique ID of the computer call. Required.
     :vartype id: str
     :ivar call_id: An identifier used when responding to the tool call with output. Required.
@@ -4179,7 +4090,7 @@ class ItemFieldComputerToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemFieldType.COMPUTER_CALL]]
+    type: Required[Literal["computer_call"]]
     """The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL."""
     id: Required[str]
     """The unique ID of the computer call. Required."""
@@ -4200,7 +4111,7 @@ class ItemFieldComputerToolCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the computer tool call output. Always ``computer_call_output``.
      Required. COMPUTER_CALL_OUTPUT.
-    :vartype type: Literal[ItemFieldType.COMPUTER_CALL_OUTPUT]
+    :vartype type: Literal["computer_call_output"]
     :ivar id: The ID of the computer tool call output. Required.
     :vartype id: str
     :ivar call_id: The ID of the computer tool call that produced the output. Required.
@@ -4216,7 +4127,7 @@ class ItemFieldComputerToolCallOutput(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemFieldType.COMPUTER_CALL_OUTPUT]]
+    type: Required[Literal["computer_call_output"]]
     """The type of the computer tool call output. Always ``computer_call_output``. Required.
      COMPUTER_CALL_OUTPUT."""
     id: Required[str]
@@ -4238,7 +4149,7 @@ class ItemFieldCustomToolCall(TypedDict, total=False):
 
     :ivar type: The type of the custom tool call. Always ``custom_tool_call``. Required.
      CUSTOM_TOOL_CALL.
-    :vartype type: Literal[ItemFieldType.CUSTOM_TOOL_CALL]
+    :vartype type: Literal["custom_tool_call"]
     :ivar id: The unique ID of the custom tool call in the OpenAI platform.
     :vartype id: str
     :ivar call_id: An identifier used to map this custom tool call to a tool call output. Required.
@@ -4251,7 +4162,7 @@ class ItemFieldCustomToolCall(TypedDict, total=False):
     :vartype input: str
     """
 
-    type: Required[Literal[ItemFieldType.CUSTOM_TOOL_CALL]]
+    type: Required[Literal["custom_tool_call"]]
     """The type of the custom tool call. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL."""
     id: str
     """The unique ID of the custom tool call in the OpenAI platform."""
@@ -4270,7 +4181,7 @@ class ItemFieldCustomToolCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the custom tool call output. Always ``custom_tool_call_output``.
      Required. CUSTOM_TOOL_CALL_OUTPUT.
-    :vartype type: Literal[ItemFieldType.CUSTOM_TOOL_CALL_OUTPUT]
+    :vartype type: Literal["custom_tool_call_output"]
     :ivar id: The unique ID of the custom tool call output in the OpenAI platform.
     :vartype id: str
     :ivar call_id: The call ID, used to map this custom tool call output to a custom tool call.
@@ -4282,7 +4193,7 @@ class ItemFieldCustomToolCallOutput(TypedDict, total=False):
     :vartype output: Union[str, list["FunctionAndCustomToolCallOutput"]]
     """
 
-    type: Required[Literal[ItemFieldType.CUSTOM_TOOL_CALL_OUTPUT]]
+    type: Required[Literal["custom_tool_call_output"]]
     """The type of the custom tool call output. Always ``custom_tool_call_output``. Required.
      CUSTOM_TOOL_CALL_OUTPUT."""
     id: str
@@ -4301,7 +4212,7 @@ class ItemFieldFileSearchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the file search tool call. Always ``file_search_call``. Required.
      FILE_SEARCH_CALL.
-    :vartype type: Literal[ItemFieldType.FILE_SEARCH_CALL]
+    :vartype type: Literal["file_search_call"]
     :ivar status: The status of the file search tool call. One of ``in_progress``, ``searching``,
      ``incomplete`` or ``failed``,. Required. Is one of the following types: Literal["in_progress"],
      Literal["searching"], Literal["completed"], Literal["incomplete"], Literal["failed"]
@@ -4314,7 +4225,7 @@ class ItemFieldFileSearchToolCall(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the file search tool call. Required."""
-    type: Required[Literal[ItemFieldType.FILE_SEARCH_CALL]]
+    type: Required[Literal["file_search_call"]]
     """The type of the file search tool call. Always ``file_search_call``. Required. FILE_SEARCH_CALL."""
     status: Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
     """The status of the file search tool call. One of ``in_progress``, ``searching``, ``incomplete``
@@ -4329,7 +4240,7 @@ class ItemFieldFunctionShellCall(TypedDict, total=False):
     """Shell tool call.
 
     :ivar type: The type of the item. Always ``shell_call``. Required. SHELL_CALL.
-    :vartype type: Literal[ItemFieldType.SHELL_CALL]
+    :vartype type: Literal["shell_call"]
     :ivar id: The unique ID of the shell tool call. Populated when this item is returned via API.
      Required.
     :vartype id: str
@@ -4346,7 +4257,7 @@ class ItemFieldFunctionShellCall(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.SHELL_CALL]]
+    type: Required[Literal["shell_call"]]
     """The type of the item. Always ``shell_call``. Required. SHELL_CALL."""
     id: Required[str]
     """The unique ID of the shell tool call. Populated when this item is returned via API. Required."""
@@ -4368,7 +4279,7 @@ class ItemFieldFunctionShellCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the shell call output. Always ``shell_call_output``. Required.
      SHELL_CALL_OUTPUT.
-    :vartype type: Literal[ItemFieldType.SHELL_CALL_OUTPUT]
+    :vartype type: Literal["shell_call_output"]
     :ivar id: The unique ID of the shell call output. Populated when this item is returned via API.
      Required.
     :vartype id: str
@@ -4385,7 +4296,7 @@ class ItemFieldFunctionShellCallOutput(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.SHELL_CALL_OUTPUT]]
+    type: Required[Literal["shell_call_output"]]
     """The type of the shell call output. Always ``shell_call_output``. Required. SHELL_CALL_OUTPUT."""
     id: Required[str]
     """The unique ID of the shell call output. Populated when this item is returned via API. Required."""
@@ -4409,7 +4320,7 @@ class ItemFieldFunctionToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the function tool call. Always ``function_call``. Required.
      FUNCTION_CALL.
-    :vartype type: Literal[ItemFieldType.FUNCTION_CALL]
+    :vartype type: Literal["function_call"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
     :ivar namespace: The namespace of the function to run.
@@ -4426,7 +4337,7 @@ class ItemFieldFunctionToolCall(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the function tool call. Required."""
-    type: Required[Literal[ItemFieldType.FUNCTION_CALL]]
+    type: Required[Literal["function_call"]]
     """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
@@ -4450,7 +4361,7 @@ class ItemFieldFunctionToolCallOutput(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required. FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[ItemFieldType.FUNCTION_CALL_OUTPUT]
+    :vartype type: Literal["function_call_output"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the function call generated by your code. Can be a string or an
@@ -4466,7 +4377,7 @@ class ItemFieldFunctionToolCallOutput(TypedDict, total=False):
     id: Required[str]
     """The unique ID of the function tool call output. Populated when this item is returned via API.
      Required."""
-    type: Required[Literal[ItemFieldType.FUNCTION_CALL_OUTPUT]]
+    type: Required[Literal["function_call_output"]]
     """The type of the function tool call output. Always ``function_call_output``. Required.
      FUNCTION_CALL_OUTPUT."""
     call_id: Required[str]
@@ -4485,7 +4396,7 @@ class ItemFieldImageGenToolCall(TypedDict, total=False):
 
     :ivar type: The type of the image generation call. Always ``image_generation_call``. Required.
      IMAGE_GENERATION_CALL.
-    :vartype type: Literal[ItemFieldType.IMAGE_GENERATION_CALL]
+    :vartype type: Literal["image_generation_call"]
     :ivar id: The unique ID of the image generation call. Required.
     :vartype id: str
     :ivar status: The status of the image generation call. Required. Is one of the following types:
@@ -4495,7 +4406,7 @@ class ItemFieldImageGenToolCall(TypedDict, total=False):
     :vartype result: str
     """
 
-    type: Required[Literal[ItemFieldType.IMAGE_GENERATION_CALL]]
+    type: Required[Literal["image_generation_call"]]
     """The type of the image generation call. Always ``image_generation_call``. Required.
      IMAGE_GENERATION_CALL."""
     id: Required[str]
@@ -4512,7 +4423,7 @@ class ItemFieldLocalShellToolCall(TypedDict, total=False):
 
     :ivar type: The type of the local shell call. Always ``local_shell_call``. Required.
      LOCAL_SHELL_CALL.
-    :vartype type: Literal[ItemFieldType.LOCAL_SHELL_CALL]
+    :vartype type: Literal["local_shell_call"]
     :ivar id: The unique ID of the local shell call. Required.
     :vartype id: str
     :ivar call_id: The unique ID of the local shell tool call generated by the model. Required.
@@ -4524,7 +4435,7 @@ class ItemFieldLocalShellToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemFieldType.LOCAL_SHELL_CALL]]
+    type: Required[Literal["local_shell_call"]]
     """The type of the local shell call. Always ``local_shell_call``. Required. LOCAL_SHELL_CALL."""
     id: Required[str]
     """The unique ID of the local shell call. Required."""
@@ -4542,7 +4453,7 @@ class ItemFieldLocalShellToolCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the local shell tool call output. Always ``local_shell_call_output``.
      Required. LOCAL_SHELL_CALL_OUTPUT.
-    :vartype type: Literal[ItemFieldType.LOCAL_SHELL_CALL_OUTPUT]
+    :vartype type: Literal["local_shell_call_output"]
     :ivar id: The unique ID of the local shell tool call generated by the model. Required.
     :vartype id: str
     :ivar output: A JSON string of the output of the local shell tool call. Required.
@@ -4552,7 +4463,7 @@ class ItemFieldLocalShellToolCallOutput(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemFieldType.LOCAL_SHELL_CALL_OUTPUT]]
+    type: Required[Literal["local_shell_call_output"]]
     """The type of the local shell tool call output. Always ``local_shell_call_output``. Required.
      LOCAL_SHELL_CALL_OUTPUT."""
     id: Required[str]
@@ -4569,7 +4480,7 @@ class ItemFieldMcpApprovalRequest(TypedDict, total=False):
 
     :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
      MCP_APPROVAL_REQUEST.
-    :vartype type: Literal[ItemFieldType.MCP_APPROVAL_REQUEST]
+    :vartype type: Literal["mcp_approval_request"]
     :ivar id: The unique ID of the approval request. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server making the request. Required.
@@ -4580,7 +4491,7 @@ class ItemFieldMcpApprovalRequest(TypedDict, total=False):
     :vartype arguments: str
     """
 
-    type: Required[Literal[ItemFieldType.MCP_APPROVAL_REQUEST]]
+    type: Required[Literal["mcp_approval_request"]]
     """The type of the item. Always ``mcp_approval_request``. Required. MCP_APPROVAL_REQUEST."""
     id: Required[str]
     """The unique ID of the approval request. Required."""
@@ -4597,7 +4508,7 @@ class ItemFieldMcpApprovalResponseResource(TypedDict, total=False):
 
     :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
      MCP_APPROVAL_RESPONSE.
-    :vartype type: Literal[ItemFieldType.MCP_APPROVAL_RESPONSE]
+    :vartype type: Literal["mcp_approval_response"]
     :ivar id: The unique ID of the approval response. Required.
     :vartype id: str
     :ivar approval_request_id: The ID of the approval request being answered. Required.
@@ -4608,7 +4519,7 @@ class ItemFieldMcpApprovalResponseResource(TypedDict, total=False):
     :vartype reason: str
     """
 
-    type: Required[Literal[ItemFieldType.MCP_APPROVAL_RESPONSE]]
+    type: Required[Literal["mcp_approval_response"]]
     """The type of the item. Always ``mcp_approval_response``. Required. MCP_APPROVAL_RESPONSE."""
     id: Required[str]
     """The unique ID of the approval response. Required."""
@@ -4623,7 +4534,7 @@ class ItemFieldMcpListTools(TypedDict, total=False):
     """MCP list tools.
 
     :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
-    :vartype type: Literal[ItemFieldType.MCP_LIST_TOOLS]
+    :vartype type: Literal["mcp_list_tools"]
     :ivar id: The unique ID of the list. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server. Required.
@@ -4634,7 +4545,7 @@ class ItemFieldMcpListTools(TypedDict, total=False):
     :vartype error: "RealtimeMCPError"
     """
 
-    type: Required[Literal[ItemFieldType.MCP_LIST_TOOLS]]
+    type: Required[Literal["mcp_list_tools"]]
     """The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS."""
     id: Required[str]
     """The unique ID of the list. Required."""
@@ -4649,7 +4560,7 @@ class ItemFieldMcpToolCall(TypedDict, total=False):
     """MCP tool call.
 
     :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
-    :vartype type: Literal[ItemFieldType.MCP_CALL]
+    :vartype type: Literal["mcp_call"]
     :ivar id: The unique ID of the tool call. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server running the tool. Required.
@@ -4670,7 +4581,7 @@ class ItemFieldMcpToolCall(TypedDict, total=False):
     :vartype approval_request_id: str
     """
 
-    type: Required[Literal[ItemFieldType.MCP_CALL]]
+    type: Required[Literal["mcp_call"]]
     """The type of the item. Always ``mcp_call``. Required. MCP_CALL."""
     id: Required[str]
     """The unique ID of the tool call. Required."""
@@ -4693,7 +4604,7 @@ class ItemFieldMessage(TypedDict, total=False):
     """Message.
 
     :ivar type: The type of the message. Always set to ``message``. Required. MESSAGE.
-    :vartype type: Literal[ItemFieldType.MESSAGE]
+    :vartype type: Literal["message"]
     :ivar id: The unique ID of the message. Required.
     :vartype id: str
     :ivar status: The status of item. One of ``in_progress``, ``completed``, or ``incomplete``.
@@ -4710,7 +4621,7 @@ class ItemFieldMessage(TypedDict, total=False):
     :vartype phase: MessagePhase
     """
 
-    type: Required[Literal[ItemFieldType.MESSAGE]]
+    type: Required[Literal["message"]]
     """The type of the message. Always set to ``message``. Required. MESSAGE."""
     id: Required[str]
     """The unique ID of the message. Required."""
@@ -4733,7 +4644,7 @@ class ItemFieldReasoningItem(TypedDict, total=False):
     """Reasoning.
 
     :ivar type: The type of the object. Always ``reasoning``. Required. REASONING.
-    :vartype type: Literal[ItemFieldType.REASONING]
+    :vartype type: Literal["reasoning"]
     :ivar id: The unique identifier of the reasoning content. Required.
     :vartype id: str
     :ivar encrypted_content:
@@ -4748,7 +4659,7 @@ class ItemFieldReasoningItem(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemFieldType.REASONING]]
+    type: Required[Literal["reasoning"]]
     """The type of the object. Always ``reasoning``. Required. REASONING."""
     id: Required[str]
     """The unique identifier of the reasoning content. Required."""
@@ -4767,7 +4678,7 @@ class ItemFieldToolSearchCall(TypedDict, total=False):
     """ItemFieldToolSearchCall.
 
     :ivar type: The type of the item. Always ``tool_search_call``. Required. TOOL_SEARCH_CALL.
-    :vartype type: Literal[ItemFieldType.TOOL_SEARCH_CALL]
+    :vartype type: Literal["tool_search_call"]
     :ivar id: The unique ID of the tool search call item. Required.
     :vartype id: str
     :ivar call_id: Required.
@@ -4784,7 +4695,7 @@ class ItemFieldToolSearchCall(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.TOOL_SEARCH_CALL]]
+    type: Required[Literal["tool_search_call"]]
     """The type of the item. Always ``tool_search_call``. Required. TOOL_SEARCH_CALL."""
     id: Required[str]
     """The unique ID of the tool search call item. Required."""
@@ -4806,7 +4717,7 @@ class ItemFieldToolSearchOutput(TypedDict, total=False):
     """ItemFieldToolSearchOutput.
 
     :ivar type: The type of the item. Always ``tool_search_output``. Required. TOOL_SEARCH_OUTPUT.
-    :vartype type: Literal[ItemFieldType.TOOL_SEARCH_OUTPUT]
+    :vartype type: Literal["tool_search_output"]
     :ivar id: The unique ID of the tool search output item. Required.
     :vartype id: str
     :ivar call_id: Required.
@@ -4823,7 +4734,7 @@ class ItemFieldToolSearchOutput(TypedDict, total=False):
     :vartype created_by: str
     """
 
-    type: Required[Literal[ItemFieldType.TOOL_SEARCH_OUTPUT]]
+    type: Required[Literal["tool_search_output"]]
     """The type of the item. Always ``tool_search_output``. Required. TOOL_SEARCH_OUTPUT."""
     id: Required[str]
     """The unique ID of the tool search output item. Required."""
@@ -4848,10 +4759,11 @@ class ItemFieldWebSearchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the web search tool call. Always ``web_search_call``. Required.
      WEB_SEARCH_CALL.
-    :vartype type: Literal[ItemFieldType.WEB_SEARCH_CALL]
+    :vartype type: Literal["web_search_call"]
     :ivar status: The status of the web search tool call. Required. Is one of the following types:
-     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"]
-    :vartype status: Literal["in_progress", "searching", "completed", "failed"]
+     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"],
+     Literal["incomplete"]
+    :vartype status: Literal["in_progress", "searching", "completed", "failed", "incomplete"]
     :ivar action: An object describing the specific action taken in this web search call. Includes
      details on how the model used the web (search, open_page, find_in_page). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind
@@ -4861,11 +4773,12 @@ class ItemFieldWebSearchToolCall(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the web search tool call. Required."""
-    type: Required[Literal[ItemFieldType.WEB_SEARCH_CALL]]
+    type: Required[Literal["web_search_call"]]
     """The type of the web search tool call. Always ``web_search_call``. Required. WEB_SEARCH_CALL."""
-    status: Required[Literal["in_progress", "searching", "completed", "failed"]]
+    status: Required[Literal["in_progress", "searching", "completed", "failed", "incomplete"]]
     """The status of the web search tool call. Required. Is one of the following types:
-     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"]"""
+     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"],
+     Literal[\"incomplete\"]"""
     action: Required[Union["WebSearchActionSearch", "WebSearchActionOpenPage", "WebSearchActionFind"]]
     """An object describing the specific action taken in this web search call. Includes details on how
      the model used the web (search, open_page, find_in_page). Required. Is one of the following
@@ -4879,7 +4792,7 @@ class ItemFileSearchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the file search tool call. Always ``file_search_call``. Required.
      FILE_SEARCH_CALL.
-    :vartype type: Literal[ItemType.FILE_SEARCH_CALL]
+    :vartype type: Literal["file_search_call"]
     :ivar status: The status of the file search tool call. One of ``in_progress``, ``searching``,
      ``incomplete`` or ``failed``,. Required. Is one of the following types: Literal["in_progress"],
      Literal["searching"], Literal["completed"], Literal["incomplete"], Literal["failed"]
@@ -4892,7 +4805,7 @@ class ItemFileSearchToolCall(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the file search tool call. Required."""
-    type: Required[Literal[ItemType.FILE_SEARCH_CALL]]
+    type: Required[Literal["file_search_call"]]
     """The type of the file search tool call. Always ``file_search_call``. Required. FILE_SEARCH_CALL."""
     status: Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
     """The status of the file search tool call. One of ``in_progress``, ``searching``, ``incomplete``
@@ -4910,7 +4823,7 @@ class ItemFunctionToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the function tool call. Always ``function_call``. Required.
      FUNCTION_CALL.
-    :vartype type: Literal[ItemType.FUNCTION_CALL]
+    :vartype type: Literal["function_call"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
     :ivar namespace: The namespace of the function to run.
@@ -4927,7 +4840,7 @@ class ItemFunctionToolCall(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the function tool call. Required."""
-    type: Required[Literal[ItemType.FUNCTION_CALL]]
+    type: Required[Literal["function_call"]]
     """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
@@ -4948,7 +4861,7 @@ class ItemImageGenToolCall(TypedDict, total=False):
 
     :ivar type: The type of the image generation call. Always ``image_generation_call``. Required.
      IMAGE_GENERATION_CALL.
-    :vartype type: Literal[ItemType.IMAGE_GENERATION_CALL]
+    :vartype type: Literal["image_generation_call"]
     :ivar id: The unique ID of the image generation call. Required.
     :vartype id: str
     :ivar status: The status of the image generation call. Required. Is one of the following types:
@@ -4958,7 +4871,7 @@ class ItemImageGenToolCall(TypedDict, total=False):
     :vartype result: str
     """
 
-    type: Required[Literal[ItemType.IMAGE_GENERATION_CALL]]
+    type: Required[Literal["image_generation_call"]]
     """The type of the image generation call. Always ``image_generation_call``. Required.
      IMAGE_GENERATION_CALL."""
     id: Required[str]
@@ -4975,7 +4888,7 @@ class ItemLocalShellToolCall(TypedDict, total=False):
 
     :ivar type: The type of the local shell call. Always ``local_shell_call``. Required.
      LOCAL_SHELL_CALL.
-    :vartype type: Literal[ItemType.LOCAL_SHELL_CALL]
+    :vartype type: Literal["local_shell_call"]
     :ivar id: The unique ID of the local shell call. Required.
     :vartype id: str
     :ivar call_id: The unique ID of the local shell tool call generated by the model. Required.
@@ -4987,7 +4900,7 @@ class ItemLocalShellToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemType.LOCAL_SHELL_CALL]]
+    type: Required[Literal["local_shell_call"]]
     """The type of the local shell call. Always ``local_shell_call``. Required. LOCAL_SHELL_CALL."""
     id: Required[str]
     """The unique ID of the local shell call. Required."""
@@ -5005,7 +4918,7 @@ class ItemLocalShellToolCallOutput(TypedDict, total=False):
 
     :ivar type: The type of the local shell tool call output. Always ``local_shell_call_output``.
      Required. LOCAL_SHELL_CALL_OUTPUT.
-    :vartype type: Literal[ItemType.LOCAL_SHELL_CALL_OUTPUT]
+    :vartype type: Literal["local_shell_call_output"]
     :ivar id: The unique ID of the local shell tool call generated by the model. Required.
     :vartype id: str
     :ivar output: A JSON string of the output of the local shell tool call. Required.
@@ -5015,7 +4928,7 @@ class ItemLocalShellToolCallOutput(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemType.LOCAL_SHELL_CALL_OUTPUT]]
+    type: Required[Literal["local_shell_call_output"]]
     """The type of the local shell tool call output. Always ``local_shell_call_output``. Required.
      LOCAL_SHELL_CALL_OUTPUT."""
     id: Required[str]
@@ -5032,7 +4945,7 @@ class ItemMcpApprovalRequest(TypedDict, total=False):
 
     :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
      MCP_APPROVAL_REQUEST.
-    :vartype type: Literal[ItemType.MCP_APPROVAL_REQUEST]
+    :vartype type: Literal["mcp_approval_request"]
     :ivar id: The unique ID of the approval request. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server making the request. Required.
@@ -5043,7 +4956,7 @@ class ItemMcpApprovalRequest(TypedDict, total=False):
     :vartype arguments: str
     """
 
-    type: Required[Literal[ItemType.MCP_APPROVAL_REQUEST]]
+    type: Required[Literal["mcp_approval_request"]]
     """The type of the item. Always ``mcp_approval_request``. Required. MCP_APPROVAL_REQUEST."""
     id: Required[str]
     """The unique ID of the approval request. Required."""
@@ -5059,7 +4972,7 @@ class ItemMcpListTools(TypedDict, total=False):
     """MCP list tools.
 
     :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
-    :vartype type: Literal[ItemType.MCP_LIST_TOOLS]
+    :vartype type: Literal["mcp_list_tools"]
     :ivar id: The unique ID of the list. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server. Required.
@@ -5070,7 +4983,7 @@ class ItemMcpListTools(TypedDict, total=False):
     :vartype error: "RealtimeMCPError"
     """
 
-    type: Required[Literal[ItemType.MCP_LIST_TOOLS]]
+    type: Required[Literal["mcp_list_tools"]]
     """The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS."""
     id: Required[str]
     """The unique ID of the list. Required."""
@@ -5085,7 +4998,7 @@ class ItemMcpToolCall(TypedDict, total=False):
     """MCP tool call.
 
     :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
-    :vartype type: Literal[ItemType.MCP_CALL]
+    :vartype type: Literal["mcp_call"]
     :ivar id: The unique ID of the tool call. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server running the tool. Required.
@@ -5106,7 +5019,7 @@ class ItemMcpToolCall(TypedDict, total=False):
     :vartype approval_request_id: str
     """
 
-    type: Required[Literal[ItemType.MCP_CALL]]
+    type: Required[Literal["mcp_call"]]
     """The type of the item. Always ``mcp_call``. Required. MCP_CALL."""
     id: Required[str]
     """The unique ID of the tool call. Required."""
@@ -5129,7 +5042,7 @@ class ItemMessage(TypedDict, total=False):
     """Message.
 
     :ivar type: The type of the message. Always set to ``message``. Required. MESSAGE.
-    :vartype type: Literal[ItemType.MESSAGE]
+    :vartype type: Literal["message"]
     :ivar role: The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``,
      ``critic``, ``discriminator``, ``developer``, or ``tool``. Required. Known values are:
      "unknown", "user", "assistant", "system", "critic", "discriminator", "developer", and "tool".
@@ -5140,7 +5053,7 @@ class ItemMessage(TypedDict, total=False):
     :vartype content: Union[str, list["MessageContent"]]
     """
 
-    type: Required[Literal[ItemType.MESSAGE]]
+    type: Required[Literal["message"]]
     """The type of the message. Always set to ``message``. Required. MESSAGE."""
     role: Required[MessageRole]
     """The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``, ``critic``,
@@ -5159,7 +5072,7 @@ class ItemOutputMessage(TypedDict, total=False):
     :ivar id: The unique ID of the output message. Required.
     :vartype id: str
     :ivar type: The type of the output message. Always ``message``. Required. OUTPUT_MESSAGE.
-    :vartype type: Literal[ItemType.OUTPUT_MESSAGE]
+    :vartype type: Literal["output_message"]
     :ivar role: The role of the output message. Always ``assistant``. Required. Default value is
      "assistant".
     :vartype role: Literal["assistant"]
@@ -5175,7 +5088,7 @@ class ItemOutputMessage(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the output message. Required."""
-    type: Required[Literal[ItemType.OUTPUT_MESSAGE]]
+    type: Required[Literal["output_message"]]
     """The type of the output message. Always ``message``. Required. OUTPUT_MESSAGE."""
     role: Required[Literal["assistant"]]
     """The role of the output message. Always ``assistant``. Required. Default value is \"assistant\"."""
@@ -5193,7 +5106,7 @@ class ItemReasoningItem(TypedDict, total=False):
     """Reasoning.
 
     :ivar type: The type of the object. Always ``reasoning``. Required. REASONING.
-    :vartype type: Literal[ItemType.REASONING]
+    :vartype type: Literal["reasoning"]
     :ivar id: The unique identifier of the reasoning content. Required.
     :vartype id: str
     :ivar encrypted_content:
@@ -5208,7 +5121,7 @@ class ItemReasoningItem(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    type: Required[Literal[ItemType.REASONING]]
+    type: Required[Literal["reasoning"]]
     """The type of the object. Always ``reasoning``. Required. REASONING."""
     id: Required[str]
     """The unique identifier of the reasoning content. Required."""
@@ -5227,12 +5140,12 @@ class ItemReferenceParam(TypedDict, total=False):
     """Item reference.
 
     :ivar type: The type of item to reference. Always ``item_reference``. Required. ITEM_REFERENCE.
-    :vartype type: Literal[ItemType.ITEM_REFERENCE]
+    :vartype type: Literal["item_reference"]
     :ivar id: The ID of the item to reference. Required.
     :vartype id: str
     """
 
-    type: Required[Literal[ItemType.ITEM_REFERENCE]]
+    type: Required[Literal["item_reference"]]
     """The type of item to reference. Always ``item_reference``. Required. ITEM_REFERENCE."""
     id: Required[str]
     """The ID of the item to reference. Required."""
@@ -5245,10 +5158,11 @@ class ItemWebSearchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the web search tool call. Always ``web_search_call``. Required.
      WEB_SEARCH_CALL.
-    :vartype type: Literal[ItemType.WEB_SEARCH_CALL]
+    :vartype type: Literal["web_search_call"]
     :ivar status: The status of the web search tool call. Required. Is one of the following types:
-     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"]
-    :vartype status: Literal["in_progress", "searching", "completed", "failed"]
+     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"],
+     Literal["incomplete"]
+    :vartype status: Literal["in_progress", "searching", "completed", "failed", "incomplete"]
     :ivar action: An object describing the specific action taken in this web search call. Includes
      details on how the model used the web (search, open_page, find_in_page). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind
@@ -5258,11 +5172,12 @@ class ItemWebSearchToolCall(TypedDict, total=False):
 
     id: Required[str]
     """The unique ID of the web search tool call. Required."""
-    type: Required[Literal[ItemType.WEB_SEARCH_CALL]]
+    type: Required[Literal["web_search_call"]]
     """The type of the web search tool call. Always ``web_search_call``. Required. WEB_SEARCH_CALL."""
-    status: Required[Literal["in_progress", "searching", "completed", "failed"]]
+    status: Required[Literal["in_progress", "searching", "completed", "failed", "incomplete"]]
     """The status of the web search tool call. Required. Is one of the following types:
-     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"]"""
+     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"],
+     Literal[\"incomplete\"]"""
     action: Required[Union["WebSearchActionSearch", "WebSearchActionOpenPage", "WebSearchActionFind"]]
     """An object describing the specific action taken in this web search call. Includes details on how
      the model used the web (search, open_page, find_in_page). Required. Is one of the following
@@ -5274,13 +5189,13 @@ class KeyPressAction(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a keypress action, this property is always set to
      ``keypress``. Required. KEYPRESS.
-    :vartype type: Literal[ComputerActionType.KEYPRESS]
+    :vartype type: Literal["keypress"]
     :ivar keys_property: The combination of keys the model is requesting to be pressed. This is an
      array of strings, each representing a key. Required.
     :vartype keys_property: list[str]
     """
 
-    type: Required[Literal[ComputerActionType.KEYPRESS]]
+    type: Required[Literal["keypress"]]
     """Specifies the event type. For a keypress action, this property is always set to ``keypress``.
      Required. KEYPRESS."""
     keys: Required[list[str]]
@@ -5292,10 +5207,10 @@ class LocalEnvironmentResource(TypedDict, total=False):
     """Local Environment.
 
     :ivar type: The environment type. Always ``local``. Required. LOCAL.
-    :vartype type: Literal[FunctionShellCallEnvironmentType.LOCAL]
+    :vartype type: Literal["local"]
     """
 
-    type: Required[Literal[FunctionShellCallEnvironmentType.LOCAL]]
+    type: Required[Literal["local"]]
     """The environment type. Always ``local``. Required. LOCAL."""
 
 
@@ -5332,14 +5247,14 @@ class LocalShellToolParam(TypedDict, total=False):
     """Local shell tool.
 
     :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
-    :vartype type: Literal[ToolType.LOCAL_SHELL]
+    :vartype type: Literal["local_shell"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
     """
 
-    type: Required[Literal[ToolType.LOCAL_SHELL]]
+    type: Required[Literal["local_shell"]]
     """The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL."""
     name: str
     """Optional user-defined name for this tool or configuration."""
@@ -5394,7 +5309,7 @@ class MCPApprovalResponse(TypedDict, total=False):
 
     :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
      MCP_APPROVAL_RESPONSE.
-    :vartype type: Literal[ItemType.MCP_APPROVAL_RESPONSE]
+    :vartype type: Literal["mcp_approval_response"]
     :ivar id:
     :vartype id: str
     :ivar approval_request_id: The ID of the approval request being answered. Required.
@@ -5405,7 +5320,7 @@ class MCPApprovalResponse(TypedDict, total=False):
     :vartype reason: str
     """
 
-    type: Required[Literal[ItemType.MCP_APPROVAL_RESPONSE]]
+    type: Required[Literal["mcp_approval_response"]]
     """The type of the item. Always ``mcp_approval_response``. Required. MCP_APPROVAL_RESPONSE."""
     id: Optional[str]
     approval_request_id: Required[str]
@@ -5448,7 +5363,7 @@ class MCPTool(TypedDict, total=False):
     """MCP tool.
 
     :ivar type: The type of the MCP tool. Always ``mcp``. Required. MCP.
-    :vartype type: Literal[ToolType.MCP]
+    :vartype type: Literal["mcp"]
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
     :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
@@ -5498,7 +5413,7 @@ class MCPTool(TypedDict, total=False):
     :vartype project_connection_id: str
     """
 
-    type: Required[Literal[ToolType.MCP]]
+    type: Required[Literal["mcp"]]
     """The type of the MCP tool. Always ``mcp``. Required. MCP."""
     server_label: Required[str]
     """A label for this MCP server, used to identify it in tool calls. Required."""
@@ -5613,7 +5528,7 @@ class MemorySearchPreviewTool(TypedDict, total=False):
 
     :ivar type: The type of the tool. Always ``memory_search_preview``. Required.
      MEMORY_SEARCH_PREVIEW.
-    :vartype type: Literal[ToolType.MEMORY_SEARCH_PREVIEW]
+    :vartype type: Literal["memory_search_preview"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -5631,7 +5546,7 @@ class MemorySearchPreviewTool(TypedDict, total=False):
     :vartype update_delay: int
     """
 
-    type: Required[Literal[ToolType.MEMORY_SEARCH_PREVIEW]]
+    type: Required[Literal["memory_search_preview"]]
     """The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH_PREVIEW."""
     name: str
     """Optional user-defined name for this tool or configuration."""
@@ -5653,12 +5568,12 @@ class MemorySearchToolCallItemParam(TypedDict, total=False):
     """MemorySearchToolCallItemParam.
 
     :ivar type: Required. MEMORY_SEARCH_CALL.
-    :vartype type: Literal[ItemType.MEMORY_SEARCH_CALL]
+    :vartype type: Literal["memory_search_call"]
     :ivar results: The results returned from the memory search.
     :vartype results: list["MemorySearchItem"]
     """
 
-    type: Required[Literal[ItemType.MEMORY_SEARCH_CALL]]
+    type: Required[Literal["memory_search_call"]]
     """Required. MEMORY_SEARCH_CALL."""
     results: Optional[list["MemorySearchItem"]]
     """The results returned from the memory search."""
@@ -5672,7 +5587,7 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. MEMORY_SEARCH_CALL.
-    :vartype type: Literal[OutputItemType.MEMORY_SEARCH_CALL]
+    :vartype type: Literal["memory_search_call"]
     :ivar status: The status of the memory search tool call. One of ``in_progress``, ``searching``,
      ``completed``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["incomplete"],
@@ -5688,7 +5603,7 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.MEMORY_SEARCH_CALL]]
+    type: Required[Literal["memory_search_call"]]
     """Required. MEMORY_SEARCH_CALL."""
     status: Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
     """The status of the memory search tool call. One of ``in_progress``, ``searching``,
@@ -5705,7 +5620,7 @@ class MessageContentInputFileContent(TypedDict, total=False):
     """Input file.
 
     :ivar type: The type of the input item. Always ``input_file``. Required. INPUT_FILE.
-    :vartype type: Literal[MessageContentType.INPUT_FILE]
+    :vartype type: Literal["input_file"]
     :ivar file_id:
     :vartype file_id: str
     :ivar filename: The name of the file to be sent to the model.
@@ -5720,7 +5635,7 @@ class MessageContentInputFileContent(TypedDict, total=False):
     :vartype detail: FileInputDetail
     """
 
-    type: Required[Literal[MessageContentType.INPUT_FILE]]
+    type: Required[Literal["input_file"]]
     """The type of the input item. Always ``input_file``. Required. INPUT_FILE."""
     file_id: Optional[str]
     filename: str
@@ -5739,7 +5654,7 @@ class MessageContentInputImageContent(TypedDict, total=False):
     """Input image.
 
     :ivar type: The type of the input item. Always ``input_image``. Required. INPUT_IMAGE.
-    :vartype type: Literal[MessageContentType.INPUT_IMAGE]
+    :vartype type: Literal["input_image"]
     :ivar image_url:
     :vartype image_url: str
     :ivar file_id:
@@ -5750,7 +5665,7 @@ class MessageContentInputImageContent(TypedDict, total=False):
     :vartype detail: ImageDetail
     """
 
-    type: Required[Literal[MessageContentType.INPUT_IMAGE]]
+    type: Required[Literal["input_image"]]
     """The type of the input item. Always ``input_image``. Required. INPUT_IMAGE."""
     image_url: Optional[str]
     file_id: Optional[str]
@@ -5764,12 +5679,12 @@ class MessageContentInputTextContent(TypedDict, total=False):
     """Input text.
 
     :ivar type: The type of the input item. Always ``input_text``. Required. INPUT_TEXT.
-    :vartype type: Literal[MessageContentType.INPUT_TEXT]
+    :vartype type: Literal["input_text"]
     :ivar text: The text input to the model. Required.
     :vartype text: str
     """
 
-    type: Required[Literal[MessageContentType.INPUT_TEXT]]
+    type: Required[Literal["input_text"]]
     """The type of the input item. Always ``input_text``. Required. INPUT_TEXT."""
     text: Required[str]
     """The text input to the model. Required."""
@@ -5779,7 +5694,7 @@ class MessageContentOutputTextContent(TypedDict, total=False):
     """Output text.
 
     :ivar type: The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT.
-    :vartype type: Literal[MessageContentType.OUTPUT_TEXT]
+    :vartype type: Literal["output_text"]
     :ivar text: The text output from the model. Required.
     :vartype text: str
     :ivar annotations: The annotations of the text output. Required.
@@ -5788,7 +5703,7 @@ class MessageContentOutputTextContent(TypedDict, total=False):
     :vartype logprobs: list["LogProb"]
     """
 
-    type: Required[Literal[MessageContentType.OUTPUT_TEXT]]
+    type: Required[Literal["output_text"]]
     """The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT."""
     text: Required[str]
     """The text output from the model. Required."""
@@ -5803,12 +5718,12 @@ class MessageContentReasoningTextContent(TypedDict, total=False):
 
     :ivar type: The type of the reasoning text. Always ``reasoning_text``. Required.
      REASONING_TEXT.
-    :vartype type: Literal[MessageContentType.REASONING_TEXT]
+    :vartype type: Literal["reasoning_text"]
     :ivar text: The reasoning text from the model. Required.
     :vartype text: str
     """
 
-    type: Required[Literal[MessageContentType.REASONING_TEXT]]
+    type: Required[Literal["reasoning_text"]]
     """The type of the reasoning text. Always ``reasoning_text``. Required. REASONING_TEXT."""
     text: Required[str]
     """The reasoning text from the model. Required."""
@@ -5818,12 +5733,12 @@ class MessageContentRefusalContent(TypedDict, total=False):
     """Refusal.
 
     :ivar type: The type of the refusal. Always ``refusal``. Required. REFUSAL.
-    :vartype type: Literal[MessageContentType.REFUSAL]
+    :vartype type: Literal["refusal"]
     :ivar refusal: The refusal explanation from the model. Required.
     :vartype refusal: str
     """
 
-    type: Required[Literal[MessageContentType.REFUSAL]]
+    type: Required[Literal["refusal"]]
     """The type of the refusal. Always ``refusal``. Required. REFUSAL."""
     refusal: Required[str]
     """The refusal explanation from the model. Required."""
@@ -5843,7 +5758,7 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW.
-    :vartype type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
+    :vartype type: Literal["fabric_dataagent_preview"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -5852,7 +5767,7 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
     :vartype fabric_dataagent_preview: "FabricDataAgentToolParameters"
     """
 
-    type: Required[Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]]
+    type: Required[Literal["fabric_dataagent_preview"]]
     """The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW."""
     name: str
@@ -5883,14 +5798,14 @@ class ModerationErrorBody(TypedDict, total=False):
 
     :ivar type: The object type, which was always ``error`` for moderation failures. Required.
      ERROR.
-    :vartype type: Literal[ModerationEntryType.ERROR]
+    :vartype type: Literal["error"]
     :ivar code: The error code. Required.
     :vartype code: str
     :ivar message: The error message. Required.
     :vartype message: str
     """
 
-    type: Required[Literal[ModerationEntryType.ERROR]]
+    type: Required[Literal["error"]]
     """The object type, which was always ``error`` for moderation failures. Required. ERROR."""
     code: Required[str]
     """The error code. Required."""
@@ -5915,7 +5830,7 @@ class ModerationResultBody(TypedDict, total=False):
 
     :ivar type: The object type, which was always ``moderation_result`` for successful moderation
      results. Required. MODERATION_RESULT.
-    :vartype type: Literal[ModerationEntryType.MODERATION_RESULT]
+    :vartype type: Literal["moderation_result"]
     :ivar model: The moderation model that produced this result. Required.
     :vartype model: str
     :ivar flagged: A boolean indicating whether the content was flagged by any category. Required.
@@ -5930,7 +5845,7 @@ class ModerationResultBody(TypedDict, total=False):
     :vartype category_applied_input_types: dict[str, list[ModerationInputType]]
     """
 
-    type: Required[Literal[ModerationEntryType.MODERATION_RESULT]]
+    type: Required[Literal["moderation_result"]]
     """The object type, which was always ``moderation_result`` for successful moderation results.
      Required. MODERATION_RESULT."""
     model: Required[str]
@@ -5951,7 +5866,7 @@ class MoveParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a move action, this property is always set to
      ``move``. Required. MOVE.
-    :vartype type: Literal[ComputerActionType.MOVE]
+    :vartype type: Literal["move"]
     :ivar x: The x-coordinate to move to. Required.
     :vartype x: int
     :ivar y: The y-coordinate to move to. Required.
@@ -5960,7 +5875,7 @@ class MoveParam(TypedDict, total=False):
     :vartype keys_property: list[str]
     """
 
-    type: Required[Literal[ComputerActionType.MOVE]]
+    type: Required[Literal["move"]]
     """Specifies the event type. For a move action, this property is always set to ``move``. Required.
      MOVE."""
     x: Required[int]
@@ -5974,7 +5889,7 @@ class NamespaceToolParam(TypedDict, total=False):
     """Namespace.
 
     :ivar type: The type of the tool. Always ``namespace``. Required. NAMESPACE.
-    :vartype type: Literal[ToolType.NAMESPACE]
+    :vartype type: Literal["namespace"]
     :ivar name: The namespace name used in tool calls (for example, ``crm``). Required.
     :vartype name: str
     :ivar description: A description of the namespace shown to the model. Required.
@@ -5983,7 +5898,7 @@ class NamespaceToolParam(TypedDict, total=False):
     :vartype tools: list[Union["FunctionToolParam", "CustomToolParam"]]
     """
 
-    type: Required[Literal[ToolType.NAMESPACE]]
+    type: Required[Literal["namespace"]]
     """The type of the tool. Always ``namespace``. Required. NAMESPACE."""
     name: Required[str]
     """The namespace name used in tool calls (for example, ``crm``). Required."""
@@ -6003,7 +5918,7 @@ class OAuthConsentRequestOutputItem(TypedDict, total=False):
     :ivar id: Required.
     :vartype id: str
     :ivar type: Required. OAUTH_CONSENT_REQUEST.
-    :vartype type: Literal[OutputItemType.OAUTH_CONSENT_REQUEST]
+    :vartype type: Literal["oauth_consent_request"]
     :ivar consent_link: The link the user can use to perform OAuth consent. Required.
     :vartype consent_link: str
     :ivar server_label: The server label for the OAuth consent request. Required.
@@ -6016,7 +5931,7 @@ class OAuthConsentRequestOutputItem(TypedDict, total=False):
     """The response on which the item is created."""
     id: Required[str]
     """Required."""
-    type: Required[Literal[OutputItemType.OAUTH_CONSENT_REQUEST]]
+    type: Required[Literal["oauth_consent_request"]]
     """Required. OAUTH_CONSENT_REQUEST."""
     consent_link: Required[str]
     """The link the user can use to perform OAuth consent. Required."""
@@ -6028,10 +5943,10 @@ class OpenApiAnonymousAuthDetails(TypedDict, total=False):
     """Security details for OpenApi anonymous authentication.
 
     :ivar type: The object type, which is always 'anonymous'. Required. ANONYMOUS.
-    :vartype type: Literal[OpenApiAuthType.ANONYMOUS]
+    :vartype type: Literal["anonymous"]
     """
 
-    type: Required[Literal[OpenApiAuthType.ANONYMOUS]]
+    type: Required[Literal["anonymous"]]
     """The object type, which is always 'anonymous'. Required. ANONYMOUS."""
 
 
@@ -6094,12 +6009,12 @@ class OpenApiManagedAuthDetails(TypedDict, total=False):
     """Security details for OpenApi managed_identity authentication.
 
     :ivar type: The object type, which is always 'managed_identity'. Required. MANAGED_IDENTITY.
-    :vartype type: Literal[OpenApiAuthType.MANAGED_IDENTITY]
+    :vartype type: Literal["managed_identity"]
     :ivar security_scheme: Connection auth security details. Required.
     :vartype security_scheme: "OpenApiManagedSecurityScheme"
     """
 
-    type: Required[Literal[OpenApiAuthType.MANAGED_IDENTITY]]
+    type: Required[Literal["managed_identity"]]
     """The object type, which is always 'managed_identity'. Required. MANAGED_IDENTITY."""
     security_scheme: Required["OpenApiManagedSecurityScheme"]
     """Connection auth security details. Required."""
@@ -6121,12 +6036,12 @@ class OpenApiProjectConnectionAuthDetails(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'project_connection'. Required.
      PROJECT_CONNECTION.
-    :vartype type: Literal[OpenApiAuthType.PROJECT_CONNECTION]
+    :vartype type: Literal["project_connection"]
     :ivar security_scheme: Project connection auth security details. Required.
     :vartype security_scheme: "OpenApiProjectConnectionSecurityScheme"
     """
 
-    type: Required[Literal[OpenApiAuthType.PROJECT_CONNECTION]]
+    type: Required[Literal["project_connection"]]
     """The object type, which is always 'project_connection'. Required. PROJECT_CONNECTION."""
     security_scheme: Required["OpenApiProjectConnectionSecurityScheme"]
     """Project connection auth security details. Required."""
@@ -6147,12 +6062,12 @@ class OpenApiTool(TypedDict, total=False):
     """The input definition information for an OpenAPI tool as used to configure an agent.
 
     :ivar type: The object type, which is always 'openapi'. Required. OPENAPI.
-    :vartype type: Literal[ToolType.OPENAPI]
+    :vartype type: Literal["openapi"]
     :ivar openapi: The openapi function definition. Required.
     :vartype openapi: "OpenApiFunctionDefinition"
     """
 
-    type: Required[Literal[ToolType.OPENAPI]]
+    type: Required[Literal["openapi"]]
     """The object type, which is always 'openapi'. Required. OPENAPI."""
     openapi: Required["OpenApiFunctionDefinition"]
     """The openapi function definition. Required."""
@@ -6166,7 +6081,7 @@ class OpenApiToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. OPENAPI_CALL.
-    :vartype type: Literal[OutputItemType.OPENAPI_CALL]
+    :vartype type: Literal["openapi_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar name: The name of the OpenAPI operation being called. Required.
@@ -6184,7 +6099,7 @@ class OpenApiToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.OPENAPI_CALL]]
+    type: Required[Literal["openapi_call"]]
     """Required. OPENAPI_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -6207,7 +6122,7 @@ class OpenApiToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. OPENAPI_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.OPENAPI_CALL_OUTPUT]
+    :vartype type: Literal["openapi_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar name: The name of the OpenAPI operation that was called. Required.
@@ -6226,7 +6141,7 @@ class OpenApiToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.OPENAPI_CALL_OUTPUT]]
+    type: Required[Literal["openapi_call_output"]]
     """Required. OPENAPI_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -6245,7 +6160,7 @@ class OutputContentOutputTextContent(TypedDict, total=False):
     """Output text.
 
     :ivar type: The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT.
-    :vartype type: Literal[OutputContentType.OUTPUT_TEXT]
+    :vartype type: Literal["output_text"]
     :ivar text: The text output from the model. Required.
     :vartype text: str
     :ivar annotations: The annotations of the text output. Required.
@@ -6254,7 +6169,7 @@ class OutputContentOutputTextContent(TypedDict, total=False):
     :vartype logprobs: list["LogProb"]
     """
 
-    type: Required[Literal[OutputContentType.OUTPUT_TEXT]]
+    type: Required[Literal["output_text"]]
     """The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT."""
     text: Required[str]
     """The text output from the model. Required."""
@@ -6269,12 +6184,12 @@ class OutputContentReasoningTextContent(TypedDict, total=False):
 
     :ivar type: The type of the reasoning text. Always ``reasoning_text``. Required.
      REASONING_TEXT.
-    :vartype type: Literal[OutputContentType.REASONING_TEXT]
+    :vartype type: Literal["reasoning_text"]
     :ivar text: The reasoning text from the model. Required.
     :vartype text: str
     """
 
-    type: Required[Literal[OutputContentType.REASONING_TEXT]]
+    type: Required[Literal["reasoning_text"]]
     """The type of the reasoning text. Always ``reasoning_text``. Required. REASONING_TEXT."""
     text: Required[str]
     """The reasoning text from the model. Required."""
@@ -6284,12 +6199,12 @@ class OutputContentRefusalContent(TypedDict, total=False):
     """Refusal.
 
     :ivar type: The type of the refusal. Always ``refusal``. Required. REFUSAL.
-    :vartype type: Literal[OutputContentType.REFUSAL]
+    :vartype type: Literal["refusal"]
     :ivar refusal: The refusal explanation from the model. Required.
     :vartype refusal: str
     """
 
-    type: Required[Literal[OutputContentType.REFUSAL]]
+    type: Required[Literal["refusal"]]
     """The type of the refusal. Always ``refusal``. Required. REFUSAL."""
     refusal: Required[str]
     """The refusal explanation from the model. Required."""
@@ -6303,7 +6218,7 @@ class OutputItemAdditionalTools(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``additional_tools``. Required. ADDITIONAL_TOOLS.
-    :vartype type: Literal[OutputItemType.ADDITIONAL_TOOLS]
+    :vartype type: Literal["additional_tools"]
     :ivar id: The unique ID of the additional tools item. Required.
     :vartype id: str
     :ivar role: The role that provided the additional tools. Required. Known values are: "unknown",
@@ -6317,7 +6232,7 @@ class OutputItemAdditionalTools(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.ADDITIONAL_TOOLS]]
+    type: Required[Literal["additional_tools"]]
     """The type of the item. Always ``additional_tools``. Required. ADDITIONAL_TOOLS."""
     id: Required[str]
     """The unique ID of the additional tools item. Required."""
@@ -6336,7 +6251,7 @@ class OutputItemApplyPatchToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``apply_patch_call``. Required. APPLY_PATCH_CALL.
-    :vartype type: Literal[OutputItemType.APPLY_PATCH_CALL]
+    :vartype type: Literal["apply_patch_call"]
     :ivar id: The unique ID of the apply patch tool call. Populated when this item is returned via
      API. Required.
     :vartype id: str
@@ -6353,7 +6268,7 @@ class OutputItemApplyPatchToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.APPLY_PATCH_CALL]]
+    type: Required[Literal["apply_patch_call"]]
     """The type of the item. Always ``apply_patch_call``. Required. APPLY_PATCH_CALL."""
     id: Required[str]
     """The unique ID of the apply patch tool call. Populated when this item is returned via API.
@@ -6376,7 +6291,7 @@ class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the item. Always ``apply_patch_call_output``. Required.
      APPLY_PATCH_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.APPLY_PATCH_CALL_OUTPUT]
+    :vartype type: Literal["apply_patch_call_output"]
     :ivar id: The unique ID of the apply patch tool call output. Populated when this item is
      returned via API. Required.
     :vartype id: str
@@ -6393,7 +6308,7 @@ class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.APPLY_PATCH_CALL_OUTPUT]]
+    type: Required[Literal["apply_patch_call_output"]]
     """The type of the item. Always ``apply_patch_call_output``. Required. APPLY_PATCH_CALL_OUTPUT."""
     id: Required[str]
     """The unique ID of the apply patch tool call output. Populated when this item is returned via
@@ -6415,7 +6330,7 @@ class OutputItemCodeInterpreterToolCall(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the code interpreter tool call. Always ``code_interpreter_call``.
      Required. CODE_INTERPRETER_CALL.
-    :vartype type: Literal[OutputItemType.CODE_INTERPRETER_CALL]
+    :vartype type: Literal["code_interpreter_call"]
     :ivar id: The unique ID of the code interpreter tool call. Required.
     :vartype id: str
     :ivar status: The status of the code interpreter tool call. Valid values are ``in_progress``,
@@ -6435,7 +6350,7 @@ class OutputItemCodeInterpreterToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.CODE_INTERPRETER_CALL]]
+    type: Required[Literal["code_interpreter_call"]]
     """The type of the code interpreter tool call. Always ``code_interpreter_call``. Required.
      CODE_INTERPRETER_CALL."""
     id: Required[str]
@@ -6461,7 +6376,7 @@ class OutputItemCompactionBody(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``compaction``. Required. COMPACTION.
-    :vartype type: Literal[OutputItemType.COMPACTION]
+    :vartype type: Literal["compaction"]
     :ivar id: The unique ID of the compaction item. Required.
     :vartype id: str
     :ivar encrypted_content: The encrypted content that was produced by compaction. Required.
@@ -6472,7 +6387,7 @@ class OutputItemCompactionBody(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.COMPACTION]]
+    type: Required[Literal["compaction"]]
     """The type of the item. Always ``compaction``. Required. COMPACTION."""
     id: Required[str]
     """The unique ID of the compaction item. Required."""
@@ -6488,7 +6403,7 @@ class OutputItemComputerToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL.
-    :vartype type: Literal[OutputItemType.COMPUTER_CALL]
+    :vartype type: Literal["computer_call"]
     :ivar id: The unique ID of the computer call. Required.
     :vartype id: str
     :ivar call_id: An identifier used when responding to the tool call with output. Required.
@@ -6509,7 +6424,7 @@ class OutputItemComputerToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.COMPUTER_CALL]]
+    type: Required[Literal["computer_call"]]
     """The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL."""
     id: Required[str]
     """The unique ID of the computer call. Required."""
@@ -6534,7 +6449,7 @@ class OutputItemComputerToolCallOutput(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the computer tool call output. Always ``computer_call_output``.
      Required. COMPUTER_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.COMPUTER_CALL_OUTPUT]
+    :vartype type: Literal["computer_call_output"]
     :ivar id: The ID of the computer tool call output. Required.
     :vartype id: str
     :ivar call_id: The ID of the computer tool call that produced the output. Required.
@@ -6554,7 +6469,7 @@ class OutputItemComputerToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.COMPUTER_CALL_OUTPUT]]
+    type: Required[Literal["computer_call_output"]]
     """The type of the computer tool call output. Always ``computer_call_output``. Required.
      COMPUTER_CALL_OUTPUT."""
     id: Required[str]
@@ -6582,7 +6497,7 @@ class OutputItemFileSearchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the file search tool call. Always ``file_search_call``. Required.
      FILE_SEARCH_CALL.
-    :vartype type: Literal[OutputItemType.FILE_SEARCH_CALL]
+    :vartype type: Literal["file_search_call"]
     :ivar status: The status of the file search tool call. One of ``in_progress``, ``searching``,
      ``incomplete`` or ``failed``,. Required. Is one of the following types: Literal["in_progress"],
      Literal["searching"], Literal["completed"], Literal["incomplete"], Literal["failed"]
@@ -6599,7 +6514,7 @@ class OutputItemFileSearchToolCall(TypedDict, total=False):
     """The response on which the item is created."""
     id: Required[str]
     """The unique ID of the file search tool call. Required."""
-    type: Required[Literal[OutputItemType.FILE_SEARCH_CALL]]
+    type: Required[Literal["file_search_call"]]
     """The type of the file search tool call. Always ``file_search_call``. Required. FILE_SEARCH_CALL."""
     status: Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
     """The status of the file search tool call. One of ``in_progress``, ``searching``, ``incomplete``
@@ -6618,7 +6533,7 @@ class OutputItemFunctionShellCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``shell_call``. Required. SHELL_CALL.
-    :vartype type: Literal[OutputItemType.SHELL_CALL]
+    :vartype type: Literal["shell_call"]
     :ivar id: The unique ID of the shell tool call. Populated when this item is returned via API.
      Required.
     :vartype id: str
@@ -6637,7 +6552,7 @@ class OutputItemFunctionShellCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.SHELL_CALL]]
+    type: Required[Literal["shell_call"]]
     """The type of the item. Always ``shell_call``. Required. SHELL_CALL."""
     id: Required[str]
     """The unique ID of the shell tool call. Populated when this item is returned via API. Required."""
@@ -6661,7 +6576,7 @@ class OutputItemFunctionShellCallOutput(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the shell call output. Always ``shell_call_output``. Required.
      SHELL_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.SHELL_CALL_OUTPUT]
+    :vartype type: Literal["shell_call_output"]
     :ivar id: The unique ID of the shell call output. Populated when this item is returned via API.
      Required.
     :vartype id: str
@@ -6680,7 +6595,7 @@ class OutputItemFunctionShellCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.SHELL_CALL_OUTPUT]]
+    type: Required[Literal["shell_call_output"]]
     """The type of the shell call output. Always ``shell_call_output``. Required. SHELL_CALL_OUTPUT."""
     id: Required[str]
     """The unique ID of the shell call output. Populated when this item is returned via API. Required."""
@@ -6706,7 +6621,7 @@ class OutputItemFunctionToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the function tool call. Always ``function_call``. Required.
      FUNCTION_CALL.
-    :vartype type: Literal[OutputItemType.FUNCTION_CALL]
+    :vartype type: Literal["function_call"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
     :ivar namespace: The namespace of the function to run.
@@ -6727,7 +6642,7 @@ class OutputItemFunctionToolCall(TypedDict, total=False):
     """The response on which the item is created."""
     id: Required[str]
     """The unique ID of the function tool call. Required."""
-    type: Required[Literal[OutputItemType.FUNCTION_CALL]]
+    type: Required[Literal["function_call"]]
     """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
@@ -6755,7 +6670,7 @@ class OutputItemFunctionToolCallOutput(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required. FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.FUNCTION_CALL_OUTPUT]
+    :vartype type: Literal["function_call_output"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the function call generated by your code. Can be a string or an
@@ -6775,7 +6690,7 @@ class OutputItemFunctionToolCallOutput(TypedDict, total=False):
     id: Required[str]
     """The unique ID of the function tool call output. Populated when this item is returned via API.
      Required."""
-    type: Required[Literal[OutputItemType.FUNCTION_CALL_OUTPUT]]
+    type: Required[Literal["function_call_output"]]
     """The type of the function tool call output. Always ``function_call_output``. Required.
      FUNCTION_CALL_OUTPUT."""
     call_id: Required[str]
@@ -6798,7 +6713,7 @@ class OutputItemImageGenToolCall(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the image generation call. Always ``image_generation_call``. Required.
      IMAGE_GENERATION_CALL.
-    :vartype type: Literal[OutputItemType.IMAGE_GENERATION_CALL]
+    :vartype type: Literal["image_generation_call"]
     :ivar id: The unique ID of the image generation call. Required.
     :vartype id: str
     :ivar status: The status of the image generation call. Required. Is one of the following types:
@@ -6812,7 +6727,7 @@ class OutputItemImageGenToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.IMAGE_GENERATION_CALL]]
+    type: Required[Literal["image_generation_call"]]
     """The type of the image generation call. Always ``image_generation_call``. Required.
      IMAGE_GENERATION_CALL."""
     id: Required[str]
@@ -6833,7 +6748,7 @@ class OutputItemLocalShellToolCall(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the local shell call. Always ``local_shell_call``. Required.
      LOCAL_SHELL_CALL.
-    :vartype type: Literal[OutputItemType.LOCAL_SHELL_CALL]
+    :vartype type: Literal["local_shell_call"]
     :ivar id: The unique ID of the local shell call. Required.
     :vartype id: str
     :ivar call_id: The unique ID of the local shell tool call generated by the model. Required.
@@ -6849,7 +6764,7 @@ class OutputItemLocalShellToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.LOCAL_SHELL_CALL]]
+    type: Required[Literal["local_shell_call"]]
     """The type of the local shell call. Always ``local_shell_call``. Required. LOCAL_SHELL_CALL."""
     id: Required[str]
     """The unique ID of the local shell call. Required."""
@@ -6871,7 +6786,7 @@ class OutputItemLocalShellToolCallOutput(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the local shell tool call output. Always ``local_shell_call_output``.
      Required. LOCAL_SHELL_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.LOCAL_SHELL_CALL_OUTPUT]
+    :vartype type: Literal["local_shell_call_output"]
     :ivar id: The unique ID of the local shell tool call generated by the model. Required.
     :vartype id: str
     :ivar output: A JSON string of the output of the local shell tool call. Required.
@@ -6885,7 +6800,7 @@ class OutputItemLocalShellToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.LOCAL_SHELL_CALL_OUTPUT]]
+    type: Required[Literal["local_shell_call_output"]]
     """The type of the local shell tool call output. Always ``local_shell_call_output``. Required.
      LOCAL_SHELL_CALL_OUTPUT."""
     id: Required[str]
@@ -6906,7 +6821,7 @@ class OutputItemMcpApprovalRequest(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
      MCP_APPROVAL_REQUEST.
-    :vartype type: Literal[OutputItemType.MCP_APPROVAL_REQUEST]
+    :vartype type: Literal["mcp_approval_request"]
     :ivar id: The unique ID of the approval request. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server making the request. Required.
@@ -6921,7 +6836,7 @@ class OutputItemMcpApprovalRequest(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.MCP_APPROVAL_REQUEST]]
+    type: Required[Literal["mcp_approval_request"]]
     """The type of the item. Always ``mcp_approval_request``. Required. MCP_APPROVAL_REQUEST."""
     id: Required[str]
     """The unique ID of the approval request. Required."""
@@ -6942,7 +6857,7 @@ class OutputItemMcpApprovalResponseResource(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
      MCP_APPROVAL_RESPONSE.
-    :vartype type: Literal[OutputItemType.MCP_APPROVAL_RESPONSE]
+    :vartype type: Literal["mcp_approval_response"]
     :ivar id: The unique ID of the approval response. Required.
     :vartype id: str
     :ivar approval_request_id: The ID of the approval request being answered. Required.
@@ -6957,7 +6872,7 @@ class OutputItemMcpApprovalResponseResource(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.MCP_APPROVAL_RESPONSE]]
+    type: Required[Literal["mcp_approval_response"]]
     """The type of the item. Always ``mcp_approval_response``. Required. MCP_APPROVAL_RESPONSE."""
     id: Required[str]
     """The unique ID of the approval response. Required."""
@@ -6976,7 +6891,7 @@ class OutputItemMcpListTools(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
-    :vartype type: Literal[OutputItemType.MCP_LIST_TOOLS]
+    :vartype type: Literal["mcp_list_tools"]
     :ivar id: The unique ID of the list. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server. Required.
@@ -6991,7 +6906,7 @@ class OutputItemMcpListTools(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.MCP_LIST_TOOLS]]
+    type: Required[Literal["mcp_list_tools"]]
     """The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS."""
     id: Required[str]
     """The unique ID of the list. Required."""
@@ -7010,7 +6925,7 @@ class OutputItemMcpToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
-    :vartype type: Literal[OutputItemType.MCP_CALL]
+    :vartype type: Literal["mcp_call"]
     :ivar id: The unique ID of the tool call. Required.
     :vartype id: str
     :ivar server_label: The label of the MCP server running the tool. Required.
@@ -7035,7 +6950,7 @@ class OutputItemMcpToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.MCP_CALL]]
+    type: Required[Literal["mcp_call"]]
     """The type of the item. Always ``mcp_call``. Required. MCP_CALL."""
     id: Required[str]
     """The unique ID of the tool call. Required."""
@@ -7062,7 +6977,7 @@ class OutputItemMessage(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the message. Always set to ``message``. Required. MESSAGE.
-    :vartype type: Literal[OutputItemType.MESSAGE]
+    :vartype type: Literal["message"]
     :ivar id: The unique ID of the message. Required.
     :vartype id: str
     :ivar status: The status of item. One of ``in_progress``, ``completed``, or ``incomplete``.
@@ -7083,7 +6998,7 @@ class OutputItemMessage(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.MESSAGE]]
+    type: Required[Literal["message"]]
     """The type of the message. Always set to ``message``. Required. MESSAGE."""
     id: Required[str]
     """The unique ID of the message. Required."""
@@ -7112,7 +7027,7 @@ class OutputItemOutputMessage(TypedDict, total=False):
     :ivar id: The unique ID of the output message. Required.
     :vartype id: str
     :ivar type: The type of the output message. Always ``message``. Required. OUTPUT_MESSAGE.
-    :vartype type: Literal[OutputItemType.OUTPUT_MESSAGE]
+    :vartype type: Literal["output_message"]
     :ivar role: The role of the output message. Always ``assistant``. Required. Default value is
      "assistant".
     :vartype role: Literal["assistant"]
@@ -7132,7 +7047,7 @@ class OutputItemOutputMessage(TypedDict, total=False):
     """The response on which the item is created."""
     id: Required[str]
     """The unique ID of the output message. Required."""
-    type: Required[Literal[OutputItemType.OUTPUT_MESSAGE]]
+    type: Required[Literal["output_message"]]
     """The type of the output message. Always ``message``. Required. OUTPUT_MESSAGE."""
     role: Required[Literal["assistant"]]
     """The role of the output message. Always ``assistant``. Required. Default value is \"assistant\"."""
@@ -7154,7 +7069,7 @@ class OutputItemReasoningItem(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the object. Always ``reasoning``. Required. REASONING.
-    :vartype type: Literal[OutputItemType.REASONING]
+    :vartype type: Literal["reasoning"]
     :ivar id: The unique identifier of the reasoning content. Required.
     :vartype id: str
     :ivar encrypted_content:
@@ -7173,7 +7088,7 @@ class OutputItemReasoningItem(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.REASONING]]
+    type: Required[Literal["reasoning"]]
     """The type of the object. Always ``reasoning``. Required. REASONING."""
     id: Required[str]
     """The unique identifier of the reasoning content. Required."""
@@ -7196,7 +7111,7 @@ class OutputItemToolSearchCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``tool_search_call``. Required. TOOL_SEARCH_CALL.
-    :vartype type: Literal[OutputItemType.TOOL_SEARCH_CALL]
+    :vartype type: Literal["tool_search_call"]
     :ivar id: The unique ID of the tool search call item. Required.
     :vartype id: str
     :ivar call_id: Required.
@@ -7217,7 +7132,7 @@ class OutputItemToolSearchCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.TOOL_SEARCH_CALL]]
+    type: Required[Literal["tool_search_call"]]
     """The type of the item. Always ``tool_search_call``. Required. TOOL_SEARCH_CALL."""
     id: Required[str]
     """The unique ID of the tool search call item. Required."""
@@ -7243,7 +7158,7 @@ class OutputItemToolSearchOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: The type of the item. Always ``tool_search_output``. Required. TOOL_SEARCH_OUTPUT.
-    :vartype type: Literal[OutputItemType.TOOL_SEARCH_OUTPUT]
+    :vartype type: Literal["tool_search_output"]
     :ivar id: The unique ID of the tool search output item. Required.
     :vartype id: str
     :ivar call_id: Required.
@@ -7264,7 +7179,7 @@ class OutputItemToolSearchOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.TOOL_SEARCH_OUTPUT]]
+    type: Required[Literal["tool_search_output"]]
     """The type of the item. Always ``tool_search_output``. Required. TOOL_SEARCH_OUTPUT."""
     id: Required[str]
     """The unique ID of the tool search output item. Required."""
@@ -7293,10 +7208,11 @@ class OutputItemWebSearchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar type: The type of the web search tool call. Always ``web_search_call``. Required.
      WEB_SEARCH_CALL.
-    :vartype type: Literal[OutputItemType.WEB_SEARCH_CALL]
+    :vartype type: Literal["web_search_call"]
     :ivar status: The status of the web search tool call. Required. Is one of the following types:
-     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"]
-    :vartype status: Literal["in_progress", "searching", "completed", "failed"]
+     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"],
+     Literal["incomplete"]
+    :vartype status: Literal["in_progress", "searching", "completed", "failed", "incomplete"]
     :ivar action: An object describing the specific action taken in this web search call. Includes
      details on how the model used the web (search, open_page, find_in_page). Required. Is one of
      the following types: WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind
@@ -7310,11 +7226,12 @@ class OutputItemWebSearchToolCall(TypedDict, total=False):
     """The response on which the item is created."""
     id: Required[str]
     """The unique ID of the web search tool call. Required."""
-    type: Required[Literal[OutputItemType.WEB_SEARCH_CALL]]
+    type: Required[Literal["web_search_call"]]
     """The type of the web search tool call. Always ``web_search_call``. Required. WEB_SEARCH_CALL."""
-    status: Required[Literal["in_progress", "searching", "completed", "failed"]]
+    status: Required[Literal["in_progress", "searching", "completed", "failed", "incomplete"]]
     """The status of the web search tool call. Required. Is one of the following types:
-     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"]"""
+     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"],
+     Literal[\"incomplete\"]"""
     action: Required[Union["WebSearchActionSearch", "WebSearchActionOpenPage", "WebSearchActionFind"]]
     """An object describing the specific action taken in this web search call. Includes details on how
      the model used the web (search, open_page, find_in_page). Required. Is one of the following
@@ -7325,7 +7242,7 @@ class OutputMessageContentOutputTextContent(TypedDict, total=False):
     """Output text.
 
     :ivar type: The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT.
-    :vartype type: Literal[OutputMessageContentType.OUTPUT_TEXT]
+    :vartype type: Literal["output_text"]
     :ivar text: The text output from the model. Required.
     :vartype text: str
     :ivar annotations: The annotations of the text output. Required.
@@ -7334,7 +7251,7 @@ class OutputMessageContentOutputTextContent(TypedDict, total=False):
     :vartype logprobs: list["LogProb"]
     """
 
-    type: Required[Literal[OutputMessageContentType.OUTPUT_TEXT]]
+    type: Required[Literal["output_text"]]
     """The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT."""
     text: Required[str]
     """The text output from the model. Required."""
@@ -7348,12 +7265,12 @@ class OutputMessageContentRefusalContent(TypedDict, total=False):
     """Refusal.
 
     :ivar type: The type of the refusal. Always ``refusal``. Required. REFUSAL.
-    :vartype type: Literal[OutputMessageContentType.REFUSAL]
+    :vartype type: Literal["refusal"]
     :ivar refusal: The refusal explanation from the model. Required.
     :vartype refusal: str
     """
 
-    type: Required[Literal[OutputMessageContentType.REFUSAL]]
+    type: Required[Literal["refusal"]]
     """The type of the refusal. Always ``refusal``. Required. REFUSAL."""
     refusal: Required[str]
     """The refusal explanation from the model. Required."""
@@ -7406,14 +7323,14 @@ class RealtimeMCPHTTPError(TypedDict, total=False):
     """Realtime MCP HTTP error.
 
     :ivar type: Required. HTTP_ERROR.
-    :vartype type: Literal[RealtimeMcpErrorType.HTTP_ERROR]
+    :vartype type: Literal["http_error"]
     :ivar code: Required.
     :vartype code: int
     :ivar message: Required.
     :vartype message: str
     """
 
-    type: Required[Literal[RealtimeMcpErrorType.HTTP_ERROR]]
+    type: Required[Literal["http_error"]]
     """Required. HTTP_ERROR."""
     code: Required[int]
     """Required."""
@@ -7425,14 +7342,14 @@ class RealtimeMCPProtocolError(TypedDict, total=False):
     """Realtime MCP protocol error.
 
     :ivar type: Required. PROTOCOL_ERROR.
-    :vartype type: Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]
+    :vartype type: Literal["protocol_error"]
     :ivar code: Required.
     :vartype code: int
     :ivar message: Required.
     :vartype message: str
     """
 
-    type: Required[Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]]
+    type: Required[Literal["protocol_error"]]
     """Required. PROTOCOL_ERROR."""
     code: Required[int]
     """Required."""
@@ -7444,12 +7361,12 @@ class RealtimeMCPToolExecutionError(TypedDict, total=False):
     """Realtime MCP tool execution error.
 
     :ivar type: Required. TOOL_EXECUTION_ERROR.
-    :vartype type: Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]
+    :vartype type: Literal["tool_execution_error"]
     :ivar message: Required.
     :vartype message: str
     """
 
-    type: Required[Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]]
+    type: Required[Literal["tool_execution_error"]]
     """Required. TOOL_EXECUTION_ERROR."""
     message: Required[str]
     """Required."""
@@ -7458,9 +7375,8 @@ class RealtimeMCPToolExecutionError(TypedDict, total=False):
 class Reasoning(TypedDict, total=False):
     """Reasoning.
 
-    :ivar effort: Is one of the following types: Literal["none"], Literal["minimal"],
-     Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
-    :vartype effort: Literal["none", "minimal", "low", "medium", "high", "xhigh"]
+    :ivar effort: Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+    :vartype effort: ReasoningEffort
     :ivar summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype summary: Literal["auto", "concise", "detailed"]
@@ -7472,9 +7388,8 @@ class Reasoning(TypedDict, total=False):
     :vartype generate_summary: Literal["auto", "concise", "detailed"]
     """
 
-    effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]]
-    """Is one of the following types: Literal[\"none\"], Literal[\"minimal\"], Literal[\"low\"],
-     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
+    effort: Optional[ReasoningEffort]
+    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and \"xhigh\"."""
     summary: Optional[Literal["auto", "concise", "detailed"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"concise\"], Literal[\"detailed\"]"""
     context: Optional[Literal["auto", "current_turn", "all_turns"]]
@@ -7506,14 +7421,14 @@ class ResponseAudioDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.audio.delta``. Required.
      RESPONSE_AUDIO_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_AUDIO_DELTA]
+    :vartype type: Literal["response.audio.delta"]
     :ivar sequence_number: A sequence number for this chunk of the stream response. Required.
     :vartype sequence_number: int
     :ivar delta: A chunk of Base64 encoded response audio bytes. Required.
     :vartype delta: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_AUDIO_DELTA]]
+    type: Required[Literal["response.audio.delta"]]
     """The type of the event. Always ``response.audio.delta``. Required. RESPONSE_AUDIO_DELTA."""
     sequence_number: Required[int]
     """A sequence number for this chunk of the stream response. Required."""
@@ -7526,12 +7441,12 @@ class ResponseAudioDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.audio.done``. Required.
      RESPONSE_AUDIO_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_AUDIO_DONE]
+    :vartype type: Literal["response.audio.done"]
     :ivar sequence_number: The sequence number of the delta. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_AUDIO_DONE]]
+    type: Required[Literal["response.audio.done"]]
     """The type of the event. Always ``response.audio.done``. Required. RESPONSE_AUDIO_DONE."""
     sequence_number: Required[int]
     """The sequence number of the delta. Required."""
@@ -7542,14 +7457,14 @@ class ResponseAudioTranscriptDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.audio.transcript.delta``. Required.
      RESPONSE_AUDIO_TRANSCRIPT_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA]
+    :vartype type: Literal["response.audio.transcript.delta"]
     :ivar delta: The partial transcript of the audio response. Required.
     :vartype delta: str
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA]]
+    type: Required[Literal["response.audio.transcript.delta"]]
     """The type of the event. Always ``response.audio.transcript.delta``. Required.
      RESPONSE_AUDIO_TRANSCRIPT_DELTA."""
     delta: Required[str]
@@ -7563,12 +7478,12 @@ class ResponseAudioTranscriptDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.audio.transcript.done``. Required.
      RESPONSE_AUDIO_TRANSCRIPT_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE]
+    :vartype type: Literal["response.audio.transcript.done"]
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE]]
+    type: Required[Literal["response.audio.transcript.done"]]
     """The type of the event. Always ``response.audio.transcript.done``. Required.
      RESPONSE_AUDIO_TRANSCRIPT_DONE."""
     sequence_number: Required[int]
@@ -7580,7 +7495,7 @@ class ResponseCodeInterpreterCallCodeDeltaEvent(TypedDict, total=False):  # pyli
 
     :ivar type: The type of the event. Always ``response.code_interpreter_call_code.delta``.
      Required. RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA]
+    :vartype type: Literal["response.code_interpreter_call_code.delta"]
     :ivar output_index: The index of the output item in the response for which the code is being
      streamed. Required.
     :vartype output_index: int
@@ -7593,7 +7508,7 @@ class ResponseCodeInterpreterCallCodeDeltaEvent(TypedDict, total=False):  # pyli
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA]]
+    type: Required[Literal["response.code_interpreter_call_code.delta"]]
     """The type of the event. Always ``response.code_interpreter_call_code.delta``. Required.
      RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA."""
     output_index: Required[int]
@@ -7611,7 +7526,7 @@ class ResponseCodeInterpreterCallCodeDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.code_interpreter_call_code.done``.
      Required. RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE]
+    :vartype type: Literal["response.code_interpreter_call_code.done"]
     :ivar output_index: The index of the output item in the response for which the code is
      finalized. Required.
     :vartype output_index: int
@@ -7624,7 +7539,7 @@ class ResponseCodeInterpreterCallCodeDoneEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE]]
+    type: Required[Literal["response.code_interpreter_call_code.done"]]
     """The type of the event. Always ``response.code_interpreter_call_code.done``. Required.
      RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE."""
     output_index: Required[int]
@@ -7642,7 +7557,7 @@ class ResponseCodeInterpreterCallCompletedEvent(TypedDict, total=False):  # pyli
 
     :ivar type: The type of the event. Always ``response.code_interpreter_call.completed``.
      Required. RESPONSE_CODE_INTERPRETER_CALL_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_COMPLETED]
+    :vartype type: Literal["response.code_interpreter_call.completed"]
     :ivar output_index: The index of the output item in the response for which the code interpreter
      call is completed. Required.
     :vartype output_index: int
@@ -7653,7 +7568,7 @@ class ResponseCodeInterpreterCallCompletedEvent(TypedDict, total=False):  # pyli
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_COMPLETED]]
+    type: Required[Literal["response.code_interpreter_call.completed"]]
     """The type of the event. Always ``response.code_interpreter_call.completed``. Required.
      RESPONSE_CODE_INTERPRETER_CALL_COMPLETED."""
     output_index: Required[int]
@@ -7670,7 +7585,7 @@ class ResponseCodeInterpreterCallInProgressEvent(TypedDict, total=False):  # pyl
 
     :ivar type: The type of the event. Always ``response.code_interpreter_call.in_progress``.
      Required. RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS]
+    :vartype type: Literal["response.code_interpreter_call.in_progress"]
     :ivar output_index: The index of the output item in the response for which the code interpreter
      call is in progress. Required.
     :vartype output_index: int
@@ -7681,7 +7596,7 @@ class ResponseCodeInterpreterCallInProgressEvent(TypedDict, total=False):  # pyl
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS]]
+    type: Required[Literal["response.code_interpreter_call.in_progress"]]
     """The type of the event. Always ``response.code_interpreter_call.in_progress``. Required.
      RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS."""
     output_index: Required[int]
@@ -7698,7 +7613,7 @@ class ResponseCodeInterpreterCallInterpretingEvent(TypedDict, total=False):  # p
 
     :ivar type: The type of the event. Always ``response.code_interpreter_call.interpreting``.
      Required. RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING]
+    :vartype type: Literal["response.code_interpreter_call.interpreting"]
     :ivar output_index: The index of the output item in the response for which the code interpreter
      is interpreting code. Required.
     :vartype output_index: int
@@ -7709,7 +7624,7 @@ class ResponseCodeInterpreterCallInterpretingEvent(TypedDict, total=False):  # p
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING]]
+    type: Required[Literal["response.code_interpreter_call.interpreting"]]
     """The type of the event. Always ``response.code_interpreter_call.interpreting``. Required.
      RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING."""
     output_index: Required[int]
@@ -7725,14 +7640,14 @@ class ResponseCompletedEvent(TypedDict, total=False):
     """Emitted when the model response is complete.
 
     :ivar type: The type of the event. Always ``response.completed``. Required. RESPONSE_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_COMPLETED]
+    :vartype type: Literal["response.completed"]
     :ivar response: Properties of the completed response. Required.
     :vartype response: "ResponseObject"
     :ivar sequence_number: The sequence number for this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_COMPLETED]]
+    type: Required[Literal["response.completed"]]
     """The type of the event. Always ``response.completed``. Required. RESPONSE_COMPLETED."""
     response: Required["ResponseObject"]
     """Properties of the completed response. Required."""
@@ -7745,7 +7660,7 @@ class ResponseContentPartAddedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.content_part.added``. Required.
      RESPONSE_CONTENT_PART_ADDED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED]
+    :vartype type: Literal["response.content_part.added"]
     :ivar item_id: The ID of the output item that the content part was added to. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that the content part was added to. Required.
@@ -7758,7 +7673,7 @@ class ResponseContentPartAddedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED]]
+    type: Required[Literal["response.content_part.added"]]
     """The type of the event. Always ``response.content_part.added``. Required.
      RESPONSE_CONTENT_PART_ADDED."""
     item_id: Required[str]
@@ -7778,7 +7693,7 @@ class ResponseContentPartDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.content_part.done``. Required.
      RESPONSE_CONTENT_PART_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE]
+    :vartype type: Literal["response.content_part.done"]
     :ivar item_id: The ID of the output item that the content part was added to. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that the content part was added to. Required.
@@ -7791,7 +7706,7 @@ class ResponseContentPartDoneEvent(TypedDict, total=False):
     :vartype part: "OutputContent"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE]]
+    type: Required[Literal["response.content_part.done"]]
     """The type of the event. Always ``response.content_part.done``. Required.
      RESPONSE_CONTENT_PART_DONE."""
     item_id: Required[str]
@@ -7810,14 +7725,14 @@ class ResponseCreatedEvent(TypedDict, total=False):
     """An event that is emitted when a response is created.
 
     :ivar type: The type of the event. Always ``response.created``. Required. RESPONSE_CREATED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CREATED]
+    :vartype type: Literal["response.created"]
     :ivar response: The response that was created. Required.
     :vartype response: "ResponseObject"
     :ivar sequence_number: The sequence number for this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CREATED]]
+    type: Required[Literal["response.created"]]
     """The type of the event. Always ``response.created``. Required. RESPONSE_CREATED."""
     response: Required["ResponseObject"]
     """The response that was created. Required."""
@@ -7829,7 +7744,7 @@ class ResponseCustomToolCallInputDeltaEvent(TypedDict, total=False):
     """ResponseCustomToolCallInputDelta.
 
     :ivar type: The event type identifier. Required. RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA]
+    :vartype type: Literal["response.custom_tool_call_input.delta"]
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     :ivar output_index: The index of the output this delta applies to. Required.
@@ -7840,7 +7755,7 @@ class ResponseCustomToolCallInputDeltaEvent(TypedDict, total=False):
     :vartype delta: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA]]
+    type: Required[Literal["response.custom_tool_call_input.delta"]]
     """The event type identifier. Required. RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA."""
     sequence_number: Required[int]
     """The sequence number of this event. Required."""
@@ -7856,7 +7771,7 @@ class ResponseCustomToolCallInputDoneEvent(TypedDict, total=False):
     """ResponseCustomToolCallInputDone.
 
     :ivar type: The event type identifier. Required. RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE]
+    :vartype type: Literal["response.custom_tool_call_input.done"]
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     :ivar output_index: The index of the output this event applies to. Required.
@@ -7867,7 +7782,7 @@ class ResponseCustomToolCallInputDoneEvent(TypedDict, total=False):
     :vartype input: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE]]
+    type: Required[Literal["response.custom_tool_call_input.done"]]
     """The event type identifier. Required. RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE."""
     sequence_number: Required[int]
     """The sequence number of this event. Required."""
@@ -7883,7 +7798,7 @@ class ResponseErrorEvent(TypedDict, total=False):
     """Emitted when an error occurs.
 
     :ivar type: The type of the event. Always ``error``. Required. ERROR.
-    :vartype type: Literal[ResponseStreamEventType.ERROR]
+    :vartype type: Literal["error"]
     :ivar code: Required.
     :vartype code: str
     :ivar message: The error message. Required.
@@ -7894,7 +7809,7 @@ class ResponseErrorEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.ERROR]]
+    type: Required[Literal["error"]]
     """The type of the event. Always ``error``. Required. ERROR."""
     code: Required[Optional[str]]
     """Required."""
@@ -7935,14 +7850,14 @@ class ResponseFailedEvent(TypedDict, total=False):
     """An event that is emitted when a response fails.
 
     :ivar type: The type of the event. Always ``response.failed``. Required. RESPONSE_FAILED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_FAILED]
+    :vartype type: Literal["response.failed"]
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     :ivar response: The response that failed. Required.
     :vartype response: "ResponseObject"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_FAILED]]
+    type: Required[Literal["response.failed"]]
     """The type of the event. Always ``response.failed``. Required. RESPONSE_FAILED."""
     sequence_number: Required[int]
     """The sequence number of this event. Required."""
@@ -7955,7 +7870,7 @@ class ResponseFileSearchCallCompletedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.file_search_call.completed``. Required.
      RESPONSE_FILE_SEARCH_CALL_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_COMPLETED]
+    :vartype type: Literal["response.file_search_call.completed"]
     :ivar output_index: The index of the output item that the file search call is initiated.
      Required.
     :vartype output_index: int
@@ -7965,7 +7880,7 @@ class ResponseFileSearchCallCompletedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_COMPLETED]]
+    type: Required[Literal["response.file_search_call.completed"]]
     """The type of the event. Always ``response.file_search_call.completed``. Required.
      RESPONSE_FILE_SEARCH_CALL_COMPLETED."""
     output_index: Required[int]
@@ -7981,7 +7896,7 @@ class ResponseFileSearchCallInProgressEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.file_search_call.in_progress``. Required.
      RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS]
+    :vartype type: Literal["response.file_search_call.in_progress"]
     :ivar output_index: The index of the output item that the file search call is initiated.
      Required.
     :vartype output_index: int
@@ -7991,7 +7906,7 @@ class ResponseFileSearchCallInProgressEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS]]
+    type: Required[Literal["response.file_search_call.in_progress"]]
     """The type of the event. Always ``response.file_search_call.in_progress``. Required.
      RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS."""
     output_index: Required[int]
@@ -8007,7 +7922,7 @@ class ResponseFileSearchCallSearchingEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.file_search_call.searching``. Required.
      RESPONSE_FILE_SEARCH_CALL_SEARCHING.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_SEARCHING]
+    :vartype type: Literal["response.file_search_call.searching"]
     :ivar output_index: The index of the output item that the file search call is searching.
      Required.
     :vartype output_index: int
@@ -8017,7 +7932,7 @@ class ResponseFileSearchCallSearchingEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_SEARCHING]]
+    type: Required[Literal["response.file_search_call.searching"]]
     """The type of the event. Always ``response.file_search_call.searching``. Required.
      RESPONSE_FILE_SEARCH_CALL_SEARCHING."""
     output_index: Required[int]
@@ -8037,7 +7952,7 @@ class ResponseFunctionCallArgumentsDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.function_call_arguments.delta``. Required.
      RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]
+    :vartype type: Literal["response.function_call_arguments.delta"]
     :ivar item_id: The ID of the output item that the function-call arguments delta is added to.
      Required.
     :vartype item_id: str
@@ -8050,7 +7965,7 @@ class ResponseFunctionCallArgumentsDeltaEvent(TypedDict, total=False):
     :vartype delta: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]]
+    type: Required[Literal["response.function_call_arguments.delta"]]
     """The type of the event. Always ``response.function_call_arguments.delta``. Required.
      RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA."""
     item_id: Required[str]
@@ -8067,7 +7982,7 @@ class ResponseFunctionCallArgumentsDoneEvent(TypedDict, total=False):
     """Emitted when function-call arguments are finalized.
 
     :ivar type: Required. RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]
+    :vartype type: Literal["response.function_call_arguments.done"]
     :ivar item_id: The ID of the item. Required.
     :vartype item_id: str
     :ivar name: The name of the function that was called. Required.
@@ -8080,7 +7995,7 @@ class ResponseFunctionCallArgumentsDoneEvent(TypedDict, total=False):
     :vartype arguments: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]]
+    type: Required[Literal["response.function_call_arguments.done"]]
     """Required. RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE."""
     item_id: Required[str]
     """The ID of the item. Required."""
@@ -8099,7 +8014,7 @@ class ResponseImageGenCallCompletedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.image_generation_call.completed'. Required.
      RESPONSE_IMAGE_GENERATION_CALL_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_COMPLETED]
+    :vartype type: Literal["response.image_generation_call.completed"]
     :ivar output_index: The index of the output item in the response's output array. Required.
     :vartype output_index: int
     :ivar sequence_number: The sequence number of this event. Required.
@@ -8108,7 +8023,7 @@ class ResponseImageGenCallCompletedEvent(TypedDict, total=False):
     :vartype item_id: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_COMPLETED]]
+    type: Required[Literal["response.image_generation_call.completed"]]
     """The type of the event. Always 'response.image_generation_call.completed'. Required.
      RESPONSE_IMAGE_GENERATION_CALL_COMPLETED."""
     output_index: Required[int]
@@ -8124,7 +8039,7 @@ class ResponseImageGenCallGeneratingEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.image_generation_call.generating'.
      Required. RESPONSE_IMAGE_GENERATION_CALL_GENERATING.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_GENERATING]
+    :vartype type: Literal["response.image_generation_call.generating"]
     :ivar output_index: The index of the output item in the response's output array. Required.
     :vartype output_index: int
     :ivar item_id: The unique identifier of the image generation item being processed. Required.
@@ -8134,7 +8049,7 @@ class ResponseImageGenCallGeneratingEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_GENERATING]]
+    type: Required[Literal["response.image_generation_call.generating"]]
     """The type of the event. Always 'response.image_generation_call.generating'. Required.
      RESPONSE_IMAGE_GENERATION_CALL_GENERATING."""
     output_index: Required[int]
@@ -8150,7 +8065,7 @@ class ResponseImageGenCallInProgressEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.image_generation_call.in_progress'.
      Required. RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS]
+    :vartype type: Literal["response.image_generation_call.in_progress"]
     :ivar output_index: The index of the output item in the response's output array. Required.
     :vartype output_index: int
     :ivar item_id: The unique identifier of the image generation item being processed. Required.
@@ -8160,7 +8075,7 @@ class ResponseImageGenCallInProgressEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS]]
+    type: Required[Literal["response.image_generation_call.in_progress"]]
     """The type of the event. Always 'response.image_generation_call.in_progress'. Required.
      RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS."""
     output_index: Required[int]
@@ -8176,7 +8091,7 @@ class ResponseImageGenCallPartialImageEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.image_generation_call.partial_image'.
      Required. RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE]
+    :vartype type: Literal["response.image_generation_call.partial_image"]
     :ivar output_index: The index of the output item in the response's output array. Required.
     :vartype output_index: int
     :ivar item_id: The unique identifier of the image generation item being processed. Required.
@@ -8192,7 +8107,7 @@ class ResponseImageGenCallPartialImageEvent(TypedDict, total=False):
     :vartype partial_image_b64: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE]]
+    type: Required[Literal["response.image_generation_call.partial_image"]]
     """The type of the event. Always 'response.image_generation_call.partial_image'. Required.
      RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE."""
     output_index: Required[int]
@@ -8225,14 +8140,14 @@ class ResponseIncompleteEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.incomplete``. Required.
      RESPONSE_INCOMPLETE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_INCOMPLETE]
+    :vartype type: Literal["response.incomplete"]
     :ivar response: The response that was incomplete. Required.
     :vartype response: "ResponseObject"
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_INCOMPLETE]]
+    type: Required[Literal["response.incomplete"]]
     """The type of the event. Always ``response.incomplete``. Required. RESPONSE_INCOMPLETE."""
     response: Required["ResponseObject"]
     """The response that was incomplete. Required."""
@@ -8245,14 +8160,14 @@ class ResponseInProgressEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.in_progress``. Required.
      RESPONSE_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_IN_PROGRESS]
+    :vartype type: Literal["response.in_progress"]
     :ivar response: The response that is in progress. Required.
     :vartype response: "ResponseObject"
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_IN_PROGRESS]]
+    type: Required[Literal["response.in_progress"]]
     """The type of the event. Always ``response.in_progress``. Required. RESPONSE_IN_PROGRESS."""
     response: Required["ResponseObject"]
     """The response that is in progress. Required."""
@@ -8299,7 +8214,7 @@ class ResponseMCPCallArgumentsDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_call_arguments.delta'. Required.
      RESPONSE_MCP_CALL_ARGUMENTS_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]
+    :vartype type: Literal["response.mcp_call_arguments.delta"]
     :ivar output_index: The index of the output item in the response's output array. Required.
     :vartype output_index: int
     :ivar item_id: The unique identifier of the MCP tool call item being processed. Required.
@@ -8311,7 +8226,7 @@ class ResponseMCPCallArgumentsDeltaEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]]
+    type: Required[Literal["response.mcp_call_arguments.delta"]]
     """The type of the event. Always 'response.mcp_call_arguments.delta'. Required.
      RESPONSE_MCP_CALL_ARGUMENTS_DELTA."""
     output_index: Required[int]
@@ -8329,7 +8244,7 @@ class ResponseMCPCallArgumentsDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_call_arguments.done'. Required.
      RESPONSE_MCP_CALL_ARGUMENTS_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]
+    :vartype type: Literal["response.mcp_call_arguments.done"]
     :ivar output_index: The index of the output item in the response's output array. Required.
     :vartype output_index: int
     :ivar item_id: The unique identifier of the MCP tool call item being processed. Required.
@@ -8341,7 +8256,7 @@ class ResponseMCPCallArgumentsDoneEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]]
+    type: Required[Literal["response.mcp_call_arguments.done"]]
     """The type of the event. Always 'response.mcp_call_arguments.done'. Required.
      RESPONSE_MCP_CALL_ARGUMENTS_DONE."""
     output_index: Required[int]
@@ -8359,7 +8274,7 @@ class ResponseMCPCallCompletedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_call.completed'. Required.
      RESPONSE_MCP_CALL_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_COMPLETED]
+    :vartype type: Literal["response.mcp_call.completed"]
     :ivar item_id: The ID of the MCP tool call item that completed. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that completed. Required.
@@ -8368,7 +8283,7 @@ class ResponseMCPCallCompletedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_COMPLETED]]
+    type: Required[Literal["response.mcp_call.completed"]]
     """The type of the event. Always 'response.mcp_call.completed'. Required.
      RESPONSE_MCP_CALL_COMPLETED."""
     item_id: Required[str]
@@ -8384,7 +8299,7 @@ class ResponseMCPCallFailedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_call.failed'. Required.
      RESPONSE_MCP_CALL_FAILED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_FAILED]
+    :vartype type: Literal["response.mcp_call.failed"]
     :ivar item_id: The ID of the MCP tool call item that failed. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that failed. Required.
@@ -8393,7 +8308,7 @@ class ResponseMCPCallFailedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_FAILED]]
+    type: Required[Literal["response.mcp_call.failed"]]
     """The type of the event. Always 'response.mcp_call.failed'. Required. RESPONSE_MCP_CALL_FAILED."""
     item_id: Required[str]
     """The ID of the MCP tool call item that failed. Required."""
@@ -8408,7 +8323,7 @@ class ResponseMCPCallInProgressEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_call.in_progress'. Required.
      RESPONSE_MCP_CALL_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_IN_PROGRESS]
+    :vartype type: Literal["response.mcp_call.in_progress"]
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     :ivar output_index: The index of the output item in the response's output array. Required.
@@ -8417,7 +8332,7 @@ class ResponseMCPCallInProgressEvent(TypedDict, total=False):
     :vartype item_id: str
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_CALL_IN_PROGRESS]]
+    type: Required[Literal["response.mcp_call.in_progress"]]
     """The type of the event. Always 'response.mcp_call.in_progress'. Required.
      RESPONSE_MCP_CALL_IN_PROGRESS."""
     sequence_number: Required[int]
@@ -8433,7 +8348,7 @@ class ResponseMCPListToolsCompletedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_list_tools.completed'. Required.
      RESPONSE_MCP_LIST_TOOLS_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_COMPLETED]
+    :vartype type: Literal["response.mcp_list_tools.completed"]
     :ivar item_id: The ID of the MCP tool call item that produced this output. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that was processed. Required.
@@ -8442,7 +8357,7 @@ class ResponseMCPListToolsCompletedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_COMPLETED]]
+    type: Required[Literal["response.mcp_list_tools.completed"]]
     """The type of the event. Always 'response.mcp_list_tools.completed'. Required.
      RESPONSE_MCP_LIST_TOOLS_COMPLETED."""
     item_id: Required[str]
@@ -8458,7 +8373,7 @@ class ResponseMCPListToolsFailedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_list_tools.failed'. Required.
      RESPONSE_MCP_LIST_TOOLS_FAILED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_FAILED]
+    :vartype type: Literal["response.mcp_list_tools.failed"]
     :ivar item_id: The ID of the MCP tool call item that failed. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that failed. Required.
@@ -8467,7 +8382,7 @@ class ResponseMCPListToolsFailedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_FAILED]]
+    type: Required[Literal["response.mcp_list_tools.failed"]]
     """The type of the event. Always 'response.mcp_list_tools.failed'. Required.
      RESPONSE_MCP_LIST_TOOLS_FAILED."""
     item_id: Required[str]
@@ -8483,7 +8398,7 @@ class ResponseMCPListToolsInProgressEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.mcp_list_tools.in_progress'. Required.
      RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS]
+    :vartype type: Literal["response.mcp_list_tools.in_progress"]
     :ivar item_id: The ID of the MCP tool call item that is being processed. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that is being processed. Required.
@@ -8492,7 +8407,7 @@ class ResponseMCPListToolsInProgressEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS]]
+    type: Required[Literal["response.mcp_list_tools.in_progress"]]
     """The type of the event. Always 'response.mcp_list_tools.in_progress'. Required.
      RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS."""
     item_id: Required[str]
@@ -8681,7 +8596,7 @@ class ResponseOutputItemAddedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.output_item.added``. Required.
      RESPONSE_OUTPUT_ITEM_ADDED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED]
+    :vartype type: Literal["response.output_item.added"]
     :ivar output_index: The index of the output item that was added. Required.
     :vartype output_index: int
     :ivar sequence_number: The sequence number of this event. Required.
@@ -8690,7 +8605,7 @@ class ResponseOutputItemAddedEvent(TypedDict, total=False):
     :vartype item: "OutputItem"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED]]
+    type: Required[Literal["response.output_item.added"]]
     """The type of the event. Always ``response.output_item.added``. Required.
      RESPONSE_OUTPUT_ITEM_ADDED."""
     output_index: Required[int]
@@ -8706,7 +8621,7 @@ class ResponseOutputItemDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.output_item.done``. Required.
      RESPONSE_OUTPUT_ITEM_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE]
+    :vartype type: Literal["response.output_item.done"]
     :ivar output_index: The index of the output item that was marked done. Required.
     :vartype output_index: int
     :ivar sequence_number: The sequence number of this event. Required.
@@ -8715,7 +8630,7 @@ class ResponseOutputItemDoneEvent(TypedDict, total=False):
     :vartype item: "OutputItem"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE]]
+    type: Required[Literal["response.output_item.done"]]
     """The type of the event. Always ``response.output_item.done``. Required.
      RESPONSE_OUTPUT_ITEM_DONE."""
     output_index: Required[int]
@@ -8731,7 +8646,7 @@ class ResponseOutputTextAnnotationAddedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always 'response.output_text.annotation.added'. Required.
      RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED]
+    :vartype type: Literal["response.output_text.annotation.added"]
     :ivar item_id: The unique identifier of the item to which the annotation is being added.
      Required.
     :vartype item_id: str
@@ -8748,7 +8663,7 @@ class ResponseOutputTextAnnotationAddedEvent(TypedDict, total=False):
     :vartype annotation: "Annotation"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED]]
+    type: Required[Literal["response.output_text.annotation.added"]]
     """The type of the event. Always 'response.output_text.annotation.added'. Required.
      RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED."""
     item_id: Required[str]
@@ -8773,14 +8688,14 @@ class ResponseQueuedEvent(TypedDict, total=False):
     """ResponseQueuedEvent.
 
     :ivar type: The type of the event. Always 'response.queued'. Required. RESPONSE_QUEUED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_QUEUED]
+    :vartype type: Literal["response.queued"]
     :ivar response: The full response object that is queued. Required.
     :vartype response: "ResponseObject"
     :ivar sequence_number: The sequence number for this event. Required.
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_QUEUED]]
+    type: Required[Literal["response.queued"]]
     """The type of the event. Always 'response.queued'. Required. RESPONSE_QUEUED."""
     response: Required["ResponseObject"]
     """The full response object that is queued. Required."""
@@ -8793,7 +8708,7 @@ class ResponseReasoningSummaryPartAddedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.reasoning_summary_part.added``. Required.
      RESPONSE_REASONING_SUMMARY_PART_ADDED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_ADDED]
+    :vartype type: Literal["response.reasoning_summary_part.added"]
     :ivar item_id: The ID of the item this summary part is associated with. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item this summary part is associated with.
@@ -8807,7 +8722,7 @@ class ResponseReasoningSummaryPartAddedEvent(TypedDict, total=False):
     :vartype part: "ResponseReasoningSummaryPartAddedEventPart"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_ADDED]]
+    type: Required[Literal["response.reasoning_summary_part.added"]]
     """The type of the event. Always ``response.reasoning_summary_part.added``. Required.
      RESPONSE_REASONING_SUMMARY_PART_ADDED."""
     item_id: Required[str]
@@ -8842,7 +8757,7 @@ class ResponseReasoningSummaryPartDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.reasoning_summary_part.done``. Required.
      RESPONSE_REASONING_SUMMARY_PART_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_DONE]
+    :vartype type: Literal["response.reasoning_summary_part.done"]
     :ivar item_id: The ID of the item this summary part is associated with. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item this summary part is associated with.
@@ -8856,7 +8771,7 @@ class ResponseReasoningSummaryPartDoneEvent(TypedDict, total=False):
     :vartype part: "ResponseReasoningSummaryPartDoneEventPart"
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_DONE]]
+    type: Required[Literal["response.reasoning_summary_part.done"]]
     """The type of the event. Always ``response.reasoning_summary_part.done``. Required.
      RESPONSE_REASONING_SUMMARY_PART_DONE."""
     item_id: Required[str]
@@ -8891,7 +8806,7 @@ class ResponseReasoningSummaryTextDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.reasoning_summary_text.delta``. Required.
      RESPONSE_REASONING_SUMMARY_TEXT_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DELTA]
+    :vartype type: Literal["response.reasoning_summary_text.delta"]
     :ivar item_id: The ID of the item this summary text delta is associated with. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item this summary text delta is associated with.
@@ -8905,7 +8820,7 @@ class ResponseReasoningSummaryTextDeltaEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DELTA]]
+    type: Required[Literal["response.reasoning_summary_text.delta"]]
     """The type of the event. Always ``response.reasoning_summary_text.delta``. Required.
      RESPONSE_REASONING_SUMMARY_TEXT_DELTA."""
     item_id: Required[str]
@@ -8925,7 +8840,7 @@ class ResponseReasoningSummaryTextDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.reasoning_summary_text.done``. Required.
      RESPONSE_REASONING_SUMMARY_TEXT_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DONE]
+    :vartype type: Literal["response.reasoning_summary_text.done"]
     :ivar item_id: The ID of the item this summary text is associated with. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item this summary text is associated with.
@@ -8939,7 +8854,7 @@ class ResponseReasoningSummaryTextDoneEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DONE]]
+    type: Required[Literal["response.reasoning_summary_text.done"]]
     """The type of the event. Always ``response.reasoning_summary_text.done``. Required.
      RESPONSE_REASONING_SUMMARY_TEXT_DONE."""
     item_id: Required[str]
@@ -8959,7 +8874,7 @@ class ResponseReasoningTextDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.reasoning_text.delta``. Required.
      RESPONSE_REASONING_TEXT_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REASONING_TEXT_DELTA]
+    :vartype type: Literal["response.reasoning_text.delta"]
     :ivar item_id: The ID of the item this reasoning text delta is associated with. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item this reasoning text delta is associated with.
@@ -8974,7 +8889,7 @@ class ResponseReasoningTextDeltaEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REASONING_TEXT_DELTA]]
+    type: Required[Literal["response.reasoning_text.delta"]]
     """The type of the event. Always ``response.reasoning_text.delta``. Required.
      RESPONSE_REASONING_TEXT_DELTA."""
     item_id: Required[str]
@@ -8994,7 +8909,7 @@ class ResponseReasoningTextDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.reasoning_text.done``. Required.
      RESPONSE_REASONING_TEXT_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REASONING_TEXT_DONE]
+    :vartype type: Literal["response.reasoning_text.done"]
     :ivar item_id: The ID of the item this reasoning text is associated with. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item this reasoning text is associated with.
@@ -9008,7 +8923,7 @@ class ResponseReasoningTextDoneEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REASONING_TEXT_DONE]]
+    type: Required[Literal["response.reasoning_text.done"]]
     """The type of the event. Always ``response.reasoning_text.done``. Required.
      RESPONSE_REASONING_TEXT_DONE."""
     item_id: Required[str]
@@ -9028,7 +8943,7 @@ class ResponseRefusalDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.refusal.delta``. Required.
      RESPONSE_REFUSAL_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REFUSAL_DELTA]
+    :vartype type: Literal["response.refusal.delta"]
     :ivar item_id: The ID of the output item that the refusal text is added to. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that the refusal text is added to. Required.
@@ -9041,7 +8956,7 @@ class ResponseRefusalDeltaEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REFUSAL_DELTA]]
+    type: Required[Literal["response.refusal.delta"]]
     """The type of the event. Always ``response.refusal.delta``. Required. RESPONSE_REFUSAL_DELTA."""
     item_id: Required[str]
     """The ID of the output item that the refusal text is added to. Required."""
@@ -9060,7 +8975,7 @@ class ResponseRefusalDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.refusal.done``. Required.
      RESPONSE_REFUSAL_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_REFUSAL_DONE]
+    :vartype type: Literal["response.refusal.done"]
     :ivar item_id: The ID of the output item that the refusal text is finalized. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that the refusal text is finalized. Required.
@@ -9074,7 +8989,7 @@ class ResponseRefusalDoneEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_REFUSAL_DONE]]
+    type: Required[Literal["response.refusal.done"]]
     """The type of the event. Always ``response.refusal.done``. Required. RESPONSE_REFUSAL_DONE."""
     item_id: Required[str]
     """The ID of the output item that the refusal text is finalized. Required."""
@@ -9113,7 +9028,7 @@ class ResponseTextDeltaEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.output_text.delta``. Required.
      RESPONSE_OUTPUT_TEXT_DELTA.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA]
+    :vartype type: Literal["response.output_text.delta"]
     :ivar item_id: The ID of the output item that the text delta was added to. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that the text delta was added to. Required.
@@ -9128,7 +9043,7 @@ class ResponseTextDeltaEvent(TypedDict, total=False):
     :vartype logprobs: list["ResponseLogProb"]
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA]]
+    type: Required[Literal["response.output_text.delta"]]
     """The type of the event. Always ``response.output_text.delta``. Required.
      RESPONSE_OUTPUT_TEXT_DELTA."""
     item_id: Required[str]
@@ -9150,7 +9065,7 @@ class ResponseTextDoneEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.output_text.done``. Required.
      RESPONSE_OUTPUT_TEXT_DONE.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE]
+    :vartype type: Literal["response.output_text.done"]
     :ivar item_id: The ID of the output item that the text content is finalized. Required.
     :vartype item_id: str
     :ivar output_index: The index of the output item that the text content is finalized. Required.
@@ -9166,7 +9081,7 @@ class ResponseTextDoneEvent(TypedDict, total=False):
     :vartype logprobs: list["ResponseLogProb"]
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE]]
+    type: Required[Literal["response.output_text.done"]]
     """The type of the event. Always ``response.output_text.done``. Required.
      RESPONSE_OUTPUT_TEXT_DONE."""
     item_id: Required[str]
@@ -9257,7 +9172,7 @@ class ResponseWebSearchCallCompletedEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.web_search_call.completed``. Required.
      RESPONSE_WEB_SEARCH_CALL_COMPLETED.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_COMPLETED]
+    :vartype type: Literal["response.web_search_call.completed"]
     :ivar output_index: The index of the output item that the web search call is associated with.
      Required.
     :vartype output_index: int
@@ -9267,7 +9182,7 @@ class ResponseWebSearchCallCompletedEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_COMPLETED]]
+    type: Required[Literal["response.web_search_call.completed"]]
     """The type of the event. Always ``response.web_search_call.completed``. Required.
      RESPONSE_WEB_SEARCH_CALL_COMPLETED."""
     output_index: Required[int]
@@ -9283,7 +9198,7 @@ class ResponseWebSearchCallInProgressEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.web_search_call.in_progress``. Required.
      RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS]
+    :vartype type: Literal["response.web_search_call.in_progress"]
     :ivar output_index: The index of the output item that the web search call is associated with.
      Required.
     :vartype output_index: int
@@ -9293,7 +9208,7 @@ class ResponseWebSearchCallInProgressEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS]]
+    type: Required[Literal["response.web_search_call.in_progress"]]
     """The type of the event. Always ``response.web_search_call.in_progress``. Required.
      RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS."""
     output_index: Required[int]
@@ -9309,7 +9224,7 @@ class ResponseWebSearchCallSearchingEvent(TypedDict, total=False):
 
     :ivar type: The type of the event. Always ``response.web_search_call.searching``. Required.
      RESPONSE_WEB_SEARCH_CALL_SEARCHING.
-    :vartype type: Literal[ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_SEARCHING]
+    :vartype type: Literal["response.web_search_call.searching"]
     :ivar output_index: The index of the output item that the web search call is associated with.
      Required.
     :vartype output_index: int
@@ -9319,7 +9234,7 @@ class ResponseWebSearchCallSearchingEvent(TypedDict, total=False):
     :vartype sequence_number: int
     """
 
-    type: Required[Literal[ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_SEARCHING]]
+    type: Required[Literal["response.web_search_call.searching"]]
     """The type of the event. Always ``response.web_search_call.searching``. Required.
      RESPONSE_WEB_SEARCH_CALL_SEARCHING."""
     output_index: Required[int]
@@ -9335,10 +9250,10 @@ class ScreenshotParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a screenshot action, this property is always set to
      ``screenshot``. Required. SCREENSHOT.
-    :vartype type: Literal[ComputerActionType.SCREENSHOT]
+    :vartype type: Literal["screenshot"]
     """
 
-    type: Required[Literal[ComputerActionType.SCREENSHOT]]
+    type: Required[Literal["screenshot"]]
     """Specifies the event type. For a screenshot action, this property is always set to
      ``screenshot``. Required. SCREENSHOT."""
 
@@ -9348,7 +9263,7 @@ class ScrollParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a scroll action, this property is always set to
      ``scroll``. Required. SCROLL.
-    :vartype type: Literal[ComputerActionType.SCROLL]
+    :vartype type: Literal["scroll"]
     :ivar x: The x-coordinate where the scroll occurred. Required.
     :vartype x: int
     :ivar y: The y-coordinate where the scroll occurred. Required.
@@ -9361,7 +9276,7 @@ class ScrollParam(TypedDict, total=False):
     :vartype keys_property: list[str]
     """
 
-    type: Required[Literal[ComputerActionType.SCROLL]]
+    type: Required[Literal["scroll"]]
     """Specifies the event type. For a scroll action, this property is always set to ``scroll``.
      Required. SCROLL."""
     x: Required[int]
@@ -9383,7 +9298,7 @@ class SharepointGroundingToolCall(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. SHAREPOINT_GROUNDING_PREVIEW_CALL.
-    :vartype type: Literal[OutputItemType.SHAREPOINT_GROUNDING_PREVIEW_CALL]
+    :vartype type: Literal["sharepoint_grounding_preview_call"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar arguments: A JSON string of the arguments to pass to the tool. Required.
@@ -9399,7 +9314,7 @@ class SharepointGroundingToolCall(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.SHAREPOINT_GROUNDING_PREVIEW_CALL]]
+    type: Required[Literal["sharepoint_grounding_preview_call"]]
     """Required. SHAREPOINT_GROUNDING_PREVIEW_CALL."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -9420,7 +9335,7 @@ class SharepointGroundingToolCallOutput(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. SHAREPOINT_GROUNDING_PREVIEW_CALL_OUTPUT.
-    :vartype type: Literal[OutputItemType.SHAREPOINT_GROUNDING_PREVIEW_CALL_OUTPUT]
+    :vartype type: Literal["sharepoint_grounding_preview_call_output"]
     :ivar call_id: The unique ID of the tool call generated by the model. Required.
     :vartype call_id: str
     :ivar output: The output from the SharePoint grounding tool call. Is one of the following
@@ -9437,7 +9352,7 @@ class SharepointGroundingToolCallOutput(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.SHAREPOINT_GROUNDING_PREVIEW_CALL_OUTPUT]]
+    type: Required[Literal["sharepoint_grounding_preview_call_output"]]
     """Required. SHAREPOINT_GROUNDING_PREVIEW_CALL_OUTPUT."""
     call_id: Required[str]
     """The unique ID of the tool call generated by the model. Required."""
@@ -9477,7 +9392,7 @@ class SharepointPreviewTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW.
-    :vartype type: Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]
+    :vartype type: Literal["sharepoint_grounding_preview"]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -9486,7 +9401,7 @@ class SharepointPreviewTool(TypedDict, total=False):
     :vartype sharepoint_grounding_preview: "SharepointGroundingToolParameters"
     """
 
-    type: Required[Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]]
+    type: Required[Literal["sharepoint_grounding_preview"]]
     """The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW."""
     name: str
@@ -9501,14 +9416,14 @@ class SkillReferenceParam(TypedDict, total=False):
     """SkillReferenceParam.
 
     :ivar type: References a skill created with the /v1/skills endpoint. Required. SKILL_REFERENCE.
-    :vartype type: Literal[ContainerSkillType.SKILL_REFERENCE]
+    :vartype type: Literal["skill_reference"]
     :ivar skill_id: The ID of the referenced skill. Required.
     :vartype skill_id: str
     :ivar version: Optional skill version. Use a positive integer or 'latest'. Omit for default.
     :vartype version: str
     """
 
-    type: Required[Literal[ContainerSkillType.SKILL_REFERENCE]]
+    type: Required[Literal["skill_reference"]]
     """References a skill created with the /v1/skills endpoint. Required. SKILL_REFERENCE."""
     skill_id: Required[str]
     """The ID of the referenced skill. Required."""
@@ -9520,10 +9435,10 @@ class SpecificApplyPatchParam(TypedDict, total=False):
     """Specific apply patch tool choice.
 
     :ivar type: The tool to call. Always ``apply_patch``. Required. APPLY_PATCH.
-    :vartype type: Literal[ToolChoiceParamType.APPLY_PATCH]
+    :vartype type: Literal["apply_patch"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.APPLY_PATCH]]
+    type: Required[Literal["apply_patch"]]
     """The tool to call. Always ``apply_patch``. Required. APPLY_PATCH."""
 
 
@@ -9531,10 +9446,10 @@ class SpecificFunctionShellParam(TypedDict, total=False):
     """Specific shell tool choice.
 
     :ivar type: The tool to call. Always ``shell``. Required. SHELL.
-    :vartype type: Literal[ToolChoiceParamType.SHELL]
+    :vartype type: Literal["shell"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.SHELL]]
+    type: Required[Literal["shell"]]
     """The tool to call. Always ``shell``. Required. SHELL."""
 
 
@@ -9571,7 +9486,7 @@ class StructuredOutputsOutputItem(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. STRUCTURED_OUTPUTS.
-    :vartype type: Literal[OutputItemType.STRUCTURED_OUTPUTS]
+    :vartype type: Literal["structured_outputs"]
     :ivar output: The structured output captured during the response. Required.
     :vartype output: Any
     :ivar id: Required.
@@ -9582,7 +9497,7 @@ class StructuredOutputsOutputItem(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.STRUCTURED_OUTPUTS]]
+    type: Required[Literal["structured_outputs"]]
     """Required. STRUCTURED_OUTPUTS."""
     output: Required[Any]
     """The structured output captured during the response. Required."""
@@ -9594,12 +9509,12 @@ class SummaryTextContent(TypedDict, total=False):
     """Summary text.
 
     :ivar type: The type of the object. Always ``summary_text``. Required. SUMMARY_TEXT.
-    :vartype type: Literal[MessageContentType.SUMMARY_TEXT]
+    :vartype type: Literal["summary_text"]
     :ivar text: A summary of the reasoning output from the model so far. Required.
     :vartype text: str
     """
 
-    type: Required[Literal[MessageContentType.SUMMARY_TEXT]]
+    type: Required[Literal["summary_text"]]
     """The type of the object. Always ``summary_text``. Required. SUMMARY_TEXT."""
     text: Required[str]
     """A summary of the reasoning output from the model so far. Required."""
@@ -9609,12 +9524,12 @@ class TextContent(TypedDict, total=False):
     """Text Content.
 
     :ivar type: Required. TEXT.
-    :vartype type: Literal[MessageContentType.TEXT]
+    :vartype type: Literal["text"]
     :ivar text: Required.
     :vartype text: str
     """
 
-    type: Required[Literal[MessageContentType.TEXT]]
+    type: Required[Literal["text"]]
     """Required. TEXT."""
     text: Required[str]
     """Required."""
@@ -9625,10 +9540,10 @@ class TextResponseFormatConfigurationResponseFormatJsonObject(TypedDict, total=F
 
     :ivar type: The type of response format being defined. Always ``json_object``. Required.
      JSON_OBJECT.
-    :vartype type: Literal[TextResponseFormatConfigurationType.JSON_OBJECT]
+    :vartype type: Literal["json_object"]
     """
 
-    type: Required[Literal[TextResponseFormatConfigurationType.JSON_OBJECT]]
+    type: Required[Literal["json_object"]]
     """The type of response format being defined. Always ``json_object``. Required. JSON_OBJECT."""
 
 
@@ -9636,10 +9551,10 @@ class TextResponseFormatConfigurationResponseFormatText(TypedDict, total=False):
     """Text.
 
     :ivar type: The type of response format being defined. Always ``text``. Required. TEXT.
-    :vartype type: Literal[TextResponseFormatConfigurationType.TEXT]
+    :vartype type: Literal["text"]
     """
 
-    type: Required[Literal[TextResponseFormatConfigurationType.TEXT]]
+    type: Required[Literal["text"]]
     """The type of response format being defined. Always ``text``. Required. TEXT."""
 
 
@@ -9648,7 +9563,7 @@ class TextResponseFormatJsonSchema(TypedDict, total=False):
 
     :ivar type: The type of response format being defined. Always ``json_schema``. Required.
      JSON_SCHEMA.
-    :vartype type: Literal[TextResponseFormatConfigurationType.JSON_SCHEMA]
+    :vartype type: Literal["json_schema"]
     :ivar description: A description of what the response format is for, used by the model to
      determine how to respond in the format.
     :vartype description: str
@@ -9661,7 +9576,7 @@ class TextResponseFormatJsonSchema(TypedDict, total=False):
     :vartype strict: bool
     """
 
-    type: Required[Literal[TextResponseFormatConfigurationType.JSON_SCHEMA]]
+    type: Required[Literal["json_schema"]]
     """The type of response format being defined. Always ``json_schema``. Required. JSON_SCHEMA."""
     description: str
     """A description of what the response format is for, used by the model to determine how to respond
@@ -9678,7 +9593,7 @@ class ToolChoiceAllowed(TypedDict, total=False):
     """Allowed tools.
 
     :ivar type: Allowed tool configuration type. Always ``allowed_tools``. Required. ALLOWED_TOOLS.
-    :vartype type: Literal[ToolChoiceParamType.ALLOWED_TOOLS]
+    :vartype type: Literal["allowed_tools"]
     :ivar mode: Constrains the tools available to the model to a pre-defined set. ``auto`` allows
      the model to pick from among the allowed tools and generate a message. ``required`` requires
      the model to call one or more of the allowed tools. Required. Is either a Literal["auto"] type
@@ -9697,7 +9612,7 @@ class ToolChoiceAllowed(TypedDict, total=False):
     :vartype tools: list[dict[str, Any]]
     """
 
-    type: Required[Literal[ToolChoiceParamType.ALLOWED_TOOLS]]
+    type: Required[Literal["allowed_tools"]]
     """Allowed tool configuration type. Always ``allowed_tools``. Required. ALLOWED_TOOLS."""
     mode: Required[Literal["auto", "required"]]
     """Constrains the tools available to the model to a pre-defined set. ``auto`` allows the model to
@@ -9722,10 +9637,10 @@ class ToolChoiceCodeInterpreter(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. CODE_INTERPRETER.
-    :vartype type: Literal[ToolChoiceParamType.CODE_INTERPRETER]
+    :vartype type: Literal["code_interpreter"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.CODE_INTERPRETER]]
+    type: Required[Literal["code_interpreter"]]
     """Required. CODE_INTERPRETER."""
 
 
@@ -9734,10 +9649,10 @@ class ToolChoiceComputer(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER.
-    :vartype type: Literal[ToolChoiceParamType.COMPUTER]
+    :vartype type: Literal["computer"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.COMPUTER]]
+    type: Required[Literal["computer"]]
     """Required. COMPUTER."""
 
 
@@ -9746,10 +9661,10 @@ class ToolChoiceComputerUse(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER_USE.
-    :vartype type: Literal[ToolChoiceParamType.COMPUTER_USE]
+    :vartype type: Literal["computer_use"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.COMPUTER_USE]]
+    type: Required[Literal["computer_use"]]
     """Required. COMPUTER_USE."""
 
 
@@ -9758,10 +9673,10 @@ class ToolChoiceComputerUsePreview(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER_USE_PREVIEW.
-    :vartype type: Literal[ToolChoiceParamType.COMPUTER_USE_PREVIEW]
+    :vartype type: Literal["computer_use_preview"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.COMPUTER_USE_PREVIEW]]
+    type: Required[Literal["computer_use_preview"]]
     """Required. COMPUTER_USE_PREVIEW."""
 
 
@@ -9769,12 +9684,12 @@ class ToolChoiceCustom(TypedDict, total=False):
     """Custom tool.
 
     :ivar type: For custom tool calling, the type is always ``custom``. Required. CUSTOM.
-    :vartype type: Literal[ToolChoiceParamType.CUSTOM]
+    :vartype type: Literal["custom"]
     :ivar name: The name of the custom tool to call. Required.
     :vartype name: str
     """
 
-    type: Required[Literal[ToolChoiceParamType.CUSTOM]]
+    type: Required[Literal["custom"]]
     """For custom tool calling, the type is always ``custom``. Required. CUSTOM."""
     name: Required[str]
     """The name of the custom tool to call. Required."""
@@ -9785,10 +9700,10 @@ class ToolChoiceFileSearch(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. FILE_SEARCH.
-    :vartype type: Literal[ToolChoiceParamType.FILE_SEARCH]
+    :vartype type: Literal["file_search"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.FILE_SEARCH]]
+    type: Required[Literal["file_search"]]
     """Required. FILE_SEARCH."""
 
 
@@ -9796,12 +9711,12 @@ class ToolChoiceFunction(TypedDict, total=False):
     """Function tool.
 
     :ivar type: For function calling, the type is always ``function``. Required. FUNCTION.
-    :vartype type: Literal[ToolChoiceParamType.FUNCTION]
+    :vartype type: Literal["function"]
     :ivar name: The name of the function to call. Required.
     :vartype name: str
     """
 
-    type: Required[Literal[ToolChoiceParamType.FUNCTION]]
+    type: Required[Literal["function"]]
     """For function calling, the type is always ``function``. Required. FUNCTION."""
     name: Required[str]
     """The name of the function to call. Required."""
@@ -9812,10 +9727,10 @@ class ToolChoiceImageGeneration(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. IMAGE_GENERATION.
-    :vartype type: Literal[ToolChoiceParamType.IMAGE_GENERATION]
+    :vartype type: Literal["image_generation"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.IMAGE_GENERATION]]
+    type: Required[Literal["image_generation"]]
     """Required. IMAGE_GENERATION."""
 
 
@@ -9823,14 +9738,14 @@ class ToolChoiceMCP(TypedDict, total=False):
     """MCP tool.
 
     :ivar type: For MCP tools, the type is always ``mcp``. Required. MCP.
-    :vartype type: Literal[ToolChoiceParamType.MCP]
+    :vartype type: Literal["mcp"]
     :ivar server_label: The label of the MCP server to use. Required.
     :vartype server_label: str
     :ivar name:
     :vartype name: str
     """
 
-    type: Required[Literal[ToolChoiceParamType.MCP]]
+    type: Required[Literal["mcp"]]
     """For MCP tools, the type is always ``mcp``. Required. MCP."""
     server_label: Required[str]
     """The label of the MCP server to use. Required."""
@@ -9842,10 +9757,10 @@ class ToolChoiceWebSearchPreview(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW.
-    :vartype type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW]
+    :vartype type: Literal["web_search_preview"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW]]
+    type: Required[Literal["web_search_preview"]]
     """Required. WEB_SEARCH_PREVIEW."""
 
 
@@ -9854,10 +9769,10 @@ class ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
-    :vartype type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11]
+    :vartype type: Literal["web_search_preview_2025_03_11"]
     """
 
-    type: Required[Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11]]
+    type: Required[Literal["web_search_preview_2025_03_11"]]
     """Required. WEB_SEARCH_PREVIEW2025_03_11."""
 
 
@@ -9889,7 +9804,7 @@ class ToolSearchCallItemParam(TypedDict, total=False):
     :ivar call_id:
     :vartype call_id: str
     :ivar type: The item type. Always ``tool_search_call``. Required. TOOL_SEARCH_CALL.
-    :vartype type: Literal[ItemType.TOOL_SEARCH_CALL]
+    :vartype type: Literal["tool_search_call"]
     :ivar execution: Whether tool search was executed by the server or by the client. Known values
      are: "server" and "client".
     :vartype execution: ToolSearchExecutionType
@@ -9901,7 +9816,7 @@ class ToolSearchCallItemParam(TypedDict, total=False):
 
     id: Optional[str]
     call_id: Optional[str]
-    type: Required[Literal[ItemType.TOOL_SEARCH_CALL]]
+    type: Required[Literal["tool_search_call"]]
     """The item type. Always ``tool_search_call``. Required. TOOL_SEARCH_CALL."""
     execution: ToolSearchExecutionType
     """Whether tool search was executed by the server or by the client. Known values are: \"server\"
@@ -9920,7 +9835,7 @@ class ToolSearchOutputItemParam(TypedDict, total=False):
     :ivar call_id:
     :vartype call_id: str
     :ivar type: The item type. Always ``tool_search_output``. Required. TOOL_SEARCH_OUTPUT.
-    :vartype type: Literal[ItemType.TOOL_SEARCH_OUTPUT]
+    :vartype type: Literal["tool_search_output"]
     :ivar execution: Whether tool search was executed by the server or by the client. Known values
      are: "server" and "client".
     :vartype execution: ToolSearchExecutionType
@@ -9932,7 +9847,7 @@ class ToolSearchOutputItemParam(TypedDict, total=False):
 
     id: Optional[str]
     call_id: Optional[str]
-    type: Required[Literal[ItemType.TOOL_SEARCH_OUTPUT]]
+    type: Required[Literal["tool_search_output"]]
     """The item type. Always ``tool_search_output``. Required. TOOL_SEARCH_OUTPUT."""
     execution: ToolSearchExecutionType
     """Whether tool search was executed by the server or by the client. Known values are: \"server\"
@@ -9947,7 +9862,7 @@ class ToolSearchToolParam(TypedDict, total=False):
     """Tool search tool.
 
     :ivar type: The type of the tool. Always ``tool_search``. Required. TOOL_SEARCH.
-    :vartype type: Literal[ToolType.TOOL_SEARCH]
+    :vartype type: Literal["tool_search"]
     :ivar execution: Whether tool search is executed by the server or by the client. Known values
      are: "server" and "client".
     :vartype execution: ToolSearchExecutionType
@@ -9957,7 +9872,7 @@ class ToolSearchToolParam(TypedDict, total=False):
     :vartype parameters: "EmptyModelParam"
     """
 
-    type: Required[Literal[ToolType.TOOL_SEARCH]]
+    type: Required[Literal["tool_search"]]
     """The type of the tool. Always ``tool_search``. Required. TOOL_SEARCH."""
     execution: ToolSearchExecutionType
     """Whether tool search is executed by the server or by the client. Known values are: \"server\"
@@ -9990,12 +9905,12 @@ class TypeParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a type action, this property is always set to
      ``type``. Required. TYPE.
-    :vartype type: Literal[ComputerActionType.TYPE]
+    :vartype type: Literal["type"]
     :ivar text: The text to type. Required.
     :vartype text: str
     """
 
-    type: Required[Literal[ComputerActionType.TYPE]]
+    type: Required[Literal["type"]]
     """Specifies the event type. For a type action, this property is always set to ``type``. Required.
      TYPE."""
     text: Required[str]
@@ -10006,7 +9921,7 @@ class UrlCitationBody(TypedDict, total=False):
     """URL citation.
 
     :ivar type: The type of the URL citation. Always ``url_citation``. Required. URL_CITATION.
-    :vartype type: Literal[AnnotationType.URL_CITATION]
+    :vartype type: Literal["url_citation"]
     :ivar url: The URL of the web resource. Required.
     :vartype url: str
     :ivar start_index: The index of the first character of the URL citation in the message.
@@ -10018,7 +9933,7 @@ class UrlCitationBody(TypedDict, total=False):
     :vartype title: str
     """
 
-    type: Required[Literal[AnnotationType.URL_CITATION]]
+    type: Required[Literal["url_citation"]]
     """The type of the URL citation. Always ``url_citation``. Required. URL_CITATION."""
     url: Required[str]
     """The URL of the web resource. Required."""
@@ -10045,7 +9960,7 @@ class UserProfileMemoryItem(TypedDict, total=False):
     :vartype content: str
     :ivar kind: The kind of the memory item. Required. User profile information extracted from
      conversations.
-    :vartype kind: Literal[MemoryItemKind.USER_PROFILE]
+    :vartype kind: Literal["user_profile"]
     """
 
     memory_id: Required[str]
@@ -10056,7 +9971,7 @@ class UserProfileMemoryItem(TypedDict, total=False):
     """The namespace that logically groups and isolates memories, such as a user ID. Required."""
     content: Required[str]
     """The content of the memory. Required."""
-    kind: Required[Literal[MemoryItemKind.USER_PROFILE]]
+    kind: Required[Literal["user_profile"]]
     """The kind of the memory item. Required. User profile information extracted from conversations."""
 
 
@@ -10074,10 +9989,10 @@ class WaitParam(TypedDict, total=False):
 
     :ivar type: Specifies the event type. For a wait action, this property is always set to
      ``wait``. Required. WAIT.
-    :vartype type: Literal[ComputerActionType.WAIT]
+    :vartype type: Literal["wait"]
     """
 
-    type: Required[Literal[ComputerActionType.WAIT]]
+    type: Required[Literal["wait"]]
     """Specifies the event type. For a wait action, this property is always set to ``wait``. Required.
      WAIT."""
 
@@ -10208,7 +10123,7 @@ class WebSearchPreviewTool(TypedDict, total=False):
 
     :ivar type: The type of the web search tool. One of ``web_search_preview`` or
      ``web_search_preview_2025_03_11``. Required. WEB_SEARCH_PREVIEW.
-    :vartype type: Literal[ToolType.WEB_SEARCH_PREVIEW]
+    :vartype type: Literal["web_search_preview"]
     :ivar user_location:
     :vartype user_location: "ApproximateLocation"
     :ivar search_context_size: High level guidance for the amount of context window space to use
@@ -10219,7 +10134,7 @@ class WebSearchPreviewTool(TypedDict, total=False):
     :vartype search_content_types: list[SearchContentType]
     """
 
-    type: Required[Literal[ToolType.WEB_SEARCH_PREVIEW]]
+    type: Required[Literal["web_search_preview"]]
     """The type of the web search tool. One of ``web_search_preview`` or
      ``web_search_preview_2025_03_11``. Required. WEB_SEARCH_PREVIEW."""
     user_location: Optional["ApproximateLocation"]
@@ -10235,7 +10150,7 @@ class WebSearchTool(TypedDict, total=False):
 
     :ivar type: The type of the web search tool. One of ``web_search`` or
      ``web_search_2025_08_26``. Required. WEB_SEARCH.
-    :vartype type: Literal[ToolType.WEB_SEARCH]
+    :vartype type: Literal["web_search"]
     :ivar filters:
     :vartype filters: "WebSearchToolFilters"
     :ivar user_location:
@@ -10253,7 +10168,7 @@ class WebSearchTool(TypedDict, total=False):
     :vartype custom_search_configuration: "WebSearchConfiguration"
     """
 
-    type: Required[Literal[ToolType.WEB_SEARCH]]
+    type: Required[Literal["web_search"]]
     """The type of the web search tool. One of ``web_search`` or ``web_search_2025_08_26``. Required.
      WEB_SEARCH."""
     filters: Optional["WebSearchToolFilters"]
@@ -10289,7 +10204,7 @@ class WorkflowActionOutputItem(TypedDict, total=False):
     :ivar response_id: The response on which the item is created.
     :vartype response_id: str
     :ivar type: Required. WORKFLOW_ACTION.
-    :vartype type: Literal[OutputItemType.WORKFLOW_ACTION]
+    :vartype type: Literal["workflow_action"]
     :ivar kind: The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required.
     :vartype kind: str
     :ivar action_id: Unique identifier for the action. Required.
@@ -10310,7 +10225,7 @@ class WorkflowActionOutputItem(TypedDict, total=False):
     """The agent that created the item."""
     response_id: str
     """The response on which the item is created."""
-    type: Required[Literal[OutputItemType.WORKFLOW_ACTION]]
+    type: Required[Literal["workflow_action"]]
     """Required. WORKFLOW_ACTION."""
     kind: Required[str]
     """The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required."""
@@ -10332,12 +10247,12 @@ class WorkIQPreviewTool(TypedDict, total=False):
     """A WorkIQ server-side tool.
 
     :ivar type: The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW.
-    :vartype type: Literal[ToolType.WORK_IQ_PREVIEW]
+    :vartype type: Literal["work_iq_preview"]
     :ivar work_iq_preview: The WorkIQ tool parameters. Required.
     :vartype work_iq_preview: "WorkIQPreviewToolParameters"
     """
 
-    type: Required[Literal[ToolType.WORK_IQ_PREVIEW]]
+    type: Required[Literal["work_iq_preview"]]
     """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
     work_iq_preview: Required["WorkIQPreviewToolParameters"]
     """The WorkIQ tool parameters. Required."""

@@ -9,6 +9,8 @@
 OUTPUT_DIR  ?= azure/ai/agentserver/responses/models/_generated
 TYPESPEC_DIR ?= type_spec
 TEMP_TSP_DIR := $(TYPESPEC_DIR)/TempTypeSpecFiles
+TEMP_OUTPUT_DIR := .tmp_typeddict_codegen
+TYPESPEC_PYTHON_EMITTER_PATH ?=
 OPENAPI_SPEC ?= $(TEMP_TSP_DIR)/Foundry/openapi.virtual-public-preview.yaml
 VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
@@ -96,11 +98,15 @@ generate-models:
 	cd /d $(TYPESPEC_DIR) && tsp-client sync
 	@echo Installing TypeSpec dependencies from emitter-package.json...
 	cd /d $(TEMP_TSP_DIR) && npm install --silent
+	@if not "$(TYPESPEC_PYTHON_EMITTER_PATH)"=="" cd /d $(TEMP_TSP_DIR) && npm install --silent --no-save "$(TYPESPEC_PYTHON_EMITTER_PATH)"
+	python _scripts\finalize_typeddict_generation.py --client-tsp "$(CONTRACTS_DIR)\client.tsp"
 	@echo Generating local Python TypedDict models...
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
-	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath .)" --option "@azure-tools/typespec-python.namespace=azure.ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
+	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	python _scripts\finalize_typeddict_generation.py --emitter-output-root "$(TEMP_OUTPUT_DIR)" --generated-root "$(OUTPUT_DIR)"
 	@if not exist "$(OUTPUT_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
-	python _scripts\finalize_typeddict_generation.py --generated-root "$(OUTPUT_DIR)"
+	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 generate-models:
 	@command -v tsp-client >/dev/null 2>&1 || { \
@@ -116,14 +122,20 @@ generate-models:
 	cd $(TYPESPEC_DIR) && tsp-client sync
 	@echo "Installing TypeSpec dependencies from emitter-package.json..."
 	cd $(TEMP_TSP_DIR) && npm install --silent
+	@if [ -n "$(TYPESPEC_PYTHON_EMITTER_PATH)" ]; then \
+		cd $(TEMP_TSP_DIR) && npm install --silent --no-save "$(TYPESPEC_PYTHON_EMITTER_PATH)"; \
+	fi
+	python _scripts/finalize_typeddict_generation.py --client-tsp "$(CONTRACTS_DIR)/client.tsp"
 	@echo "Generating local Python TypedDict models..."
 	rm -rf $(OUTPUT_DIR)
-	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath .)" --option "@azure-tools/typespec-python.namespace=azure.ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	rm -rf $(TEMP_OUTPUT_DIR)
+	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	python _scripts/finalize_typeddict_generation.py --emitter-output-root "$(TEMP_OUTPUT_DIR)" --generated-root "$(OUTPUT_DIR)"
 	@test -d $(OUTPUT_DIR) || { \
 		echo "Error: generated model package was not found." >&2; \
 		exit 1; \
 	}
-	python _scripts/finalize_typeddict_generation.py --generated-root "$(OUTPUT_DIR)"
+	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 
 # --------------------------------------------------------------------------
