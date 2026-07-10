@@ -6,7 +6,7 @@
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-_FINISHED = frozenset(["succeeded", "canceled", "cancelled", "failed"])
+_FINISHED = frozenset(["succeeded", "canceled", "cancelled", "failed", "partiallycompleted"])
 
 
 class AnalyzeDocumentsAsyncLROPollingMethod(AsyncLROBasePolling):
