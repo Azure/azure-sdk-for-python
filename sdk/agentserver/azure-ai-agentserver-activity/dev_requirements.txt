@@ -2,6 +2,5 @@
 -e ../../../eng/tools/azure-sdk-tools
 -e ../azure-ai-agentserver-core
 pytest
-httpx
 pytest-asyncio
 opentelemetry-sdk>=1.40.0

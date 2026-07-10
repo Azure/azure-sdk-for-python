@@ -4,21 +4,19 @@
 """Tests for ActivityAgentServerHost routes and endpoint behavior."""
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 
 @pytest.mark.asyncio
-async def test_post_activity_returns_200():
+async def test_post_activity_returns_200(asgi_client):
     async def handle(request) -> Response:
         activity = request.state.activity
         return JSONResponse({"ok": True, "type": activity.get("type")})
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "message", "text": "hi"},
@@ -32,13 +30,12 @@ async def test_post_activity_returns_200():
 
 
 @pytest.mark.asyncio
-async def test_post_activity_requires_json_object():
+async def test_post_activity_requires_json_object(asgi_client):
     async def handle(_request):
         return None
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json=["not", "object"],
@@ -49,13 +46,12 @@ async def test_post_activity_requires_json_object():
 
 
 @pytest.mark.asyncio
-async def test_default_non_invoke_flow_returns_202_when_handler_returns_none():
+async def test_default_non_invoke_flow_returns_202_when_handler_returns_none(asgi_client):
     async def handle(_request):
         return Response(status_code=202)
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "message", "text": "hello"},
@@ -66,13 +62,12 @@ async def test_default_non_invoke_flow_returns_202_when_handler_returns_none():
 
 
 @pytest.mark.asyncio
-async def test_invoke_response_path_returns_200_with_body():
+async def test_invoke_response_path_returns_200_with_body(asgi_client):
     async def handle(_request):
         return JSONResponse({"status": 200, "body": {"message": "approved"}})
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "invoke", "name": "adaptiveCard/action", "value": {"verb": "approve"}},

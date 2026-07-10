@@ -93,9 +93,7 @@ class MsalPatch:
 
     PATCH_FLAG: str = "_activity_sdk_msal_patched"
     TOKEN_EXCHANGE_SCOPE: str = "api://AzureADTokenExchange/.default"
-    IDENTITY_CONFIG_KEY: str = "identity_config"
     FMI_PATH_KEY: str = "fmi_path"
-    MANAGED_IDENTITY_CLIENT_ID_KEY: str = "managed_identity_client_id"
     MSAL_CONFIGURATION_ATTR: str = "_msal_configuration"
     MSAL_CLIENT_ID_ATTR: str = "CLIENT_ID"
 

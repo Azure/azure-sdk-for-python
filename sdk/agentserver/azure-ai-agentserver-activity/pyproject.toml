@@ -30,7 +30,6 @@ dependencies = [
 # keep in sync with dev_requirements.txt
 dev = [
     "azure-sdk-tools",
-    "httpx",
     "opentelemetry-sdk>=1.40.0",
     "pytest-asyncio",
     "pytest",

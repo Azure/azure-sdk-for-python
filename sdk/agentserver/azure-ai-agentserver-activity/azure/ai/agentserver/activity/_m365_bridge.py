@@ -45,10 +45,11 @@ def _apply_msal_patches() -> None:
     """Apply the MSAL auth patch for the Foundry digital-worker (MAIB) model.
 
     When the auth type is ``UserManagedIdentity`` the stock ``MsalAuth`` uses
-    ``ManagedIdentityClient``, which does not support ``fmi_path``. This patch
-    replaces ``get_agentic_application_token`` with a ``DefaultAzureCredential``
-    federated-identity exchange. It is idempotent (guarded by a patch flag) and
-    a no-op when the M365 MSAL package is not installed.
+    MSAL's ``ManagedIdentityClient``, which does not support ``fmi_path``. This
+    patch replaces ``get_agentic_application_token`` with a federated-identity
+    (FMI) exchange via azure-identity's ``ManagedIdentityCredential``. It is
+    idempotent (guarded by a patch flag) and a no-op when the M365 MSAL package
+    is not installed.
 
     :return: None.
     :rtype: None
@@ -63,13 +64,14 @@ def _apply_msal_patches() -> None:
     if getattr(MsalAuth, MsalPatch.PATCH_FLAG, False):
         return
 
-    async def get_token_via_dac(self: object, tenant_id: str, agent_app_instance_id: str) -> Optional[str]:
-        # ``tenant_id`` is part of the MsalAuth.get_agentic_application_token
-        # contract we are overriding (the SDK always passes it positionally), but
-        # this DefaultAzureCredential/FMI flow derives the tenant from the
-        # federated-identity exchange, so we do not read it here.
-        del tenant_id
-        from azure.identity.aio import DefaultAzureCredential
+    async def get_token_via_managed_identity(
+        self: object, _tenant_id: str, agent_app_instance_id: str
+    ) -> Optional[str]:
+        # ``_tenant_id`` is part of the MsalAuth.get_agentic_application_token
+        # signature we are overriding (the SDK passes it positionally). The FMI
+        # exchange derives the tenant from the managed identity itself, so it is
+        # intentionally unused here.
+        from azure.identity.aio import ManagedIdentityCredential
 
         if not agent_app_instance_id:
             # pylint: disable=import-error,no-name-in-module
@@ -77,20 +79,23 @@ def _apply_msal_patches() -> None:
 
             raise ValueError(str(authentication_errors.AgentApplicationInstanceIdRequired))
 
+        msal_configuration = getattr(self, MsalPatch.MSAL_CONFIGURATION_ATTR, None)
+        client_id: Optional[str] = getattr(msal_configuration, MsalPatch.MSAL_CLIENT_ID_ATTR, None)
+
         logger.info(
-            "Acquiring agentic application token via DefaultAzureCredential for agent_app_instance_id=%s",
+            "Acquiring agentic application token via ManagedIdentityCredential for agent_app_instance_id=%s",
             agent_app_instance_id,
         )
 
-        msal_configuration = getattr(self, MsalPatch.MSAL_CONFIGURATION_ATTR, None)
-        client_id: Optional[str] = getattr(msal_configuration, MsalPatch.MSAL_CLIENT_ID_ATTR, None)
-        credential_kwargs: dict[str, object] = {
-            MsalPatch.IDENTITY_CONFIG_KEY: {MsalPatch.FMI_PATH_KEY: agent_app_instance_id},
-        }
-        if client_id:
-            credential_kwargs[MsalPatch.MANAGED_IDENTITY_CLIENT_ID_KEY] = client_id
-
-        credential = DefaultAzureCredential(**credential_kwargs)
+        # Use ManagedIdentityCredential rather than DefaultAzureCredential: in a
+        # hosted container the agentic token must come from the container's managed
+        # identity. ManagedIdentityCredential supports the FMI ``identity_config``
+        # exchange but has no credential fallback chain, so it cannot silently pick
+        # up an unintended identity (for example a developer's Azure CLI login).
+        credential = ManagedIdentityCredential(
+            client_id=client_id or None,
+            identity_config={MsalPatch.FMI_PATH_KEY: agent_app_instance_id},
+        )
         try:
             token = await credential.get_token(MsalPatch.TOKEN_EXCHANGE_SCOPE)
             return token.token
@@ -104,11 +109,11 @@ def _apply_msal_patches() -> None:
             try:
                 await credential.close()
             except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug("Error closing DefaultAzureCredential", exc_info=True)
+                logger.debug("Error closing ManagedIdentityCredential", exc_info=True)
 
-    MsalAuth.get_agentic_application_token = get_token_via_dac
+    MsalAuth.get_agentic_application_token = get_token_via_managed_identity
     setattr(MsalAuth, MsalPatch.PATCH_FLAG, True)
-    logger.info("Patched MsalAuth.get_agentic_application_token -> DefaultAzureCredential")
+    logger.info("Patched MsalAuth.get_agentic_application_token -> ManagedIdentityCredential")
 
 
 def build_m365_app(

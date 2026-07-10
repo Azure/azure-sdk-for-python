@@ -429,20 +429,20 @@ def _patched_msal_auth():
 
 
 def test_fmi_token_exchange_success(monkeypatch, _patched_msal_auth, caplog):
-    """The patched token method mints a token via DefaultAzureCredential, logs an
-    INFO acquisition line, passes the FMI path, and closes the credential."""
+    """The patched token method mints a token via ManagedIdentityCredential, logs
+    an INFO acquisition line, passes the FMI path, and closes the credential."""
     import logging
 
     import azure.identity.aio as aio
 
-    monkeypatch.setattr(aio, "DefaultAzureCredential", _FakeCredential)
+    monkeypatch.setattr(aio, "ManagedIdentityCredential", _FakeCredential)
     _FakeCredential.last_kwargs = {}
 
     with caplog.at_level(logging.INFO, logger="azure.ai.agentserver.activity.bridge"):
         token = _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1"))
 
     assert token == "fmi-token-123"
-    assert _FakeCredential.last_kwargs[MsalPatch.IDENTITY_CONFIG_KEY] == {MsalPatch.FMI_PATH_KEY: "agent-instance-1"}
+    assert _FakeCredential.last_kwargs["identity_config"] == {MsalPatch.FMI_PATH_KEY: "agent-instance-1"}
     assert any("agent-instance-1" in r.message for r in caplog.records)
 
 
@@ -451,7 +451,7 @@ def test_fmi_token_exchange_includes_client_id_when_configured(monkeypatch, _pat
     managed identity client id."""
     import azure.identity.aio as aio
 
-    monkeypatch.setattr(aio, "DefaultAzureCredential", _FakeCredential)
+    monkeypatch.setattr(aio, "ManagedIdentityCredential", _FakeCredential)
     _FakeCredential.last_kwargs = {}
 
     msal_config = types.SimpleNamespace(**{MsalPatch.MSAL_CLIENT_ID_ATTR: "mi-client-77"})
@@ -460,7 +460,7 @@ def test_fmi_token_exchange_includes_client_id_when_configured(monkeypatch, _pat
     token = _run(_patched_msal_auth.get_agentic_application_token(fake_self, "tenant-x", "agent-instance-1"))
 
     assert token == "fmi-token-123"
-    assert _FakeCredential.last_kwargs[MsalPatch.MANAGED_IDENTITY_CLIENT_ID_KEY] == "mi-client-77"
+    assert _FakeCredential.last_kwargs["client_id"] == "mi-client-77"
 
 
 def test_fmi_token_exchange_requires_instance_id(_patched_msal_auth):
@@ -473,7 +473,7 @@ def test_fmi_token_exchange_returns_none_on_error(monkeypatch, _patched_msal_aut
     """A credential failure is swallowed and returns None (no token minted)."""
     import azure.identity.aio as aio
 
-    monkeypatch.setattr(aio, "DefaultAzureCredential", _RaisingCredential)
+    monkeypatch.setattr(aio, "ManagedIdentityCredential", _RaisingCredential)
 
     token = _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1"))
 

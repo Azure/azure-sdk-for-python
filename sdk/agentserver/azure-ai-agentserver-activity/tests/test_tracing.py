@@ -4,7 +4,6 @@
 """Tracing and baggage tests for the activity protocol host."""
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
@@ -26,7 +25,7 @@ def _ensure_real_tracer_provider():
 
 
 @pytest.mark.asyncio
-async def test_activity_sets_baggage_values_per_request():
+async def test_activity_sets_baggage_values_per_request(asgi_client):
     async def handle(_request):
         return JSONResponse(
             {
@@ -36,8 +35,7 @@ async def test_activity_sets_baggage_values_per_request():
         )
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages?agent_session_id=session-from-query",
             json={"type": "message", "text": "hello", "conversation": {"id": "conv-42"}},
@@ -51,7 +49,7 @@ async def test_activity_sets_baggage_values_per_request():
 
 
 @pytest.mark.asyncio
-async def test_traceparent_is_propagated_to_handler_child_span():
+async def test_traceparent_is_propagated_to_handler_child_span(asgi_client):
     handler_tracer = trace.get_tracer("test.activity.handler")
 
     observed = {"trace_id": "", "parent_span_id": ""}
@@ -74,8 +72,7 @@ async def test_traceparent_is_propagated_to_handler_child_span():
         }
         inject(headers)
 
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        async with asgi_client(app) as client:
             resp = await client.post(
                 "/activity/messages",
                 json={"type": "message", "text": "hello"},

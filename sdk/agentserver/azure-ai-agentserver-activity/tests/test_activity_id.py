@@ -6,20 +6,18 @@
 import uuid
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 
 @pytest.mark.asyncio
-async def test_provided_activity_id_is_used():
+async def test_provided_activity_id_is_used(asgi_client):
     async def handle(_request):
         return JSONResponse({"ok": True})
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "message", "text": "hi", "id": "my-activity-123"},
@@ -31,13 +29,12 @@ async def test_provided_activity_id_is_used():
 
 
 @pytest.mark.asyncio
-async def test_missing_activity_id_generates_uuid():
+async def test_missing_activity_id_generates_uuid(asgi_client):
     async def handle(_request):
         return JSONResponse({"ok": True})
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "message", "text": "hi"},
@@ -51,13 +48,12 @@ async def test_missing_activity_id_generates_uuid():
 
 
 @pytest.mark.asyncio
-async def test_oversized_activity_id_falls_back_to_uuid():
+async def test_oversized_activity_id_falls_back_to_uuid(asgi_client):
     async def handle(_request):
         return JSONResponse({"ok": True})
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "message", "text": "hi", "id": "x" * 300},
@@ -71,13 +67,12 @@ async def test_oversized_activity_id_falls_back_to_uuid():
 
 
 @pytest.mark.asyncio
-async def test_malformed_activity_id_falls_back_to_uuid():
+async def test_malformed_activity_id_falls_back_to_uuid(asgi_client):
     async def handle(_request):
         return JSONResponse({"ok": True})
 
     app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+    async with asgi_client(app) as client:
         resp = await client.post(
             "/activity/messages",
             json={"type": "message", "text": "hi", "id": "id with spaces & <script>"},
