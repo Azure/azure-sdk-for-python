@@ -9,7 +9,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_job
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml._restclient.v2023_04_01_preview import models
+from azure.ai.ml._restclient.arm_ml_service import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType, GitProperties
 from azure.ai.ml.entities._builders import Command
@@ -285,7 +285,7 @@ class TestJobOperations:
         the correct experiment_name / run_id and a CreateRun body carrying the supplied fields.
         The returned entity must also be routed through _resolve_azureml_id so callers get the
         same resolved view they'd get from jobs.get()."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 
         fake_job = Mock()
         fake_job.properties.job_type = RestJobType.COMMAND
@@ -333,7 +333,7 @@ class TestJobOperations:
     ) -> None:
         """PIPELINE jobs must be re-fetched via _get_job_2401 to obtain the non-projected view
         before the RunHistory PATCH is issued. The refreshed entity is then resolved."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 
         pipeline_job = Mock()
         pipeline_job.properties.job_type = RestJobType.PIPELINE
@@ -359,7 +359,7 @@ class TestJobOperations:
     ) -> None:
         """A pipeline child job (properties is None on the 2401 view) must raise
         PipelineChildJobError and must NOT issue any RunHistory PATCH."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
         from azure.ai.ml.exceptions import PipelineChildJobError
 
         parent_view = Mock()
@@ -393,7 +393,7 @@ class TestJobOperations:
         """For a Job that was previously fetched (has an ARM id) and is being resubmitted with
         only metadata edits (no compute/experiment_name change), create_or_update must route
         through the RunHistory PATCH shortcut and skip the legacy MFE PUT round-trip."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 
         fake_job = Mock()
         fake_job.properties.job_type = RestJobType.COMMAND
@@ -437,7 +437,7 @@ class TestJobOperations:
     def test_parse_corrupt_job_data(self, mocker: MockFixture, corrupt_job_data: str) -> None:
         with open(corrupt_job_data, "r") as f:
             resource = json.load(f)
-        resource = models.JobBase.deserialize(resource)
+        resource = models.JobBase._deserialize(resource, [])
         with pytest.raises(Exception, match="Unknown search space type"):
             # Convert from REST object
             Job._from_rest_object(resource)

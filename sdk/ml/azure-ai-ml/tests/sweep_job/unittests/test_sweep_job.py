@@ -48,9 +48,7 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm="random",
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs={
                 "input1": {
                     "path": "top_level.csv",
@@ -87,9 +85,7 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm="random",
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs=None,
         )
         rest = sweep._to_rest_object()
@@ -125,19 +121,14 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm=sampling_algorithm,
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs={"input1": {"file": "top_level.csv", "mode": "ro_mount"}},
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
         )
 
         rest = sweep._to_rest_object()
-        assert (
-            rest.properties.sampling_algorithm.sampling_algorithm_type
-            == expected_rest_type
-        )
+        assert rest.properties.sampling_algorithm.sampling_algorithm_type == expected_rest_type
 
     @pytest.mark.parametrize(
         "sampling_algorithm, expected_from_rest_type",
@@ -150,9 +141,7 @@ class TestSweepJob:
             (BayesianSamplingAlgorithm(), "bayesian"),
         ],
     )
-    def test_sampling_algorithm_from_rest(
-        self, sampling_algorithm, expected_from_rest_type
-    ):
+    def test_sampling_algorithm_from_rest(self, sampling_algorithm, expected_from_rest_type):
         command_job = CommandJob(
             code=Code(base_path="./src"),
             command="python train.py --ss {search_space.ss}",
@@ -166,9 +155,7 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm=sampling_algorithm,
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs={"input1": Input(path="trial.csv")},
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
@@ -207,9 +194,7 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm=random_sampling_algorithm,
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs={"input1": Input(path="trial.csv")},
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
@@ -285,9 +270,7 @@ class TestSweepJob:
             command="echo ${{inputs.uri}} ${{search_space.lr}} ${{search_space.lr2}}",
             distribution=MpiDistribution(),
             environment_variables={"EVN1": "VAR1"},
-            resources=JobResourceConfiguration(
-                instance_count=2, instance_type="STANDARD_BLA"
-            ),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
             code="./",
         )
 
@@ -351,9 +334,7 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm="random",
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs={
                 "input1": {
                     "path": "top_level.csv",
@@ -367,11 +348,7 @@ class TestSweepJob:
         )
 
         rest_obj = sweep._to_rest_object()
-        (
-            rest_obj.properties.trial.distribution == distribution._to_rest_object()
-            if distribution
-            else None
-        )
+        (rest_obj.properties.trial.distribution == distribution._to_rest_object() if distribution else None)
 
         # validate from rest scenario
         sweep_job: SweepJob = Job._from_rest_object(rest_obj)
@@ -404,9 +381,7 @@ class TestSweepJob:
         sweep = SweepJob(
             sampling_algorithm="random",
             trial=command_job,
-            search_space={
-                "ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])
-            },
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
             inputs={
                 "input1": {
                     "path": "top_level.csv",
@@ -421,11 +396,7 @@ class TestSweepJob:
         )
 
         rest_obj = sweep._to_rest_object()
-        (
-            rest_obj.properties.get("resources") == resources._to_rest_object()
-            if resources
-            else None
-        )
+        (rest_obj.properties.get("resources") == resources._to_rest_object() if resources else None)
 
         # validate from rest scenario
         sweep_job: SweepJob = Job._from_rest_object(rest_obj)
@@ -436,12 +407,6 @@ class TestSweepJob:
         assert sweep_job.identity == sweep.identity
         if sweep_job.resources:
             if "instance_type" in sweep.resources:
-                assert (
-                    sweep_job.resources.instance_type
-                    == sweep.resources["instance_type"]
-                )
+                assert sweep_job.resources.instance_type == sweep.resources["instance_type"]
             if "instance_count" in sweep.resources:
-                assert (
-                    sweep_job.resources.instance_count
-                    == sweep.resources["instance_count"]
-                )
+                assert sweep_job.resources.instance_count == sweep.resources["instance_count"]

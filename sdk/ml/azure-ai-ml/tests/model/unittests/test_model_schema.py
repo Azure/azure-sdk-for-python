@@ -77,10 +77,8 @@ class TestModelSchema:
             "systemData": {},
         }
 
-        # intellectual_property is a workspace-model field (v2023_08); deserialize into that model for this test.
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelVersion as ModelVersion2308
-
-        from_rest_ipp_model = Model._from_rest_object(ModelVersion2308.deserialize(rest_ipp_model))
+        # intellectual_property is preserved on the arm hybrid model as a camelCase mapping key.
+        from_rest_ipp_model = Model._from_rest_object(ModelVersion._deserialize(rest_ipp_model, []))
 
         assert from_rest_ipp_model._intellectual_property
         assert from_rest_ipp_model._intellectual_property.protection_level == "All"

@@ -9,7 +9,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import load_compute
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource, ImageMetadata
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
+from azure.ai.ml._restclient.arm_ml_service.models import DataFactory
 from azure.ai.ml.constants._compute import CustomApplicationDefaults
 from azure.ai.ml.entities import (
     AmlCompute,
@@ -227,7 +227,7 @@ class TestComputeEntity:
         # client, so ``_from_rest_object`` must read the 2023-08 typed attributes (enableRootAccess /
         # releaseQuotaOnStop / enableOSPatching) -- not only the arm-hybrid wire keys produced by the
         # entity's own ``_to_rest_object`` round-trip. Guards the read path that only e2e exercised.
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+        from azure.ai.ml._restclient.arm_ml_service.models import (
             ComputeInstance as MsrestComputeInstance,
             ComputeInstanceProperties as MsrestComputeInstanceProperties,
             ComputeResource as MsrestComputeResource,
@@ -255,7 +255,7 @@ class TestComputeEntity:
         # ``AmlCompute._load_from_rest`` reads ``createdOn`` from the msrest ``additional_properties`` bag
         # (the v2023_08 response carries it as an undeclared field). Guards against assuming the arm-hybrid
         # mapping shape on the real ops response.
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+        from azure.ai.ml._restclient.arm_ml_service.models import (
             AmlCompute as MsrestAmlCompute,
             AmlComputeProperties as MsrestAmlComputeProperties,
             ComputeResource as MsrestComputeResource,

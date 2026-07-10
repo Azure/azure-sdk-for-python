@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import BatchDeployment as RestBatchDeployment
+from azure.ai.ml._restclient.arm_ml_service.models import BatchDeployment as RestBatchDeployment
 from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._load_functions import load_pipeline_component_batch_deployment

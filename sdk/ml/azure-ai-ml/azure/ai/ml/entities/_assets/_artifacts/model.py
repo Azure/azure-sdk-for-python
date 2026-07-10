@@ -189,6 +189,12 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                         DeploymentTemplateReference(asset_id=getattr(item, "asset_id", None))
                     )
 
+        # Handle intellectual_property (attribute for msrest models, camelCase mapping key for arm hybrid
+        # models returned by the shared arm_ml_service client).
+        _ip_rest = getattr(rest_model_version, "intellectual_property", None)
+        if _ip_rest is None and isinstance(rest_model_version, Mapping):
+            _ip_rest = rest_model_version.get("intellectualProperty")
+
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -203,11 +209,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=(
-                IntellectualProperty._from_rest_object(getattr(rest_model_version, "intellectual_property", None))
-                if getattr(rest_model_version, "intellectual_property", None)
-                else None
-            ),
+            intellectual_property=(IntellectualProperty._from_rest_object(_ip_rest) if _ip_rest else None),
             system_metadata=model_system_metadata,
             default_deployment_template=default_deployment_template,
             allowed_deployment_templates=allowed_deployment_templates,

@@ -10,7 +10,7 @@ from azure.ai.ml import load_batch_deployment, load_online_deployment
 from azure.ai.ml._restclient.arm_ml_service.models import BatchDeployment as BatchDeploymentData
 from azure.ai.ml._restclient.arm_ml_service.models import BatchOutputAction, EndpointComputeType
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import BatchPipelineComponentDeploymentConfiguration
 from azure.ai.ml._restclient.arm_ml_service.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )

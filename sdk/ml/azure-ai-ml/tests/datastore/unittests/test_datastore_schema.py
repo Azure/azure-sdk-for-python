@@ -4,7 +4,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
 from azure.ai.ml._restclient.arm_ml_service import models as models_arm
-from azure.ai.ml._restclient.v2023_04_01_preview import models as models_preview
+from azure.ai.ml._restclient.arm_ml_service import models as models_preview
 from azure.ai.ml._restclient.arm_ml_service.models import AzureBlobDatastore as RestAzureBlobDatastore
 from azure.ai.ml._restclient.arm_ml_service.models import (
     AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore,

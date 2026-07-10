@@ -6,7 +6,7 @@
 Context (production regression, azure-ai-ml 1.34.0/1.35.0):
 ``DatastoreOperations.create_or_update`` was migrated to the arm_ml_service client (its operation
 serializes the request body with ``json.dumps(body, cls=SdkJSONEncoder, ...)``), but the datastore
-ENTITIES still returned an old ``v2023_04_01_preview`` msrest ``Datastore`` model. ``SdkJSONEncoder``
+ENTITIES still returned an old per-version msrest ``Datastore`` model. ``SdkJSONEncoder``
 can only serialize arm hybrid models, so a msrest datastore body raised
 ``TypeError: Object of type Datastore is not JSON serializable`` on every create/update — a hard
 failure for customers, invisible to the mocked unit tests and the (skipped/live-only) e2e tests.
