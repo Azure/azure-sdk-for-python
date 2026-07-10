@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023Preview
-from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentVersion, ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentContainer, EnvironmentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -32,9 +32,13 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
+    get_registry_container_asset,
+    get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
+    list_registry_assets,
 )
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
@@ -128,11 +132,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 if isinstance(environment, WorkspaceAssetReference):
                     # verify that environment is not already in registry
                     try:
-                        self._version_operations.get(
-                            name=environment.name,
-                            version=environment.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
+                        get_registry_versioned_asset(
+                            self._registry_service_client,
+                            "environments",
+                            environment.name,
+                            environment.version,
+                            self._resource_group_name,
+                            self._registry_name,
                         )
                     except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
@@ -185,14 +191,18 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
-                self._version_operations.begin_create_or_update(
-                    name=environment.name,
-                    version=environment.version,
-                    registry_name=self._registry_name,
-                    body=env_version_resource,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                ).result()
+                EnvironmentVersion._deserialize(
+                    begin_create_or_update_registry_versioned_asset(
+                        self._registry_service_client,
+                        "environments",
+                        environment.name,
+                        environment.version,
+                        self._operation_scope.resource_group_name,
+                        self._registry_name,
+                        env_version_resource,
+                    ),
+                    [],
+                )
                 if self._registry_name
                 else self._version_operations.create_or_update(
                     name=environment.name,
@@ -234,12 +244,16 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersion:
         if version:
             return (
-                self._version_operations.get(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                    **self._kwargs,
+                EnvironmentVersion._deserialize(
+                    get_registry_versioned_asset(
+                        self._registry_service_client,
+                        "environments",
+                        name,
+                        version,
+                        self._resource_group_name,
+                        self._registry_name,
+                    ),
+                    [],
                 )
                 if self._registry_name
                 else self._version_operations.get(
@@ -251,11 +265,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
         return (
-            self._containers_operations.get(
-                name=name,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-                **self._kwargs,
+            EnvironmentContainer._deserialize(
+                get_registry_container_asset(
+                    self._registry_service_client,
+                    "environments",
+                    name,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._containers_operations.get(
@@ -347,12 +365,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Environment],
                 (
-                    self._version_operations.list(
-                        name=name,
-                        registry_name=self._registry_name,
-                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
-                        **self._scope_kwargs,
-                        **self._kwargs,
+                    list_registry_assets(
+                        self._registry_service_client,
+                        "environments",
+                        name,
+                        self._resource_group_name,
+                        self._registry_name,
+                        EnvironmentVersion,
+                        Environment._from_rest_object,
                     )
                     if self._registry_name
                     else self._version_operations.list(
@@ -368,11 +388,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Environment],
             (
-                self._containers_operations.list(
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                    **self._scope_kwargs,
-                    **self._kwargs,
+                list_registry_assets(
+                    self._registry_service_client,
+                    "environments",
+                    None,
+                    self._resource_group_name,
+                    self._registry_name,
+                    EnvironmentContainer,
+                    Environment._from_container_rest_object,
                 )
                 if self._registry_name
                 else self._containers_operations.list(
