@@ -57,6 +57,7 @@ opentelemetry-instrumentation-psycopg2
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-urllib
 opentelemetry-instrumentation-urllib3
+opentelemetry-instrumentation-httpx
 opentelemetry-resource-detector-azure
 azure-nspkg
 azure-ai-nspkg
