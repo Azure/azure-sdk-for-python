@@ -201,6 +201,8 @@ class ModelOperations(_ScopeDependentOperations):
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
                     registry_name=self._registry_name,
+                    registry_service_client=self._registry_service_client,
+                    asset_plural="models",
                 )
 
             version = model.version

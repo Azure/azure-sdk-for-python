@@ -765,25 +765,27 @@ def _get_next_version_from_container(
     resource_group_name: str,
     workspace_name: str,
     registry_name: str = None,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
     **kwargs,
 ) -> str:
     try:
-        container = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                **kwargs,
+        if registry_name:
+            # Byte-identical to the legacy v2021_10 registry container GET (same MFE endpoint + api-version).
+            from azure.ai.ml._utils._registry_utils import get_registry_container_asset
+
+            container = get_registry_container_asset(
+                registry_service_client, asset_plural, name, resource_group_name, registry_name
             )
-            if registry_name
-            else container_operation.get(
+            version = container["properties"]["nextVersion"]
+        else:
+            container = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 **kwargs,
             )
-        )
-        version = container.properties.next_version
+            version = container.properties.next_version
 
     except ResourceNotFoundError:
         version = "1"
@@ -796,26 +798,28 @@ def _get_next_latest_versions_from_container(
     resource_group_name: str,
     workspace_name: str,
     registry_name: str = None,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
     **kwargs,
 ) -> str:
     try:
-        container = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                **kwargs,
+        if registry_name:
+            from azure.ai.ml._utils._registry_utils import get_registry_container_asset
+
+            container = get_registry_container_asset(
+                registry_service_client, asset_plural, name, resource_group_name, registry_name
             )
-            if registry_name
-            else container_operation.get(
+            next_version = container["properties"]["nextVersion"]
+            latest_version = container["properties"]["latestVersion"]
+        else:
+            container = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 **kwargs,
             )
-        )
-        next_version = container.properties.next_version
-        latest_version = container.properties.latest_version
+            next_version = container.properties.next_version
+            latest_version = container.properties.latest_version
 
     except ResourceNotFoundError:
         next_version = "1"
@@ -829,25 +833,26 @@ def _get_latest_version_from_container(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
     **kwargs,
 ) -> str:
     try:
-        container = (
-            container_operation.get(
-                name=asset_name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                **kwargs,
+        if registry_name:
+            from azure.ai.ml._utils._registry_utils import get_registry_container_asset
+
+            container = get_registry_container_asset(
+                registry_service_client, asset_plural, asset_name, resource_group_name, registry_name
             )
-            if registry_name
-            else container_operation.get(
+            version = container["properties"]["latestVersion"]
+        else:
+            container = container_operation.get(
                 name=asset_name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 **kwargs,
             )
-        )
-        version = container.properties.latest_version
+            version = container.properties.latest_version
 
     except ResourceNotFoundError as e:
         message = (
