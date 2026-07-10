@@ -23,9 +23,6 @@ from azure.ai.ml._artifacts._constants import (
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._restclient.arm_ml_service.models import ModelContainer as ArmModelContainer
@@ -113,7 +110,7 @@ class ModelOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         service_client_model_dataplane: ServiceClientModelDataPlane = None,
         all_operations: Optional[OperationsContainer] = None,

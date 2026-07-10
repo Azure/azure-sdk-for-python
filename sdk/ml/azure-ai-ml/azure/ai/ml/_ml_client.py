@@ -549,7 +549,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             (
-                self._service_client_10_2021_dataplanepreview
+                self._service_client_registry_arm
                 if registry_name or registry_reference
                 else self._service_client_08_2023_preview
             ),
@@ -568,7 +568,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             (
-                self._service_client_10_2021_dataplanepreview
+                self._service_client_registry_arm
                 if registry_name or registry_reference
                 else self._service_client_08_2023_preview
             ),
