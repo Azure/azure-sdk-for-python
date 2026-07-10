@@ -1,10 +1,12 @@
 {
     "ignoreWords": [
         "agentserver",
+        "MAIB",
         "openapi",
         "paramtype",
         "rtype",
-        "starlette"
+        "starlette",
+        "TENANTID"
     ],
     "ignorePaths": [
         "*.csv",

@@ -35,8 +35,8 @@ def get_hosted_agent_env(*, digital_worker: bool = False) -> dict[str, str]:
         from azure.ai.agentserver.activity import get_hosted_agent_env
         from microsoft_agents.activity import load_configuration_from_env
 
-        environm = get_hosted_agent_env()
-        agents_sdk_config = load_configuration_from_env(environm)
+        env = get_hosted_agent_env()
+        agents_sdk_config = load_configuration_from_env(env)
 
     The identity source differs by auth model:
 
