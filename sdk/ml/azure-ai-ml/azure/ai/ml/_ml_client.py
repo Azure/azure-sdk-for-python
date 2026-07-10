@@ -22,7 +22,6 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import configure_appinsights_logging
@@ -100,6 +99,7 @@ ServiceClient102022Preview = partial(MachineLearningServicesMgmtClient, api_vers
 ServiceClient022023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-02-01-preview")
 ServiceClient042023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-04-01-preview")
 ServiceClient062023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-06-01-preview")
+ServiceClient082023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-08-01-preview")
 ServiceClient012025Preview = partial(MachineLearningServicesMgmtClient, api_version="2025-01-01-preview")
 ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_version="2024-10-01-preview")
 # arm_ml_service-backed client pinned to the 2024-04-01-preview wire api-version. Used by the workspace

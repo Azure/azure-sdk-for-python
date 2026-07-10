@@ -7,7 +7,7 @@
 from os import PathLike
 from typing import Any, Dict, Iterable, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient082023Preview
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
 from azure.ai.ml._scope_dependent_operations import (
@@ -43,9 +43,8 @@ class EvaluatorOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources (ServiceClient082023Preview).
-    :type service_client: typing.Union[
-        azure.ai.ml._restclient.v2023_08_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient]
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.

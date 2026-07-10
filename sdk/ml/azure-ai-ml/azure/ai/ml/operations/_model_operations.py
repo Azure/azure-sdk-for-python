@@ -23,11 +23,11 @@ from azure.ai.ml._artifacts._constants import (
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient082023Preview
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._restclient.arm_ml_service.models import ModelContainer as ArmModelContainer
 from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelVersion
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -48,6 +48,7 @@ from azure.ai.ml._utils._registry_utils import (
     begin_create_or_update_registry_versioned_asset,
     begin_import_registry_asset,
     begin_package_registry_model,
+    begin_package_workspace_model,
     get_asset_body_for_registry_storage,
     get_registry_client,
     get_registry_container_asset,
@@ -92,10 +93,9 @@ class ModelOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient082023Preview).
-    :type service_client: typing.Union[
-        azure.ai.ml._restclient.v2023_08_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient]
+        resources.
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
@@ -843,26 +843,31 @@ class ModelOperations(_ScopeDependentOperations):
             package_request = package_request._to_rest_object()
 
         if self._registry_reference:
-            package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
+            package_request["targetEnvironmentId"] = (
+                f"azureml://locations/{self._operation_scope._workspace_location}"
+                f"/workspaces/{self._operation_scope._workspace_id}/environments/"
+                f"{package_request.get('targetEnvironmentId')}"
+            )
         if self._registry_name or self._registry_reference:
             # Byte-identical to the legacy v2021_10 registry ``begin_package`` (same MFE endpoint + api-version + wire body).
-            package_body = package_request.serialize() if hasattr(package_request, "serialize") else package_request
             package_out = begin_package_registry_model(
                 self._registry_service_client,
                 name,
                 version,
                 self._resource_group_name,
                 self._registry_name if self._registry_name else self._registry_reference,
-                package_body,
+                package_request,
             )
         else:
-            package_out = self._model_versions_operation.begin_package(
-                name=name,
-                version=version,
-                workspace_name=self._workspace_name,
-                body=package_request,
-                **self._scope_kwargs,
-            ).result()
+            # arm model_versions has no begin_package; issue the byte-identical workspace LRO via send_request.
+            package_out = begin_package_workspace_model(
+                self._service_client,
+                name,
+                version,
+                self._resource_group_name,
+                self._workspace_name,
+                package_request,
+            )
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
         if isinstance(package_out, dict):
@@ -884,7 +889,9 @@ class ModelOperations(_ScopeDependentOperations):
             environment_version = parsed_id.asset_version
 
         module_logger.info("\nPackage Created")
-        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
+        if package_out is not None and (
+            isinstance(package_out, dict) or package_out.__class__.__name__ == "PackageResponse"
+        ):
             if self._registry_name:
                 current_rg = self._scope_kwargs.pop("resource_group_name", None)
                 self._scope_kwargs["resource_group_name"] = self._workspace_rg

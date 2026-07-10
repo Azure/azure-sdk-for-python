@@ -4,9 +4,8 @@
 
 # pylint: disable=redefined-builtin
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
 from azure.ai.ml._schema.assets.package.base_environment_source import BaseEnvironmentSourceSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -38,11 +37,18 @@ class BaseEnvironment:
         self.resource_id = resource_id
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestBaseEnvironmentId) -> "RestBaseEnvironmentId":
+    def _from_rest_object(cls, rest_obj: Any) -> "BaseEnvironment":
+        if isinstance(rest_obj, dict):
+            return BaseEnvironment(
+                type=rest_obj.get("baseEnvironmentSourceType"), resource_id=rest_obj.get("resourceId")
+            )
         return BaseEnvironment(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
 
     def _to_dict(self) -> Dict:
         return dict(BaseEnvironmentSourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
-    def _to_rest_object(self) -> RestBaseEnvironmentId:
-        return RestBaseEnvironmentId(base_environment_source_type=self.type, resource_id=self.resource_id)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        rest: Dict[str, Any] = {"baseEnvironmentSourceType": self.type}
+        if self.resource_id is not None:
+            rest["resourceId"] = self.resource_id
+        return rest

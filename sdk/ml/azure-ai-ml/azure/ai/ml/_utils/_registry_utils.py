@@ -450,6 +450,57 @@ def begin_package_registry_model(
     return LROPoller(service_client._client, raw_result, get_long_running_output, polling_method).result()
 
 
+def begin_package_workspace_model(
+    service_client, name, version, resource_group, workspace_name, body, *, polling_interval=None
+) -> dict:
+    """Byte-identical workspace model ``begin_package`` LRO.
+
+    POST ``.../workspaces/{workspace_name}/models/{name}/versions/{version}/package`` at api-version
+    2023-08-01-preview. Mirrors the legacy v2023_08 ``ModelVersionsOperations.begin_package`` (same URL,
+    api-version, JSON body, and 200/202 LRO handling) using the shared arm hybrid client's ``send_request``
+    pipeline, so no per-version msrest client is required.
+
+    :param service_client: The hybrid arm client bound to the workspace control-plane endpoint.
+    :param name: Model name.
+    :param version: Model version.
+    :param resource_group: Resource group name.
+    :param workspace_name: Workspace name.
+    :param body: The camelCase package-request wire dict.
+    :keyword polling_interval: Optional poll interval override.
+    :return: The raw camelCase final ``PackageResponse`` body.
+    :rtype: dict
+    """
+    subscription_id = service_client._config.subscription_id
+    request = HttpRequest(
+        "POST",
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"
+        f"/models/{name}/versions/{version}/package",
+        params={"api-version": "2023-08-01-preview"},
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        json=body,
+    )
+    path_format_arguments = {
+        "endpoint": service_client._serialize.url(
+            "self._config.base_url", service_client._config.base_url, "str", skip_quote=True
+        ),
+    }
+    request.url = service_client._client.format_url(request.url, **path_format_arguments)
+    raw_result = service_client._client._pipeline.run(request, stream=True)
+    response = raw_result.http_response
+    response.read()
+    if response.status_code not in [200, 202]:
+        response.raise_for_status()
+
+    def get_long_running_output(pipeline_response):
+        http_response = pipeline_response.http_response
+        return http_response.json() if http_response.text() else None
+
+    interval = polling_interval if polling_interval is not None else service_client._config.polling_interval
+    polling_method = ARMPolling(interval, path_format_arguments=path_format_arguments)
+    return LROPoller(service_client._client, raw_result, get_long_running_output, polling_method).result()
+
+
 def begin_import_registry_asset(
     service_client, resource_group, registry_name, body, *, polling_cls=ARMPolling, polling_interval=None, wait=True
 ):
