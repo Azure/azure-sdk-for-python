@@ -281,8 +281,18 @@ def list_registry_assets(
 
 
 def begin_create_or_update_registry_versioned_asset(
-    service_client, asset_plural: str, name, version, resource_group, registry_name, body
-) -> dict:
+    service_client,
+    asset_plural: str,
+    name,
+    version,
+    resource_group,
+    registry_name,
+    body,
+    *,
+    polling_cls=ARMPolling,
+    polling_interval=None,
+    wait=True,
+):
     """Byte-identical registry versioned-asset create-or-update LRO (same MFE endpoint + api-version + wire body).
 
     Mirrors the arm ``begin_create_or_update`` machinery (initial PUT via the pipeline + ``LROPoller``/``ARMPolling``)
@@ -296,8 +306,13 @@ def begin_create_or_update_registry_versioned_asset(
     :param resource_group: Resource group name.
     :param registry_name: Registry name.
     :param body: The arm hybrid version model to serialize as the request body.
-    :return: The raw camelCase final response body.
-    :rtype: dict
+    :keyword polling_cls: The polling method class (defaults to ``ARMPolling``; pass ``AzureMLPolling`` to match callers
+        that stream progress).
+    :keyword polling_interval: Optional poll interval override (defaults to the client config's polling interval).
+    :keyword wait: When ``True`` (default) the LRO is awaited and the final body dict is returned; when ``False`` the
+        ``LROPoller`` is returned so the caller can drive it (e.g. via ``polling_wait``).
+    :return: The raw camelCase final response body, or the ``LROPoller`` when ``wait`` is ``False``.
+    :rtype: dict or ~azure.core.polling.LROPoller
     """
     subscription_id = service_client._config.subscription_id
     content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)
@@ -325,8 +340,12 @@ def begin_create_or_update_registry_versioned_asset(
     def get_long_running_output(pipeline_response):
         return pipeline_response.http_response.json()
 
-    polling_method = ARMPolling(service_client._config.polling_interval, path_format_arguments=path_format_arguments)
-    return LROPoller(service_client._client, raw_result, get_long_running_output, polling_method).result()
+    interval = polling_interval if polling_interval is not None else service_client._config.polling_interval
+    polling_method = polling_cls(interval, path_format_arguments=path_format_arguments)
+    poller = LROPoller(service_client._client, raw_result, get_long_running_output, polling_method)
+    if wait:
+        return poller.result()
+    return poller
 
 
 def get_asset_body_for_registry_storage(

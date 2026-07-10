@@ -27,6 +27,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
     get_registry_versioned_asset,
     list_registry_assets,
 )
@@ -532,21 +533,17 @@ class ComponentOperations(_ScopeDependentOperations):
         try:
             if self._registry_name:
                 start_time = time.time()
-                path_format_arguments = {
-                    "componentName": component.name,
-                    "resourceGroupName": self._resource_group_name,
-                    "registryName": self._registry_name,
-                }
-                poller = self._version_operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._registry_name,
-                    body=rest_component_resource,
-                    polling=AzureMLPolling(
-                        LROConfigurations.POLL_INTERVAL,
-                        path_format_arguments=path_format_arguments,
-                    ),
+                poller = begin_create_or_update_registry_versioned_asset(
+                    self._registry_service_client,
+                    "components",
+                    name,
+                    version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                    rest_component_resource,
+                    polling_cls=AzureMLPolling,
+                    polling_interval=LROConfigurations.POLL_INTERVAL,
+                    wait=False,
                 )
                 message = f"Creating/updating registry component {component.name} with version {component.version} "
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
