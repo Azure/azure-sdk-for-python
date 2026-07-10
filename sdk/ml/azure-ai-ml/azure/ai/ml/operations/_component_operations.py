@@ -14,9 +14,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012024
 from azure.ai.ml._restclient.arm_ml_service.models import ComponentContainer, ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
@@ -105,7 +102,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient012024, ServiceClient102021Dataplane],
+        service_client: ServiceClient012024,
         all_operations: OperationsContainer,
         preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,

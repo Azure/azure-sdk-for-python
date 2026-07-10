@@ -11,9 +11,6 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023Preview
 from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentContainer, EnvironmentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
@@ -75,7 +72,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         **kwargs: Any,
     ):
