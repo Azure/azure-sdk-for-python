@@ -12,7 +12,6 @@ from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtCl
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.ai.ml.exceptions import MlException
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -62,24 +61,20 @@ class RegistryDiscovery:
         self._subscription_id = response.subscription_id
         self._resource_group = response.resource_group
 
-    def get_registry_service_client(self) -> AzureMachineLearningWorkspaces:
-        self._get_registry_details()
+    def get_registry_service_client(self) -> ServiceClientModelDataPlane:
+        # The registry data-plane control client is now the arm-MFE hybrid client (see get_registry_arm_service_client);
+        # this only builds the model-dataplane client used for the create-with-system-metadata path.
+        if self._base_url is None:
+            self._get_registry_details()
         self.kwargs.pop("subscription_id", None)
         self.kwargs.pop("resource_group", None)
-        service_client_10_2021_dataplanepreview = AzureMachineLearningWorkspaces(
-            subscription_id=self._subscription_id,
-            resource_group=self._resource_group,
-            credential=self.credential,
-            base_url=self._base_url,
-            **self.kwargs,
-        )
         service_model_client_10_2021_dataplanepreview = ServiceClientModelDataPlane(
             credential=self.credential,
             subscription_id=self._subscription_id,
             base_url=self._base_url,
             **self.kwargs,
         )
-        return service_client_10_2021_dataplanepreview, service_model_client_10_2021_dataplanepreview
+        return service_model_client_10_2021_dataplanepreview
 
     def get_registry_arm_service_client(self) -> MachineLearningServicesMgmtClient:
         """Build a hybrid arm_ml_service client bound to the discovered registry MFE endpoint.
@@ -604,16 +599,14 @@ def get_registry_client(credential, registry_name, workspace_location: Optional[
     registry_discovery = RegistryDiscovery(
         credential, registry_name, service_client_registry_discovery_client, **kwargs
     )
-    service_client_10_2021_dataplanepreview, service_model_client_10_2021_dataplanepreview = (
-        registry_discovery.get_registry_service_client()
-    )
-    # Byte-identical hybrid client bound to the same discovered MFE endpoint + registry data-plane api-version.
-    # Registry consumers are being migrated off the msrest client above to this client's ``send_request``.
+    service_model_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
+    # Byte-identical hybrid client bound to the discovered MFE endpoint + registry data-plane api-version; all registry
+    # operations are driven through its ``send_request`` (the legacy v2021_10 msrest client is no longer built).
     service_client_registry_arm = registry_discovery.get_registry_arm_service_client()
     subscription_id = registry_discovery.subscription_id
     resource_group_name = registry_discovery.resource_group
     return (
-        service_client_10_2021_dataplanepreview,
+        service_client_registry_arm,
         resource_group_name,
         subscription_id,
         service_model_client_10_2021_dataplanepreview,
