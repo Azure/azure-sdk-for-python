@@ -6,11 +6,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    ModelVersionData,
-    ModelVersionDefaultDeploymentTemplate,
-    ModelVersionDetails,
-)
 from azure.ai.ml._restclient.arm_ml_service.models import (
     FlavorData,
     ModelContainer,
@@ -152,8 +147,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     @classmethod
-    def _from_rest_object(cls, model_rest_object: Union[ModelVersion, ModelVersionData]) -> "Model":
-        rest_model_version: Union[ModelVersionProperties, ModelVersionDetails] = model_rest_object.properties
+    def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
+        rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
         model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
         model_system_metadata = (
@@ -235,36 +230,12 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         model.version = None
         return model
 
-    def _to_rest_object(self) -> Union[ModelVersionData, ModelVersion]:
-        if self.default_deployment_template or self.allowed_deployment_templates:
-            model_version = ModelVersionDetails(
-                description=self.description,
-                tags=self.tags,
-                properties=self.properties,
-                flavors=(
-                    {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
-                ),
-                model_type=self.type,
-                model_uri=self.path,
-                stage=self.stage,
-                is_anonymous=self._is_anonymous or False,
-                is_archived=False,
-            )
-            model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
-
-            if self.default_deployment_template:
-                model_version.default_deployment_template = ModelVersionDefaultDeploymentTemplate(
-                    asset_id=self.default_deployment_template.asset_id
-                )
-            if self.allowed_deployment_templates:
-                model_version.allowed_deployment_templates = [
-                    ModelVersionDefaultDeploymentTemplate(asset_id=adt.asset_id)
-                    for adt in self.allowed_deployment_templates
-                ]
-            model_version_resource = ModelVersionData(properties=model_version)
-
-            return model_version_resource
-
+    def _to_rest_object(self) -> ModelVersion:
+        # arm ModelVersion for all cases. arm lacks the registry deployment-template fields, so carry them as camelCase
+        # wire keys (byte-identical to the legacy v2021_10 ``ModelVersionData``). NOTE: the legacy v2021_10
+        # ``ModelVersionDetails`` had NO ``stage`` field, so models WITH deployment templates dropped ``stage`` on the
+        # wire; that quirk is preserved by omitting ``stage`` when a deployment template is present.
+        has_deployment_template = bool(self.default_deployment_template or self.allowed_deployment_templates)
         model_version = ModelVersionProperties(
             description=self.description,
             tags=self.tags,
@@ -274,11 +245,18 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             ),  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
-            stage=self.stage,
+            stage=None if has_deployment_template else self.stage,
             is_anonymous=self._is_anonymous or False,
             is_archived=False,
         )
         model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+
+        if self.default_deployment_template:
+            model_version["defaultDeploymentTemplate"] = {"assetId": self.default_deployment_template.asset_id}
+        if self.allowed_deployment_templates:
+            model_version["allowedDeploymentTemplates"] = [
+                {"assetId": adt.asset_id} for adt in self.allowed_deployment_templates
+            ]
 
         model_version_resource = ModelVersion(properties=model_version)
 
