@@ -13,12 +13,6 @@ from urllib.parse import urlparse
 
 class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
 
-    def _print_env_debug(self):
-        print("AZURE_TEST_RUN_LIVE =", repr(os.getenv("AZURE_TEST_RUN_LIVE")))
-        print("ANALYZEDOCUMENTS_ENDPOINT =", repr(os.getenv("ANALYZEDOCUMENTS_ENDPOINT")))
-        print("ANALYZEDOCUMENTS_SOURCE_LOCATION =", repr(os.getenv("ANALYZEDOCUMENTS_SOURCE_LOCATION")))
-        print("ANALYZEDOCUMENTS_TARGET_LOCATION =", repr(os.getenv("ANALYZEDOCUMENTS_TARGET_LOCATION")))
-
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy
     def test_get_job_state(
@@ -90,11 +84,6 @@ class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
         analyzedocuments_source_location,
         analyzedocuments_target_location,
     ):
-        self._print_env_debug()
-        print("prepared analyzedocuments_endpoint =", analyzedocuments_endpoint)
-        print("prepared analyzedocuments_source_location =", analyzedocuments_source_location)
-        print("prepared analyzedocuments_target_location =", analyzedocuments_target_location)
-
         client = self.create_client(endpoint=analyzedocuments_endpoint)
 
         poller = client.begin_submit_job(
