@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pytest
 
-from azure.ai.agentserver.responses.models._generated import (
+from azure.ai.extensions.openai.responses import (
     CreateResponse,
     ItemMessage,
     MessageContentInputTextContent,
@@ -35,8 +35,8 @@ def test_get_content_expanded__string_content_wraps_as_input_text() -> None:
     parts = get_content_expanded(msg)
 
     assert len(parts) == 1
-    assert isinstance(parts[0], MessageContentInputTextContent)
-    assert parts[0].text == "Hello world"
+    assert parts[0]["type"] == "input_text"
+    assert parts[0]["text"] == "Hello world"
 
 
 def test_get_content_expanded__empty_string_returns_empty_list() -> None:
@@ -51,12 +51,12 @@ def test_get_content_expanded__list_content_passes_through() -> None:
     """A list[MessageContent] should pass through unchanged."""
     msg = ItemMessage(
         role=MessageRole.USER,
-        content=[MessageContentInputTextContent(text="part1")],
+        content=[MessageContentInputTextContent(type="input_text", text="part1")],
     )
     parts = get_content_expanded(msg)
 
     assert len(parts) == 1
-    assert parts[0].text == "part1"
+    assert parts[0]["text"] == "part1"
 
 
 def test_get_content_expanded__none_content_returns_empty() -> None:
@@ -78,8 +78,8 @@ def test_get_content_expanded__dict_with_string_content() -> None:
     parts = get_content_expanded(msg)
 
     assert len(parts) == 1
-    assert isinstance(parts[0], MessageContentInputTextContent)
-    assert parts[0].text == "dict string content"
+    assert parts[0]["type"] == "input_text"
+    assert parts[0]["text"] == "dict string content"
 
 
 # ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ def test_get_input_text__mixed_string_and_list_content() -> None:
             ItemMessage(role=MessageRole.USER, content="First message"),
             ItemMessage(
                 role=MessageRole.USER,
-                content=[MessageContentInputTextContent(text="Second message")],
+                content=[MessageContentInputTextContent(type="input_text", text="Second message")],
             ),
         ],
     )
@@ -164,12 +164,11 @@ def test_get_input_expanded__normalizes_string_content_to_list() -> None:
 
     assert len(items) == 1
     msg = items[0]
-    assert isinstance(msg, ItemMessage)
     # content should now be a list, not a string
-    assert isinstance(msg.content, list)
-    assert len(msg.content) == 1
-    assert isinstance(msg.content[0], MessageContentInputTextContent)
-    assert msg.content[0].text == "expanded text"
+    assert isinstance(msg["content"], list)
+    assert len(msg["content"]) == 1
+    assert msg["content"][0]["type"] == "input_text"
+    assert msg["content"][0]["text"] == "expanded text"
 
 
 def test_get_input_expanded__list_content_unchanged() -> None:
@@ -179,15 +178,15 @@ def test_get_input_expanded__list_content_unchanged() -> None:
         input=[
             ItemMessage(
                 role=MessageRole.USER,
-                content=[MessageContentInputTextContent(text="already a list")],
+                content=[MessageContentInputTextContent(type="input_text", text="already a list")],
             ),
         ],
     )
     items = get_input_expanded(request)
 
     msg = items[0]
-    assert isinstance(msg.content, list)
-    assert msg.content[0].text == "already a list"
+    assert isinstance(msg["content"], list)
+    assert msg["content"][0]["text"] == "already a list"
 
 
 def test_get_input_expanded__string_input_shorthand_already_list() -> None:
@@ -196,6 +195,6 @@ def test_get_input_expanded__string_input_shorthand_already_list() -> None:
     items = get_input_expanded(request)
 
     msg = items[0]
-    assert isinstance(msg, ItemMessage)
-    assert isinstance(msg.content, list)
-    assert msg.content[0].text == "plain string input"
+    assert msg["type"] == "message"
+    assert isinstance(msg["content"], list)
+    assert msg["content"][0]["text"] == "plain string input"

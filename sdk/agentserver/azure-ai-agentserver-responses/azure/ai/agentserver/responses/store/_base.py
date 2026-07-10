@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
 
-from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
+from azure.ai.extensions.openai.responses import OutputItem, ResponseObject, ResponseStreamEvent
 
 if TYPE_CHECKING:
     from .._response_context import PlatformContext
@@ -35,7 +35,7 @@ class ResponseProviderProtocol(Protocol):
         """Persist a new response envelope and optional input/history references.
 
         :param response: The response envelope to persist.
-        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
+        :type response: ~azure.ai.extensions.openai.responses.ResponseObject
         :param input_items: Optional resolved output items to associate with the response.
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item IDs to link to the response.
@@ -53,7 +53,7 @@ class ResponseProviderProtocol(Protocol):
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: The response envelope matching the given ID.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
+        :rtype: ~azure.ai.extensions.openai.responses.ResponseObject
         :raises KeyError: If the response does not exist.
         """
         ...
@@ -62,7 +62,7 @@ class ResponseProviderProtocol(Protocol):
         """Persist an updated response envelope.
 
         :param response: The response envelope with updated fields to persist.
-        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
+        :type response: ~azure.ai.extensions.openai.responses.ResponseObject
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :rtype: None
@@ -165,7 +165,7 @@ class ResponseStreamProviderProtocol(Protocol):
         """Persist the complete ordered list of SSE events for a response.
 
         Called once when the background+stream response reaches terminal state.
-        The *events* list contains ``ResponseStreamEvent`` model instances.
+        The *events* list contains ``ResponseStreamEvent`` wire payloads.
 
         :param response_id: The unique identifier of the response.
         :type response_id: str

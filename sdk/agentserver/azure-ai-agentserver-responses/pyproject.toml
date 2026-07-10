@@ -19,6 +19,7 @@ classifiers = [
 ]
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b7",
+    "azure-ai-extensions-openai>=1.0.0b1",
     "azure-core>=1.30.0",
     "isodate>=0.6.1",
     "aiohttp>=3.10.0,<4.0.0",
@@ -63,6 +64,7 @@ pythonpath = ["."]
 
 [tool.uv.sources]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-ai-extensions-openai = { path = "../../ai/azure-ai-extensions-openai", editable = true }
 azure-core = { path = "../../core/azure-core" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 

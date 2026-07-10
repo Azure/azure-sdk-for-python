@@ -27,7 +27,7 @@ import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses.models._generated import OutputItem, ResponseObject
+from azure.ai.extensions.openai.responses import OutputItem, ResponseObject
 from azure.ai.agentserver.responses.store._base import (
     ResponseProviderProtocol,
     ResponseStreamProviderProtocol,

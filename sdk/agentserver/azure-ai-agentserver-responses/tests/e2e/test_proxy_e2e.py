@@ -96,7 +96,7 @@ def _emit_text_only_handler(text: str):
 
     def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
         async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+            stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield stream.emit_created()
             yield stream.emit_in_progress()
 
@@ -119,7 +119,7 @@ def _emit_multi_output_handler(request: CreateResponse, context: ResponseContext
     """Emit 3 output items: reasoning + function_call + text message."""
 
     async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
         yield stream.emit_created()
         yield stream.emit_in_progress()
 
@@ -162,7 +162,7 @@ def _emit_failed_handler(request: CreateResponse, context: ResponseContext, canc
     """Emit created, in_progress, then failed."""
 
     async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
         yield stream.emit_created()
         yield stream.emit_in_progress()
         yield stream.emit_failed(code="server_error", message="Backend processing error")
@@ -180,7 +180,7 @@ def _make_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
 
     def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
         async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+            stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield stream.emit_created()
             yield stream.emit_in_progress()
 
@@ -193,7 +193,7 @@ def _make_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
             full_text: list[str] = []
 
             async with await upstream_client.responses.create(
-                model=request.model or "gpt-4o-mini",
+                model=request.get("model") or "gpt-4o-mini",
                 input=user_text,
                 stream=True,
             ) as upstream_stream:
@@ -221,7 +221,7 @@ def _make_non_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
             user_text = await context.get_input_text() or "hello"
 
             result = await upstream_client.responses.create(
-                model=request.model or "gpt-4o-mini",
+                model=request.get("model") or "gpt-4o-mini",
                 input=user_text,
             )
 
@@ -233,7 +233,7 @@ def _make_non_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
                         if part.type == "output_text":
                             output_text += part.text
 
-            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+            stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield stream.emit_created()
             yield stream.emit_in_progress()
 
@@ -257,7 +257,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
 
     def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
         async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+            stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield stream.emit_created()
             yield stream.emit_in_progress()
 
@@ -272,7 +272,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
             text_builder = None
 
             async with await upstream_client.responses.create(
-                model=request.model or "gpt-4o-mini",
+                model=request.get("model") or "gpt-4o-mini",
                 input=user_text,
                 stream=True,
             ) as upstream_stream:

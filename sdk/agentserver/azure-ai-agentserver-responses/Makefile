@@ -15,9 +15,9 @@ ROOT_SCHEMAS ?= CreateResponse
 OVERLAY ?= _scripts/validation-overlay.yaml
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
 MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/agentserver/responses/models
-MODEL_SHIMS_DIR := _scripts/generated_shims
 CONTRACTS_DIR := $(TEMP_TSP_DIR)/sdk-service-agentserver-contracts
-MODEL_BASE    := $(OUTPUT_DIR)/sdk/models/_utils/model_base.py
+SDK_ROOT ?= ../../..
+EXTENSION_OPENAI_DIR ?= $(SDK_ROOT)/sdk/ai/azure-ai-extensions-openai
 
 .PHONY: generate-models generate-validators generate-openapi generate-contracts clean install-typespec-deps
 
@@ -95,31 +95,10 @@ generate-contracts: generate-models generate-openapi generate-validators
 ifeq ($(OS),Windows_NT)
 generate-models:
 	@where tsp-client >NUL 2>NUL || (echo Error: tsp-client is not installed. 1>&2 && echo Run 'make install-typespec-deps' to install it. 1>&2 && exit /b 1)
-	@where npm >NUL 2>NUL || (echo Error: npm is required. Install Node.js ^(v18+^) from https://nodejs.org/ 1>&2 && exit /b 1)
-	@echo Syncing upstream TypeSpec sources...
-	cd /d $(TYPESPEC_DIR) && tsp-client sync
-	@echo Installing TypeSpec dependencies from emitter-package.json...
-	cd /d $(TEMP_TSP_DIR) && npm install --silent
-	@echo Generating Python models...
+	@echo Generating extension-owned OpenAI Responses models...
+	cd /d $(EXTENSION_OPENAI_DIR) && $(MAKE) generate-responses-models
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
-	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))"
-	@if not exist "$(MODEL_PACKAGE_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
-	@if not exist "$(OUTPUT_DIR)\sdk" mkdir "$(OUTPUT_DIR)\sdk"
-	@xcopy /E /I /Y "$(MODEL_PACKAGE_DIR)" "$(OUTPUT_DIR)\sdk\models" >NUL
-	@if exist "$(OUTPUT_DIR)\sdk\models\aio" rmdir /s /q "$(OUTPUT_DIR)\sdk\models\aio"
-	@if exist "$(OUTPUT_DIR)\sdk\models\operations" rmdir /s /q "$(OUTPUT_DIR)\sdk\models\operations"
-	@if exist "$(OUTPUT_DIR)\sdk\models\_client.py" del /q "$(OUTPUT_DIR)\sdk\models\_client.py"
-	@if exist "$(OUTPUT_DIR)\sdk\models\_configuration.py" del /q "$(OUTPUT_DIR)\sdk\models\_configuration.py"
-	@if exist "$(OUTPUT_DIR)\sdk\models\_version.py" del /q "$(OUTPUT_DIR)\sdk\models\_version.py"
-	@copy /Y "$(MODEL_SHIMS_DIR)\sdk_models__init__.py" "$(OUTPUT_DIR)\sdk\models\__init__.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\__init__.py" "$(OUTPUT_DIR)\__init__.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\models_patch.py" "$(OUTPUT_DIR)\sdk\models\models\_patch.py" >NUL
-	@REM Patch _deserialize_sequence: reject plain strings so union falls through to str branch
-	@powershell -Command "(Get-Content '$(MODEL_BASE)') -replace 'return type\(obj\)\(_deserialize\(deserializer, entry, module\) for entry in obj\)','if isinstance(obj, str):\n        raise DeserializationError()\n    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)' | Set-Content '$(MODEL_BASE)'"
-	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
+	python _scripts\write_extension_model_shims.py --local-generated-root "$(OUTPUT_DIR)"
 else
 generate-models:
 	@command -v tsp-client >/dev/null 2>&1 || { \
@@ -127,37 +106,10 @@ generate-models:
 		echo "Run 'make install-typespec-deps' to install it." >&2; \
 		exit 1; \
 	}
-	@command -v npm >/dev/null 2>&1 || { \
-		echo "Error: npm is required. Install Node.js (v18+) from https://nodejs.org/" >&2; \
-		exit 1; \
-	}
-	@echo "Syncing upstream TypeSpec sources..."
-	cd $(TYPESPEC_DIR) && tsp-client sync
-	@echo "Installing TypeSpec dependencies from emitter-package.json..."
-	cd $(TEMP_TSP_DIR) && npm install --silent
-	@echo "Generating Python models..."
+	@echo "Generating extension-owned OpenAI Responses models..."
+	$(MAKE) -C $(EXTENSION_OPENAI_DIR) generate-responses-models
 	rm -rf $(OUTPUT_DIR)
-	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))"
-	@test -d $(MODEL_PACKAGE_DIR) || { \
-		echo "Error: generated model package was not found." >&2; \
-		exit 1; \
-	}
-	mkdir -p $(OUTPUT_DIR)/sdk
-	cp -R $(MODEL_PACKAGE_DIR) $(OUTPUT_DIR)/sdk/models
-	rm -rf $(OUTPUT_DIR)/sdk/models/aio
-	rm -rf $(OUTPUT_DIR)/sdk/models/operations
-	rm -f $(OUTPUT_DIR)/sdk/models/_client.py
-	rm -f $(OUTPUT_DIR)/sdk/models/_configuration.py
-	rm -f $(OUTPUT_DIR)/sdk/models/_version.py
-	cp $(MODEL_SHIMS_DIR)/sdk_models__init__.py $(OUTPUT_DIR)/sdk/models/__init__.py
-	cp $(MODEL_SHIMS_DIR)/__init__.py $(OUTPUT_DIR)/__init__.py
-	cp $(MODEL_SHIMS_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
-	cp $(MODEL_SHIMS_DIR)/_models.py $(OUTPUT_DIR)/_models.py
-	cp $(MODEL_SHIMS_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
-	cp $(MODEL_SHIMS_DIR)/models_patch.py $(OUTPUT_DIR)/sdk/models/models/_patch.py
-	# Patch _deserialize_sequence: reject plain strings so union falls through to str branch
-	sed -i 's/    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)/    if isinstance(obj, str):\n        raise DeserializationError()\n    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)/' $(MODEL_BASE)
-	rm -rf $(TEMP_OUTPUT_DIR)
+	python _scripts/write_extension_model_shims.py --local-generated-root "$(OUTPUT_DIR)"
 endif
 
 # --------------------------------------------------------------------------

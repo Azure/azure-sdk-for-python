@@ -16,17 +16,17 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
-from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
 from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
+from azure.ai.extensions.openai.responses import ApiErrorResponse, CreateResponse
 from azure.ai.agentserver.responses.models.errors import RequestValidationError
 
 
 def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
-    """Parse incoming JSON payload into the generated ``CreateResponse`` model.
+    """Validate incoming JSON payload and return a dict-native ``CreateResponse`` payload.
 
     :param payload: Raw request payload mapping.
     :type payload: Mapping[str, Any]
-    :returns: Parsed generated create response model.
+    :returns: Parsed create response wire payload.
     :rtype: CreateResponse
     :raises RequestValidationError: If payload is not an object or cannot be parsed.
     """
@@ -49,21 +49,14 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
             details=details,
         )
 
-    try:
-        return CreateResponse(payload)
-    except Exception as exc:  # pragma: no cover - generated model raises implementation-specific errors.
-        raise RequestValidationError(
-            "request body failed schema validation",
-            code="invalid_request",
-            debug_info={"exception_type": type(exc).__name__, "detail": str(exc)},
-        ) from exc
+    return CreateResponse(payload)
 
 
 def normalize_create_response(
     request: CreateResponse,
     options: ResponsesServerOptions | None,
 ) -> CreateResponse:
-    """Apply server-side defaults to a parsed create request model.
+    """Apply server-side defaults to a parsed create request payload.
 
     :param request: The parsed create response model to normalize.
     :type request: CreateResponse
@@ -72,13 +65,15 @@ def normalize_create_response(
     :return: The same model instance with defaults applied.
     :rtype: CreateResponse
     """
-    if (request.model is None or (isinstance(request.model, str) and not request.model.strip())) and options:
-        request.model = options.default_model
+    model = request.get("model")
+    if (model is None or (isinstance(model, str) and not model.strip())) and options:
+        request["model"] = options.default_model
+        model = request.get("model")
 
-    if isinstance(request.model, str):
-        request.model = request.model.strip() or ""
-    elif request.model is None:
-        request.model = ""
+    if isinstance(model, str):
+        request["model"] = model.strip() or ""
+    elif model is None:
+        request["model"] = ""
 
     return request
 
@@ -90,16 +85,16 @@ def validate_create_response(request: CreateResponse) -> None:
     :type request: CreateResponse
     :raises RequestValidationError: If semantic preconditions are violated.
     """
-    store_enabled = True if request.store is None else bool(request.store)
+    store_enabled = True if request.get("store") is None else bool(request.get("store"))
 
-    if request.background and not store_enabled:
+    if request.get("background") and not store_enabled:
         raise RequestValidationError(
             "background=true requires store=true",
             code="unsupported_parameter",
             param="background",
         )
 
-    if request.stream_options is not None and request.stream is not True:
+    if request.get("stream_options") is not None and request.get("stream") is not True:
         raise RequestValidationError(
             "stream_options requires stream=true",
             code="invalid_mode",
@@ -109,7 +104,7 @@ def validate_create_response(request: CreateResponse) -> None:
     # B22: model is optional — resolved to default in normalize_create_response()
 
     # Metadata constraints: ≤16 keys, key ≤64 chars, value ≤512 chars
-    metadata = getattr(request, "metadata", None)
+    metadata = request.get("metadata")
     if metadata is not None and hasattr(metadata, "items"):
         if len(metadata) > 16:
             raise RequestValidationError(
@@ -132,7 +127,7 @@ def validate_create_response(request: CreateResponse) -> None:
                 )
 
     # Validate previous_response_id format (must be a valid caresp ID)
-    prev_id = getattr(request, "previous_response_id", None)
+    prev_id = request.get("previous_response_id")
     if isinstance(prev_id, str) and prev_id:
         is_valid, _ = IdGenerator.is_valid(prev_id, allowed_prefixes=["caresp"])
         if not is_valid:
@@ -172,7 +167,7 @@ def build_api_error_response(
     error_type: str = "invalid_request_error",
     debug_info: dict[str, Any] | None = None,
 ) -> ApiErrorResponse:
-    """Build a generated ``ApiErrorResponse`` envelope for client-visible failures.
+    """Build an API error envelope for client-visible failures.
 
     :param message: Human-readable error message.
     :type message: str
@@ -187,15 +182,15 @@ def build_api_error_response(
     :return: A generated ``ApiErrorResponse`` envelope.
     :rtype: ApiErrorResponse
     """
-    return ApiErrorResponse(
-        error=Error(
-            code=code,
-            message=message,
-            param=param,
-            type=error_type,
-            debug_info=debug_info,
-        )
-    )
+    error: dict[str, Any] = {
+        "code": code,
+        "message": message,
+        "param": param,
+        "type": error_type,
+    }
+    if debug_info is not None:
+        error["debug_info"] = debug_info
+    return ApiErrorResponse(error=error)
 
 
 def build_not_found_error_response(
@@ -353,8 +348,6 @@ def _json_payload(value: Any) -> Any:
     :return: A JSON-serializable representation of the value.
     :rtype: Any
     """
-    if hasattr(value, "as_dict"):
-        return value.as_dict()  # type: ignore[no-any-return]
     return value
 
 

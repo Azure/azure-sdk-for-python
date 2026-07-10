@@ -9,7 +9,6 @@ import re
 import pytest
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses.models import _generated as generated_models
 
 
 def test_id_generator__new_id_uses_new_format_shape() -> None:
@@ -98,13 +97,17 @@ def test_id_generator__convenience_method_uses_caresp_prefix() -> None:
     assert len(created_id.split("_", maxsplit=1)[1]) == 50
 
 
-def test_id_generator__new_item_id_dispatches_by_generated_model_type() -> None:
-    item_message = object.__new__(generated_models.ItemMessage)
-    item_reference = object.__new__(generated_models.ItemReferenceParam)
+def test_id_generator__new_item_id_dispatches_by_wire_type() -> None:
+    item_message = {"type": "message"}
+    item_compaction = {"type": "compaction"}
+    item_reference = {"type": "item_reference", "id": "item_1"}
 
     generated_id = IdGenerator.new_item_id(item_message)
+    compaction_id = IdGenerator.new_item_id(item_compaction)
 
     assert generated_id is not None
     assert generated_id.startswith("msg_")
+    assert compaction_id is not None
+    assert compaction_id.startswith("cmp_")
     assert IdGenerator.new_item_id(item_reference) is None
     assert IdGenerator.new_item_id(object()) is None

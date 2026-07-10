@@ -28,7 +28,7 @@ def test_parse_create_response_rejects_invalid_payload() -> None:
 
 def test_parse_create_response_allows_valid_payload() -> None:
     parsed = parse_create_response({"model": "gpt-4o"})
-    assert parsed.model == "gpt-4o"
+    assert parsed["model"] == "gpt-4o"
 
 
 def test_parse_create_response_rejects_non_object_body() -> None:

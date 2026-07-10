@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-from azure.ai.agentserver.responses.models._generated import ResponseObject
+from azure.ai.extensions.openai.responses import ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 
 # ---------------------------------------------------------------------------

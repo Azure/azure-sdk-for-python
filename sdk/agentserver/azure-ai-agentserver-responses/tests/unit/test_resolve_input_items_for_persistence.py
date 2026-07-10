@@ -11,7 +11,7 @@ import pytest
 
 from azure.ai.agentserver.responses._response_context import ResponseContext
 from azure.ai.agentserver.responses.hosting._orchestrator import _resolve_input_items_for_persistence
-from azure.ai.agentserver.responses.models._generated import (
+from azure.ai.extensions.openai.responses import (
     CreateResponse,
     ItemMessage,
     ItemReferenceParam,
@@ -45,7 +45,7 @@ def _make_request(inp: Any) -> CreateResponse:
 @pytest.mark.asyncio
 async def test_resolves_references_via_context() -> None:
     """item_reference entries are resolved to concrete OutputItem for persistence."""
-    inline_msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hi")])
+    inline_msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
     ref = ItemReferenceParam(id="item_ref1")
     resolved = OutputItemMessage(id="item_ref1", role="assistant", content=[], status="completed")
     provider = _mock_provider(get_items_return=[resolved])
@@ -68,7 +68,7 @@ async def test_resolves_references_via_context() -> None:
     # Should have BOTH items: resolved reference + inline message
     assert result is not None
     assert len(result) == 2
-    assert all(isinstance(item, OutputItemMessage) for item in result)
+    assert all(isinstance(item, dict) and item.get("type") == "message" for item in result)
 
 
 # ------------------------------------------------------------------
@@ -79,7 +79,7 @@ async def test_resolves_references_via_context() -> None:
 @pytest.mark.asyncio
 async def test_fallback_when_no_context() -> None:
     """When context is None, returns the fallback items."""
-    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hi")])
+    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
     fallback = [out for item in [msg] if (out := to_output_item(item, "resp_002")) is not None]
 
     result = await _resolve_input_items_for_persistence(None, fallback)
@@ -96,7 +96,7 @@ async def test_fallback_when_no_context() -> None:
 @pytest.mark.asyncio
 async def test_fallback_on_resolution_error() -> None:
     """When context._get_input_items_for_persistence raises, falls back."""
-    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hi")])
+    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
     ref = ItemReferenceParam(id="item_bad")
     provider = _mock_provider()
     provider.get_items = AsyncMock(side_effect=RuntimeError("provider down"))

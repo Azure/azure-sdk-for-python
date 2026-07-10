@@ -6,9 +6,8 @@ from __future__ import annotations
 
 import base64
 import secrets
-from typing import Callable, Sequence
-
-from .models import _generated as generated_models
+from collections.abc import Mapping
+from typing import Any, Sequence
 
 
 class IdGenerator:  # pylint: disable=too-many-public-methods
@@ -349,55 +348,56 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("om", partition_key_hint)
 
     @staticmethod
-    def new_item_id(item: generated_models.Item, partition_key_hint: str | None = "") -> str | None:
-        """Generate a type-specific ID for a generated Item subtype.
+    def new_item_id(item: Mapping[str, Any], partition_key_hint: str | None = "") -> str | None:
+        """Generate a type-specific ID for an item wire payload.
 
-        Dispatches to the appropriate ``new_*_item_id`` factory method based on the
-        runtime type of *item*. Returns None for ``ItemReferenceParam`` or unrecognized types.
+        Dispatches to the appropriate ``new_*_item_id`` factory method based on
+        the item ``type`` discriminator. Returns ``None`` for item references or
+        unrecognized payloads.
 
-        :param item: The generated Item instance to create an ID for.
-        :type item: generated_models.Item
+        :param item: The item wire payload to create an ID for.
+        :type item: Mapping[str, Any]
         :param partition_key_hint: An existing ID from which to extract the partition key
             for co-location. Defaults to an empty string.
         :type partition_key_hint: str | None
         :returns: A new unique ID string, or None if the item type is a reference or unrecognized.
         :rtype: str | None
         """
-        dispatch_map: tuple[tuple[type[object], Callable[..., str]], ...] = (
-            (generated_models.ItemMessage, IdGenerator.new_message_item_id),
-            (generated_models.ItemOutputMessage, IdGenerator.new_output_message_item_id),
-            (generated_models.ItemFunctionToolCall, IdGenerator.new_function_call_item_id),
-            (generated_models.FunctionCallOutputItemParam, IdGenerator.new_function_call_output_item_id),
-            (generated_models.ItemCustomToolCall, IdGenerator.new_custom_tool_call_item_id),
-            (generated_models.ItemCustomToolCallOutput, IdGenerator.new_custom_tool_call_output_item_id),
-            (generated_models.ItemComputerToolCall, IdGenerator.new_computer_call_item_id),
-            (generated_models.ComputerCallOutputItemParam, IdGenerator.new_computer_call_output_item_id),
-            (generated_models.ItemFileSearchToolCall, IdGenerator.new_file_search_call_item_id),
-            (generated_models.ItemWebSearchToolCall, IdGenerator.new_web_search_call_item_id),
-            (generated_models.ItemImageGenToolCall, IdGenerator.new_image_gen_call_item_id),
-            (generated_models.ItemCodeInterpreterToolCall, IdGenerator.new_code_interpreter_call_item_id),
-            (generated_models.ItemLocalShellToolCall, IdGenerator.new_local_shell_call_item_id),
-            (generated_models.ItemLocalShellToolCallOutput, IdGenerator.new_local_shell_call_output_item_id),
-            (generated_models.FunctionShellCallItemParam, IdGenerator.new_function_shell_call_item_id),
-            (generated_models.FunctionShellCallOutputItemParam, IdGenerator.new_function_shell_call_output_item_id),
-            (generated_models.ApplyPatchToolCallItemParam, IdGenerator.new_apply_patch_call_item_id),
-            (generated_models.ApplyPatchToolCallOutputItemParam, IdGenerator.new_apply_patch_call_output_item_id),
-            (generated_models.ItemMcpListTools, IdGenerator.new_mcp_list_tools_item_id),
-            (generated_models.ItemMcpToolCall, IdGenerator.new_mcp_call_item_id),
-            (generated_models.ItemMcpApprovalRequest, IdGenerator.new_mcp_approval_request_item_id),
-            (generated_models.MCPApprovalResponse, IdGenerator.new_mcp_approval_response_item_id),
-            (generated_models.ItemReasoningItem, IdGenerator.new_reasoning_item_id),
-            (generated_models.CompactionSummaryItemParam, IdGenerator.new_compaction_item_id),
-            (generated_models.StructuredOutputsOutputItem, IdGenerator.new_structured_output_item_id),
-        )
-
-        for model_type, generator in dispatch_map:
-            if isinstance(item, model_type):
-                return generator(partition_key_hint)
-
-        if isinstance(item, generated_models.ItemReferenceParam):
+        discriminator_dispatch = {
+            "message": IdGenerator.new_message_item_id,
+            "output_message": IdGenerator.new_output_message_item_id,
+            "function_call": IdGenerator.new_function_call_item_id,
+            "function_call_output": IdGenerator.new_function_call_output_item_id,
+            "custom_tool_call": IdGenerator.new_custom_tool_call_item_id,
+            "custom_tool_call_output": IdGenerator.new_custom_tool_call_output_item_id,
+            "computer_call": IdGenerator.new_computer_call_item_id,
+            "computer_call_output": IdGenerator.new_computer_call_output_item_id,
+            "file_search_call": IdGenerator.new_file_search_call_item_id,
+            "web_search_call": IdGenerator.new_web_search_call_item_id,
+            "image_generation_call": IdGenerator.new_image_gen_call_item_id,
+            "code_interpreter_call": IdGenerator.new_code_interpreter_call_item_id,
+            "local_shell_call": IdGenerator.new_local_shell_call_item_id,
+            "local_shell_call_output": IdGenerator.new_local_shell_call_output_item_id,
+            "shell_call": IdGenerator.new_function_shell_call_item_id,
+            "shell_call_output": IdGenerator.new_function_shell_call_output_item_id,
+            "apply_patch_call": IdGenerator.new_apply_patch_call_item_id,
+            "apply_patch_call_output": IdGenerator.new_apply_patch_call_output_item_id,
+            "mcp_list_tools": IdGenerator.new_mcp_list_tools_item_id,
+            "mcp_call": IdGenerator.new_mcp_call_item_id,
+            "mcp_approval_request": IdGenerator.new_mcp_approval_request_item_id,
+            "mcp_approval_response": IdGenerator.new_mcp_approval_response_item_id,
+            "reasoning": IdGenerator.new_reasoning_item_id,
+            "compaction": IdGenerator.new_compaction_item_id,
+            "compaction_summary": IdGenerator.new_compaction_item_id,
+            "structured_outputs": IdGenerator.new_structured_output_item_id,
+        }
+        if not isinstance(item, Mapping):
             return None
-        return None
+        item_type = item.get("type")
+        if item_type is None and ("role" in item or "content" in item):
+            item_type = "message"
+        generator = discriminator_dispatch.get(str(item_type or ""))
+        return generator(partition_key_hint) if generator else None
 
     @staticmethod
     def extract_partition_key(id_value: str) -> str:
