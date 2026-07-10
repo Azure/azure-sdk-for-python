@@ -82,7 +82,7 @@ def _redact_storage_path(path: str) -> str:
     segments = path.split("/")
     redacted: list[str] = []
     for index, segment in enumerate(segments):
-        if index < 3 or segment in {"items", "items:keys", "statestores"} or not segment:
+        if index < 3 or segment in {"items", "items:keys", "state_stores"} or not segment:
             redacted.append(segment)
         else:
             redacted.append("*")

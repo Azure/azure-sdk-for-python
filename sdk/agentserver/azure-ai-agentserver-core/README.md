@@ -129,22 +129,27 @@ async def on_shutdown():
 ### Durable state storage
 
 `FoundryStateStore` is a durable, server-backed key-value store for agent state
-— session memory, per-user preferences, counters, and checkpoints — with
-optimistic concurrency, tag filtering, key listing, and optional per-item TTL.
+— session memory, per-user preferences, counters, and checkpoints — bound to
+one explicit, caller-named store, with an explicit store lifecycle, single-item
+optimistic concurrency, tag-filtered key listing, and store-level TTL.
 
 ```python
 from azure.ai.agentserver.core.storage import FoundryStateStore
 
 # Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
-async with FoundryStateStore() as store:
-    etag = await store.set("counters", "page-views", 1)
-    item = await store.get("counters", "page-views")
-    print(item.value)  # 1
+# The store name is the scope -- encode conversation/thread identity into it.
+async with FoundryStateStore("checkpoints/thread-abc", user_isolation=True) as store:
+    await store.get_or_create()
+    await store.set("step-1", {"done": False})
+    item = await store.get("step-1")
+    print(item.value)  # {"done": False}
 ```
 
-Reads return typed `StateItem` values; writes are expressed as typed `Upsert` /
-`Delete` changes. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
-for the full API, the concurrency model, and common gotchas, and
+Reads return typed `StateItem` values; writes return typed item metadata and use
+single-item `If-Match` concurrency. Session/conversation scoping is expressed in
+the store name itself, and item expiry is controlled by the store's
+`item_ttl_seconds` setting. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
+for the full API, the store lifecycle, and common gotchas, and
 [state_store_sample.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/state_store_sample.py)
 for a runnable end-to-end example.
 

@@ -48,10 +48,10 @@ def test_from_env_requires_variable(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_build_url_appends_api_version() -> None:
     ep = FoundryStorageEndpoint(storage_base_url="https://x/storage/", api_version="v1")
-    assert ep.build_url("statestores") == "https://x/storage/statestores?api-version=v1"
+    assert ep.build_url("state_stores") == "https://x/storage/state_stores?api-version=v1"
 
 
 def test_build_url_appends_extra_params_encoded() -> None:
     ep = FoundryStorageEndpoint(storage_base_url="https://x/storage/", api_version="v1")
-    url = ep.build_url("statestores", after="it 1/2")
-    assert url == "https://x/storage/statestores?api-version=v1&after=it%201%2F2"
+    url = ep.build_url("state_stores", after="it 1/2")
+    assert url == "https://x/storage/state_stores?api-version=v1&after=it%201%2F2"

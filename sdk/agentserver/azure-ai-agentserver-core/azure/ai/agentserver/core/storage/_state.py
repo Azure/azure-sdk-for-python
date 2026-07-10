@@ -144,7 +144,7 @@ class FoundryStateStore(FoundryStorageClient):
         return self._name
 
     def _store_path(self) -> str:
-        return f"statestores/{_encode_segment(self._name)}"
+        return f"state_stores/{_encode_segment(self._name)}"
 
     def _item_path(self, key: str) -> str:
         _validate_key(key)
@@ -178,7 +178,7 @@ class FoundryStateStore(FoundryStorageClient):
             description=self._description,
             tags=self._tags,
         )
-        response = await self._send_storage_request(self._request("POST", "statestores", content=body))
+        response = await self._send_storage_request(self._request("POST", "state_stores", content=body))
         return deserialize_state_store(response.text())
 
     async def create_or_get(self) -> StateStoreInfo:

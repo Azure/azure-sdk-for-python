@@ -102,7 +102,7 @@ async def test_create_posts_store_descriptor() -> None:
 
     request = _sent_request(store)
     assert request.method == "POST"
-    assert request.url == f"{_BASE_URL}statestores?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores?api-version=v1"
     assert request.headers["Content-Type"] == "application/json; charset=utf-8"
     assert "x-ms-user-id" not in request.headers
     assert json.loads(request.content.decode("utf-8")) == {
@@ -148,7 +148,7 @@ async def test_create_or_get_returns_created_store_when_absent() -> None:
 
     request = _sent_request(store)
     assert request.method == "POST"
-    assert request.url == f"{_BASE_URL}statestores?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores?api-version=v1"
     assert result.name == "checkpoints"
 
 
@@ -179,7 +179,7 @@ async def test_create_or_get_fetches_existing_store_on_conflict() -> None:
     second_request = store._client.send_request.call_args_list[1][0][0]
     assert first_request.method == "POST"
     assert second_request.method == "GET"
-    assert second_request.url == f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}?api-version=v1"
+    assert second_request.url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}?api-version=v1"
     assert result.description == "existing"
     assert result.tags == {"env": "dev"}
 
@@ -208,7 +208,7 @@ async def test_get_or_create_returns_existing_store_when_present() -> None:
 
     request = _sent_request(store)
     assert request.method == "GET"
-    assert request.url == f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}?api-version=v1"
     assert result.description == "existing"
     assert result.tags == {"env": "dev"}
 
@@ -240,7 +240,7 @@ async def test_get_or_create_creates_store_when_absent() -> None:
     second_request = store._client.send_request.call_args_list[1][0][0]
     assert first_request.method == "GET"
     assert second_request.method == "POST"
-    assert second_request.url == f"{_BASE_URL}statestores?api-version=v1"
+    assert second_request.url == f"{_BASE_URL}state_stores?api-version=v1"
     assert result.name == "checkpoints"
 
 
@@ -270,7 +270,7 @@ async def test_get_or_create_fetches_store_when_create_races_with_another_caller
 
     requests = [call_args[0][0] for call_args in store._client.send_request.call_args_list]
     assert [request.method for request in requests] == ["GET", "POST", "GET"]
-    assert requests[2].url == f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}?api-version=v1"
+    assert requests[2].url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}?api-version=v1"
     assert result.description == "created elsewhere"
 
 
@@ -299,7 +299,7 @@ async def test_get_properties_uses_base64url_store_name() -> None:
 
     request = _sent_request(store)
     assert request.method == "GET"
-    assert request.url == f"{_BASE_URL}statestores/{_encode_segment(store_name)}?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment(store_name)}?api-version=v1"
     assert result.name == store_name
     assert result.id == "ss_1"
 
@@ -328,7 +328,7 @@ async def test_update_metadata_sends_only_present_fields() -> None:
 
     request = _sent_request(store)
     assert request.method == "PATCH"
-    assert request.url == f"{_BASE_URL}statestores/{_encode_segment('prefs')}?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
     assert json.loads(request.content.decode("utf-8")) == {"description": "updated", "tags": {"env": "prod"}}
     assert result.updated_at == 3
 
@@ -347,7 +347,7 @@ async def test_delete_store_returns_deleted_marker() -> None:
 
     request = _sent_request(store)
     assert request.method == "DELETE"
-    assert request.url == f"{_BASE_URL}statestores/{_encode_segment('prefs')}?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
     assert result == DeletedStateStore(id="ss_1", name="prefs", deleted=True)
 
 
@@ -372,7 +372,7 @@ async def test_create_item_posts_key_value_and_tags() -> None:
 
     request = _sent_request(store)
     assert request.method == "POST"
-    assert request.url == f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}/items?api-version=v1"
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items?api-version=v1"
     assert json.loads(request.content.decode("utf-8")) == {
         "key": "step/1",
         "value": {"done": False},
@@ -411,7 +411,7 @@ async def test_set_puts_value_and_if_match_header() -> None:
     request = _sent_request(store)
     assert request.method == "PUT"
     assert request.url == (
-        f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
+        f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
     )
     assert request.headers["If-Match"] == '"0x8DC"'
     assert json.loads(request.content.decode("utf-8")) == {"value": {"done": True}, "tags": {"kind": "checkpoint"}}
@@ -467,7 +467,7 @@ async def test_get_returns_state_item_with_value_and_metadata() -> None:
     assert request.method == "GET"
     assert request.headers["x-ms-user-id"] == "user-42"
     assert request.url == (
-        f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
+        f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
     )
     assert result == StateItem(
         id="it_1",
@@ -539,7 +539,7 @@ async def test_list_keys_uses_query_parameters_and_returns_page() -> None:
     assert request.method == "GET"
     assert request.headers["x-ms-user-id"] == "user-42"
     assert request.url == (
-        f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}/items:keys"
+        f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items:keys"
         "?api-version=v1&tags.kind=checkpoint&tags.phase=run&limit=10&after=it_0&order=asc"
     )
     assert page == KeyPage(
@@ -566,7 +566,7 @@ async def test_list_keys_defaults_to_desc_order() -> None:
     await store.list_keys()
 
     request = _sent_request(store)
-    assert request.url == f"{_BASE_URL}statestores/{_encode_segment('checkpoints')}/items:keys?api-version=v1&order=desc"
+    assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items:keys?api-version=v1&order=desc"
 
 
 def test_empty_key_is_rejected() -> None:

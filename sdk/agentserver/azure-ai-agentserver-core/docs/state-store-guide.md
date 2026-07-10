@@ -16,7 +16,7 @@ name is the main scoping tool for your data:
 - Set `item_ttl_seconds` once at store creation when you want idle items to
   age out automatically.
 
-The SDK is the developer-facing layer over the internal `/storage/statestores/*`
+The SDK is the developer-facing layer over the internal `/storage/state_stores/*`
 protocol: it keeps the transport/auth pipeline in `FoundryStorageClient`, while
 `FoundryStateStore` owns the ergonomic store-bound API.
 

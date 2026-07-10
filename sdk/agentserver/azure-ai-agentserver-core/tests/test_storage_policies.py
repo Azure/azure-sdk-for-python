@@ -13,9 +13,9 @@ from azure.ai.agentserver.core.storage._policies import (
 
 
 def test_mask_keeps_only_storage_path_and_api_version() -> None:
-    url = "https://proj.example.com/api/projects/secret/storage/statestores/abc/items:keys?api-version=v1&after=it_1"
+    url = "https://proj.example.com/api/projects/secret/storage/state_stores/abc/items:keys?api-version=v1&after=it_1"
     masked = _mask_storage_url(url)
-    assert masked == "***/storage/statestores/*/items:keys?api-version=v1"
+    assert masked == "***/storage/state_stores/*/items:keys?api-version=v1"
     assert "secret" not in masked
     assert "after=it_1" not in masked
     assert "abc" not in masked
