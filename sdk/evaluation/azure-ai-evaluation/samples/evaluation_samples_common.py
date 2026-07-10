@@ -39,6 +39,17 @@ class EvaluationCommonSamples(object):
 
         # [END create_OAI_model_config]
 
+        # [START create_anthropic_model_config]
+        from azure.ai.evaluation._model_configurations import AnthropicModelConfiguration
+
+        anthropic_model_config = AnthropicModelConfiguration(
+            type="anthropic",
+            api_key="my-anthropic-api-key",
+            model="claude-3-5-sonnet-20241022",
+        )
+
+        # [END create_anthropic_model_config]
+
         # [START create_azure_ai_project_object]
         from azure.ai.evaluation._model_configurations import AzureAIProject
 
