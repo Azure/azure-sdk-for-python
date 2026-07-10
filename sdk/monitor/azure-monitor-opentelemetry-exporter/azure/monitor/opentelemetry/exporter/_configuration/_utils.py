@@ -51,7 +51,7 @@ class OneSettingsResponse:
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
-        refresh_interval (int): Interval in seconds for the next configuration refresh
+        refresh_interval_s (int): Interval in seconds for the next configuration refresh
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
         status_code (int): HTTP status code from the response
         has_exception (bool): True if the request resulted in a transient error (network error, timeout, etc.)
@@ -60,7 +60,7 @@ class OneSettingsResponse:
     def __init__(
         self,
         etag: Optional[str] = None,
-        refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
+        refresh_interval_s: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
         status_code: int = 200,
         has_exception: bool = False,
@@ -69,7 +69,7 @@ class OneSettingsResponse:
 
         Args:
             etag (Optional[str], optional): ETag header value for caching. Defaults to None.
-            refresh_interval (int, optional): Refresh interval in seconds.
+            refresh_interval_s (int, optional): Refresh interval in seconds.
                 Defaults to _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS.
             settings (Optional[Dict[str, str]], optional): Configuration settings dictionary.
                 Defaults to empty dict if None.
@@ -77,7 +77,7 @@ class OneSettingsResponse:
             has_exception (bool, optional): Indicates if request failed with a transient error. Defaults to False.
         """
         self.etag = etag
-        self.refresh_interval = refresh_interval
+        self.refresh_interval_s = refresh_interval_s
         self.settings = settings or {}
         self.status_code = status_code
         self.has_exception = has_exception
@@ -151,7 +151,7 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
 
     :return: Structured response object containing:
         - etag: ETag header value for conditional requests
-        - refresh_interval: Next refresh interval from headers
+        - refresh_interval_s: Next refresh interval from headers
         - settings: Configuration key-value pairs (empty for 304/errors)
         - status_code: HTTP status code of the response
     :rtype: OneSettingsResponse
@@ -160,7 +160,7 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         raise exceptions, always returning a valid OneSettingsResponse object.
     """
     etag = None
-    refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
+    refresh_interval_s = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     settings: Dict[str, str] = {}
     status_code = response.status_code
 
@@ -169,12 +169,12 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         etag = response.headers.get("ETag")
         refresh_interval_header = response.headers.get("x-ms-onesetinterval")
         try:
-            # Note: OneSettings refresh interval is in minutes, convert to seconds
+            # Note: OneSettings refresh interval returned is in minutes, convert to seconds
             if refresh_interval_header:
-                refresh_interval = int(refresh_interval_header) * 60
+                refresh_interval_s = int(refresh_interval_header) * 60
         except (ValueError, TypeError):
             logger.debug("Invalid refresh interval format: %s", refresh_interval_header)
-            refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
+            refresh_interval_s = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
 
     # Handle different status codes
     if status_code == 304:
@@ -198,7 +198,7 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
     elif status_code == 500:
         logger.debug("Internal server error from OneSettings: %s", response.content)
 
-    return OneSettingsResponse(etag, refresh_interval, settings, status_code)
+    return OneSettingsResponse(etag, refresh_interval_s, settings, status_code)
 
 
 # mypy: disable-error-code="no-any-return"

@@ -26,14 +26,14 @@ class _ConfigurationState:
     """Immutable state object for configuration data."""
 
     etag: str = ""
-    refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
+    refresh_interval_s: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     settings_cache: Dict[str, str] = field(default_factory=dict)
 
     def with_updates(self, **kwargs) -> "_ConfigurationState":  # pylint: disable=C4741,C4742
         """Create a new state object with updated values."""
         return _ConfigurationState(
             etag=kwargs.get("etag", self.etag),
-            refresh_interval=kwargs.get("refresh_interval", self.refresh_interval),
+            refresh_interval_s=kwargs.get("refresh_interval_s", self.refresh_interval_s),
             settings_cache=kwargs.get("settings_cache", self.settings_cache.copy()),
         )
 
@@ -62,7 +62,7 @@ class _ConfigurationManager(metaclass=Singleton):
             from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
 
             # Get initial refresh interval from current state
-            initial_refresh_interval = self._current_state.refresh_interval
+            initial_refresh_interval = self._current_state.refresh_interval_s
 
             self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
             self._initialized = True
@@ -119,8 +119,9 @@ class _ConfigurationManager(metaclass=Singleton):
             current_state = self._current_state
             if current_state.etag:
                 headers["If-None-Match"] = current_state.etag
-            if current_state.refresh_interval:
-                headers["x-ms-onesetinterval"] = str(current_state.refresh_interval)
+            if current_state.refresh_interval_s:
+                # refresh_interval_s is stored in seconds internally; the header expects minutes.
+                headers["x-ms-onesetinterval"] = str(current_state.refresh_interval_s // 60)
 
         # Poll CHANGE endpoint (e2)
         response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
@@ -128,7 +129,7 @@ class _ConfigurationManager(metaclass=Singleton):
         # Check for transient errors - double interval and return
         if self._is_transient_error(response):
             with self._state_lock:
-                doubled_interval = self._current_state.refresh_interval * 2
+                doubled_interval = self._current_state.refresh_interval_s * 2
                 current_refresh_interval = min(doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
 
             if response.has_exception:
@@ -143,8 +144,8 @@ class _ConfigurationManager(metaclass=Singleton):
         new_state_updates: Dict[str, Any] = {}
         if response.etag is not None:
             new_state_updates["etag"] = response.etag
-        if response.refresh_interval and response.refresh_interval > 0:  # type: ignore
-            new_state_updates["refresh_interval"] = response.refresh_interval  # type: ignore
+        if response.refresh_interval_s and response.refresh_interval_s > 0:  # type: ignore
+            new_state_updates["refresh_interval_s"] = response.refresh_interval_s  # type: ignore
 
         if response.status_code == 304:
             # Not modified: no configuration changes published
@@ -170,7 +171,7 @@ class _ConfigurationManager(metaclass=Singleton):
         with self._state_lock:
             latest_state = self._current_state
             self._current_state = latest_state.with_updates(**new_state_updates)
-            current_refresh_interval = self._current_state.refresh_interval
+            current_refresh_interval = self._current_state.refresh_interval_s
             if "settings_cache" in new_state_updates:
                 notify_callbacks = True
                 state_for_callbacks = self._current_state

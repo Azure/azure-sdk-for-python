@@ -31,7 +31,7 @@ class TestConfigurationState(unittest.TestCase):
         state = _ConfigurationState()
 
         self.assertEqual(state.etag, "")
-        self.assertEqual(state.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(state.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(state.settings_cache, {})
 
     def test_with_updates_single_field(self):
@@ -45,7 +45,7 @@ class TestConfigurationState(unittest.TestCase):
         self.assertEqual(updated_state.etag, "new-etag")
         # Other fields preserved
         self.assertEqual(
-            updated_state.refresh_interval,
+            updated_state.refresh_interval_s,
             _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         )
 
@@ -53,20 +53,20 @@ class TestConfigurationState(unittest.TestCase):
         """Test updating multiple fields creates new state object."""
         original_state = _ConfigurationState()
         updated_state = original_state.with_updates(
-            etag="test-etag", refresh_interval=60, settings_cache={"key": "value"}
+            etag="test-etag", refresh_interval_s=60, settings_cache={"key": "value"}
         )
 
         # Original state unchanged
         self.assertEqual(original_state.etag, "")
         self.assertEqual(
-            original_state.refresh_interval,
+            original_state.refresh_interval_s,
             _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         )
         self.assertEqual(original_state.settings_cache, {})
 
         # New state has all updated values
         self.assertEqual(updated_state.etag, "test-etag")
-        self.assertEqual(updated_state.refresh_interval, 60)
+        self.assertEqual(updated_state.refresh_interval_s, 60)
         self.assertEqual(updated_state.settings_cache, {"key": "value"})
 
     def test_settings_cache_isolation(self):
@@ -148,7 +148,7 @@ class TestConfigurationManager(unittest.TestCase):
         manager.initialize()
 
         # First call: no etag cached, e2 returns 200 → triggers e1 fetch
-        change_response = OneSettingsResponse(etag="change-etag", refresh_interval=1800, status_code=200)
+        change_response = OneSettingsResponse(etag="change-etag", refresh_interval_s=1800, status_code=200)
         config_response = OneSettingsResponse(settings={"key": "value"}, status_code=200)
 
         def mock_request_side_effect(url, query_dict, headers=None):
@@ -185,10 +185,10 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Simulate state after startup (etag already cached)
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="test-etag", refresh_interval=1800)
+            manager._current_state = manager._current_state.with_updates(etag="test-etag", refresh_interval_s=1800)
 
         # Setup - subsequent call should include etag in headers
-        mock_response = OneSettingsResponse(etag="new-etag", refresh_interval=2400, status_code=304)
+        mock_response = OneSettingsResponse(etag="new-etag", refresh_interval_s=2400, status_code=304)
         mock_request.return_value = mock_response
 
         # Execute
@@ -200,7 +200,8 @@ class TestConfigurationManager(unittest.TestCase):
         self.assertEqual(call_args[0][0], _ONE_SETTINGS_CHANGE_URL)
         headers = call_args[0][2]  # headers parameter
         self.assertEqual(headers["If-None-Match"], "test-etag")
-        self.assertEqual(headers["x-ms-onesetinterval"], "1800")
+        # refresh_interval is stored as 1800 seconds; the header echoes it back in minutes (1800 / 60 = 30)
+        self.assertEqual(headers["x-ms-onesetinterval"], "30")
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
@@ -213,12 +214,12 @@ class TestConfigurationManager(unittest.TestCase):
         with manager._state_lock:
             manager._current_state = manager._current_state.with_updates(
                 etag="old-etag",
-                refresh_interval=1800,
+                refresh_interval_s=1800,
                 settings_cache={"old_key": "old_value"},
             )
 
         # Mock responses for CHANGE (200 = new config) and CONFIG endpoints
-        change_response = OneSettingsResponse(etag="new-etag", refresh_interval=1800, status_code=200)
+        change_response = OneSettingsResponse(etag="new-etag", refresh_interval_s=1800, status_code=200)
         config_response = OneSettingsResponse(settings={"key": "config_value"}, status_code=200)
 
         # Configure mock to return different responses for different URLs
@@ -258,10 +259,10 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Simulate state after startup (etag already cached)
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="old-etag", refresh_interval=2500)
+            manager._current_state = manager._current_state.with_updates(etag="old-etag", refresh_interval_s=2500)
 
         # 304 response from CHANGE endpoint
-        not_modified_response = OneSettingsResponse(etag="old-etag", refresh_interval=2500, status_code=304)
+        not_modified_response = OneSettingsResponse(etag="old-etag", refresh_interval_s=2500, status_code=304)
         mock_request.return_value = not_modified_response
         result = manager.get_configuration_and_refresh_interval()
 
@@ -283,12 +284,12 @@ class TestConfigurationManager(unittest.TestCase):
         with manager._state_lock:
             manager._current_state = manager._current_state.with_updates(
                 etag="test-etag",
-                refresh_interval=1800,
+                refresh_interval_s=1800,
                 settings_cache={"key": "config_value"},
             )
 
         # 304 response
-        not_modified_response = OneSettingsResponse(etag="test-etag", refresh_interval=1800, status_code=304)
+        not_modified_response = OneSettingsResponse(etag="test-etag", refresh_interval_s=1800, status_code=304)
         mock_request.return_value = not_modified_response
 
         # Execute
@@ -319,7 +320,7 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Set initial state with etag (simulates post-startup)
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval=1800)
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval_s=1800)
 
         # Setup timeout response
         timeout_response = OneSettingsResponse(
@@ -353,7 +354,7 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Set initial state with etag (simulates post-startup)
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval=900)
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval_s=900)
 
         # Setup network exception response
         exception_response = OneSettingsResponse(has_exception=True, status_code=200)
@@ -389,7 +390,7 @@ class TestConfigurationManager(unittest.TestCase):
 
                 with manager._state_lock:
                     manager._current_state = manager._current_state.with_updates(
-                        etag="existing-etag", refresh_interval=1200
+                        etag="existing-etag", refresh_interval_s=1200
                     )
 
                 # Setup HTTP error response
@@ -423,7 +424,7 @@ class TestConfigurationManager(unittest.TestCase):
 
         with manager._state_lock:
             manager._current_state = manager._current_state.with_updates(
-                etag="existing-etag", refresh_interval=high_refresh_interval
+                etag="existing-etag", refresh_interval_s=high_refresh_interval
             )
 
         # Setup timeout response
@@ -450,13 +451,13 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Set initial state with etag (simulates post-startup)
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval=1800)
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval_s=1800)
 
         # Setup non-retryable HTTP error response (e.g., 400 Bad Request)
         bad_request_response = OneSettingsResponse(
             status_code=400,  # Not in _RETRYABLE_STATUS_CODES
             has_exception=False,
-            refresh_interval=1800,  # Should remain unchanged
+            refresh_interval_s=1800,  # Should remain unchanged
         )
         mock_request.return_value = bad_request_response
 
@@ -478,12 +479,12 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Set initial state with etag (simulates post-startup)
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval=1800)
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval_s=1800)
 
         # Setup successful 304 response
         success_response = OneSettingsResponse(
             etag="existing-etag",
-            refresh_interval=1800,
+            refresh_interval_s=1800,
             status_code=304,
             has_exception=False,
         )
