@@ -30,4 +30,3 @@ import sys
 collect_ignore_glob = []
 if sys.version_info < (3, 6):
     collect_ignore_glob.append("*")
-
