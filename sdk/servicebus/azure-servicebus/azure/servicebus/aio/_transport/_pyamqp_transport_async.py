@@ -312,18 +312,31 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         # pylint: disable=protected-access
         link = handler._link
-        if link is None or link._is_closed or link.current_link_credit <= 0:
-            return
+        if link is None or link._is_closed:
+            return  # cannot drain or settle through a closed/absent link
         try:
-            await link.flow(link_credit=0, drain=True)
-            deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
-            while time.time() < deadline:
-                before = handler._received_messages.qsize()
-                # listen() directly, not do_work_async(): do_work re-issues credit
-                # at 0 and would undo the drain. Stop on quiescence (no new transfers).
-                await handler._connection.listen(wait=handler._socket_timeout)
-                if handler._received_messages.qsize() == before:
-                    break
+            if link.current_link_credit > 0:
+                # Outstanding credit: stop the broker and pump in-flight transfers
+                # into the buffer before releasing them below.
+                outstanding = link.current_link_credit
+                await link.flow(link_credit=0, drain=True)
+                deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
+                idle_cycles = 0
+                while time.time() < deadline:
+                    before = handler._received_messages.qsize()
+                    # listen() directly, not do_work_async() (which re-issues credit at
+                    # 0 and undoes the drain). batch=outstanding assembles multi-frame
+                    # transfers in one cycle; pyamqp drops the drain echo, so stop after
+                    # 2 idle cycles.
+                    await handler._connection.listen(wait=handler._socket_timeout, batch=outstanding)
+                    if handler._received_messages.qsize() == before:
+                        idle_cycles += 1
+                        if idle_cycles >= 2:
+                            break
+                    else:
+                        idle_cycles = 0
+            # Always release buffered deliveries (incl. the credit==0 prefetch case) so
+            # they are not left locked until lock expiry.
             while not handler._received_messages.empty():
                 frame, _ = handler._received_messages.get_nowait()
                 await handler.settle_messages_async(frame[1], frame[2], "released")

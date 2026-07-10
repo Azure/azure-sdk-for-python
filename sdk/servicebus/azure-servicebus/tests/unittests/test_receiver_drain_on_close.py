@@ -105,8 +105,17 @@ class TestPyamqpTransportDrain:
         h._link.flow.assert_called_once_with(link_credit=0, drain=True)
         h.settle_messages.assert_called_once_with(99, b"tag-99", "released")
 
-    def test_skipped_when_no_credit(self):
+    def test_no_credit_skips_drain_but_releases_buffer(self):
+        # A prefetch receiver can hit zero credit with deliveries still buffered:
+        # skip the drain flow, but the buffered messages must still be released.
         h = _handler(credit=0, buffer=_buffer_with((10, b"tag-10")))
+        PyamqpTransport.drain_receive_link_and_release_messages(h)
+        h._link.flow.assert_not_called()
+        h.settle_messages.assert_called_once_with(10, b"tag-10", "released")
+        assert h._received_messages.empty()
+
+    def test_no_credit_empty_buffer_is_noop(self):
+        h = _handler(credit=0)
         PyamqpTransport.drain_receive_link_and_release_messages(h)
         h._link.flow.assert_not_called()
         h.settle_messages.assert_not_called()
@@ -115,6 +124,7 @@ class TestPyamqpTransportDrain:
         h = _handler(credit=5, is_closed=True, buffer=_buffer_with((10, b"tag-10")))
         PyamqpTransport.drain_receive_link_and_release_messages(h)
         h._link.flow.assert_not_called()
+        h.settle_messages.assert_not_called()  # cannot settle through a closed link
 
     def test_skipped_when_link_none(self):
         h = _handler(credit=5)
@@ -181,11 +191,12 @@ class TestPyamqpTransportDrainAsync:
         h.settle_messages_async.assert_awaited_once_with(88, b"tag-88", "released")
 
     @pytest.mark.asyncio
-    async def test_skipped_when_no_credit(self):
+    async def test_no_credit_skips_drain_but_releases_buffer(self):
         h = _handler(credit=0, buffer=_buffer_with((20, b"tag-20")), is_async=True)
         await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)
         h._link.flow.assert_not_called()
-        h.settle_messages_async.assert_not_called()
+        h.settle_messages_async.assert_awaited_once_with(20, b"tag-20", "released")
+        assert h._received_messages.empty()
 
     @pytest.mark.asyncio
     async def test_failure_does_not_raise(self):
