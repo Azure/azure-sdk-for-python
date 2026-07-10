@@ -13,7 +13,7 @@ import re
 import logging
 from typing import List, Any, Optional
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
-from openai import OpenAI
+from azure.ai.extensions.openai.openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider

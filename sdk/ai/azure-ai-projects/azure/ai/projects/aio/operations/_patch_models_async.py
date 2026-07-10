@@ -55,15 +55,19 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         :return: A tuple of ``(sas_uri, container_blob_uri, pending_upload_id)``.
         :rtype: tuple[str, str, str or None]
         """
-        payload = dict(response) if isinstance(response, dict) else response.as_dict()
-
-        blob_ref = payload.get("blobReferenceForConsumption") or payload.get("blobReference") or {}
-        sas_uri = (blob_ref.get("credential") or {}).get("sasUri")
-        container_blob_uri = blob_ref.get("blobUri")
-        pending_upload_id = payload.get("temporaryDataReferenceId") or payload.get("pendingUploadId")
+        if isinstance(response, dict):
+            blob_ref = response.get("blobReferenceForConsumption") or response.get("blobReference") or {}
+            sas_uri = (blob_ref.get("credential") or {}).get("sasUri")
+            container_blob_uri = blob_ref.get("blobUri")
+            pending_upload_id = response.get("temporaryDataReferenceId") or response.get("pendingUploadId")
+        else:
+            blob_ref = response.blob_reference
+            sas_uri = blob_ref.credential.sas_uri
+            container_blob_uri = blob_ref.blob_uri
+            pending_upload_id = response.pending_upload_id
 
         if not sas_uri or not container_blob_uri:
-            raise ValueError("Could not locate SAS URI / blob URI in pending_upload response: " f"{payload!r}")
+            raise ValueError("Could not locate SAS URI / blob URI in pending_upload response: " f"{response!r}")
         return sas_uri, container_blob_uri, pending_upload_id
 
     @staticmethod

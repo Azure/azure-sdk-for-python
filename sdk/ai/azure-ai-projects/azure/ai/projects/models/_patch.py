@@ -33,7 +33,7 @@ from ._patch_evaluation_typeddicts import (
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
-from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ._models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
