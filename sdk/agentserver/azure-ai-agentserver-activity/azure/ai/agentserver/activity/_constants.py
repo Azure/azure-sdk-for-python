@@ -105,6 +105,36 @@ class BaggageKeys:
     CONVERSATION_ID: str = "azure.ai.agentserver.conversation_id"
 
 
+class SpanAttributes:
+    """Attribute keys and values for the per-turn ``invoke_agent`` span.
+
+    Each turn is wrapped in one ``invoke_agent`` span so the turn shows up as a
+    single row in the trace list and becomes the parent of the spans the M365
+    SDK creates. The agent name / version / id and the project id are set here
+    directly (not left to the shared stack) so they are guaranteed to be on this
+    one span together with the per-turn id — that combination is what makes the
+    turn appear in the trace list.
+    """
+
+    GEN_AI_OPERATION_NAME: str = "gen_ai.operation.name"
+    GEN_AI_SYSTEM: str = "gen_ai.system"
+    GEN_AI_AGENT_NAME: str = "gen_ai.agent.name"
+    GEN_AI_AGENT_VERSION: str = "gen_ai.agent.version"
+    GEN_AI_AGENT_ID: str = "gen_ai.agent.id"
+    GEN_AI_CONVERSATION_ID: str = "gen_ai.conversation.id"
+    FOUNDRY_PROJECT_ID: str = "microsoft.foundry.project.id"
+    SESSION_ID: str = "microsoft.session.id"
+    # Per-turn identifier used to give the turn its own row in the trace list.
+    # The activity turn has no response/invocation id of its own, so the
+    # activity id is used.
+    RESPONSE_ID: str = "azure.ai.agentserver.response_id"
+
+    # Fixed attribute values.
+    GEN_AI_SYSTEM_VALUE: str = "activity"
+    OPERATION_NAME_VALUE: str = "invoke_agent"
+    SPAN_NAME: str = "invoke_agent"
+
+
 class LogRecordFields:
     """Log-record attribute names populated by the activity log enrichment."""
 

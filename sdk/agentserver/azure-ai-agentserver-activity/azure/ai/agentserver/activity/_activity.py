@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
+from opentelemetry import trace as _otel_trace
 from opentelemetry.context import Context
 from starlette.requests import Request
 from starlette.responses import Response
@@ -37,8 +38,12 @@ from azure.ai.agentserver.core import (
     AgentServerHost,
     FoundryAgentRequestContext,
     create_error_response,
+    detach_context,
+    end_span,
+    flush_spans,
     get_request_context,
     reset_request_context,
+    set_current_span,
     set_request_context,
 )
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
@@ -61,6 +66,7 @@ from ._constants import (
     ErrorCode,
     ErrorSource,
     LogRecordFields,
+    SpanAttributes,
 )
 
 if TYPE_CHECKING:  # pragma: no cover - type-only imports (M365 SDK is optional)
@@ -631,6 +637,45 @@ class ActivityAgentServerHost(AgentServerHost):
             ctx = _otel_baggage.set_baggage(BaggageKeys.CONVERSATION_ID, conversation_id, context=ctx)
         return _otel_context.attach(ctx)
 
+    def _build_invoke_span_attrs(self, activity_id: str, conversation_id: str, session_id: str) -> dict[str, str]:
+        """Build the attributes for the per-turn ``invoke_agent`` span.
+
+        The agent name / version / id and the project id are set here directly
+        so they are guaranteed to be present on this one span, together with the
+        per-turn id (the activity id). That combination is what makes the turn
+        show up as a row in the trace list. Only values that are actually
+        available are added, so a local run without the platform environment
+        variables does not emit blank attributes.
+
+        :param activity_id: The sanitized activity ID, used as the per-turn id.
+        :type activity_id: str
+        :param conversation_id: The resolved conversation ID (may be empty).
+        :type conversation_id: str
+        :param session_id: The resolved session ID.
+        :type session_id: str
+        :return: A mapping of span attribute keys to values.
+        :rtype: dict[str, str]
+        """
+        attrs: dict[str, str] = {
+            SpanAttributes.GEN_AI_OPERATION_NAME: SpanAttributes.OPERATION_NAME_VALUE,
+            SpanAttributes.GEN_AI_SYSTEM: SpanAttributes.GEN_AI_SYSTEM_VALUE,
+        }
+        if activity_id:
+            attrs[SpanAttributes.RESPONSE_ID] = activity_id
+        if self.config.agent_name:
+            attrs[SpanAttributes.GEN_AI_AGENT_NAME] = self.config.agent_name
+        if self.config.agent_version:
+            attrs[SpanAttributes.GEN_AI_AGENT_VERSION] = self.config.agent_version
+        if self.config.agent_id:
+            attrs[SpanAttributes.GEN_AI_AGENT_ID] = self.config.agent_id
+        if self.config.project_id:
+            attrs[SpanAttributes.FOUNDRY_PROJECT_ID] = self.config.project_id
+        if conversation_id:
+            attrs[SpanAttributes.GEN_AI_CONVERSATION_ID] = conversation_id
+        if session_id:
+            attrs[SpanAttributes.SESSION_ID] = session_id
+        return attrs
+
     async def _run_handler(self, request: Request, activity_id: str, conversation_id: str, session_id: str) -> Response:
         """Invoke the registered handler and classify any failure into a 500.
 
@@ -645,6 +690,13 @@ class ActivityAgentServerHost(AgentServerHost):
         :return: The handler's response, or a classified 500 error response.
         :rtype: Response
         """
+        tracer = _otel_trace.get_tracer("azure.ai.agentserver.activity")
+        span = tracer.start_span(
+            SpanAttributes.SPAN_NAME,
+            attributes=self._build_invoke_span_attrs(activity_id, conversation_id, session_id),
+        )
+        span_token = set_current_span(span)
+        error: Optional[BaseException] = None
         try:
             if self._handler is None:
                 raise NotImplementedError(
@@ -664,6 +716,7 @@ class ActivityAgentServerHost(AgentServerHost):
             )
             return response
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            error = exc
             error_source, error_detail = _classify_error(exc)
             logger.error(
                 "Activity request failed | activity_id=%s | conversation_id=%s | "
@@ -687,6 +740,11 @@ class ActivityAgentServerHost(AgentServerHost):
             )
             self._add_required_response_headers(response, session_id)
             return response
+        finally:
+            if span_token is not None:
+                detach_context(span_token)
+            end_span(span, exc=error)
+            flush_spans()
 
     async def _create_activity_endpoint(self, request: Request) -> Response:
         """Handle inbound POST to ``/activity/messages``.
