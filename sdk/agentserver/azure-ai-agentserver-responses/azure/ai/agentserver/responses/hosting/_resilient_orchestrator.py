@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
+from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Callable
 
 from azure.ai.agentserver.core.tasks import (
@@ -37,7 +38,7 @@ from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import CreateResponse
+    from ..models._generated import CreateResponse, ResponseObject
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
     from ._orchestrator import _ResponseOrchestrator
@@ -50,54 +51,158 @@ logger = logging.getLogger("azure.ai.agentserver.responses.agentserver")
 _RESPONSES_NS = "_responses"
 
 
+def _server_error_message(shutdown_reason: str) -> str:
+    """Return the canonical user-visible ``error.message`` for a shutdown/crash
+    marker, keyed by ``shutdown_reason``.
+
+    Single source of truth so the overlay path and the synthesize path emit an
+    identical message (and match ``docs/responses-resilience-spec.md`` §7.3).
+
+    :param shutdown_reason: ``"crash_recovery"`` or ``"grace_exhausted"``.
+    :type shutdown_reason: str
+    :returns: The human-readable error message.
+    :rtype: str
+    """
+    if shutdown_reason == "crash_recovery":
+        return "Server interrupted before completing this response"
+    if shutdown_reason == "grace_exhausted":
+        return "Server stopped before this response completed"
+    return "Server failed to complete this response"
+
+
 def _build_server_error_payload(
     response_id: str,
     *,
     shutdown_reason: str,
     message: str | None = None,
+    agent_reference: dict[str, Any] | None = None,
+    model: str | None = None,
 ) -> dict[str, Any]:
     """Build the response-failed payload for crash / shutdown markers.
 
-    Single source of truth for the failure payload format per
-    ``sdk/agentserver/specs/resilience-contract.md`` § Glossary —
-    the user-visible ``code`` is the generic ``"server_error"`` (the
-    same code used elsewhere in the codebase, e.g. ``_orchestrator.py``).
-    Path-specific cause goes in ``message`` and in
-    ``error.additionalInfo.shutdown_reason`` for operator diagnostics.
+    Single source of truth for the failure payload format. The ``error`` object
+    matches the SOT ``ResponseError`` shape exactly — ``code`` (the generic
+    ``"server_error"``, as used elsewhere in the codebase) + ``message`` (the
+    path-specific human-readable cause). No ``type`` or ``additionalInfo`` is
+    set: the SOT ``ResponseError`` (unlike the HTTP error envelope) carries only
+    ``code`` and ``message``, and the internal ``shutdown_reason`` is not
+    surfaced to customers (it selects the message and is available in logs).
 
     :param response_id: The response identifier.
     :type response_id: str
     :keyword shutdown_reason: One of ``"crash_recovery"`` (next-lifetime
         marker for SIGKILL / lost-process recovery) or ``"grace_exhausted"``
-        (in-process marker fired during graceful shutdown). Surfaces in
-        ``error.additionalInfo.shutdown_reason``.
+        (in-process marker fired during graceful shutdown). Selects the
+        default ``message`` (internal-only; not surfaced on the payload).
     :paramtype shutdown_reason: str
     :keyword message: Optional override for the human-readable
         ``error.message``. If omitted, a path-specific default is used.
     :paramtype message: str | None
+    :keyword agent_reference: The persisted agent reference (``name`` +
+        ``version``). The Foundry storage API validates that every
+        ``update_response`` / ``create_response`` body carries an agent
+        reference and rejects the write when it is missing, so the crash
+        marker MUST stamp it or the failed terminal never persists and the
+        response stays ``in_progress`` forever.
+    :paramtype agent_reference: dict[str, Any] | None
+    :keyword model: Optional model identifier, mirrored onto the marker for
+        parity with the canonical ``build_failed_response`` shape.
+    :paramtype model: str | None
     :returns: A response-failed dict suitable for persisting via
         ``ResponseProviderProtocol.update_response``.
     :rtype: dict[str, Any]
     """
     if message is None:
-        if shutdown_reason == "crash_recovery":
-            message = "Server interrupted before completing this response"
-        elif shutdown_reason == "grace_exhausted":
-            message = "Server stopped before this response completed"
-        else:
-            message = "Server failed to complete this response"
+        message = _server_error_message(shutdown_reason)
     return {
         "id": response_id,
+        "response_id": response_id,
+        "agent_reference": deepcopy(agent_reference) if agent_reference else {},
         "object": "response",
         "status": "failed",
+        "model": model,
         "output": [],
         "error": {
-            "type": "server_error",
             "code": "server_error",
             "message": message,
-            "additionalInfo": {"shutdown_reason": shutdown_reason},
         },
     }
+
+
+def _agent_reference_from_params(params: dict[str, Any]) -> dict[str, Any] | None:
+    """Extract the persisted agent reference (``name`` + ``version``) from the
+    resilient task input.
+
+    The Foundry storage API validates that every write carries an agent
+    reference, so the crash-failed marker must stamp it. The value is the
+    normalized ``{type, name, version}`` dict persisted under
+    ``_K_AGENT_REFERENCE``.
+
+    :param params: The persisted task input params.
+    :type params: dict[str, Any]
+    :returns: The agent-reference dict, or ``None`` when absent.
+    :rtype: dict[str, Any] | None
+    """
+    agent_reference = params.get("agent_reference")
+    if isinstance(agent_reference, dict) and agent_reference:
+        return agent_reference
+    return None
+
+
+def _model_from_params(params: dict[str, Any]) -> str | None:
+    """Extract the model identifier from the persisted request, for parity with
+    the canonical failed-response shape.
+
+    :param params: The persisted task input params.
+    :type params: dict[str, Any]
+    :returns: The model string, or ``None`` when absent.
+    :rtype: str | None
+    """
+    request = params.get("request")
+    if isinstance(request, dict):
+        model = request.get("model")
+        if isinstance(model, str):
+            return model
+    return None
+
+
+def _overlay_failed_terminal(
+    snapshot: "ResponseObject",
+    *,
+    shutdown_reason: str,
+    message: str | None = None,
+) -> "ResponseObject":
+    """Overlay a ``failed`` terminal onto a persisted response snapshot.
+
+    Per ``docs/responses-resilience-spec.md`` §7.2/§7.3 the crash-failed
+    marker MUST preserve the developer's persisted response object — its
+    ``agent_reference``, ``model``, the ``output`` accumulated and durably
+    persisted before the crash, ``created_at``, and any other fields — and
+    only set ``status="failed"`` with the ``server_error`` error attached.
+    The persisted snapshot is the authoritative record of what was durably
+    accomplished; the failure is layered on top of it rather than discarding
+    it. Preserving the snapshot also satisfies the store's mandatory
+    ``agent_reference`` requirement by construction.
+
+    :param snapshot: The persisted (non-terminal) response snapshot.
+    :type snapshot: ResponseObject
+    :keyword shutdown_reason: Selects the default ``error.message``
+        (internal-only; not surfaced on the payload).
+    :paramtype shutdown_reason: str
+    :keyword message: Optional override for ``error.message``. Defaults to the
+        canonical message for ``shutdown_reason``.
+    :paramtype message: str | None
+    :returns: A copy of the snapshot transitioned to ``failed``.
+    :rtype: ResponseObject
+    """
+    from ..models.runtime import apply_failed_terminal  # pylint: disable=import-outside-toplevel
+    from ..models._generated import ResponseObject  # pylint: disable=import-outside-toplevel
+
+    error = {
+        "code": "server_error",
+        "message": message if message is not None else _server_error_message(shutdown_reason),
+    }
+    return ResponseObject(apply_failed_terminal(snapshot, error=error))
 
 
 # (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,
@@ -1197,58 +1302,114 @@ class ResilientResponseOrchestrator:
         # (Spec 014 T-066) Race-safe idempotent check. If the store already
         # holds a terminal response for this id, leave it alone — the crash
         # happened after terminal persistence, and overwriting would corrupt
-        # the result.
-        try:
-            existing = await self._provider.get_response(response_id, context=platform_context)
-            existing_status = getattr(existing, "status", None) or (
-                existing.get("status") if isinstance(existing, dict) else None
-            )
-            if isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
-                logger.info(
-                    "_persist_crash_failed: response %s already terminal "
-                    "(status=%s) — skipping overwrite (race avoidance)",
-                    response_id,
-                    existing_status,
+        # the result. A non-terminal snapshot is captured for reuse: the
+        # failed terminal is overlaid onto it so the developer's persisted
+        # response object (agent_reference, model, output-so-far, ...) is
+        # preserved rather than discarded (§7.2 step 3).
+        #
+        # ``response_known_absent`` distinguishes a *confirmed* missing response
+        # (``KeyError`` — handler crashed before ``response.created``) from an
+        # *unknown* store state (some other read error). The read is retried
+        # once so a transient failure does not force the destructive synthesize
+        # path below — synthesizing carries ``agent_reference``, so an
+        # ``update`` would now succeed and overwrite a progressed snapshot with
+        # empty output.
+        existing_snapshot: "ResponseObject | None" = None
+        response_known_absent = False
+        for _attempt in range(2):
+            try:
+                existing = await self._provider.get_response(response_id, context=platform_context)
+                existing_status = getattr(existing, "status", None) or (
+                    existing.get("status") if isinstance(existing, dict) else None
                 )
-                return
-        except KeyError:
-            # Response not yet in store (handler crashed before terminal).
-            pass
-        except Exception:  # pylint: disable=broad-exception-caught
-            # Other store errors — swallow and try the write below; the
-            # write will report its own error.
-            pass
+                if isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
+                    logger.info(
+                        "_persist_crash_failed: response %s already terminal "
+                        "(status=%s) — skipping overwrite (race avoidance)",
+                        response_id,
+                        existing_status,
+                    )
+                    return
+                existing_snapshot = existing
+                break
+            except (KeyError, FoundryResourceNotFoundError):
+                # Response confirmed not in store (crash before terminal). The
+                # file/memory stores raise KeyError; the Foundry store raises
+                # FoundryResourceNotFoundError for a missing response.
+                response_known_absent = True
+                break
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Unknown/transient store error — retry once, then fall through
+                # to the conservative create-only path below.
+                continue
 
-        failed_response = _build_server_error_payload(
-            response_id,
-            shutdown_reason="crash_recovery",
-            message="Server crashed during response execution",
-        )
+        if existing_snapshot is not None:
+            # Preserve the persisted snapshot; overlay only status + error.
+            failed_response = _overlay_failed_terminal(
+                existing_snapshot,
+                shutdown_reason="crash_recovery",
+            )
+        else:
+            # No readable snapshot — synthesize a minimal failed object,
+            # carrying agent_reference + model from the persisted task input so
+            # the write still satisfies the store's agent-reference requirement.
+            # Output is empty (no progress could be preserved).
+            failed_response = ResponseObject(
+                _build_server_error_payload(
+                    response_id,
+                    shutdown_reason="crash_recovery",
+                    agent_reference=_agent_reference_from_params(params),
+                    model=_model_from_params(params),
+                )
+            )
 
-        try:
-            await self._provider.update_response(ResponseObject(failed_response), context=platform_context)
-        except (KeyError, FoundryResourceNotFoundError):
-            # Response was never persisted at response.created — try
-            # create instead so the failed terminal still lands. The Foundry
-            # store raises FoundryResourceNotFoundError (NOT a KeyError) for the
-            # missing-response case, so both must be caught here or the create
-            # fallback would be skipped on the production store.
+        if existing_snapshot is not None or response_known_absent:
+            # Safe to write: either we preserve the snapshot (overlay) or the
+            # response is confirmed absent (a create lands a fresh terminal).
+            try:
+                await self._provider.update_response(failed_response, context=platform_context)
+            except (KeyError, FoundryResourceNotFoundError):
+                # Response was never persisted at response.created — try
+                # create instead so the failed terminal still lands. The Foundry
+                # store raises FoundryResourceNotFoundError (NOT a KeyError) for
+                # the missing-response case, so both must be caught here or the
+                # create fallback would be skipped on the production store.
+                try:
+                    await self._provider.create_response(
+                        failed_response,
+                        input_items=[],
+                        history_item_ids=None,
+                        context=platform_context,
+                    )
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logger.error(
+                        "_persist_crash_failed: create after update-not-found failed for %s: %s",
+                        response_id,
+                        exc,
+                    )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "_persist_crash_failed: failed to persist crash-failure for %s: %s",
+                    response_id,
+                    exc,
+                )
+        else:
+            # Unknown store state (read failed and the response was never
+            # confirmed absent): a progressed snapshot may still exist. NEVER
+            # ``update`` here — it would clobber that progress with empty
+            # output. Best-effort ``create`` only: it lands a terminal iff the
+            # response truly does not exist; if it already exists, the store
+            # rejects the create and the existing progress is left intact.
             try:
                 await self._provider.create_response(
-                    ResponseObject(failed_response),
+                    failed_response,
                     input_items=[],
                     history_item_ids=None,
                     context=platform_context,
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error(
-                    "_persist_crash_failed: create after update-not-found failed for %s: %s",
+                    "_persist_crash_failed: create-only (unknown store state) failed for %s: %s",
                     response_id,
                     exc,
                 )
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error(
-                "_persist_crash_failed: failed to persist crash-failure for %s: %s",
-                response_id,
-                exc,
-            )

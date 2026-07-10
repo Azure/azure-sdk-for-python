@@ -164,7 +164,8 @@ async def test_p05_path_c_sigkill_marks_failed(
         assert terminal["status"] == "failed", terminal
         error = terminal.get("error") or {}
         assert error.get("code") == "server_error", terminal
-        additional = error.get("additionalInfo") or {}
-        assert additional.get("shutdown_reason") == "crash_recovery", terminal
+        # SOT ResponseError is {code, message} only — the internal
+        # shutdown_reason is not leaked to the customer payload.
+        assert "additionalInfo" not in error, terminal
     finally:
         await harness.close()

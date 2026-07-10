@@ -43,10 +43,16 @@ from ..models.runtime import (
     ResponseStatus,
 )
 from ..models.runtime import (
-    build_cancelled_response as _build_cancelled_response,
+    apply_cancelled_terminal as _apply_cancelled_terminal,
 )
 from ..models.runtime import (
-    build_failed_response as _build_failed_response,
+    apply_failed_terminal as _apply_failed_terminal,
+)
+from ..models.runtime import (
+    resolve_cancelled_response as _resolve_cancelled_response,
+)
+from ..models.runtime import (
+    resolve_failed_response as _resolve_failed_response,
 )
 from ..store._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 from ..streaming._checkpoint import ResponseCheckpointEvent
@@ -744,7 +750,8 @@ def _bg_resolve_cancelled(
             response_id,
         )
         record.set_response_snapshot(
-            _build_failed_response(
+            _resolve_failed_response(
+                record.response,
                 response_id,
                 agent_reference,
                 model,
@@ -810,7 +817,8 @@ async def _bg_persist_terminal(
         return
     if record.persistence_failed:
         # Phase 1 already failed — skip update attempt and apply storage error.
-        storage_error_response = _build_failed_response(
+        storage_error_response = _resolve_failed_response(
+            record.response,
             response_id,
             agent_reference,
             model,
@@ -852,7 +860,8 @@ async def _bg_persist_terminal(
         )
         record.persistence_failed = True
         record.persistence_exception = persist_exc
-        storage_error_response = _build_failed_response(
+        storage_error_response = _resolve_failed_response(
+            record.response,
             response_id,
             agent_reference,
             model,
@@ -1031,7 +1040,8 @@ async def _bg_drain_handler_events(
         )
         if record.status != "cancelled":
             record.set_response_snapshot(
-                _build_failed_response(
+                _resolve_failed_response(
+                    record.response,
                     response_id,
                     agent_reference,
                     model,
@@ -1504,9 +1514,17 @@ class _ResponseOrchestrator:
         :return: Normalised cancel-terminal event.
         :rtype: ResponseStreamEvent
         """
+        base = _extract_response_snapshot_from_events(
+            state.handler_events,
+            response_id=ctx.response_id,
+            agent_reference=ctx.agent_reference,
+            model=ctx.model,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+        )
         cancel_event: dict[str, Any] = {
             "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-            "response": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
+            "response": _apply_cancelled_terminal(base),
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
 
@@ -1525,18 +1543,20 @@ class _ResponseOrchestrator:
         :return: Normalised ``response.failed`` event.
         :rtype: ResponseStreamEvent
         """
+        base = _extract_response_snapshot_from_events(
+            state.handler_events,
+            response_id=ctx.response_id,
+            agent_reference=ctx.agent_reference,
+            model=ctx.model,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+        )
         failed_event: dict[str, Any] = {
             "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-            "response": {
-                "id": ctx.response_id,
-                "object": "response",
-                "status": "failed",
-                "output": [],
-                "error": {
-                    "code": "server_error",
-                    "message": "An internal server error occurred.",
-                },
-            },
+            "response": _apply_failed_terminal(
+                base,
+                error={"code": "server_error", "message": "An internal server error occurred."},
+            ),
         }
         return await self._normalize_and_append(ctx, state, failed_event)
 
@@ -1555,7 +1575,8 @@ class _ResponseOrchestrator:
         :param record: The execution record to update.
         :type record: ResponseExecution
         """
-        storage_error_response = _build_failed_response(
+        storage_error_response = _resolve_failed_response(
+            record.response,
             ctx.response_id,
             ctx.agent_reference,
             ctx.model,
@@ -1634,13 +1655,10 @@ class _ResponseOrchestrator:
         _client_cancelled = bool(ctx.context.client_cancelled) if ctx.context else False
         if not (_client_cancelled and status != "cancelled"):
             return response_payload, status
-        cancelled_response = _build_cancelled_response(
-            ctx.response_id,
-            ctx.agent_reference,
-            ctx.model,
-            created_at=ctx.context.created_at if ctx.context else None,
-        )
-        response_payload = cancelled_response.as_dict()
+        # Overlay ``cancelled`` onto the handler's resolved payload (preserving
+        # its metadata/conversation/instructions/... — the handler owns those)
+        # rather than rebuilding a bare-bones object. Output is cleared per B11.
+        response_payload = _apply_cancelled_terminal(response_payload)
         response_payload["background"] = ctx.background
         # Replace state.pending_terminal with the cancel-terminal event so
         # the SSE wire and persistence see the overridden status.
@@ -1929,7 +1947,8 @@ class _ResponseOrchestrator:
                 # async window where GET could observe a
                 # status/snapshot mismatch.
                 execution.set_response_snapshot(
-                    _build_failed_response(
+                    _resolve_failed_response(
+                        execution.response,
                         ctx.response_id,
                         ctx.agent_reference,
                         ctx.model,
@@ -2330,7 +2349,8 @@ class _ResponseOrchestrator:
         state.captured_error = state.bg_record.persistence_exception or RuntimeError("Phase 1 create failed")
         if not ctx.background:
             # Non-bg streaming: emit response.created → response.failed.
-            storage_error_response = _build_failed_response(
+            storage_error_response = _resolve_failed_response(
+                state.bg_record.response,
                 ctx.response_id,
                 ctx.agent_reference,
                 ctx.model,
@@ -3179,7 +3199,8 @@ class _ResponseOrchestrator:
                 "Non-bg sync response %s cancelled on client disconnect (B17, store=true → cancelled retrievable)",
                 ctx.response_id,
             )
-            cancelled_response = _build_cancelled_response(
+            cancelled_response = _resolve_cancelled_response(
+                record.response,
                 ctx.response_id,
                 ctx.agent_reference,
                 ctx.model,
@@ -3389,7 +3410,8 @@ class _ResponseOrchestrator:
         # carries status=failed (matches pre-Phase-2 behaviour). Sync
         # callers receive HTTP 200 with failed body per S-015 contract.
         if record.status == "in_progress":
-            failed_response = _build_failed_response(
+            failed_response = _resolve_failed_response(
+                record.response,
                 ctx.response_id,
                 ctx.agent_reference,
                 ctx.model,
@@ -3511,7 +3533,8 @@ class _ResponseOrchestrator:
                 record.persistence_failed = True
                 record.persistence_exception = persist_exc
                 # Replace snapshot with storage_error response.failed
-                storage_error_response = _build_failed_response(
+                storage_error_response = _resolve_failed_response(
+                    record.response,
                     ctx.response_id,
                     ctx.agent_reference,
                     ctx.model,

@@ -699,3 +699,147 @@ class TestPersistCrashFailedRecovery:
         get_iso = provider.get_response.call_args.kwargs["context"]
         assert get_iso.user_id_key == "user-123"
         assert get_iso.call_id is None
+
+    @pytest.mark.asyncio
+    async def test_crash_failed_preserves_persisted_snapshot(self) -> None:
+        """The crash-failed marker MUST preserve the developer's persisted
+        response object — overlaying only ``status`` + ``error`` — rather than
+        writing a synthetic minimal object.
+
+        Regression (two coupled defects): the crash-failure payload was
+        synthesized from scratch with ``output=[]`` and NO ``agent_reference``.
+        (1) Discarding the persisted snapshot threw away the developer's
+        durably-persisted progress (output items) and response fields. (2) The
+        Foundry storage API validates that every write carries an
+        ``agent_reference`` with both ``name`` and ``version`` and rejects the
+        write when it is missing — so the failed terminal never persisted and
+        the response stayed ``in_progress`` forever (Path B / mark-failed
+        recovery). Preserving the snapshot fixes both: agent_reference/model/
+        output all carry through, and only the terminal status + error are
+        overlaid.
+        """
+        from unittest.mock import AsyncMock, MagicMock
+
+        from azure.ai.agentserver.responses.models._generated import ResponseObject
+
+        persisted = ResponseObject(
+            {
+                "id": "caresp_x",
+                "object": "response",
+                "status": "in_progress",
+                "agent_reference": {"type": "agent_reference", "name": "my-agent", "version": "7"},
+                "model": "gpt-5.4-nano",
+                "output": [{"type": "message", "id": "msg_1", "role": "assistant"}],
+            }
+        )
+
+        provider = MagicMock()
+        provider.get_response = AsyncMock(return_value=persisted)
+        provider.update_response = AsyncMock()
+        provider.create_response = AsyncMock()
+
+        orch = ResilientResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=provider,
+            options=MagicMock(steerable_conversations=False),
+        )
+
+        params = {"user_id_key": "user-123"}
+
+        await orch._persist_crash_failed("caresp_x", params)
+
+        provider.update_response.assert_awaited_once()
+        written = provider.update_response.call_args[0][0]
+        payload = written.as_dict() if hasattr(written, "as_dict") else dict(written)
+
+        # Terminal + error overlaid.
+        assert payload.get("status") == "failed"
+        assert payload["error"]["code"] == "server_error"
+        # SOT ResponseError is {code, message} only — no internal
+        # ``additionalInfo``/``shutdown_reason`` leaked to the customer.
+        assert "additionalInfo" not in payload["error"]
+        assert "type" not in payload["error"]
+        # agent_reference preserved (satisfies the store's mandatory field).
+        assert payload["agent_reference"]["name"] == "my-agent"
+        assert payload["agent_reference"]["version"] == "7"
+        # Progress + developer fields preserved, NOT discarded.
+        assert payload.get("model") == "gpt-5.4-nano"
+        assert payload.get("output") == [{"type": "message", "id": "msg_1", "role": "assistant"}]
+
+    @pytest.mark.asyncio
+    async def test_crash_failed_synthesizes_agent_reference_when_never_persisted(self) -> None:
+        """When no response was ever persisted (handler crashed before
+        ``response.created``), the synthesized minimal ``failed`` object MUST
+        still carry ``agent_reference`` + ``model`` from the persisted task
+        input so the write satisfies the store's agent-reference requirement.
+        Output is legitimately empty (no progress existed).
+        """
+        from unittest.mock import AsyncMock, MagicMock
+
+        provider = MagicMock()
+        provider.get_response = AsyncMock(side_effect=KeyError("missing"))
+        provider.update_response = AsyncMock()
+        provider.create_response = AsyncMock()
+
+        orch = ResilientResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=provider,
+            options=MagicMock(steerable_conversations=False),
+        )
+
+        params = {
+            "user_id_key": "user-123",
+            "agent_reference": {"type": "agent_reference", "name": "my-agent", "version": "7"},
+            "request": {"model": "gpt-5.4-nano"},
+        }
+
+        await orch._persist_crash_failed("caresp_x", params)
+
+        provider.update_response.assert_awaited_once()
+        written = provider.update_response.call_args[0][0]
+        payload = written.as_dict() if hasattr(written, "as_dict") else dict(written)
+        assert payload.get("status") == "failed"
+        assert payload["agent_reference"]["name"] == "my-agent"
+        assert payload["agent_reference"]["version"] == "7"
+        assert payload.get("model") == "gpt-5.4-nano"
+        assert payload.get("output") == []
+
+    @pytest.mark.asyncio
+    async def test_crash_failed_unknown_store_state_never_clobbers(self) -> None:
+        """When the snapshot read fails for an *unknown* reason (not a
+        confirmed-absent error), a progressed response may still exist in the
+        store. The recovery path MUST NOT ``update`` with a minimal
+        ``output=[]`` object — that would clobber the progress with empty
+        output now that the synthesized marker carries ``agent_reference`` and
+        the store would accept the write. It falls back to a best-effort
+        ``create`` only (which the store rejects if the response already
+        exists, leaving progress intact).
+        """
+        from unittest.mock import AsyncMock, MagicMock
+
+        provider = MagicMock()
+        # Unknown/transient read failure on every attempt (NOT KeyError /
+        # FoundryResourceNotFoundError).
+        provider.get_response = AsyncMock(side_effect=RuntimeError("store unavailable"))
+        provider.update_response = AsyncMock()
+        provider.create_response = AsyncMock()
+
+        orch = ResilientResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=provider,
+            options=MagicMock(steerable_conversations=False),
+        )
+
+        params = {
+            "user_id_key": "user-123",
+            "agent_reference": {"type": "agent_reference", "name": "my-agent", "version": "7"},
+        }
+
+        await orch._persist_crash_failed("caresp_x", params)
+
+        # MUST NOT overwrite (update) — that would clobber any progress.
+        provider.update_response.assert_not_awaited()
+        # Best-effort create only.
+        provider.create_response.assert_awaited_once()
+        # The read is retried once before giving up on the unknown error.
+        assert provider.get_response.await_count == 2

@@ -194,8 +194,12 @@ respond to waiting clients in this lifetime.
 
 **Path C.** On the next lifetime the framework finds the resilient record
 (disposition `mark-failed`) and marks the response `failed`
-(`code=server_error`) with a synthetic terminal event so subsequent polling
-and stream-reconnect see terminal.
+(`code=server_error`) by overlaying the failed terminal onto the persisted
+response snapshot — preserving `agent_reference`, `model`, and the progress
+(output items) durably persisted before the crash — so subsequent polling
+and stream-reconnect see terminal. When no snapshot was ever persisted, a
+minimal `failed` object is synthesized carrying `agent_reference` + `model`
+from the persisted task input.
 
 ### Row 3 — Marked failed, foreground (`store=true, background=false`, any `resilient_background`)
 

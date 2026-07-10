@@ -57,8 +57,8 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
-    build_cancelled_response,
-    build_failed_response,
+    resolve_cancelled_response,
+    resolve_failed_response,
 )
 from ..store._base import ResponseProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
@@ -1533,7 +1533,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if terminal_error is not None:
             if record.status == "cancelled":
                 record.set_response_snapshot(
-                    build_cancelled_response(record.response_id, record.agent_reference, record.model)
+                    resolve_cancelled_response(
+                        record.response, record.response_id, record.agent_reference, record.model
+                    )
                 )
                 return JSONResponse(
                     strip_internal_metadata(_RuntimeState.to_snapshot(record)), status_code=200, headers=_hdrs
@@ -1559,7 +1561,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 pass  # Handler may throw or timeout — already handled by the task itself
 
         # Set cancelled snapshot and transition
-        record.set_response_snapshot(build_cancelled_response(record.response_id, record.agent_reference, record.model))
+        record.set_response_snapshot(
+            resolve_cancelled_response(record.response, record.response_id, record.agent_reference, record.model)
+        )
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
         if record.response is not None:
@@ -1810,7 +1814,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # Leave in current state — will be re-entered on restart.
                 continue
             # Non-resilient or foreground: best-effort mark failed.
-            failed_payload = build_failed_response(record.response_id, record.agent_reference, record.model)
+            failed_payload = resolve_failed_response(
+                record.response, record.response_id, record.agent_reference, record.model
+            )
             record.set_response_snapshot(failed_payload)
             record.transition_to("failed")
 
@@ -1824,14 +1830,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # shutdown.
             if record.mode_flags.store and self._provider is not None:
                 try:
-                    from ..models._generated import (  # pylint: disable=import-outside-toplevel
-                        ResponseObject,
-                    )
-
                     _pctx = None
                     if record.response_context is not None:
                         _pctx = getattr(record.response_context, "platform_context", None)
-                    await self._provider.update_response(ResponseObject(failed_payload), context=_pctx)
+                    await self._provider.update_response(failed_payload, context=_pctx)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     logger.warning(
                         "Failed to persist Path-B failed terminal for %s during " "shutdown: %s",
