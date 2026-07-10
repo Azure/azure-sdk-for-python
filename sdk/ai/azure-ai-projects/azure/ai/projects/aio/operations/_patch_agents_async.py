@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
-from ...operations._patch_agents import _compute_sha256_from_stream
+from ...operations._patch_agents import _build_create_version_from_code_content, _compute_sha256_from_stream
 from ...models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
     _has_header_case_insensitive,
@@ -273,15 +273,11 @@ class AgentsOperations(GeneratedAgentsOperations):
         if code_zip_sha256 is None:
             code_zip_sha256 = _compute_sha256_from_stream(code)
 
-        # Build content from expanded parameters using internal model classes
-        metadata_obj = _models._models._CreateAgentVersionFromCodeMetadata(  # pylint: disable=protected-access
+        content = _build_create_version_from_code_content(
             definition=definition,
+            code=code,
             description=description,
             metadata=metadata,
-        )
-        content = _models._models._CreateAgentVersionFromCodeContent(  # pylint: disable=protected-access
-            metadata=metadata_obj,
-            code=code,
         )
 
         if getattr(self._config, "allow_preview", False):

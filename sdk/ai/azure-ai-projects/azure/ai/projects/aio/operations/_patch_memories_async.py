@@ -8,8 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Union, Optional, Any, overload, IO, cast
-from openai.types.responses import ResponseInputParam
+from collections.abc import Mapping
+from typing import Union, Optional, Any, overload, cast
+from azure.ai.extensions.openai.types import ResponseInputParam
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
@@ -58,7 +59,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
          Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
-        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :paramtype items: Union[str, azure.ai.extensions.openai.types.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -90,28 +91,11 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
-    async def search_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
     async def search_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: JSON = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[Union[str, ResponseInputParam]] = None,
@@ -123,8 +107,8 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         :param name: The name of the memory store to search. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: JSON request body. Required.
+        :type body: JSON
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -133,7 +117,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
          Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
-        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :paramtype items: Union[str, azure.ai.extensions.openai.types.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -143,6 +127,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if body is not _Unset and not isinstance(body, Mapping):
+            raise TypeError("body must be a JSON mapping.")
+
         return await super()._search_memories(
             name=name,
             body=body,
@@ -177,7 +164,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
          Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
-        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :paramtype items: Union[str, azure.ai.extensions.openai.types.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -222,31 +209,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
-    async def begin_update_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> AsyncUpdateMemoriesLROPoller:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncUpdateMemoriesLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.projects.models.AsyncUpdateMemoriesLROPoller
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
     @api_version_validation(
         method_added_on="v1",
@@ -256,7 +218,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
     async def begin_update_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: JSON = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[Union[str, ResponseInputParam]] = None,
@@ -268,8 +230,8 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: JSON request body. Required.
+        :type body: JSON
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -278,7 +240,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
          Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
-        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :paramtype items: Union[str, azure.ai.extensions.openai.types.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -296,6 +258,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
+
+        if body is not _Unset and not isinstance(body, Mapping):
+            raise TypeError("body must be a JSON mapping.")
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
@@ -330,9 +295,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
+            response_headers["Operation-Location"] = response.headers.get("Operation-Location")
 
             deserialized = _deserialize(MemoryStoreUpdateCompletedResult, response.json().get("result", None))
             if deserialized is None:

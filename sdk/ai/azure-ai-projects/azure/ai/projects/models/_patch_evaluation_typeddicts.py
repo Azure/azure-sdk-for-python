@@ -7,7 +7,7 @@
 import datetime
 from typing import Dict, Any, List, Union
 from typing_extensions import Literal, Required, TypedDict
-from openai.types.evals.create_eval_completions_run_data_source_param import (
+from azure.ai.extensions.openai.evals import (
     InputMessagesItemReference,
     SourceFileContent,
     SourceFileID,

@@ -24,6 +24,21 @@ from ..models._patch import (
 )
 
 
+def _build_create_version_from_code_content(
+    *,
+    definition: _models.HostedAgentDefinition,
+    code: IO[bytes],
+    description: Optional[str],
+    metadata: Optional[dict[str, str]],
+) -> dict[str, Any]:
+    metadata_body: dict[str, Any] = {"definition": definition}
+    if description is not None:
+        metadata_body["description"] = description
+    if metadata is not None:
+        metadata_body["metadata"] = metadata
+    return {"metadata": metadata_body, "code": code}
+
+
 def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1024) -> str:
     if not isinstance(stream, IOBase) or not stream.seekable():
         raise TypeError("'code' must be provided as a seekable IO[bytes] stream.")
@@ -307,15 +322,11 @@ class AgentsOperations(GeneratedAgentsOperations):
         if code_zip_sha256 is None:
             code_zip_sha256 = _compute_sha256_from_stream(code)
 
-        # Build content from expanded parameters using internal model classes
-        metadata_obj = _models._models._CreateAgentVersionFromCodeMetadata(  # pylint: disable=protected-access
+        content = _build_create_version_from_code_content(
             definition=definition,
+            code=code,
             description=description,
             metadata=metadata,
-        )
-        content = _models._models._CreateAgentVersionFromCodeContent(  # pylint: disable=protected-access
-            metadata=metadata_obj,
-            code=code,
         )
 
         if getattr(self._config, "allow_preview", False):

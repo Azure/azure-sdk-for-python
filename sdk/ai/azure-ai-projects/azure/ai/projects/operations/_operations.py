@@ -8,9 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from io import IOBase
-import json
-from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 import uuid
 
@@ -33,11 +31,10 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import types, types as _types
 from .._configuration import AIProjectClientConfiguration
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._utils.utils import prepare_multipart_form_data
+from .._utils.utils import FileType, prepare_multipart_form_data
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -101,9 +98,9 @@ def build_agents_delete_request(agent_name: str, *, force: Optional[bool] = None
 
 def build_agents_list_request(
     *,
-    kind: Optional[Union[str, _models.AgentKind]] = None,
+    kind: Optional[types.AgentKind] = None,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -250,7 +247,7 @@ def build_agents_list_versions_request(
     agent_name: str,
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     include_drafts: Optional[bool] = None,
@@ -317,7 +314,7 @@ def build_agents_update_details_request(agent_name: str, **kwargs: Any) -> HttpR
 
 
 def build_agents_create_version_from_code_request(  # pylint: disable=name-too-long
-    agent_name: str, *, code_zip_sha256: str, **kwargs: Any
+    agent_name: str, *, code_zip_sha256: str, files: list[FileType], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -340,7 +337,7 @@ def build_agents_create_version_from_code_request(  # pylint: disable=name-too-l
     _headers["x-ms-code-zip-sha256"] = _SERIALIZER.header("code_zip_sha256", code_zip_sha256, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, files=files, **kwargs)
 
 
 def build_agents_download_code_request(
@@ -501,7 +498,7 @@ def build_agents_list_sessions_request(
     agent_name: str,
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -566,7 +563,7 @@ def build_agents_get_session_log_stream_request(  # pylint: disable=name-too-lon
 
 
 def build_agents_upload_session_file_request(
-    agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    agent_name: str, session_id: str, *, path: str, json: bytes, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -592,7 +589,7 @@ def build_agents_upload_session_file_request(
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_agents_download_session_file_request(  # pylint: disable=name-too-long
@@ -629,7 +626,7 @@ def build_agents_list_session_files_request(
     *,
     path: Optional[str] = None,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -735,12 +732,12 @@ def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest
 
 
 def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
+    id: str, *, json: _types.EvaluationRule, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -756,16 +753,15 @@ def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_evaluation_rules_list_request(
     *,
-    action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
+    action_type: Optional[types.EvaluationRuleActionType] = None,
     agent_name: Optional[str] = None,
     enabled: Optional[bool] = None,
     **kwargs: Any
@@ -845,10 +841,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
 
 
 def build_connections_list_request(
-    *,
-    connection_type: Optional[Union[str, _models.ConnectionType]] = None,
-    default_connection: Optional[bool] = None,
-    **kwargs: Any
+    *, connection_type: Optional[types.ConnectionType] = None, default_connection: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -959,11 +952,13 @@ def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> Htt
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_datasets_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_datasets_create_or_update_request(
+    name: str, version: str, *, json: _types.DatasetVersion, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -980,18 +975,19 @@ def build_datasets_create_or_update_request(name: str, version: str, **kwargs: A
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
-def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_datasets_pending_upload_request(
+    name: str, version: str, *, json: _types.PendingUploadRequest, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1008,11 +1004,10 @@ def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_datasets_get_credentials_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
@@ -1068,7 +1063,7 @@ def build_deployments_list_request(
     *,
     model_publisher: Optional[str] = None,
     model_name: Optional[str] = None,
-    deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
+    deployment_type: Optional[types.DeploymentType] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1182,11 +1177,13 @@ def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> Http
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_create_or_update_request(
+    name: str, version: str, *, json: _types.Index, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1203,11 +1200,10 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_toolboxes_create_version_request(name: str, **kwargs: Any) -> HttpRequest:
@@ -1264,7 +1260,7 @@ def build_toolboxes_get_request(name: str, **kwargs: Any) -> HttpRequest:
 def build_toolboxes_list_request(
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -1299,7 +1295,7 @@ def build_toolboxes_list_versions_request(
     name: str,
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -1496,12 +1492,12 @@ def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too
 
 
 def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
+    name: str, *, json: _types.EvaluationTaxonomy, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1517,20 +1513,19 @@ def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
+    name: str, *, json: _types.EvaluationTaxonomy, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1546,11 +1541,10 @@ def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-long
@@ -1664,12 +1658,12 @@ def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-lo
 
 
 def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
+    name: str, *, json: _types.EvaluatorVersion, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1685,20 +1679,19 @@ def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
+    name: str, version: str, *, json: _types.EvaluatorVersion, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1715,20 +1708,19 @@ def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
+    name: str, version: str, *, json: _types.PendingUploadRequest, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1745,20 +1737,19 @@ def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
+    name: str, version: str, *, json: _types.EvaluatorCredentialRequest, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1775,20 +1766,19 @@ def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluators_create_generation_job_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
+    *, json: _types.EvaluatorGenerationJob, operation_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1801,11 +1791,10 @@ def build_beta_evaluators_create_generation_job_request(  # pylint: disable=name
     # Construct headers
     if operation_id is not None:
         _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_evaluators_get_generation_job_request(  # pylint: disable=name-too-long
@@ -1837,7 +1826,7 @@ def build_beta_evaluators_get_generation_job_request(  # pylint: disable=name-to
 def build_beta_evaluators_list_generation_jobs_request(  # pylint: disable=name-too-long
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -1914,11 +1903,11 @@ def build_beta_evaluators_delete_generation_job_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
+def build_beta_insights_generate_request(*, json: _types.Insight, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1935,11 +1924,10 @@ def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
         _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
             datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
         )
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_insights_get_request(
@@ -1972,7 +1960,7 @@ def build_beta_insights_get_request(
 
 def build_beta_insights_list_request(
     *,
-    type: Optional[Union[str, _models.InsightType]] = None,
+    type: Optional[types.InsightType] = None,
     eval_id: Optional[str] = None,
     run_id: Optional[str] = None,
     agent_name: Optional[str] = None,
@@ -2083,7 +2071,7 @@ def build_beta_memory_stores_get_request(name: str, **kwargs: Any) -> HttpReques
 def build_beta_memory_stores_list_request(
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -2314,9 +2302,9 @@ def build_beta_memory_stores_get_memory_request(  # pylint: disable=name-too-lon
 def build_beta_memory_stores_list_memories_request(  # pylint: disable=name-too-long
     name: str,
     *,
-    kind: Optional[Union[str, _models.MemoryItemKind]] = None,
+    kind: Optional[types.MemoryItemKind] = None,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -2471,11 +2459,13 @@ def build_beta_models_delete_request(name: str, version: str, **kwargs: Any) -> 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_models_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_beta_models_update_request(
+    name: str, version: str, *, json: _types.UpdateModelVersionRequest, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2492,20 +2482,19 @@ def build_beta_models_update_request(name: str, version: str, **kwargs: Any) -> 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_models_pending_create_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
+    name: str, version: str, *, json: _types.ModelVersion, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2522,18 +2511,19 @@ def build_beta_models_pending_create_version_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
-def build_beta_models_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_beta_models_pending_upload_request(
+    name: str, version: str, *, json: _types.ModelPendingUploadRequest, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2550,20 +2540,19 @@ def build_beta_models_pending_upload_request(name: str, version: str, **kwargs: 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_models_get_credentials_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
+    name: str, version: str, *, json: _types.ModelCredentialRequest, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2580,11 +2569,10 @@ def build_beta_models_get_credentials_request(  # pylint: disable=name-too-long
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
@@ -2630,11 +2618,11 @@ def build_beta_red_teams_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_create_request(**kwargs: Any) -> HttpRequest:
+def build_beta_red_teams_create_request(*, json: _types.RedTeam, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2645,11 +2633,10 @@ def build_beta_red_teams_create_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_routines_create_or_update_request(  # pylint: disable=name-too-long
@@ -2918,7 +2905,7 @@ def build_beta_schedules_get_request(schedule_id: str, **kwargs: Any) -> HttpReq
 
 
 def build_beta_schedules_list_request(
-    *, type: Optional[Union[str, _models.ScheduleTaskType]] = None, enabled: Optional[bool] = None, **kwargs: Any
+    *, type: Optional[types.ScheduleTaskType] = None, enabled: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2943,12 +2930,12 @@ def build_beta_schedules_list_request(
 
 
 def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-long
-    schedule_id: str, **kwargs: Any
+    schedule_id: str, *, json: _types.Schedule, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2964,11 +2951,10 @@ def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
@@ -2997,11 +2983,7 @@ def build_beta_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs
 
 
 def build_beta_schedules_list_runs_request(
-    schedule_id: str,
-    *,
-    type: Optional[Union[str, _models.ScheduleTaskType]] = None,
-    enabled: Optional[bool] = None,
-    **kwargs: Any
+    schedule_id: str, *, type: Optional[types.ScheduleTaskType] = None, enabled: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3057,7 +3039,7 @@ def build_beta_skills_get_request(name: str, **kwargs: Any) -> HttpRequest:
 def build_beta_skills_list_request(
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -3167,7 +3149,7 @@ def build_beta_skills_create_request(name: str, **kwargs: Any) -> HttpRequest:
 
 
 def build_beta_skills_create_from_files_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
+    name: str, *, files: list[FileType], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3189,14 +3171,14 @@ def build_beta_skills_create_from_files_request(  # pylint: disable=name-too-lon
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, files=files, **kwargs)
 
 
 def build_beta_skills_list_versions_request(
     name: str,
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -3362,7 +3344,7 @@ def build_beta_datasets_get_generation_job_request(  # pylint: disable=name-too-
 def build_beta_datasets_list_generation_jobs_request(  # pylint: disable=name-too-long
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -3394,12 +3376,12 @@ def build_beta_datasets_list_generation_jobs_request(  # pylint: disable=name-to
 
 
 def build_beta_datasets_create_generation_job_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
+    *, json: _types.DataGenerationJob, operation_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3412,11 +3394,10 @@ def build_beta_datasets_create_generation_job_request(  # pylint: disable=name-t
     # Construct headers
     if operation_id is not None:
         _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_datasets_cancel_generation_job_request(  # pylint: disable=name-too-long
@@ -3466,12 +3447,12 @@ def build_beta_datasets_delete_generation_job_request(  # pylint: disable=name-t
 
 
 def build_beta_agents_create_optimization_job_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
+    *, json: _types.OptimizationJob, operation_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3484,11 +3465,10 @@ def build_beta_agents_create_optimization_job_request(  # pylint: disable=name-t
     # Construct headers
     if operation_id is not None:
         _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_beta_agents_get_optimization_job_request(  # pylint: disable=name-too-long
@@ -3520,10 +3500,10 @@ def build_beta_agents_get_optimization_job_request(  # pylint: disable=name-too-
 def build_beta_agents_list_optimization_jobs_request(  # pylint: disable=name-too-long
     *,
     limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
+    order: Optional[types.PageOrder] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
-    status: Optional[Union[str, _models.JobStatus]] = None,
+    status: Optional[types.JobStatus] = None,
     agent_name: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -3653,16 +3633,197 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, agent_name: str, **kwargs: Any) -> _models.AgentDetails:
+    def get(self, agent_name: str, **kwargs: Any) -> _types.AgentDetails:
         """Get an agent.
 
         Retrieves an agent definition by its unique name.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
+        :return: AgentDetails
+        :rtype: ~azure.ai.projects.types.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "state": "str",
+                    "versions": {
+                        "latest": {
+                            "created_at": "2020-02-20 00:00:00",
+                            "definition": agent_definition,
+                            "id": "str",
+                            "metadata": {
+                                "str": "str"
+                            },
+                            "name": "str",
+                            "object": "str",
+                            "version": "str",
+                            "agent_guid": "str",
+                            "blueprint": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "blueprint_reference": agent_blueprint_reference,
+                            "description": "str",
+                            "draft": bool,
+                            "instance_identity": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "status": "str"
+                        }
+                    },
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    },
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3675,7 +3836,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentDetails] = kwargs.pop("cls", None)
 
         _request = build_agents_get_request(
             agent_name=agent_name,
@@ -3703,16 +3864,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3720,7 +3884,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(self, agent_name: str, *, force: Optional[bool] = None, **kwargs: Any) -> _models.DeleteAgentResponse:
+    def delete(self, agent_name: str, *, force: Optional[bool] = None, **kwargs: Any) -> _types.DeleteAgentResponse:
         """Delete an agent.
 
         Deletes an agent. For hosted agents, if any version has active sessions, the request is
@@ -3734,9 +3898,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          ``false`` if a value is not specified by the caller. This value is not relevant for other Agent
          types. Default value is None.
         :paramtype force: bool
-        :return: DeleteAgentResponse. The DeleteAgentResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteAgentResponse
+        :return: DeleteAgentResponse
+        :rtype: ~azure.ai.projects.types.DeleteAgentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "name": "str",
+                    "object": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3749,7 +3923,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteAgentResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DeleteAgentResponse] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_request(
             agent_name=agent_name,
@@ -3778,16 +3952,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteAgentResponse, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3798,12 +3975,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def list(
         self,
         *,
-        kind: Optional[Union[str, _models.AgentKind]] = None,
+        kind: Optional[types.AgentKind] = None,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.AgentDetails"]:
+    ) -> ItemPaged["_types.AgentDetails"]:
         """List agents.
 
         Returns a paged collection of agent resources.
@@ -3826,13 +4003,194 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of AgentDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentDetails]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.AgentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "state": "str",
+                    "versions": {
+                        "latest": {
+                            "created_at": "2020-02-20 00:00:00",
+                            "definition": agent_definition,
+                            "id": "str",
+                            "metadata": {
+                                "str": "str"
+                            },
+                            "name": "str",
+                            "object": "str",
+                            "version": "str",
+                            "agent_guid": "str",
+                            "blueprint": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "blueprint_reference": agent_blueprint_reference,
+                            "description": "str",
+                            "draft": bool,
+                            "instance_identity": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "status": "str"
+                        }
+                    },
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    },
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.AgentDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3862,10 +4220,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentDetails],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -3881,9 +4236,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -3896,14 +4251,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         agent_name: str,
         *,
-        definition: _models.AgentDefinition,
+        definition: _types.AgentDefinition,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
-        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        blueprint_reference: Optional[_types.AgentBlueprintReference] = None,
         draft: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+    ) -> _types.AgentVersionDetails:
         """Create an agent version.
 
         Creates a new version for the specified agent and returns the created version resource.
@@ -3917,7 +4272,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :paramtype definition: ~azure.ai.projects.types.AgentDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3931,21 +4286,153 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
-        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :paramtype blueprint_reference: ~azure.ai.projects.types.AgentBlueprintReference
         :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
          release. The service defaults to ``false`` if a value is not specified by the caller. Draft
          versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
          Default value is None.
         :paramtype draft: bool
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
 
     @overload
     def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.AgentVersionDetails:
         """Create an agent version.
 
         Creates a new version for the specified agent and returns the created version resource.
@@ -3958,53 +4445,264 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_version(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """Create an agent version.
+        Example:
+            .. code-block:: python
 
-        Creates a new version for the specified agent and returns the created version resource.
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
 
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
 
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "definition": agent_definition,
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
 
     @distributed_trace
     def create_version(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionRequest] = _Unset,
         *,
-        definition: _models.AgentDefinition = _Unset,
+        definition: _types.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
-        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        blueprint_reference: Optional[_types.AgentBlueprintReference] = None,
         draft: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+    ) -> _types.AgentVersionDetails:
         """Create an agent version.
 
         Creates a new version for the specified agent and returns the created version resource.
@@ -4016,11 +4714,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateAgentVersionRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionRequest
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :paramtype definition: ~azure.ai.projects.types.AgentDefinition
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -4031,15 +4729,251 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
-        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :paramtype blueprint_reference: ~azure.ai.projects.types.AgentBlueprintReference
         :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
          release. The service defaults to ``false`` if a value is not specified by the caller. Draft
          versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
          Default value is None.
         :paramtype draft: bool
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "definition": agent_definition,
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4053,7 +4987,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentVersionDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if definition is _Unset:
@@ -4067,17 +5001,17 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -4101,16 +5035,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4128,7 +5065,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+    ) -> _types.AgentVersionDetails:
         """Create an agent version from manifest.
 
         Imports the provided manifest to create a new version for the specified agent.
@@ -4157,15 +5094,147 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
 
     @overload
     def create_version_from_manifest(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionFromManifestRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.AgentVersionDetails:
         """Create an agent version from manifest.
 
         Imports the provided manifest to create a new version for the specified agent.
@@ -4178,52 +5247,166 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionFromManifestRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_version_from_manifest(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """Create an agent version from manifest.
+        Example:
+            .. code-block:: python
 
-        Imports the provided manifest to create a new version for the specified agent.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "manifest_id": "str",
+                    "parameter_values": {
+                        "str": {}
+                    },
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
 
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
 
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
 
     @distributed_trace
     def create_version_from_manifest(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionFromManifestRequest] = _Unset,
         *,
         manifest_id: str = _Unset,
         parameter_values: dict[str, Any] = _Unset,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+    ) -> _types.AgentVersionDetails:
         """Create an agent version from manifest.
 
         Imports the provided manifest to create a new version for the specified agent.
@@ -4235,8 +5418,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateAgentVersionFromManifestRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionFromManifestRequest
         :keyword manifest_id: The manifest ID to import the agent version from. Required.
         :paramtype manifest_id: str
         :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
@@ -4251,9 +5434,148 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "manifest_id": "str",
+                    "parameter_values": {
+                        "str": {}
+                    },
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4267,7 +5589,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentVersionDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if manifest_id is _Unset:
@@ -4282,17 +5604,17 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_agents_create_version_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -4316,16 +5638,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4333,7 +5658,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionDetails:
+    def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _types.AgentVersionDetails:
         """Get an agent version.
 
         Retrieves the specified version of an agent by its agent name and version identifier.
@@ -4342,9 +5667,136 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_version: The version of the agent to retrieve. Required.
         :type agent_version: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4357,7 +5809,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentVersionDetails] = kwargs.pop("cls", None)
 
         _request = build_agents_get_version_request(
             agent_name=agent_name,
@@ -4386,16 +5838,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4405,7 +5860,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def delete_version(
         self, agent_name: str, agent_version: str, *, force: Optional[bool] = None, **kwargs: Any
-    ) -> _models.DeleteAgentVersionResponse:
+    ) -> _types.DeleteAgentVersionResponse:
         """Delete an agent version.
 
         Deletes a specific version of an agent. For hosted agents, if the version has active sessions,
@@ -4421,10 +5876,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          value is not specified by the caller. This value is not relevant for other Agent types. Default
          value is None.
         :paramtype force: bool
-        :return: DeleteAgentVersionResponse. The DeleteAgentVersionResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteAgentVersionResponse
+        :return: DeleteAgentVersionResponse
+        :rtype: ~azure.ai.projects.types.DeleteAgentVersionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "name": "str",
+                    "object": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4437,7 +5902,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteAgentVersionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DeleteAgentVersionResponse] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_version_request(
             agent_name=agent_name,
@@ -4467,16 +5932,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteAgentVersionResponse, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4489,11 +5957,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         include_drafts: Optional[bool] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.AgentVersionDetails"]:
+    ) -> ItemPaged["_types.AgentVersionDetails"]:
         """List agent versions.
 
         Returns a paged collection of versions for the specified agent.
@@ -4519,13 +5987,140 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          versions are returned). Default value is None.
         :paramtype include_drafts: bool
         :return: An iterator like instance of AgentVersionDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentVersionDetails]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.AgentVersionDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentVersionDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.AgentVersionDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4556,10 +6151,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentVersionDetails],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -4575,9 +6167,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -4591,10 +6183,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         *,
         content_type: str = "application/merge-patch+json",
-        agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
-        agent_card: Optional[_models.AgentCard] = None,
+        agent_endpoint: Optional[_types.AgentEndpointConfig] = None,
+        agent_card: Optional[_types.AgentCard] = None,
         **kwargs: Any
-    ) -> _models.AgentDetails:
+    ) -> _types.AgentDetails:
         """Update an agent endpoint.
 
         Applies a merge-patch update to the specified agent endpoint configuration.
@@ -4605,18 +6197,204 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
+        :paramtype agent_endpoint: ~azure.ai.projects.types.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
-        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
+        :paramtype agent_card: ~azure.ai.projects.types.AgentCard
+        :return: AgentDetails
+        :rtype: ~azure.ai.projects.types.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "state": "str",
+                    "versions": {
+                        "latest": {
+                            "created_at": "2020-02-20 00:00:00",
+                            "definition": agent_definition,
+                            "id": "str",
+                            "metadata": {
+                                "str": "str"
+                            },
+                            "name": "str",
+                            "object": "str",
+                            "version": "str",
+                            "agent_guid": "str",
+                            "blueprint": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "blueprint_reference": agent_blueprint_reference,
+                            "description": "str",
+                            "draft": bool,
+                            "instance_identity": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "status": "str"
+                        }
+                    },
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    },
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    }
+                }
         """
 
     @overload
     def update_details(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentDetails:
+        self,
+        agent_name: str,
+        body: _types.PatchAgentObjectRequest,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _types.AgentDetails:
         """Update an agent endpoint.
 
         Applies a merge-patch update to the specified agent endpoint configuration.
@@ -4624,60 +6402,484 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.PatchAgentObjectRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
+        :return: AgentDetails
+        :rtype: ~azure.ai.projects.types.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def update_details(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Update an agent endpoint.
+        Example:
+            .. code-block:: python
 
-        Applies a merge-patch update to the specified agent endpoint configuration.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    }
+                }
 
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "state": "str",
+                    "versions": {
+                        "latest": {
+                            "created_at": "2020-02-20 00:00:00",
+                            "definition": agent_definition,
+                            "id": "str",
+                            "metadata": {
+                                "str": "str"
+                            },
+                            "name": "str",
+                            "object": "str",
+                            "version": "str",
+                            "agent_guid": "str",
+                            "blueprint": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "blueprint_reference": agent_blueprint_reference,
+                            "description": "str",
+                            "draft": bool,
+                            "instance_identity": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "status": "str"
+                        }
+                    },
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    },
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    }
+                }
         """
 
     @distributed_trace
     def update_details(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.PatchAgentObjectRequest] = _Unset,
         *,
-        agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
-        agent_card: Optional[_models.AgentCard] = None,
+        agent_endpoint: Optional[_types.AgentEndpointConfig] = None,
+        agent_card: Optional[_types.AgentCard] = None,
         **kwargs: Any
-    ) -> _models.AgentDetails:
+    ) -> _types.AgentDetails:
         """Update an agent endpoint.
 
         Applies a merge-patch update to the specified agent endpoint configuration.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a PatchAgentObjectRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.PatchAgentObjectRequest
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
+        :paramtype agent_endpoint: ~azure.ai.projects.types.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
-        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
+        :paramtype agent_card: ~azure.ai.projects.types.AgentCard
+        :return: AgentDetails
+        :rtype: ~azure.ai.projects.types.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "state": "str",
+                    "versions": {
+                        "latest": {
+                            "created_at": "2020-02-20 00:00:00",
+                            "definition": agent_definition,
+                            "id": "str",
+                            "metadata": {
+                                "str": "str"
+                            },
+                            "name": "str",
+                            "object": "str",
+                            "version": "str",
+                            "agent_guid": "str",
+                            "blueprint": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "blueprint_reference": agent_blueprint_reference,
+                            "description": "str",
+                            "draft": bool,
+                            "instance_identity": {
+                                "client_id": "str",
+                                "principal_id": "str"
+                            },
+                            "status": "str"
+                        }
+                    },
+                    "agent_card": {
+                        "skills": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "description": "str",
+                                "examples": [
+                                    "str"
+                                ],
+                                "tags": [
+                                    "str"
+                                ]
+                            }
+                        ],
+                        "version": "str",
+                        "description": "str"
+                    },
+                    "agent_endpoint": {
+                        "authorization_schemes": [
+                            agent_endpoint_authorization_scheme
+                        ],
+                        "protocol_configuration": {
+                            "a2a": {},
+                            "activity": {
+                                "enable_m365_public_endpoint": bool
+                            },
+                            "invocations": {},
+                            "invocations_ws": {},
+                            "mcp": {},
+                            "responses": {}
+                        },
+                        "version_selector": {
+                            "version_selection_rules": [
+                                version_selection_rule
+                            ]
+                        }
+                    },
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4691,23 +6893,23 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"agent_card": agent_card, "agent_endpoint": agent_endpoint}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_agents_update_details_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -4731,45 +6933,34 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def _create_version_from_code(
-        self,
-        agent_name: str,
-        content: _models._models._CreateAgentVersionFromCodeContent,
-        *,
-        code_zip_sha256: str,
-        **kwargs: Any
-    ) -> _models.AgentVersionDetails: ...
-    @overload
-    def _create_version_from_code(
-        self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails: ...
-
     @distributed_trace
     def _create_version_from_code(
         self,
         agent_name: str,
-        content: Union[_models._models._CreateAgentVersionFromCodeContent, JSON],
+        content: _types._CreateAgentVersionFromCodeContent,
         *,
         code_zip_sha256: str,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
+    ) -> _types.AgentVersionDetails:
         """Create an agent version from code.
 
         Creates a new agent version from code. Uploads the code zip and creates a new version for an
@@ -4784,14 +6975,223 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: Is either a _CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or JSON
+        :param content: Required.
+        :type content: ~azure.ai.projects.types._CreateAgentVersionFromCodeContent
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :return: AgentVersionDetails
+        :rtype: ~azure.ai.projects.types.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                content = {
+                    "code": filetype,
+                    "metadata": {
+                        "definition": {
+                            "cpu": "str",
+                            "kind": "hosted",
+                            "memory": "str",
+                            "code_configuration": {
+                                "dependency_resolution": "str",
+                                "entry_point": [
+                                    "str"
+                                ],
+                                "runtime": "str",
+                                "content_hash": "str"
+                            },
+                            "container_configuration": {
+                                "image": "str"
+                            },
+                            "environment_variables": {
+                                "str": "str"
+                            },
+                            "protocol_versions": [
+                                {
+                                    "protocol": "str",
+                                    "version": "str"
+                                }
+                            ],
+                            "rai_config": {
+                                "rai_policy_name": "str"
+                            },
+                            "telemetry_config": {
+                                "endpoints": [
+                                    telemetry_endpoint
+                                ]
+                            }
+                        },
+                        "description": "str",
+                        "metadata": {
+                            "str": "str"
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "external":
+                agent_definition = {
+                    "kind": "external",
+                    "otel_agent_id": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "hosted":
+                agent_definition = {
+                    "cpu": "str",
+                    "kind": "hosted",
+                    "memory": "str",
+                    "code_configuration": {
+                        "dependency_resolution": "str",
+                        "entry_point": [
+                            "str"
+                        ],
+                        "runtime": "str",
+                        "content_hash": "str"
+                    },
+                    "container_configuration": {
+                        "image": "str"
+                    },
+                    "environment_variables": {
+                        "str": "str"
+                    },
+                    "protocol_versions": [
+                        {
+                            "protocol": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "telemetry_config": {
+                        "endpoints": [
+                            telemetry_endpoint
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                agent_definition = {
+                    "kind": "prompt",
+                    "model": "str",
+                    "instructions": "str",
+                    "rai_config": {
+                        "rai_policy_name": "str"
+                    },
+                    "reasoning": {
+                        "context": "auto",
+                        "effort": "none",
+                        "generate_summary": "auto",
+                        "summary": "auto"
+                    },
+                    "structured_inputs": {
+                        "str": {
+                            "default_value": {},
+                            "description": "str",
+                            "required": bool,
+                            "schema": {
+                                "str": {}
+                            }
+                        }
+                    },
+                    "temperature": 0.0,
+                    "text": {
+                        "format": text_response_format
+                    },
+                    "tool_choice": "str",
+                    "tools": [
+                        tool
+                    ],
+                    "top_p": 0.0
+                }
+
+                # JSON input template for discriminator value "json_object":
+                text_response_format = {
+                    "type": "json_object"
+                }
+
+                # JSON input template for discriminator value "json_schema":
+                text_response_format = {
+                    "name": "str",
+                    "schema": {
+                        "str": {}
+                    },
+                    "type": "json_schema",
+                    "description": "str",
+                    "strict": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": agent_definition,
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "object": "str",
+                    "version": "str",
+                    "agent_guid": "str",
+                    "blueprint": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "blueprint_reference": agent_blueprint_reference,
+                    "description": "str",
+                    "draft": bool,
+                    "instance_identity": {
+                        "client_id": "str",
+                        "principal_id": "str"
+                    },
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4804,9 +7204,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentVersionDetails] = kwargs.pop("cls", None)
 
-        _body = content.as_dict() if isinstance(content, _Model) else content
+        if not isinstance(content, MutableMapping):
+            raise TypeError("content must be a mapping")
+        _body = content
         _file_fields: list[str] = ["code"]
         _data_fields: list[str] = ["metadata"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
@@ -4839,16 +7241,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4917,9 +7322,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -4981,9 +7386,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5038,9 +7443,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5052,104 +7457,183 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         agent_name: str,
         *,
-        version_indicator: _models.VersionIndicator,
+        version_indicator: _types.VersionIndicator,
         content_type: str = "application/json",
         agent_session_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentSessionResource:
+    ) -> _types.AgentSessionResource:
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided user identity for
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
         :keyword version_indicator: Determines which agent version backs the session. Required.
-        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
+        :paramtype version_indicator: ~azure.ai.projects.types.VersionIndicator
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
          within the agent endpoint. Auto-generated if omitted. Default value is None.
         :paramtype agent_session_id: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :return: AgentSessionResource
+        :rtype: ~azure.ai.projects.types.AgentSessionResource
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "agent_session_id": "str",
+                    "created_at": "2020-02-20 00:00:00",
+                    "expires_at": "2020-02-20 00:00:00",
+                    "last_accessed_at": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "version_indicator": version_indicator
+                }
         """
 
     @overload
     def create_session(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentSessionResource:
+        self,
+        agent_name: str,
+        body: _types.CreateSessionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.AgentSessionResource:
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided user identity for
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateSessionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :return: AgentSessionResource
+        :rtype: ~azure.ai.projects.types.AgentSessionResource
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_session(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentSessionResource:
-        """Create a session.
+        Example:
+            .. code-block:: python
 
-        Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided user identity for
-        session-mutating operations.
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
 
-        :param agent_name: The name of the agent to create a session for. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "version_indicator": version_indicator,
+                    "agent_session_id": "str"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "agent_session_id": "str",
+                    "created_at": "2020-02-20 00:00:00",
+                    "expires_at": "2020-02-20 00:00:00",
+                    "last_accessed_at": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "version_indicator": version_indicator
+                }
         """
 
     @distributed_trace
     def create_session(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateSessionRequest] = _Unset,
         *,
-        version_indicator: _models.VersionIndicator = _Unset,
+        version_indicator: _types.VersionIndicator = _Unset,
         agent_session_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentSessionResource:
+    ) -> _types.AgentSessionResource:
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided user identity for
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateSessionRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateSessionRequest
         :keyword version_indicator: Determines which agent version backs the session. Required.
-        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
+        :paramtype version_indicator: ~azure.ai.projects.types.VersionIndicator
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
          within the agent endpoint. Auto-generated if omitted. Default value is None.
         :paramtype agent_session_id: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :return: AgentSessionResource
+        :rtype: ~azure.ai.projects.types.AgentSessionResource
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "version_indicator": version_indicator,
+                    "agent_session_id": "str"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "agent_session_id": "str",
+                    "created_at": "2020-02-20 00:00:00",
+                    "expires_at": "2020-02-20 00:00:00",
+                    "last_accessed_at": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "version_indicator": version_indicator
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5163,7 +7647,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentSessionResource] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if version_indicator is _Unset:
@@ -5171,17 +7655,17 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             body = {"agent_session_id": agent_session_id, "version_indicator": version_indicator}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_agents_create_session_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -5205,16 +7689,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentSessionResource, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5222,7 +7709,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_session(self, agent_name: str, session_id: str, **kwargs: Any) -> _models.AgentSessionResource:
+    def get_session(self, agent_name: str, session_id: str, **kwargs: Any) -> _types.AgentSessionResource:
         """Get a session.
 
         Retrieves the details of a hosted agent session by agent name and session identifier.
@@ -5231,9 +7718,31 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param session_id: The session identifier. Required.
         :type session_id: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :return: AgentSessionResource
+        :rtype: ~azure.ai.projects.types.AgentSessionResource
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "agent_session_id": "str",
+                    "created_at": "2020-02-20 00:00:00",
+                    "expires_at": "2020-02-20 00:00:00",
+                    "last_accessed_at": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "version_indicator": version_indicator
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5246,7 +7755,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
+        cls: ClsType[_types.AgentSessionResource] = kwargs.pop("cls", None)
 
         _request = build_agents_get_session_request(
             agent_name=agent_name,
@@ -5275,16 +7784,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AgentSessionResource, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5342,9 +7854,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5402,9 +7914,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5417,10 +7929,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.AgentSessionResource"]:
+    ) -> ItemPaged["_types.AgentSessionResource"]:
         """List sessions for an agent.
 
         Returns a paged collection of sessions associated with the specified agent endpoint.
@@ -5442,13 +7954,35 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of AgentSessionResource
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentSessionResource]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.AgentSessionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "version_ref":
+                version_indicator = {
+                    "agent_version": "str",
+                    "type": "version_ref"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "agent_session_id": "str",
+                    "created_at": "2020-02-20 00:00:00",
+                    "expires_at": "2020-02-20 00:00:00",
+                    "last_accessed_at": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "version_indicator": version_indicator
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentSessionResource]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.AgentSessionResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5478,10 +8012,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentSessionResource],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -5497,9 +8028,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -5510,7 +8041,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_session_log_stream(
         self, agent_name: str, agent_version: str, session_id: str, **kwargs: Any
-    ) -> _models.SessionLogEvent:
+    ) -> _types.SessionLogEvent:
         """Stream console logs for a hosted agent session.
 
         Streams console logs (stdout / stderr) for a specific hosted agent session
@@ -5546,9 +8077,18 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_version: str
         :param session_id: The session ID (maps to an ADC sandbox). Required.
         :type session_id: str
-        :return: SessionLogEvent. The SessionLogEvent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionLogEvent
+        :return: SessionLogEvent
+        :rtype: ~azure.ai.projects.types.SessionLogEvent
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "data": "str",
+                    "event": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5561,7 +8101,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SessionLogEvent] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SessionLogEvent] = kwargs.pop("cls", None)
 
         _request = build_agents_get_session_log_stream_request(
             agent_name=agent_name,
@@ -5591,9 +8131,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5603,7 +8143,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SessionLogEvent, response.text())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5613,7 +8156,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def upload_session_file(
         self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
-    ) -> _models.SessionFileWriteResult:
+    ) -> _types.SessionFileWriteResult:
         """Upload a session file.
 
         Uploads binary file content to the specified path in the session sandbox. The service stores
@@ -5628,9 +8171,18 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :return: SessionFileWriteResult
+        :rtype: ~azure.ai.projects.types.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "bytes_written": 0,
+                    "path": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5644,9 +8196,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[_models.SessionFileWriteResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SessionFileWriteResult] = kwargs.pop("cls", None)
 
-        _content = content
+        _json = content
 
         _request = build_agents_upload_session_file_request(
             agent_name=agent_name,
@@ -5654,7 +8206,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             path=path,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -5678,16 +8230,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SessionFileWriteResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5753,9 +8308,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5774,10 +8329,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         *,
         path: Optional[str] = None,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.SessionDirectoryEntry"]:
+    ) -> ItemPaged["_types.SessionDirectoryEntry"]:
         """List session files.
 
         Returns files and directories at the specified path in the session sandbox. The response
@@ -5806,13 +8361,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of SessionDirectoryEntry
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.SessionDirectoryEntry]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.SessionDirectoryEntry]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "is_directory": bool,
+                    "modified_time": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "size": 0
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SessionDirectoryEntry]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.SessionDirectoryEntry]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5844,10 +8410,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.SessionDirectoryEntry],
-                deserialized.get("entries", []),
-            )
+            list_of_elem = deserialized.get("entries", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -5863,9 +8426,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -5932,9 +8495,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -5960,16 +8523,52 @@ class EvaluationRulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
+    def get(self, id: str, **kwargs: Any) -> _types.EvaluationRule:
         """Get an evaluation rule.
 
         Retrieves the specified evaluation rule and its configuration.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :return: EvaluationRule
+        :rtype: ~azure.ai.projects.types.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "continuousEvaluation":
+                evaluation_rule_action = {
+                    "evalId": "str",
+                    "type": "continuousEvaluation",
+                    "maxHourlyRuns": 0,
+                    "samplingRate": 0.0
+                }
+
+                # JSON input template for discriminator value "humanEvaluationPreview":
+                evaluation_rule_action = {
+                    "templateId": "str",
+                    "type": "humanEvaluationPreview"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "action": evaluation_rule_action,
+                    "enabled": bool,
+                    "eventType": "str",
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "description": "str",
+                    "displayName": "str",
+                    "filter": {
+                        "agentName": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5982,7 +8581,7 @@ class EvaluationRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
+        cls: ClsType[_types.EvaluationRule] = kwargs.pop("cls", None)
 
         _request = build_evaluation_rules_get_request(
             id=id,
@@ -6015,7 +8614,10 @@ class EvaluationRulesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluationRule, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6072,82 +8674,105 @@ class EvaluationRulesOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def create_or_update(
-        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationRule:
-        """Create or update an evaluation rule.
-
-        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationRule:
-        """Create or update an evaluation rule.
-
-        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationRule:
-        """Create or update an evaluation rule.
-
-        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def create_or_update(
-        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationRule:
+    def create_or_update(self, id: str, evaluation_rule: _types.EvaluationRule, **kwargs: Any) -> _types.EvaluationRule:
         """Create or update an evaluation rule.
 
         Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :param evaluation_rule: Evaluation rule resource. Is one of the following types:
-         EvaluationRule, JSON, IO[bytes] Required.
-        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
-        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: ~azure.ai.projects.types.EvaluationRule
+        :return: EvaluationRule
+        :rtype: ~azure.ai.projects.types.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "continuousEvaluation":
+                evaluation_rule_action = {
+                    "evalId": "str",
+                    "type": "continuousEvaluation",
+                    "maxHourlyRuns": 0,
+                    "samplingRate": 0.0
+                }
+
+                # JSON input template for discriminator value "humanEvaluationPreview":
+                evaluation_rule_action = {
+                    "templateId": "str",
+                    "type": "humanEvaluationPreview"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                evaluation_rule = {
+                    "action": evaluation_rule_action,
+                    "enabled": bool,
+                    "eventType": "str",
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "description": "str",
+                    "displayName": "str",
+                    "filter": {
+                        "agentName": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "continuousEvaluation":
+                evaluation_rule_action = {
+                    "evalId": "str",
+                    "type": "continuousEvaluation",
+                    "maxHourlyRuns": 0,
+                    "samplingRate": 0.0
+                }
+
+                # JSON input template for discriminator value "humanEvaluationPreview":
+                evaluation_rule_action = {
+                    "templateId": "str",
+                    "type": "humanEvaluationPreview"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "continuousEvaluation":
+                evaluation_rule_action = {
+                    "evalId": "str",
+                    "type": "continuousEvaluation",
+                    "maxHourlyRuns": 0,
+                    "samplingRate": 0.0
+                }
+
+                # JSON input template for discriminator value "humanEvaluationPreview":
+                evaluation_rule_action = {
+                    "templateId": "str",
+                    "type": "humanEvaluationPreview"
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "action": evaluation_rule_action,
+                    "enabled": bool,
+                    "eventType": "str",
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "description": "str",
+                    "displayName": "str",
+                    "filter": {
+                        "agentName": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6160,21 +8785,16 @@ class EvaluationRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.EvaluationRule] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(evaluation_rule, (IOBase, bytes)):
-            _content = evaluation_rule
-        else:
-            _content = json.dumps(evaluation_rule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = evaluation_rule
 
         _request = build_evaluation_rules_create_or_update_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -6203,7 +8823,10 @@ class EvaluationRulesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluationRule, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6214,11 +8837,11 @@ class EvaluationRulesOperations:
     def list(
         self,
         *,
-        action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
+        action_type: Optional[types.EvaluationRuleActionType] = None,
         agent_name: Optional[str] = None,
         enabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.EvaluationRule"]:
+    ) -> ItemPaged["_types.EvaluationRule"]:
         """List evaluation rules.
 
         Returns the evaluation rules configured for the project, optionally filtered by action type,
@@ -6232,13 +8855,49 @@ class EvaluationRulesOperations:
         :keyword enabled: Filter by the enabled status. Default value is None.
         :paramtype enabled: bool
         :return: An iterator like instance of EvaluationRule
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationRule]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.EvaluationRule]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "continuousEvaluation":
+                evaluation_rule_action = {
+                    "evalId": "str",
+                    "type": "continuousEvaluation",
+                    "maxHourlyRuns": 0,
+                    "samplingRate": 0.0
+                }
+
+                # JSON input template for discriminator value "humanEvaluationPreview":
+                evaluation_rule_action = {
+                    "templateId": "str",
+                    "type": "humanEvaluationPreview"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "action": evaluation_rule_action,
+                    "enabled": bool,
+                    "eventType": "str",
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "description": "str",
+                    "displayName": "str",
+                    "filter": {
+                        "agentName": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluationRule]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.EvaluationRule]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6293,10 +8952,7 @@ class EvaluationRulesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluationRule],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6337,7 +8993,7 @@ class ConnectionsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def _get(self, name: str, **kwargs: Any) -> _models.Connection:
+    def _get(self, name: str, **kwargs: Any) -> _types.Connection:
         """Get a connection.
 
         Retrieves the specified connection and its configuration details without including credential
@@ -6345,9 +9001,54 @@ class ConnectionsOperations:
 
         :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
-        :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Connection
+        :return: Connection
+        :rtype: ~azure.ai.projects.types.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AAD":
+                base_credentials = {
+                    "type": "AAD"
+                }
+
+                # JSON input template for discriminator value "AgenticIdentityToken_Preview":
+                base_credentials = {
+                    "type": "AgenticIdentityToken_Preview"
+                }
+
+                # JSON input template for discriminator value "ApiKey":
+                base_credentials = {
+                    "type": "ApiKey",
+                    "key": "str"
+                }
+
+                # JSON input template for discriminator value "CustomKeys":
+                base_credentials = {
+                    "type": "CustomKeys"
+                }
+
+                # JSON input template for discriminator value "None":
+                base_credentials = {
+                    "type": "None"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "credentials": base_credentials,
+                    "id": "str",
+                    "isDefault": bool,
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "target": "str",
+                    "type": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6360,7 +9061,7 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Connection] = kwargs.pop("cls", None)
 
         _request = build_connections_get_request(
             name=name,
@@ -6398,7 +9099,10 @@ class ConnectionsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Connection, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6406,16 +9110,61 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
+    def _get_with_credentials(self, name: str, **kwargs: Any) -> _types.Connection:
         """Get a connection with credentials.
 
         Retrieves the specified connection together with its credential values.
 
         :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
-        :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Connection
+        :return: Connection
+        :rtype: ~azure.ai.projects.types.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AAD":
+                base_credentials = {
+                    "type": "AAD"
+                }
+
+                # JSON input template for discriminator value "AgenticIdentityToken_Preview":
+                base_credentials = {
+                    "type": "AgenticIdentityToken_Preview"
+                }
+
+                # JSON input template for discriminator value "ApiKey":
+                base_credentials = {
+                    "type": "ApiKey",
+                    "key": "str"
+                }
+
+                # JSON input template for discriminator value "CustomKeys":
+                base_credentials = {
+                    "type": "CustomKeys"
+                }
+
+                # JSON input template for discriminator value "None":
+                base_credentials = {
+                    "type": "None"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "credentials": base_credentials,
+                    "id": "str",
+                    "isDefault": bool,
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "target": "str",
+                    "type": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6428,7 +9177,7 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Connection] = kwargs.pop("cls", None)
 
         _request = build_connections_get_with_credentials_request(
             name=name,
@@ -6466,7 +9215,10 @@ class ConnectionsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Connection, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6477,10 +9229,10 @@ class ConnectionsOperations:
     def list(
         self,
         *,
-        connection_type: Optional[Union[str, _models.ConnectionType]] = None,
+        connection_type: Optional[types.ConnectionType] = None,
         default_connection: Optional[bool] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.Connection"]:
+    ) -> ItemPaged["_types.Connection"]:
         """List connections.
 
         Returns the connections available in the current project, optionally filtered by type or
@@ -6494,13 +9246,58 @@ class ConnectionsOperations:
          None.
         :paramtype default_connection: bool
         :return: An iterator like instance of Connection
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Connection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Connection]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AAD":
+                base_credentials = {
+                    "type": "AAD"
+                }
+
+                # JSON input template for discriminator value "AgenticIdentityToken_Preview":
+                base_credentials = {
+                    "type": "AgenticIdentityToken_Preview"
+                }
+
+                # JSON input template for discriminator value "ApiKey":
+                base_credentials = {
+                    "type": "ApiKey",
+                    "key": "str"
+                }
+
+                # JSON input template for discriminator value "CustomKeys":
+                base_credentials = {
+                    "type": "CustomKeys"
+                }
+
+                # JSON input template for discriminator value "None":
+                base_credentials = {
+                    "type": "None"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "credentials": base_credentials,
+                    "id": "str",
+                    "isDefault": bool,
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "target": "str",
+                    "type": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Connection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6554,10 +9351,7 @@ class ConnectionsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Connection],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6598,7 +9392,7 @@ class DatasetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.DatasetVersion"]:
+    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_types.DatasetVersion"]:
         """List versions.
 
         List all versions of the given DatasetVersion.
@@ -6606,13 +9400,52 @@ class DatasetsOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DatasetVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "uri_file":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_file",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "uri_folder":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_folder",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == dataset_version
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DatasetVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.DatasetVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6665,10 +9498,7 @@ class DatasetsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.DatasetVersion],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6691,19 +9521,58 @@ class DatasetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.DatasetVersion"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_types.DatasetVersion"]:
         """List latest versions.
 
         List the latest version of each DatasetVersion.
 
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DatasetVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "uri_file":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_file",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "uri_folder":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_folder",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == dataset_version
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DatasetVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.DatasetVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6755,10 +9624,7 @@ class DatasetsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.DatasetVersion],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6781,7 +9647,7 @@ class DatasetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
+    def get(self, name: str, version: str, **kwargs: Any) -> _types.DatasetVersion:
         """Get a version.
 
         Get the specific version of the DatasetVersion. The service returns 404 Not Found error if the
@@ -6791,9 +9657,48 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to retrieve. Required.
         :type version: str
-        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :return: DatasetVersion
+        :rtype: ~azure.ai.projects.types.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "uri_file":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_file",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "uri_folder":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_folder",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == dataset_version
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6806,7 +9711,7 @@ class DatasetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DatasetVersion] = kwargs.pop("cls", None)
 
         _request = build_datasets_get_request(
             name=name,
@@ -6840,7 +9745,10 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DatasetVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6901,94 +9809,10 @@ class DatasetsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        dataset_version: _models.DatasetVersion,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.DatasetVersion:
-        """Create or update a version.
-
-        Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or update. Required.
-        :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: ~azure.ai.projects.models.DatasetVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        dataset_version: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.DatasetVersion:
-        """Create or update a version.
-
-        Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or update. Required.
-        :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        dataset_version: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.DatasetVersion:
-        """Create or update a version.
-
-        Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or update. Required.
-        :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def create_or_update(
-        self, name: str, version: str, dataset_version: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.DatasetVersion:
+        self, name: str, version: str, dataset_version: _types.DatasetVersion, **kwargs: Any
+    ) -> _types.DatasetVersion:
         """Create or update a version.
 
         Create a new or update an existing DatasetVersion with the given version id.
@@ -6997,12 +9821,119 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Is one of the following types:
-         DatasetVersion, JSON, IO[bytes] Required.
-        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or JSON or IO[bytes]
-        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: ~azure.ai.projects.types.DatasetVersion
+        :return: DatasetVersion
+        :rtype: ~azure.ai.projects.types.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "uri_file":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_file",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "uri_folder":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_folder",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                dataset_version = dataset_version
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "uri_file":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_file",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "uri_folder":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_folder",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "uri_file":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_file",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "uri_folder":
+                dataset_version = {
+                    "dataUri": "str",
+                    "name": "str",
+                    "type": "uri_folder",
+                    "version": "str",
+                    "connectionName": "str",
+                    "description": "str",
+                    "id": "str",
+                    "isReference": bool,
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == dataset_version
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7015,22 +9946,17 @@ class DatasetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/merge-patch+json"))
+        cls: ClsType[_types.DatasetVersion] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(dataset_version, (IOBase, bytes)):
-            _content = dataset_version
-        else:
-            _content = json.dumps(dataset_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = dataset_version
 
         _request = build_datasets_create_or_update_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -7059,105 +9985,20 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DatasetVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: _models.PendingUploadRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
+        self, name: str, version: str, pending_upload_request: _types.PendingUploadRequest, **kwargs: Any
+    ) -> _types.PendingUploadResponse:
         """Start a pending upload.
 
         Initiates a new pending upload or retrieves an existing one for the specified dataset version.
@@ -7166,13 +10007,36 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is one of the following
-         types: PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
-         IO[bytes]
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: ~azure.ai.projects.types.PendingUploadRequest
+        :return: PendingUploadResponse
+        :rtype: ~azure.ai.projects.types.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                pending_upload_request = {
+                    "pendingUploadType": "str",
+                    "connectionName": "str",
+                    "pendingUploadId": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blobReference": {
+                        "blobUri": "str",
+                        "credential": {
+                            "sasUri": "str",
+                            "type": "SAS"
+                        },
+                        "storageAccountArmId": "str"
+                    },
+                    "pendingUploadId": "str",
+                    "pendingUploadType": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7185,22 +10049,17 @@ class DatasetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.PendingUploadResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pending_upload_request, (IOBase, bytes)):
-            _content = pending_upload_request
-        else:
-            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = pending_upload_request
 
         _request = build_datasets_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -7229,7 +10088,10 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7237,7 +10099,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.DatasetCredential:
+    def get_credentials(self, name: str, version: str, **kwargs: Any) -> _types.DatasetCredential:
         """Get dataset credentials.
 
         Gets the SAS credential to access the storage account associated with a Dataset version.
@@ -7246,9 +10108,24 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :return: DatasetCredential
+        :rtype: ~azure.ai.projects.types.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blobReference": {
+                        "blobUri": "str",
+                        "credential": {
+                            "sasUri": "str",
+                            "type": "SAS"
+                        },
+                        "storageAccountArmId": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7261,7 +10138,7 @@ class DatasetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DatasetCredential] = kwargs.pop("cls", None)
 
         _request = build_datasets_get_credentials_request(
             name=name,
@@ -7295,7 +10172,10 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DatasetCredential, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7321,16 +10201,45 @@ class DeploymentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.Deployment:
+    def get(self, name: str, **kwargs: Any) -> _types.Deployment:
         """Get a deployment.
 
         Gets a deployed model.
 
         :param name: Name of the deployment. Required.
         :type name: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Deployment
+        :return: Deployment
+        :rtype: ~azure.ai.projects.types.Deployment
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "ModelDeployment":
+                deployment = {
+                    "capabilities": {
+                        "str": "str"
+                    },
+                    "modelName": "str",
+                    "modelPublisher": "str",
+                    "modelVersion": "str",
+                    "name": "str",
+                    "sku": {
+                        "capacity": 0,
+                        "family": "str",
+                        "name": "str",
+                        "size": "str",
+                        "tier": "str"
+                    },
+                    "type": "ModelDeployment",
+                    "connectionName": "str"
+                }
+
+                # response body for status code(s): 200
+                response == deployment
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7343,7 +10252,7 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Deployment] = kwargs.pop("cls", None)
 
         _request = build_deployments_get_request(
             name=name,
@@ -7381,7 +10290,10 @@ class DeploymentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7394,9 +10306,9 @@ class DeploymentsOperations:
         *,
         model_publisher: Optional[str] = None,
         model_name: Optional[str] = None,
-        deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
+        deployment_type: Optional[types.DeploymentType] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.Deployment"]:
+    ) -> ItemPaged["_types.Deployment"]:
         """List deployments.
 
         Returns the deployed models available in the current project, optionally filtered by publisher,
@@ -7411,13 +10323,42 @@ class DeploymentsOperations:
          is None.
         :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
         :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Deployment]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "ModelDeployment":
+                deployment = {
+                    "capabilities": {
+                        "str": "str"
+                    },
+                    "modelName": "str",
+                    "modelPublisher": "str",
+                    "modelVersion": "str",
+                    "name": "str",
+                    "sku": {
+                        "capacity": 0,
+                        "family": "str",
+                        "name": "str",
+                        "size": "str",
+                        "tier": "str"
+                    },
+                    "type": "ModelDeployment",
+                    "connectionName": "str"
+                }
+
+                # response body for status code(s): 200
+                response == deployment
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Deployment]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Deployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7472,10 +10413,7 @@ class DeploymentsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Deployment],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -7516,7 +10454,7 @@ class IndexesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.Index"]:
+    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_types.Index"]:
         """List versions.
 
         List all versions of the given Index.
@@ -7524,13 +10462,96 @@ class IndexesOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :return: An iterator like instance of Index
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Index]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureSearch":
+                index = {
+                    "connectionName": "str",
+                    "indexName": "str",
+                    "name": "str",
+                    "type": "AzureSearch",
+                    "version": "str",
+                    "description": "str",
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
+                index = {
+                    "connectionName": "str",
+                    "containerName": "str",
+                    "databaseName": "str",
+                    "embeddingConfiguration": {
+                        "embeddingField": "str",
+                        "modelDeploymentName": "str"
+                    },
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "name": "str",
+                    "type": "CosmosDBNoSqlVectorStore",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "ManagedAzureSearch":
+                index = {
+                    "name": "str",
+                    "type": "ManagedAzureSearch",
+                    "vectorStoreId": "str",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == index
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Index]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Index]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7583,10 +10604,7 @@ class IndexesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Index],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -7609,19 +10627,102 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.Index"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_types.Index"]:
         """List latest versions.
 
         List the latest version of each Index.
 
         :return: An iterator like instance of Index
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Index]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureSearch":
+                index = {
+                    "connectionName": "str",
+                    "indexName": "str",
+                    "name": "str",
+                    "type": "AzureSearch",
+                    "version": "str",
+                    "description": "str",
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
+                index = {
+                    "connectionName": "str",
+                    "containerName": "str",
+                    "databaseName": "str",
+                    "embeddingConfiguration": {
+                        "embeddingField": "str",
+                        "modelDeploymentName": "str"
+                    },
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "name": "str",
+                    "type": "CosmosDBNoSqlVectorStore",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "ManagedAzureSearch":
+                index = {
+                    "name": "str",
+                    "type": "ManagedAzureSearch",
+                    "vectorStoreId": "str",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == index
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Index]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Index]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7673,10 +10774,7 @@ class IndexesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Index],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -7699,7 +10797,7 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, name: str, version: str, **kwargs: Any) -> _models.Index:
+    def get(self, name: str, version: str, **kwargs: Any) -> _types.Index:
         """Get a version.
 
         Get the specific version of the Index. The service returns 404 Not Found error if the Index
@@ -7709,9 +10807,92 @@ class IndexesOperations:
         :type name: str
         :param version: The specific version id of the Index to retrieve. Required.
         :type version: str
-        :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Index
+        :return: Index
+        :rtype: ~azure.ai.projects.types.Index
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureSearch":
+                index = {
+                    "connectionName": "str",
+                    "indexName": "str",
+                    "name": "str",
+                    "type": "AzureSearch",
+                    "version": "str",
+                    "description": "str",
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
+                index = {
+                    "connectionName": "str",
+                    "containerName": "str",
+                    "databaseName": "str",
+                    "embeddingConfiguration": {
+                        "embeddingField": "str",
+                        "modelDeploymentName": "str"
+                    },
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "name": "str",
+                    "type": "CosmosDBNoSqlVectorStore",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "ManagedAzureSearch":
+                index = {
+                    "name": "str",
+                    "type": "ManagedAzureSearch",
+                    "vectorStoreId": "str",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == index
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7724,7 +10905,7 @@ class IndexesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Index] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Index] = kwargs.pop("cls", None)
 
         _request = build_indexes_get_request(
             name=name,
@@ -7758,7 +10939,10 @@ class IndexesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Index, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7819,88 +11003,8 @@ class IndexesOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        index: _models.Index,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.Index:
-        """Create or update a version.
-
-        Create a new or update an existing Index with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to create or update. Required.
-        :type version: str
-        :param index: The Index to create or update. Required.
-        :type index: ~azure.ai.projects.models.Index
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self, name: str, version: str, index: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.Index:
-        """Create or update a version.
-
-        Create a new or update an existing Index with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to create or update. Required.
-        :type version: str
-        :param index: The Index to create or update. Required.
-        :type index: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        index: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.Index:
-        """Create or update a version.
-
-        Create a new or update an existing Index with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to create or update. Required.
-        :type version: str
-        :param index: The Index to create or update. Required.
-        :type index: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def create_or_update(
-        self, name: str, version: str, index: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Index:
+    def create_or_update(self, name: str, version: str, index: _types.Index, **kwargs: Any) -> _types.Index:
         """Create or update a version.
 
         Create a new or update an existing Index with the given version id.
@@ -7909,12 +11013,251 @@ class IndexesOperations:
         :type name: str
         :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param index: The Index to create or update. Is one of the following types: Index, JSON,
-         IO[bytes] Required.
-        :type index: ~azure.ai.projects.models.Index or JSON or IO[bytes]
-        :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Index
+        :param index: The Index to create or update. Required.
+        :type index: ~azure.ai.projects.types.Index
+        :return: Index
+        :rtype: ~azure.ai.projects.types.Index
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "AzureSearch":
+                index = {
+                    "connectionName": "str",
+                    "indexName": "str",
+                    "name": "str",
+                    "type": "AzureSearch",
+                    "version": "str",
+                    "description": "str",
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
+                index = {
+                    "connectionName": "str",
+                    "containerName": "str",
+                    "databaseName": "str",
+                    "embeddingConfiguration": {
+                        "embeddingField": "str",
+                        "modelDeploymentName": "str"
+                    },
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "name": "str",
+                    "type": "CosmosDBNoSqlVectorStore",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "ManagedAzureSearch":
+                index = {
+                    "name": "str",
+                    "type": "ManagedAzureSearch",
+                    "vectorStoreId": "str",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                index = index
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureSearch":
+                index = {
+                    "connectionName": "str",
+                    "indexName": "str",
+                    "name": "str",
+                    "type": "AzureSearch",
+                    "version": "str",
+                    "description": "str",
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
+                index = {
+                    "connectionName": "str",
+                    "containerName": "str",
+                    "databaseName": "str",
+                    "embeddingConfiguration": {
+                        "embeddingField": "str",
+                        "modelDeploymentName": "str"
+                    },
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "name": "str",
+                    "type": "CosmosDBNoSqlVectorStore",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "ManagedAzureSearch":
+                index = {
+                    "name": "str",
+                    "type": "ManagedAzureSearch",
+                    "vectorStoreId": "str",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureSearch":
+                index = {
+                    "connectionName": "str",
+                    "indexName": "str",
+                    "name": "str",
+                    "type": "AzureSearch",
+                    "version": "str",
+                    "description": "str",
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
+                index = {
+                    "connectionName": "str",
+                    "containerName": "str",
+                    "databaseName": "str",
+                    "embeddingConfiguration": {
+                        "embeddingField": "str",
+                        "modelDeploymentName": "str"
+                    },
+                    "fieldMapping": {
+                        "contentFields": [
+                            "str"
+                        ],
+                        "filepathField": "str",
+                        "metadataFields": [
+                            "str"
+                        ],
+                        "titleField": "str",
+                        "urlField": "str",
+                        "vectorFields": [
+                            "str"
+                        ]
+                    },
+                    "name": "str",
+                    "type": "CosmosDBNoSqlVectorStore",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "ManagedAzureSearch":
+                index = {
+                    "name": "str",
+                    "type": "ManagedAzureSearch",
+                    "vectorStoreId": "str",
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == index
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7927,22 +11270,17 @@ class IndexesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Index] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/merge-patch+json"))
+        cls: ClsType[_types.Index] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(index, (IOBase, bytes)):
-            _content = index
-        else:
-            _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = index
 
         _request = build_indexes_create_or_update_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -7971,7 +11309,10 @@ class IndexesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Index, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8001,14 +11342,14 @@ class ToolboxesOperations:
         self,
         name: str,
         *,
-        tools: List[_models.ToolboxTool],
+        tools: List[_types.ToolboxTool],
         content_type: str = "application/json",
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
-        skills: Optional[List[_models.ToolboxSkill]] = None,
-        policies: Optional[_models.ToolboxPolicies] = None,
+        skills: Optional[List[_types.ToolboxSkill]] = None,
+        policies: Optional[_types.ToolboxPolicies] = None,
         **kwargs: Any
-    ) -> _models.ToolboxVersionObject:
+    ) -> _types.ToolboxVersionObject:
         """Create a new version of a toolbox.
 
         Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
@@ -8017,7 +11358,7 @@ class ToolboxesOperations:
          Required.
         :type name: str
         :keyword tools: The list of tools to include in this version. Required.
-        :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
+        :paramtype tools: list[~azure.ai.projects.types.ToolboxTool]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8029,18 +11370,49 @@ class ToolboxesOperations:
         :keyword skills: The list of skill sources to include in this version. A skill reference
          specifies a skill name and optionally a version. If version is omitted, the skill's default
          version is used. Default value is None.
-        :paramtype skills: list[~azure.ai.projects.models.ToolboxSkill]
+        :paramtype skills: list[~azure.ai.projects.types.ToolboxSkill]
         :keyword policies: Policy configuration for this toolbox version. Default value is None.
-        :paramtype policies: ~azure.ai.projects.models.ToolboxPolicies
-        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
+        :paramtype policies: ~azure.ai.projects.types.ToolboxPolicies
+        :return: ToolboxVersionObject
+        :rtype: ~azure.ai.projects.types.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "version": "str",
+                    "description": "str",
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
         """
 
     @overload
     def create_version(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolboxVersionObject:
+        self,
+        name: str,
+        body: _types.CreateToolboxVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.ToolboxVersionObject:
         """Create a new version of a toolbox.
 
         Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
@@ -8049,49 +11421,73 @@ class ToolboxesOperations:
          Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateToolboxVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
+        :return: ToolboxVersionObject
+        :rtype: ~azure.ai.projects.types.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_version(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolboxVersionObject:
-        """Create a new version of a toolbox.
+        Example:
+            .. code-block:: python
 
-        Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
 
-        :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
-         Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "version": "str",
+                    "description": "str",
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
         """
 
     @distributed_trace
     def create_version(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateToolboxVersionRequest] = _Unset,
         *,
-        tools: List[_models.ToolboxTool] = _Unset,
+        tools: List[_types.ToolboxTool] = _Unset,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
-        skills: Optional[List[_models.ToolboxSkill]] = None,
-        policies: Optional[_models.ToolboxPolicies] = None,
+        skills: Optional[List[_types.ToolboxSkill]] = None,
+        policies: Optional[_types.ToolboxPolicies] = None,
         **kwargs: Any
-    ) -> _models.ToolboxVersionObject:
+    ) -> _types.ToolboxVersionObject:
         """Create a new version of a toolbox.
 
         Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
@@ -8099,10 +11495,10 @@ class ToolboxesOperations:
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateToolboxVersionRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateToolboxVersionRequest
         :keyword tools: The list of tools to include in this version. Required.
-        :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
+        :paramtype tools: list[~azure.ai.projects.types.ToolboxTool]
         :keyword description: A human-readable description of the toolbox. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the toolbox. Default value is
@@ -8111,12 +11507,57 @@ class ToolboxesOperations:
         :keyword skills: The list of skill sources to include in this version. A skill reference
          specifies a skill name and optionally a version. If version is omitted, the skill's default
          version is used. Default value is None.
-        :paramtype skills: list[~azure.ai.projects.models.ToolboxSkill]
+        :paramtype skills: list[~azure.ai.projects.types.ToolboxSkill]
         :keyword policies: Policy configuration for this toolbox version. Default value is None.
-        :paramtype policies: ~azure.ai.projects.models.ToolboxPolicies
-        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
+        :paramtype policies: ~azure.ai.projects.types.ToolboxPolicies
+        :return: ToolboxVersionObject
+        :rtype: ~azure.ai.projects.types.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "version": "str",
+                    "description": "str",
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8130,7 +11571,7 @@ class ToolboxesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_types.ToolboxVersionObject] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if tools is _Unset:
@@ -8144,17 +11585,17 @@ class ToolboxesOperations:
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_toolboxes_create_version_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -8178,16 +11619,19 @@ class ToolboxesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ToolboxVersionObject, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8195,16 +11639,26 @@ class ToolboxesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.ToolboxObject:
+    def get(self, name: str, **kwargs: Any) -> _types.ToolboxObject:
         """Retrieve a toolbox.
 
         Retrieves the specified toolbox and its current configuration.
 
         :param name: The name of the toolbox to retrieve. Required.
         :type name: str
-        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :return: ToolboxObject
+        :rtype: ~azure.ai.projects.types.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "default_version": "str",
+                    "id": "str",
+                    "name": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8217,7 +11671,7 @@ class ToolboxesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ToolboxObject] = kwargs.pop("cls", None)
+        cls: ClsType[_types.ToolboxObject] = kwargs.pop("cls", None)
 
         _request = build_toolboxes_get_request(
             name=name,
@@ -8245,16 +11699,19 @@ class ToolboxesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ToolboxObject, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8266,10 +11723,10 @@ class ToolboxesOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.ToolboxObject"]:
+    ) -> ItemPaged["_types.ToolboxObject"]:
         """List toolboxes.
 
         Returns the toolboxes available in the current project.
@@ -8289,13 +11746,23 @@ class ToolboxesOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of ToolboxObject
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ToolboxObject]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.ToolboxObject]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "default_version": "str",
+                    "id": "str",
+                    "name": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ToolboxObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.ToolboxObject]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8324,10 +11791,7 @@ class ToolboxesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ToolboxObject],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -8343,9 +11807,9 @@ class ToolboxesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -8359,10 +11823,10 @@ class ToolboxesOperations:
         name: str,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.ToolboxVersionObject"]:
+    ) -> ItemPaged["_types.ToolboxVersionObject"]:
         """List toolbox versions.
 
         Returns the available versions for the specified toolbox.
@@ -8384,13 +11848,39 @@ class ToolboxesOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of ToolboxVersionObject
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ToolboxVersionObject]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.ToolboxVersionObject]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "version": "str",
+                    "description": "str",
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ToolboxVersionObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.ToolboxVersionObject]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8420,10 +11910,7 @@ class ToolboxesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ToolboxVersionObject],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -8439,9 +11926,9 @@ class ToolboxesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -8450,7 +11937,7 @@ class ToolboxesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
+    def get_version(self, name: str, version: str, **kwargs: Any) -> _types.ToolboxVersionObject:
         """Retrieve a specific version of a toolbox.
 
         Retrieves the specified version of a toolbox by name and version identifier.
@@ -8459,9 +11946,35 @@ class ToolboxesOperations:
         :type name: str
         :param version: The version identifier to retrieve. Required.
         :type version: str
-        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
+        :return: ToolboxVersionObject
+        :rtype: ~azure.ai.projects.types.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "name": "str",
+                    "tools": [
+                        toolbox_tool
+                    ],
+                    "version": "str",
+                    "description": "str",
+                    "policies": {
+                        "rai_config": {
+                            "rai_policy_name": "str"
+                        }
+                    },
+                    "skills": [
+                        toolbox_skill
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8474,7 +11987,7 @@ class ToolboxesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_types.ToolboxVersionObject] = kwargs.pop("cls", None)
 
         _request = build_toolboxes_get_version_request(
             name=name,
@@ -8503,16 +12016,19 @@ class ToolboxesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ToolboxVersionObject, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8522,7 +12038,7 @@ class ToolboxesOperations:
     @overload
     def update(
         self, name: str, *, default_version: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolboxObject:
+    ) -> _types.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
         Updates the toolbox's default version pointer to the specified version.
@@ -8535,15 +12051,25 @@ class ToolboxesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :return: ToolboxObject
+        :rtype: ~azure.ai.projects.types.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "default_version": "str",
+                    "id": "str",
+                    "name": "str"
+                }
         """
 
     @overload
     def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolboxObject:
+        self, name: str, body: _types.UpdateToolboxRequest1, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
         Updates the toolbox's default version pointer to the specified version.
@@ -8551,53 +12077,68 @@ class ToolboxesOperations:
         :param name: The name of the toolbox to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateToolboxRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :return: ToolboxObject
+        :rtype: ~azure.ai.projects.types.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolboxObject:
-        """Update a toolbox to point to a specific version.
+        Example:
+            .. code-block:: python
 
-        Updates the toolbox's default version pointer to the specified version.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "default_version": "str"
+                }
 
-        :param name: The name of the toolbox to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxObject
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # response body for status code(s): 200
+                response == {
+                    "default_version": "str",
+                    "id": "str",
+                    "name": "str"
+                }
         """
 
     @distributed_trace
     def update(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
-    ) -> _models.ToolboxObject:
+        self,
+        name: str,
+        body: Union[JSON, _types.UpdateToolboxRequest1] = _Unset,
+        *,
+        default_version: str = _Unset,
+        **kwargs: Any
+    ) -> _types.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
         Updates the toolbox's default version pointer to the specified version.
 
         :param name: The name of the toolbox to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a UpdateToolboxRequest1 type. Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateToolboxRequest1
         :keyword default_version: The version identifier that the toolbox should point to. When set,
          the toolbox's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
-        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :return: ToolboxObject
+        :rtype: ~azure.ai.projects.types.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "default_version": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "default_version": "str",
+                    "id": "str",
+                    "name": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8611,7 +12152,7 @@ class ToolboxesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ToolboxObject] = kwargs.pop("cls", None)
+        cls: ClsType[_types.ToolboxObject] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if default_version is _Unset:
@@ -8619,17 +12160,17 @@ class ToolboxesOperations:
             body = {"default_version": default_version}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_toolboxes_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -8653,16 +12194,19 @@ class ToolboxesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ToolboxObject, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8714,9 +12258,9 @@ class ToolboxesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -8773,9 +12317,9 @@ class ToolboxesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -8801,16 +12345,96 @@ class BetaEvaluationTaxonomiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
+    def get(self, name: str, **kwargs: Any) -> _types.EvaluationTaxonomy:
         """Get an evaluation taxonomy.
 
         Retrieves the specified evaluation taxonomy.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :return: EvaluationTaxonomy
+        :rtype: ~azure.ai.projects.types.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "name": "str",
+                    "taxonomyInput": evaluation_taxonomy_input,
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "taxonomyCategories": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "riskCategory": "str",
+                            "subCategories": [
+                                {
+                                    "enabled": bool,
+                                    "id": "str",
+                                    "name": "str",
+                                    "description": "str",
+                                    "properties": {
+                                        "str": "str"
+                                    }
+                                }
+                            ],
+                            "description": "str",
+                            "properties": {
+                                "str": "str"
+                            }
+                        }
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8823,7 +12447,7 @@ class BetaEvaluationTaxonomiesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+        cls: ClsType[_types.EvaluationTaxonomy] = kwargs.pop("cls", None)
 
         _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
@@ -8856,7 +12480,10 @@ class BetaEvaluationTaxonomiesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8866,7 +12493,7 @@ class BetaEvaluationTaxonomiesOperations:
     @distributed_trace
     def list(
         self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.EvaluationTaxonomy"]:
+    ) -> ItemPaged["_types.EvaluationTaxonomy"]:
         """List evaluation taxonomies.
 
         Returns the evaluation taxonomies available in the project, optionally filtered by input name
@@ -8877,13 +12504,93 @@ class BetaEvaluationTaxonomiesOperations:
         :keyword input_type: Filter by taxonomy input type. Default value is None.
         :paramtype input_type: str
         :return: An iterator like instance of EvaluationTaxonomy
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "name": "str",
+                    "taxonomyInput": evaluation_taxonomy_input,
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "taxonomyCategories": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "riskCategory": "str",
+                            "subCategories": [
+                                {
+                                    "enabled": bool,
+                                    "id": "str",
+                                    "name": "str",
+                                    "description": "str",
+                                    "properties": {
+                                        "str": "str"
+                                    }
+                                }
+                            ],
+                            "description": "str",
+                            "properties": {
+                                "str": "str"
+                            }
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluationTaxonomy]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.EvaluationTaxonomy]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8937,10 +12644,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluationTaxonomy],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -9012,82 +12716,216 @@ class BetaEvaluationTaxonomiesOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def create(
-        self, name: str, taxonomy: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        Creates or replaces the specified evaluation taxonomy with the provided definition.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        Creates or replaces the specified evaluation taxonomy with the provided definition.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, name: str, taxonomy: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        Creates or replaces the specified evaluation taxonomy with the provided definition.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def create(
-        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
+    def create(self, name: str, taxonomy: _types.EvaluationTaxonomy, **kwargs: Any) -> _types.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
         Creates or replaces the specified evaluation taxonomy with the provided definition.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
-         JSON, IO[bytes] Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: ~azure.ai.projects.types.EvaluationTaxonomy
+        :return: EvaluationTaxonomy
+        :rtype: ~azure.ai.projects.types.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                taxonomy = {
+                    "name": "str",
+                    "taxonomyInput": evaluation_taxonomy_input,
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "taxonomyCategories": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "riskCategory": "str",
+                            "subCategories": [
+                                {
+                                    "enabled": bool,
+                                    "id": "str",
+                                    "name": "str",
+                                    "description": "str",
+                                    "properties": {
+                                        "str": "str"
+                                    }
+                                }
+                            ],
+                            "description": "str",
+                            "properties": {
+                                "str": "str"
+                            }
+                        }
+                    ]
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "name": "str",
+                    "taxonomyInput": evaluation_taxonomy_input,
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "taxonomyCategories": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "riskCategory": "str",
+                            "subCategories": [
+                                {
+                                    "enabled": bool,
+                                    "id": "str",
+                                    "name": "str",
+                                    "description": "str",
+                                    "properties": {
+                                        "str": "str"
+                                    }
+                                }
+                            ],
+                            "description": "str",
+                            "properties": {
+                                "str": "str"
+                            }
+                        }
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9100,21 +12938,16 @@ class BetaEvaluationTaxonomiesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.EvaluationTaxonomy] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(taxonomy, (IOBase, bytes)):
-            _content = taxonomy
-        else:
-            _content = json.dumps(taxonomy, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = taxonomy
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -9143,89 +12976,186 @@ class BetaEvaluationTaxonomiesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def update(
-        self, name: str, taxonomy: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, name: str, taxonomy: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param taxonomy: The evaluation taxonomy. Required.
-        :type taxonomy: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def update(
-        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
+    def update(self, name: str, taxonomy: _types.EvaluationTaxonomy, **kwargs: Any) -> _types.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
         Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
-         JSON, IO[bytes] Required.
-        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: ~azure.ai.projects.types.EvaluationTaxonomy
+        :return: EvaluationTaxonomy
+        :rtype: ~azure.ai.projects.types.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                taxonomy = {
+                    "name": "str",
+                    "taxonomyInput": evaluation_taxonomy_input,
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "taxonomyCategories": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "riskCategory": "str",
+                            "subCategories": [
+                                {
+                                    "enabled": bool,
+                                    "id": "str",
+                                    "name": "str",
+                                    "description": "str",
+                                    "properties": {
+                                        "str": "str"
+                                    }
+                                }
+                            ],
+                            "description": "str",
+                            "properties": {
+                                "str": "str"
+                            }
+                        }
+                    ]
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "agent":
+                evaluation_taxonomy_input = {
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "target": evaluation_target,
+                    "type": "agent"
+                }
+
+                # JSON input template for discriminator value "azure_ai_agent":
+                evaluation_target = {
+                    "name": "str",
+                    "type": "azure_ai_agent",
+                    "tool_descriptions": [
+                        {
+                            "description": "str",
+                            "name": "str"
+                        }
+                    ],
+                    "tools": [
+                        tool
+                    ],
+                    "version": "str"
+                }
+
+                # JSON input template for discriminator value "azure_ai_model":
+                evaluation_target = {
+                    "type": "azure_ai_model",
+                    "model": "str",
+                    "sampling_params": {
+                        "max_completion_tokens": 0,
+                        "seed": 0,
+                        "temperature": 0.0,
+                        "top_p": 0.0
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "name": "str",
+                    "taxonomyInput": evaluation_taxonomy_input,
+                    "version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "taxonomyCategories": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "riskCategory": "str",
+                            "subCategories": [
+                                {
+                                    "enabled": bool,
+                                    "id": "str",
+                                    "name": "str",
+                                    "description": "str",
+                                    "properties": {
+                                        "str": "str"
+                                    }
+                                }
+                            ],
+                            "description": "str",
+                            "properties": {
+                                "str": "str"
+                            }
+                        }
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9238,21 +13168,16 @@ class BetaEvaluationTaxonomiesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.EvaluationTaxonomy] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(taxonomy, (IOBase, bytes)):
-            _content = taxonomy
-        else:
-            _content = json.dumps(taxonomy, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = taxonomy
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -9281,7 +13206,10 @@ class BetaEvaluationTaxonomiesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9314,7 +13242,7 @@ class BetaEvaluatorsOperations:
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.EvaluatorVersion"]:
+    ) -> ItemPaged["_types.EvaluatorVersion"]:
         """List evaluator versions.
 
         Returns the available versions for the specified evaluator.
@@ -9329,13 +13257,153 @@ class BetaEvaluatorsOperations:
          100, and the default is 20. Default value is None.
         :paramtype limit: int
         :return: An iterator like instance of EvaluatorVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.EvaluatorVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9390,10 +13458,7 @@ class BetaEvaluatorsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluatorVersion],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -9422,7 +13487,7 @@ class BetaEvaluatorsOperations:
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.EvaluatorVersion"]:
+    ) -> ItemPaged["_types.EvaluatorVersion"]:
         """List latest evaluator versions.
 
         Lists the latest version of each evaluator.
@@ -9435,13 +13500,153 @@ class BetaEvaluatorsOperations:
          100, and the default is 20. Default value is None.
         :paramtype limit: int
         :return: An iterator like instance of EvaluatorVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.EvaluatorVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9495,10 +13700,7 @@ class BetaEvaluatorsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluatorVersion],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -9521,7 +13723,7 @@ class BetaEvaluatorsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
+    def get_version(self, name: str, version: str, **kwargs: Any) -> _types.EvaluatorVersion:
         """Get an evaluator version.
 
         Retrieves the specified evaluator version, returning 404 if it does not exist.
@@ -9530,9 +13732,149 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
         :type version: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :return: EvaluatorVersion
+        :rtype: ~azure.ai.projects.types.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9545,7 +13887,7 @@ class BetaEvaluatorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_types.EvaluatorVersion] = kwargs.pop("cls", None)
 
         _request = build_beta_evaluators_get_version_request(
             name=name,
@@ -9579,7 +13921,10 @@ class BetaEvaluatorsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9641,87 +13986,298 @@ class BetaEvaluatorsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def create_version(
-        self,
-        name: str,
-        evaluator_version: _models.EvaluatorVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_version(
-        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_version(
-        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Create an evaluator version.
-
-        Creates a new evaluator version with an auto-incremented version identifier.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def create_version(
-        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluatorVersion:
+        self, name: str, evaluator_version: _types.EvaluatorVersion, **kwargs: Any
+    ) -> _types.EvaluatorVersion:
         """Create an evaluator version.
 
         Creates a new evaluator version with an auto-incremented version identifier.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
-         Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :param evaluator_version: Required.
+        :type evaluator_version: ~azure.ai.projects.types.EvaluatorVersion
+        :return: EvaluatorVersion
+        :rtype: ~azure.ai.projects.types.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                evaluator_version = {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9734,21 +14290,16 @@ class BetaEvaluatorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.EvaluatorVersion] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(evaluator_version, (IOBase, bytes)):
-            _content = evaluator_version
-        else:
-            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = evaluator_version
 
         _request = build_beta_evaluators_create_version_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -9777,99 +14328,20 @@ class BetaEvaluatorsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: _models.EvaluatorVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_version(
-        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
-        """Update an evaluator version.
-
-        Updates the specified evaluator version in place.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
+        self, name: str, version: str, evaluator_version: _types.EvaluatorVersion, **kwargs: Any
+    ) -> _types.EvaluatorVersion:
         """Update an evaluator version.
 
         Updates the specified evaluator version in place.
@@ -9878,12 +14350,288 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The version of the EvaluatorVersion to update. Required.
         :type version: str
-        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
-         JSON, IO[bytes] Required.
-        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
-        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: ~azure.ai.projects.types.EvaluatorVersion
+        :return: EvaluatorVersion
+        :rtype: ~azure.ai.projects.types.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                evaluator_version = {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "categories": [
+                        "str"
+                    ],
+                    "created_at": "2020-02-20 00:00:00",
+                    "created_by": "str",
+                    "definition": evaluator_definition,
+                    "evaluator_type": "str",
+                    "modified_at": "2020-02-20 00:00:00",
+                    "name": "str",
+                    "version": "str",
+                    "description": "str",
+                    "display_name": "str",
+                    "generation_artifacts": {
+                        "dataset": {
+                            "name": "str",
+                            "version": "str"
+                        },
+                        "kinds": [
+                            "str"
+                        ]
+                    },
+                    "id": "str",
+                    "metadata": {
+                        "str": "str"
+                    },
+                    "supported_evaluation_levels": [
+                        "str"
+                    ],
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9896,22 +14644,17 @@ class BetaEvaluatorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.EvaluatorVersion] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(evaluator_version, (IOBase, bytes)):
-            _content = evaluator_version
-        else:
-            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = evaluator_version
 
         _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -9940,108 +14683,20 @@ class BetaEvaluatorsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: _models.PendingUploadRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified evaluator
-        version.
-
-        :param name: Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified evaluator
-        version.
-
-        :param name: Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified evaluator
-        version.
-
-        :param name: Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PendingUploadResponse:
+        self, name: str, version: str, pending_upload_request: _types.PendingUploadRequest, **kwargs: Any
+    ) -> _types.PendingUploadResponse:
         """Start a pending upload.
 
         Initiates a new pending upload or retrieves an existing one for the specified evaluator
@@ -10051,13 +14706,36 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is one of the following
-         types: PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
-         IO[bytes]
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: ~azure.ai.projects.types.PendingUploadRequest
+        :return: PendingUploadResponse
+        :rtype: ~azure.ai.projects.types.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                pending_upload_request = {
+                    "pendingUploadType": "str",
+                    "connectionName": "str",
+                    "pendingUploadId": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blobReference": {
+                        "blobUri": "str",
+                        "credential": {
+                            "sasUri": "str",
+                            "type": "SAS"
+                        },
+                        "storageAccountArmId": "str"
+                    },
+                    "pendingUploadId": "str",
+                    "pendingUploadType": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10070,22 +14748,17 @@ class BetaEvaluatorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.PendingUploadResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pending_upload_request, (IOBase, bytes)):
-            _content = pending_upload_request
-        else:
-            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = pending_upload_request
 
         _request = build_beta_evaluators_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -10109,117 +14782,29 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: _models.EvaluatorCredentialRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
-        """Get evaluator credentials.
-
-        Retrieves SAS credentials for accessing the storage account associated with the specified
-        evaluator version.
-
-        :param name: Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
-        :type version: str
-        :param credential_request: The credential request parameters. Required.
-        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
-        """Get evaluator credentials.
-
-        Retrieves SAS credentials for accessing the storage account associated with the specified
-        evaluator version.
-
-        :param name: Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
-        :type version: str
-        :param credential_request: The credential request parameters. Required.
-        :type credential_request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
-        """Get evaluator credentials.
-
-        Retrieves SAS credentials for accessing the storage account associated with the specified
-        evaluator version.
-
-        :param name: Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
-        :type version: str
-        :param credential_request: The credential request parameters. Required.
-        :type credential_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: Union[_models.EvaluatorCredentialRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
+        self, name: str, version: str, credential_request: _types.EvaluatorCredentialRequest, **kwargs: Any
+    ) -> _types.DatasetCredential:
         """Get evaluator credentials.
 
         Retrieves SAS credentials for accessing the storage account associated with the specified
@@ -10229,13 +14814,31 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
-        :param credential_request: The credential request parameters. Is one of the following types:
-         EvaluatorCredentialRequest, JSON, IO[bytes] Required.
-        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest or JSON or
-         IO[bytes]
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :param credential_request: The credential request parameters. Required.
+        :type credential_request: ~azure.ai.projects.types.EvaluatorCredentialRequest
+        :return: DatasetCredential
+        :rtype: ~azure.ai.projects.types.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                credential_request = {
+                    "blob_uri": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blobReference": {
+                        "blobUri": "str",
+                        "credential": {
+                            "sasUri": "str",
+                            "type": "SAS"
+                        },
+                        "storageAccountArmId": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10248,22 +14851,17 @@ class BetaEvaluatorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.DatasetCredential] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(credential_request, (IOBase, bytes)):
-            _content = credential_request
-        else:
-            _content = json.dumps(credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = credential_request
 
         _request = build_beta_evaluators_get_credentials_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -10287,120 +14885,389 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DatasetCredential, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def create_generation_job(
-        self,
-        job: _models.EvaluatorGenerationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_generation_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def create_generation_job(
-        self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
+        self, job: _types.EvaluatorGenerationJob, *, operation_id: Optional[str] = None, **kwargs: Any
+    ) -> _types.EvaluatorGenerationJob:
         """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.types.EvaluatorGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :return: EvaluatorGenerationJob
+        :rtype: ~azure.ai.projects.types.EvaluatorGenerationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                job = {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "evaluator_name": "str",
+                        "model": "str",
+                        "sources": [
+                            evaluator_generation_job_source
+                        ],
+                        "evaluator_description": "str",
+                        "evaluator_display_name": "str"
+                    },
+                    "result": {
+                        "categories": [
+                            "str"
+                        ],
+                        "created_at": "2020-02-20 00:00:00",
+                        "created_by": "str",
+                        "definition": evaluator_definition,
+                        "evaluator_type": "str",
+                        "modified_at": "2020-02-20 00:00:00",
+                        "name": "str",
+                        "version": "str",
+                        "description": "str",
+                        "display_name": "str",
+                        "generation_artifacts": {
+                            "dataset": {
+                                "name": "str",
+                                "version": "str"
+                            },
+                            "kinds": [
+                                "str"
+                            ]
+                        },
+                        "id": "str",
+                        "metadata": {
+                            "str": "str"
+                        },
+                        "supported_evaluation_levels": [
+                            "str"
+                        ],
+                        "tags": {
+                            "str": "str"
+                        }
+                    },
+                    "usage": {
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "evaluator_name": "str",
+                        "model": "str",
+                        "sources": [
+                            evaluator_generation_job_source
+                        ],
+                        "evaluator_description": "str",
+                        "evaluator_display_name": "str"
+                    },
+                    "result": {
+                        "categories": [
+                            "str"
+                        ],
+                        "created_at": "2020-02-20 00:00:00",
+                        "created_by": "str",
+                        "definition": evaluator_definition,
+                        "evaluator_type": "str",
+                        "modified_at": "2020-02-20 00:00:00",
+                        "name": "str",
+                        "version": "str",
+                        "description": "str",
+                        "display_name": "str",
+                        "generation_artifacts": {
+                            "dataset": {
+                                "name": "str",
+                                "version": "str"
+                            },
+                            "kinds": [
+                                "str"
+                            ]
+                        },
+                        "id": "str",
+                        "metadata": {
+                            "str": "str"
+                        },
+                        "supported_evaluation_levels": [
+                            "str"
+                        ],
+                        "tags": {
+                            "str": "str"
+                        }
+                    },
+                    "usage": {
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10413,21 +15280,16 @@ class BetaEvaluatorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.EvaluatorGenerationJob] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = job
 
         _request = build_beta_evaluators_create_generation_job_request(
             operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -10451,9 +15313,9 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -10464,7 +15326,10 @@ class BetaEvaluatorsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10472,16 +15337,191 @@ class BetaEvaluatorsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
+    def get_generation_job(self, job_id: str, **kwargs: Any) -> _types.EvaluatorGenerationJob:
         """Get an evaluator generation job.
 
         Gets the details of an evaluator generation job by its ID.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :return: EvaluatorGenerationJob
+        :rtype: ~azure.ai.projects.types.EvaluatorGenerationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "evaluator_name": "str",
+                        "model": "str",
+                        "sources": [
+                            evaluator_generation_job_source
+                        ],
+                        "evaluator_description": "str",
+                        "evaluator_display_name": "str"
+                    },
+                    "result": {
+                        "categories": [
+                            "str"
+                        ],
+                        "created_at": "2020-02-20 00:00:00",
+                        "created_by": "str",
+                        "definition": evaluator_definition,
+                        "evaluator_type": "str",
+                        "modified_at": "2020-02-20 00:00:00",
+                        "name": "str",
+                        "version": "str",
+                        "description": "str",
+                        "display_name": "str",
+                        "generation_artifacts": {
+                            "dataset": {
+                                "name": "str",
+                                "version": "str"
+                            },
+                            "kinds": [
+                                "str"
+                            ]
+                        },
+                        "id": "str",
+                        "metadata": {
+                            "str": "str"
+                        },
+                        "supported_evaluation_levels": [
+                            "str"
+                        ],
+                        "tags": {
+                            "str": "str"
+                        }
+                    },
+                    "usage": {
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10494,7 +15534,7 @@ class BetaEvaluatorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_types.EvaluatorGenerationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_evaluators_get_generation_job_request(
             job_id=job_id,
@@ -10522,9 +15562,9 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -10534,7 +15574,10 @@ class BetaEvaluatorsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10546,10 +15589,10 @@ class BetaEvaluatorsOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.EvaluatorGenerationJob"]:
+    ) -> ItemPaged["_types.EvaluatorGenerationJob"]:
         """List evaluator generation jobs.
 
         Returns a list of evaluator generation jobs. The List API has up to a few seconds of
@@ -10571,13 +15614,188 @@ class BetaEvaluatorsOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of EvaluatorGenerationJob
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorGenerationJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.EvaluatorGenerationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "evaluator_name": "str",
+                        "model": "str",
+                        "sources": [
+                            evaluator_generation_job_source
+                        ],
+                        "evaluator_description": "str",
+                        "evaluator_display_name": "str"
+                    },
+                    "result": {
+                        "categories": [
+                            "str"
+                        ],
+                        "created_at": "2020-02-20 00:00:00",
+                        "created_by": "str",
+                        "definition": evaluator_definition,
+                        "evaluator_type": "str",
+                        "modified_at": "2020-02-20 00:00:00",
+                        "name": "str",
+                        "version": "str",
+                        "description": "str",
+                        "display_name": "str",
+                        "generation_artifacts": {
+                            "dataset": {
+                                "name": "str",
+                                "version": "str"
+                            },
+                            "kinds": [
+                                "str"
+                            ]
+                        },
+                        "id": "str",
+                        "metadata": {
+                            "str": "str"
+                        },
+                        "supported_evaluation_levels": [
+                            "str"
+                        ],
+                        "tags": {
+                            "str": "str"
+                        }
+                    },
+                    "usage": {
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluatorGenerationJob]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.EvaluatorGenerationJob]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10606,10 +15824,7 @@ class BetaEvaluatorsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.EvaluatorGenerationJob],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -10625,9 +15840,9 @@ class BetaEvaluatorsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -10636,16 +15851,191 @@ class BetaEvaluatorsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
+    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _types.EvaluatorGenerationJob:
         """Cancel an evaluator generation job.
 
         Cancels an evaluator generation job by its ID.
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :return: EvaluatorGenerationJob
+        :rtype: ~azure.ai.projects.types.EvaluatorGenerationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "code":
+                evaluator_definition = {
+                    "type": "code",
+                    "blob_uri": "str",
+                    "code_text": "str",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "entry_point": "str",
+                    "image_tag": "str",
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "endpoint":
+                evaluator_definition = {
+                    "connection_name": "str",
+                    "type": "endpoint",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "prompt":
+                evaluator_definition = {
+                    "prompt_text": "str",
+                    "type": "prompt",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    }
+                }
+
+                # JSON input template for discriminator value "rubric":
+                evaluator_definition = {
+                    "dimensions": [
+                        {
+                            "description": "str",
+                            "id": "str",
+                            "weight": 0,
+                            "always_applicable": bool
+                        }
+                    ],
+                    "type": "rubric",
+                    "data_schema": {
+                        "str": {}
+                    },
+                    "init_parameters": {
+                        "str": {}
+                    },
+                    "metrics": {
+                        "str": {
+                            "desirable_direction": "str",
+                            "is_primary": bool,
+                            "max_value": 0.0,
+                            "min_value": 0.0,
+                            "threshold": 0.0,
+                            "type": "str"
+                        }
+                    },
+                    "pass_threshold": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "evaluator_name": "str",
+                        "model": "str",
+                        "sources": [
+                            evaluator_generation_job_source
+                        ],
+                        "evaluator_description": "str",
+                        "evaluator_display_name": "str"
+                    },
+                    "result": {
+                        "categories": [
+                            "str"
+                        ],
+                        "created_at": "2020-02-20 00:00:00",
+                        "created_by": "str",
+                        "definition": evaluator_definition,
+                        "evaluator_type": "str",
+                        "modified_at": "2020-02-20 00:00:00",
+                        "name": "str",
+                        "version": "str",
+                        "description": "str",
+                        "display_name": "str",
+                        "generation_artifacts": {
+                            "dataset": {
+                                "name": "str",
+                                "version": "str"
+                            },
+                            "kinds": [
+                                "str"
+                            ]
+                        },
+                        "id": "str",
+                        "metadata": {
+                            "str": "str"
+                        },
+                        "supported_evaluation_levels": [
+                            "str"
+                        ],
+                        "tags": {
+                            "str": "str"
+                        }
+                    },
+                    "usage": {
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10658,7 +16048,7 @@ class BetaEvaluatorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_types.EvaluatorGenerationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_evaluators_cancel_generation_job_request(
             job_id=job_id,
@@ -10686,16 +16076,19 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10750,9 +16143,9 @@ class BetaEvaluatorsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -10777,71 +16170,263 @@ class BetaInsightsOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def generate(
-        self, insight: _models.Insight, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Insight:
-        """Generate insights.
-
-        Generates an insights report from the provided evaluation configuration.
-
-        :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Required.
-        :type insight: ~azure.ai.projects.models.Insight
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Insight. The Insight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def generate(self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Insight:
-        """Generate insights.
-
-        Generates an insights report from the provided evaluation configuration.
-
-        :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Required.
-        :type insight: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Insight. The Insight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def generate(self, insight: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Insight:
-        """Generate insights.
-
-        Generates an insights report from the provided evaluation configuration.
-
-        :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Required.
-        :type insight: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Insight. The Insight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
+    def generate(self, insight: _types.Insight, **kwargs: Any) -> _types.Insight:
         """Generate insights.
 
         Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
-        :type insight: ~azure.ai.projects.models.Insight or JSON or IO[bytes]
-        :return: Insight. The Insight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Insight
+         settings. Required.
+        :type insight: ~azure.ai.projects.types.Insight
+        :return: Insight
+        :rtype: ~azure.ai.projects.types.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_request = {
+                    "agentName": "str",
+                    "type": "AgentClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_request = {
+                    "baselineRunId": "str",
+                    "evalId": "str",
+                    "treatmentRunIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationComparison"
+                }
+
+                # JSON input template for discriminator value "EvaluationRunClusterInsight":
+                insight_request = {
+                    "evalId": "str",
+                    "runIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationRunClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_result = {
+                    "clusterInsight": {
+                        "clusters": [
+                            {
+                                "description": "str",
+                                "id": "str",
+                                "label": "str",
+                                "suggestion": "str",
+                                "suggestionTitle": "str",
+                                "weight": 0,
+                                "samples": [
+                                    insight_sample
+                                ],
+                                "subClusters": [
+                                    ...
+                                ]
+                            }
+                        ],
+                        "summary": {
+                            "method": "str",
+                            "sampleCount": 0,
+                            "uniqueClusterCount": 0,
+                            "uniqueSubclusterCount": 0,
+                            "usage": {
+                                "inputTokenUsage": 0,
+                                "outputTokenUsage": 0,
+                                "totalTokenUsage": 0
+                            }
+                        },
+                        "coordinates": {
+                            "str": {
+                                "size": 0,
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    },
+                    "type": "AgentClusterInsight"
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_result = {
+                    "comparisons": [
+                        {
+                            "baselineRunSummary": {
+                                "average": 0.0,
+                                "runId": "str",
+                                "sampleCount": 0,
+                                "standardDeviation": 0.0
+                            },
+                            "compareItems": [
+                                {
+                                    "deltaEstimate": 0.0,
+                                    "pValue": 0.0,
+                                    "treatmentEffect": "str",
+                                    "treatmentRunId": "str",
+                                    "treatmentRunSummary": {
+                                        "average": 0.0,
+                                        "runId": "str",
+                                        "sampleCount": 0,
+                                        "standardDeviation": 0.0
+                                    }
+                                }
+                            ],
+                            "evaluator": "str",
+                            "metric": "str",
+                            "testingCriteria": "str"
+                        }
+                    ],
+                    "method": "str",
+                    "type": "EvaluationComparison"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                insight = {
+                    "displayName": "str",
+                    "id": "str",
+                    "metadata": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "completedAt": "2020-02-20 00:00:00"
+                    },
+                    "request": insight_request,
+                    "state": "str",
+                    "result": insight_result
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_request = {
+                    "agentName": "str",
+                    "type": "AgentClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_request = {
+                    "baselineRunId": "str",
+                    "evalId": "str",
+                    "treatmentRunIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationComparison"
+                }
+
+                # JSON input template for discriminator value "EvaluationRunClusterInsight":
+                insight_request = {
+                    "evalId": "str",
+                    "runIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationRunClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_result = {
+                    "clusterInsight": {
+                        "clusters": [
+                            {
+                                "description": "str",
+                                "id": "str",
+                                "label": "str",
+                                "suggestion": "str",
+                                "suggestionTitle": "str",
+                                "weight": 0,
+                                "samples": [
+                                    insight_sample
+                                ],
+                                "subClusters": [
+                                    ...
+                                ]
+                            }
+                        ],
+                        "summary": {
+                            "method": "str",
+                            "sampleCount": 0,
+                            "uniqueClusterCount": 0,
+                            "uniqueSubclusterCount": 0,
+                            "usage": {
+                                "inputTokenUsage": 0,
+                                "outputTokenUsage": 0,
+                                "totalTokenUsage": 0
+                            }
+                        },
+                        "coordinates": {
+                            "str": {
+                                "size": 0,
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    },
+                    "type": "AgentClusterInsight"
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_result = {
+                    "comparisons": [
+                        {
+                            "baselineRunSummary": {
+                                "average": 0.0,
+                                "runId": "str",
+                                "sampleCount": 0,
+                                "standardDeviation": 0.0
+                            },
+                            "compareItems": [
+                                {
+                                    "deltaEstimate": 0.0,
+                                    "pValue": 0.0,
+                                    "treatmentEffect": "str",
+                                    "treatmentRunId": "str",
+                                    "treatmentRunSummary": {
+                                        "average": 0.0,
+                                        "runId": "str",
+                                        "sampleCount": 0,
+                                        "standardDeviation": 0.0
+                                    }
+                                }
+                            ],
+                            "evaluator": "str",
+                            "metric": "str",
+                            "testingCriteria": "str"
+                        }
+                    ],
+                    "method": "str",
+                    "type": "EvaluationComparison"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "displayName": "str",
+                    "id": "str",
+                    "metadata": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "completedAt": "2020-02-20 00:00:00"
+                    },
+                    "request": insight_request,
+                    "state": "str",
+                    "result": insight_result
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10854,20 +16439,15 @@ class BetaInsightsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.Insight] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(insight, (IOBase, bytes)):
-            _content = insight
-        else:
-            _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = insight
 
         _request = build_beta_insights_generate_request(
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -10891,16 +16471,19 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Insight, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10908,7 +16491,7 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
+    def get(self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _types.Insight:
         """Get an insight.
 
         Retrieves the specified insight report and its results.
@@ -10918,9 +16501,133 @@ class BetaInsightsOperations:
         :keyword include_coordinates: Whether to include coordinates for visualization in the response.
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
-        :return: Insight. The Insight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Insight
+        :return: Insight
+        :rtype: ~azure.ai.projects.types.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_request = {
+                    "agentName": "str",
+                    "type": "AgentClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_request = {
+                    "baselineRunId": "str",
+                    "evalId": "str",
+                    "treatmentRunIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationComparison"
+                }
+
+                # JSON input template for discriminator value "EvaluationRunClusterInsight":
+                insight_request = {
+                    "evalId": "str",
+                    "runIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationRunClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_result = {
+                    "clusterInsight": {
+                        "clusters": [
+                            {
+                                "description": "str",
+                                "id": "str",
+                                "label": "str",
+                                "suggestion": "str",
+                                "suggestionTitle": "str",
+                                "weight": 0,
+                                "samples": [
+                                    insight_sample
+                                ],
+                                "subClusters": [
+                                    ...
+                                ]
+                            }
+                        ],
+                        "summary": {
+                            "method": "str",
+                            "sampleCount": 0,
+                            "uniqueClusterCount": 0,
+                            "uniqueSubclusterCount": 0,
+                            "usage": {
+                                "inputTokenUsage": 0,
+                                "outputTokenUsage": 0,
+                                "totalTokenUsage": 0
+                            }
+                        },
+                        "coordinates": {
+                            "str": {
+                                "size": 0,
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    },
+                    "type": "AgentClusterInsight"
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_result = {
+                    "comparisons": [
+                        {
+                            "baselineRunSummary": {
+                                "average": 0.0,
+                                "runId": "str",
+                                "sampleCount": 0,
+                                "standardDeviation": 0.0
+                            },
+                            "compareItems": [
+                                {
+                                    "deltaEstimate": 0.0,
+                                    "pValue": 0.0,
+                                    "treatmentEffect": "str",
+                                    "treatmentRunId": "str",
+                                    "treatmentRunSummary": {
+                                        "average": 0.0,
+                                        "runId": "str",
+                                        "sampleCount": 0,
+                                        "standardDeviation": 0.0
+                                    }
+                                }
+                            ],
+                            "evaluator": "str",
+                            "metric": "str",
+                            "testingCriteria": "str"
+                        }
+                    ],
+                    "method": "str",
+                    "type": "EvaluationComparison"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "displayName": "str",
+                    "id": "str",
+                    "metadata": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "completedAt": "2020-02-20 00:00:00"
+                    },
+                    "request": insight_request,
+                    "state": "str",
+                    "result": insight_result
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10933,7 +16640,7 @@ class BetaInsightsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Insight] = kwargs.pop("cls", None)
 
         _request = build_beta_insights_get_request(
             insight_id=insight_id,
@@ -10962,16 +16669,19 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Insight, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10982,13 +16692,13 @@ class BetaInsightsOperations:
     def list(
         self,
         *,
-        type: Optional[Union[str, _models.InsightType]] = None,
+        type: Optional[types.InsightType] = None,
         eval_id: Optional[str] = None,
         run_id: Optional[str] = None,
         agent_name: Optional[str] = None,
         include_coordinates: Optional[bool] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.Insight"]:
+    ) -> ItemPaged["_types.Insight"]:
         """List insights.
 
         Returns insights in reverse chronological order, with the most recent entries first.
@@ -11006,13 +16716,137 @@ class BetaInsightsOperations:
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
         :return: An iterator like instance of Insight
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Insight]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_request = {
+                    "agentName": "str",
+                    "type": "AgentClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_request = {
+                    "baselineRunId": "str",
+                    "evalId": "str",
+                    "treatmentRunIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationComparison"
+                }
+
+                # JSON input template for discriminator value "EvaluationRunClusterInsight":
+                insight_request = {
+                    "evalId": "str",
+                    "runIds": [
+                        "str"
+                    ],
+                    "type": "EvaluationRunClusterInsight",
+                    "modelConfiguration": {
+                        "modelDeploymentName": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "AgentClusterInsight":
+                insight_result = {
+                    "clusterInsight": {
+                        "clusters": [
+                            {
+                                "description": "str",
+                                "id": "str",
+                                "label": "str",
+                                "suggestion": "str",
+                                "suggestionTitle": "str",
+                                "weight": 0,
+                                "samples": [
+                                    insight_sample
+                                ],
+                                "subClusters": [
+                                    ...
+                                ]
+                            }
+                        ],
+                        "summary": {
+                            "method": "str",
+                            "sampleCount": 0,
+                            "uniqueClusterCount": 0,
+                            "uniqueSubclusterCount": 0,
+                            "usage": {
+                                "inputTokenUsage": 0,
+                                "outputTokenUsage": 0,
+                                "totalTokenUsage": 0
+                            }
+                        },
+                        "coordinates": {
+                            "str": {
+                                "size": 0,
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    },
+                    "type": "AgentClusterInsight"
+                }
+
+                # JSON input template for discriminator value "EvaluationComparison":
+                insight_result = {
+                    "comparisons": [
+                        {
+                            "baselineRunSummary": {
+                                "average": 0.0,
+                                "runId": "str",
+                                "sampleCount": 0,
+                                "standardDeviation": 0.0
+                            },
+                            "compareItems": [
+                                {
+                                    "deltaEstimate": 0.0,
+                                    "pValue": 0.0,
+                                    "treatmentEffect": "str",
+                                    "treatmentRunId": "str",
+                                    "treatmentRunSummary": {
+                                        "average": 0.0,
+                                        "runId": "str",
+                                        "sampleCount": 0,
+                                        "standardDeviation": 0.0
+                                    }
+                                }
+                            ],
+                            "evaluator": "str",
+                            "metric": "str",
+                            "testingCriteria": "str"
+                        }
+                    ],
+                    "method": "str",
+                    "type": "EvaluationComparison"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "displayName": "str",
+                    "id": "str",
+                    "metadata": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "completedAt": "2020-02-20 00:00:00"
+                    },
+                    "request": insight_request,
+                    "state": "str",
+                    "result": insight_result
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Insight]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Insight]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11069,10 +16903,7 @@ class BetaInsightsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Insight],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -11088,9 +16919,9 @@ class BetaInsightsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -11121,12 +16952,12 @@ class BetaMemoryStoresOperations:
         self,
         *,
         name: str,
-        definition: _models.MemoryStoreDefinition,
+        definition: _types.MemoryStoreDefinition,
         content_type: str = "application/json",
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+    ) -> _types.MemoryStoreDetails:
         """Create a memory store.
 
         Creates a memory store resource with the provided configuration.
@@ -11134,7 +16965,7 @@ class BetaMemoryStoresOperations:
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
+        :paramtype definition: ~azure.ai.projects.types.MemoryStoreDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11143,76 +16974,214 @@ class BetaMemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
 
     @overload
     def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+        self, body: _types.CreateMemoryStoreRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.MemoryStoreDetails:
         """Create a memory store.
 
         Creates a memory store resource with the provided configuration.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateMemoryStoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Create a memory store.
+        Example:
+            .. code-block:: python
 
-        Creates a memory store resource with the provided configuration.
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
 
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "definition": memory_store_definition,
+                    "name": "str",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
 
     @distributed_trace
     def create(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateMemoryStoreRequest] = _Unset,
         *,
         name: str = _Unset,
-        definition: _models.MemoryStoreDefinition = _Unset,
+        definition: _types.MemoryStoreDefinition = _Unset,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+    ) -> _types.MemoryStoreDetails:
         """Create a memory store.
 
         Creates a memory store resource with the provided configuration.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateMemoryStoreRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateMemoryStoreRequest
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
+        :paramtype definition: ~azure.ai.projects.types.MemoryStoreDefinition
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "definition": memory_store_definition,
+                    "name": "str",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11226,7 +17195,7 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -11236,16 +17205,16 @@ class BetaMemoryStoresOperations:
             body = {"definition": definition, "description": description, "metadata": metadata, "name": name}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -11269,16 +17238,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11294,7 +17266,7 @@ class BetaMemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+    ) -> _types.MemoryStoreDetails:
         """Update a memory store.
 
         Updates the specified memory store with the supplied configuration changes.
@@ -11309,15 +17281,49 @@ class BetaMemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
 
     @overload
     def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+        self, name: str, body: _types.UpdateMemoryStoreRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.MemoryStoreDetails:
         """Update a memory store.
 
         Updates the specified memory store with the supplied configuration changes.
@@ -11325,61 +17331,125 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateMemoryStoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Update a memory store.
+        Example:
+            .. code-block:: python
 
-        Updates the specified memory store with the supplied configuration changes.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
 
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
 
     @distributed_trace
     def update(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoryStoreRequest] = _Unset,
         *,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+    ) -> _types.MemoryStoreDetails:
         """Update a memory store.
 
         Updates the specified memory store with the supplied configuration changes.
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a UpdateMemoryStoreRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoryStoreRequest
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11393,23 +17463,23 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"description": description, "metadata": metadata}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -11433,16 +17503,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11450,16 +17523,50 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
+    def get(self, name: str, **kwargs: Any) -> _types.MemoryStoreDetails:
         """Get a memory store.
 
         Retrieves the specified memory store and its current configuration.
 
         :param name: The name of the memory store to retrieve. Required.
         :type name: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :return: MemoryStoreDetails
+        :rtype: ~azure.ai.projects.types.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11472,7 +17579,7 @@ class BetaMemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         _request = build_beta_memory_stores_get_request(
             name=name,
@@ -11500,16 +17607,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11521,10 +17631,10 @@ class BetaMemoryStoresOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.MemoryStoreDetails"]:
+    ) -> ItemPaged["_types.MemoryStoreDetails"]:
         """List memory stores.
 
         Returns the memory stores available to the caller.
@@ -11544,13 +17654,47 @@ class BetaMemoryStoresOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of MemoryStoreDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "default":
+                memory_store_definition = {
+                    "chat_model": "str",
+                    "embedding_model": "str",
+                    "kind": "default",
+                    "options": {
+                        "chat_summary_enabled": bool,
+                        "user_profile_enabled": bool,
+                        "default_ttl_seconds": "1 day, 0:00:00",
+                        "procedural_memory_enabled": bool,
+                        "user_profile_details": "str"
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "definition": memory_store_definition,
+                    "id": "str",
+                    "name": "str",
+                    "object": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "metadata": {
+                        "str": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.MemoryStoreDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.MemoryStoreDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11579,10 +17723,7 @@ class BetaMemoryStoresOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.MemoryStoreDetails],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -11598,9 +17739,9 @@ class BetaMemoryStoresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -11609,16 +17750,26 @@ class BetaMemoryStoresOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
+    def delete(self, name: str, **kwargs: Any) -> _types.DeleteMemoryStoreResult:
         """Delete a memory store.
 
         Deletes the specified memory store.
 
         :param name: The name of the memory store to delete. Required.
         :type name: str
-        :return: DeleteMemoryStoreResult. The DeleteMemoryStoreResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
+        :return: DeleteMemoryStoreResult
+        :rtype: ~azure.ai.projects.types.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "name": "str",
+                    "object": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11631,7 +17782,7 @@ class BetaMemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
 
         _request = build_beta_memory_stores_delete_request(
             name=name,
@@ -11659,16 +17810,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteMemoryStoreResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11684,38 +17838,34 @@ class BetaMemoryStoresOperations:
         content_type: str = "application/json",
         items: Optional[List[dict[str, Any]]] = None,
         previous_search_id: Optional[str] = None,
-        options: Optional[_models.MemorySearchOptions] = None,
+        options: Optional[_types.MemorySearchOptions] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult: ...
+    ) -> _types.MemoryStoreSearchResult: ...
     @overload
     def _search_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult: ...
-    @overload
-    def _search_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult: ...
+        self, name: str, body: _types.SearchMemoriesRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.MemoryStoreSearchResult: ...
 
     @distributed_trace
     def _search_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SearchMemoriesRequest] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
         previous_search_id: Optional[str] = None,
-        options: Optional[_models.MemorySearchOptions] = None,
+        options: Optional[_types.MemorySearchOptions] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
+    ) -> _types.MemoryStoreSearchResult:
         """Search memories.
 
         Searches the specified memory store for memories relevant to the provided conversation context.
 
         :param name: The name of the memory store to search. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a SearchMemoriesRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.SearchMemoriesRequest
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -11725,10 +17875,49 @@ class BetaMemoryStoresOperations:
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
-        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :paramtype options: ~azure.ai.projects.types.MemorySearchOptions
+        :return: MemoryStoreSearchResult
+        :rtype: ~azure.ai.projects.types.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "scope": "str",
+                    "items": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "options": {
+                        "max_memories": 0
+                    },
+                    "previous_search_id": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "memories": [
+                        {
+                            "memory_item": memory_item
+                        }
+                    ],
+                    "search_id": "str",
+                    "usage": {
+                        "embedding_tokens": 0,
+                        "input_tokens": 0,
+                        "input_tokens_details": {
+                            "cached_tokens": 0
+                        },
+                        "output_tokens": 0,
+                        "output_tokens_details": {
+                            "reasoning_tokens": 0
+                        },
+                        "total_tokens": 0
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11742,7 +17931,7 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreSearchResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryStoreSearchResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if scope is _Unset:
@@ -11750,17 +17939,17 @@ class BetaMemoryStoresOperations:
             body = {"items": items, "options": options, "previous_search_id": previous_search_id, "scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_search_memories_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -11784,16 +17973,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryStoreSearchResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11803,7 +17995,7 @@ class BetaMemoryStoresOperations:
     def _update_memories_initial(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoriesRequest] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
@@ -11836,17 +18028,17 @@ class BetaMemoryStoresOperations:
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_update_memories_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -11869,9 +18061,9 @@ class BetaMemoryStoresOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -11896,28 +18088,24 @@ class BetaMemoryStoresOperations:
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
+    ) -> LROPoller[_types.MemoryStoreUpdateCompletedResult]: ...
     @overload
     def _begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
-    @overload
-    def _begin_update_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
+        self, name: str, body: _types.UpdateMemoriesRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_types.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace
     def _begin_update_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.UpdateMemoriesRequest] = _Unset,
         *,
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]:
+    ) -> LROPoller[_types.MemoryStoreUpdateCompletedResult]:
         """Update memories.
 
         Starts an update that writes conversation memories into the specified memory store. The
@@ -11925,8 +18113,8 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a UpdateMemoriesRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoriesRequest
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -11941,17 +18129,53 @@ class BetaMemoryStoresOperations:
          Set to 0 to immediately trigger the update without delay.
          Defaults to 300 (5 minutes). Default value is None.
         :paramtype update_delay: int
-        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
+         ~azure.core.polling.LROPoller[~azure.ai.projects.types.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "scope": "str",
+                    "items": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "previous_update_id": "str",
+                    "update_delay": 0
+                }
+
+                # response body for status code(s): 202
+                response == {
+                    "memory_operations": [
+                        {
+                            "kind": "str",
+                            "memory_item": memory_item
+                        }
+                    ],
+                    "usage": {
+                        "embedding_tokens": 0,
+                        "input_tokens": 0,
+                        "input_tokens_details": {
+                            "cached_tokens": 0
+                        },
+                        "output_tokens": 0,
+                        "output_tokens_details": {
+                            "reasoning_tokens": 0
+                        },
+                        "total_tokens": 0
+                    }
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -11979,7 +18203,10 @@ class BetaMemoryStoresOperations:
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.MemoryStoreUpdateCompletedResult, response.json().get("result", {}))
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -11997,20 +18224,20 @@ class BetaMemoryStoresOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.MemoryStoreUpdateCompletedResult].from_continuation_token(
+            return LROPoller[_types.MemoryStoreUpdateCompletedResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.MemoryStoreUpdateCompletedResult](
+        return LROPoller[_types.MemoryStoreUpdateCompletedResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @overload
     def delete_scope(
         self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
+    ) -> _types.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
         Deletes all memories in the specified memory store that are associated with the provided scope.
@@ -12023,16 +18250,26 @@ class BetaMemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :return: MemoryStoreDeleteScopeResult
+        :rtype: ~azure.ai.projects.types.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "name": "str",
+                    "object": "str",
+                    "scope": "str"
+                }
         """
 
     @overload
     def delete_scope(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
+        self, name: str, body: _types.DeleteScopeRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
         Deletes all memories in the specified memory store that are associated with the provided scope.
@@ -12040,56 +18277,65 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.DeleteScopeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :return: MemoryStoreDeleteScopeResult
+        :rtype: ~azure.ai.projects.types.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def delete_scope(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete memories by scope.
+        Example:
+            .. code-block:: python
 
-        Deletes all memories in the specified memory store that are associated with the provided scope.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "scope": "str"
+                }
 
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "name": "str",
+                    "object": "str",
+                    "scope": "str"
+                }
         """
 
     @distributed_trace
     def delete_scope(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
+        self, name: str, body: Union[JSON, _types.DeleteScopeRequest] = _Unset, *, scope: str = _Unset, **kwargs: Any
+    ) -> _types.MemoryStoreDeleteScopeResult:
         """Delete memories by scope.
 
         Deletes all memories in the specified memory store that are associated with the provided scope.
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a DeleteScopeRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.DeleteScopeRequest
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :return: MemoryStoreDeleteScopeResult
+        :rtype: ~azure.ai.projects.types.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "scope": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "name": "str",
+                    "object": "str",
+                    "scope": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12103,7 +18349,7 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDeleteScopeResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryStoreDeleteScopeResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if scope is _Unset:
@@ -12111,17 +18357,17 @@ class BetaMemoryStoresOperations:
             body = {"scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_delete_scope_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -12145,16 +18391,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryStoreDeleteScopeResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12168,10 +18417,10 @@ class BetaMemoryStoresOperations:
         *,
         scope: str,
         content: str,
-        kind: Union[str, _models.MemoryItemKind],
+        kind: types.MemoryItemKind,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MemoryItem:
+    ) -> _types.MemoryItem:
         """Create a memory item.
 
         Creates a memory item in the specified memory store.
@@ -12189,15 +18438,51 @@ class BetaMemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
 
     @overload
     def create_memory(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryItem:
+        self, name: str, body: _types.CreateMemoryRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.MemoryItem:
         """Create a memory item.
 
         Creates a memory item in the specified memory store.
@@ -12205,54 +18490,77 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateMemoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_memory(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryItem:
-        """Create a memory item.
+        Example:
+            .. code-block:: python
 
-        Creates a memory item in the specified memory store.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "content": "str",
+                    "kind": "str",
+                    "scope": "str"
+                }
 
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
 
     @distributed_trace
     def create_memory(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateMemoryRequest] = _Unset,
         *,
         scope: str = _Unset,
         content: str = _Unset,
-        kind: Union[str, _models.MemoryItemKind] = _Unset,
+        kind: types.MemoryItemKind = _Unset,
         **kwargs: Any
-    ) -> _models.MemoryItem:
+    ) -> _types.MemoryItem:
         """Create a memory item.
 
         Creates a memory item in the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateMemoryRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateMemoryRequest
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -12261,9 +18569,52 @@ class BetaMemoryStoresOperations:
         :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
          and "procedural". Required.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "content": "str",
+                    "kind": "str",
+                    "scope": "str"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12277,7 +18628,7 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryItem] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryItem] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if scope is _Unset:
@@ -12289,17 +18640,17 @@ class BetaMemoryStoresOperations:
             body = {"content": content, "kind": kind, "scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_create_memory_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -12323,16 +18674,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryItem, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12342,7 +18696,7 @@ class BetaMemoryStoresOperations:
     @overload
     def update_memory(
         self, name: str, memory_id: str, *, content: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryItem:
+    ) -> _types.MemoryItem:
         """Update a memory item.
 
         Updates the specified memory item in the memory store.
@@ -12356,15 +18710,57 @@ class BetaMemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
 
     @overload
     def update_memory(
-        self, name: str, memory_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryItem:
+        self,
+        name: str,
+        memory_id: str,
+        body: _types.UpdateMemoryRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.MemoryItem:
         """Update a memory item.
 
         Updates the specified memory item in the memory store.
@@ -12374,41 +18770,66 @@ class BetaMemoryStoresOperations:
         :param memory_id: The ID of the memory item to update. Required.
         :type memory_id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateMemoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def update_memory(
-        self, name: str, memory_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryItem:
-        """Update a memory item.
+        Example:
+            .. code-block:: python
 
-        Updates the specified memory item in the memory store.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "content": "str"
+                }
 
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param memory_id: The ID of the memory item to update. Required.
-        :type memory_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
 
     @distributed_trace
     def update_memory(
-        self, name: str, memory_id: str, body: Union[JSON, IO[bytes]] = _Unset, *, content: str = _Unset, **kwargs: Any
-    ) -> _models.MemoryItem:
+        self,
+        name: str,
+        memory_id: str,
+        body: Union[JSON, _types.UpdateMemoryRequest] = _Unset,
+        *,
+        content: str = _Unset,
+        **kwargs: Any
+    ) -> _types.MemoryItem:
         """Update a memory item.
 
         Updates the specified memory item in the memory store.
@@ -12417,13 +18838,54 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param memory_id: The ID of the memory item to update. Required.
         :type memory_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a UpdateMemoryRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateMemoryRequest
         :keyword content: The updated content of the memory. Required.
         :paramtype content: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "content": "str"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12437,7 +18899,7 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryItem] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryItem] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if content is _Unset:
@@ -12445,18 +18907,18 @@ class BetaMemoryStoresOperations:
             body = {"content": content}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_memory_stores_update_memory_request(
             name=name,
             memory_id=memory_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -12480,16 +18942,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryItem, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12497,7 +18962,7 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_memory(self, name: str, memory_id: str, **kwargs: Any) -> _models.MemoryItem:
+    def get_memory(self, name: str, memory_id: str, **kwargs: Any) -> _types.MemoryItem:
         """Get a memory item.
 
         Retrieves the specified memory item from the memory store.
@@ -12506,9 +18971,45 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param memory_id: The ID of the memory item to retrieve. Required.
         :type memory_id: str
-        :return: MemoryItem. The MemoryItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryItem
+        :return: MemoryItem
+        :rtype: ~azure.ai.projects.types.MemoryItem
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12521,7 +19022,7 @@ class BetaMemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MemoryItem] = kwargs.pop("cls", None)
+        cls: ClsType[_types.MemoryItem] = kwargs.pop("cls", None)
 
         _request = build_beta_memory_stores_get_memory_request(
             name=name,
@@ -12550,16 +19051,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MemoryItem, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12572,13 +19076,13 @@ class BetaMemoryStoresOperations:
         name: str,
         *,
         scope: str,
-        kind: Optional[Union[str, _models.MemoryItemKind]] = None,
+        kind: Optional[types.MemoryItemKind] = None,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> ItemPaged["_models.MemoryItem"]:
+    ) -> ItemPaged["_types.MemoryItem"]:
         """List memory items.
 
         Returns memory items from the specified memory store.
@@ -12609,23 +19113,59 @@ class BetaMemoryStoresOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: An iterator like instance of MemoryItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.MemoryItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
 
     @overload
     def list_memories(
         self,
         name: str,
-        body: JSON,
+        body: _types.ListMemoriesRequest,
         *,
-        kind: Optional[Union[str, _models.MemoryItemKind]] = None,
+        kind: Optional[types.MemoryItemKind] = None,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> ItemPaged["_models.MemoryItem"]:
+    ) -> ItemPaged["_types.MemoryItem"]:
         """List memory items.
 
         Returns memory items from the specified memory store.
@@ -12633,7 +19173,7 @@ class BetaMemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.ListMemoriesRequest
         :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
          and "procedural". Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
@@ -12655,77 +19195,72 @@ class BetaMemoryStoresOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: An iterator like instance of MemoryItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.MemoryItem]
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def list_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        kind: Optional[Union[str, _models.MemoryItemKind]] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> ItemPaged["_models.MemoryItem"]:
-        """List memory items.
+        Example:
+            .. code-block:: python
 
-        Returns memory items from the specified memory store.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "scope": "str"
+                }
 
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Default value is None.
-        :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An iterator like instance of MemoryItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
 
     @distributed_trace
     def list_memories(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.ListMemoriesRequest] = _Unset,
         *,
         scope: str = _Unset,
-        kind: Optional[Union[str, _models.MemoryItemKind]] = None,
+        kind: Optional[types.MemoryItemKind] = None,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.MemoryItem"]:
+    ) -> ItemPaged["_types.MemoryItem"]:
         """List memory items.
 
         Returns memory items from the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a ListMemoriesRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.ListMemoriesRequest
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -12747,14 +19282,55 @@ class BetaMemoryStoresOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of MemoryItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.MemoryItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "scope": "str"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "chat_summary":
+                memory_item = {
+                    "content": "str",
+                    "kind": "chat_summary",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "procedural":
+                memory_item = {
+                    "content": "str",
+                    "kind": "procedural",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # JSON input template for discriminator value "user_profile":
+                memory_item = {
+                    "content": "str",
+                    "kind": "user_profile",
+                    "memory_id": "str",
+                    "scope": "str",
+                    "updated_at": "2020-02-20 00:00:00"
+                }
+
+                # response body for status code(s): 200
+                response == memory_item
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.MemoryItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.MemoryItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12769,11 +19345,11 @@ class BetaMemoryStoresOperations:
             body = {"scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         def prepare_request(_continuation_token=None):
 
@@ -12786,7 +19362,7 @@ class BetaMemoryStoresOperations:
                 before=before,
                 content_type=content_type,
                 api_version=self._config.api_version,
-                content=_content,
+                json=_json,
                 headers=_headers,
                 params=_params,
             )
@@ -12798,10 +19374,7 @@ class BetaMemoryStoresOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.MemoryItem],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -12817,9 +19390,9 @@ class BetaMemoryStoresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -12828,7 +19401,7 @@ class BetaMemoryStoresOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_memory(self, name: str, memory_id: str, **kwargs: Any) -> _models.DeleteMemoryResult:
+    def delete_memory(self, name: str, memory_id: str, **kwargs: Any) -> _types.DeleteMemoryResult:
         """Delete a memory item.
 
         Deletes the specified memory item from the memory store.
@@ -12837,9 +19410,19 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param memory_id: The ID of the memory item to delete. Required.
         :type memory_id: str
-        :return: DeleteMemoryResult. The DeleteMemoryResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteMemoryResult
+        :return: DeleteMemoryResult
+        :rtype: ~azure.ai.projects.types.DeleteMemoryResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "memory_id": "str",
+                    "object": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12852,7 +19435,7 @@ class BetaMemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteMemoryResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DeleteMemoryResult] = kwargs.pop("cls", None)
 
         _request = build_beta_memory_stores_delete_memory_request(
             name=name,
@@ -12881,16 +19464,19 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteMemoryResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12916,7 +19502,7 @@ class BetaModelsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.ModelVersion"]:
+    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_types.ModelVersion"]:
         """List versions.
 
         List all versions of the given ModelVersion.
@@ -12924,13 +19510,54 @@ class BetaModelsOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :return: An iterator like instance of ModelVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ModelVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.ModelVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blobUri": "str",
+                    "name": "str",
+                    "version": "str",
+                    "artifactProfile": {
+                        "category": "str",
+                        "signals": [
+                            "str"
+                        ]
+                    },
+                    "baseModel": "str",
+                    "description": "str",
+                    "id": "str",
+                    "loraConfig": {
+                        "alpha": 0,
+                        "dropout": 0.0,
+                        "rank": 0,
+                        "targetModules": [
+                            "str"
+                        ]
+                    },
+                    "source": {
+                        "jobId": "str",
+                        "sourceType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",
+                            "message": "str"
+                        }
+                    ],
+                    "weightType": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ModelVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.ModelVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12983,10 +19610,7 @@ class BetaModelsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ModelVersion],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -13009,19 +19633,60 @@ class BetaModelsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.ModelVersion"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_types.ModelVersion"]:
         """List latest versions.
 
         List the latest version of each ModelVersion.
 
         :return: An iterator like instance of ModelVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ModelVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.ModelVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blobUri": "str",
+                    "name": "str",
+                    "version": "str",
+                    "artifactProfile": {
+                        "category": "str",
+                        "signals": [
+                            "str"
+                        ]
+                    },
+                    "baseModel": "str",
+                    "description": "str",
+                    "id": "str",
+                    "loraConfig": {
+                        "alpha": 0,
+                        "dropout": 0.0,
+                        "rank": 0,
+                        "targetModules": [
+                            "str"
+                        ]
+                    },
+                    "source": {
+                        "jobId": "str",
+                        "sourceType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",
+                            "message": "str"
+                        }
+                    ],
+                    "weightType": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ModelVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.ModelVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13073,10 +19738,7 @@ class BetaModelsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ModelVersion],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -13099,7 +19761,7 @@ class BetaModelsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, name: str, version: str, **kwargs: Any) -> _models.ModelVersion:
+    def get(self, name: str, version: str, **kwargs: Any) -> _types.ModelVersion:
         """Get a model version.
 
         Retrieves the specified model version, returning 404 if it does not exist.
@@ -13108,9 +19770,50 @@ class BetaModelsOperations:
         :type name: str
         :param version: The specific version id of the ModelVersion to retrieve. Required.
         :type version: str
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
+        :return: ModelVersion
+        :rtype: ~azure.ai.projects.types.ModelVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "blobUri": "str",
+                    "name": "str",
+                    "version": "str",
+                    "artifactProfile": {
+                        "category": "str",
+                        "signals": [
+                            "str"
+                        ]
+                    },
+                    "baseModel": "str",
+                    "description": "str",
+                    "id": "str",
+                    "loraConfig": {
+                        "alpha": 0,
+                        "dropout": 0.0,
+                        "rank": 0,
+                        "targetModules": [
+                            "str"
+                        ]
+                    },
+                    "source": {
+                        "jobId": "str",
+                        "sourceType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",
+                            "message": "str"
+                        }
+                    ],
+                    "weightType": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13123,7 +19826,7 @@ class BetaModelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ModelVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_types.ModelVersion] = kwargs.pop("cls", None)
 
         _request = build_beta_models_get_request(
             name=name,
@@ -13157,7 +19860,10 @@ class BetaModelsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ModelVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13218,101 +19924,10 @@ class BetaModelsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @overload
-    def update(
-        self,
-        name: str,
-        version: str,
-        model_version_update: _models.UpdateModelVersionRequest,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.ModelVersion:
-        """Update a model version.
-
-        Update an existing ModelVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
-         Required.
-        :type version: str
-        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
-        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        name: str,
-        version: str,
-        model_version_update: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.ModelVersion:
-        """Update a model version.
-
-        Update an existing ModelVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
-         Required.
-        :type version: str
-        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
-        :type model_version_update: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        name: str,
-        version: str,
-        model_version_update: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.ModelVersion:
-        """Update a model version.
-
-        Update an existing ModelVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
-         Required.
-        :type version: str
-        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
-        :type model_version_update: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def update(
-        self,
-        name: str,
-        version: str,
-        model_version_update: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.ModelVersion:
+        self, name: str, version: str, model_version_update: _types.UpdateModelVersionRequest, **kwargs: Any
+    ) -> _types.ModelVersion:
         """Update a model version.
 
         Update an existing ModelVersion with the given version id.
@@ -13322,13 +19937,60 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param model_version_update: The UpdateModelVersionRequest to create or update. Is one of the
-         following types: UpdateModelVersionRequest, JSON, IO[bytes] Required.
-        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or
-         IO[bytes]
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: ~azure.ai.projects.types.UpdateModelVersionRequest
+        :return: ModelVersion
+        :rtype: ~azure.ai.projects.types.ModelVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                model_version_update = {
+                    "description": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "blobUri": "str",
+                    "name": "str",
+                    "version": "str",
+                    "artifactProfile": {
+                        "category": "str",
+                        "signals": [
+                            "str"
+                        ]
+                    },
+                    "baseModel": "str",
+                    "description": "str",
+                    "id": "str",
+                    "loraConfig": {
+                        "alpha": 0,
+                        "dropout": 0.0,
+                        "rank": 0,
+                        "targetModules": [
+                            "str"
+                        ]
+                    },
+                    "source": {
+                        "jobId": "str",
+                        "sourceType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",
+                            "message": "str"
+                        }
+                    ],
+                    "weightType": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13341,22 +20003,17 @@ class BetaModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ModelVersion] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/merge-patch+json"))
+        cls: ClsType[_types.ModelVersion] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(model_version_update, (IOBase, bytes)):
-            _content = model_version_update
-        else:
-            _content = json.dumps(model_version_update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = model_version_update
 
         _request = build_beta_models_update_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -13385,98 +20042,20 @@ class BetaModelsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ModelVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def pending_create_version(
-        self,
-        name: str,
-        version: str,
-        model_version: _models.ModelVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CreateAsyncResponse:
-        """Create a model version async.
-
-        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a location header for polling the operation status.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param model_version: Model version to create. Required.
-        :type model_version: ~azure.ai.projects.models.ModelVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CreateAsyncResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_create_version(
-        self, name: str, version: str, model_version: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateAsyncResponse:
-        """Create a model version async.
-
-        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a location header for polling the operation status.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param model_version: Model version to create. Required.
-        :type model_version: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CreateAsyncResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_create_version(
-        self,
-        name: str,
-        version: str,
-        model_version: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CreateAsyncResponse:
-        """Create a model version async.
-
-        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a location header for polling the operation status.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param model_version: Model version to create. Required.
-        :type model_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CreateAsyncResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def pending_create_version(
-        self, name: str, version: str, model_version: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.CreateAsyncResponse:
+        self, name: str, version: str, model_version: _types.ModelVersion, **kwargs: Any
+    ) -> _types.CreateAsyncResponse:
         """Create a model version async.
 
         Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
@@ -13486,12 +20065,58 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param model_version: Model version to create. Is one of the following types: ModelVersion,
-         JSON, IO[bytes] Required.
-        :type model_version: ~azure.ai.projects.models.ModelVersion or JSON or IO[bytes]
-        :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CreateAsyncResponse
+        :param model_version: Model version to create. Required.
+        :type model_version: ~azure.ai.projects.types.ModelVersion
+        :return: CreateAsyncResponse
+        :rtype: ~azure.ai.projects.types.CreateAsyncResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                model_version = {
+                    "blobUri": "str",
+                    "name": "str",
+                    "version": "str",
+                    "artifactProfile": {
+                        "category": "str",
+                        "signals": [
+                            "str"
+                        ]
+                    },
+                    "baseModel": "str",
+                    "description": "str",
+                    "id": "str",
+                    "loraConfig": {
+                        "alpha": 0,
+                        "dropout": 0.0,
+                        "rank": 0,
+                        "targetModules": [
+                            "str"
+                        ]
+                    },
+                    "source": {
+                        "jobId": "str",
+                        "sourceType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",
+                            "message": "str"
+                        }
+                    ],
+                    "weightType": "str"
+                }
+
+                # response body for status code(s): 202
+                response == {
+                    "location": "str",
+                    "operationResult": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13504,22 +20129,17 @@ class BetaModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CreateAsyncResponse] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.CreateAsyncResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(model_version, (IOBase, bytes)):
-            _content = model_version
-        else:
-            _content = json.dumps(model_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = model_version
 
         _request = build_beta_models_pending_create_version_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -13551,108 +20171,20 @@ class BetaModelsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.CreateAsyncResponse, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: _models.ModelPendingUploadRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ModelPendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified model version.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param pending_upload_request: Required.
-        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ModelPendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified model version.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param pending_upload_request: Required.
-        :type pending_upload_request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ModelPendingUploadResponse:
-        """Start a pending upload.
-
-        Initiates a new pending upload or retrieves an existing one for the specified model version.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param pending_upload_request: Required.
-        :type pending_upload_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: Union[_models.ModelPendingUploadRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.ModelPendingUploadResponse:
+        self, name: str, version: str, pending_upload_request: _types.ModelPendingUploadRequest, **kwargs: Any
+    ) -> _types.ModelPendingUploadResponse:
         """Start a pending upload.
 
         Initiates a new pending upload or retrieves an existing one for the specified model version.
@@ -13661,14 +20193,36 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: Is one of the following types: ModelPendingUploadRequest, JSON,
-         IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or JSON or
-         IO[bytes]
-        :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
+        :param pending_upload_request: Required.
+        :type pending_upload_request: ~azure.ai.projects.types.ModelPendingUploadRequest
+        :return: ModelPendingUploadResponse
+        :rtype: ~azure.ai.projects.types.ModelPendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                pending_upload_request = {
+                    "pendingUploadType": "str",
+                    "connectionName": "str",
+                    "pendingUploadId": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blobReference": {
+                        "blobUri": "str",
+                        "credential": {
+                            "sasUri": "str",
+                            "type": "SAS"
+                        },
+                        "storageAccountArmId": "str"
+                    },
+                    "pendingUploadId": "str",
+                    "pendingUploadType": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13681,22 +20235,17 @@ class BetaModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ModelPendingUploadResponse] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.ModelPendingUploadResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pending_upload_request, (IOBase, bytes)):
-            _content = pending_upload_request
-        else:
-            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = pending_upload_request
 
         _request = build_beta_models_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -13725,105 +20274,20 @@ class BetaModelsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ModelPendingUploadResponse, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: _models.ModelCredentialRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
-        """Get model asset credentials.
-
-        Retrieves temporary credentials for accessing the storage backing the specified model version.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param credential_request: Required.
-        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
-        """Get model asset credentials.
-
-        Retrieves temporary credentials for accessing the storage backing the specified model version.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param credential_request: Required.
-        :type credential_request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
-        """Get model asset credentials.
-
-        Retrieves temporary credentials for accessing the storage backing the specified model version.
-
-        :param name: Name of the model. Required.
-        :type name: str
-        :param version: Version of the model. Required.
-        :type version: str
-        :param credential_request: Required.
-        :type credential_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def get_credentials(
-        self,
-        name: str,
-        version: str,
-        credential_request: Union[_models.ModelCredentialRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.DatasetCredential:
+        self, name: str, version: str, credential_request: _types.ModelCredentialRequest, **kwargs: Any
+    ) -> _types.DatasetCredential:
         """Get model asset credentials.
 
         Retrieves temporary credentials for accessing the storage backing the specified model version.
@@ -13832,12 +20296,31 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: Is one of the following types: ModelCredentialRequest, JSON,
-         IO[bytes] Required.
-        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
-        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :param credential_request: Required.
+        :type credential_request: ~azure.ai.projects.types.ModelCredentialRequest
+        :return: DatasetCredential
+        :rtype: ~azure.ai.projects.types.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                credential_request = {
+                    "blobUri": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "blobReference": {
+                        "blobUri": "str",
+                        "credential": {
+                            "sasUri": "str",
+                            "type": "SAS"
+                        },
+                        "storageAccountArmId": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13850,22 +20333,17 @@ class BetaModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.DatasetCredential] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(credential_request, (IOBase, bytes)):
-            _content = credential_request
-        else:
-            _content = json.dumps(credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = credential_request
 
         _request = build_beta_models_get_credentials_request(
             name=name,
             version=version,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -13894,7 +20372,10 @@ class BetaModelsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DatasetCredential, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13920,16 +20401,51 @@ class BetaRedTeamsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
+    def get(self, name: str, **kwargs: Any) -> _types.RedTeam:
         """Get a redteam.
 
         Retrieves the specified redteam and its configuration.
 
         :param name: Identifier of the red team run. Required.
         :type name: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :return: RedTeam
+        :rtype: ~azure.ai.projects.types.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureOpenAIModel":
+                red_team_target_config = {
+                    "modelDeploymentName": "str",
+                    "type": "AzureOpenAIModel"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "target": red_team_target_config,
+                    "applicationScenario": "str",
+                    "attackStrategies": [
+                        "str"
+                    ],
+                    "displayName": "str",
+                    "numTurns": 0,
+                    "properties": {
+                        "str": "str"
+                    },
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "simulationOnly": bool,
+                    "status": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13942,7 +20458,7 @@ class BetaRedTeamsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+        cls: ClsType[_types.RedTeam] = kwargs.pop("cls", None)
 
         _request = build_beta_red_teams_get_request(
             name=name,
@@ -13975,7 +20491,10 @@ class BetaRedTeamsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RedTeam, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13983,19 +20502,54 @@ class BetaRedTeamsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_types.RedTeam"]:
         """List redteams.
 
         Returns the redteams available in the current project.
 
         :return: An iterator like instance of RedTeam
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RedTeam]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureOpenAIModel":
+                red_team_target_config = {
+                    "modelDeploymentName": "str",
+                    "type": "AzureOpenAIModel"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "target": red_team_target_config,
+                    "applicationScenario": "str",
+                    "attackStrategies": [
+                        "str"
+                    ],
+                    "displayName": "str",
+                    "numTurns": 0,
+                    "properties": {
+                        "str": "str"
+                    },
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "simulationOnly": bool,
+                    "status": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.RedTeam]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.RedTeam]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14047,10 +20601,7 @@ class BetaRedTeamsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.RedTeam],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -14072,68 +20623,84 @@ class BetaRedTeamsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def create(
-        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RedTeam:
-        """Create a redteam run.
-
-        Submits a new redteam run for execution with the provided configuration.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: ~azure.ai.projects.models.RedTeam
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
-        """Create a redteam run.
-
-        Submits a new redteam run for execution with the provided configuration.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
-        """Create a redteam run.
-
-        Submits a new redteam run for execution with the provided configuration.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
+    def create(self, red_team: _types.RedTeam, **kwargs: Any) -> _types.RedTeam:
         """Create a redteam run.
 
         Submits a new redteam run for execution with the provided configuration.
 
-        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
-         Required.
-        :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :param red_team: Redteam to be run. Required.
+        :type red_team: ~azure.ai.projects.types.RedTeam
+        :return: RedTeam
+        :rtype: ~azure.ai.projects.types.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "AzureOpenAIModel":
+                red_team_target_config = {
+                    "modelDeploymentName": "str",
+                    "type": "AzureOpenAIModel"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                red_team = {
+                    "id": "str",
+                    "target": red_team_target_config,
+                    "applicationScenario": "str",
+                    "attackStrategies": [
+                        "str"
+                    ],
+                    "displayName": "str",
+                    "numTurns": 0,
+                    "properties": {
+                        "str": "str"
+                    },
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "simulationOnly": bool,
+                    "status": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "AzureOpenAIModel":
+                red_team_target_config = {
+                    "modelDeploymentName": "str",
+                    "type": "AzureOpenAIModel"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "id": "str",
+                    "target": red_team_target_config,
+                    "applicationScenario": "str",
+                    "attackStrategies": [
+                        "str"
+                    ],
+                    "displayName": "str",
+                    "numTurns": 0,
+                    "properties": {
+                        "str": "str"
+                    },
+                    "riskCategories": [
+                        "str"
+                    ],
+                    "simulationOnly": bool,
+                    "status": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14146,20 +20713,15 @@ class BetaRedTeamsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.RedTeam] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(red_team, (IOBase, bytes)):
-            _content = red_team
-        else:
-            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = red_team
 
         _request = build_beta_red_teams_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -14183,16 +20745,19 @@ class BetaRedTeamsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RedTeam, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14225,10 +20790,10 @@ class BetaRoutinesOperations:
         content_type: str = "application/json",
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
-        triggers: Optional[dict[str, _models.RoutineTrigger]] = None,
-        action: Optional[_models.RoutineAction] = None,
+        triggers: Optional[dict[str, _types.RoutineTrigger]] = None,
+        action: Optional[_types.RoutineAction] = None,
         **kwargs: Any
-    ) -> _models.Routine:
+    ) -> _types.Routine:
         """Create or update a routine.
 
         Creates a new routine or replaces an existing routine with the supplied definition.
@@ -14244,18 +20809,60 @@ class BetaRoutinesOperations:
         :paramtype enabled: bool
         :keyword triggers: The triggers configured for the routine. In v1, exactly one trigger entry is
          supported. Default value is None.
-        :paramtype triggers: dict[str, ~azure.ai.projects.models.RoutineTrigger]
+        :paramtype triggers: dict[str, ~azure.ai.projects.types.RoutineTrigger]
         :keyword action: The action executed when the routine fires. Default value is None.
-        :paramtype action: ~azure.ai.projects.models.RoutineAction
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
+        :paramtype action: ~azure.ai.projects.types.RoutineAction
+        :return: Routine
+        :rtype: ~azure.ai.projects.types.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
 
     @overload
     def create_or_update(
-        self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Routine:
+        self,
+        routine_name: str,
+        body: _types.CreateOrUpdateRoutineRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.Routine:
         """Create or update a routine.
 
         Creates a new routine or replaces an existing routine with the supplied definition.
@@ -14263,67 +20870,183 @@ class BetaRoutinesOperations:
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateOrUpdateRoutineRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
+        :return: Routine
+        :rtype: ~azure.ai.projects.types.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_or_update(
-        self, routine_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Routine:
-        """Create or update a routine.
+        Example:
+            .. code-block:: python
 
-        Creates a new routine or replaces an existing routine with the supplied definition.
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
 
-        :param routine_name: The unique name of the routine. Required.
-        :type routine_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "action": routine_action,
+                    "description": "str",
+                    "enabled": bool,
+                    "triggers": {
+                        "str": routine_trigger
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
 
     @distributed_trace
     def create_or_update(
         self,
         routine_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateOrUpdateRoutineRequest] = _Unset,
         *,
         description: Optional[str] = None,
         enabled: Optional[bool] = None,
-        triggers: Optional[dict[str, _models.RoutineTrigger]] = None,
-        action: Optional[_models.RoutineAction] = None,
+        triggers: Optional[dict[str, _types.RoutineTrigger]] = None,
+        action: Optional[_types.RoutineAction] = None,
         **kwargs: Any
-    ) -> _models.Routine:
+    ) -> _types.Routine:
         """Create or update a routine.
 
         Creates a new routine or replaces an existing routine with the supplied definition.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateOrUpdateRoutineRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateOrUpdateRoutineRequest
         :keyword description: A human-readable description of the routine. Default value is None.
         :paramtype description: str
         :keyword enabled: Whether the routine is enabled. Default value is None.
         :paramtype enabled: bool
         :keyword triggers: The triggers configured for the routine. In v1, exactly one trigger entry is
          supported. Default value is None.
-        :paramtype triggers: dict[str, ~azure.ai.projects.models.RoutineTrigger]
+        :paramtype triggers: dict[str, ~azure.ai.projects.types.RoutineTrigger]
         :keyword action: The action executed when the routine fires. Default value is None.
-        :paramtype action: ~azure.ai.projects.models.RoutineAction
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
+        :paramtype action: ~azure.ai.projects.types.RoutineAction
+        :return: Routine
+        :rtype: ~azure.ai.projects.types.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "action": routine_action,
+                    "description": "str",
+                    "enabled": bool,
+                    "triggers": {
+                        "str": routine_trigger
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14337,23 +21060,23 @@ class BetaRoutinesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Routine] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Routine] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"action": action, "description": description, "enabled": enabled, "triggers": triggers}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_routines_create_or_update_request(
             routine_name=routine_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -14377,16 +21100,19 @@ class BetaRoutinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Routine, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14394,16 +21120,53 @@ class BetaRoutinesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(self, routine_name: str, **kwargs: Any) -> _models.Routine:
+    def get(self, routine_name: str, **kwargs: Any) -> _types.Routine:
         """Get a routine.
 
         Retrieves the specified routine and its current configuration.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
+        :return: Routine
+        :rtype: ~azure.ai.projects.types.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14416,7 +21179,7 @@ class BetaRoutinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Routine] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Routine] = kwargs.pop("cls", None)
 
         _request = build_beta_routines_get_request(
             routine_name=routine_name,
@@ -14444,16 +21207,19 @@ class BetaRoutinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Routine, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14461,16 +21227,53 @@ class BetaRoutinesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def enable(self, routine_name: str, **kwargs: Any) -> _models.Routine:
+    def enable(self, routine_name: str, **kwargs: Any) -> _types.Routine:
         """Enable a routine.
 
         Enables the specified routine so it can be dispatched.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
+        :return: Routine
+        :rtype: ~azure.ai.projects.types.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14483,7 +21286,7 @@ class BetaRoutinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Routine] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Routine] = kwargs.pop("cls", None)
 
         _request = build_beta_routines_enable_request(
             routine_name=routine_name,
@@ -14511,16 +21314,19 @@ class BetaRoutinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Routine, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14528,16 +21334,53 @@ class BetaRoutinesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def disable(self, routine_name: str, **kwargs: Any) -> _models.Routine:
+    def disable(self, routine_name: str, **kwargs: Any) -> _types.Routine:
         """Disable a routine.
 
         Disables the specified routine so it no longer runs.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :return: Routine. The Routine is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Routine
+        :return: Routine
+        :rtype: ~azure.ai.projects.types.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14550,7 +21393,7 @@ class BetaRoutinesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Routine] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Routine] = kwargs.pop("cls", None)
 
         _request = build_beta_routines_disable_request(
             routine_name=routine_name,
@@ -14578,16 +21421,19 @@ class BetaRoutinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Routine, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14597,7 +21443,7 @@ class BetaRoutinesOperations:
     @distributed_trace
     def list(
         self, *, limit: Optional[int] = None, before: Optional[str] = None, order: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.Routine"]:
+    ) -> ItemPaged["_types.Routine"]:
         """List routines.
 
         Returns the routines available in the current project.
@@ -14611,13 +21457,50 @@ class BetaRoutinesOperations:
          None.
         :paramtype order: str
         :return: An iterator like instance of Routine
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Routine]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Routine]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_action = {
+                    "type": "invoke_agent_invocations_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "input": {},
+                    "session_id": "str"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_action = {
+                    "type": "invoke_agent_responses_api",
+                    "agent_endpoint_id": "str",
+                    "agent_name": "str",
+                    "conversation": "str",
+                    "input": {}
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "action": routine_action,
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "name": "str",
+                    "triggers": {
+                        "str": routine_trigger
+                    },
+                    "updated_at": "2020-02-20 00:00:00"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Routine]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Routine]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14646,10 +21529,7 @@ class BetaRoutinesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Routine],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -14665,9 +21545,9 @@ class BetaRoutinesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -14720,9 +21600,9 @@ class BetaRoutinesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -14739,7 +21619,7 @@ class BetaRoutinesOperations:
         before: Optional[str] = None,
         order: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.RoutineRun"]:
+    ) -> ItemPaged["_types.RoutineRun"]:
         """List prior runs for a routine.
 
         Returns prior runs recorded for the specified routine.
@@ -14758,13 +21638,45 @@ class BetaRoutinesOperations:
          None.
         :paramtype order: str
         :return: An iterator like instance of RoutineRun
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RoutineRun]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.RoutineRun]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "action_correlation_id": "str",
+                    "action_type": "str",
+                    "agent_endpoint_id": "str",
+                    "agent_id": "str",
+                    "attempt_source": "str",
+                    "conversation_id": "str",
+                    "dispatch_id": "str",
+                    "ended_at": "2020-02-20 00:00:00",
+                    "error_message": "str",
+                    "error_status_code": 0,
+                    "error_type": "str",
+                    "phase": "str",
+                    "response_id": "str",
+                    "scheduled_fire_at": "2020-02-20 00:00:00",
+                    "session_id": "str",
+                    "started_at": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "task_id": "str",
+                    "trigger_event_payload": {
+                        "str": {}
+                    },
+                    "trigger_name": "str",
+                    "trigger_type": "str",
+                    "triggered_at": "2020-02-20 00:00:00"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.RoutineRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.RoutineRun]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14795,10 +21707,7 @@ class BetaRoutinesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.RoutineRun],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -14814,9 +21723,9 @@ class BetaRoutinesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -14830,9 +21739,9 @@ class BetaRoutinesOperations:
         routine_name: str,
         *,
         content_type: str = "application/json",
-        payload: Optional[_models.RoutineDispatchPayload] = None,
+        payload: Optional[_types.RoutineDispatchPayload] = None,
         **kwargs: Any
-    ) -> _models.DispatchRoutineResult:
+    ) -> _types.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         Queues an asynchronous dispatch for the specified routine.
@@ -14844,16 +21753,31 @@ class BetaRoutinesOperations:
         :paramtype content_type: str
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
-        :paramtype payload: ~azure.ai.projects.models.RoutineDispatchPayload
-        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
+        :paramtype payload: ~azure.ai.projects.types.RoutineDispatchPayload
+        :return: DispatchRoutineResult
+        :rtype: ~azure.ai.projects.types.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "action_correlation_id": "str",
+                    "dispatch_id": "str",
+                    "task_id": "str"
+                }
         """
 
     @overload
     def dispatch(
-        self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DispatchRoutineResult:
+        self,
+        routine_name: str,
+        body: _types.DispatchRoutineAsyncRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         Queues an asynchronous dispatch for the specified routine.
@@ -14861,58 +21785,98 @@ class BetaRoutinesOperations:
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.DispatchRoutineAsyncRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
+        :return: DispatchRoutineResult
+        :rtype: ~azure.ai.projects.types.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def dispatch(
-        self, routine_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DispatchRoutineResult:
-        """Queue an asynchronous routine dispatch.
+        Example:
+            .. code-block:: python
 
-        Queues an asynchronous dispatch for the specified routine.
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
 
-        :param routine_name: The unique name of the routine. Required.
-        :type routine_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_dispatch_payload = {
+                    "input": {},
+                    "type": "invoke_agent_invocations_api"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_dispatch_payload = {
+                    "input": {},
+                    "type": "invoke_agent_responses_api"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "payload": routine_dispatch_payload
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "action_correlation_id": "str",
+                    "dispatch_id": "str",
+                    "task_id": "str"
+                }
         """
 
     @distributed_trace
     def dispatch(
         self,
         routine_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.DispatchRoutineAsyncRequest] = _Unset,
         *,
-        payload: Optional[_models.RoutineDispatchPayload] = None,
+        payload: Optional[_types.RoutineDispatchPayload] = None,
         **kwargs: Any
-    ) -> _models.DispatchRoutineResult:
+    ) -> _types.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         Queues an asynchronous dispatch for the specified routine.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a DispatchRoutineAsyncRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.DispatchRoutineAsyncRequest
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
-        :paramtype payload: ~azure.ai.projects.models.RoutineDispatchPayload
-        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
+        :paramtype payload: ~azure.ai.projects.types.RoutineDispatchPayload
+        :return: DispatchRoutineResult
+        :rtype: ~azure.ai.projects.types.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "invoke_agent_invocations_api":
+                routine_dispatch_payload = {
+                    "input": {},
+                    "type": "invoke_agent_invocations_api"
+                }
+
+                # JSON input template for discriminator value "invoke_agent_responses_api":
+                routine_dispatch_payload = {
+                    "input": {},
+                    "type": "invoke_agent_responses_api"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "payload": routine_dispatch_payload
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "action_correlation_id": "str",
+                    "dispatch_id": "str",
+                    "task_id": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14926,23 +21890,23 @@ class BetaRoutinesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DispatchRoutineResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DispatchRoutineResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"payload": payload}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_routines_dispatch_request(
             routine_name=routine_name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -14966,16 +21930,19 @@ class BetaRoutinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DispatchRoutineResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15051,16 +22018,81 @@ class BetaSchedulesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get(self, schedule_id: str, **kwargs: Any) -> _models.Schedule:
+    def get(self, schedule_id: str, **kwargs: Any) -> _types.Schedule:
         """Get a schedule.
 
         Retrieves the specified schedule resource.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :return: Schedule. The Schedule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Schedule
+        :return: Schedule
+        :rtype: ~azure.ai.projects.types.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "Cron":
+                trigger = {
+                    "expression": "str",
+                    "type": "Cron",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "OneTime":
+                trigger = {
+                    "triggerAt": "2020-02-20 00:00:00",
+                    "type": "OneTime",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Recurrence":
+                trigger = {
+                    "interval": 0,
+                    "schedule": recurrence_schedule,
+                    "type": "Recurrence",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Daily":
+                recurrence_schedule = {
+                    "hours": [
+                        0
+                    ],
+                    "type": "Daily"
+                }
+
+                # JSON input template for discriminator value "Hourly":
+                recurrence_schedule = {
+                    "type": "Hourly"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "task": schedule_task,
+                    "trigger": trigger,
+                    "description": "str",
+                    "displayName": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "provisioningStatus": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15073,7 +22105,7 @@ class BetaSchedulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
+        cls: ClsType[_types.Schedule] = kwargs.pop("cls", None)
 
         _request = build_beta_schedules_get_request(
             schedule_id=schedule_id,
@@ -15106,7 +22138,10 @@ class BetaSchedulesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Schedule, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15115,12 +22150,8 @@ class BetaSchedulesOperations:
 
     @distributed_trace
     def list(
-        self,
-        *,
-        type: Optional[Union[str, _models.ScheduleTaskType]] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.Schedule"]:
+        self, *, type: Optional[types.ScheduleTaskType] = None, enabled: Optional[bool] = None, **kwargs: Any
+    ) -> ItemPaged["_types.Schedule"]:
         """List schedules.
 
         Returns schedules that match the supplied type and enabled filters.
@@ -15131,13 +22162,78 @@ class BetaSchedulesOperations:
         :keyword enabled: Filter by the enabled status. Default value is None.
         :paramtype enabled: bool
         :return: An iterator like instance of Schedule
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Schedule]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "Cron":
+                trigger = {
+                    "expression": "str",
+                    "type": "Cron",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "OneTime":
+                trigger = {
+                    "triggerAt": "2020-02-20 00:00:00",
+                    "type": "OneTime",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Recurrence":
+                trigger = {
+                    "interval": 0,
+                    "schedule": recurrence_schedule,
+                    "type": "Recurrence",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Daily":
+                recurrence_schedule = {
+                    "hours": [
+                        0
+                    ],
+                    "type": "Daily"
+                }
+
+                # JSON input template for discriminator value "Hourly":
+                recurrence_schedule = {
+                    "type": "Hourly"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "enabled": bool,
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "task": schedule_task,
+                    "trigger": trigger,
+                    "description": "str",
+                    "displayName": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "provisioningStatus": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Schedule]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.Schedule]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15191,10 +22287,7 @@ class BetaSchedulesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Schedule],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -15216,82 +22309,188 @@ class BetaSchedulesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def create_or_update(
-        self, schedule_id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Schedule:
-        """Create or update a schedule.
-
-        Creates a new schedule or updates an existing schedule with the supplied definition.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :param schedule: The resource instance. Required.
-        :type schedule: ~azure.ai.projects.models.Schedule
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Schedule. The Schedule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Schedule:
-        """Create or update a schedule.
-
-        Creates a new schedule or updates an existing schedule with the supplied definition.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :param schedule: The resource instance. Required.
-        :type schedule: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Schedule. The Schedule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self, schedule_id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Schedule:
-        """Create or update a schedule.
-
-        Creates a new schedule or updates an existing schedule with the supplied definition.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :param schedule: The resource instance. Required.
-        :type schedule: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Schedule. The Schedule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    def create_or_update(
-        self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Schedule:
+    def create_or_update(self, schedule_id: str, schedule: _types.Schedule, **kwargs: Any) -> _types.Schedule:
         """Create or update a schedule.
 
         Creates a new schedule or updates an existing schedule with the supplied definition.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
-         IO[bytes] Required.
-        :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
-        :return: Schedule. The Schedule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Schedule
+        :param schedule: The resource instance. Required.
+        :type schedule: ~azure.ai.projects.types.Schedule
+        :return: Schedule
+        :rtype: ~azure.ai.projects.types.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "Cron":
+                trigger = {
+                    "expression": "str",
+                    "type": "Cron",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "OneTime":
+                trigger = {
+                    "triggerAt": "2020-02-20 00:00:00",
+                    "type": "OneTime",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Recurrence":
+                trigger = {
+                    "interval": 0,
+                    "schedule": recurrence_schedule,
+                    "type": "Recurrence",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Daily":
+                recurrence_schedule = {
+                    "hours": [
+                        0
+                    ],
+                    "type": "Daily"
+                }
+
+                # JSON input template for discriminator value "Hourly":
+                recurrence_schedule = {
+                    "type": "Hourly"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                schedule = {
+                    "enabled": bool,
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "task": schedule_task,
+                    "trigger": trigger,
+                    "description": "str",
+                    "displayName": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "provisioningStatus": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "Cron":
+                trigger = {
+                    "expression": "str",
+                    "type": "Cron",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "OneTime":
+                trigger = {
+                    "triggerAt": "2020-02-20 00:00:00",
+                    "type": "OneTime",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Recurrence":
+                trigger = {
+                    "interval": 0,
+                    "schedule": recurrence_schedule,
+                    "type": "Recurrence",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Daily":
+                recurrence_schedule = {
+                    "hours": [
+                        0
+                    ],
+                    "type": "Daily"
+                }
+
+                # JSON input template for discriminator value "Hourly":
+                recurrence_schedule = {
+                    "type": "Hourly"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "Cron":
+                trigger = {
+                    "expression": "str",
+                    "type": "Cron",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "OneTime":
+                trigger = {
+                    "triggerAt": "2020-02-20 00:00:00",
+                    "type": "OneTime",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Recurrence":
+                trigger = {
+                    "interval": 0,
+                    "schedule": recurrence_schedule,
+                    "type": "Recurrence",
+                    "endTime": "2020-02-20 00:00:00",
+                    "startTime": "2020-02-20 00:00:00",
+                    "timeZone": "str"
+                }
+
+                # JSON input template for discriminator value "Daily":
+                recurrence_schedule = {
+                    "hours": [
+                        0
+                    ],
+                    "type": "Daily"
+                }
+
+                # JSON input template for discriminator value "Hourly":
+                recurrence_schedule = {
+                    "type": "Hourly"
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "enabled": bool,
+                    "id": "str",
+                    "systemData": {
+                        "str": "str"
+                    },
+                    "task": schedule_task,
+                    "trigger": trigger,
+                    "description": "str",
+                    "displayName": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "provisioningStatus": "str",
+                    "tags": {
+                        "str": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15304,21 +22503,16 @@ class BetaSchedulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.Schedule] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(schedule, (IOBase, bytes)):
-            _content = schedule
-        else:
-            _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = schedule
 
         _request = build_beta_schedules_create_or_update_request(
             schedule_id=schedule_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -15347,7 +22541,10 @@ class BetaSchedulesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Schedule, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15355,7 +22552,7 @@ class BetaSchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
+    def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _types.ScheduleRun:
         """Get a schedule run.
 
         Retrieves the specified run for a schedule.
@@ -15364,9 +22561,24 @@ class BetaSchedulesOperations:
         :type schedule_id: str
         :param run_id: The unique identifier of the schedule run. Required.
         :type run_id: str
-        :return: ScheduleRun. The ScheduleRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ScheduleRun
+        :return: ScheduleRun
+        :rtype: ~azure.ai.projects.types.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "scheduleId": "str",
+                    "success": bool,
+                    "error": "str",
+                    "triggerTime": "2020-02-20 00:00:00"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15379,7 +22591,7 @@ class BetaSchedulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ScheduleRun] = kwargs.pop("cls", None)
+        cls: ClsType[_types.ScheduleRun] = kwargs.pop("cls", None)
 
         _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
@@ -15408,16 +22620,19 @@ class BetaSchedulesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ScheduleRun, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15429,10 +22644,10 @@ class BetaSchedulesOperations:
         self,
         schedule_id: str,
         *,
-        type: Optional[Union[str, _models.ScheduleTaskType]] = None,
+        type: Optional[types.ScheduleTaskType] = None,
         enabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.ScheduleRun"]:
+    ) -> ItemPaged["_types.ScheduleRun"]:
         """List schedule runs.
 
         Returns schedule runs that match the supplied filters.
@@ -15445,13 +22660,28 @@ class BetaSchedulesOperations:
         :keyword enabled: Filter by the enabled status. Default value is None.
         :paramtype enabled: bool
         :return: An iterator like instance of ScheduleRun
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ScheduleRun]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "scheduleId": "str",
+                    "success": bool,
+                    "error": "str",
+                    "triggerTime": "2020-02-20 00:00:00"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ScheduleRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.ScheduleRun]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15506,10 +22736,7 @@ class BetaSchedulesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ScheduleRun],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -15550,16 +22777,29 @@ class BetaSkillsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.SkillDetails:
+    def get(self, name: str, **kwargs: Any) -> _types.SkillDetails:
         """Retrieve a skill.
 
         Retrieves the specified skill and its current configuration.
 
         :param name: The unique name of the skill. Required.
         :type name: str
-        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillDetails
+        :return: SkillDetails
+        :rtype: ~azure.ai.projects.types.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "default_version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "latest_version": "str",
+                    "name": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15572,7 +22812,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SkillDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SkillDetails] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_get_request(
             name=name,
@@ -15600,16 +22840,19 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15621,10 +22864,10 @@ class BetaSkillsOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.SkillDetails"]:
+    ) -> ItemPaged["_types.SkillDetails"]:
         """List skills.
 
         Returns the skills available in the current project.
@@ -15644,13 +22887,26 @@ class BetaSkillsOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of SkillDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.SkillDetails]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.SkillDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "default_version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "latest_version": "str",
+                    "name": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SkillDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.SkillDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15679,10 +22935,7 @@ class BetaSkillsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.SkillDetails],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -15698,9 +22951,9 @@ class BetaSkillsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -15711,7 +22964,7 @@ class BetaSkillsOperations:
     @overload
     def update(
         self, name: str, *, default_version: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillDetails:
+    ) -> _types.SkillDetails:
         """Update a skill.
 
         Modifies the specified skill's configuration.
@@ -15724,15 +22977,28 @@ class BetaSkillsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillDetails
+        :return: SkillDetails
+        :rtype: ~azure.ai.projects.types.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "default_version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "latest_version": "str",
+                    "name": "str"
+                }
         """
 
     @overload
     def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillDetails:
+        self, name: str, body: _types.UpdateSkillRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _types.SkillDetails:
         """Update a skill.
 
         Modifies the specified skill's configuration.
@@ -15740,53 +23006,74 @@ class BetaSkillsOperations:
         :param name: The name of the skill to update. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.UpdateSkillRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillDetails
+        :return: SkillDetails
+        :rtype: ~azure.ai.projects.types.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillDetails:
-        """Update a skill.
+        Example:
+            .. code-block:: python
 
-        Modifies the specified skill's configuration.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "default_version": "str"
+                }
 
-        :param name: The name of the skill to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "default_version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "latest_version": "str",
+                    "name": "str"
+                }
         """
 
     @distributed_trace
     def update(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
-    ) -> _models.SkillDetails:
+        self,
+        name: str,
+        body: Union[JSON, _types.UpdateSkillRequest] = _Unset,
+        *,
+        default_version: str = _Unset,
+        **kwargs: Any
+    ) -> _types.SkillDetails:
         """Update a skill.
 
         Modifies the specified skill's configuration.
 
         :param name: The name of the skill to update. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a UpdateSkillRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.UpdateSkillRequest
         :keyword default_version: The version identifier that the skill should point to. When set, the
          skill's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
-        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillDetails
+        :return: SkillDetails
+        :rtype: ~azure.ai.projects.types.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "default_version": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "default_version": "str",
+                    "description": "str",
+                    "id": "str",
+                    "latest_version": "str",
+                    "name": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15800,7 +23087,7 @@ class BetaSkillsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SkillDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SkillDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if default_version is _Unset:
@@ -15808,17 +23095,17 @@ class BetaSkillsOperations:
             body = {"default_version": default_version}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_skills_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -15842,16 +23129,19 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillDetails, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15859,16 +23149,26 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(self, name: str, **kwargs: Any) -> _models.DeleteSkillResult:
+    def delete(self, name: str, **kwargs: Any) -> _types.DeleteSkillResult:
         """Delete a skill.
 
         Removes the specified skill and its associated versions.
 
         :param name: The unique name of the skill. Required.
         :type name: str
-        :return: DeleteSkillResult. The DeleteSkillResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteSkillResult
+        :return: DeleteSkillResult
+        :rtype: ~azure.ai.projects.types.DeleteSkillResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "id": "str",
+                    "name": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15881,7 +23181,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteSkillResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DeleteSkillResult] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_delete_request(
             name=name,
@@ -15909,16 +23209,19 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteSkillResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15931,10 +23234,10 @@ class BetaSkillsOperations:
         name: str,
         *,
         content_type: str = "application/json",
-        inline_content: Optional[_models.SkillInlineContent] = None,
+        inline_content: Optional[_types.SkillInlineContent] = None,
         default: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.SkillVersion:
+    ) -> _types.SkillVersion:
         """Create a new version of a skill.
 
         Creates a new version of a skill. If the skill does not exist, it will be created.
@@ -15946,18 +23249,36 @@ class BetaSkillsOperations:
         :paramtype content_type: str
         :keyword inline_content: Inline skill content for simple skills without file uploads.
          Foundry-specific extension. Default value is None.
-        :paramtype inline_content: ~azure.ai.projects.models.SkillInlineContent
+        :paramtype inline_content: ~azure.ai.projects.types.SkillInlineContent
         :keyword default: Whether to set this version as the default. Default value is None.
         :paramtype default: bool
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
+        :return: SkillVersion
+        :rtype: ~azure.ai.projects.types.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "id": "str",
+                    "name": "str",
+                    "skill_id": "str",
+                    "version": "str"
+                }
         """
 
     @overload
     def create(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillVersion:
+        self,
+        name: str,
+        body: _types.CreateSkillVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _types.SkillVersion:
         """Create a new version of a skill.
 
         Creates a new version of a skill. If the skill does not exist, it will be created.
@@ -15965,61 +23286,101 @@ class BetaSkillsOperations:
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateSkillVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
+        :return: SkillVersion
+        :rtype: ~azure.ai.projects.types.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillVersion:
-        """Create a new version of a skill.
+        Example:
+            .. code-block:: python
 
-        Creates a new version of a skill. If the skill does not exist, it will be created.
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "default": bool,
+                    "inline_content": {
+                        "description": "str",
+                        "instructions": "str",
+                        "allowed_tools": [
+                            "str"
+                        ],
+                        "compatibility": "str",
+                        "license": "str",
+                        "metadata": {
+                            "str": "str"
+                        }
+                    }
+                }
 
-        :param name: The name of the skill. If the skill does not exist, it will be created. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "id": "str",
+                    "name": "str",
+                    "skill_id": "str",
+                    "version": "str"
+                }
         """
 
     @distributed_trace
     def create(
         self,
         name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateSkillVersionRequest] = _Unset,
         *,
-        inline_content: Optional[_models.SkillInlineContent] = None,
+        inline_content: Optional[_types.SkillInlineContent] = None,
         default: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.SkillVersion:
+    ) -> _types.SkillVersion:
         """Create a new version of a skill.
 
         Creates a new version of a skill. If the skill does not exist, it will be created.
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is either a JSON type or a CreateSkillVersionRequest type. Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateSkillVersionRequest
         :keyword inline_content: Inline skill content for simple skills without file uploads.
          Foundry-specific extension. Default value is None.
-        :paramtype inline_content: ~azure.ai.projects.models.SkillInlineContent
+        :paramtype inline_content: ~azure.ai.projects.types.SkillInlineContent
         :keyword default: Whether to set this version as the default. Default value is None.
         :paramtype default: bool
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
+        :return: SkillVersion
+        :rtype: ~azure.ai.projects.types.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "default": bool,
+                    "inline_content": {
+                        "description": "str",
+                        "instructions": "str",
+                        "allowed_tools": [
+                            "str"
+                        ],
+                        "compatibility": "str",
+                        "license": "str",
+                        "metadata": {
+                            "str": "str"
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "id": "str",
+                    "name": "str",
+                    "skill_id": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16033,23 +23394,23 @@ class BetaSkillsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SkillVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SkillVersion] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"default": default, "inline_content": inline_content}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = None
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
+            _json = body
 
         _request = build_beta_skills_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -16073,69 +23434,61 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def create_from_files(
-        self, name: str, content: _models.CreateSkillVersionFromFilesBody, **kwargs: Any
-    ) -> _models.SkillVersion:
-        """Create a skill version from uploaded files.
-
-        Creates a new version of a skill from uploaded files via multipart form data.
-
-        :param name: The name of the skill. Required.
-        :type name: str
-        :param content: Required.
-        :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_from_files(self, name: str, content: JSON, **kwargs: Any) -> _models.SkillVersion:
-        """Create a skill version from uploaded files.
-
-        Creates a new version of a skill from uploaded files via multipart form data.
-
-        :param name: The name of the skill. Required.
-        :type name: str
-        :param content: Required.
-        :type content: JSON
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def create_from_files(
-        self, name: str, content: Union[_models.CreateSkillVersionFromFilesBody, JSON], **kwargs: Any
-    ) -> _models.SkillVersion:
+        self, name: str, content: _types.CreateSkillVersionFromFilesBody, **kwargs: Any
+    ) -> _types.SkillVersion:
         """Create a skill version from uploaded files.
 
         Creates a new version of a skill from uploaded files via multipart form data.
 
         :param name: The name of the skill. Required.
         :type name: str
-        :param content: Is either a CreateSkillVersionFromFilesBody type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody or JSON
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
+        :param content: Required.
+        :type content: ~azure.ai.projects.types.CreateSkillVersionFromFilesBody
+        :return: SkillVersion
+        :rtype: ~azure.ai.projects.types.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                content = {
+                    "files": [
+                        filetype
+                    ],
+                    "default": bool
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "id": "str",
+                    "name": "str",
+                    "skill_id": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16148,9 +23501,11 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SkillVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SkillVersion] = kwargs.pop("cls", None)
 
-        _body = content.as_dict() if isinstance(content, _Model) else content
+        if not isinstance(content, MutableMapping):
+            raise TypeError("content must be a mapping")
+        _body = content
         _file_fields: list[str] = ["files"]
         _data_fields: list[str] = ["default"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
@@ -16182,16 +23537,19 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16204,10 +23562,10 @@ class BetaSkillsOperations:
         name: str,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.SkillVersion"]:
+    ) -> ItemPaged["_types.SkillVersion"]:
         """List skill versions.
 
         Returns the available versions for the specified skill.
@@ -16229,13 +23587,26 @@ class BetaSkillsOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of SkillVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.SkillVersion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.SkillVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "id": "str",
+                    "name": "str",
+                    "skill_id": "str",
+                    "version": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SkillVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.SkillVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16265,10 +23636,7 @@ class BetaSkillsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.SkillVersion],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -16284,9 +23652,9 @@ class BetaSkillsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -16295,7 +23663,7 @@ class BetaSkillsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.SkillVersion:
+    def get_version(self, name: str, version: str, **kwargs: Any) -> _types.SkillVersion:
         """Retrieve a specific version of a skill.
 
         Retrieves the specified version of a skill by name and version identifier.
@@ -16304,9 +23672,22 @@ class BetaSkillsOperations:
         :type name: str
         :param version: The version identifier to retrieve. Required.
         :type version: str
-        :return: SkillVersion. The SkillVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillVersion
+        :return: SkillVersion
+        :rtype: ~azure.ai.projects.types.SkillVersion
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "id": "str",
+                    "name": "str",
+                    "skill_id": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16319,7 +23700,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SkillVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_types.SkillVersion] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_get_version_request(
             name=name,
@@ -16348,16 +23729,19 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillVersion, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16415,9 +23799,9 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -16485,9 +23869,9 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -16502,7 +23886,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResult:
+    def delete_version(self, name: str, version: str, **kwargs: Any) -> _types.DeleteSkillVersionResult:
         """Delete a specific version of a skill.
 
         Removes the specified version of a skill.
@@ -16511,10 +23895,20 @@ class BetaSkillsOperations:
         :type name: str
         :param version: The version identifier to delete. Required.
         :type version: str
-        :return: DeleteSkillVersionResult. The DeleteSkillVersionResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteSkillVersionResult
+        :return: DeleteSkillVersionResult
+        :rtype: ~azure.ai.projects.types.DeleteSkillVersionResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deleted": bool,
+                    "id": "str",
+                    "name": "str",
+                    "version": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16527,7 +23921,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteSkillVersionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DeleteSkillVersionResult] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_delete_version_request(
             name=name,
@@ -16556,16 +23950,19 @@ class BetaSkillsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteSkillVersionResult, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16591,16 +23988,104 @@ class BetaDatasetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
+    def get_generation_job(self, job_id: str, **kwargs: Any) -> _types.DataGenerationJob:
         """Get a data generation job.
 
         Retrieves the specified data generation job and its current status.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
+        :return: DataGenerationJob
+        :rtype: ~azure.ai.projects.types.DataGenerationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "simple_qna":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "simple_qna",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "question_types": [
+                        "str"
+                    ],
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "tool_use":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "tool_use",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "traces":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "traces",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "name": "str",
+                        "options": data_generation_job_options,
+                        "scenario": "str",
+                        "sources": [
+                            data_generation_job_source
+                        ],
+                        "output_options": {
+                            "description": "str",
+                            "name": "str",
+                            "tags": {
+                                "str": "str"
+                            }
+                        }
+                    },
+                    "result": {
+                        "generated_samples": 0,
+                        "outputs": [
+                            data_generation_job_output
+                        ],
+                        "token_usage": {
+                            "completion_tokens": 0,
+                            "prompt_tokens": 0,
+                            "total_tokens": 0
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16613,7 +24098,7 @@ class BetaDatasetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DataGenerationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_datasets_get_generation_job_request(
             job_id=job_id,
@@ -16641,9 +24126,9 @@ class BetaDatasetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -16653,7 +24138,10 @@ class BetaDatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DataGenerationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16665,10 +24153,10 @@ class BetaDatasetsOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.DataGenerationJob"]:
+    ) -> ItemPaged["_types.DataGenerationJob"]:
         """List data generation jobs.
 
         Returns a list of data generation jobs.
@@ -16688,13 +24176,101 @@ class BetaDatasetsOperations:
          Default value is None.
         :paramtype before: str
         :return: An iterator like instance of DataGenerationJob
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.DataGenerationJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.DataGenerationJob]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "simple_qna":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "simple_qna",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "question_types": [
+                        "str"
+                    ],
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "tool_use":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "tool_use",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "traces":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "traces",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "name": "str",
+                        "options": data_generation_job_options,
+                        "scenario": "str",
+                        "sources": [
+                            data_generation_job_source
+                        ],
+                        "output_options": {
+                            "description": "str",
+                            "name": "str",
+                            "tags": {
+                                "str": "str"
+                            }
+                        }
+                    },
+                    "result": {
+                        "generated_samples": 0,
+                        "outputs": [
+                            data_generation_job_output
+                        ],
+                        "token_usage": {
+                            "completion_tokens": 0,
+                            "prompt_tokens": 0,
+                            "total_tokens": 0
+                        }
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DataGenerationJob]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.DataGenerationJob]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16723,10 +24299,7 @@ class BetaDatasetsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.DataGenerationJob],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -16742,9 +24315,9 @@ class BetaDatasetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -16752,100 +24325,195 @@ class BetaDatasetsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def create_generation_job(
-        self,
-        job: _models.DataGenerationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_generation_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def create_generation_job(
-        self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.DataGenerationJob:
+        self, job: _types.DataGenerationJob, *, operation_id: Optional[str] = None, **kwargs: Any
+    ) -> _types.DataGenerationJob:
         """Create a data generation job.
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.types.DataGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
+        :return: DataGenerationJob
+        :rtype: ~azure.ai.projects.types.DataGenerationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "simple_qna":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "simple_qna",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "question_types": [
+                        "str"
+                    ],
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "tool_use":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "tool_use",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "traces":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "traces",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                job = {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "name": "str",
+                        "options": data_generation_job_options,
+                        "scenario": "str",
+                        "sources": [
+                            data_generation_job_source
+                        ],
+                        "output_options": {
+                            "description": "str",
+                            "name": "str",
+                            "tags": {
+                                "str": "str"
+                            }
+                        }
+                    },
+                    "result": {
+                        "generated_samples": 0,
+                        "outputs": [
+                            data_generation_job_output
+                        ],
+                        "token_usage": {
+                            "completion_tokens": 0,
+                            "prompt_tokens": 0,
+                            "total_tokens": 0
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "simple_qna":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "simple_qna",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "question_types": [
+                        "str"
+                    ],
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "tool_use":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "tool_use",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "traces":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "traces",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "name": "str",
+                        "options": data_generation_job_options,
+                        "scenario": "str",
+                        "sources": [
+                            data_generation_job_source
+                        ],
+                        "output_options": {
+                            "description": "str",
+                            "name": "str",
+                            "tags": {
+                                "str": "str"
+                            }
+                        }
+                    },
+                    "result": {
+                        "generated_samples": 0,
+                        "outputs": [
+                            data_generation_job_output
+                        ],
+                        "token_usage": {
+                            "completion_tokens": 0,
+                            "prompt_tokens": 0,
+                            "total_tokens": 0
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16858,21 +24526,16 @@ class BetaDatasetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.DataGenerationJob] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = job
 
         _request = build_beta_datasets_create_generation_job_request(
             operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -16896,9 +24559,9 @@ class BetaDatasetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -16909,7 +24572,10 @@ class BetaDatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DataGenerationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16917,16 +24583,104 @@ class BetaDatasetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
+    def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _types.DataGenerationJob:
         """Cancel a data generation job.
 
         Cancels the specified data generation job if it is still in progress.
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
+        :return: DataGenerationJob
+        :rtype: ~azure.ai.projects.types.DataGenerationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "simple_qna":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "simple_qna",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "question_types": [
+                        "str"
+                    ],
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "tool_use":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "tool_use",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # JSON input template for discriminator value "traces":
+                data_generation_job_options = {
+                    "max_samples": 0,
+                    "type": "traces",
+                    "model_options": {
+                        "model": "str"
+                    },
+                    "train_split": 0.0
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "finished_at": "2020-02-20 00:00:00",
+                    "inputs": {
+                        "name": "str",
+                        "options": data_generation_job_options,
+                        "scenario": "str",
+                        "sources": [
+                            data_generation_job_source
+                        ],
+                        "output_options": {
+                            "description": "str",
+                            "name": "str",
+                            "tags": {
+                                "str": "str"
+                            }
+                        }
+                    },
+                    "result": {
+                        "generated_samples": 0,
+                        "outputs": [
+                            data_generation_job_output
+                        ],
+                        "token_usage": {
+                            "completion_tokens": 0,
+                            "prompt_tokens": 0,
+                            "total_tokens": 0
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16939,7 +24693,7 @@ class BetaDatasetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_types.DataGenerationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_datasets_cancel_generation_job_request(
             job_id=job_id,
@@ -16967,16 +24721,19 @@ class BetaDatasetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DataGenerationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17030,9 +24787,9 @@ class BetaDatasetsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -17057,100 +24814,234 @@ class BetaAgentsOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def create_optimization_job(
-        self,
-        job: _models.OptimizationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_optimization_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_optimization_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def create_optimization_job(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
-    ) -> _models.OptimizationJob:
+        self, job: _types.OptimizationJob, *, operation_id: Optional[str] = None, **kwargs: Any
+    ) -> _types.OptimizationJob:
         """Creates an agent optimization job.
 
         Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
         idempotent retry.
 
-        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
-         Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.types.OptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: OptimizationJob
+        :rtype: ~azure.ai.projects.types.OptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "inline":
+                optimization_dataset_input = {
+                    "items": [
+                        {
+                            "criteria": [
+                                {
+                                    "instruction": "str",
+                                    "name": "str"
+                                }
+                            ],
+                            "desired_num_turns": 0,
+                            "ground_truth": "str",
+                            "query": "str"
+                        }
+                    ],
+                    "type": "inline"
+                }
+
+                # JSON input template for discriminator value "reference":
+                optimization_dataset_input = {
+                    "name": "str",
+                    "type": "reference",
+                    "version": "str"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                job = {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "inputs": {
+                        "agent": {
+                            "agent_name": "str",
+                            "agent_version": "str"
+                        },
+                        "evaluators": [
+                            {
+                                "name": "str",
+                                "version": "str"
+                            }
+                        ],
+                        "train_dataset": optimization_dataset_input,
+                        "options": {
+                            "eval_model": "str",
+                            "evaluation_level": "str",
+                            "max_candidates": 0,
+                            "optimization_config": {
+                                "str": {}
+                            },
+                            "optimization_model": "str"
+                        },
+                        "validation_dataset": optimization_dataset_input
+                    },
+                    "progress": {
+                        "best_score": 0.0,
+                        "candidates_completed": 0,
+                        "elapsed_seconds": 0.0
+                    },
+                    "result": {
+                        "baseline": "str",
+                        "best": "str",
+                        "candidates": [
+                            {
+                                "avg_score": 0.0,
+                                "avg_tokens": 0.0,
+                                "name": "str",
+                                "candidate_id": "str",
+                                "eval_id": "str",
+                                "eval_run_id": "str",
+                                "mutations": {
+                                    "str": {}
+                                },
+                                "promotion": {
+                                    "agent_name": "str",
+                                    "agent_version": "str",
+                                    "promoted_at": "2020-02-20 00:00:00"
+                                }
+                            }
+                        ]
+                    },
+                    "warnings": [
+                        "str"
+                    ]
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "inline":
+                optimization_dataset_input = {
+                    "items": [
+                        {
+                            "criteria": [
+                                {
+                                    "instruction": "str",
+                                    "name": "str"
+                                }
+                            ],
+                            "desired_num_turns": 0,
+                            "ground_truth": "str",
+                            "query": "str"
+                        }
+                    ],
+                    "type": "inline"
+                }
+
+                # JSON input template for discriminator value "reference":
+                optimization_dataset_input = {
+                    "name": "str",
+                    "type": "reference",
+                    "version": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "inputs": {
+                        "agent": {
+                            "agent_name": "str",
+                            "agent_version": "str"
+                        },
+                        "evaluators": [
+                            {
+                                "name": "str",
+                                "version": "str"
+                            }
+                        ],
+                        "train_dataset": optimization_dataset_input,
+                        "options": {
+                            "eval_model": "str",
+                            "evaluation_level": "str",
+                            "max_candidates": 0,
+                            "optimization_config": {
+                                "str": {}
+                            },
+                            "optimization_model": "str"
+                        },
+                        "validation_dataset": optimization_dataset_input
+                    },
+                    "progress": {
+                        "best_score": 0.0,
+                        "candidates_completed": 0,
+                        "elapsed_seconds": 0.0
+                    },
+                    "result": {
+                        "baseline": "str",
+                        "best": "str",
+                        "candidates": [
+                            {
+                                "avg_score": 0.0,
+                                "avg_tokens": 0.0,
+                                "name": "str",
+                                "candidate_id": "str",
+                                "eval_id": "str",
+                                "eval_run_id": "str",
+                                "mutations": {
+                                    "str": {}
+                                },
+                                "promotion": {
+                                    "agent_name": "str",
+                                    "agent_version": "str",
+                                    "promoted_at": "2020-02-20 00:00:00"
+                                }
+                            }
+                        ]
+                    },
+                    "warnings": [
+                        "str"
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17163,21 +25054,16 @@ class BetaAgentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_types.OptimizationJob] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = job
 
         _request = build_beta_agents_create_optimization_job_request(
             operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -17201,9 +25087,9 @@ class BetaAgentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -17214,7 +25100,10 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17222,16 +25111,123 @@ class BetaAgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _types.OptimizationJob:
         """Get info about an agent optimization job.
 
         Get an optimization job by id.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: OptimizationJob
+        :rtype: ~azure.ai.projects.types.OptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "inline":
+                optimization_dataset_input = {
+                    "items": [
+                        {
+                            "criteria": [
+                                {
+                                    "instruction": "str",
+                                    "name": "str"
+                                }
+                            ],
+                            "desired_num_turns": 0,
+                            "ground_truth": "str",
+                            "query": "str"
+                        }
+                    ],
+                    "type": "inline"
+                }
+
+                # JSON input template for discriminator value "reference":
+                optimization_dataset_input = {
+                    "name": "str",
+                    "type": "reference",
+                    "version": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "inputs": {
+                        "agent": {
+                            "agent_name": "str",
+                            "agent_version": "str"
+                        },
+                        "evaluators": [
+                            {
+                                "name": "str",
+                                "version": "str"
+                            }
+                        ],
+                        "train_dataset": optimization_dataset_input,
+                        "options": {
+                            "eval_model": "str",
+                            "evaluation_level": "str",
+                            "max_candidates": 0,
+                            "optimization_config": {
+                                "str": {}
+                            },
+                            "optimization_model": "str"
+                        },
+                        "validation_dataset": optimization_dataset_input
+                    },
+                    "progress": {
+                        "best_score": 0.0,
+                        "candidates_completed": 0,
+                        "elapsed_seconds": 0.0
+                    },
+                    "result": {
+                        "baseline": "str",
+                        "best": "str",
+                        "candidates": [
+                            {
+                                "avg_score": 0.0,
+                                "avg_tokens": 0.0,
+                                "name": "str",
+                                "candidate_id": "str",
+                                "eval_id": "str",
+                                "eval_run_id": "str",
+                                "mutations": {
+                                    "str": {}
+                                },
+                                "promotion": {
+                                    "agent_name": "str",
+                                    "agent_version": "str",
+                                    "promoted_at": "2020-02-20 00:00:00"
+                                }
+                            }
+                        ]
+                    },
+                    "warnings": [
+                        "str"
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17244,7 +25240,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_types.OptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_get_optimization_job_request(
             job_id=job_id,
@@ -17272,9 +25268,9 @@ class BetaAgentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
@@ -17284,7 +25280,10 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17296,12 +25295,12 @@ class BetaAgentsOperations:
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
+        order: Optional[types.PageOrder] = None,
         before: Optional[str] = None,
-        status: Optional[Union[str, _models.JobStatus]] = None,
+        status: Optional[types.JobStatus] = None,
         agent_name: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.OptimizationJobListItem"]:
+    ) -> ItemPaged["_types.OptimizationJobListItem"]:
         """Returns a list of agent optimization jobs.
 
         List optimization jobs. Supports cursor pagination and optional status / agent_name filters.
@@ -17326,13 +25325,48 @@ class BetaAgentsOperations:
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
         :return: An iterator like instance of OptimizationJobListItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.OptimizationJobListItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.types.OptimizationJobListItem]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "agent": {
+                        "agent_name": "str",
+                        "agent_version": "str"
+                    },
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "progress": {
+                        "best_score": 0.0,
+                        "candidates_completed": 0,
+                        "elapsed_seconds": 0.0
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OptimizationJobListItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_types.OptimizationJobListItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17363,10 +25397,7 @@ class BetaAgentsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.OptimizationJobListItem],
-                deserialized.get("data", []),
-            )
+            list_of_elem = deserialized.get("data", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -17382,9 +25413,9 @@ class BetaAgentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
+                error = self._deserialize.failsafe_deserialize(
+                    _types.ApiErrorResponse,
+                    pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error)
 
@@ -17393,7 +25424,7 @@ class BetaAgentsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _types.OptimizationJob:
         """Cancels an agent optimization job.
 
         Request cancellation of a running or queued job. Returns an error if the job is already in a
@@ -17401,9 +25432,116 @@ class BetaAgentsOperations:
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: OptimizationJob
+        :rtype: ~azure.ai.projects.types.OptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "type":
+
+                # JSON input template for discriminator value "inline":
+                optimization_dataset_input = {
+                    "items": [
+                        {
+                            "criteria": [
+                                {
+                                    "instruction": "str",
+                                    "name": "str"
+                                }
+                            ],
+                            "desired_num_turns": 0,
+                            "ground_truth": "str",
+                            "query": "str"
+                        }
+                    ],
+                    "type": "inline"
+                }
+
+                # JSON input template for discriminator value "reference":
+                optimization_dataset_input = {
+                    "name": "str",
+                    "type": "reference",
+                    "version": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "created_at": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "status": "str",
+                    "updated_at": "2020-02-20 00:00:00",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "additionalInfo": {
+                            "str": {}
+                        },
+                        "debugInfo": {
+                            "str": {}
+                        },
+                        "details": [
+                            ...
+                        ],
+                        "param": "str",
+                        "type": "str"
+                    },
+                    "inputs": {
+                        "agent": {
+                            "agent_name": "str",
+                            "agent_version": "str"
+                        },
+                        "evaluators": [
+                            {
+                                "name": "str",
+                                "version": "str"
+                            }
+                        ],
+                        "train_dataset": optimization_dataset_input,
+                        "options": {
+                            "eval_model": "str",
+                            "evaluation_level": "str",
+                            "max_candidates": 0,
+                            "optimization_config": {
+                                "str": {}
+                            },
+                            "optimization_model": "str"
+                        },
+                        "validation_dataset": optimization_dataset_input
+                    },
+                    "progress": {
+                        "best_score": 0.0,
+                        "candidates_completed": 0,
+                        "elapsed_seconds": 0.0
+                    },
+                    "result": {
+                        "baseline": "str",
+                        "best": "str",
+                        "candidates": [
+                            {
+                                "avg_score": 0.0,
+                                "avg_tokens": 0.0,
+                                "name": "str",
+                                "candidate_id": "str",
+                                "eval_id": "str",
+                                "eval_run_id": "str",
+                                "mutations": {
+                                    "str": {}
+                                },
+                                "promotion": {
+                                    "agent_name": "str",
+                                    "agent_version": "str",
+                                    "promoted_at": "2020-02-20 00:00:00"
+                                }
+                            }
+                        ]
+                    },
+                    "warnings": [
+                        "str"
+                    ]
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17416,7 +25554,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_types.OptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_cancel_optimization_job_request(
             job_id=job_id,
@@ -17444,16 +25582,19 @@ class BetaAgentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17507,9 +25648,9 @@ class BetaAgentsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            error = self._deserialize.failsafe_deserialize(
+                _types.ApiErrorResponse,
+                pipeline_response,
             )
             raise HttpResponseError(response=response, model=error)
 

@@ -36,7 +36,7 @@ dependencies = [
     "azure-core>=1.37.0",
     "typing-extensions>=4.11",
     "azure-identity>=1.15.0",
-    "openai>=2.8.0",
+    "azure-ai-extensions-openai>=1.0.0b1",
     "azure-storage-blob>=12.15.0",
 ]
 dynamic = [
@@ -67,9 +67,11 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-build]
 verifytypes = false
 
+[tool.uv.sources]
+azure-ai-extensions-openai = { path = "../azure-ai-extensions-openai", editable = true }
+
 [tool.mypy]
 exclude = '.*samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$'
 
 [tool.azure-sdk-conda]
 in_bundle = false
-
