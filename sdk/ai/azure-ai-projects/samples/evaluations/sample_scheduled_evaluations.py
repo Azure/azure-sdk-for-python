@@ -24,7 +24,7 @@ USAGE:
     4) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     5) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    7) FOUNDRY_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    7) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 from datetime import datetime

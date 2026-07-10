@@ -27,6 +27,7 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use-preview model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os

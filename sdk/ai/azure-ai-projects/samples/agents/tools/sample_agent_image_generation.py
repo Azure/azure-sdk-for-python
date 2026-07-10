@@ -32,7 +32,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
        used by the Agent for understanding and responding to prompts. This is NOT the image generation model.
-    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
        used by the ImageGenTool.
 
     NOTE:

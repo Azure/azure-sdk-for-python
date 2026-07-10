@@ -27,9 +27,10 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the Agent's AI model,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
-    4) MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory,
+    5) MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 

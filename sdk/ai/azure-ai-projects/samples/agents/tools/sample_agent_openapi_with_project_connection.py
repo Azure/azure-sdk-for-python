@@ -22,7 +22,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) OPENAPI_PROJECT_CONNECTION_ID - The OpenAPI project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) OPENAPI_PROJECT_CONNECTION_ID - The OpenAPI project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
 """
 

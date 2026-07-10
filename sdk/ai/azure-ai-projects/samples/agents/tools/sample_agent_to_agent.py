@@ -23,11 +23,12 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) A2A_ENDPOINT - (Optional) If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
+    5) A2A_ENDPOINT - (Optional) If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
        endpoint on the tool.
-    5) A2A_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    6) A2A_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os

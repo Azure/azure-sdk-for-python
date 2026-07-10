@@ -35,7 +35,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
     2) FOUNDRY_MODEL_NAME - Required. The model deployment name for the simulator
        and AI-assisted evaluators.
-    3) FOUNDRY_AGENT_NAME - Required. The name of the Foundry agent to simulate against.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os

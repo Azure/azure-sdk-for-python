@@ -21,10 +21,11 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
-    5) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    5) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
+    6) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os

@@ -21,8 +21,9 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) FABRIC_IQ_PROJECT_CONNECTION_ID - The fully-qualified resource id of the Fabric IQ project connection.
-    4) FABRIC_IQ_USER_INPUT - The natural-language question to send to the agent.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) FABRIC_IQ_PROJECT_CONNECTION_ID - The fully-qualified resource id of the Fabric IQ project connection.
+    5) FABRIC_IQ_USER_INPUT - The natural-language question to send to the agent.
 """
 
 import os

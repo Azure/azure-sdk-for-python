@@ -31,10 +31,11 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID - The Bing Custom Search project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID - The Bing Custom Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) BING_CUSTOM_SEARCH_INSTANCE_NAME - The Bing Custom Search instance name
-    5) BING_CUSTOM_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    5) BING_CUSTOM_SEARCH_INSTANCE_NAME - The Bing Custom Search instance name
+    6) BING_CUSTOM_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os

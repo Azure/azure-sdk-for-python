@@ -22,9 +22,10 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) STORAGE_INPUT_QUEUE_NAME - The name of the Azure Storage Queue to use for input and output in the Azure Function tool.
-    4) STORAGE_OUTPUT_QUEUE_NAME - The name of the Azure Storage Queue to use for output in the Azure Function tool.
-    5) STORAGE_QUEUE_SERVICE_ENDPOINT - The endpoint of the Azure Storage Queue service.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) STORAGE_INPUT_QUEUE_NAME - The name of the Azure Storage Queue to use for input and output in the Azure Function tool.
+    5) STORAGE_OUTPUT_QUEUE_NAME - The name of the Azure Storage Queue to use for output in the Azure Function tool.
+    6) STORAGE_QUEUE_SERVICE_ENDPOINT - The endpoint of the Azure Storage Queue service.
 """
 
 import os

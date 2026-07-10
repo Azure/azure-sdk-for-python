@@ -31,7 +31,7 @@ USAGE:
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for generating
        synthetic data and for AI-assisted evaluators.
-    3) FOUNDRY_AGENT_NAME - Required. The name of the Foundry agent to evaluate.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
