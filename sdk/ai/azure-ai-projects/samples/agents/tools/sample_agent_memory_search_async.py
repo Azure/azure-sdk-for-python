@@ -56,90 +56,90 @@ async def main() -> None:
 
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
+    credential = DefaultAzureCredential()
+    project_client = AIProjectClient(endpoint=endpoint, credential=credential)
+
+    # Delete memory store, if it already exists
+    memory_store_name = "my_memory_store"
+    try:
+        await project_client.beta.memory_stores.delete(memory_store_name)
+        print(f"Memory store `{memory_store_name}` deleted")
+    except ResourceNotFoundError:
+        pass
+
+    # Create a memory store
+    definition = MemoryStoreDefaultDefinition(
+        chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
+        embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
+    )
+    memory_store = await project_client.beta.memory_stores.create(
+        name=memory_store_name,
+        description="Example memory store for conversations",
+        definition=definition,
+    )
+    print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
+
+    # Set scope to associate the memories with
+    # You can also use "{{$userId}}" to take the oid of the request authentication header
+    scope = "user_123"
+
     async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    ):
-
-        # Delete memory store, if it already exists
-        memory_store_name = "my_memory_store"
-        try:
-            await project_client.beta.memory_stores.delete(memory_store_name)
-            print(f"Memory store `{memory_store_name}` deleted")
-        except ResourceNotFoundError:
-            pass
-
-        # Create a memory store
-        definition = MemoryStoreDefaultDefinition(
-            chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
-            embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
-        )
-        memory_store = await project_client.beta.memory_stores.create(
-            name=memory_store_name,
-            description="Example memory store for conversations",
-            definition=definition,
-        )
-        print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
-
-        # Set scope to associate the memories with
-        # You can also use "{{$userId}}" to take the oid of the request authentication header
-        scope = "user_123"
-
-        async with (
-            create_version_with_endpoint_async(
-                project_client=project_client,
-                agent_name=AGENT_NAME,
-                definition=PromptAgentDefinition(
-                    model=os.environ["FOUNDRY_MODEL_NAME"],
-                    instructions="You are a helpful assistant that answers general questions",
-                    tools=[
-                        MemorySearchPreviewTool(
-                            memory_store_name=memory_store.name,
-                            scope=scope,
-                            update_delay=1,  # Wait 1 second of inactivity before updating memories
-                            # In a real application, set this to a higher value like 300 (5 minutes, default)
-                        )
-                    ],
-                ),
+        credential,
+        project_client,
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=AGENT_NAME,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="You are a helpful assistant that answers general questions",
+                tools=[
+                    MemorySearchPreviewTool(
+                        memory_store_name=memory_store.name,
+                        scope=scope,
+                        update_delay=1,  # Wait 1 second of inactivity before updating memories
+                        # In a real application, set this to a higher value like 300 (5 minutes, default)
+                    )
+                ],
             ),
-            project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
-        ):
-            agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+        ),
+        project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
+    ):
+        agent = await project_client.agents.get(agent_name=AGENT_NAME)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-            # Create a conversation with the agent with memory tool enabled
-            conversation = await openai_client.conversations.create()
-            print(f"Created conversation (id: {conversation.id})")
+        # Create a conversation with the agent with memory tool enabled
+        conversation = await openai_client.conversations.create()
+        print(f"Created conversation (id: {conversation.id})")
 
-            # Create an agent response to initial user message
-            response = await openai_client.responses.create(
-                input="I prefer dark roast coffee",
-                conversation=conversation.id,
-            )
-            print(f"Response output: {response.output_text}")
+        # Create an agent response to initial user message
+        response = await openai_client.responses.create(
+            input="I prefer dark roast coffee",
+            conversation=conversation.id,
+        )
+        print(f"Response output: {response.output_text}")
 
-            # After an inactivity in the conversation, memories will be extracted from the conversation and stored
-            print("Waiting for memories to be stored...")
-            await asyncio.sleep(60)
+        # After an inactivity in the conversation, memories will be extracted from the conversation and stored
+        print("Waiting for memories to be stored...")
+        await asyncio.sleep(60)
 
-            # Create a new conversation
-            new_conversation = await openai_client.conversations.create()
-            print(f"Created new conversation (id: {new_conversation.id})")
+        # Create a new conversation
+        new_conversation = await openai_client.conversations.create()
+        print(f"Created new conversation (id: {new_conversation.id})")
 
-            # Create an agent response with stored memories
-            new_response = await openai_client.responses.create(
-                input="Please order my usual coffee",
-                conversation=new_conversation.id,
-            )
-            print(f"Response output: {new_response.output_text}")
+        # Create an agent response with stored memories
+        new_response = await openai_client.responses.create(
+            input="Please order my usual coffee",
+            conversation=new_conversation.id,
+        )
+        print(f"Response output: {new_response.output_text}")
 
-            # Clean up
-            await openai_client.conversations.delete(conversation.id)
-            await openai_client.conversations.delete(new_conversation.id)
-            print("Conversations deleted")
+        # Clean up
+        await openai_client.conversations.delete(conversation.id)
+        await openai_client.conversations.delete(new_conversation.id)
+        print("Conversations deleted")
 
-        await project_client.beta.memory_stores.delete(memory_store.name)
-        print("Memory store deleted")
+    await project_client.beta.memory_stores.delete(memory_store.name)
+    print("Memory store deleted")
 
 
 if __name__ == "__main__":

@@ -85,41 +85,41 @@ AIProjectInstrumentor().instrument()
 
 scenario = os.path.basename(__file__)
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
-with tracer.start_as_current_span(scenario):
-    with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=agent_name,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant that answers general questions",
-            ),
+with (
+    tracer.start_as_current_span(scenario),
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="You are a helpful assistant that answers general questions",
         ),
-        project_client.get_openai_client(agent_name=agent_name) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=agent_name)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-        conversation = openai_client.conversations.create()
+    conversation = openai_client.conversations.create()
 
-        request = "Hello, tell me a joke."
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            input=request,
-        )
-        print(f"Answer: {response.output}")
+    request = "Hello, tell me a joke."
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        input=request,
+    )
+    print(f"Answer: {response.output}")
 
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            input="Tell another one about computers.",
-        )
-        print(f"Answer: {response.output}")
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        input="Tell another one about computers.",
+    )
+    print(f"Answer: {response.output}")
 
-        print("\n📋 Listing conversation items...")
-        items = openai_client.conversations.items.list(conversation_id=conversation.id)
+    print("\n📋 Listing conversation items...")
+    items = openai_client.conversations.items.list(conversation_id=conversation.id)
 
-        # Print all the items
-        for item in items:
-            display_conversation_item(item)
+    # Print all the items
+    for item in items:
+        display_conversation_item(item)

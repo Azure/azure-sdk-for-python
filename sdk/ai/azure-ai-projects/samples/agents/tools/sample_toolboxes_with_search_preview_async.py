@@ -57,13 +57,14 @@ TOOLBOX_NAME = "toolbox_with_mcp_tool"
 INNER_MCP_LABEL = "github"
 INNER_MCP_URL = "https://api.githubcopilot.com/mcp"
 TOOLBOX_MCP_LABEL = "search-tool"
-AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
     ):
 
         inner_mcp_tool = MCPToolboxTool(
@@ -90,24 +91,20 @@ async def main() -> None:
             require_approval="never",
         )
 
-        async with (
-            create_version_with_endpoint_async(
-                project_client=project_client,
-                agent_name=AGENT_NAME,
-                definition=PromptAgentDefinition(
-                    model=os.environ["FOUNDRY_MODEL_NAME"],
-                    instructions=(
-                        "Always use the toolbox search tool to answer questions and perform tasks. "
-                        "Use `tool_search` to discover a relevant tool, then `call_tool` "
-                        "with the tool name returned by the search."
-                    ),
-                    tools=[toolbox_mcp_tool],
+        async with create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions=(
+                    "Always use the toolbox search tool to answer questions and perform tasks. "
+                    "Use `tool_search` to discover a relevant tool, then `call_tool` "
+                    "with the tool name returned by the search."
                 ),
+                tools=[toolbox_mcp_tool],
             ),
-            project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
-        ):
-            agent = await project_client.agents.get(agent_name=AGENT_NAME)
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version}).")
+        ) as agent:
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
 
             response = await openai_client.responses.create(
                 input="What is my username in Github profile?",

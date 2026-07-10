@@ -38,35 +38,33 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
+tool_payload = WorkIQPreviewTool(
+    project_connection_id=os.environ["WORK_IQ_PROJECT_CONNECTION_ID"],
+)
+
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="Use the available WorkIQ tools to answer questions and perform tasks.",
+            tools=[tool_payload],
+        ),
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    tool_payload = WorkIQPreviewTool(
-        project_connection_id=os.environ["WORK_IQ_PROJECT_CONNECTION_ID"],
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+
+    user_input = os.environ.get("WORK_IQ_USER_INPUT") or input("Enter your question:\n")
+
+    response = openai_client.responses.create(
+        input=user_input,
     )
 
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=agent_name,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="Use the available WorkIQ tools to answer questions and perform tasks.",
-                tools=[tool_payload],
-            ),
-        ),
-        project_client.get_openai_client(agent_name=agent_name) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=agent_name)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    print(f"Agent response: {response.output_text}")
 
-        user_input = os.environ.get("WORK_IQ_USER_INPUT") or input("Enter your question:\n")
-
-        response = openai_client.responses.create(
-            input=user_input,
-        )
-
-        print(f"Agent response: {response.output_text}")
-
-        # The helper restores the endpoint and deletes the temporary version automatically.
+    # The helper restores the endpoint and deletes the temporary version automatically.

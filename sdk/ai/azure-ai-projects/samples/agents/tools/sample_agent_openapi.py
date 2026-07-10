@@ -26,6 +26,7 @@ USAGE:
 
 import os
 from typing import Any, cast
+from pathlib import Path
 import jsonref
 from dotenv import load_dotenv
 from util import create_version_with_endpoint
@@ -42,41 +43,36 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+weather_asset_file_path = Path(__file__).resolve().parent / "../assets/weather_openapi.json"
+openapi_weather = cast(dict[str, Any], jsonref.loads(weather_asset_file_path.read_text(encoding="utf-8")))
+
+tool = OpenApiTool(
+    openapi=OpenApiFunctionDefinition(
+        name="get_weather",
+        spec=openapi_weather,
+        description="Retrieve weather information for a location.",
+        auth=OpenApiAnonymousAuthDetails(),
+    )
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-):
-    weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
-
-    with open(weather_asset_file_path, "r", encoding="utf-8") as f:
-        openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
-
-    tool = OpenApiTool(
-        openapi=OpenApiFunctionDefinition(
-            name="get_weather",
-            spec=openapi_weather,
-            description="Retrieve weather information for a location.",
-            auth=OpenApiAnonymousAuthDetails(),
-        )
-    )
-
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=agent_name,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant.",
-                tools=[tool],
-            ),
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="You are a helpful assistant.",
+            tools=[tool],
         ),
-        project_client.get_openai_client(agent_name=agent_name) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=agent_name)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-        response = openai_client.responses.create(
-            input="Use the OpenAPI tool to print out, what is the weather in Seattle today.",
-        )
-        print(f"Agent response: {response.output_text}")
+    response = openai_client.responses.create(
+        input="Use the OpenAPI tool to print out, what is the weather in Seattle today.",
+    )
+    print(f"Agent response: {response.output_text}")

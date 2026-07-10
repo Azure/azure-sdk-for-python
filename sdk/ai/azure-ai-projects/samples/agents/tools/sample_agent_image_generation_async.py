@@ -47,6 +47,7 @@ import asyncio
 import base64
 import os
 import tempfile
+from pathlib import Path
 from dotenv import load_dotenv
 from util import create_version_with_endpoint_async
 
@@ -57,53 +58,46 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
 
 
 async def main():
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    ):
-
-        image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
-
-        async with (
-            create_version_with_endpoint_async(
-                project_client=project_client,
-                agent_name=agent_name,
-                definition=PromptAgentDefinition(
-                    model=os.environ["FOUNDRY_MODEL_NAME"],
-                    instructions="Generate images based on user prompts",
-                    tools=[ImageGenTool(model=image_generation_model, quality="low", size="1024x1024")],
-                ),
-                description="Agent for image generation.",
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="Generate images based on user prompts",
+                tools=[ImageGenTool(model=image_generation_model, quality="low", size="1024x1024")],
             ),
-            project_client.get_openai_client(agent_name=agent_name) as openai_client,
-        ):
-            agent = await project_client.agents.get(agent_name=agent_name)
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+            description="Agent for image generation.",
+        ),
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-            response = await openai_client.responses.create(
-                input="Generate an image of Microsoft logo.",
-                extra_headers={
-                    "x-ms-oai-image-generation-deployment": image_generation_model
-                },  # this is required at the moment for image generation
-            )
-            print(f"Response created: {response.id}")
+        response = await openai_client.responses.create(
+            input="Generate an image of Microsoft logo.",
+            extra_headers={
+                "x-ms-oai-image-generation-deployment": image_generation_model
+            },  # this is required at the moment for image generation
+        )
+        print(f"Response created: {response.id}")
 
-            print("\nCleaning up...")
+        print("\nCleaning up...")
 
-            # Save the image to a file
-            image_data = [output.result for output in response.output if output.type == "image_generation_call"]
-            if image_data and image_data[0]:
-                print("Downloading generated image...")
-                filename = "microsoft.png"
-                file_path = os.path.join(tempfile.gettempdir(), filename)
-
-                with open(file_path, "wb") as f:
-                    f.write(base64.b64decode(image_data[0]))
-
-                print(f"Image saved to: {file_path}")
+        # Save the image to a file
+        image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+        if image_data and image_data[0]:
+            print("Downloading generated image...")
+            filename = "microsoft.png"
+            file_path = Path(tempfile.gettempdir()) / filename
+            file_path.write_bytes(base64.b64decode(image_data[0]))
+            print(f"Image saved to: {file_path}")
 
 
 if __name__ == "__main__":

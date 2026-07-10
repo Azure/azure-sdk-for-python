@@ -41,37 +41,35 @@ agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main():
+    tool_payload = FabricIQPreviewTool(
+        project_connection_id=os.environ["FABRIC_IQ_PROJECT_CONNECTION_ID"],
+        require_approval="never",
+    )
+
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="Use the available Fabric IQ tools to answer questions and perform tasks.",
+                tools=[tool_payload],
+            ),
+        ),
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
     ):
-        tool_payload = FabricIQPreviewTool(
-            project_connection_id=os.environ["FABRIC_IQ_PROJECT_CONNECTION_ID"],
-            require_approval="never",
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+
+        user_input = os.environ.get("FABRIC_IQ_USER_INPUT") or input("Enter your question:\n")
+
+        response = await openai_client.responses.create(
+            input=user_input,
         )
 
-        async with (
-            create_version_with_endpoint_async(
-                project_client=project_client,
-                agent_name=agent_name,
-                definition=PromptAgentDefinition(
-                    model=os.environ["FOUNDRY_MODEL_NAME"],
-                    instructions="Use the available Fabric IQ tools to answer questions and perform tasks.",
-                    tools=[tool_payload],
-                ),
-            ),
-            project_client.get_openai_client(agent_name=agent_name) as openai_client,
-        ):
-            agent = await project_client.agents.get(agent_name=agent_name)
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
-            user_input = os.environ.get("FABRIC_IQ_USER_INPUT") or input("Enter your question:\n")
-
-            response = await openai_client.responses.create(
-                input=user_input,
-            )
-
-            print(f"Agent response: {response.output_text}")
+        print(f"Agent response: {response.output_text}")
 
 
 if __name__ == "__main__":

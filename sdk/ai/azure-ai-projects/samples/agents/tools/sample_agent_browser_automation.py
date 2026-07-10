@@ -42,72 +42,68 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+
+tool = BrowserAutomationPreviewTool(
+    browser_automation_preview=BrowserAutomationToolParameters(
+        connection=BrowserAutomationToolConnectionParameters(
+            project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
+        )
+    )
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="""You are an Agent helping with browser automation tasks.
+        You can answer questions, provide information, and assist with various tasks
+        related to web browsing using the Browser Automation tool available to you.""",
+            tools=[tool],
+        ),
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    tool = BrowserAutomationPreviewTool(
-        browser_automation_preview=BrowserAutomationToolParameters(
-            connection=BrowserAutomationToolConnectionParameters(
-                project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
-            )
-        )
+    stream_response = openai_client.responses.create(
+        stream=True,
+        tool_choice="required",
+        input="""
+        Your goal is to report the percent of Microsoft year-to-date stock price change.
+        To do that, go to the website finance.yahoo.com.
+        At the top of the page, you will find a search bar.
+        Enter the value 'MSFT', to get information about the Microsoft stock price.
+        At the top of the resulting page you will see a default chart of Microsoft stock price.
+        Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.""",
     )
 
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=AGENT_NAME,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="""You are an Agent helping with browser automation tasks.
-            You can answer questions, provide information, and assist with various tasks
-            related to web browsing using the Browser Automation tool available to you.""",
-                tools=[tool],
-            ),
-        ),
-        project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=AGENT_NAME)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    for event in stream_response:
+        if event.type == "response.created":
+            print(f"Follow-up response created with ID: {event.response.id}")
+        elif event.type == "response.output_text.delta":
+            print(f"Delta: {event.delta}")
+        elif event.type == "response.text.done":
+            print("\nFollow-up response done!")
+        elif event.type == "response.output_item.done":
+            item = event.item
+            if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
+                arguments_str = getattr(item, "arguments", "{}")
 
-        stream_response = openai_client.responses.create(
-            stream=True,
-            tool_choice="required",
-            input="""
-            Your goal is to report the percent of Microsoft year-to-date stock price change.
-            To do that, go to the website finance.yahoo.com.
-            At the top of the page, you will find a search bar.
-            Enter the value 'MSFT', to get information about the Microsoft stock price.
-            At the top of the resulting page you will see a default chart of Microsoft stock price.
-            Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.""",
-        )
+                # Parse the arguments string into a dictionary
+                arguments = json.loads(arguments_str)
+                query = arguments.get("query")
 
-        for event in stream_response:
-            if event.type == "response.created":
-                print(f"Follow-up response created with ID: {event.response.id}")
-            elif event.type == "response.output_text.delta":
-                print(f"Delta: {event.delta}")
-            elif event.type == "response.text.done":
-                print("\nFollow-up response done!")
-            elif event.type == "response.output_item.done":
-                item = event.item
-                if (
-                    item.type == "browser_automation_preview_call"
-                ):  # TODO: support browser_automation_preview_call schema
-                    arguments_str = getattr(item, "arguments", "{}")
+                print(f"Call ID: {getattr(item, 'call_id')}")
+                print(f"Query arguments: {query}")
+        elif event.type == "response.completed":
+            print("\nFollow-up completed!")
+            print(f"Full response: {event.response.output_text}")
 
-                    # Parse the arguments string into a dictionary
-                    arguments = json.loads(arguments_str)
-                    query = arguments.get("query")
-
-                    print(f"Call ID: {getattr(item, 'call_id')}")
-                    print(f"Query arguments: {query}")
-            elif event.type == "response.completed":
-                print("\nFollow-up completed!")
-                print(f"Full response: {event.response.output_text}")
-
-        print("\nCleaning up...")
+    print("\nCleaning up...")

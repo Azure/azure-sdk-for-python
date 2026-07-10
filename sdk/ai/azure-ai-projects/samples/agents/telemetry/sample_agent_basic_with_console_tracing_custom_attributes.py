@@ -84,20 +84,20 @@ provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
 
 scenario = os.path.basename(__file__)
-with tracer.start_as_current_span(scenario):
-    with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as client,
-    ):
+with (
+    tracer.start_as_current_span(scenario),
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as client,
+):
 
-        agent_definition = PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant that answers general questions",
-        )
+    agent_definition = PromptAgentDefinition(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        instructions="You are a helpful assistant that answers general questions",
+    )
 
-        agent = client.agents.create_version(
-            agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"), definition=agent_definition
-        )
+    agent = client.agents.create_version(
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"), definition=agent_definition
+    )
 
-        client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+    client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agent deleted")

@@ -49,58 +49,56 @@ agent = None
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
+
+tool = AzureFunctionTool(
+    azure_function=AzureFunctionDefinition(
+        input_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_INPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        output_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_OUTPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        function=AzureFunctionDefinitionFunction(
+            name="queue_trigger",
+            description="Get weather for a given location",
+            parameters={
+                "type": "object",
+                "properties": {"location": {"type": "string", "description": "location to determine weather for"}},
+            },
+        ),
+    )
+)
+
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="You are a helpful assistant.",
+            tools=[tool],
+        ),
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-    tool = AzureFunctionTool(
-        azure_function=AzureFunctionDefinition(
-            input_binding=AzureFunctionBinding(
-                storage_queue=AzureFunctionStorageQueue(
-                    queue_name=os.environ["STORAGE_INPUT_QUEUE_NAME"],
-                    queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
-                )
-            ),
-            output_binding=AzureFunctionBinding(
-                storage_queue=AzureFunctionStorageQueue(
-                    queue_name=os.environ["STORAGE_OUTPUT_QUEUE_NAME"],
-                    queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
-                )
-            ),
-            function=AzureFunctionDefinitionFunction(
-                name="queue_trigger",
-                description="Get weather for a given location",
-                parameters={
-                    "type": "object",
-                    "properties": {"location": {"type": "string", "description": "location to determine weather for"}},
-                },
-            ),
-        )
+    user_input = "What is the weather in Seattle?"
+
+    response = openai_client.responses.create(
+        tool_choice="required",
+        input=user_input,
     )
 
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=agent_name,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant.",
-                tools=[tool],
-            ),
-        ),
-        project_client.get_openai_client(agent_name=agent_name) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=agent_name)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    print(f"Response output: {response.output_text}")
 
-        user_input = "What is the weather in Seattle?"
-
-        response = openai_client.responses.create(
-            tool_choice="required",
-            input=user_input,
-        )
-
-        print(f"Response output: {response.output_text}")
-
-        print("\nCleaning up...")
+    print("\nCleaning up...")

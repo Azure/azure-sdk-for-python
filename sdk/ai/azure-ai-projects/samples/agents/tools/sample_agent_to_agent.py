@@ -44,64 +44,61 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+tool = A2APreviewTool(
+    project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
+)
+# If the connection is missing target, we need to set the A2A endpoint URL.
+if os.environ.get("A2A_ENDPOINT"):
+    tool.base_url = os.environ["A2A_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-):
-
-    tool = A2APreviewTool(
-        project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
-    )
-    # If the connection is missing target, we need to set the A2A endpoint URL.
-    if os.environ.get("A2A_ENDPOINT"):
-        tool.base_url = os.environ["A2A_ENDPOINT"]
-
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=AGENT_NAME,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant.",
-                tools=[tool],
-            ),
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="You are a helpful assistant.",
+            tools=[tool],
         ),
-        project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=AGENT_NAME)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-        user_input = os.environ.get("A2A_USER_INPUT") or input(
-            "Enter your question (e.g., 'What can the secondary agent do?'): \n"
-        )
+    user_input = os.environ.get("A2A_USER_INPUT") or input(
+        "Enter your question (e.g., 'What can the secondary agent do?'): \n"
+    )
 
-        stream_response = openai_client.responses.create(
-            stream=True,
-            tool_choice="required",
-            input=user_input,
-        )
+    stream_response = openai_client.responses.create(
+        stream=True,
+        tool_choice="required",
+        input=user_input,
+    )
 
-        for event in stream_response:
-            if event.type == "response.created":
-                print(f"Follow-up response created with ID: {event.response.id}")
-            elif event.type == "response.output_text.delta":
-                print(f"Delta: {event.delta}")
-            elif event.type == "response.text.done":
-                print("\nFollow-up response done!")
-            elif event.type == "response.output_item.done":
-                item = event.item
-                if item.type == "a2a_preview_call":
-                    print(f"Request ID: {getattr(item, 'id')}")
-                    if hasattr(item, "model_extra"):
-                        extra = getattr(item, "model_extra")
-                        if isinstance(extra, dict):
-                            print(f"Arguments: {extra['arguments']}")
-                elif item.type == "a2a_preview_call_output":
-                    print(f"Response ID: {getattr(item, 'id')}")
-            elif event.type == "response.completed":
-                print("\nFollow-up completed!")
-                print(f"Full response: {event.response.output_text}")
+    for event in stream_response:
+        if event.type == "response.created":
+            print(f"Follow-up response created with ID: {event.response.id}")
+        elif event.type == "response.output_text.delta":
+            print(f"Delta: {event.delta}")
+        elif event.type == "response.text.done":
+            print("\nFollow-up response done!")
+        elif event.type == "response.output_item.done":
+            item = event.item
+            if item.type == "a2a_preview_call":
+                print(f"Request ID: {getattr(item, 'id')}")
+                if hasattr(item, "model_extra"):
+                    extra = getattr(item, "model_extra")
+                    if isinstance(extra, dict):
+                        print(f"Arguments: {extra['arguments']}")
+            elif item.type == "a2a_preview_call_output":
+                print(f"Response ID: {getattr(item, 'id')}")
+        elif event.type == "response.completed":
+            print("\nFollow-up completed!")
+            print(f"Full response: {event.response.output_text}")
 
-        print("\nCleaning up...")
+    print("\nCleaning up...")

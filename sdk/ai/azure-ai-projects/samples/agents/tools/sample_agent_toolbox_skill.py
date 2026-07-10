@@ -33,12 +33,12 @@ USAGE:
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under
        the "Name" column in the "Models + endpoints" tab in your Microsoft
        Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
 
 from dotenv import load_dotenv
-from util import create_version_with_endpoint
 
 from azure.ai.projects.models._models import ToolboxSearchPreviewToolboxTool
 from azure.core.exceptions import ResourceNotFoundError
@@ -52,6 +52,7 @@ from azure.ai.projects.models import (
     ToolboxSearchPreviewToolboxTool,
     ToolboxSkillReference,
 )
+from util import create_version_with_endpoint
 
 load_dotenv()
 
@@ -59,12 +60,13 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 SKILL_NAME = "shipping-cost-skill"
 TOOLBOX_NAME = "toolbox_with_skill"
-AGENT_NAME = "SkillToolboxAgent"
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
 
     try:
@@ -110,27 +112,22 @@ with (
         require_approval="never",
     )
 
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=AGENT_NAME,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions=(
-                    "Answer the user using the `shipping-cost-skill` instructions "
-                    "available in your context. Do not call `tool_search`; the "
-                    "skill rules are already part of your knowledge. Apply the "
-                    "skill's formula exactly as given and state the formula in "
-                    "your answer."
-                ),
-                temperature=0,
-                tools=[toolbox_mcp_tool],
+    with create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions=(
+                "Answer the user using the `shipping-cost-skill` instructions "
+                "available in your context. Do not call `tool_search`; the "
+                "skill rules are already part of your knowledge. Apply the "
+                "skill's formula exactly as given and state the formula in "
+                "your answer."
             ),
+            temperature=0,
+            tools=[toolbox_mcp_tool],
         ),
-        project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=AGENT_NAME)
-        print(f"Agent created (id={agent.id}, name={agent.name}, version={agent.versions.latest.version})")
+    ) as agent:
 
         user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
         print(f"User: {user_input}")

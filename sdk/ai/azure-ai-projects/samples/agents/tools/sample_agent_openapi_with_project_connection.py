@@ -29,6 +29,7 @@ USAGE:
 
 import os
 from typing import Any, cast
+from pathlib import Path
 import jsonref
 from dotenv import load_dotenv
 from util import create_version_with_endpoint
@@ -46,48 +47,41 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+tripadvisor_asset_file_path = Path(__file__).resolve().parent / "../assets/tripadvisor_openapi.json"
+openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(tripadvisor_asset_file_path.read_text(encoding="utf-8")))
+
+tool = OpenApiTool(
+    openapi=OpenApiFunctionDefinition(
+        name="tripadvisor",
+        spec=openapi_tripadvisor,
+        description="Trip Advisor API to get travel information",
+        auth=OpenApiProjectConnectionAuthDetails(
+            security_scheme=OpenApiProjectConnectionSecurityScheme(
+                project_connection_id=os.environ["OPENAPI_PROJECT_CONNECTION_ID"]
+            )
+        ),
+    )
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-):
-    tripadvisor_asset_file_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json")
-    )
-
-    with open(tripadvisor_asset_file_path, "r", encoding="utf-8") as f:
-        openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
-
-    tool = OpenApiTool(
-        openapi=OpenApiFunctionDefinition(
-            name="tripadvisor",
-            spec=openapi_tripadvisor,
-            description="Trip Advisor API to get travel information",
-            auth=OpenApiProjectConnectionAuthDetails(
-                security_scheme=OpenApiProjectConnectionSecurityScheme(
-                    project_connection_id=os.environ["OPENAPI_PROJECT_CONNECTION_ID"]
-                )
-            ),
-        )
-    )
-
-    with (
-        create_version_with_endpoint(
-            project_client=project_client,
-            agent_name=agent_name,
-            definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant.",
-                tools=[tool],
-            ),
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="You are a helpful assistant.",
+            tools=[tool],
         ),
-        project_client.get_openai_client(agent_name=agent_name) as openai_client,
-    ):
-        agent = project_client.agents.get(agent_name=agent_name)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
+    agent = project_client.agents.get(agent_name=agent_name)
+    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
-        response = openai_client.responses.create(
-            input="Recommend me 5 top hotels in the United States",
-        )
-        # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
-        print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")
+    response = openai_client.responses.create(
+        input="Recommend me 5 top hotels in the United States",
+    )
+    # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
+    print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")
