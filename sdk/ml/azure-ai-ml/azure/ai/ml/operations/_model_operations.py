@@ -738,16 +738,18 @@ class ModelOperations(_ScopeDependentOperations):
         sub_ = self._operation_scope._subscription_id
         registry_ = self._operation_scope.registry_name
         client_ = self._service_client
+        registry_service_client_ = self._registry_service_client
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub, _model_client, _ = get_registry_client(
+            _client, _rg, _sub, _model_client, _arm_client = get_registry_client(
                 self._service_client._config.credential, registry_name
             )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
             self._service_client = _client
+            self._registry_service_client = _arm_client
             self._model_versions_operation = _client.model_versions
             yield
         finally:
@@ -755,6 +757,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
+            self._registry_service_client = registry_service_client_
             self._model_versions_operation = model_versions_operation_
 
     @experimental
