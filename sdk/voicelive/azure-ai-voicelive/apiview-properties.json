@@ -201,5 +201,5 @@
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     },
-    "CrossLanguageVersion": "c6a835031b61"
+    "CrossLanguageVersion": "e710d3387810"
 }

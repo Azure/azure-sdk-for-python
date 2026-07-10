@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
+import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
@@ -4867,9 +4868,9 @@ class ResponseSession(_Model):
     :vartype agent: ~azure.ai.voicelive.models.AgentConfig
     :ivar id: The unique identifier for the session.
     :vartype id: str
-    :ivar expires_at: Expiration timestamp for the session, in seconds since epoch. This value is
-     set by the server and cannot be changed with ``session.update``.
-    :vartype expires_at: int
+    :ivar expires_at: Expiration time for the session. This value is set by the server and cannot
+     be changed with ``session.update``.
+    :vartype expires_at: ~datetime.datetime
     """
 
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4963,9 +4964,11 @@ class ResponseSession(_Model):
     """The agent configuration for the session, if applicable."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier for the session."""
-    expires_at: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Expiration timestamp for the session, in seconds since epoch. This value is set by the server
-     and cannot be changed with ``session.update``."""
+    expires_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Expiration time for the session. This value is set by the server and cannot be changed with
+     ``session.update``."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -4996,7 +4999,7 @@ class ResponseSession(_Model):
         metadata: Optional[dict[str, str]] = None,
         agent: Optional["_models.AgentConfig"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        expires_at: Optional[int] = None,
+        expires_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload

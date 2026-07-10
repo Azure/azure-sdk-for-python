@@ -15,6 +15,8 @@
   server loopback reference path and client-provided stereo echo reference input.
 - **Parallel Tool Call Control**: Added `parallel_tool_calls` to session models so callers can
   control whether tool calls may run in parallel.
+- **Session Expiration**: Added `expires_at` to `ResponseSession`, a server-set `datetime` indicating
+  when the session expires.
 
 ### Breaking Changes
 

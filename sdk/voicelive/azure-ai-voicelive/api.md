@@ -2137,7 +2137,7 @@ namespace azure.ai.voicelive.models
         agent: Optional[AgentConfig]
         animation: Optional[Animation]
         avatar: Optional[AvatarConfig]
-        expires_at: Optional[int]
+        expires_at: Optional[datetime]
         id: Optional[str]
         include: Optional[list[Union[str, SessionIncludeOption]]]
         input_audio_echo_cancellation: Optional[AudioEchoCancellation]
@@ -2168,7 +2168,7 @@ namespace azure.ai.voicelive.models
                 agent: Optional[AgentConfig] = ..., 
                 animation: Optional[Animation] = ..., 
                 avatar: Optional[AvatarConfig] = ..., 
-                expires_at: Optional[int] = ..., 
+                expires_at: Optional[datetime] = ..., 
                 id: Optional[str] = ..., 
                 include: Optional[list[Union[str, SessionIncludeOption]]] = ..., 
                 input_audio_echo_cancellation: Optional[AudioEchoCancellation] = ..., 
