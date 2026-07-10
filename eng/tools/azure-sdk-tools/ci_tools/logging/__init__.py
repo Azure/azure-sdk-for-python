@@ -5,6 +5,7 @@ import argparse
 import logging
 
 from logging import Logger
+from typing import Mapping, Optional
 
 from ci_tools.variables import get_log_directory, in_ci
 
@@ -79,7 +80,13 @@ def run_logged_to_file(*args, prefix="", **kwargs):
         subprocess.run(*args, **kwargs, stdout=log_output, stderr=log_output)
 
 
-def run_logged(cmd: list[str], cwd: str, check: bool, should_stream_to_console: bool):
+def run_logged(
+    cmd: list[str],
+    cwd: str,
+    check: bool,
+    should_stream_to_console: bool,
+    env: Optional[Mapping[str, str]] = None,
+):
     """
     Runs a command, logging output to subprocess.PIPE or streaming live to console based on log level.
 
@@ -88,11 +95,17 @@ def run_logged(cmd: list[str], cwd: str, check: bool, should_stream_to_console: 
     try:
         if should_stream_to_console:
             # Stream live, no capturing
-            return subprocess.run(cmd, cwd=cwd, check=check, text=True, stderr=subprocess.STDOUT)
+            return subprocess.run(cmd, cwd=cwd, check=check, text=True, stderr=subprocess.STDOUT, env=env)
         else:
             # Capture merged output but don't print unless there's a failure
             return subprocess.run(
-                cmd, cwd=cwd, check=check, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+                cmd,
+                cwd=cwd,
+                check=check,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                env=env,
             )
     except subprocess.CalledProcessError as e:
         logger.error(f"Command failed: {' '.join(cmd)}")

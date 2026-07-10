@@ -1,8 +1,17 @@
-import argparse, sys, os, logging, glob, shutil
+import argparse, sys, os, logging, glob, shutil, shlex
 
+from collections.abc import Mapping as MappingABC
 from subprocess import run
 
-from typing import List, Optional
+from typing import Dict, List, Optional
+
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except ImportError:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+
 from ci_tools.functions import discover_targeted_packages, process_requires, get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root, get_artifact_directory
@@ -217,8 +226,84 @@ def build_packages(
         create_package(package_root, dist_dir, enable_wheel, enable_sdist)
 
 
+def _local_build_env(folder: str) -> Optional[Dict[str, str]]:
+    """Merge ``[tool.cibuildwheel].environment`` from ``folder/pyproject.toml`` into
+    ``os.environ.copy()`` so the same compiler flags apply when we build without
+    cibuildwheel. Returns ``None`` when no such config exists.
+    """
+    pyproject = os.path.join(folder, "pyproject.toml")
+    if not os.path.exists(pyproject):
+        return None
+    try:
+        with open(pyproject, "rb") as f:
+            data = toml.load(f)
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning(f"Could not parse {pyproject} to extract cibuildwheel environment: {exc}")
+        return None
+
+    env_value = data.get("tool", {}).get("cibuildwheel", {}).get("environment", None)
+    if not env_value:
+        return None
+
+    overrides: Dict[str, str] = {}
+    if isinstance(env_value, MappingABC):
+        overrides = {str(k): str(v) for k, v in env_value.items()}
+    elif isinstance(env_value, str):
+        # Shell-style form: ``CFLAGS='-Wno-implicit-function-declaration' FOO=bar``.
+        for token in shlex.split(env_value):
+            if "=" in token:
+                k, v = token.split("=", 1)
+                overrides[k] = v
+    else:
+        return None
+
+    if not overrides:
+        return None
+
+    merged = os.environ.copy()
+    merged.update(overrides)
+    return merged
+
+
+def build_whl_locally(pkg_path: str, dist_dir: str) -> None:
+    """Build a wheel for ``pkg_path`` into ``dist_dir`` via ``python -m build`` (PEP 517).
+
+    Used to resolve local relative dev_requirements on network-isolated test agents,
+    where cibuildwheel can't run. For C ``ext_modules`` packages,
+    ``[tool.cibuildwheel].environment`` from pyproject.toml is applied to the build
+    subprocess so platform-specific compiler flags still reach the compiler.
+    """
+    parsed = ParsedSetup.from_path(pkg_path)
+    should_log_build_output = logger.getEffectiveLevel() <= logging.DEBUG
+
+    # `python -m build -n` needs the package's runtime requires importable to read __version__.
+    pip_output = get_pip_list_output(sys.executable)
+    necessary_install_requirements = [
+        req for req in parsed.requires if parse_require(req).name not in pip_output.keys()
+    ]
+    if necessary_install_requirements:
+        run_logged(
+            [sys.executable, "-m", "pip", "install", *necessary_install_requirements],
+            cwd=parsed.folder,
+            check=False,
+            should_stream_to_console=should_log_build_output,
+        )
+
+    build_env = _local_build_env(parsed.folder) if parsed.ext_modules else None
+    run_logged(
+        [sys.executable, "-m", "build", "-n", "-w", "-o", dist_dir, parsed.folder],
+        cwd=parsed.folder,
+        check=True,
+        should_stream_to_console=should_log_build_output,
+        env=build_env,
+    )
+
+
 def create_package(
-    setup_directory_or_file: str, dest_folder: str, enable_wheel: bool = True, enable_sdist: bool = True
+    setup_directory_or_file: str,
+    dest_folder: str,
+    enable_wheel: bool = True,
+    enable_sdist: bool = True,
 ):
     """
     Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
@@ -248,6 +333,9 @@ def create_package(
             check=False,
             should_stream_to_console=should_log_build_output,
         )
+        # Apply [tool.cibuildwheel].environment when building ext_modules pyproject packages
+        # so platform-specific compiler flags reach the compiler. No-op otherwise.
+        build_env = _local_build_env(setup_parsed.folder) if setup_parsed.ext_modules else None
         run_logged(
             [
                 sys.executable,
@@ -260,6 +348,7 @@ def create_package(
             cwd=setup_parsed.folder,
             check=True,
             should_stream_to_console=should_log_build_output,
+            env=build_env,
         )
     else:
         if enable_wheel:
