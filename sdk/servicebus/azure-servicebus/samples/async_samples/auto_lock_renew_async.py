@@ -74,21 +74,19 @@ async def renew_lock_via_receiver_auto_lock_renewer_keyword() -> None:
 
         # Pass the AutoLockRenewer directly to the receiver factory via the auto_lock_renewer
         # keyword. Received messages are then automatically registered for lock renewal on
-        # receipt, without a manual renewer.register(...) call.
-        renewer = AutoLockRenewer()
+        # receipt, without a manual renewer.register(...) call. The `async with` form ensures
+        # the renewer is shut down even if the receiver block raises.
+        async with AutoLockRenewer() as renewer:
+            async with servicebus_client.get_queue_receiver(
+                queue_name=QUEUE_NAME, auto_lock_renewer=renewer, prefetch_count=10
+            ) as receiver:
+                received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
 
-        async with servicebus_client.get_queue_receiver(
-            queue_name=QUEUE_NAME, auto_lock_renewer=renewer, prefetch_count=10
-        ) as receiver:
-            received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
+                await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
 
-            await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
-
-            for msg in received_msgs:
-                await receiver.complete_message(msg)
-            print("Complete messages.")
-
-        await renewer.close()
+                for msg in received_msgs:
+                    await receiver.complete_message(msg)
+                print("Complete messages.")
 
 
 async def renew_lock_on_session_of_the_sessionful_entity():
