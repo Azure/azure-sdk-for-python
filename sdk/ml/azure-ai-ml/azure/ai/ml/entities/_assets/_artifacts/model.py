@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from collections.abc import Mapping
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -161,41 +162,37 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
 
-        # Handle default_deployment_template from REST object
+        # Handle default_deployment_template from REST object (attribute for msrest models, camelCase mapping key for
+        # arm hybrid models returned by the registry data-plane).
         default_deployment_template = None
-        if (
-            hasattr(rest_model_version, "default_deployment_template")
-            and rest_model_version.default_deployment_template
-        ):
-            # REST object has default_deployment_template as a dict with 'asset_id' key
-            if isinstance(rest_model_version.default_deployment_template, dict):
+        _ddt = getattr(rest_model_version, "default_deployment_template", None)
+        if _ddt is None and isinstance(rest_model_version, Mapping):
+            _ddt = rest_model_version.get("defaultDeploymentTemplate")
+        if _ddt:
+            if isinstance(_ddt, dict):
                 default_deployment_template = DeploymentTemplateReference(
-                    asset_id=rest_model_version.default_deployment_template.get("asset_id")
+                    asset_id=_ddt.get("asset_id") or _ddt.get("assetId")
                 )
             else:
                 # Handle case where it's already an object with asset_id attribute
-                default_deployment_template = DeploymentTemplateReference(
-                    asset_id=getattr(rest_model_version.default_deployment_template, "asset_id", None)
-                )
+                default_deployment_template = DeploymentTemplateReference(asset_id=getattr(_ddt, "asset_id", None))
 
         # Handle allowed_deployment_templates from REST object
         allowed_deployment_templates = None
-        if (
-            hasattr(rest_model_version, "allowed_deployment_templates")
-            and rest_model_version.allowed_deployment_templates
-        ):
-            raw_list = rest_model_version.allowed_deployment_templates
-            if isinstance(raw_list, list):
-                allowed_deployment_templates = []
-                for item in raw_list:
-                    if isinstance(item, dict):
-                        allowed_deployment_templates.append(
-                            DeploymentTemplateReference(asset_id=item.get("asset_id") or item.get("assetId"))
-                        )
-                    else:
-                        allowed_deployment_templates.append(
-                            DeploymentTemplateReference(asset_id=getattr(item, "asset_id", None))
-                        )
+        _adt = getattr(rest_model_version, "allowed_deployment_templates", None)
+        if _adt is None and isinstance(rest_model_version, Mapping):
+            _adt = rest_model_version.get("allowedDeploymentTemplates")
+        if _adt and isinstance(_adt, list):
+            allowed_deployment_templates = []
+            for item in _adt:
+                if isinstance(item, dict):
+                    allowed_deployment_templates.append(
+                        DeploymentTemplateReference(asset_id=item.get("asset_id") or item.get("assetId"))
+                    )
+                else:
+                    allowed_deployment_templates.append(
+                        DeploymentTemplateReference(asset_id=getattr(item, "asset_id", None))
+                    )
 
         model = Model(
             id=model_rest_object.id,
@@ -212,8 +209,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
             intellectual_property=(
-                IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
-                if rest_model_version.intellectual_property
+                IntellectualProperty._from_rest_object(getattr(rest_model_version, "intellectual_property", None))
+                if getattr(rest_model_version, "intellectual_property", None)
                 else None
             ),
             system_metadata=model_system_metadata,

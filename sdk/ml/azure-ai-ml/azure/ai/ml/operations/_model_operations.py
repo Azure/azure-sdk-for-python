@@ -29,6 +29,8 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ModelContainer as ArmModelContainer
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -50,8 +52,11 @@ from azure.ai.ml._utils._registry_utils import (
     begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
+    get_registry_container_asset,
+    get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
+    list_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import _is_evaluator, resolve_short_datastore_url, validate_ml_flow_folder
@@ -206,11 +211,13 @@ class ModelOperations(_ScopeDependentOperations):
                 if isinstance(model, WorkspaceAssetReference):
                     # verify that model is not already in registry
                     try:
-                        self._model_versions_operation.get(
-                            name=model.name,
-                            version=model.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
+                        get_registry_versioned_asset(
+                            self._registry_service_client,
+                            "models",
+                            model.name,
+                            model.version,
+                            self._resource_group_name,
+                            self._registry_name,
                         )
                     except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
@@ -331,14 +338,28 @@ class ModelOperations(_ScopeDependentOperations):
 
     def _get_with_registry(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
         if version:
-            return self._model_versions_operation.get(
-                name=name,
-                version=version,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
+            return ArmModelVersion._deserialize(
+                get_registry_versioned_asset(
+                    self._registry_service_client,
+                    "models",
+                    name,
+                    version,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
 
-        return self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+        return ArmModelContainer._deserialize(
+            get_registry_container_asset(
+                self._registry_service_client,
+                "models",
+                name,
+                self._resource_group_name,
+                self._registry_name,
+            ),
+            [],
+        )
 
     def _get_with_workspace(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
@@ -579,11 +600,14 @@ class ModelOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_versions_operation.list(
-                        name=name,
-                        registry_name=self._registry_name,
-                        cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
-                        **self._scope_kwargs,
+                    list_registry_assets(
+                        self._registry_service_client,
+                        "models",
+                        name,
+                        self._resource_group_name,
+                        self._registry_name,
+                        ArmModelVersion,
+                        Model._from_rest_object,
                     )
                     if self._registry_name
                     else self._model_versions_operation.list(
@@ -600,11 +624,15 @@ class ModelOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Model],
             (
-                self._model_container_operation.list(
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                list_registry_assets(
+                    self._registry_service_client,
+                    "models",
+                    None,
+                    self._resource_group_name,
+                    self._registry_name,
+                    ArmModelContainer,
+                    Model._from_container_rest_object,
                     list_view_type=list_view_type,
-                    **self._scope_kwargs,
                 )
                 if self._registry_name
                 else self._model_container_operation.list(
