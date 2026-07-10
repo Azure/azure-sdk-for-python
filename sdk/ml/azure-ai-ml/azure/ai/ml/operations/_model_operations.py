@@ -49,6 +49,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
     begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
@@ -314,8 +315,13 @@ class ModelOperations(_ScopeDependentOperations):
     def _begin_create_or_update_registry_model(self, name, version, model_version_resource, cont_token):
         # if continuation token is None and system_metadata attribute found
         # we need to send the system_metadata values in the request
-        return (
-            self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
+        if (
+            self._registry_name
+            and cont_token is None
+            and hasattr(model_version_resource.properties, "system_metadata")
+            and self._model_dataplane_operation is not None
+        ):
+            return self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
                 subscription_id=self._operation_scope._subscription_id,
                 name=str(name),
                 version=str(version),
@@ -323,17 +329,25 @@ class ModelOperations(_ScopeDependentOperations):
                 registry_name=self._registry_name,
                 **self._scope_kwargs,
             ).result()
-            if self._registry_name
-            and cont_token is None
-            and hasattr(model_version_resource.properties, "system_metadata")
-            and self._model_dataplane_operation is not None
-            else self._model_versions_operation.begin_create_or_update(
-                name=name,
-                version=version,
-                body=model_version_resource,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-            ).result()
+        # Byte-identical to the legacy v2021_10 ``model_versions.begin_create_or_update`` on the MFE endpoint. The body
+        # may be a msrest ``ModelVersionData`` (deployment-template path) or an arm hybrid ``ModelVersion``; serialize the
+        # former to a wire dict so the shared LRO helper posts the identical payload.
+        body = (
+            model_version_resource.serialize()
+            if hasattr(model_version_resource, "serialize")
+            else model_version_resource
+        )
+        return ArmModelVersion._deserialize(
+            begin_create_or_update_registry_versioned_asset(
+                self._registry_service_client,
+                "models",
+                name,
+                version,
+                self._resource_group_name,
+                self._registry_name,
+                body,
+            ),
+            [],
         )
 
     def _get_with_registry(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
