@@ -263,7 +263,8 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
+    # Registry data-plane assets now flow through the shared arm_ml_service hybrid client.
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture

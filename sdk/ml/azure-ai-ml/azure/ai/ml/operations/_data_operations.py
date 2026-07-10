@@ -101,11 +101,9 @@ class DataOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient,
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources.
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     """
