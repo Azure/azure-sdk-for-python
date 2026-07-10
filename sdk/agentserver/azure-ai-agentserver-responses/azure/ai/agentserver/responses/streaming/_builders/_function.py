@@ -8,7 +8,7 @@ from collections.abc import AsyncIterable
 from copy import deepcopy
 from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
 
-from ...models import _generated as generated_models
+from azure.ai.extensions.openai import responses as response_models
 from ._base import BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
@@ -62,7 +62,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         return self._call_id
 
-    def emit_added(self) -> generated_models.ResponseOutputItemAddedEvent:
+    def emit_added(self) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function call.
 
         :returns: The emitted event.
@@ -79,7 +79,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_arguments_delta(self, delta: str) -> generated_models.ResponseFunctionCallArgumentsDeltaEvent:
+    def emit_arguments_delta(self, delta: str) -> response_models.ResponseFunctionCallArgumentsDeltaEvent:
         """Emit a function-call arguments delta event.
 
         :param delta: The incremental arguments text fragment.
@@ -88,10 +88,10 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseFunctionCallArgumentsDeltaEvent
         """
         return cast(
-            generated_models.ResponseFunctionCallArgumentsDeltaEvent,
+            response_models.ResponseFunctionCallArgumentsDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
+                    "type": response_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "delta": delta,
@@ -99,7 +99,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             ),
         )
 
-    def emit_arguments_done(self, arguments: str) -> generated_models.ResponseFunctionCallArgumentsDoneEvent:
+    def emit_arguments_done(self, arguments: str) -> response_models.ResponseFunctionCallArgumentsDoneEvent:
         """Emit a function-call arguments done event.
 
         :param arguments: The final, complete arguments string.
@@ -109,10 +109,10 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         self._final_arguments = arguments
         return cast(
-            generated_models.ResponseFunctionCallArgumentsDoneEvent,
+            response_models.ResponseFunctionCallArgumentsDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
+                    "type": response_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "name": self._name,
@@ -121,7 +121,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             ),
         )
 
-    def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(self) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function call.
 
         :returns: The emitted event.
@@ -140,7 +140,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
 
     # ---- Sub-item convenience generators (S-053) ----
 
-    def arguments(self, args: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    def arguments(self, args: str) -> Iterator[response_models.ResponseStreamEvent]:
         """Yield the argument delta and done events.
 
         Emits ``function_call_arguments.delta`` followed by
@@ -154,7 +154,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         yield self.emit_arguments_delta(args)
         yield self.emit_arguments_done(args)
 
-    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Async variant of :meth:`arguments` with streaming support.
 
         When *args* is a string, behaves identically to :meth:`arguments`.
@@ -204,9 +204,9 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         self._final_output: (
             str
             | list[
-                generated_models.InputTextContentParam
-                | generated_models.InputImageContentParamAutoParam
-                | generated_models.InputFileContentParam
+                response_models.InputTextContentParam
+                | response_models.InputImageContentParamAutoParam
+                | response_models.InputFileContentParam
             ]
             | None
         ) = None
@@ -224,12 +224,12 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         self,
         output: str
         | list[
-            generated_models.InputTextContentParam
-            | generated_models.InputImageContentParamAutoParam
-            | generated_models.InputFileContentParam
+            response_models.InputTextContentParam
+            | response_models.InputImageContentParamAutoParam
+            | response_models.InputFileContentParam
         ]
         | None = None,
-    ) -> generated_models.ResponseOutputItemAddedEvent:
+    ) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function-call output.
 
         :param output: Optional initial output value.
@@ -251,12 +251,12 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         self,
         output: str
         | list[
-            generated_models.InputTextContentParam
-            | generated_models.InputImageContentParamAutoParam
-            | generated_models.InputFileContentParam
+            response_models.InputTextContentParam
+            | response_models.InputImageContentParamAutoParam
+            | response_models.InputFileContentParam
         ]
         | None = None,
-    ) -> generated_models.ResponseOutputItemDoneEvent:
+    ) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function-call output.
 
         :param output: Optional final output value. Uses previously set output if ``None``.

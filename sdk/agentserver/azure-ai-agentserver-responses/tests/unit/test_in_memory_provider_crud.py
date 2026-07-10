@@ -14,7 +14,7 @@ from typing import Any
 
 import pytest
 
-from azure.ai.agentserver.responses.models import _generated as generated_models
+from azure.ai.extensions.openai.responses import ResponseObject
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 # ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ def _response(
     status: str = "completed",
     output: list[dict[str, Any]] | None = None,
     conversation_id: str | None = None,
-) -> generated_models.ResponseObject:
+) -> ResponseObject:
     payload: dict[str, Any] = {
         "id": response_id,
         "object": "response",
@@ -38,7 +38,7 @@ def _response(
     }
     if conversation_id is not None:
         payload["conversation"] = {"id": conversation_id}
-    return generated_models.ResponseObject(payload)
+    return ResponseObject(payload)
 
 
 def _input_item(item_id: str, text: str) -> dict[str, Any]:
@@ -70,7 +70,7 @@ def test_create__stores_response_envelope() -> None:
     asyncio.run(provider.create_response(_response("resp_1"), None, None))
 
     result = asyncio.run(provider.get_response("resp_1"))
-    assert str(getattr(result, "id")) == "resp_1"
+    assert result["id"] == "resp_1"
 
 
 def test_create__duplicate_raises_value_error() -> None:
@@ -115,7 +115,7 @@ def test_create__returns_defensive_copy() -> None:
     r1["status"] = "failed"
 
     r2 = asyncio.run(provider.get_response("resp_copy"))
-    assert str(getattr(r2, "status")) == "completed"
+    assert r2["status"] == "completed"
 
 
 # ===========================================================================
@@ -157,7 +157,7 @@ def test_update__replaces_envelope() -> None:
     asyncio.run(provider.update_response(updated))
 
     result = asyncio.run(provider.get_response("resp_upd"))
-    assert str(getattr(result, "status")) == "completed"
+    assert result["status"] == "completed"
 
 
 def test_update__stores_new_output_items() -> None:

@@ -54,7 +54,6 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputImageContent
 
 app = ResponsesAgentServerHost()
 
@@ -63,10 +62,10 @@ def _extract_images(items):
     """Extract ``MessageContentInputImageContent`` from expanded input items."""
     images = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if item.get("type") != "message":
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputImageContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_image":
                 images.append(content)
     return images
 
@@ -78,7 +77,7 @@ async def url_handler(request: CreateResponse, context: ResponseContext):
     items = await context.get_input_items()
     images = _extract_images(items)
 
-    urls = [img.image_url for img in images if img.image_url and not is_data_url(img.image_url)]
+    urls = [img["image_url"] for img in images if img.get("image_url") and not is_data_url(img["image_url"])]
     return TextResponse(context, request, text=f"Received {len(urls)} image URL(s): {', '.join(urls)}")
 
 
@@ -91,9 +90,10 @@ async def base64_handler(request: CreateResponse, context: ResponseContext):
 
     results = []
     for img in images:
-        if img.image_url and is_data_url(img.image_url):
-            raw = try_decode_bytes(img.image_url)
-            media = get_media_type(img.image_url)
+        image_url = img.get("image_url")
+        if image_url and is_data_url(image_url):
+            raw = try_decode_bytes(image_url)
+            media = get_media_type(image_url)
             size = len(raw) if raw else 0
             results.append(f"{media or 'unknown'} ({size} bytes)")
     return TextResponse(context, request, text=f"Decoded {len(results)} image(s): {'; '.join(results)}")
@@ -106,7 +106,7 @@ async def file_id_handler(request: CreateResponse, context: ResponseContext):
     items = await context.get_input_items()
     images = _extract_images(items)
 
-    file_ids = [img.file_id for img in images if img.file_id]
+    file_ids = [img["file_id"] for img in images if img.get("file_id")]
     return TextResponse(context, request, text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}")
 
 

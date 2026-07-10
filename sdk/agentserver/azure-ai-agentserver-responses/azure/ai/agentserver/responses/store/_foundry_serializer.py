@@ -7,7 +7,12 @@ from __future__ import annotations
 import json
 from typing import Any, Iterable
 
-from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
+from azure.ai.extensions.openai import to_wire_dict
+from azure.ai.extensions.openai.responses import OutputItem, ResponseObject
+
+
+def _to_dict(value: Any) -> dict[str, Any]:
+    return to_wire_dict(value)
 
 
 def serialize_create_request(
@@ -27,22 +32,22 @@ def serialize_create_request(
     :rtype: bytes
     """
     payload: dict[str, Any] = {
-        "response": response.as_dict(),
-        "input_items": [item.as_dict() for item in (input_items or [])],
+        "response": _to_dict(response),
+        "input_items": [_to_dict(item) for item in (input_items or [])],
         "history_item_ids": list(history_item_ids or []),
     }
     return json.dumps(payload).encode("utf-8")
 
 
 def serialize_response(response: ResponseObject) -> bytes:
-    """Serialize a single :class:`ResponseObject` snapshot to JSON bytes.
+    """Serialize a single :class:`ResponseObject` wire snapshot to JSON bytes.
 
     :param response: The response model to encode.
     :type response: ResponseObject
     :returns: UTF-8 encoded JSON body.
     :rtype: bytes
     """
-    return json.dumps(response.as_dict()).encode("utf-8")
+    return json.dumps(_to_dict(response)).encode("utf-8")
 
 
 def serialize_batch_request(item_ids: list[str]) -> bytes:
@@ -57,21 +62,20 @@ def serialize_batch_request(item_ids: list[str]) -> bytes:
 
 
 def deserialize_response(body: str) -> ResponseObject:
-    """Deserialize a JSON response body into a :class:`ResponseObject` model.
+    """Deserialize a JSON response body into a response wire payload.
 
     :param body: The raw JSON response text from the storage API.
     :type body: str
-    :returns: A populated :class:`ResponseObject` model.
+    :returns: A response wire payload.
     :rtype: ResponseObject
     """
-    return ResponseObject(json.loads(body))  # type: ignore[call-arg]
+    return json.loads(body)
 
 
 def deserialize_paged_items(body: str) -> list[OutputItem]:
     """Deserialize a paged-response JSON body, extracting the ``data`` array.
 
-    The discriminator field ``type`` on each item determines the concrete
-    :class:`OutputItem` subclass returned.
+    Items are returned as dict-native ``OutputItem`` wire payloads.
 
     :param body: The raw JSON response text from the storage API.
     :type body: str
@@ -79,7 +83,7 @@ def deserialize_paged_items(body: str) -> list[OutputItem]:
     :rtype: list[OutputItem]
     """
     data = json.loads(body)
-    return [OutputItem._deserialize(item, []) for item in data.get("data", [])]  # type: ignore[attr-defined]  # pylint: disable=protected-access
+    return list(data.get("data", []))
 
 
 def deserialize_items_array(body: str) -> list[OutputItem | None]:
@@ -99,7 +103,7 @@ def deserialize_items_array(body: str) -> list[OutputItem | None]:
         if item is None:
             result.append(None)
         else:
-            result.append(OutputItem._deserialize(item, []))  # type: ignore[attr-defined]  # pylint: disable=protected-access
+            result.append(item)  # type: ignore[arg-type]
     return result
 
 

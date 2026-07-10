@@ -19,12 +19,12 @@ import inspect
 from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union
 
-from ..models import _generated as generated_models
+from azure.ai.extensions.openai import responses as response_models
 from ._event_stream import ResponseEventStream
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import CreateResponse, ResponseObject
+    from azure.ai.extensions.openai.responses import CreateResponse, ResponseObject
 
 #: Union of all accepted text sources.
 TextSource = Union[str, Callable[[], Union[str, Awaitable[str]]], AsyncIterable[str]]
@@ -86,10 +86,10 @@ class TextResponse:
         self._text = text
         self._configure = configure
 
-    def __aiter__(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    def __aiter__(self) -> AsyncIterator[response_models.ResponseStreamEvent]:
         return self._generate()
 
-    async def _generate(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def _generate(self) -> AsyncIterator[response_models.ResponseStreamEvent]:
         stream = ResponseEventStream(
             response_id=self._context.response_id,
             request=self._request,

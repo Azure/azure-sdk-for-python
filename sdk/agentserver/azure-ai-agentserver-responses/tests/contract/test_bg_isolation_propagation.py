@@ -21,7 +21,7 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._response_context import PlatformContext
-from azure.ai.agentserver.responses.models._generated import OutputItem, ResponseObject
+from azure.ai.extensions.openai.responses import OutputItem, ResponseObject
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from tests._helpers import poll_until

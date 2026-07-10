@@ -20,11 +20,11 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     AgentServerHost,
     build_server_version,
 )
+from azure.ai.extensions.openai.responses import CreateResponse, ResponseStreamEvent
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
-from ..models._generated import CreateResponse, ResponseStreamEvent
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
@@ -42,14 +42,14 @@ CreateHandlerFn = Callable[
 """Type alias for the user-registered create-response handler function.
 
 The handler receives:
-- ``request``: The parsed :class:`CreateResponse` model.
+- ``request``: The parsed :class:`CreateResponse` wire payload.
 - ``context``: The :class:`ResponseContext` for the current request.
 - ``cancellation_signal``: An :class:`asyncio.Event` set when cancellation is requested.
 
 It must return one of:
 - A ``TextResponse`` for text-only responses (it implements ``AsyncIterable``).
-- An ``AsyncIterable`` (async generator) of :class:`ResponseStreamEvent` instances.
-- A synchronous ``Generator`` of :class:`ResponseStreamEvent` instances.
+- An ``AsyncIterable`` (async generator) of :class:`ResponseStreamEvent` wire payloads.
+- A synchronous ``Generator`` of :class:`ResponseStreamEvent` wire payloads.
 """
 
 logger = logging.getLogger("azure.ai.agentserver")

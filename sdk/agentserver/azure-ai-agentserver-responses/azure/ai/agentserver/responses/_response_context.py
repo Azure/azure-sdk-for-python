@@ -7,17 +7,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Sequence
 
-from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
+from azure.ai.extensions.openai import get_field as _get_field
+from azure.ai.extensions.openai import is_type as _is_wire_type
+from azure.ai.extensions.openai.responses import CreateResponse, InputParam, Item, ItemReferenceParam, OutputItem
 
-from .models._generated import (
-    CreateResponse,
-    Item,
-    ItemMessage,
-    ItemReferenceParam,
-    MessageContentInputTextContent,
-    OutputItem,
-)
-from .models._helpers import get_input_expanded, to_item, to_output_item
+from .models._helpers import get_input_expanded, is_item_reference, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
@@ -144,12 +138,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         items = await self.get_input_items(resolve_references=resolve_references)
         texts: list[str] = []
         for item in items:
-            if isinstance(item, ItemMessage):
-                for part in getattr(item, "content", None) or []:
-                    if isinstance(part, MessageContentInputTextContent):
-                        text = getattr(part, "text", None)
-                        if text is not None:
-                            texts.append(text)
+            if _is_wire_type(item, "message") or _get_field(item, "content") is not None:
+                for part in _get_field(item, "content") or []:
+                    text = _get_field(part, "text")
+                    if text is not None:
+                        texts.append(text)
         return "\n".join(texts)
 
     async def _get_input_items_for_persistence(self) -> Sequence[OutputItem]:
@@ -190,8 +183,8 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         results: list[Item | None] = []
 
         for item in expanded:
-            if isinstance(item, ItemReferenceParam):
-                reference_ids.append(item.id)
+            if is_item_reference(item):
+                reference_ids.append(str(item["id"]))
                 reference_positions.append(len(results))
                 results.append(None)  # placeholder
             else:

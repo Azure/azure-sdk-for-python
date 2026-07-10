@@ -188,7 +188,7 @@ def test_apply_event_cancelled_is_noop() -> None:
 
 
 def test_apply_event_output_item_added() -> None:
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
+    from azure.ai.extensions.openai.responses import ResponseObject
 
     execution = _make_execution(status="in_progress")
     execution.response = ResponseObject(
