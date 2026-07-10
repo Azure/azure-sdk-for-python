@@ -75,7 +75,7 @@ jobs:
             # install/build/prepare/regenerate) with a write-scoped token, so a
             # fork head would run untrusted code in a privileged context.
             if [ "${HEAD_OWNER}/${HEAD_REPO_NAME}" != "microsoft/typespec" ]; then
-              echo "::error::Regeneration from fork-based pull requests is not allowed for security reasons. PR #${PR_NUMBER} has its head branch on '${HEAD_OWNER}/${HEAD_REPO_NAME}', not 'microsoft/typespec'. Push the PR branch to microsoft/typespec directly (a non-fork branch) and re-run this workflow."
+              echo "::error::Regeneration from fork-based pull requests is not allowed. PR #${PR_NUMBER} has its head branch on '${HEAD_OWNER}/${HEAD_REPO_NAME}', not 'microsoft/typespec'. Push the PR branch to microsoft/typespec directly (a non-fork branch) and re-run this workflow."
               exit 1
             fi
             REPO="${HEAD_OWNER}/${HEAD_REPO_NAME}"
