@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models, types as _types
+from .. import models as _models
 from .._configuration import HybridComputeManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,6 +40,7 @@ from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -2137,7 +2138,7 @@ class LicensesOperations:
         self,
         resource_group_name: str,
         license_name: str,
-        parameters: Union[_models.License, _types.License, IO[bytes]],
+        parameters: Union[_models.License, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2240,7 +2241,7 @@ class LicensesOperations:
         self,
         resource_group_name: str,
         license_name: str,
-        parameters: _types.License,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2253,7 +2254,7 @@ class LicensesOperations:
         :param license_name: The name of the license. Required.
         :type license_name: str
         :param parameters: Parameters supplied to the Create license operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.License
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2296,7 +2297,7 @@ class LicensesOperations:
         self,
         resource_group_name: str,
         license_name: str,
-        parameters: Union[_models.License, _types.License, IO[bytes]],
+        parameters: Union[_models.License, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.License]:
         """The operation to create or update a license.
@@ -2306,10 +2307,9 @@ class LicensesOperations:
         :type resource_group_name: str
         :param license_name: The name of the license. Required.
         :type license_name: str
-        :param parameters: Parameters supplied to the Create license operation. Is either a License
-         type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.License or
-         ~azure.mgmt.hybridcompute.types.License or IO[bytes]
+        :param parameters: Parameters supplied to the Create license operation. Is one of the following
+         types: License, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.License or JSON or IO[bytes]
         :return: An instance of LROPoller that returns License. The License is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.License]
@@ -2375,7 +2375,7 @@ class LicensesOperations:
         self,
         resource_group_name: str,
         license_name: str,
-        parameters: Union[_models.LicenseUpdate, _types.LicenseUpdate, IO[bytes]],
+        parameters: Union[_models.LicenseUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2478,7 +2478,7 @@ class LicensesOperations:
         self,
         resource_group_name: str,
         license_name: str,
-        parameters: _types.LicenseUpdate,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2491,7 +2491,7 @@ class LicensesOperations:
         :param license_name: The name of the license. Required.
         :type license_name: str
         :param parameters: Parameters supplied to the Update license operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.LicenseUpdate
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2534,7 +2534,7 @@ class LicensesOperations:
         self,
         resource_group_name: str,
         license_name: str,
-        parameters: Union[_models.LicenseUpdate, _types.LicenseUpdate, IO[bytes]],
+        parameters: Union[_models.LicenseUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.License]:
         """The operation to update a license.
@@ -2544,10 +2544,9 @@ class LicensesOperations:
         :type resource_group_name: str
         :param license_name: The name of the license. Required.
         :type license_name: str
-        :param parameters: Parameters supplied to the Update license operation. Is either a
-         LicenseUpdate type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.LicenseUpdate or
-         ~azure.mgmt.hybridcompute.types.LicenseUpdate or IO[bytes]
+        :param parameters: Parameters supplied to the Update license operation. Is one of the following
+         types: LicenseUpdate, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.LicenseUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns License. The License is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.License]
@@ -2916,7 +2915,7 @@ class LicensesOperations:
         return ItemPaged(get_next, extract_data)
 
     def _validate_license_initial(
-        self, parameters: Union[_models.License, _types.License, IO[bytes]], **kwargs: Any
+        self, parameters: Union[_models.License, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3002,12 +3001,12 @@ class LicensesOperations:
 
     @overload
     def begin_validate_license(
-        self, parameters: _types.License, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.License]:
         """The operation to validate a license.
 
         :param parameters: The content of the action request. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.License
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3036,14 +3035,13 @@ class LicensesOperations:
 
     @distributed_trace
     def begin_validate_license(
-        self, parameters: Union[_models.License, _types.License, IO[bytes]], **kwargs: Any
+        self, parameters: Union[_models.License, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.License]:
         """The operation to validate a license.
 
-        :param parameters: The content of the action request. Is either a License type or a IO[bytes]
-         type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.License or
-         ~azure.mgmt.hybridcompute.types.License or IO[bytes]
+        :param parameters: The content of the action request. Is one of the following types: License,
+         JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.License or JSON or IO[bytes]
         :return: An instance of LROPoller that returns License. The License is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.License]
@@ -3240,7 +3238,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: _types.Machine,
+        parameters: JSON,
         *,
         expand: Optional[str] = None,
         content_type: str = "application/json",
@@ -3255,7 +3253,7 @@ class MachinesOperations:
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param parameters: Parameters supplied to the Create hybrid machine operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.Machine
+        :type parameters: JSON
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3302,7 +3300,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: Union[_models.Machine, _types.Machine, IO[bytes]],
+        parameters: Union[_models.Machine, JSON, IO[bytes]],
         *,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -3315,10 +3313,9 @@ class MachinesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Create hybrid machine operation. Is either a
-         Machine type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.Machine or
-         ~azure.mgmt.hybridcompute.types.Machine or IO[bytes]
+        :param parameters: Parameters supplied to the Create hybrid machine operation. Is one of the
+         following types: Machine, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.Machine or JSON or IO[bytes]
         :keyword expand: Expands referenced resources. Default value is None.
         :paramtype expand: str
         :return: Machine. The Machine is compatible with MutableMapping
@@ -3425,7 +3422,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: _types.MachineUpdate,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3438,7 +3435,7 @@ class MachinesOperations:
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param parameters: Parameters supplied to the Update hybrid machine operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.MachineUpdate
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3479,7 +3476,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: Union[_models.MachineUpdate, _types.MachineUpdate, IO[bytes]],
+        parameters: Union[_models.MachineUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Machine:
         """The operation to update a hybrid machine.
@@ -3489,10 +3486,9 @@ class MachinesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Update hybrid machine operation. Is either a
-         MachineUpdate type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.MachineUpdate or
-         ~azure.mgmt.hybridcompute.types.MachineUpdate or IO[bytes]
+        :param parameters: Parameters supplied to the Update hybrid machine operation. Is one of the
+         following types: MachineUpdate, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.MachineUpdate or JSON or IO[bytes]
         :return: Machine. The Machine is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridcompute.models.Machine
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4009,9 +4005,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         name: str,
-        install_patches_input: Union[
-            _models.MachineInstallPatchesParameters, _types.MachineInstallPatchesParameters, IO[bytes]
-        ],
+        install_patches_input: Union[_models.MachineInstallPatchesParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4117,7 +4111,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         name: str,
-        install_patches_input: _types.MachineInstallPatchesParameters,
+        install_patches_input: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4131,7 +4125,7 @@ class MachinesOperations:
         :type name: str
         :param install_patches_input: Input for InstallPatches as directly received by the API.
          Required.
-        :type install_patches_input: ~azure.mgmt.hybridcompute.types.MachineInstallPatchesParameters
+        :type install_patches_input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4177,9 +4171,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         name: str,
-        install_patches_input: Union[
-            _models.MachineInstallPatchesParameters, _types.MachineInstallPatchesParameters, IO[bytes]
-        ],
+        install_patches_input: Union[_models.MachineInstallPatchesParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MachineInstallPatchesResult]:
         """The operation to install patches on a hybrid machine identity in Azure.
@@ -4189,10 +4181,10 @@ class MachinesOperations:
         :type resource_group_name: str
         :param name: The name of the hybrid machine. Required.
         :type name: str
-        :param install_patches_input: Input for InstallPatches as directly received by the API. Is
-         either a MachineInstallPatchesParameters type or a IO[bytes] type. Required.
+        :param install_patches_input: Input for InstallPatches as directly received by the API. Is one
+         of the following types: MachineInstallPatchesParameters, JSON, IO[bytes] Required.
         :type install_patches_input: ~azure.mgmt.hybridcompute.models.MachineInstallPatchesParameters
-         or ~azure.mgmt.hybridcompute.types.MachineInstallPatchesParameters or IO[bytes]
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns MachineInstallPatchesResult. The
          MachineInstallPatchesResult is compatible with MutableMapping
         :rtype:
@@ -4347,7 +4339,7 @@ class LicenseProfilesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: Union[_models.LicenseProfile, _types.LicenseProfile, IO[bytes]],
+        parameters: Union[_models.LicenseProfile, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4457,7 +4449,7 @@ class LicenseProfilesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: _types.LicenseProfile,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4471,7 +4463,7 @@ class LicenseProfilesOperations:
         :type machine_name: str
         :param parameters: Parameters supplied to the Create or Update license profile operation.
          Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.LicenseProfile
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4515,7 +4507,7 @@ class LicenseProfilesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: Union[_models.LicenseProfile, _types.LicenseProfile, IO[bytes]],
+        parameters: Union[_models.LicenseProfile, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.LicenseProfile]:
         """The operation to create or update a license profile.
@@ -4526,9 +4518,8 @@ class LicenseProfilesOperations:
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param parameters: Parameters supplied to the Create or Update license profile operation. Is
-         either a LicenseProfile type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfile or
-         ~azure.mgmt.hybridcompute.types.LicenseProfile or IO[bytes]
+         one of the following types: LicenseProfile, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfile or JSON or IO[bytes]
         :return: An instance of LROPoller that returns LicenseProfile. The LicenseProfile is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.LicenseProfile]
@@ -4592,7 +4583,7 @@ class LicenseProfilesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: Union[_models.LicenseProfileUpdate, _types.LicenseProfileUpdate, IO[bytes]],
+        parameters: Union[_models.LicenseProfileUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4701,7 +4692,7 @@ class LicenseProfilesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: _types.LicenseProfileUpdate,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4714,7 +4705,7 @@ class LicenseProfilesOperations:
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param parameters: Parameters supplied to the Update license profile operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.LicenseProfileUpdate
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4757,7 +4748,7 @@ class LicenseProfilesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        parameters: Union[_models.LicenseProfileUpdate, _types.LicenseProfileUpdate, IO[bytes]],
+        parameters: Union[_models.LicenseProfileUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.LicenseProfile]:
         """The operation to update a license profile.
@@ -4767,10 +4758,9 @@ class LicenseProfilesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param parameters: Parameters supplied to the Update license profile operation. Is either a
-         LicenseProfileUpdate type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfileUpdate or
-         ~azure.mgmt.hybridcompute.types.LicenseProfileUpdate or IO[bytes]
+        :param parameters: Parameters supplied to the Update license profile operation. Is one of the
+         following types: LicenseProfileUpdate, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.LicenseProfileUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns LicenseProfile. The LicenseProfile is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.LicenseProfile]
@@ -5153,7 +5143,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        extension_parameters: Union[_models.MachineExtension, _types.MachineExtension, IO[bytes]],
+        extension_parameters: Union[_models.MachineExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5263,7 +5253,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        extension_parameters: _types.MachineExtension,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5279,7 +5269,7 @@ class MachineExtensionsOperations:
         :type extension_name: str
         :param extension_parameters: Parameters supplied to the Create Machine Extension operation.
          Required.
-        :type extension_parameters: ~azure.mgmt.hybridcompute.types.MachineExtension
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5327,7 +5317,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        extension_parameters: Union[_models.MachineExtension, _types.MachineExtension, IO[bytes]],
+        extension_parameters: Union[_models.MachineExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MachineExtension]:
         """The operation to create or update the extension.
@@ -5340,9 +5330,9 @@ class MachineExtensionsOperations:
         :param extension_name: The name of the machine extension. Required.
         :type extension_name: str
         :param extension_parameters: Parameters supplied to the Create Machine Extension operation. Is
-         either a MachineExtension type or a IO[bytes] type. Required.
-        :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtension or
-         ~azure.mgmt.hybridcompute.types.MachineExtension or IO[bytes]
+         one of the following types: MachineExtension, JSON, IO[bytes] Required.
+        :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtension or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns MachineExtension. The MachineExtension is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.MachineExtension]
@@ -5406,7 +5396,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        extension_parameters: Union[_models.MachineExtensionUpdate, _types.MachineExtensionUpdate, IO[bytes]],
+        extension_parameters: Union[_models.MachineExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5519,7 +5509,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        extension_parameters: _types.MachineExtensionUpdate,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5535,7 +5525,7 @@ class MachineExtensionsOperations:
         :type extension_name: str
         :param extension_parameters: Parameters supplied to the Create Machine Extension operation.
          Required.
-        :type extension_parameters: ~azure.mgmt.hybridcompute.types.MachineExtensionUpdate
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5583,7 +5573,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        extension_parameters: Union[_models.MachineExtensionUpdate, _types.MachineExtensionUpdate, IO[bytes]],
+        extension_parameters: Union[_models.MachineExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MachineExtension]:
         """The operation to create or update the extension.
@@ -5596,9 +5586,9 @@ class MachineExtensionsOperations:
         :param extension_name: The name of the machine extension. Required.
         :type extension_name: str
         :param extension_parameters: Parameters supplied to the Create Machine Extension operation. Is
-         either a MachineExtensionUpdate type or a IO[bytes] type. Required.
-        :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdate or
-         ~azure.mgmt.hybridcompute.types.MachineExtensionUpdate or IO[bytes]
+         one of the following types: MachineExtensionUpdate, JSON, IO[bytes] Required.
+        :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns MachineExtension. The MachineExtension is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.MachineExtension]
@@ -5989,7 +5979,7 @@ class MachineRunCommandsOperations:
         resource_group_name: str,
         machine_name: str,
         run_command_name: str,
-        run_command_properties: Union[_models.MachineRunCommand, _types.MachineRunCommand, IO[bytes]],
+        run_command_properties: Union[_models.MachineRunCommand, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6101,7 +6091,7 @@ class MachineRunCommandsOperations:
         resource_group_name: str,
         machine_name: str,
         run_command_name: str,
-        run_command_properties: _types.MachineRunCommand,
+        run_command_properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6116,7 +6106,7 @@ class MachineRunCommandsOperations:
         :param run_command_name: The name of the run command. Required.
         :type run_command_name: str
         :param run_command_properties: Parameters supplied to the Create Run Command. Required.
-        :type run_command_properties: ~azure.mgmt.hybridcompute.types.MachineRunCommand
+        :type run_command_properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6163,7 +6153,7 @@ class MachineRunCommandsOperations:
         resource_group_name: str,
         machine_name: str,
         run_command_name: str,
-        run_command_properties: Union[_models.MachineRunCommand, _types.MachineRunCommand, IO[bytes]],
+        run_command_properties: Union[_models.MachineRunCommand, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MachineRunCommand]:
         """The operation to create or update a run command.
@@ -6175,10 +6165,10 @@ class MachineRunCommandsOperations:
         :type machine_name: str
         :param run_command_name: The name of the run command. Required.
         :type run_command_name: str
-        :param run_command_properties: Parameters supplied to the Create Run Command. Is either a
-         MachineRunCommand type or a IO[bytes] type. Required.
-        :type run_command_properties: ~azure.mgmt.hybridcompute.models.MachineRunCommand or
-         ~azure.mgmt.hybridcompute.types.MachineRunCommand or IO[bytes]
+        :param run_command_properties: Parameters supplied to the Create Run Command. Is one of the
+         following types: MachineRunCommand, JSON, IO[bytes] Required.
+        :type run_command_properties: ~azure.mgmt.hybridcompute.models.MachineRunCommand or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns MachineRunCommand. The MachineRunCommand is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.MachineRunCommand]
@@ -6563,7 +6553,7 @@ class GatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.Gateway, _types.Gateway, IO[bytes]],
+        parameters: Union[_models.Gateway, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6670,7 +6660,7 @@ class GatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: _types.Gateway,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6683,7 +6673,7 @@ class GatewaysOperations:
         :param gateway_name: The name of the Gateway. Required.
         :type gateway_name: str
         :param parameters: Parameters supplied to the Create gateway operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.Gateway
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6726,7 +6716,7 @@ class GatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.Gateway, _types.Gateway, IO[bytes]],
+        parameters: Union[_models.Gateway, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Gateway]:
         """The operation to create or update a gateway.
@@ -6736,10 +6726,9 @@ class GatewaysOperations:
         :type resource_group_name: str
         :param gateway_name: The name of the Gateway. Required.
         :type gateway_name: str
-        :param parameters: Parameters supplied to the Create gateway operation. Is either a Gateway
-         type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.Gateway or
-         ~azure.mgmt.hybridcompute.types.Gateway or IO[bytes]
+        :param parameters: Parameters supplied to the Create gateway operation. Is one of the following
+         types: Gateway, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.Gateway or JSON or IO[bytes]
         :return: An instance of LROPoller that returns Gateway. The Gateway is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.Gateway]
@@ -6829,7 +6818,7 @@ class GatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: _types.GatewayUpdate,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6842,7 +6831,7 @@ class GatewaysOperations:
         :param gateway_name: The name of the Gateway. Required.
         :type gateway_name: str
         :param parameters: Parameters supplied to the Update gateway operation. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.GatewayUpdate
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6883,7 +6872,7 @@ class GatewaysOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.GatewayUpdate, _types.GatewayUpdate, IO[bytes]],
+        parameters: Union[_models.GatewayUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Gateway:
         """The operation to update a gateway.
@@ -6893,10 +6882,9 @@ class GatewaysOperations:
         :type resource_group_name: str
         :param gateway_name: The name of the Gateway. Required.
         :type gateway_name: str
-        :param parameters: Parameters supplied to the Update gateway operation. Is either a
-         GatewayUpdate type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.GatewayUpdate or
-         ~azure.mgmt.hybridcompute.types.GatewayUpdate or IO[bytes]
+        :param parameters: Parameters supplied to the Update gateway operation. Is one of the following
+         types: GatewayUpdate, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.GatewayUpdate or JSON or IO[bytes]
         :return: Gateway. The Gateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridcompute.models.Gateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7575,7 +7563,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         scope_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7685,7 +7673,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         scope_name: str,
         private_endpoint_connection_name: str,
-        parameters: _types.PrivateEndpointConnection,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7700,7 +7688,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.PrivateEndpointConnection
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7749,7 +7737,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         scope_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -7761,9 +7749,10 @@ class PrivateEndpointConnectionsOperations:
         :type scope_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnection or
-         ~azure.mgmt.hybridcompute.types.PrivateEndpointConnection or IO[bytes]
+        :param parameters: Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes]
+         Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnection or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -8685,7 +8674,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        parameters: _types.HybridComputePrivateLinkScope,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8700,7 +8689,7 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :param parameters: Properties that need to be specified to create or update a Azure Arc for
          Servers and Clusters PrivateLinkScope. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.HybridComputePrivateLinkScope
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8745,7 +8734,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        parameters: Union[_models.HybridComputePrivateLinkScope, _types.HybridComputePrivateLinkScope, IO[bytes]],
+        parameters: Union[_models.HybridComputePrivateLinkScope, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.HybridComputePrivateLinkScope:
         """Creates (or updates) a Azure Arc PrivateLinkScope. Note: You cannot specify a different value
@@ -8757,10 +8746,10 @@ class PrivateLinkScopesOperations:
         :param scope_name: The name of the Azure Arc PrivateLinkScope resource. Required.
         :type scope_name: str
         :param parameters: Properties that need to be specified to create or update a Azure Arc for
-         Servers and Clusters PrivateLinkScope. Is either a HybridComputePrivateLinkScope type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope or
-         ~azure.mgmt.hybridcompute.types.HybridComputePrivateLinkScope or IO[bytes]
+         Servers and Clusters PrivateLinkScope. Is one of the following types:
+         HybridComputePrivateLinkScope, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope or JSON or
+         IO[bytes]
         :return: HybridComputePrivateLinkScope. The HybridComputePrivateLinkScope is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope
@@ -8868,7 +8857,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        private_link_scope_tags: _types.TagsResource,
+        private_link_scope_tags: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8883,7 +8872,7 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :param private_link_scope_tags: Updated tag information to set into the PrivateLinkScope
          instance. Required.
-        :type private_link_scope_tags: ~azure.mgmt.hybridcompute.types.TagsResource
+        :type private_link_scope_tags: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8928,7 +8917,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        private_link_scope_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
+        private_link_scope_tags: Union[_models.TagsResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.HybridComputePrivateLinkScope:
         """Updates an existing PrivateLinkScope's tags. To update other fields use the CreateOrUpdate
@@ -8940,9 +8929,9 @@ class PrivateLinkScopesOperations:
         :param scope_name: The name of the Azure Arc PrivateLinkScope resource. Required.
         :type scope_name: str
         :param private_link_scope_tags: Updated tag information to set into the PrivateLinkScope
-         instance. Is either a TagsResource type or a IO[bytes] type. Required.
-        :type private_link_scope_tags: ~azure.mgmt.hybridcompute.models.TagsResource or
-         ~azure.mgmt.hybridcompute.types.TagsResource or IO[bytes]
+         instance. Is one of the following types: TagsResource, JSON, IO[bytes] Required.
+        :type private_link_scope_tags: ~azure.mgmt.hybridcompute.models.TagsResource or JSON or
+         IO[bytes]
         :return: HybridComputePrivateLinkScope. The HybridComputePrivateLinkScope is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope
@@ -9952,7 +9941,7 @@ class SettingsOperations:
         base_resource_type: str,
         base_resource_name: str,
         settings_resource_name: str,
-        parameters: _types.Settings,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9971,7 +9960,7 @@ class SettingsOperations:
         :param settings_resource_name: The name of the settings resource. Required.
         :type settings_resource_name: str
         :param parameters: Settings details. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.Settings
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10024,7 +10013,7 @@ class SettingsOperations:
         base_resource_type: str,
         base_resource_name: str,
         settings_resource_name: str,
-        parameters: Union[_models.Settings, _types.Settings, IO[bytes]],
+        parameters: Union[_models.Settings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Settings:
         """Updates the base Settings of the target resource.
@@ -10040,9 +10029,9 @@ class SettingsOperations:
         :type base_resource_name: str
         :param settings_resource_name: The name of the settings resource. Required.
         :type settings_resource_name: str
-        :param parameters: Settings details. Is either a Settings type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.Settings or
-         ~azure.mgmt.hybridcompute.types.Settings or IO[bytes]
+        :param parameters: Settings details. Is one of the following types: Settings, JSON, IO[bytes]
+         Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.Settings or JSON or IO[bytes]
         :return: Settings. The Settings is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridcompute.models.Settings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10161,7 +10150,7 @@ class SettingsOperations:
         base_resource_type: str,
         base_resource_name: str,
         settings_resource_name: str,
-        parameters: _types.Settings,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10180,7 +10169,7 @@ class SettingsOperations:
         :param settings_resource_name: The name of the settings resource. Required.
         :type settings_resource_name: str
         :param parameters: Settings details. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.types.Settings
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10233,7 +10222,7 @@ class SettingsOperations:
         base_resource_type: str,
         base_resource_name: str,
         settings_resource_name: str,
-        parameters: Union[_models.Settings, _types.Settings, IO[bytes]],
+        parameters: Union[_models.Settings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Settings:
         """Update the base Settings of the target resource.
@@ -10249,9 +10238,9 @@ class SettingsOperations:
         :type base_resource_name: str
         :param settings_resource_name: The name of the settings resource. Required.
         :type settings_resource_name: str
-        :param parameters: Settings details. Is either a Settings type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.hybridcompute.models.Settings or
-         ~azure.mgmt.hybridcompute.types.Settings or IO[bytes]
+        :param parameters: Settings details. Is one of the following types: Settings, JSON, IO[bytes]
+         Required.
+        :type parameters: ~azure.mgmt.hybridcompute.models.Settings or JSON or IO[bytes]
         :return: Settings. The Settings is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridcompute.models.Settings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10568,7 +10557,7 @@ class _HybridComputeManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         machine_name: str,
-        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, _types.MachineExtensionUpgrade, IO[bytes]],
+        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10675,7 +10664,7 @@ class _HybridComputeManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         machine_name: str,
-        extension_upgrade_parameters: _types.MachineExtensionUpgrade,
+        extension_upgrade_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10689,7 +10678,7 @@ class _HybridComputeManagementClientOperationsMixin(
         :type machine_name: str
         :param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.
          Required.
-        :type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.types.MachineExtensionUpgrade
+        :type extension_upgrade_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10731,7 +10720,7 @@ class _HybridComputeManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         machine_name: str,
-        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, _types.MachineExtensionUpgrade, IO[bytes]],
+        extension_upgrade_parameters: Union[_models.MachineExtensionUpgrade, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to Upgrade Machine Extensions.
@@ -10742,9 +10731,9 @@ class _HybridComputeManagementClientOperationsMixin(
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.
-         Is either a MachineExtensionUpgrade type or a IO[bytes] type. Required.
+         Is one of the following types: MachineExtensionUpgrade, JSON, IO[bytes] Required.
         :type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpgrade or
-         ~azure.mgmt.hybridcompute.types.MachineExtensionUpgrade or IO[bytes]
+         JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10800,7 +10789,7 @@ class _HybridComputeManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         machine_name: str,
-        extensions: Union[_models.SetupExtensionRequest, _types.SetupExtensionRequest, IO[bytes]],
+        extensions: Union[_models.SetupExtensionRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10907,7 +10896,7 @@ class _HybridComputeManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         machine_name: str,
-        extensions: _types.SetupExtensionRequest,
+        extensions: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10920,7 +10909,7 @@ class _HybridComputeManagementClientOperationsMixin(
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
         :param extensions: Parameters supplied to the Setup Extensions operation. Required.
-        :type extensions: ~azure.mgmt.hybridcompute.types.SetupExtensionRequest
+        :type extensions: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10963,7 +10952,7 @@ class _HybridComputeManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         machine_name: str,
-        extensions: Union[_models.SetupExtensionRequest, _types.SetupExtensionRequest, IO[bytes]],
+        extensions: Union[_models.SetupExtensionRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SetupExtensionRequest]:
         """The operation to Setup Machine Extensions.
@@ -10973,10 +10962,9 @@ class _HybridComputeManagementClientOperationsMixin(
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param extensions: Parameters supplied to the Setup Extensions operation. Is either a
-         SetupExtensionRequest type or a IO[bytes] type. Required.
-        :type extensions: ~azure.mgmt.hybridcompute.models.SetupExtensionRequest or
-         ~azure.mgmt.hybridcompute.types.SetupExtensionRequest or IO[bytes]
+        :param extensions: Parameters supplied to the Setup Extensions operation. Is one of the
+         following types: SetupExtensionRequest, JSON, IO[bytes] Required.
+        :type extensions: ~azure.mgmt.hybridcompute.models.SetupExtensionRequest or JSON or IO[bytes]
         :return: An instance of LROPoller that returns SetupExtensionRequest. The SetupExtensionRequest
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.SetupExtensionRequest]
