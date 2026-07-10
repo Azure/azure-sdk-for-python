@@ -649,6 +649,9 @@ class DataOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="data",
+            version_arm_cls=DataVersionBase,
+            container_arm_cls=DataContainer,
         )
 
     @monitor_with_activity(ops_logger, "Data.Restore", ActivityType.PUBLICAPI)
@@ -688,6 +691,9 @@ class DataOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="data",
+            version_arm_cls=DataVersionBase,
+            container_arm_cls=DataContainer,
         )
 
     def _get_latest_version(self, name: str) -> Data:

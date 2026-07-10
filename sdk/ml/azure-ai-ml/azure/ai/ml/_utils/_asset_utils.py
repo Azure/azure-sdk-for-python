@@ -982,10 +982,14 @@ def _archive_or_restore(
     name: str,
     version: Optional[str] = None,
     label: Optional[str] = None,
+    asset_plural: str = None,
+    version_arm_cls: Any = None,
+    container_arm_cls: Any = None,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
     registry_name = asset_operations._registry_name
+    registry_service_client = getattr(asset_operations, "_registry_service_client", None)
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -999,70 +1003,81 @@ def _archive_or_restore(
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
-        version_resource = (
-            version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
+        if registry_name:
+            # Byte-identical registry version archive/restore: GET -> mutate is_archived/stage -> PUT (all on MFE).
+            from azure.ai.ml._utils._registry_utils import (
+                begin_create_or_update_registry_versioned_asset,
+                get_registry_versioned_asset,
             )
-            if registry_name
-            else version_operation.get(
+
+            version_resource = version_arm_cls._deserialize(
+                get_registry_versioned_asset(
+                    registry_service_client, asset_plural, name, version, resource_group_name, registry_name
+                ),
+                [],
+            )
+            version_resource.properties.is_archived = is_archived
+            version_resource.properties.stage = None
+            begin_create_or_update_registry_versioned_asset(
+                registry_service_client,
+                asset_plural,
+                name,
+                version,
+                resource_group_name,
+                registry_name,
+                version_resource,
+            )
+        else:
+            version_resource = version_operation.get(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
             )
-        )
-        version_resource.properties.is_archived = is_archived
-        version_resource.properties.stage = None
-        (  # pylint: disable=expression-not-assigned
-            version_operation.begin_create_or_update(
-                name=name,
-                version=version,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                body=version_resource,
-            )
-            if registry_name
-            else version_operation.create_or_update(
+            version_resource.properties.is_archived = is_archived
+            version_resource.properties.stage = None
+            version_operation.create_or_update(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 body=version_resource,
             )
-        )
     else:
-        container_resource = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
+        if registry_name:
+            from azure.ai.ml._utils._registry_utils import (
+                begin_create_or_update_registry_container,
+                get_registry_container_asset,
             )
-            if registry_name
-            else container_operation.get(
+
+            container_resource = container_arm_cls._deserialize(
+                get_registry_container_asset(
+                    registry_service_client, asset_plural, name, resource_group_name, registry_name
+                ),
+                [],
+            )
+            container_resource.properties.is_archived = is_archived
+            begin_create_or_update_registry_container(
+                registry_service_client,
+                asset_plural,
+                name,
+                resource_group_name,
+                registry_name,
+                container_resource,
+            )
+        else:
+            container_resource = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
             )
-        )
-        container_resource.properties.is_archived = is_archived
-        (  # pylint: disable=expression-not-assigned
-            container_operation.begin_create_or_update(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                body=container_resource,
-            )
-            if registry_name
-            else container_operation.create_or_update(
+            container_resource.properties.is_archived = is_archived
+            container_operation.create_or_update(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 body=container_resource,
             )
-        )
 
 
 def _resolve_label_to_asset(

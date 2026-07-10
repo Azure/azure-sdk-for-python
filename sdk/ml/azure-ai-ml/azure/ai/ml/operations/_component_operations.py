@@ -744,6 +744,9 @@ class ComponentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="components",
+            version_arm_cls=ComponentVersion,
+            container_arm_cls=ComponentContainer,
         )
 
     @monitor_with_telemetry_mixin(ops_logger, "Component.Restore", ActivityType.PUBLICAPI)
@@ -781,6 +784,9 @@ class ComponentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="components",
+            version_arm_cls=ComponentVersion,
+            container_arm_cls=ComponentContainer,
         )
 
     def _get_latest_version(self, component_name: str) -> Component:

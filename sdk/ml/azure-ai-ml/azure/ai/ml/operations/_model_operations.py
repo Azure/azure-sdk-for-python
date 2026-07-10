@@ -554,6 +554,9 @@ class ModelOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="models",
+            version_arm_cls=ArmModelVersion,
+            container_arm_cls=ArmModelContainer,
         )
 
     @monitor_with_activity(ops_logger, "Model.Restore", ActivityType.PUBLICAPI)
@@ -590,6 +593,9 @@ class ModelOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="models",
+            version_arm_cls=ArmModelVersion,
+            container_arm_cls=ArmModelContainer,
         )
 
     @monitor_with_activity(ops_logger, "Model.List", ActivityType.PUBLICAPI)

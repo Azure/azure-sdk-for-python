@@ -447,6 +447,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="environments",
+            version_arm_cls=EnvironmentVersion,
+            container_arm_cls=EnvironmentContainer,
         )
 
     @monitor_with_activity(ops_logger, "Environment.Restore", ActivityType.PUBLICAPI)
@@ -485,6 +488,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="environments",
+            version_arm_cls=EnvironmentVersion,
+            container_arm_cls=EnvironmentContainer,
         )
 
     def _get_latest_version(self, name: str) -> Environment:

@@ -358,6 +358,57 @@ def begin_create_or_update_registry_versioned_asset(
     return poller
 
 
+def begin_create_or_update_registry_container(
+    service_client, asset_plural: str, name, resource_group, registry_name, body, *, polling_interval=None, wait=True
+):
+    """Byte-identical registry container create-or-update LRO (``.../registries/{registry}/{plural}/{name}``).
+
+    :param service_client: The hybrid arm client bound to the registry MFE endpoint.
+    :param asset_plural: The plural asset segment of the URL (e.g. ``codes``, ``models``, ``data``, ``environments``).
+    :type asset_plural: str
+    :param name: Container name.
+    :param resource_group: Resource group name.
+    :param registry_name: Registry name.
+    :param body: The arm hybrid container model to serialize as the request body.
+    :keyword polling_interval: Optional poll interval override.
+    :keyword wait: When ``True`` (default) the LRO is awaited and the final body dict returned.
+    :return: The raw camelCase final response body, or the ``LROPoller`` when ``wait`` is ``False``.
+    :rtype: dict or ~azure.core.polling.LROPoller
+    """
+    subscription_id = service_client._config.subscription_id
+    content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)
+    request = HttpRequest(
+        "PUT",
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/registries/{registry_name}"
+        f"/{asset_plural}/{name}",
+        params={"api-version": REGISTRY_DATAPLANE_API_VERSION},
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        content=content,
+    )
+    path_format_arguments = {
+        "endpoint": service_client._serialize.url(
+            "self._config.base_url", service_client._config.base_url, "str", skip_quote=True
+        ),
+    }
+    request.url = service_client._client.format_url(request.url, **path_format_arguments)
+    raw_result = service_client._client._pipeline.run(request, stream=True)
+    response = raw_result.http_response
+    response.read()
+    if response.status_code not in [200, 201]:
+        response.raise_for_status()
+
+    def get_long_running_output(pipeline_response):
+        return pipeline_response.http_response.json()
+
+    interval = polling_interval if polling_interval is not None else service_client._config.polling_interval
+    polling_method = ARMPolling(interval, path_format_arguments=path_format_arguments)
+    poller = LROPoller(service_client._client, raw_result, get_long_running_output, polling_method)
+    if wait:
+        return poller.result()
+    return poller
+
+
 def begin_import_registry_asset(
     service_client, resource_group, registry_name, body, *, polling_cls=ARMPolling, polling_interval=None, wait=True
 ):
