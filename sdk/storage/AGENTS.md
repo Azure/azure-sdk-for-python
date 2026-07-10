@@ -44,15 +44,14 @@ The four data-plane storage packages (`blob`, `queue`, `file-share`, `file-datal
 - Each exposes a **container/share/filesystem client** and an **item client** (blob, queue, file/directory) with matching method signatures where applicable.
 - Sync and async clients share the same public method names; the async variants live in a corresponding `aio/` subpackage.
 - When adding or changing a method on one client, verify whether the equivalent clients in the other packages should receive the same change.
+- When updating a package `_shared/` module, check equivalent `_shared` modules across other storage packages and keep shared behavior aligned unless divergence is intentional and documented.
 
 ### Rule 3: Prefer Existing Patterns Over New Abstractions
 
 Before introducing a new helper class, utility function, or base class, search for an existing implementation across the storage packages. Common patterns already in use include:
 
-- Shared authentication helpers in `_shared/` subdirectories.
-- `StorageConfiguration` and pipeline-building utilities reused across packages.
-- `_serialize.py` / `_deserialize.py` modules for request/response transformation.
-- `StorageRetryPolicy` and connection-string parsing in `azure-storage-blob/_shared/`.
+- Prefer existing helper and handler patterns before introducing new abstractions.
+- Check common extension points first: `_helpers` modules, upload/download helper modules, handler modules, and package `_shared` utilities.
 
 Introduce new abstractions only when an existing pattern genuinely cannot accommodate the requirement.
 
@@ -63,7 +62,7 @@ Azure Storage services are case-sensitive for many identifiers (container names,
 - HTTP header names — use constants from `azure.storage.blob._shared.constants` or equivalent.
 - Service version strings — reference the `X_MS_VERSION` constant (from `azure.storage.blob._shared.constants`) rather than inline strings.
 - SAS permission characters — use the typed permission classes (e.g., `BlobSasPermissions`, `QueueSasPermissions`) instead of raw character strings.
-- Error codes — compare against named constants, not literal strings.
+- Error codes/constants — avoid repeating literal strings. Reuse existing constants when available (including shared constants modules). If none exist, define module-level constants near usage and follow local package conventions.
 
 ## Storage Service Semantics
 
@@ -96,24 +95,41 @@ Agents modifying service-specific logic should be aware of the following behavio
 
 ```bash
 cd sdk/storage/<package-name>
-pip install -e ".[dev]"
+pip install -r dev_requirements.txt
+pip install -e .
+azpysdk black .
 ```
+> Use a virtual environment (recommended) to avoid dependency conflicts with other SDK packages or your global Python environment.
 
 ### Run tests (playback mode — no live service required)
 
 ```bash
-cd sdk/storage/<package-name>
-pytest tests/ -v
-```
-
-### Run tests against a live service or local emulator
-
-Set the appropriate environment variables for the target package (e.g., `AZURE_STORAGE_ACCOUNT_NAME`, `AZURE_STORAGE_ACCOUNT_KEY` or `AZURE_STORAGE_CONNECTION_STRING`), then:
+To run tests in live mode, set the environment variable first (do not use a `--live` flag):
 
 ```bash
-cd sdk/storage/<package-name>
-pytest tests/ -v --live
+# Linux/macOS
+export AZURE_TEST_RUN_LIVE=true
+
+# Windows (PowerShell)
+$env:AZURE_TEST_RUN_LIVE="true"
 ```
+
+If there is a test command immediately after, keep it and make it normal `pytest` usage (no `--live`).
+
+---
+
+### C) Add single/few-test examples in test section (near live guidance)
+
+Add:
+
+```bash
+# Run one test file
+pytest tests/test_<feature>.py
+
+# Run one test case
+pytest tests/test_<feature>.py::test_<name>
+```
+
 
 ### Run tests against the Azurite local emulator (optional)
 
@@ -143,3 +159,10 @@ cd sdk/storage/<package-name>
 azpysdk pylint .
 azpysdk mypy .
 ```
+
+### Rule 5: Follow typing conventions
+
+- All public APIs must include Python 3 style type hints. Add hints to private functions and internal helpers when practical.
+- Follow existing SDK typing patterns (for example, prefer `Literal` where that pattern is established rather than introducing new enum types only for typing).
+- If a typing-only import is not needed at runtime, place it under `if TYPE_CHECKING:`.
+- Prefer explicit optionality in signatures. For kwargs containers, make optionality clear when `None` is accepted (for example, `Optional[Dict[str, Any]]` or `dict[str, Any] | None`).
