@@ -549,7 +549,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             (
-                self._service_client_10_2021_dataplanepreview
+                self._service_client_registry_arm
                 if registry_name or registry_reference
                 else self._service_client_08_2023_preview
             ),
@@ -568,7 +568,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             (
-                self._service_client_10_2021_dataplanepreview
+                self._service_client_registry_arm
                 if registry_name or registry_reference
                 else self._service_client_08_2023_preview
             ),
@@ -578,6 +578,7 @@ class MLClient:
             control_plane_client=self._service_client_08_2023_preview,
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             registry_reference=registry_reference,
         )
 
@@ -585,7 +586,7 @@ class MLClient:
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023),
+            (self._service_client_registry_arm if registry_name else self._service_client_04_2023),
             self._datastores,
             registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,  # type: ignore[arg-type]
@@ -594,7 +595,7 @@ class MLClient:
         self._environments = EnvironmentOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
+            (self._service_client_registry_arm if registry_name else self._service_client_04_2023_preview),
             self._operation_container,
             registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,  # type: ignore[arg-type]
@@ -656,7 +657,7 @@ class MLClient:
         self._data = DataOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
+            (self._service_client_registry_arm if registry_name else self._service_client_04_2023_preview),
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
@@ -667,11 +668,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name
-                else self._service_client_01_2024_preview_arm
-            ),
+            (self._service_client_registry_arm if registry_name else self._service_client_01_2024_preview_arm),
             self._operation_container,
             self._preflight,
             registry_service_client=getattr(self, "_service_client_registry_arm", None),
