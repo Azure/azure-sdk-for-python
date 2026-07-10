@@ -322,13 +322,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 await link.flow(link_credit=0, drain=True)
                 deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
                 idle_cycles = 0
-                while time.time() < deadline:
+                while True:
+                    remaining = deadline - time.time()
+                    if remaining <= 0:
+                        break
                     before = handler._received_messages.qsize()
                     # listen() directly, not do_work_async() (which re-issues credit at
                     # 0 and undoes the drain). batch=outstanding assembles multi-frame
-                    # transfers in one cycle; pyamqp drops the drain echo, so stop after
-                    # 2 idle cycles.
-                    await handler._connection.listen(wait=handler._socket_timeout, batch=outstanding)
+                    # transfers in one cycle; cap each read by the remaining budget so
+                    # close stays bounded. pyamqp drops the drain echo, so stop after 2
+                    # idle cycles.
+                    wait = remaining if handler._socket_timeout is None else min(handler._socket_timeout, remaining)
+                    await handler._connection.listen(wait=wait, batch=outstanding)
                     if handler._received_messages.qsize() == before:
                         idle_cycles += 1
                         if idle_cycles >= 2:

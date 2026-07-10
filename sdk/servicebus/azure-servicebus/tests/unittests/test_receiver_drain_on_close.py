@@ -30,6 +30,7 @@ no network.
 """
 
 import queue
+import time
 
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -139,23 +140,28 @@ class TestPyamqpTransportDrain:
         # drain aborted before releasing; no exception escapes
         h.settle_messages.assert_not_called()
 
-    def test_bounded_when_never_quiescent(self):
+    def test_bounded_by_deadline_even_with_blocking_listen(self):
+        # A large socket_timeout must not let a single blocking read overrun the cap:
+        # each listen() should wait at most the remaining drain budget.
         buffer = queue.Queue()
         connection = MagicMock(name="connection")
-        seq = {"n": 0}
 
         def _listen(*args, **kwargs):
-            seq["n"] += 1
-            frame = TransferFrame(handle=0, delivery_id=seq["n"], delivery_tag=bytes(str(seq["n"]), "ascii"))
+            time.sleep(kwargs.get("wait", 0))  # block for the requested wait
+            frame = TransferFrame(handle=0, delivery_id=1, delivery_tag=b"t")
             buffer.put((frame, MagicMock()))  # never quiescent
 
         connection.listen = MagicMock(side_effect=_listen)
         h = _handler(credit=3, buffer=buffer, connection=connection)
+        h._socket_timeout = 5  # much larger than the drain cap
 
-        with patch("azure.servicebus._transport._pyamqp_transport.RECEIVE_LINK_DRAIN_TIMEOUT", 0.05):
-            PyamqpTransport.drain_receive_link_and_release_messages(h)  # must terminate, not hang
+        start = time.time()
+        with patch("azure.servicebus._transport._pyamqp_transport.RECEIVE_LINK_DRAIN_TIMEOUT", 0.1):
+            PyamqpTransport.drain_receive_link_and_release_messages(h)
+        elapsed = time.time() - start
 
         assert h._connection.listen.call_count >= 1
+        assert elapsed < 2.0  # bounded by the cap, not the 5s socket timeout
 
 
 class TestPyamqpTransportDrainAsync:
@@ -206,23 +212,28 @@ class TestPyamqpTransportDrainAsync:
         h.settle_messages_async.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_bounded_when_never_quiescent(self):
+    async def test_bounded_by_deadline_even_with_blocking_listen(self):
+        import asyncio  # pylint: disable=do-not-import-asyncio
+
         buffer = queue.Queue()
         connection = MagicMock(name="connection")
-        seq = {"n": 0}
 
         async def _listen(*args, **kwargs):
-            seq["n"] += 1
-            frame = TransferFrame(handle=0, delivery_id=seq["n"], delivery_tag=bytes(str(seq["n"]), "ascii"))
-            buffer.put((frame, MagicMock()))
+            await asyncio.sleep(kwargs.get("wait", 0))  # block for the requested wait
+            frame = TransferFrame(handle=0, delivery_id=1, delivery_tag=b"t")
+            buffer.put((frame, MagicMock()))  # never quiescent
 
         connection.listen = AsyncMock(side_effect=_listen)
         h = _handler(credit=3, buffer=buffer, connection=connection, is_async=True)
+        h._socket_timeout = 5  # much larger than the drain cap
 
-        with patch("azure.servicebus.aio._transport._pyamqp_transport_async.RECEIVE_LINK_DRAIN_TIMEOUT", 0.05):
-            await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)  # must terminate
+        start = time.time()
+        with patch("azure.servicebus.aio._transport._pyamqp_transport_async.RECEIVE_LINK_DRAIN_TIMEOUT", 0.1):
+            await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)
+        elapsed = time.time() - start
 
         assert h._connection.listen.await_count >= 1
+        assert elapsed < 2.0  # bounded by the cap, not the 5s socket timeout
 
 
 # --------------------------------------------------------------------------- #
