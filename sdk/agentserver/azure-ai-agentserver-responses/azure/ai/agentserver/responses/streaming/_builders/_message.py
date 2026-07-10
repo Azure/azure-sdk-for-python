@@ -8,10 +8,8 @@ from collections.abc import AsyncIterable
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator, cast
 
-from azure.ai.agentserver.responses.models._wire import to_wire_dict
-
 from azure.ai.agentserver.responses import models as response_models
-from ._base import BaseOutputItemBuilder, BuilderLifecycleState
+from ._base import BaseOutputItemBuilder, BuilderLifecycleState, _require_wire_dict
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -185,7 +183,6 @@ class TextContentBuilder:
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
-        annotation_payload = to_wire_dict(annotation)
         return cast(
             response_models.ResponseOutputTextAnnotationAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
@@ -195,7 +192,7 @@ class TextContentBuilder:
                     "output_index": self._output_index,
                     "content_index": self._content_index,
                     "annotation_index": annotation_index,
-                    "annotation": annotation_payload,
+                    "annotation": _require_wire_dict(annotation, "annotation"),
                 }
             ),
         )

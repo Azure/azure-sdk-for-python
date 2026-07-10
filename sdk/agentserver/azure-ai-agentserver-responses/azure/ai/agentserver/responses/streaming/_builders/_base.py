@@ -8,8 +8,6 @@ from copy import deepcopy
 from enum import Enum
 from typing import TYPE_CHECKING, Any, cast
 
-from azure.ai.agentserver.responses.models._wire import to_wire_dict
-
 from azure.ai.agentserver.responses import models as response_models
 
 if TYPE_CHECKING:
@@ -29,6 +27,13 @@ def _require_non_empty(value: str, field_name: str) -> str:
     """
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{field_name} must be a non-empty string")
+    return value
+
+
+def _require_wire_dict(value: Any, field_name: str) -> dict[str, Any]:
+    """Validate that a builder payload is already a dict-native wire payload."""
+    if not isinstance(value, dict):
+        raise TypeError(f"{field_name} must be a dict-native wire payload")
     return value
 
 
@@ -169,7 +174,7 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseOutputItemAddedEvent
         """
-        return self._emit_added(to_wire_dict(item))
+        return self._emit_added(_require_wire_dict(item, "item"))
 
     def emit_done(self, item: response_models.OutputItem) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for a generic item.
@@ -179,4 +184,4 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseOutputItemDoneEvent
         """
-        return self._emit_done(to_wire_dict(item))
+        return self._emit_done(_require_wire_dict(item, "item"))

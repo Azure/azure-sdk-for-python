@@ -933,7 +933,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # (e.g., after a process restart).
             try:
                 response_obj = await self._provider.get_response(response_id, context=_context)
-                snapshot = to_wire_dict(response_obj)
+                snapshot = cast(dict[str, Any], response_obj)
                 logger.info(
                     "Retrieved response %s: status=%s output_count=%d",
                     response_id,
@@ -1362,7 +1362,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         """
         try:
             response_obj = await self._provider.get_response(response_id, context=_context)
-            persisted = to_wire_dict(response_obj)
+            persisted = cast(dict[str, Any], response_obj)
 
             # B1: background check comes first — non-bg responses always
             # get the "synchronous" message regardless of terminal status.

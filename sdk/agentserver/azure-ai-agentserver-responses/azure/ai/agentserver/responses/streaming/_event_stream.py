@@ -9,7 +9,6 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Iterator, Sequence, cast
 
-from azure.ai.agentserver.responses.models._wire import to_wire_dict
 from azure.ai.agentserver.responses import models as response_models
 from azure.ai.agentserver.responses.models import AgentReference
 
@@ -59,9 +58,11 @@ def _resolve_conversation_param(raw: Any) -> str | None:
     return None
 
 
-def _as_dict(obj: Any) -> dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-    """Convert a model or dict-like object to a plain dictionary."""
-    return to_wire_dict(obj)
+def _require_wire_dict(obj: Any, field_name: str) -> dict[str, Any]:
+    """Validate that a convenience-method payload is already dict-native."""
+    if not isinstance(obj, dict):
+        raise TypeError(f"{field_name} must be a dict-native wire payload")
+    return obj
 
 
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
@@ -845,8 +846,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_computer_call()
-        action_dict = _as_dict(action)
-        checks = [_as_dict(c) for c in (pending_safety_checks or [])]
+        action_dict = _require_wire_dict(action, "action")
+        checks = [_require_wire_dict(c, "pending_safety_checks item") for c in (pending_safety_checks or [])]
         item = {
             "type": "computer_call",
             "id": builder.item_id,
@@ -876,8 +877,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_computer_call_output()
-        output_dict = _as_dict(output)
-        checks = [_as_dict(c) for c in (acknowledged_safety_checks or [])]
+        output_dict = _require_wire_dict(output, "output")
+        checks = [_require_wire_dict(c, "acknowledged_safety_checks item") for c in (acknowledged_safety_checks or [])]
         item = {
             "type": "computer_call_output",
             "id": builder.item_id,
@@ -906,7 +907,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_local_shell_call()
-        action_dict = _as_dict(action)
+        action_dict = _require_wire_dict(action, "action")
         item = {
             "type": "local_shell_call",
             "id": builder.item_id,
@@ -950,8 +951,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_function_shell_call()
-        action_dict = _as_dict(action)
-        env_dict = _as_dict(environment)
+        action_dict = _require_wire_dict(action, "action")
+        env_dict = _require_wire_dict(environment, "environment")
         item = {
             "type": "shell_call",
             "id": builder.item_id,
@@ -984,7 +985,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_function_shell_call_output()
-        output_list = [_as_dict(o) for o in output]
+        output_list = [_require_wire_dict(o, "output item") for o in output]
         item = {
             "type": "shell_call_output",
             "id": builder.item_id,
@@ -1014,7 +1015,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_apply_patch_call()
-        op_dict = _as_dict(operation)
+        op_dict = _require_wire_dict(operation, "operation")
         item = {
             "type": "apply_patch_call",
             "id": builder.item_id,
@@ -1070,7 +1071,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         builder = self.add_output_item_custom_tool_call_output()
         output_val: Any
         if isinstance(output, list):
-            output_val = [_as_dict(o) for o in output]
+            output_val = [_require_wire_dict(o, "output item") for o in output]
         else:
             output_val = output
         item = {

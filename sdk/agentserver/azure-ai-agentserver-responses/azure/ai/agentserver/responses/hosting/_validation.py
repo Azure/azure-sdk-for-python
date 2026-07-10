@@ -49,6 +49,8 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
             details=details,
         )
 
+    if isinstance(payload, dict):
+        return cast(CreateResponse, payload)
     return cast(CreateResponse, dict(payload))
 
 

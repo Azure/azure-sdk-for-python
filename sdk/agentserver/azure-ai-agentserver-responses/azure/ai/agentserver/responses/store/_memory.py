@@ -9,7 +9,7 @@ import contextlib
 from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
-from typing import Any, AsyncIterator, Dict, Iterable
+from typing import Any, AsyncIterator, Dict, Iterable, cast
 
 from azure.ai.agentserver.responses.models._wire import get_field, to_wire_dict
 from azure.ai.agentserver.responses.models import OutputItem, ResponseObject, ResponseStreamEvent
@@ -380,7 +380,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             if entry is None:
                 return False
 
-            entry.execution.set_response_snapshot(to_wire_dict(response))
+            entry.execution.set_response_snapshot(deepcopy(cast(dict[str, Any], response)))
             self._apply_ttl_unlocked(entry, ttl_seconds)
             return True
 
