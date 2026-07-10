@@ -328,7 +328,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
     load_dotenv()
     #
     endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
+    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
     # Construct the paths to the data folder and data file used in this sample
     script_dir = os.path.dirname(os.path.abspath(__file__))

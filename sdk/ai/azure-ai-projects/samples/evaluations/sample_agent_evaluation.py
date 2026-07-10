@@ -54,7 +54,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     agent = project_client.agents.create_version(
-        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=PromptAgentDefinition(
             model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",

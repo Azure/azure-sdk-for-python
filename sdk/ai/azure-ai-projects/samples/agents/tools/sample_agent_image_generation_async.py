@@ -55,7 +55,7 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 
 load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = "MyAgent"
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main():

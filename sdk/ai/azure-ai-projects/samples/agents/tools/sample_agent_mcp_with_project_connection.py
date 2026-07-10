@@ -36,7 +36,7 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-AGENT_NAME = "MyAgent7"
+AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 with (
     DefaultAzureCredential() as credential,

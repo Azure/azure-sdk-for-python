@@ -51,7 +51,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = os.environ["FOUNDRY_AGENT_NAME"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 with (
     DefaultAzureCredential() as credential,

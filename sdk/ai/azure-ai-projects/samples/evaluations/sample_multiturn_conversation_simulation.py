@@ -51,7 +51,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 # Path to the simulation scenarios data file
 script_dir = os.path.dirname(os.path.abspath(__file__))

@@ -48,7 +48,7 @@ def main() -> None:  # pylint: disable=too-many-statements
     load_dotenv()
     #
     endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
+    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
     with (
         DefaultAzureCredential() as credential,

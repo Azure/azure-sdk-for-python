@@ -39,7 +39,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = "MyAgent"
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
