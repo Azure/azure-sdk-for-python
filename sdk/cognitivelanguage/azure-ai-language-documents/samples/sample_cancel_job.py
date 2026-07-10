@@ -26,6 +26,7 @@ from urllib.parse import urlparse
 # [START sample_cancel_job]
 def sample_cancel_job() -> None:
     import os
+    from urllib.parse import urlparse
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.documents import AnalyzeDocumentsClient
 

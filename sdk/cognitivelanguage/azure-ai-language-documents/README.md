@@ -253,6 +253,7 @@ If you need to cancel a submitted job, use `begin_cancel_job`:
 ```python
 def sample_cancel_job() -> None:
     import os
+    from urllib.parse import urlparse
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.documents import AnalyzeDocumentsClient
 
