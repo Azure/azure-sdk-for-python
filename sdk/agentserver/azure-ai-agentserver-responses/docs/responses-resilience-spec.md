@@ -138,7 +138,7 @@ deliver per the table below:
 |---|---|---|---|---|
 | **A** | Handler returns within grace | Persist terminal; task body returns | Persist terminal; task body returns | Persist terminal (best-effort) |
 | **B** | Grace exhausted (graceful shutdown) | Task left `in_progress`; handler stops; **next lifetime re-invokes** | Task body persists `failed` (server_error, shutdown_reason=grace_exhausted) | Best-effort in-process `failed` marker |
-| **C** | SIGKILL or Path-B failure | Next-lifetime recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Next-lifetime recovery scanner re-fires task → marks response `failed` (server_error, shutdown_reason=crash_recovery) | No recovery applies (no persistence) |
+| **C** | SIGKILL or Path-B failure | Next-lifetime recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Next-lifetime recovery scanner re-fires task → marks response `failed` (`server_error`) | No recovery applies (no persistence) |
 
 The framework MUST implement Path B and Path C as independent fallbacks
 for each other (Path C is a complete fallback for Path B). A Path-B
@@ -403,8 +403,7 @@ The only differences are:
    `response.created` event is observed.
 3. **Crash mid-handler** — task stays `in_progress`. The recovery
    scanner re-fires it; the recovered entry takes the `mark-failed`
-   branch and persists `failed` (server_error,
-   shutdown_reason=crash_recovery) idempotently. (The idempotency
+   branch and persists `failed` (`server_error`) idempotently. (The idempotency
    check skips the overwrite if the response is already terminal —
    see §7.2.) The handler is NOT re-invoked.
 
@@ -509,10 +508,26 @@ On recovery, the task body:
    `cancelled`, `incomplete`), returns without overwriting — the
    crash happened after terminal persistence and before the
    task body could complete.
-3. Otherwise, persists a `failed` response with
-   `error.code="server_error"`,
-   `error.additionalInfo.shutdown_reason="crash_recovery"`,
-   `output=[]`.
+3. Otherwise, marks the response `failed` by **overlaying a failed
+   terminal onto the persisted response snapshot** — the developer's
+   response object (its `agent_reference`, `model`, the `output`
+   accumulated and durably persisted before the crash, `created_at`,
+   `conversation_id`, and any other fields set at `response.created` or
+   by a later checkpoint) is preserved. Only `status` is set to
+   `failed` and an `error` is attached, with `error.code="server_error"`
+   and a path-specific `error.message`. The internal recovery cause
+   (crash vs graceful-shutdown) is **not** surfaced on the customer
+   payload — it selects the `message` and is available in server logs.
+   The
+   progress the response made before the crash is **not** discarded —
+   the persisted snapshot is the authoritative record of what was
+   durably accomplished, and the failure is layered on top of it.
+
+   When **no** response was ever persisted (the handler crashed before
+   emitting `response.created`, so the store has no snapshot), the body
+   synthesizes a minimal `failed` object instead, carrying the
+   `agent_reference` and `model` from the persisted task input (§5) so
+   the write still satisfies the store's agent-reference requirement.
 4. Returns cleanly. Task → `completed`. The handler is NOT invoked.
 
 For steerable chains (`steerable_conversations=true`), the body
@@ -523,37 +538,65 @@ persisted is the authoritative failure record; the in-process result
 of the body's `return None` is consistent with that. For non-steerable
 chains, returning is correct.
 
-### §7.3 — The `server_error` payload
+### §7.3 — The `server_error` error object
 
-Every framework-emitted recovery / shutdown marker uses this
-exact shape:
+Every framework-emitted recovery / shutdown marker attaches this
+exact `error` object to the response's terminal:
+
+```json
+{
+  "code": "server_error",
+  "message": "<path-specific human-readable cause>"
+}
+```
+
+- `code` is always `"server_error"` — the user-facing error class is
+  generic. Per the SOT behaviour contract the response-object
+  `ResponseError` carries only `code` and `message` (no `type` — that
+  field belongs to the HTTP error envelope, not the response object —
+  and no `additionalInfo`).
+- `message` is human-readable and SHOULD encode the path-specific
+  cause ("Server interrupted before completing this response" for path C
+  / "Server stopped before this response completed" for path B). Ports
+  MAY localise; the structure is what is normative.
+- The internal recovery cause (path B `grace_exhausted` vs path C
+  `crash_recovery`) is **not** surfaced on the customer payload — it
+  only selects the `message` and is recorded in server logs. Exposing
+  it would leak framework-internal lifecycle mechanics to customers.
+
+**The error object is overlaid onto the response, not written as a
+standalone object.** The enclosing response is the **preserved
+persisted snapshot** (§7.2 step 3): `status` is set to `failed` and
+the `error` above is attached, while `agent_reference`, `model`,
+`output` (progress made before the crash), `created_at`, and other
+developer-set fields are carried through unchanged. A representative
+overlaid terminal — a two-phase response that crashed after its first
+phase was durably persisted:
 
 ```json
 {
   "id": "<response_id>",
   "object": "response",
   "status": "failed",
-  "output": [],
+  "agent_reference": { "type": "agent_reference", "name": "<agent>", "version": "<n>" },
+  "model": "<model>",
+  "output": [ { "type": "message", "id": "msg_1", "...": "phase-1 output persisted before crash" } ],
   "error": {
-    "type": "server_error",
     "code": "server_error",
-    "message": "<path-specific human-readable cause>",
-    "additionalInfo": {
-      "shutdown_reason": "crash_recovery" | "grace_exhausted"
-    }
+    "message": "<path-specific human-readable cause>"
   }
 }
 ```
 
-- `type` and `code` are always `"server_error"` — the user-facing
-  error class is generic.
-- `shutdown_reason` is operator-facing and distinguishes path B
-  (`grace_exhausted` — in-process marker fired) from path C
-  (`crash_recovery` — next-lifetime recovery scanner marker).
-- `message` is human-readable and SHOULD encode the path-specific
-  cause ("Server interrupted before completing this response" /
-  "Server stopped before this response completed"). Ports MAY
-  localise; the structure is what is normative.
+**`agent_reference` (with both `name` and `version`) is mandatory on
+every write to the response store** — the store validates it and
+rejects the write when it is missing, which would leave the response
+stuck `in_progress`. Preserving the persisted snapshot satisfies this
+by construction (the snapshot already carries `agent_reference` from
+`response.created`). When no snapshot exists, the synthesized minimal
+`failed` object MUST still populate `agent_reference` and `model` from
+the persisted task input, and its `output` is legitimately empty
+(no progress was ever persisted).
 
 ---
 
@@ -1218,7 +1261,7 @@ HTTP   ──► POST /v1/responses { stream: false, store, background } ──�
        framework: persist failed terminal:
                   { status: "failed",
                     error: { code: "server_error",
-                             additionalInfo: { shutdown_reason: "crash_recovery" }}}
+                             message: "Server interrupted before completing this response" }}
        framework: task body returns → task → completed
        
        (client polls)
@@ -1285,8 +1328,11 @@ already terminal (§7.2 idempotency check).
 ### C-SERVER-ERROR — `server_error` payload
 
 Every framework-emitted shutdown/crash marker MUST conform to the
-shape in §7.3 — `type=code="server_error"`, structured
-`additionalInfo.shutdown_reason`, `output=[]`.
+shape in §7.3 — `code="server_error"` + a path-specific `message` (no
+`type` and no `additionalInfo` on the response-object `ResponseError`;
+the internal recovery cause is not surfaced to customers). Output is
+the preserved snapshot's output when a snapshot exists (§7.2 step 3),
+and `[]` only when none was ever persisted.
 
 ### C-RESILIENCE-CTX — Flat recovery + steering surface on `context`
 

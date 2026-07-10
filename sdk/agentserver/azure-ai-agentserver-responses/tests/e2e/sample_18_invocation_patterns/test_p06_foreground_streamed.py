@@ -199,7 +199,7 @@ async def test_p06_path_c_sigkill_marks_failed(
     so the connection is dropped abruptly from the OS. The
     next-lifetime recovery scanner picks up the bookkeeping task and
     writes the ``response.failed`` terminal with
-    ``error.code=server_error`` + ``additionalInfo.shutdown_reason=crash_recovery``.
+    ``error.code=server_error``.
     Polled JSON GET after the restart returns the failed terminal.
 
     Per spec Endpoint 3 Rule B2, foreground responses do not support
@@ -278,7 +278,8 @@ async def test_p06_path_c_sigkill_marks_failed(
         assert terminal["status"] == "failed", terminal
         error = terminal.get("error") or {}
         assert error.get("code") == "server_error", terminal
-        additional = error.get("additionalInfo") or {}
-        assert additional.get("shutdown_reason") == "crash_recovery", terminal
+        # SOT ResponseError is {code, message} only — the internal
+        # shutdown_reason is not leaked to the customer payload.
+        assert "additionalInfo" not in error, terminal
     finally:
         await harness.close()

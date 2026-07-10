@@ -25,7 +25,7 @@ you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 > **Default**: `resilient_background` defaults to `False`. Without the
 > opt-in, a crash mid-handler leaves the response in the
 > "crash-failed" state: the next-lifetime recovery scanner marks it
-> `failed` (`server_error` / `shutdown_reason=crash_recovery`) instead
+> `failed` (`error.code="server_error"`) instead
 > of re-invoking the handler. Set `resilient_background=True` on
 > `ResponsesServerOptions` to engage the re-invoke recovery path.
 

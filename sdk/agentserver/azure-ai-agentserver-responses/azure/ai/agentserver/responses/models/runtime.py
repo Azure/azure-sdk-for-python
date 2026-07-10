@@ -410,3 +410,126 @@ def build_failed_response(
     if created_at is not None:
         payload["created_at"] = created_at.isoformat()
     return ResponseObject(payload)
+
+
+_DEFAULT_FAILED_ERROR_MESSAGE = "An internal server error occurred."
+
+
+def apply_failed_terminal(base: Mapping[str, Any], *, error: dict[str, Any]) -> dict[str, Any]:
+    """Overlay a ``failed`` terminal onto an existing response snapshot.
+
+    The handler owns the contents of the response object; the framework may
+    only set the terminal ``status`` and attach the ``error``. Every other
+    field the handler produced (``metadata``, ``conversation``,
+    ``instructions``, ``tools``, ``usage``, sampling params, ``output``, ...)
+    is preserved. Per the SOT behaviour contract a ``failed`` response's
+    ``output`` "may be partial", so accumulated output is kept; ``error`` is
+    non-null and ``completed_at`` MUST be null (only ``completed`` carries it).
+
+    :param base: The existing (typically non-terminal) response snapshot.
+    :type base: ~typing.Mapping[str, ~typing.Any]
+    :keyword error: The ``error`` object to attach (``{code, message, ...}``).
+    :paramtype error: dict[str, ~typing.Any]
+    :returns: A new payload dict transitioned to ``failed``.
+    :rtype: dict[str, ~typing.Any]
+    """
+    obj = base.as_dict() if hasattr(base, "as_dict") else deepcopy(dict(base))
+    obj["status"] = "failed"
+    obj["error"] = deepcopy(error)
+    obj.pop("completed_at", None)
+    return obj
+
+
+def apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]:
+    """Overlay a ``cancelled`` terminal onto an existing response snapshot.
+
+    The handler owns the response contents; the framework sets ``status`` and,
+    per the SOT behaviour contract (B11 / Terminal Guarantee #2 — "cancellation
+    always wins ... 0 output items regardless of what processing had
+    produced"), clears ``output``. ``error`` and ``completed_at`` MUST be null
+    for a ``cancelled`` response. All other handler-owned fields are preserved.
+
+    :param base: The existing (typically non-terminal) response snapshot.
+    :type base: ~typing.Mapping[str, ~typing.Any]
+    :returns: A new payload dict transitioned to ``cancelled`` with empty output.
+    :rtype: dict[str, ~typing.Any]
+    """
+    obj = base.as_dict() if hasattr(base, "as_dict") else deepcopy(dict(base))
+    obj["status"] = "cancelled"
+    obj["output"] = []
+    obj.pop("error", None)
+    obj.pop("completed_at", None)
+    return obj
+
+
+def resolve_failed_response(
+    base: Mapping[str, Any] | None,
+    response_id: str,
+    agent_reference: AgentReference | dict[str, Any],
+    model: str | None,
+    *,
+    created_at: datetime | None = None,
+    error_code: str = "server_error",
+    error_message: str = _DEFAULT_FAILED_ERROR_MESSAGE,
+) -> ResponseObject:
+    """Build a ``failed`` terminal, preserving the handler's response object.
+
+    When ``base`` (the handler-produced snapshot) exists, the failed terminal
+    is overlaid onto it so no handler-owned fields are lost. When it is absent
+    (the handler crashed before ``response.created``, so there is nothing to
+    preserve), a minimal object is synthesized via :func:`build_failed_response`.
+
+    :param base: The handler's response snapshot, or ``None`` if none exists.
+    :type base: ~typing.Mapping[str, ~typing.Any] | None
+    :param response_id: The response identifier (used only for the synthesized fallback).
+    :type response_id: str
+    :param agent_reference: Agent reference for the synthesized fallback.
+    :type agent_reference: ~azure.ai.agentserver.responses.models.AgentReference | dict[str, ~typing.Any]
+    :param model: Model identifier for the synthesized fallback.
+    :type model: str | None
+    :keyword created_at: Optional creation timestamp for the synthesized fallback.
+    :paramtype created_at: ~datetime.datetime | None
+    :keyword error_code: Error code (e.g. ``"server_error"`` / ``"storage_error"``).
+    :paramtype error_code: str
+    :keyword error_message: Human-readable error message.
+    :paramtype error_message: str
+    :returns: A ``failed`` response object.
+    :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
+    """
+    if base is not None:
+        return ResponseObject(apply_failed_terminal(base, error={"code": error_code, "message": error_message}))
+    return build_failed_response(
+        response_id, agent_reference, model, created_at=created_at, error_message=error_message, error_code=error_code
+    )
+
+
+def resolve_cancelled_response(
+    base: Mapping[str, Any] | None,
+    response_id: str,
+    agent_reference: AgentReference | dict[str, Any],
+    model: str | None,
+    *,
+    created_at: datetime | None = None,
+) -> ResponseObject:
+    """Build a ``cancelled`` terminal, preserving the handler's response object.
+
+    When ``base`` exists it is overlaid (status → ``cancelled``, output
+    cleared); otherwise a minimal object is synthesized via
+    :func:`build_cancelled_response`.
+
+    :param base: The handler's response snapshot, or ``None`` if none exists.
+    :type base: ~typing.Mapping[str, ~typing.Any] | None
+    :param response_id: The response identifier (used only for the synthesized fallback).
+    :type response_id: str
+    :param agent_reference: Agent reference for the synthesized fallback.
+    :type agent_reference: ~azure.ai.agentserver.responses.models.AgentReference | dict[str, ~typing.Any]
+    :param model: Model identifier for the synthesized fallback.
+    :type model: str | None
+    :keyword created_at: Optional creation timestamp for the synthesized fallback.
+    :paramtype created_at: ~datetime.datetime | None
+    :returns: A ``cancelled`` response object.
+    :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
+    """
+    if base is not None:
+        return ResponseObject(apply_cancelled_terminal(base))
+    return build_cancelled_response(response_id, agent_reference, model, created_at=created_at)
