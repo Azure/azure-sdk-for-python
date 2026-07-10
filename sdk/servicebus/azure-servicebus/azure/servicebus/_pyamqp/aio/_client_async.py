@@ -25,6 +25,7 @@ from ..client import (
 from ..message import _MessageDelivery, Message
 from ..constants import (
     MessageDeliveryState,
+    ReceiverSettleMode,
     SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
     LinkDeliverySettleReason,
@@ -817,6 +818,22 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         return batch
 
     async def close_async(self):
+        # Release any buffered-but-unconsumed messages before closing so they are
+        # not left locked at the broker until lock expiry (which also inflates the
+        # delivery count and delays redelivery). Only applies to PEEK_LOCK
+        # (ReceiverSettleMode.Second); in RECEIVE_AND_DELETE (First) the transfers
+        # are already settled, so there is nothing to release.
+        if self._receive_settle_mode != ReceiverSettleMode.First:
+            while not self._received_messages.empty():
+                try:
+                    frame, _ = self._received_messages.get_nowait()
+                    await self.settle_messages_async(frame[1], frame[2], "released")
+                    self._received_messages.task_done()
+                except queue.Empty:
+                    break
+                except Exception:  # pylint:disable=broad-except
+                    # A faulted or already-detached link must never block close.
+                    break
         self._received_messages = queue.Queue()
         await super(ReceiveClientAsync, self).close_async()
 

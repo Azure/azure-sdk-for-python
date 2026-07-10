@@ -931,6 +931,22 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         return batch
 
     def close(self):
+        # Release any buffered-but-unconsumed messages before closing so they are
+        # not left locked at the broker until lock expiry (which also inflates the
+        # delivery count and delays redelivery). Only applies to PEEK_LOCK
+        # (ReceiverSettleMode.Second); in RECEIVE_AND_DELETE (First) the transfers
+        # are already settled, so there is nothing to release.
+        if self._receive_settle_mode != ReceiverSettleMode.First:
+            while not self._received_messages.empty():
+                try:
+                    frame, _ = self._received_messages.get_nowait()
+                    self.settle_messages(frame[1], frame[2], "released")
+                    self._received_messages.task_done()
+                except queue.Empty:
+                    break
+                except Exception:  # pylint:disable=broad-except
+                    # A faulted or already-detached link must never block close.
+                    break
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
 
