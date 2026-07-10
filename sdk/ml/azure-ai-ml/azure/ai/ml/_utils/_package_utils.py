@@ -91,7 +91,11 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
         if not model_str.startswith(REGISTRY_URI_FORMAT):
             deployment.environment = packaged_env.id
         else:
-            deployment.environment = packaged_env.target_environment_id
+            deployment.environment = (
+                packaged_env.get("targetEnvironmentId")
+                if isinstance(packaged_env, dict)
+                else packaged_env.target_environment_id
+            )
         deployment.model = None
         deployment.code_configuration = None
     except Exception:

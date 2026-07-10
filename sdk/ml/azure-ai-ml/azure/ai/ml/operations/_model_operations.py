@@ -50,6 +50,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     begin_create_or_update_registry_versioned_asset,
     begin_import_registry_asset,
+    begin_package_registry_model,
     get_asset_body_for_registry_storage,
     get_registry_client,
     get_registry_container_asset,
@@ -844,26 +845,30 @@ class ModelOperations(_ScopeDependentOperations):
 
         if self._registry_reference:
             package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
-        package_out = (
-            self._model_versions_operation.begin_package(
-                name=name,
-                version=version,
-                registry_name=self._registry_name if self._registry_name else self._registry_reference,
-                body=package_request,
-                **self._scope_kwargs,
-            ).result()
-            if self._registry_name or self._registry_reference
-            else self._model_versions_operation.begin_package(
+        if self._registry_name or self._registry_reference:
+            # Byte-identical to the legacy v2021_10 registry ``begin_package`` (same MFE endpoint + api-version + wire body).
+            package_body = package_request.serialize() if hasattr(package_request, "serialize") else package_request
+            package_out = begin_package_registry_model(
+                self._registry_service_client,
+                name,
+                version,
+                self._resource_group_name,
+                self._registry_name if self._registry_name else self._registry_reference,
+                package_body,
+            )
+        else:
+            package_out = self._model_versions_operation.begin_package(
                 name=name,
                 version=version,
                 workspace_name=self._workspace_name,
                 body=package_request,
                 **self._scope_kwargs,
             ).result()
-        )
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
-        if hasattr(package_out, "target_environment_id"):
+        if isinstance(package_out, dict):
+            environment_id = package_out.get("targetEnvironmentId")
+        elif hasattr(package_out, "target_environment_id"):
             environment_id = package_out.target_environment_id
         else:
             environment_id = package_out.additional_properties["targetEnvironmentId"]
