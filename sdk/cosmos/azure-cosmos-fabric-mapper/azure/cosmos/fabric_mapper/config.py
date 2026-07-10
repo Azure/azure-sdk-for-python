@@ -11,11 +11,13 @@ from dataclasses import dataclass
 
 from .errors import ConfigurationError
 
+_INVALID_CONNECTION_VALUE_CHARS = frozenset(";\r\n\x00{}")
+
 
 @dataclass(frozen=True)
 class MirrorServingConfiguration:
     """Configuration for serving Cosmos-like queries from a Fabric mirrored table.
-    
+
     Attributes:
         fabric_server: Fabric Warehouse endpoint (e.g., ``endpoint.datawarehouse.fabric.microsoft.com``)
         fabric_database: Database name in Fabric
@@ -30,7 +32,7 @@ class MirrorServingConfiguration:
 
     def validate(self) -> None:
         """Validate that required configuration fields are present.
-        
+
         Raises:
             ConfigurationError: If required fields are missing
         """
@@ -42,22 +44,32 @@ class MirrorServingConfiguration:
         if not self.fabric_table:
             missing.append("fabric_table")
         if missing:
-            raise ConfigurationError(f"Missing required config fields: {', '.join(missing)}")
+            raise ConfigurationError(
+                f"Missing required config fields: {', '.join(missing)}"
+            )
+        for name, value in (
+            ("fabric_server", self.fabric_server),
+            ("fabric_database", self.fabric_database),
+        ):
+            if any(char in value for char in _INVALID_CONNECTION_VALUE_CHARS):
+                raise ConfigurationError(
+                    f"{name} contains invalid connection-string characters"
+                )
 
 
 def default_table_sql(config: MirrorServingConfiguration) -> str:
     """Generate the default table reference SQL for a configuration.
-    
+
     Args:
         config: Mirror serving configuration
-        
+
     Returns:
         Fully qualified table reference (e.g., '[dbo].[tablename]')
-        
+
     Raises:
         ConfigurationError: If configuration is invalid
     """
     config.validate()
-    schema = (config.fabric_schema or "dbo").replace(']', ']]')
-    table = config.fabric_table.replace(']', ']]')
+    schema = (config.fabric_schema or "dbo").replace("]", "]]")
+    table = config.fabric_table.replace("]", "]]")
     return f"[{schema}].[{table}]"

@@ -11,6 +11,7 @@ from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import TaskNavigationEfficiencyValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
     ErrorCategory,
     ErrorTarget,
     EvaluationException,
@@ -119,8 +120,11 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             try:
                 self.matching_mode = _TaskNavigationEfficiencyMatchingMode(matching_mode)
             except ValueError:
-                raise ValueError(
-                    f"matching_mode must be one of {[m.value for m in _TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'"
+                raise EvaluationException(
+                    message=f"matching_mode must be one of {[m.value for m in _TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
                 )
         elif isinstance(matching_mode, _TaskNavigationEfficiencyMatchingMode):
             self.matching_mode = matching_mode
@@ -128,6 +132,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             raise EvaluationException(
                 f"matching_mode must be a string with one of {[m.value for m in _TaskNavigationEfficiencyMatchingMode]} or _TaskNavigationEfficiencyMatchingMode enum, got {type(matching_mode)}",
                 internal_message=str(matching_mode),
+                blame=ErrorBlame.USER_ERROR,
                 target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
                 category=ErrorCategory.INVALID_VALUE,
             )
@@ -137,7 +142,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             error_target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
         )
 
-        super().__init__()
+        super().__init__(threshold=1.0)
 
     @override
     async def _real_call(self, **kwargs):
@@ -150,6 +155,23 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         """
         self._validator.validate_eval_input(kwargs)
         return await super()._real_call(**kwargs)
+
+    @staticmethod
+    def _normalize_param_value(value: Any) -> str:
+        """Normalize a parameter value to a string for consistent comparison.
+
+        Uses json.dumps for dicts and lists to produce canonical JSON strings,
+        and str() for other types. This ensures both agent and ground truth
+        parameter values are compared in the same string format.
+        """
+        if isinstance(value, str):
+            return value
+        if isinstance(value, (dict, list)):
+            try:
+                return json.dumps(value, sort_keys=True)
+            except (TypeError, ValueError):
+                return str(value)
+        return str(value)
 
     def _prepare_steps_for_comparison(
         self,
@@ -165,10 +187,22 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         agent_steps: List[Union[str, Tuple[str, Tuple]]] = []
         ground_truth_steps: List[Union[str, Tuple[str, Tuple]]] = []
         if use_parameter_matching:
-            # When parameter matching is enabled, we need to match both tool name and parameters
-            agent_steps = [(pair[0], tuple(sorted(pair[1].items()))) for pair in agent_tool_pairs]
+            # When parameter matching is enabled, we need to match both tool name and parameters.
+            # Normalize all parameter values to strings on both sides for consistent comparison.
+            agent_steps = [
+                (pair[0], tuple(sorted((k, self._normalize_param_value(v)) for k, v in pair[1].items())))
+                for pair in agent_tool_pairs
+            ]
             ground_truth_steps = [
-                (name, tuple(sorted(ground_truth_params.get(name, {}).items()))) for name in ground_truth
+                (
+                    name,
+                    tuple(
+                        sorted(
+                            (k, self._normalize_param_value(v)) for k, v in ground_truth_params.get(name, {}).items()
+                        )
+                    ),
+                )
+                for name in ground_truth
             ]
         else:
             # When parameter matching is disabled, only compare tool names
@@ -263,12 +297,26 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
+        # If response or ground_truth is a string, try to parse it as JSON
+        for key in ("response", "ground_truth"):
+            value = eval_input.get(key)
+            if isinstance(value, str):
+                try:
+                    eval_input[key] = json.loads(value)
+                except (ValueError, TypeError):
+                    pass
+
         response = eval_input["response"]
         ground_truth = eval_input["ground_truth"]
 
         # Value and type checking for ground truth steps
         if not ground_truth:
-            raise ValueError("ground_truth cannot be empty")
+            raise EvaluationException(
+                message="ground_truth cannot be empty",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+            )
 
         # Check if ground_truth is a tuple (tool names + parameters) or list (tool names only)
         use_parameter_matching = False
@@ -280,27 +328,53 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             tool_names_list, params_dict = ground_truth
 
             if not isinstance(tool_names_list, list) or not all(isinstance(name, str) for name in tool_names_list):
-                raise TypeError("ground_truth tuple first element must be a list of strings (tool names)")
+                raise EvaluationException(
+                    message="ground_truth tuple first element must be a list of strings (tool names)",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                )
 
             if not isinstance(params_dict, dict):
-                raise TypeError(
-                    "ground_truth tuple second element must be a dictionary mapping tool names to parameters"
+                raise EvaluationException(
+                    message="ground_truth tuple second element must be a dictionary mapping tool names to parameters",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
                 )
 
             # Validate that all values in params_dict are dictionaries with string keys and values
             for tool_name, params in params_dict.items():
                 if not isinstance(tool_name, str):
-                    raise TypeError("ground_truth parameters dictionary keys must be strings (tool names)")
+                    raise EvaluationException(
+                        message="ground_truth parameters dictionary keys must be strings (tool names)",
+                        blame=ErrorBlame.USER_ERROR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                    )
                 if not isinstance(params, dict):
-                    raise TypeError(f"ground_truth parameters for tool '{tool_name}' must be a dictionary")
+                    raise EvaluationException(
+                        message=f"ground_truth parameters for tool '{tool_name}' must be a dictionary",
+                        blame=ErrorBlame.USER_ERROR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                    )
                 for k, v in params.items():
                     if not isinstance(k, str):
-                        raise TypeError(f"ground_truth parameters for tool '{tool_name}' must have string keys")
+                        raise EvaluationException(
+                            message=f"ground_truth parameters for tool '{tool_name}' must have string keys",
+                            blame=ErrorBlame.USER_ERROR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                        )
                     try:
                         json.dumps(v)
                     except (TypeError, ValueError):
-                        raise TypeError(
-                            f"ground_truth parameters for tool '{tool_name}' must have JSON-serializable values (got type {type(v)} for key '{k}')"
+                        raise EvaluationException(
+                            message=f"ground_truth parameters for tool '{tool_name}' must have JSON-serializable values (got type {type(v)} for key '{k}')",
+                            blame=ErrorBlame.USER_ERROR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
                         )
 
             ground_truth_names = [name.strip() for name in tool_names_list]
@@ -311,8 +385,11 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             ground_truth_names = [step.strip() for step in ground_truth]
             use_parameter_matching = False
         else:
-            raise TypeError(
-                "ground_truth must be a list of strings or a tuple of (list[str], dict[str, dict[str, str]])"
+            raise EvaluationException(
+                message="ground_truth must be a list of strings or a tuple of (list[str], dict[str, dict[str, str]])",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
             )
 
         # Extract tool information from the response
@@ -340,9 +417,14 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             )
 
             return {
-                "task_navigation_efficiency_label": match_result,
+                "task_navigation_efficiency": float(match_result),
+                "task_navigation_efficiency_score": float(match_result),
                 "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
-                "task_navigation_efficiency_details": additional_properties_metrics,
+                "task_navigation_efficiency_passed": match_result,
+                "task_navigation_efficiency_reason": None,
+                "task_navigation_efficiency_status": "completed",
+                "task_navigation_efficiency_threshold": float(self._threshold),
+                "task_navigation_efficiency_properties": additional_properties_metrics,
             }
         else:
             raise EvaluationException(
@@ -350,6 +432,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                 internal_message=str(self.matching_mode),
                 target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
                 category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
             )
 
     @overload

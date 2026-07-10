@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    Cluster,
+    ClusterProperties,
     ErrorAdditionalInfo,
     ErrorDetail,
     ErrorResponse,
@@ -27,8 +29,15 @@ from ._models import (  # type: ignore
     OrganizationResourceUpdate,
     OrganizationResourceUpdateProperties,
     PartnerProperties,
+    Project,
+    ProjectLimitStatus,
+    ProjectProperties,
+    ProxyResource,
+    RegionsByTierResponse,
     Resource,
     SystemData,
+    TierLimitReachedResponse,
+    TierRegions,
     TrackedResource,
     UserAssignedIdentity,
     UserDetails,
@@ -36,6 +45,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
+    ClusterTier,
     CreatedByType,
     ManagedServiceIdentityType,
     MarketplaceSubscriptionStatus,
@@ -47,6 +57,8 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "Cluster",
+    "ClusterProperties",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -60,12 +72,20 @@ __all__ = [
     "OrganizationResourceUpdate",
     "OrganizationResourceUpdateProperties",
     "PartnerProperties",
+    "Project",
+    "ProjectLimitStatus",
+    "ProjectProperties",
+    "ProxyResource",
+    "RegionsByTierResponse",
     "Resource",
     "SystemData",
+    "TierLimitReachedResponse",
+    "TierRegions",
     "TrackedResource",
     "UserAssignedIdentity",
     "UserDetails",
     "ActionType",
+    "ClusterTier",
     "CreatedByType",
     "ManagedServiceIdentityType",
     "MarketplaceSubscriptionStatus",

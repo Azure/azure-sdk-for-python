@@ -18,6 +18,7 @@ from ._operations import AgentsOperations  # type: ignore
 from ._operations import EndpointsOperations  # type: ignore
 from ._operations import ProjectsOperations  # type: ignore
 from ._operations import JobDefinitionsOperations  # type: ignore
+from ._operations import ConnectionsOperations  # type: ignore
 from ._operations import JobRunsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -31,6 +32,7 @@ __all__ = [
     "EndpointsOperations",
     "ProjectsOperations",
     "JobDefinitionsOperations",
+    "ConnectionsOperations",
     "JobRunsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -13,10 +13,11 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class QueryAst:
     """Abstract syntax tree for a parsed Cosmos SQL query.
-    
+
     Attributes:
         select_value: True if SELECT VALUE (returns scalars), False for SELECT (returns docs)
         select_expr: The projection expression after SELECT [VALUE]
+        source_alias: Alias used to reference the Cosmos document source
         where_expr: WHERE clause expression (None if no WHERE)
         group_by: GROUP BY expression (None if no GROUP BY)
         having_expr: HAVING clause expression (None if no HAVING)
@@ -24,9 +25,10 @@ class QueryAst:
         offset: OFFSET value for pagination (None if not specified)
         limit: LIMIT/TOP value (None if not specified)
     """
-    
+
     select_value: bool
     select_expr: str
+    source_alias: str
     where_expr: str | None
     group_by: str | None
     having_expr: str | None

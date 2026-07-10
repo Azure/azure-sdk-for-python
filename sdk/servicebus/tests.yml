@@ -10,5 +10,3 @@ extends:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
-      MatrixFilters:
-        - PythonVersion=^(?!pypy3).*

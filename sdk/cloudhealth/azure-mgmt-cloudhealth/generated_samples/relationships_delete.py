@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.relationships.delete(
-        resource_group_name="rgopenapi",
-        health_model_name="model1",
-        relationship_name="rel1",
-    )
+    client.relationships.begin_delete(
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        relationship_name="orders-api-to-catalog-storage",
+    ).result()
 
 
-# x-ms-original-file: 2025-05-01-preview/Relationships_Delete.json
+# x-ms-original-file: 2026-05-01-preview/Relationships_Delete.json
 if __name__ == "__main__":
     main()

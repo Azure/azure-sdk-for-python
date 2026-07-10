@@ -16,9 +16,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -32,14 +32,13 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    # [START tool_declaration]
     # Create vector store for file search
     vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
     print(f"Vector store created (id: {vector_store.id})")
@@ -48,19 +47,17 @@ with (
     asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
 
     # Upload file to vector store
-    file = openai_client.vector_stores.files.upload_and_poll(
-        vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
-    )
+    with open(asset_file_path, "rb") as f:
+        file = openai_client.vector_stores.files.upload_and_poll(vector_store_id=vector_store.id, file=f)
     print(f"File uploaded to vector store (id: {file.id})")
 
     tool = FileSearchTool(vector_store_ids=[vector_store.id])
-    # [END tool_declaration]
 
     # Create agent with file search tool
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that can search through product information.",
             tools=[tool],
         ),

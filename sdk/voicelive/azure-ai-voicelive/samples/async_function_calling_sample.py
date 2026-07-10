@@ -17,13 +17,18 @@ DESCRIPTION:
 
 USAGE:
     python async_function_calling_sample.py
-    
+
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
-    2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
-    
+    1) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
+
+    Optional environment variables:
+    - AZURE_VOICELIVE_MODEL - The VoiceLive model to use (default: gpt-realtime)
+    - AZURE_VOICELIVE_USE_API_KEY - Set to "true" to use AZURE_VOICELIVE_API_KEY instead of Entra ID
+    - AZURE_VOICELIVE_API_KEY - VoiceLive API key used when AZURE_VOICELIVE_USE_API_KEY is enabled
+
 REQUIREMENTS:
     - azure-ai-voicelive
+    - azure-identity
     - python-dotenv
     - pyaudio (for audio capture and playback)
 """
@@ -61,6 +66,7 @@ except ImportError:
 # Azure VoiceLive SDK imports
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
     RequestSession,
@@ -702,47 +708,45 @@ class AsyncFunctionCallingClient:
 
 async def main():
     """Main async function."""
-    # Get credentials from environment variables
+    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
+    model = os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-realtime")
+    use_api_key = os.environ.get("AZURE_VOICELIVE_USE_API_KEY", "").strip().lower() in {"1", "true", "yes"}
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
-    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "https://test.voicelive.com/")
 
-    if not api_key:
-        print("❌ Error: No API key provided")
-        print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
-        sys.exit(1)
-
-    # Option 1: API key authentication (simple, recommended for quick start)
-    credential = AzureKeyCredential(api_key)
-
-    # Option 2: Async AAD authentication (requires azure-identity)
-    # from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
-    # credential = DefaultAzureCredential() or AzureCliCredential()
-    #
-    # 👉 Use this if you prefer AAD/MSAL-based auth.
-    #    It will look for environment variables like:
-    #      AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
-    #    or fall back to managed identity if running in Azure.
-
-    # Create and run the client
-    client = AsyncFunctionCallingClient(
-        endpoint=endpoint,
-        credential=credential,
-        model="gpt-4o-realtime-preview",
-        voice="en-US-AvaNeural",
-        instructions="You are a helpful AI assistant with access to functions. "
-        "Use the functions when appropriate to provide accurate, real-time information. "
-        "If you are asked about the weather, please respond with 'I will get the weather for you. Please wait a moment.' and then call the get_current_weather function. "
-        "If you are asked about the time, please respond with 'I will get the time for you. Please wait a moment.' and then call the get_current_time function. "
-        "Explain when you're using a function and include the results in your response naturally.",
-    )
+    credential: Union[AzureKeyCredential, AsyncTokenCredential]
+    if use_api_key:
+        if not api_key:
+            print("❌ Error: No API key provided")
+            print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
+            sys.exit(1)
+        credential = AzureKeyCredential(api_key)
+        logger.info("Using API key credential")
+    else:
+        credential = DefaultAzureCredential()
+        logger.info("Using DefaultAzureCredential")
 
     try:
+        client = AsyncFunctionCallingClient(
+            endpoint=endpoint,
+            credential=credential,
+            model=model,
+            voice="en-US-AvaNeural",
+            instructions="You are a helpful AI assistant with access to functions. "
+            "Use the functions when appropriate to provide accurate, real-time information. "
+            "If you are asked about the weather, please respond with 'I will get the weather for you. Please wait a moment.' and then call the get_current_weather function. "
+            "If you are asked about the time, please respond with 'I will get the time for you. Please wait a moment.' and then call the get_current_time function. "
+            "Explain when you're using a function and include the results in your response naturally.",
+        )
+
         await client.run()
     except KeyboardInterrupt:
         print("\n👋 Voice Live function calling client shut down.")
     except Exception as e:
         logger.error(f"Error: {e}")
         sys.exit(1)
+    finally:
+        if isinstance(credential, AsyncTokenCredential):
+            await credential.close()
 
 
 if __name__ == "__main__":

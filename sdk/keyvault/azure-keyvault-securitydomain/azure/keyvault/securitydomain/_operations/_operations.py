@@ -8,7 +8,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from .._utils.utils import ClientMixinABC
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -46,7 +46,7 @@ def build_security_domain_get_download_status_request(**kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -66,7 +66,7 @@ def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -87,7 +87,7 @@ def build_security_domain_get_upload_status_request(**kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +107,7 @@ def build_security_domain_upload_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +128,7 @@ def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -143,7 +143,9 @@ def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, SecurityDomainClientConfiguration]):
+class _SecurityDomainClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], SecurityDomainClientConfiguration]
+):
 
     @distributed_trace
     def get_download_status(self, **kwargs: Any) -> _models.SecurityDomainOperationStatus:
@@ -179,6 +181,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -193,11 +196,14 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecurityDomainOperationStatus, response.json())
 
@@ -244,6 +250,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -257,7 +264,10 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -266,7 +276,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -383,6 +393,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -397,11 +408,14 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecurityDomainOperationStatus, response.json())
 
@@ -448,6 +462,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -461,7 +476,10 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -471,7 +489,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -598,6 +616,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -612,11 +631,14 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[PipelineClient, Securit
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TransferKey, response.json())
 

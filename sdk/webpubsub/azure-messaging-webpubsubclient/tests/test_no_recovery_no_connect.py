@@ -25,21 +25,22 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
     # disable recovery and auto reconnect
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_disable_recovery_and_autoconnect(self, webpubsubclient_connection_string):
+    def test_disable_recovery_and_autoconnect(self, webpubsubclient_endpoint):
         client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             reconnect_retry_total=0,
             protocol_type=WebPubSubProtocolType.JSON,
         )
         name = "test_disable_recovery_and_autoconnect"
         with client:
             group_name = name
-            client.subscribe("group-message", on_group_message)
+            _, disconnected_event, _ = self.setup_events(client)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
+            assert disconnected_event.wait(timeout=30), "Timed out waiting for disconnection"
             with pytest.raises(SendMessageError):
                 client.send_to_group(group_name, name, "text")
-            time.sleep(1)  # wait for on_group_message to be called
+            time.sleep(3)  # wait to confirm message was NOT received
 
         assert name not in TEST_RESULT
 
@@ -47,10 +48,10 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_disable_recovery_and_autoconnect_send_concurrently(
-        self, webpubsubclient_connection_string
+        self, webpubsubclient_endpoint
     ):
         client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             reconnect_retry_total=0,
             message_retry_total=3,
             protocol_type=WebPubSubProtocolType.JSON,
@@ -58,7 +59,11 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
 
         with client:
             group_name = "test_disable_recovery_and_autoconnect_send_concurrently"
+            _, disconnected_event, _ = self.setup_events(client)
             client.join_group(group_name)
+            client._ws.sock.close(1001)  # close connection
+            assert disconnected_event.wait(timeout=30), "Timed out waiting for disconnection"
+            assert not client.is_connected()
 
             def send(idx):
                 client.send_to_group(group_name, f"hello_{idx}", "text")
@@ -68,10 +73,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
                 t = SafeThread(target=send, args=(i,))
                 t.start()
                 all_threads.append(t)
-                if i == 50:
-                    client._ws.sock.close(1001)  # close connection
 
-            for i, t in enumerate(all_threads):
-                if i > 50:
-                    with pytest.raises(Exception):
-                        t.join()
+            for t in all_threads:
+                with pytest.raises(SendMessageError):
+                    t.join()

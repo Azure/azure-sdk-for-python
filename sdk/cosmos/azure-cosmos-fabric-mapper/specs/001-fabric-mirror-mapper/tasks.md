@@ -218,7 +218,7 @@ The implementation is **complete locally but not yet released**. Current code us
 
 ### Task Order
 
-1. Complete outstanding user stories (T029-T040) 
+1. Complete outstanding user stories (T029-T040)
 2. Refactor driver implementation (T045-T051) ← **Do this before release**
 3. Final polish (T041-T044)
 4. Release v1.0.0 with mssql-python as primary driver

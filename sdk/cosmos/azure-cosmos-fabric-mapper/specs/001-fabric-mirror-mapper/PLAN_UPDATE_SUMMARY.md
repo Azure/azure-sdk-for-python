@@ -1,7 +1,7 @@
 # Plan Update Summary: SQL Driver Strategy Change
 
-**Date**: 2026-01-30  
-**Branch**: 001-fabric-mirror-mapper  
+**Date**: 2026-01-30
+**Branch**: 001-fabric-mirror-mapper
 **Change Type**: Strategic Architecture Update
 
 ## What Changed
@@ -141,17 +141,17 @@ Based on research into Python SQL driver options for Microsoft Fabric SQL endpoi
 
 ## Questions & Answers
 
-**Q: Do I need to change my code?**  
+**Q: Do I need to change my code?**
 A: No! Both drivers use DB-API 2.0 interface. Your existing connection code works as-is.
 
-**Q: What if I want to keep using pyodbc?**  
+**Q: What if I want to keep using pyodbc?**
 A: Continue using `[odbc]` extra. Both drivers will be supported.
 
-**Q: Is mssql-python production-ready?**  
+**Q: Is mssql-python production-ready?**
 A: Yes. It's an official Microsoft driver, actively maintained, and explicitly documented for Fabric SQL.
 
-**Q: What about performance?**  
+**Q: What about performance?**
 A: Both drivers use the same TDS protocol. Performance should be comparable. Testing required for validation.
 
-**Q: Can I use both drivers in the same project?**  
+**Q: Can I use both drivers in the same project?**
 A: Technically yes (they're separate packages), but choose one for consistency. The mapper abstraction layer supports both.

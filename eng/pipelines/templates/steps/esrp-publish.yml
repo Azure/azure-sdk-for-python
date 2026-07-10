@@ -1,0 +1,26 @@
+parameters:
+  - name: targetFolder
+    type: string
+  - name: owners
+    type: string
+    default: $(Build.RequestedForEmail)
+  - name: approvers
+    type: string
+    default: $(Build.RequestedForEmail)
+steps:
+  - task: EsrpRelease@11
+    displayName: 'Publish to ESRP'
+    inputs:
+      ConnectedServiceName: 'Azure SDK PME Managed Identity'
+      ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+      DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+      UseManagedIdentity: true
+      KeyVaultName: 'kv-azuresdk-codesign'
+      SignCertName: 'azure-sdk-esrp-release-certificate'
+      Intent: 'PackageDistribution'
+      ContentType: 'PyPI'
+      FolderLocation: ${{parameters.targetFolder}}
+      Owners: ${{parameters.owners}}
+      Approvers: ${{parameters.approvers}}
+      ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+      MainPublisher: 'ESRPRELPACMANTEST'

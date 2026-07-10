@@ -25,6 +25,7 @@ NOTE:
 
 import json
 import os
+import time
 from pathlib import Path
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -77,7 +78,7 @@ def create_index():
             type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),  # type: ignore[operator]
             searchable=True,
             vector_search_dimensions=1536,
-            vector_search_profile_name="my-vector-profile",
+            vector_search_profile_name="hotels-sample-vector-profile",
         ),
         SearchableField(
             name="Category",
@@ -97,13 +98,13 @@ def create_index():
 
     vector_search = VectorSearch(
         algorithms=[
-            HnswAlgorithmConfiguration(name="my-hnsw-vector-config-1"),
-            ExhaustiveKnnAlgorithmConfiguration(name="my-eknn-vector-config"),
+            HnswAlgorithmConfiguration(name="hotels-sample-hnsw-config"),
+            ExhaustiveKnnAlgorithmConfiguration(name="hotels-sample-eknn-config"),
         ],
         profiles=[
             VectorSearchProfile(
-                name="my-vector-profile",
-                algorithm_configuration_name="my-hnsw-vector-config-1",
+                name="hotels-sample-vector-profile",
+                algorithm_configuration_name="hotels-sample-hnsw-config",
             )
         ],
     )
@@ -141,11 +142,20 @@ def load_documents():
 
 
 def upload_documents():
-    """Upload documents to the search index."""
+    """Upload documents to the search index and wait for indexing to complete."""
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
     documents = load_documents()
     result = search_client.upload_documents(documents=documents)
     print(f"Uploaded: {len(result)} documents to index '{index_name}'")
+
+    # Wait for indexing to complete so the first query returns hits.
+    expected = len(documents)
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        if search_client.get_document_count() >= expected:
+            break
+        time.sleep(2)
+    print(f"Indexed: {search_client.get_document_count()} documents are queryable")
 
 
 def single_vector_search():

@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-10-23",
+  "apiVersions": {
+    "Microsoft.Automation": "2024-10-23"
+  },
+  "commit": "da8db6e593df9f3ddc13139c39930fdad54d12f7",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/automation/Automation.Management",
+  "emitterVersion": "0.62.1"
+}

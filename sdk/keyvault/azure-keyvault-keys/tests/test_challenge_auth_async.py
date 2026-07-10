@@ -6,7 +6,9 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
+
 import asyncio
+import functools
 from itertools import product
 import os
 import time
@@ -19,7 +21,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy,HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -30,7 +32,6 @@ from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
 from test_challenge_auth import (
-    empty_challenge_cache,
     get_random_url,
     add_url_port,
     CAE_CHALLENGE_RESPONSE,
@@ -46,7 +47,7 @@ only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSIO
 
 class TestChallengeAuth(KeyVaultTestCase):
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_default_version)
+    @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_multitenant_authentication(self, client, is_hsm, **kwargs):
@@ -80,6 +81,16 @@ class TestChallengeAuth(KeyVaultTestCase):
             os.environ["AZURE_TENANT_ID"] = original_tenant
         else:
             os.environ.pop("AZURE_TENANT_ID")
+
+
+def empty_challenge_cache(fn):
+    @functools.wraps(fn)
+    async def wrapper(**kwargs):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        return await fn(**kwargs)
+
+    return wrapper
 
 
 @pytest.mark.asyncio
@@ -132,9 +143,7 @@ async def test_scope(token_type):
             credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
         else:
             credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(
-            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
-        )
+        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
@@ -201,9 +210,7 @@ async def test_tenant(token_type):
             credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
         else:
             credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(
-            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
-        )
+        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
@@ -496,8 +503,8 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource, toke
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
     transport_2 = async_validating_transport(
         requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
@@ -505,8 +512,8 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource, toke
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
@@ -551,8 +558,8 @@ async def test_verify_challenge_resource_valid(verify_challenge_resource, token_
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
@@ -811,3 +818,73 @@ async def test_cae_token_expiry(token_type):
             assert credential.get_token_info.call_count == 3
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_request_body_not_reused_across_requests(token_type):
+    """A request's body must not leak into a later request made by the same client.
+
+    Regression test for the replay bug: the original request used to be stashed on the policy instance and was
+    never cleared, so a subsequent bodiless request (e.g. a polling GET) that triggered its own challenge would
+    have the earlier request's body (and method/URL) replayed onto it. The copy is now stored per-request on the
+    pipeline context, so it cannot leak across requests. See
+    https://github.com/Azure/azure-sdk-for-python/pull/47742.
+    """
+
+    expected_token = "expected_token"
+    first_content = b"a duck"
+    first_url = get_random_url()
+    second_url = get_random_url()
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    async def send(request):
+        Requests.count += 1
+        if Requests.count == 1:
+            # first request (POST with body): the body is stripped to elicit a challenge
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            return challenge
+        elif Requests.count == 2:
+            # first request is retried with its original body and authorization
+            assert request.body == first_content
+            assert expected_token in request.headers["Authorization"]
+            return Mock(status_code=200)
+        elif Requests.count == 3:
+            # second request (bodiless GET): elicits its own challenge and must have no body
+            assert not request.body
+            return challenge
+        elif Requests.count == 4:
+            # second request is retried: it must remain a bodiless GET, i.e. the first request's body and
+            # method/URL must NOT be replayed onto it
+            assert not request.body
+            assert request.method == "GET"
+            assert request.url == second_url
+            assert expected_token in request.headers["Authorization"]
+            return Mock(status_code=200)
+        raise ValueError("unexpected request")
+
+    async def get_token(*_, **__):
+        return token_type(expected_token, time.time() + 3600)
+
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
+
+    # a single policy instance handles both requests; the fix prevents state from one request leaking into the next
+    policy = AsyncChallengeAuthPolicy(credential=credential)
+    pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
+
+    first_request = HttpRequest("POST", first_url)
+    first_request.set_bytes_body(first_content)
+    await pipeline.run(first_request)
+
+    await pipeline.run(HttpRequest("GET", second_url))

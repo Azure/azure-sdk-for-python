@@ -3,9 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import patch, call, Mock, MagicMock
 import pytest
-from azure.appconfiguration.provider.aio._async_client_manager import AsyncConfigurationClientManager
+from azure.appconfiguration.provider.aio._async_client_manager import (
+    AsyncConfigurationClientManager,
+    _AsyncConfigurationClientWrapper,
+)
+from azure.appconfiguration.provider._models import SettingSelector
 
 
 def _create_mock_credential():
@@ -342,3 +346,59 @@ class TestAsyncConfigurationClientManager:
         assert 30000.0 <= manager._calculate_backoff(10) <= 600000.0
 
         assert manager_invalid._calculate_backoff(0) == 600000
+
+
+@pytest.mark.asyncio
+async def test_check_page_etags_snapshot_first_then_keys():
+    """Refresh enabled without watch settings: snapshot selector first, then normal keys."""
+    mock_client = Mock()
+    wrapper = _AsyncConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(snapshot_name="my-snapshot"),
+        SettingSelector(key_filter="app/*"),
+    ]
+    page_etags = [[], ["etag1"]]
+
+    async def empty_pages():
+        return
+        yield  # noqa: unreachable
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = empty_pages()
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = await wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_page_etags_keys_first_then_snapshot():
+    """Refresh enabled without watch settings: normal keys first, then snapshot selector."""
+    mock_client = Mock()
+    wrapper = _AsyncConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(key_filter="app/*"),
+        SettingSelector(snapshot_name="my-snapshot"),
+    ]
+    page_etags = [["etag1"], []]
+
+    async def empty_pages():
+        return
+        yield  # noqa: unreachable
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = empty_pages()
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = await wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )

@@ -1,6 +1,8 @@
 """Tests for parser handling of SQL keywords in column names."""
+
 import pytest
 from azure.cosmos.fabric_mapper.translate.parser import parse_cosmos_sql
+
 
 class TestParserKeywordColumnNames:
     """Verify parser handles column names containing SQL keywords."""
@@ -9,20 +11,34 @@ class TestParserKeywordColumnNames:
         ast = parse_cosmos_sql("SELECT c.order_date FROM c")
         assert "order_date" in ast.select_expr
 
+    def test_exact_order_keyword_property(self):
+        ast = parse_cosmos_sql("SELECT * FROM c WHERE c.order = 1")
+        assert "c.order" in ast.where_expr
+
     def test_group_in_column_name(self):
         ast = parse_cosmos_sql("SELECT c.group_name FROM c")
         assert "group_name" in ast.select_expr
 
+    def test_exact_group_keyword_property(self):
+        ast = parse_cosmos_sql("SELECT * FROM c WHERE c.group = 1")
+        assert "c.group" in ast.where_expr
+
     def test_from_in_column_name(self):
         ast = parse_cosmos_sql("SELECT c.id, c.data FROM c WHERE c.from_source = @src")
         assert "from_source" in ast.where_expr
+
+    def test_exact_from_keyword_property(self):
+        ast = parse_cosmos_sql("SELECT c.from FROM c")
+        assert ast.select_expr == "c.from"
 
     def test_offset_in_column_name(self):
         ast = parse_cosmos_sql("SELECT c.offset_val FROM c")
         assert "offset_val" in ast.select_expr
 
     def test_having_in_column_name(self):
-        ast = parse_cosmos_sql("SELECT c.category FROM c GROUP BY c.category HAVING COUNT(1) > 0")
+        ast = parse_cosmos_sql(
+            "SELECT c.category FROM c GROUP BY c.category HAVING COUNT(1) > 0"
+        )
         assert ast.having_expr is not None
 
     def test_order_by_with_keyword_column(self):

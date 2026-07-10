@@ -128,6 +128,7 @@ class _TextTranslationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -153,7 +154,7 @@ class _TextTranslationClientOperationsMixin(
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GetSupportedLanguagesResult, response.json())
 
@@ -244,7 +245,7 @@ class _TextTranslationClientOperationsMixin(
     @api_version_validation(
         method_added_on="2025-10-01-preview",
         params_added_on={"2025-10-01-preview": ["client_trace_id", "api_version", "content_type", "accept"]},
-        api_versions_list=["2025-10-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-06-06"],
     )
     async def translate(
         self,
@@ -301,6 +302,7 @@ class _TextTranslationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -327,7 +329,7 @@ class _TextTranslationClientOperationsMixin(
         response_headers["x-metered-usage"] = self._deserialize("int", response.headers.get("x-metered-usage"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TranslationResult, response.json())
 
@@ -473,7 +475,7 @@ class _TextTranslationClientOperationsMixin(
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-06-06"],
     )
     async def transliterate(
         self,
@@ -548,6 +550,7 @@ class _TextTranslationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -572,7 +575,7 @@ class _TextTranslationClientOperationsMixin(
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TransliterateResult, response.json())
 

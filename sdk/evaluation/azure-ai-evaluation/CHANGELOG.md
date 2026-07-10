@@ -1,6 +1,144 @@
 # Release History
 
-## 1.16.3 (Unreleased)
+## 1.18.1 (2026-07-09)
+
+### Bugs Fixed
+
+- Enabled `azure_ai_search`, `azure_fabric`, and `sharepoint_grounding` tool
+  calls for `ToolCallSuccessEvaluator` and `ToolOutputUtilizationEvaluator`.
+  These tools were previously rejected because their `tool_result` payloads
+  are structured (dict / list of dicts) and the internal
+  `[TOOL_RESULT] {result}` formatter rendered them with `str()`, producing
+  Python `repr` output (single quotes, `'role': 'user'`) that the LLM judges
+  could not reliably ground on. The shared formatter now JSON-encodes
+  non-string payloads via a new `_stringify_tool_result` helper
+  (`ensure_ascii=False` to preserve customer locale data), and the shared
+  `ConversationValidator.UNSUPPORTED_TOOLS` list (inherited by
+  `ToolDefinitionsValidator`) is narrowed to allow these three tools.
+  `GroundednessEvaluator` now uses a new `GroundednessConversationValidator`
+  subclass that keeps the wider rejection list, matching the corresponding
+  behavior in azureml-assets where Groundedness was intentionally not part
+  of the enablement (a follow-up will land a context-extractor helper so
+  Groundedness can also accept these tools). The remaining restricted tools
+  (`bing_grounding`, `bing_custom_search`, `web_search`,
+  `browser_automation`, `code_interpreter_call`, `computer_call`,
+  `openapi_call`) continue to be rejected. `ToolCallAccuracyEvaluator` and
+  `ToolInputAccuracyEvaluator` are unaffected — they do not render tool
+  results into the judge prompt and already opt out of the unsupported-tool
+  check.
+- Fixed OpenAPI tool-call validation in tool evaluators (e.g. `ToolCallAccuracyEvaluator`). OpenAPI
+  tool definitions are expanded into their nested functions when present, so tool calls referencing a
+  nested function name validate correctly, while OpenAPI tool definitions without nested functions are
+  kept as is so tool calls referencing the top-level tool name continue to validate.
+
+### Other Changes
+
+- Conversation/tool message preprocessing now normalizes `openapi_call` / `openapi_call_output` content
+  items to `tool_call` / `tool_result` (previously only `function_call` / `function_call_output` were
+  normalized), so evaluators correctly handle OpenAPI-tool agent transcripts.
+- Evaluators no longer log raw customer payloads in fallback/debug paths. `reformat_agent_response`,
+  `reformat_conversation_history`, `reformat_tool_definitions`, the tool-call-success reformat helpers,
+  and Groundedness context extraction now emit structural summaries only (via `_log_safe_summary`),
+  never raw query/response/tool payloads.
+
+## 1.18.0 (2026-07-06)
+
+### Bugs Fixed
+
+- Evaluators now raise `EvaluationException` (instead of bare `ValueError`/`TypeError`) for input and
+  configuration validation failures, and consistently set `blame=ErrorBlame.USER_ERROR` with an
+  appropriate `category` and `target`. Affected evaluators include `ContentSafetyEvaluator`,
+  `QAEvaluator`, `RougeScoreEvaluator`, `DocumentRetrievalEvaluator`, the task navigation efficiency
+  evaluator, and the shared evaluator base (conversation/tool-call input validation).
+- Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
+  encoded payload for converter-based attack strategies (Base64, Flip,
+  Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The
+  persisted `conversation[].content` for user turns now reflects what the
+  target actually received (`converted_value`). The pre-converter
+  adversarial objective is additionally retained as an `original_value`
+  field on user messages in the intermediate per-strategy `.jsonl`
+  artifacts (it is not surfaced in the customer-facing `results.json`,
+  which continues to expose only `role`/`content`/`name`). Baseline
+  (non-encoded) strategies are unaffected.
+  Resolves [#47228](https://github.com/Azure/azure-sdk-for-python/issues/47228).
+
+## 1.17.0 (2026-06-03)
+
+### Breaking Changes
+
+- Updated `EVALUATOR_NAME_METRICS_MAPPINGS` so `document_retrieval` and `rouge_score` report single primary metrics (`document_retrieval`, `rouge`), with previous sub-metrics now represented in each evaluator's `*_properties` payload.
+
+### Bugs Fixed
+
+- Fixed `format_llm_response` raising `UnboundLocalError` when `inputs` was not provided by ensuring `sample_input` is always initialized.
+
+## 1.16.8 (2026-05-19)
+
+### Features Added
+
+- App Insights logging now forwards arbitrary evaluator-specific keys from each event's `properties` payload as a single `gen_ai.evaluation.properties` JSON attribute (carried inside `internal_properties`). Previously only the four red-team keys (`attack_success`, `attack_technique`, `attack_complexity`, `attack_success_threshold`) were forwarded; structured outputs such as rubric `dimension_scores` were silently dropped. Payloads larger than 7500 characters are replaced with a valid JSON marker (`{"truncated": true, "original_size_bytes": <n>}`) so consumers can always `json.loads` the value. Non-dict `properties` payloads are now safely ignored instead of raising in the red-team forwarder.
+
+## 1.16.7 (2026-05-07)
+
+### Features Added
+
+- Added `extra_headers` keyword argument to `RaiServiceEvaluatorBase` (and all content safety evaluators) to allow passing custom HTTP headers to all backend RAI service calls. SDK-owned headers (`Authorization`, `User-Agent`, `Content-Type`, `aml-user-token`, `x-ms-client-request-id`) cannot be overridden by `extra_headers`.
+
+- Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
+- Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
+- Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
+
+### Bugs Fixed
+
+- `_TaskNavigationEfficiencyEvaluator` now accepts JSON-stringified `response` and `ground_truth` inputs (e.g., from data pipelines that serialize list/tuple inputs to strings). String inputs are parsed as JSON; on parse failure the original value is preserved so downstream validation surfaces the error as before.
+- Fixed error blame attribution in `_get_single_run_results` to perform a case-insensitive comparison when checking the AOAI error code for `UserError`, ensuring failed evaluation runs are correctly classified as user errors regardless of server-side casing.
+- Fixed `deflection_rate` evaluator showing incorrect pass/fail labels where all results were labeled "pass" regardless of the actual score. The inverse metric adjustment was overriding the evaluator's correct string labels, remapping every result to "pass".
+- Fixed `evaluate()` raising `EvaluationException: (InternalError) unhashable type: 'list'` when an evaluator emitted a list value under a `_result`-suffixed column. Binary aggregation now skips such columns with a warning instead of aborting the entire run.
+- Fixed `task_adherence` red team scoring by adding `scenario=redteam` to the RAI scorer evaluation payload, ensuring the server-side score mapping correctly routes to Direct mapping for attack success determination.
+- Fixed row classification double-counting in `_calculate_aoai_evaluation_summary` where errored rows were counted separately and could also be counted as passed/failed. Rows are now classified into mutually exclusive buckets with priority: passed > failed > errored > skipped.
+- Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
+- Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
+- Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
+- Fixed filename length error in `_inline_image` by catching OSError/ValueError during local path resolution and fall back to returning a text chunk instead of throwing.
+
+### Other Changes
+
+- Moved token usage attributes (`gen_ai.evaluation.usage.input_tokens`, `gen_ai.evaluation.usage.output_tokens`) from standard App Insights event attributes into the `internal_properties` JSON bag to align with internal telemetry conventions.
+
+## 1.16.6 (2026-04-27)
+
+### Bugs Fixed
+
+- Fixed evaluation token usage not being emitted in the genai evaluation event, causing token consumption metrics to be missing from telemetry.
+- Fixed multi-turn red team attacks (`RedTeamingAttack`-based strategies like `MultiTurn`) failing silently with PyRIT 0.11. Two bugs were patched at the SDK level: (1) `RedTeamingAttack._setup_async` raised `RuntimeError: Conversation already exists` because it seeded prepended conversation messages before calling `set_system_prompt`; now patched per-instance on the adversarial chat target to tolerate existing conversation history. (2) `RedTeamingAttack._generate_next_prompt_async` returned `context.next_message` without calling `.duplicate_message()`, causing `sqlite3.IntegrityError: UNIQUE constraint failed: PromptMemoryEntries.id` on the second turn; now patched at module load with an idempotent wrapper that duplicates the message before returning.
+- Fixed `sensitive_data_leakage` red team attacks producing 100% false-pass rates. `_extract_context_items` in the Foundry execution path only handled `list` or `dict` shapes for `messages[0].context`; pre-curated SDL attack objectives store the document text as a `str` with sibling `context_type`/`tool_name` fields, so the document was silently dropped and a fallback synthesized a context item from the user prompt. The agent never received the sensitive document content and could not leak it, causing the evaluator to score every attempt as a pass. Added `str` handling (both message-level and top-level), normalized raw string entries inside list-shaped context, and gated the `context_type` fallback so it only runs when no usable context was extracted (including the `context: null` case).
+
+### Other Changes
+
+## 1.16.5 (2026-04-08)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `sensitive_data_leakage` risk category producing 0% attack success rate (false negatives) in the Foundry execution path. Agent-specific tool context (e.g., `document_client_smode`, `email_client_smode`) was stored in `SeedObjective.metadata` but never propagated to the target callback, so the agent could not access the sensitive data it was supposed to leak. Context is now delivered via `prepended_conversation` SeedPrompts and extracted from conversation history metadata, enabling the ACA runtime to build FunctionTool injections.
+- Fixed multi-turn and crescendo red team strategies producing output items identical to their baseline counterparts. The Foundry execution path was writing all strategies' conversations to a single shared JSONL file, causing each strategy to read all conversations and mislabel them. Now writes per-strategy JSONL files using PyRIT's scenario result grouping.
+
+### Other Changes
+
+## 1.16.4 (2026-04-03)
+
+### Features Added
+
+- Added support for evaluator `properties` passthrough in AOAI evaluation results. When an evaluator returns a `properties` dict, it is included alongside `score`, `label`, `reason`, `threshold`, and `passed` in the result object.
+
+### Bugs Fixed
+
+- Fixed stray space in `_eval_metric.value` attribute access in `_base_rai_svc_eval.py`.
+
+## 1.16.3 (2026-04-01)
 
 ### Features Added
 
@@ -12,6 +150,8 @@
 - Fixed attack success rate (ASR) always reporting 0% because the sync eval API's `passed` field indicates task completion, not content safety. Replaced `passed`-based logic with score-based threshold comparison matching `_evaluation_processor.py`.
 
 - Fixed partial red team results being discarded when some objectives fail. Previously, if PyRIT raised due to incomplete objectives (e.g., evaluator model refuses to score), all completed results were lost. Now recovers partial results from PyRIT's memory database.
+
+- Fixed evaluator token metrics (`promptTokens`, `completionTokens`) not persisted in red teaming output items. The sync eval API returns camelCase keys but the extraction code only checked for snake_case, silently dropping all evaluator token usage data.
 
 ### Other Changes
 

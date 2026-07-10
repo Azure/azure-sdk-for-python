@@ -5,10 +5,12 @@
 # --------------------------------------------------------------------------
 
 import json
-import pytest
 from datetime import datetime, timedelta
 from math import ceil
 from time import sleep
+from unittest.mock import Mock, patch
+
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -22,9 +24,78 @@ from settings.testcase import ChangeFeedPreparer
 # Then uncomment this import and comment out the other.
 # from changefeed import ChangeFeedClient
 from azure.storage.blob.changefeed import ChangeFeedClient
+from azure.storage.blob.changefeed._models import ChangeFeed
+
+
+def _build_change_feed(blob_names):
+    """Build a ChangeFeed backed by a mock client, skipping the network-bound _initialize()."""
+    blobs = [Mock() for _ in blob_names]
+    for blob, name in zip(blobs, blob_names):
+        blob.name = name
+    client = Mock()
+    client.list_blobs.return_value = blobs
+    with patch.object(ChangeFeed, "_initialize"):
+        return ChangeFeed(client, page_size=100)
+
 
 @pytest.mark.playback_test_only
 class TestStorageChangeFeed(StorageRecordedTestCase):
+
+    @pytest.mark.parametrize(
+        "segment_path",
+        [
+            "idx/segments/2026/02/20/0827/meta.json",
+            "idx/segments/2022/11/28/2300/meta.json",
+            "idx/segments/1601/01/01/0000/meta.json",
+        ],
+    )
+    def test_valid_segment_path_is_accepted(self, segment_path):
+        assert ChangeFeed._is_valid_segment_path(segment_path) is True
+
+    @pytest.mark.parametrize(
+        "segment_path",
+        [
+            "idx/segments/2026/02/20",  # day-level directory marker (the reported crash)
+            "idx/segments/2026/02/20/0000",  # minute-level directory marker
+            "idx/segments/2026/02",  # month-level directory marker
+            "idx/segments/2026",  # year-level directory marker
+            "idx/segments",  # prefix only
+            "idx/segments/2026/02/20/0000/",  # trailing slash -> empty file token
+        ],
+    )
+    def test_directory_marker_or_malformed_path_is_rejected(self, segment_path):
+        assert ChangeFeed._is_valid_segment_path(segment_path) is False
+
+    def test_parse_datetime_from_valid_segment_path(self):
+        assert ChangeFeed._parse_datetime_from_segment_path("idx/segments/2026/02/20/0000/meta.json") == datetime(
+            2026, 2, 20, 0
+        )
+
+    def test_get_segment_paths_skips_directory_markers(self):
+        blob_names = [
+            "idx/segments/2026/02/20",  # day-level marker
+            "idx/segments/2026/02/20/0000",  # minute-level marker
+            "idx/segments/2026/02/20/0000/meta.json",  # real segment
+            "idx/segments/2026/02/20/0100/meta.json",  # real segment
+        ]
+        change_feed = _build_change_feed(blob_names)
+
+        results = list(change_feed._get_segment_paths(start_year=""))
+
+        # The generator yields a trailing None sentinel to signal "no more segments".
+        assert results[-1] is None
+        yielded_segments = [path for path in results if path is not None]
+        assert yielded_segments == [
+            "idx/segments/2026/02/20/0000/meta.json",
+            "idx/segments/2026/02/20/0100/meta.json",
+        ]
+
+    def test_get_segment_paths_does_not_raise_on_directory_markers(self):
+        blob_names = ["idx/segments/2026/02/20", "idx/segments/2026/02/20/0000/meta.json"]
+        change_feed = _build_change_feed(blob_names)
+
+        yielded_segments = [path for path in change_feed._get_segment_paths(start_year="") if path]
+        assert yielded_segments == ["idx/segments/2026/02/20/0000/meta.json"]
 
     # --Test cases for change feed -----------------------------------------
     @ChangeFeedPreparer()
@@ -48,7 +119,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         # Assert
         assert len(events_per_page1) == results_per_page
         assert len(events_per_page2) == results_per_page
-        assert events_per_page1[results_per_page-1]['id'] != events_per_page2[0]['id']
+        assert events_per_page1[results_per_page - 1]["id"] != events_per_page2[0]["id"]
 
         # Merge the two small pages into one
         events_per_page1.extend(events_per_page2)
@@ -60,8 +131,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         # Assert
         # getting two pages separately gives the same result as getting the big page at once
-        for i in range(0, len(one_page)):
-            assert merged_two_pages[i].get('id') == one_page[i].get('id')
+        for i, one_page_event in enumerate(one_page):
+            assert merged_two_pages[i].get("id") == one_page_event["id"]
 
     @ChangeFeedPreparer()
     @recorded_by_proxy
@@ -84,7 +155,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
             page_size = len(list(page))
             event_number_in_all_pages += page_size
 
-        assert ceil(len(all_events)*1.0/results_per_page) == len(pages)
+        assert ceil(len(all_events) * 1.0 / results_per_page) == len(pages)
         assert total_events == event_number_in_all_pages
 
     @ChangeFeedPreparer()
@@ -166,11 +237,11 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         dict_token = json.loads(token)
         assert len(events) > 0
-        assert dict_token['CursorVersion'] == 1
-        assert dict_token['UrlHost'] is not None
-        assert len(dict_token['CurrentSegmentCursor']['ShardCursors']) == 3
-        assert dict_token['CurrentSegmentCursor']['SegmentPath'] is not None
-        assert dict_token['CurrentSegmentCursor']['CurrentShardPath'] is not None
+        assert dict_token["CursorVersion"] == 1
+        assert dict_token["UrlHost"] is not None
+        assert len(dict_token["CurrentSegmentCursor"]["ShardCursors"]) == 3
+        assert dict_token["CurrentSegmentCursor"]["SegmentPath"] is not None
+        assert dict_token["CurrentSegmentCursor"]["CurrentShardPath"] is not None
 
         if self.is_live:
             sleep(120)
@@ -192,10 +263,10 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         # restart using the continuation token which has Non-zero EventIndex for 3 shards
         token2 = change_feed2.continuation_token
         dict_token2 = json.loads(token2)
-        assert len(dict_token2['CurrentSegmentCursor']['ShardCursors']) == 3
-        assert dict_token2['CurrentSegmentCursor']['ShardCursors'][0]['EventIndex'] != 0
-        assert dict_token2['CurrentSegmentCursor']['ShardCursors'][1]['EventIndex'] != 0
-        assert dict_token2['CurrentSegmentCursor']['ShardCursors'][2]['EventIndex'] != 0
+        assert len(dict_token2["CurrentSegmentCursor"]["ShardCursors"]) == 3
+        assert dict_token2["CurrentSegmentCursor"]["ShardCursors"][0]["EventIndex"] != 0
+        assert dict_token2["CurrentSegmentCursor"]["ShardCursors"][1]["EventIndex"] != 0
+        assert dict_token2["CurrentSegmentCursor"]["ShardCursors"][2]["EventIndex"] != 0
 
         change_feed3 = cf_client.list_changes(results_per_page=57).by_page(continuation_token=token2)
         change_feed_page3 = next(change_feed3)
@@ -226,11 +297,11 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         dict_token = json.loads(token)
 
         assert len(events_on_first_page) == 3
-        assert dict_token['CursorVersion'] == 1
-        assert dict_token['UrlHost'] is not None
-        assert len(dict_token['CurrentSegmentCursor']['ShardCursors']) == 3
-        assert dict_token['CurrentSegmentCursor']['SegmentPath'] is not None
-        assert dict_token['CurrentSegmentCursor']['CurrentShardPath'] is not None
+        assert dict_token["CursorVersion"] == 1
+        assert dict_token["UrlHost"] is not None
+        assert len(dict_token["CurrentSegmentCursor"]["ShardCursors"]) == 3
+        assert dict_token["CurrentSegmentCursor"]["SegmentPath"] is not None
+        assert dict_token["CurrentSegmentCursor"]["CurrentShardPath"] is not None
 
         print("continue printing events")
 
@@ -262,22 +333,24 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         token = change_feed.continuation_token
 
         dict_token = json.loads(token)
-        assert dict_token['CursorVersion'] == 1
-        assert dict_token['EndTime'] is not None
-        assert dict_token['UrlHost'] is not None
-        assert len(dict_token['CurrentSegmentCursor']['ShardCursors']) == 3
-        assert dict_token['CurrentSegmentCursor']['SegmentPath'] is not None
-        assert dict_token['CurrentSegmentCursor']['CurrentShardPath'] is not None
+        assert dict_token["CursorVersion"] == 1
+        assert dict_token["EndTime"] is not None
+        assert dict_token["UrlHost"] is not None
+        assert len(dict_token["CurrentSegmentCursor"]["ShardCursors"]) == 3
+        assert dict_token["CurrentSegmentCursor"]["SegmentPath"] is not None
+        assert dict_token["CurrentSegmentCursor"]["CurrentShardPath"] is not None
 
         change_feed2 = cf_client.list_changes().by_page(continuation_token=token)
         events = list(next(change_feed2))
 
         end_time_str = (end_time + timedelta(hours=1)).isoformat()
-        assert events[len(events) - 1]['eventTime'] < end_time_str
+        assert events[len(events) - 1]["eventTime"] < end_time_str
 
     @ChangeFeedPreparer()
     @recorded_by_proxy
-    def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(self, **kwargs):
+    def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(
+        self, **kwargs
+    ):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
@@ -298,11 +371,11 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         dict_token = json.loads(token)
         assert len(events) > 0
-        assert dict_token['CursorVersion'] == 1
-        assert dict_token['UrlHost'] is not None
-        assert len(dict_token['CurrentSegmentCursor']['ShardCursors']) == 3
-        assert dict_token['CurrentSegmentCursor']['SegmentPath'] is not None
-        assert dict_token['CurrentSegmentCursor']['CurrentShardPath'] is not None
+        assert dict_token["CursorVersion"] == 1
+        assert dict_token["UrlHost"] is not None
+        assert len(dict_token["CurrentSegmentCursor"]["ShardCursors"]) == 3
+        assert dict_token["CurrentSegmentCursor"]["SegmentPath"] is not None
+        assert dict_token["CurrentSegmentCursor"]["CurrentShardPath"] is not None
 
         # make sure end_time and continuation_token are mutual exclusive
         with pytest.raises(ValueError):
@@ -323,7 +396,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         # restart using the continuation token which has Non-zero EventIndex for 3 shards
         token2 = change_feed2.continuation_token
         dict_token2 = json.loads(token2)
-        assert len(dict_token2['CurrentSegmentCursor']['ShardCursors']) == 3
+        assert len(dict_token2["CurrentSegmentCursor"]["ShardCursors"]) == 3
 
         change_feed3 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token2)
         events3 = []
@@ -335,8 +408,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         dict_token3 = json.loads(token3)
 
         assert events3 != 0
-        assert len(dict_token3['CurrentSegmentCursor']['ShardCursors']) == 3
-        assert len(events)+len(events2)+len(events3) == len(all_events)
+        assert len(dict_token3["CurrentSegmentCursor"]["ShardCursors"]) == 3
+        assert len(events) + len(events2) + len(events3) == len(all_events)
 
     @ChangeFeedPreparer()
     @recorded_by_proxy
@@ -359,5 +432,5 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
                 events.append(event)
         dict_token = json.loads(change_feed.continuation_token)
         dict_token_with_1_shard = json.loads(token_with_1_shard)
-        assert len(dict_token_with_1_shard['CurrentSegmentCursor']['ShardCursors']) == 1
-        assert len(dict_token['CurrentSegmentCursor']['ShardCursors']) == 3
+        assert len(dict_token_with_1_shard["CurrentSegmentCursor"]["ShardCursors"]) == 1
+        assert len(dict_token["CurrentSegmentCursor"]["ShardCursors"]) == 3

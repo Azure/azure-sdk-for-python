@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position,wrong-import-order,ungrouped-imports
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,9 +18,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
@@ -44,12 +45,11 @@ from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
 # Define the custom span processor that is used for adding the custom
 # attributes to spans when they are started.
-# [START custom_attribute_span_processor]
 class CustomAttributeSpanProcessor(SpanProcessor):
     def __init__(self) -> None:
         pass
@@ -67,8 +67,6 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         pass
 
 
-# [END custom_attribute_span_processor]
-
 # Setup tracing to console
 # Requires opentelemetry-sdk
 span_exporter = ConsoleSpanExporter()
@@ -81,10 +79,8 @@ tracer = trace.get_tracer(__name__)
 AIProjectInstrumentor().instrument()
 
 # Add the custom span processor to the global tracer provider
-# [START add_custom_span_processor_to_tracer_provider]
 provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
-# [END add_custom_span_processor_to_tracer_provider]
 
 scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
@@ -94,7 +90,7 @@ with tracer.start_as_current_span(scenario):
     ):
 
         agent_definition = PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
         )
 

@@ -17,9 +17,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -35,7 +35,7 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -46,9 +46,9 @@ with (
     teacher_agent = project_client.agents.create_version(
         agent_name="teacher-agent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a teacher that create pre-school math question for student and check answer. 
-                            If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="""You are a teacher that create pre-school math question for student and check answer.
+                            If the answer is correct, you stop the conversation by saying [COMPLETE].
                             If the answer is wrong, you ask student to fix it.""",
         ),
     )
@@ -58,15 +58,15 @@ with (
     student_agent = project_client.agents.create_version(
         agent_name="student-agent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a student who answers questions from the teacher. 
+            model=os.environ["FOUNDRY_MODEL_NAME"],
+            instructions="""You are a student who answers questions from the teacher.
                             When the teacher gives you a question, you answer it.""",
         ),
     )
     print(f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})")
 
     # Create Multi-Agent Workflow
-    workflow_yaml = f"""
+    workflow_yaml = """
 kind: workflow
 trigger:
   kind: OnConversationStart
@@ -109,7 +109,7 @@ trigger:
 
     - kind: SendActivity
       id: send_teacher_reply
-      activity: "{{Last(Local.LatestMessage).Text}}"                
+      activity: "{{Last(Local.LatestMessage).Text}}"
 
     - kind: SetVariable
       id: set_variable_turncount
@@ -158,10 +158,10 @@ trigger:
     for event in stream:
         print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
-            event.type == "response.output_item.added" or event.type == "response.output_item.done"
-        ) and event.item.type == "workflow_action":
+            event.type in ("response.output_item.added", "response.output_item.done")
+        ) and event.item.type == "workflow_action":  # pyright: ignore [reportAttributeAccessIssue]
             print(
-                f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
+                f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",  # pyright: ignore [reportAttributeAccessIssue]
                 end="",
             )
         elif event.type == "response.completed":

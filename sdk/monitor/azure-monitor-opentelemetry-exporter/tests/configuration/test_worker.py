@@ -5,8 +5,12 @@ import threading
 import time
 from unittest.mock import Mock, patch
 
-from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
-from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
+from azure.monitor.opentelemetry.exporter._configuration._worker import (
+    _ConfigurationWorker,
+)
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_PYTHON_TARGETING,
+)
 
 
 class TestConfigurationWorker(unittest.TestCase):
@@ -59,7 +63,11 @@ class TestConfigurationWorker(unittest.TestCase):
 
     def test_get_refresh_interval_thread_safe(self):
         """Test that get_refresh_interval is thread-safe."""
-        with patch("random.uniform", return_value=0.1):
+        # Use a long startup delay so the background refresh thread doesn't
+        # change the interval during the test (avoids race condition).
+        with patch("random.uniform", return_value=300):
+            # Mock also returns 1200 so even if refresh fires, interval stays consistent
+            self.mock_configuration_manager.get_configuration_and_refresh_interval.return_value = 1200
             worker = _ConfigurationWorker(self.mock_configuration_manager, 1200)
 
             try:
@@ -123,7 +131,10 @@ class TestConfigurationWorker(unittest.TestCase):
     def test_refresh_interval_update(self):
         """Test that refresh interval is updated from configuration manager response."""
         # Mock returns different intervals
-        self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = [1800, 3600]
+        self.mock_configuration_manager.get_configuration_and_refresh_interval.side_effect = [
+            1800,
+            3600,
+        ]
 
         with patch("random.uniform", return_value=0.001):
             worker = _ConfigurationWorker(self.mock_configuration_manager, 0.01)
@@ -160,7 +171,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 start_time = time.time()
 
                 while time.time() - start_time < max_wait:
-                    if mock_logger.warning.called:
+                    if mock_logger.debug.called:
                         break
                     time.sleep(0.01)
 
@@ -169,10 +180,10 @@ class TestConfigurationWorker(unittest.TestCase):
                 self.assertTrue(worker._refresh_thread.is_alive())
 
                 # Error should be logged
-                mock_logger.warning.assert_called()
-                warning_call = mock_logger.warning.call_args[0]
-                self.assertIn("Configuration refresh failed", warning_call[0])
-                self.assertIn("Test error", str(warning_call[1]))
+                mock_logger.debug.assert_called()
+                debug_call = mock_logger.debug.call_args[0]
+                self.assertIn("Configuration refresh failed", debug_call[0])
+                self.assertIn("Test error", str(debug_call[1]))
 
             finally:
                 worker.shutdown()
@@ -293,7 +304,9 @@ class TestConfigurationWorker(unittest.TestCase):
             try:
                 # Verify thread was created with correct parameters
                 mock_thread_class.assert_called_once_with(
-                    target=worker._get_configuration, name="ConfigurationWorker", daemon=True
+                    target=worker._get_configuration,
+                    name="ConfigurationWorker",
+                    daemon=True,
                 )
 
                 # Verify thread was started

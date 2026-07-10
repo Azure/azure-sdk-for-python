@@ -1,7 +1,7 @@
 # Research: Python SQL Driver Options for Microsoft Fabric SQL Endpoints
 
-**Date**: 2026-01-30  
-**Context**: Evaluating alternatives to pyodbc + Microsoft ODBC Driver for SQL connectivity to Fabric mirrored tables  
+**Date**: 2026-01-30
+**Context**: Evaluating alternatives to pyodbc + Microsoft ODBC Driver for SQL connectivity to Fabric mirrored tables
 **Question**: Can we use a pure Python SQL driver instead of requiring system-level ODBC driver installation?
 
 ## Executive Summary

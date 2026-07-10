@@ -14,6 +14,7 @@
     ".devcontainer/**",
     "eng/**",
     ".github/CODEOWNERS",
+    ".github/**/*.lock.yml",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
@@ -96,17 +97,11 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/synapse/azure-synapse-artifacts/**",
-    "sdk/translation/azure-ai-translation-document/samples/assets/**",
-    "sdk/translation/azure-ai-translation-document/doc/**",
-    "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
     "sdk/storage/azure-storage-file-datalake/tests/**",
-    "sdk/projects/azure-projects/tests/test_infra/**",
-    "sdk/projects/azure-projects/samples/**/*.html",
-    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -121,20 +116,12 @@
     "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/openai/azure-openai/tests/assets/**",
-    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
-    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",
-    "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
+    ".gitattributes",
     ".gitignore",
     "eng/tools/azure-sdk-tools/ci_tools/github_tools.py",
     "eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
@@ -152,10 +139,14 @@
     "conda/conda-recipes/uamqp/meta.yaml",
     "conda/conda-releaselogs/azure-mgmt.md",
     ".github/workflows/azure-sdk-tools.yml",
+    ".github/workflows/actionlint.yml",
     "sdk/ai/azure-ai-voicelive/azure/ai/voicelive/models/_*.py",
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "vally",
+    "regen",
+    "pylintrc",
     "qnas",
     "msedge",
     "spinup",
@@ -185,6 +176,8 @@
     "adfs",
     "adls",
     "aenter",
+    "agentic",
+    "Agentic",
     "aiohttp",
     "alru",
     "amqp",
@@ -221,6 +214,7 @@
     "consts",
     "contoso",
     "contosodataset",
+    "contosowidgetmanager",
     "centralus",
     "centraluseuap",
     "creds",
@@ -260,6 +254,7 @@
     "engsys",
     "entra",
     "envname",
+    "esrp",
     "evals",
     "fastmcp",
     "fileno",
@@ -289,6 +284,7 @@
     "inotify",
     "ints",
     "iohttp",
+    "iscai",
     "IOHTTP",
     "IOLRO",
     "incompat",
@@ -304,6 +300,8 @@
     "ivar",
     "ivars",
     "jwks",
+    "kashifkhan",
+    "liftr",
     "keybak",
     "kube",
     "kubeconfig",
@@ -342,6 +340,7 @@
     "msauth",
     "msrest",
     "msrestazure",
+    "msyyc",
     "MSSQL",
     "MSRC",
     "mutex",
@@ -365,6 +364,7 @@
     "oauthlib",
     "objs",
     "odata",
+    "octocat",
     "oidc",
     "onboarded",
     "onmicrosoft",
@@ -403,6 +403,7 @@
     "parameterizing",
     "pypirc",
     "pyrit",
+    "pystac",
     "pytyped",
     "pytz",
     "pywin",
@@ -489,6 +490,7 @@
     "vnet",
     "volcz",
     "vsts",
+    "waza",
     "wchar",
     "wesh",
     "westcentralus",
@@ -671,46 +673,6 @@
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
-      ]
-    },
-    {
-      "filename": "sdk/projects/azure-projects/tests/**/*.py",
-      "words": [
-        "tofile",
-        "rgtest",
-        "rgexists",
-        "rgtag",
-        "kvtest",
-        "testb",
-        "sclient",
-        "aclient"
-      ]
-    },
-    {
-      "filename": "sdk/projects/azure-projects/**",
-      "words": [
-        "azproj",
-        "azproject",
-        "azprojects",
-        "aiservices",
-        "aifoundry",
-        "mcpcommand",
-        "fastmcp",
-        "GUNICORN",
-        "GZRS",
-        "RAGZRS",
-        "nfsv",
-        "Eloqua",
-        "Hdfs",
-        "Informix",
-        "Magento",
-        "Netezza",
-        "Odbc",
-        "Serp",
-        "Sybase",
-        "Vertica",
-        "Xero",
-        "redef"
       ]
     },
     {
@@ -1703,18 +1665,6 @@
       ]
     },
     {
-      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
-      "words": [
-        "wday",
-        "mday",
-        "unflattened",
-        "deseralize",
-        "astimezone",
-        "ctxt",
-        "Nify"
-      ]
-    },
-    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -1964,7 +1914,8 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone"
+        "astimezone",
+        "Merkle"
       ]
     },
     {
@@ -2194,6 +2145,19 @@
     {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
+    },
+    {
+      "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
+      "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
+      "filename": ".github/**",
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
+      "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
   "allowCompoundWords": true

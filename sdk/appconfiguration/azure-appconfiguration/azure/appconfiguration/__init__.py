@@ -18,6 +18,8 @@ from ._models import (
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
+    ConfigurationSettingPaged,
+    AsyncConfigurationSettingPaged,
 )
 from ._generated.models import (
     SnapshotStatus,
@@ -44,6 +46,8 @@ __all__ = [
     "ConfigurationSettingFields",
     "ConfigurationSettingsFilter",
     "ConfigurationSettingLabel",
+    "ConfigurationSettingPaged",
+    "AsyncConfigurationSettingPaged",
     "FILTER_PERCENTAGE",
     "FILTER_TARGETING",
     "FILTER_TIME_WINDOW",

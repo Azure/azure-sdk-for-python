@@ -1,8 +1,8 @@
 # Feature Specification: Transparent Fabric Mirror Query Mapping
 
-**Feature Branch**: `001-fabric-mirror-mapper`  
-**Created**: 2026-01-28  
-**Status**: Draft  
+**Feature Branch**: `001-fabric-mirror-mapper`
+**Created**: 2026-01-28
+**Status**: Draft
 **Input**: User description: "Create a separately installable mapper module that passes through credentials and maps Azure Cosmos DB query inputs/outputs to the SQL-driver inputs/outputs required to query Fabric Warehouse endpoints that serve mirrored Cosmos data, with minimal Cosmos client-library changes and no breakage when the module is not installed."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -11,7 +11,7 @@
   IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
   Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
   you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
+
   Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
   Think of each story as a standalone slice of functionality that can be:
   - Developed independently
@@ -128,4 +128,3 @@ As an application developer, I want the Cosmos client library to behave normally
 - **SC-002**: When the mapper module is not installed, default Cosmos client-library usage continues without errors; enabling mirror serving fails with a clear, actionable error message.
 - **SC-003**: For the supported query subset, mapped results are equivalent (within documented tolerances) to results from the non-mirror path for at least 95% of acceptance test cases.
 - **SC-004**: No secrets appear in logs or error messages across the acceptance scenarios and edge-case tests.
-

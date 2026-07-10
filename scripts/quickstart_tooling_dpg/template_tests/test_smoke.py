@@ -8,7 +8,7 @@ from devtools_testutils import recorded_by_proxy
 from testcase import {{ test_prefix.capitalize() }}Test, {{ test_prefix.capitalize() }}Preparer
 
 
-# For more info about how to write and run test, please refer to https://github.com/Azure/azure-sdk-for-python/wiki/Dataplane-Codegen-Quick-Start-for-Test
+# For more info about how to write and run test, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 class {{ test_prefix.capitalize() }}SmokeTest({{ test_prefix.capitalize() }}Test):
 
 

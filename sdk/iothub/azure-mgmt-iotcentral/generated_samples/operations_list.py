@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.iotcentral import IotCentralClient
 
 """
@@ -34,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2021-06-01/examples/Operations_List.json
+# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/stable/2021-06-01/examples/Operations_List.json
 if __name__ == "__main__":
     main()

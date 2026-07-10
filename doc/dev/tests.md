@@ -30,11 +30,11 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
 
 ## Set up your development environment
 
-The Azure SDK Python team creates libraries that are compatible with Python 3.8 and up. We walk through setting up a
-Python virtual environment for Python 3.8, but having a virtual environment for each minor version can make it
+The Azure SDK Python team creates libraries that are compatible with Python 3.10 and up. We walk through setting up a
+Python virtual environment for Python 3.10, but having a virtual environment for each minor version can make it
 easier to debug PRs locally.
 
-- Python 3.8+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store ([3.8](https://www.microsoft.com/p/python-38/9mssztt1n39l), [3.9](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7), [3.10](https://www.microsoft.com/p/python-310/9pjpw5ldxlz5), [3.11](https://apps.microsoft.com/detail/9nrwmjp3717k?hl=en-us&gl=US), [3.12](https://apps.microsoft.com/detail/9ncvdn91xzqp?hl=en-us&gl=US)) (Windows only).
+- Python 3.10+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store ([3.10](https://www.microsoft.com/p/python-310/9pjpw5ldxlz5), [3.11](https://apps.microsoft.com/detail/9nrwmjp3717k?hl=en-us&gl=US), [3.12](https://apps.microsoft.com/detail/9ncvdn91xzqp?hl=en-us&gl=US)) (Windows only).
 
 
 ```cmd
@@ -45,10 +45,10 @@ C:\Users> env\scripts\activate.bat   # Windows CMD only
 (env) C:\Users>
 ```
 
-To create virtual environment for different versions of Python use the `-p` flag to pass the specific Python executable you want to use
+To create virtual environment for different versions of Python, use the executable for that version. For example, for Python 3.14:
 
 ```cmd
-C:\Users> python -m venv -p <path/to/Python/Python38/python.exe> py38_venv
+C:\Users> <path/to/Python/Python314/python.exe> -m venv py314_venv
 ```
 
 ### SDK root directory
@@ -57,8 +57,8 @@ In the root directory of our SDK, a number of mandatory files have been added. W
 
 - README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.learn.microsoft.com/help/platform/reference-document-sdk-client-libraries#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
-- setup.py. This is the 'installer' for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
-- setup.cfg. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
+- pyproject.toml. This is the package configuration file for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
+- setup.py / setup.cfg. **Legacy:** older packages use these instead of `pyproject.toml` to build the Python package. New packages should use `pyproject.toml`. Please see [the guide on Python packaging][packaging] for details.
 - MANIFEST.in. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
 - dev_requirements.txt. This is for developers, and lists the packages required for running the tests and samples. See the dependency installation section below.
 - sdk_packaging.toml. This configuration is used by the packaging pipeline and no further modifications should be required.
@@ -147,7 +147,7 @@ A quick description of the commands above:
 - verifywhl: verifies the wheel contents and manifest
 - verifysdist: verifies the sdist contents and manifest
 - samples: runs all of the samples in the `samples` directory and verifies they are working correctly
-- apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code
+- apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code. By default, generates `api.md` and `api.metadata.yml` in the package directory, which are the files needed to pass the API consistency check. Use `--token-file` to generate only the raw APIView token file.
 
 ## The `devtools_testutils` package
 

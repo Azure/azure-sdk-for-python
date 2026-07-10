@@ -21,6 +21,7 @@ from test_helpers import (
     new_simple_content_analyzer_object,
     new_marketing_video_analyzer_object,
     assert_poller_properties,
+    assert_analyze_poller_usage,
     assert_simple_content_analyzer_result,
     save_analysis_result_to_file,
     save_keyframe_image_to_file,
@@ -604,6 +605,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         # Wait for completion
         result = poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -739,6 +741,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         # Wait for completion
         result = poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -801,6 +804,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         # Wait for completion
         result = poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify operation completed successfully
         assert result is not None, "Analysis result should not be null"

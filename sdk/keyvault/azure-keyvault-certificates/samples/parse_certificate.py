@@ -75,7 +75,7 @@ print(f"Certificate secret with name '{certificate_secret.name}' was found.")
 # This example shows how to parse a certificate in PKCS12 format since it's the default in Key Vault,
 # but PEM certificates are supported as well. With a PEM certificate, you could use load_pem_private_key
 # in place of load_key_and_certificates.
-cert_bytes = base64.b64decode(certificate_secret.value)
+cert_bytes = base64.b64decode(certificate_secret.value)  # type: ignore[arg-type]
 private_key, public_certificate, additional_certificates = pkcs12.load_key_and_certificates(
     data=cert_bytes, password=None
 )

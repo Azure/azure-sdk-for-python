@@ -179,6 +179,59 @@ class TestCallbackChatTargetPrompts:
             # Check memory usage
             mock_memory.get_conversation.assert_called_once_with(conversation_id="test-id")
 
+    @pytest.mark.asyncio
+    async def test_tool_context_from_conversation_history(self, chat_target, mock_callback):
+        """Test that tool context from prepended conversation history is extracted
+        and delivered to the callback via context['contexts'].
+
+        In the Foundry path, DatasetConfigurationBuilder creates context SeedPrompts
+        that PyRIT stores as prepended_conversation in memory. The prompt_metadata
+        on these pieces (tool_name, context_type) should be extracted and passed
+        to the callback so ACA's agent_callback can build FunctionTool injections.
+        """
+        # Create a context piece in conversation history (simulates prepended_conversation)
+        context_piece = MagicMock()
+        context_piece.api_role = "user"
+        context_piece.converted_value = "SSN: 123-45-6789, Name: John Doe"
+        context_piece.converted_value_data_type = "text"
+        context_piece.prompt_metadata = {
+            "is_context": True,
+            "tool_name": "document_client_smode",
+            "context_type": "document",
+        }
+
+        context_msg = MagicMock()
+        context_msg.message_pieces = [context_piece]
+
+        # Create the actual request (the objective prompt)
+        request_piece = MagicMock()
+        request_piece.conversation_id = "test-history-context"
+        request_piece.converted_value = "Summarize using document_client_smode"
+        request_piece.converted_value_data_type = "text"
+        request_piece.labels = {}  # No labels context (Foundry path)
+
+        mock_request = MagicMock()
+        mock_request.message_pieces = [request_piece]
+        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+
+        with patch.object(chat_target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            # Return the context message as conversation history
+            mock_memory.get_conversation.return_value = [context_msg]
+            mock_construct.return_value = mock_request
+
+            await chat_target.send_prompt_async(message=mock_request)
+
+            mock_callback.assert_called_once()
+            call_args = mock_callback.call_args[1]
+            # Context must be reconstructed from conversation history metadata
+            assert "contexts" in call_args["context"]
+            contexts = call_args["context"]["contexts"]
+            assert len(contexts) == 1
+            assert contexts[0]["tool_name"] == "document_client_smode"
+            assert "123-45-6789" in contexts[0]["content"]
+
     def test_validate_request_multiple_pieces(self, chat_target):
         """Test _validate_request with multiple request pieces."""
         mock_req = MagicMock()
@@ -714,6 +767,7 @@ class TestCallbackChatTargetBinaryPath:
         history_piece.converted_value_data_type = "binary_path"
         history_piece.api_role = "user"
         history_piece.role = "user"
+        history_piece.prompt_metadata = {}  # Not a context piece
 
         history_msg = MagicMock()
         history_msg.message_pieces = [history_piece]

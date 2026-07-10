@@ -1,14 +1,22 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.1b1 (Unreleased)
+
+### Other Changes
+
+- Documented that `locales` is now honored in Enhanced Mode. The service operates in multilingual mode by default; if specified, the first locale is used as a hint to guide recognition.
+
+## 1.0.0 (2026-05-18)
 
 ### Features Added
 
-### Breaking Changes
+- First stable release of the Azure AI Transcription client library for Python.
 
-### Bugs Fixed
+## 1.0.0b4 (2026-04-20)
 
 ### Other Changes
+
+- Moved the package to a new service category folder `transcription`.
 
 ## 1.0.0b3 (2026-02-04)
 

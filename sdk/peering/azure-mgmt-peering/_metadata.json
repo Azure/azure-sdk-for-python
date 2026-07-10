@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Peering": "2025-05-01"
   },
-  "commit": "8454cb5ef73c1ad157090245bec57c27668c81c7",
+  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/peering/resource-manager/Microsoft.Peering/Peering",
-  "emitterVersion": "0.61.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
 }

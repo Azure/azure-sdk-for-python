@@ -20,7 +20,7 @@ class AzureArcCredential(AsyncManagedIdentityBase):
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:
             return AsyncManagedIdentityClient(
-                _per_retry_policies=[ArcChallengeAuthPolicy()],
+                per_retry_policies=[ArcChallengeAuthPolicy()],
                 request_factory=functools.partial(_get_request, url),
                 **kwargs,
             )

@@ -20,6 +20,21 @@ from ._scenario_orchestrator import ScenarioOrchestrator
 from ._strategy_mapping import StrategyMapper
 
 
+def _has_usable_content(item: Any) -> bool:
+    """Return True when ``item`` is a context dict whose ``content`` survives
+    the downstream ``DatasetConfigurationBuilder.add_objective_with_context``
+    falsy-content filter (it skips items where ``not content`` evaluates True).
+    """
+    if not isinstance(item, dict):
+        return False
+    content = item.get("content")
+    if content is None:
+        return False
+    if isinstance(content, str):
+        return bool(content.strip())
+    return bool(content)
+
+
 class FoundryExecutionManager:
     """Manages Foundry-based red team execution.
 
@@ -208,9 +223,16 @@ class FoundryExecutionManager:
                 )
                 self._result_processors[risk_value] = result_processor
 
-                # Generate JSONL output
-                output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
-                result_processor.to_jsonl(output_path)
+                # Generate per-strategy JSONL files directly from the scenario's
+                # strategy grouping.  ScenarioResult.attack_results is keyed by
+                # atomic_attack_name (the FoundryStrategy value, e.g. "baseline",
+                # "crescendo"), so each strategy gets its own file — matching the
+                # legacy orchestrator path where each (strategy, risk) pair had a
+                # separate UUID-based JSONL file.
+                strategy_files = result_processor.to_jsonl_per_strategy(
+                    output_dir=self.output_dir,
+                    risk_value=risk_value,
+                )
 
                 # Get summary stats
                 stats = result_processor.get_summary_stats()
@@ -220,7 +242,7 @@ class FoundryExecutionManager:
                 strategy_results = self._group_results_by_strategy(
                     orchestrator=orchestrator,
                     risk_value=risk_value,
-                    output_path=output_path,
+                    strategy_files=strategy_files,
                     attack_strategies=attack_strategies,
                     include_baseline=include_baseline,
                 )
@@ -322,16 +344,60 @@ class FoundryExecutionManager:
         if "messages" in obj and obj["messages"]:
             first_msg = obj["messages"][0]
             if isinstance(first_msg, dict):
-                # Check for context in message
+                # Check for context in message. Pre-curated attack objectives
+                # (e.g. sensitive_data_leakage) store the context document as a
+                # string alongside sibling ``context_type``/``tool_name`` fields
+                # on the same message, so a string value must be normalized into
+                # a context item that carries the document text (not the user
+                # prompt). Missing the str branch here caused the document to be
+                # silently dropped; the fallback below then synthesized an item
+                # whose ``content`` was the user prompt, so downstream tool
+                # injections returned the prompt instead of real context.
+                # ``produced_message_context`` gates the ``context_type``
+                # fallback below. We only set it when at least one extracted
+                # item carries non-empty ``content`` — otherwise the downstream
+                # ``DatasetConfigurationBuilder.add_objective_with_context``
+                # would silently drop the empty item AND the suppressed
+                # fallback would leave the agent with no context at all.
+                # Drop unusable entries at extraction time (rather than
+                # appending and letting ``_dataset_builder`` filter them
+                # downstream) so the output of this method is the actual set
+                # of context items the agent will receive — no junk dict/empty
+                # string entries that confuse later consumers.
+                produced_message_context = False
                 if "context" in first_msg:
                     ctx = first_msg["context"]
                     if isinstance(ctx, list):
-                        context_items.extend(ctx)
-                    elif isinstance(ctx, dict):
+                        normalized = [
+                            item
+                            for item in self._normalize_context_list(
+                                ctx,
+                                first_msg.get("context_type"),
+                                first_msg.get("tool_name"),
+                            )
+                            if _has_usable_content(item)
+                        ]
+                        context_items.extend(normalized)
+                        produced_message_context = bool(normalized)
+                    elif isinstance(ctx, dict) and _has_usable_content(ctx):
                         context_items.append(ctx)
-
-                # Also check for separate context fields
-                if "context_type" in first_msg:
+                        produced_message_context = True
+                    elif isinstance(ctx, str) and ctx.strip():
+                        context_items.append(
+                            {
+                                "content": ctx,
+                                "context_type": first_msg.get("context_type"),
+                                "tool_name": first_msg.get("tool_name"),
+                            }
+                        )
+                        produced_message_context = True
+                # Fall back to synthesizing a context item from sibling fields
+                # only when no usable ``context`` value was found above. This
+                # preserves backward compatibility for objectives that carry
+                # only ``context_type`` (or have ``context: null``) while
+                # avoiding the duplicate-with-wrong-content append that caused
+                # the SDL false-pass bug.
+                if not produced_message_context and "context_type" in first_msg:
                     context_items.append(
                         {
                             "content": first_msg.get("content", ""),
@@ -340,37 +406,89 @@ class FoundryExecutionManager:
                         }
                     )
 
-        # Top-level context
+        # Top-level context. Mirrors the per-message handling above: drop
+        # unusable entries (empty strings, dicts/list items without usable
+        # ``content``) so this method's output reflects only items the agent
+        # will actually receive.
         if "context" in obj:
             ctx = obj["context"]
             if isinstance(ctx, list):
-                context_items.extend(ctx)
-            elif isinstance(ctx, dict):
+                context_items.extend(
+                    item
+                    for item in self._normalize_context_list(ctx, obj.get("context_type"), obj.get("tool_name"))
+                    if _has_usable_content(item)
+                )
+            elif isinstance(ctx, dict) and _has_usable_content(ctx):
                 context_items.append(ctx)
+            elif isinstance(ctx, str) and ctx.strip():
+                context_items.append(
+                    {
+                        "content": ctx,
+                        "context_type": obj.get("context_type"),
+                        "tool_name": obj.get("tool_name"),
+                    }
+                )
 
         return context_items
+
+    def _normalize_context_list(
+        self,
+        items: List[Any],
+        default_context_type: Optional[str],
+        default_tool_name: Optional[str],
+    ) -> List[Dict[str, Any]]:
+        """Normalize a list of context entries to dict shape.
+
+        Some objective shapes provide ``context`` as a list whose entries may
+        be either dicts (already in the expected shape) or raw strings. Raw
+        strings would otherwise propagate through and be dropped by downstream
+        consumers (e.g. ``_dataset_builder``) that only iterate dict items.
+
+        :param items: Raw context entries.
+        :type items: List[Any]
+        :param default_context_type: ``context_type`` to apply to string entries.
+        :type default_context_type: Optional[str]
+        :param default_tool_name: ``tool_name`` to apply to string entries.
+        :type default_tool_name: Optional[str]
+        :return: Normalized list of dict context items.
+        :rtype: List[Dict[str, Any]]
+        """
+        normalized: List[Dict[str, Any]] = []
+        for item in items:
+            if isinstance(item, dict):
+                normalized.append(item)
+            elif isinstance(item, str) and item.strip():
+                normalized.append(
+                    {
+                        "content": item,
+                        "context_type": default_context_type,
+                        "tool_name": default_tool_name,
+                    }
+                )
+        return normalized
 
     def _group_results_by_strategy(
         self,
         orchestrator: ScenarioOrchestrator,
         risk_value: str,
-        output_path: str,
+        strategy_files: Dict[str, str],
         attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]],
         include_baseline: bool,
     ) -> Dict[str, Dict[str, Any]]:
         """Group attack results by strategy for red_team_info format.
 
-        Uses the requested attack strategies as keys (via get_strategy_name) rather than
-        extracting from PyRIT attack identifiers, since PyRIT's PromptSendingAttack
-        is used for all single-turn attacks regardless of converter. The overall ASR is
-        used for each strategy because Foundry batches all strategies per risk category.
+        Each strategy is assigned its own JSONL data file, written via
+        ``FoundryResultProcessor.to_jsonl_per_strategy()``, so that downstream
+        result processing reads only the conversations that belong to that
+        strategy — matching the legacy orchestrator path where each
+        ``(strategy, risk)`` pair had its own file.
 
         :param orchestrator: Completed scenario orchestrator
         :type orchestrator: ScenarioOrchestrator
         :param risk_value: Risk category value
         :type risk_value: str
-        :param output_path: Path to JSONL output file
-        :type output_path: str
+        :param strategy_files: Dictionary mapping strategy key to per-strategy JSONL path
+        :type strategy_files: Dict[str, str]
         :param attack_strategies: Original list of requested attack strategies
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
         :param include_baseline: Whether baseline was included in execution
@@ -388,39 +506,53 @@ class FoundryExecutionManager:
         foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
 
         # Create an entry per requested Foundry strategy using get_strategy_name() as key
-        # so it matches ATTACK_STRATEGY_COMPLEXITY_MAP and _red_team.py eval matching
         for strategy in foundry_strategies:
             strategy_key = get_strategy_name(strategy)
+            data_file = strategy_files.get(strategy_key, "")
+            if not data_file:
+                self.logger.warning(
+                    f"No JSONL file found for strategy '{strategy_key}' in {risk_value}. "
+                    f"Available keys: {list(strategy_files.keys())}"
+                )
             results[strategy_key] = {
-                "data_file": output_path,
+                "data_file": data_file,
                 "status": "completed",
                 "asr": overall_asr,
             }
 
         # Add entries for special strategies that were executed (e.g., IndirectJailbreak via XPIA)
-        # Baseline is handled separately below
+        # Baseline is handled separately below.
+        # Special strategies like IndirectJailbreak run through PromptSendingAttack
+        # so their results appear under "baseline" in strategy_files.
         for strategy in special_strategies:
             flat = strategy if not isinstance(strategy, list) else strategy[0]
             if flat != AttackStrategy.Baseline:
                 strategy_key = get_strategy_name(strategy)
+                # XPIA/IndirectJailbreak uses baseline's PromptSendingAttack,
+                # so its data lives in the "baseline" file.
+                data_file = strategy_files.get(strategy_key, "") or strategy_files.get("baseline", "")
                 results[strategy_key] = {
-                    "data_file": output_path,
+                    "data_file": data_file,
                     "status": "completed",
                     "asr": overall_asr,
                 }
 
         # Add baseline entry if it was included
         if include_baseline:
-            results[get_strategy_name(AttackStrategy.Baseline)] = {
-                "data_file": output_path,
+            baseline_key = get_strategy_name(AttackStrategy.Baseline)
+            data_file = strategy_files.get(baseline_key, "")
+            results[baseline_key] = {
+                "data_file": data_file,
                 "status": "completed",
                 "asr": overall_asr,
             }
 
         # Fallback if no strategies produced results
         if not results:
+            # Use the first available file or empty string
+            fallback_file = next(iter(strategy_files.values()), "")
             results["Foundry"] = {
-                "data_file": output_path,
+                "data_file": fallback_file,
                 "status": "completed",
                 "asr": overall_asr,
             }

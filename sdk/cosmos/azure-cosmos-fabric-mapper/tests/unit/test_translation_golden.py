@@ -21,6 +21,12 @@ def test_golden_translation_fixtures_match():
 
     for item in data:
         res = translate(item["query"], item.get("parameters"), config)
-        assert res.sql == item["expected_sql"], f"Failed on {item['name']}: SQL mismatch"
-        assert res.params == item["expected_params"], f"Failed on {item['name']}: params mismatch"
-        assert res.select_value == item["select_value"], f"Failed on {item['name']}: select_value mismatch"
+        assert (
+            res.sql == item["expected_sql"]
+        ), f"Failed on {item['name']}: SQL mismatch"
+        assert (
+            res.params == item["expected_params"]
+        ), f"Failed on {item['name']}: params mismatch"
+        assert (
+            res.select_value == item["select_value"]
+        ), f"Failed on {item['name']}: select_value mismatch"

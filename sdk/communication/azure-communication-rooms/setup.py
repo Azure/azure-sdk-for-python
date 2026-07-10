@@ -13,7 +13,7 @@ import re
 from setuptools import setup, find_packages
 
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-communication-rooms"

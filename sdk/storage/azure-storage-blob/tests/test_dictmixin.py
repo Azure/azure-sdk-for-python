@@ -61,7 +61,7 @@ class TestDictMixin:
         updated = {key: updatedval}
         model.update(updated)
         assert model[key] == updatedval
-    
+
     def test_values_items(self):
         model = DictMixin()
         key = "testkey"

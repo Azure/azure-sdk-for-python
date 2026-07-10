@@ -6,8 +6,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.queue import (
     CorsRule,
@@ -16,10 +20,6 @@ from azure.storage.queue import (
     QueueServiceClient,
     RetentionPolicy,
 )
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 
@@ -86,8 +86,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -231,12 +230,9 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
     # --Test cases for errors ---------------------------------------
     @QueuePreparer()
-    def test_retention_no_days(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Assert
-        pytest.raises(ValueError, RetentionPolicy, True, None)
+    def test_retention_no_days(self):
+        with pytest.raises(ValueError):
+            RetentionPolicy(True, None)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -247,11 +243,12 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         cors = []
-        for i in range(0, 6):
+        for _ in range(6):
             cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
-        pytest.raises(HttpResponseError, qsc.set_service_properties, None, None, None, cors)
+        with pytest.raises(HttpResponseError):
+            qsc.set_service_properties(None, None, None, cors)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -268,7 +265,8 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         )
 
         # Assert
-        pytest.raises(HttpResponseError, qsc.set_service_properties, None, None, minute_metrics)
+        with pytest.raises(HttpResponseError):
+            qsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

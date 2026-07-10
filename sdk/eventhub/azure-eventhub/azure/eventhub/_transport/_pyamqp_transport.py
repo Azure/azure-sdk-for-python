@@ -304,7 +304,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
-        keep_alive_interval: int,
+        keep_alive_interval: Optional[int],
         client_name: str,
         link_properties: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, Any]] = None,

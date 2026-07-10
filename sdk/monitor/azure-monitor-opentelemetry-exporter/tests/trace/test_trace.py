@@ -1187,6 +1187,16 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertFalse(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.response_code, "400")
 
+        # 5xx - trace treats 5xx as success (only 4xx is failure)
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+            "http.status_code": 500,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "500")
+
         ## Stable http semconv
         span._attributes = {
             "http.request.method": "GET",
@@ -1216,6 +1226,22 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.method": "GET",
             "net.peer.ip": "peer_ip",
             "http.status_code": "",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "0")
+
+        # Stable semconv - no status code
+        span._attributes = {
+            "http.request.method": "GET",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "0")
+
+        # Stable semconv - no status code
+        span._attributes = {
+            "http.request.method": "GET",
         }
         envelope = exporter._span_to_envelope(span)
         self.assertFalse(envelope.data.base_data.success)

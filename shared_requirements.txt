@@ -57,12 +57,12 @@ opentelemetry-instrumentation-psycopg2
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-urllib
 opentelemetry-instrumentation-urllib3
+opentelemetry-instrumentation-httpx
 opentelemetry-resource-detector-azure
 azure-nspkg
 azure-ai-nspkg
 azure-cognitiveservices-nspkg
 azure-mgmt-nspkg
-azure-mixedreality-authentication
 azure-schemaregistry
 websocket-client
 avro
@@ -78,6 +78,7 @@ httpx
 pandas
 nltk
 azure-monitor-opentelemetry
+microsoft-opentelemetry
 python-dotenv
 pyrit
 prompty
@@ -92,9 +93,14 @@ opentelemetry-exporter-otlp-proto-http
 agent-framework-azure-ai
 langgraph
 azure-ai-agentserver-core
+azure-ai-agentserver-responses
 langchain-azure-ai
 opentelemetry-exporter-otlp-proto-grpc
 agent-framework-core
 langchain
 langchain-openai
 azure-ai-language-questionanswering
+github-copilot-sdk
+hypercorn
+pystac
+geojson

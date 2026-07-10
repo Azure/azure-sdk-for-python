@@ -23,4 +23,4 @@ class TestAuthorizationManagementClassicAdministratorsOperations(AzureMgmtRecord
     def test_classic_administrators_list(self, resource_group):
         response = self.client.classic_administrators.list()
         result = [r for r in response]
-        assert response
+        assert len(result)

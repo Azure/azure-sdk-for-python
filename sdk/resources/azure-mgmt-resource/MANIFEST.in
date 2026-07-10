@@ -1,7 +1,8 @@
 include *.md
 include LICENSE
-include azure/mgmt/resource/py.typed
+include azure/mgmt/resource/resources/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/mgmt/__init__.py
+include azure/mgmt/resource/__init__.py

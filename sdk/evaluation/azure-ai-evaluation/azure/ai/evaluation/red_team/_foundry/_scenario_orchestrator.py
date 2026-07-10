@@ -183,12 +183,29 @@ class ScenarioOrchestrator:
             return []
 
         # ScenarioResult.attack_results is a dict[str, List[AttackResult]]
-        # Flatten all results into a single list
+        # keyed by atomic_attack_name (strategy name, e.g. "baseline", "crescendo")
         all_results: List[AttackResult] = []
-        for objective_id, results_list in self._scenario_result.attack_results.items():
+        for strategy_name, results_list in self._scenario_result.attack_results.items():
             all_results.extend(results_list)
 
         return all_results
+
+    def get_attack_results_by_strategy(self) -> Dict[str, List[AttackResult]]:
+        """Get attack results grouped by strategy name.
+
+        Returns a shallow copy of the ScenarioResult.attack_results dict.
+        Keys are ``atomic_attack_name`` values which correspond to
+        FoundryStrategy values (e.g. ``"baseline"``, ``"crescendo"``,
+        ``"multi_turn"``, ``"base64"``).
+
+        :return: Dictionary mapping strategy name to list of AttackResult
+        :rtype: Dict[str, List[AttackResult]]
+        """
+        if not self._scenario_result:
+            self.logger.debug(f"No scenario results for {self.risk_category}")
+            return {}
+
+        return dict(self._scenario_result.attack_results)
 
     def get_memory(self) -> Any:
         """Get the memory instance for querying conversations.

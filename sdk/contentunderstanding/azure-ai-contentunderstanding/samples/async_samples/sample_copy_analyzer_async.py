@@ -119,7 +119,7 @@ async def main() -> None:
         )
         await poller.result()
 
-        print(f"Analyzer copied successfully!")
+        print("Analyzer copied successfully!")
         # [END copy_analyzer]
 
         # [START update_and_verify_analyzer]
@@ -133,7 +133,7 @@ async def main() -> None:
             tags={"modelType": "model_in_production"},
         )
 
-        print(f"Updating target analyzer with production tag...")
+        print("Updating target analyzer with production tag...")
         await client.update_analyzer(
             analyzer_id=target_analyzer_id, resource=updated_analyzer
         )
@@ -148,7 +148,7 @@ async def main() -> None:
         # [END update_and_verify_analyzer]
 
         # [START delete_copied_analyzers]
-        print(f"\nCleaning up analyzers...")
+        print("\nCleaning up analyzers...")
 
         try:
             await client.delete_analyzer(analyzer_id=source_analyzer_id)

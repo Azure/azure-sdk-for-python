@@ -1,13 +1,100 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import unittest
 import os
+from unittest import mock
 
 import pytest
 
+from azure.cosmos import _session, documents, http_constants
+from azure.cosmos._base import set_session_token_header, set_session_token_header_async
+from azure.cosmos._request_object import RequestObject
 from azure.cosmos._vector_session_token import VectorSessionToken
+from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos.http_constants import HttpHeaders, ResourceType
+
+
+class _DummyCollectionRanges:
+    def __init__(self):
+        self._rangeById = {}
+
+
+class _DummyRoutingMapProvider:
+    def __init__(self, collection_link: str):
+        self._collection_routing_map_by_item = {collection_link: _DummyCollectionRanges()}
+
+
+class _DummySyncClient:
+    def __init__(self, collection_link: str):
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self.refresh_calls = 0
+
+    def refresh_routing_map_provider(self):
+        self.refresh_calls += 1
+
+
+class _DummyAsyncClient:
+    def __init__(self, collection_link: str):
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self.refresh_calls = 0
+
+    async def refresh_routing_map_provider(self):
+        self.refresh_calls += 1
+
+
+@pytest.mark.cosmosEmulator
+class TestSessionRefreshCompatibilityUnitTest(unittest.IsolatedAsyncioTestCase):
+    """Tests session refresh compatibility across sync and async client connections."""
+
+    async def test_set_session_token_schedules_async_refresh(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        async_client = _DummyAsyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        session_container.set_session_token(async_client, response_result, response_headers)
+        await asyncio.sleep(0)
+
+        self.assertEqual(async_client.refresh_calls, 1)
+
+    async def test_set_session_token_calls_sync_refresh_directly(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        sync_client = _DummySyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        session_container.set_session_token(sync_client, response_result, response_headers)
+
+        self.assertEqual(sync_client.refresh_calls, 1)
+
+    async def test_set_session_token_closes_coroutine_when_no_running_loop(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        async_client = _DummyAsyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        with mock.patch("azure.cosmos._session.asyncio.get_running_loop", side_effect=RuntimeError):
+            session_container.set_session_token(async_client, response_result, response_headers)
+
+        self.assertEqual(async_client.refresh_calls, 0)
 
 
 @pytest.mark.cosmosEmulator
@@ -171,3 +258,360 @@ class TestSessionTokenUnitTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
+    """Regression tests for ``_resolve_partition_local_session_token``.
+
+    Companion-fix for the PKRange migration at ``_session.py:386``:
+    ``parents = list(pk_range[0].get('parents') or ())``. Previously this was
+    ``pk_range[0]['parents'].copy()`` which crashed (a) on PKRange namedtuples
+    because tuples have no ``.copy()`` and (b) when ``parents`` was ``None``.
+    """
+
+    def _container(self):
+        return _session.SessionContainer()
+
+    def test_pkrange_tuple_with_parents(self):
+        """PKRange (namedtuple) input does not crash and parents are walked."""
+        from azure.cosmos._routing.routing_range import PKRange
+        pkr = PKRange(id="child", minInclusive="80", maxExclusive="FF",
+                      parents=("parentA", "parentB"))
+        # No tokens — function must not crash on the parents iteration.
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_none_parents_does_not_crash(self):
+        """Old code did ``parents.copy()`` which raised AttributeError on None."""
+        pkr = {"id": "0", "minInclusive": "", "maxExclusive": "FF", "parents": None}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_empty_parents(self):
+        pkr = {"id": "0", "minInclusive": "", "maxExclusive": "FF", "parents": []}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_tuple_parents(self):
+        pkr = {"id": "child", "parents": ("parentA",)}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_pkrange_walks_parents_then_self(self):
+        """The iteration appends ``pk_range[0]['id']`` after parents, so an id
+        token alone (no parent tokens) still resolves."""
+        from azure.cosmos._routing.routing_range import PKRange
+        from azure.cosmos._vector_session_token import VectorSessionToken
+        pkr = PKRange(id="child", minInclusive="80", maxExclusive="FF", parents=())
+        # Build a token for the child id only.
+        # VectorSessionToken.create accepts the standard "version#globalLsn" form;
+        # use a minimal valid token so .session_token round-trips.
+        token = VectorSessionToken.create("1#1")
+        # The session container holds dict[id] -> SessionToken-like object
+        # whose ``session_token`` attribute is the string form. Wrap accordingly.
+        class _Wrap:
+            def __init__(self, t):
+                self.session_token = t.session_token
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={"child": _Wrap(token)})
+        self.assertEqual(result, token.session_token)
+
+
+class TestGetSessionTokenWithoutPartitionKeyVersion(unittest.TestCase):
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "abc123=="
+    PK_RANGE_ID = "0"
+    PK_VALUE = "some-pk-value"
+    RAW_TOKEN = "1#100"
+
+    class _CapturingRoutingMapProvider:
+        """Records the ranges argument passed to get_overlapping_ranges so tests
+        can assert that get_session_token computed the correct effective partition
+        key. Returns a single fixed partition range."""
+
+        def __init__(self, pk_range_id):
+            self._pk_range_id = pk_range_id
+            self.captured_ranges = None
+
+        def get_overlapping_ranges(self, collection_link, ranges, options):
+            del collection_link, options
+            self.captured_ranges = list(ranges)
+            return [{
+                "id": self._pk_range_id,
+                "minInclusive": "",
+                "maxExclusive": "FF",
+                "parents": [],
+            }]
+
+    class _TokenWrap:
+        """Mimics what ``SessionContainer.rid_to_session_token`` stores per
+        partition: an object exposing ``.session_token`` as the string form."""
+
+        def __init__(self, vector_session_token):
+            self.session_token = vector_session_token.session_token
+
+    def _build_container_with_seeded_token(self):
+        container = _session.SessionContainer()
+        container.collection_name_to_rid[self.COLLECTION_LINK] = self.COLLECTION_RID
+        container.rid_to_session_token[self.COLLECTION_RID] = {
+            self.PK_RANGE_ID: self._TokenWrap(VectorSessionToken.create(self.RAW_TOKEN)),
+        }
+        return container
+
+    def _build_cache(self, partition_key_definition):
+        return {
+            self.COLLECTION_LINK: {
+                "_rid": self.COLLECTION_RID,
+                "partitionKey": partition_key_definition,
+            },
+        }
+
+    def test_partitionkey_definition_without_version_returns_token(self):
+        """Service responses without a 'version' key must not silently nuke the token."""
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash"})  # no 'version'
+
+        token = container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=self._CapturingRoutingMapProvider(self.PK_RANGE_ID),
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertEqual(
+            token, "{0}:{1}".format(self.PK_RANGE_ID, self.RAW_TOKEN),
+            "Expected a non-empty session token when partitionKey lacks 'version'."
+        )
+
+    def test_partitionkey_definition_with_version_returns_same_token(self):
+        """When 'version' IS present, behavior must be unchanged."""
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash", "version": 2})
+
+        token = container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=self._CapturingRoutingMapProvider(self.PK_RANGE_ID),
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertEqual(
+            token, "{0}:{1}".format(self.PK_RANGE_ID, self.RAW_TOKEN),
+            "Expected an unchanged session token when partitionKey includes 'version'."
+        )
+
+    def test_missing_version_produces_v1_hash_epk_not_raw_binary(self):
+        """Missing 'version' must default to V1 hashing (matching the SDK's
+        _get_partition_key_from_partition_key_definition convention). If
+        version resolves to None, PartitionKey.__init__ stores None
+        (kwargs.get('version', V2) returns None when the key is present) and
+        _get_hashed_partition_key_string matches neither V1 nor V2 — the EPK
+        becomes the raw-binary encoding and targets the wrong physical
+        partition on multi-partition Hash containers."""
+        from azure.cosmos.partition_key import PartitionKey
+        expected_epk = PartitionKey(
+            path=["/pk"], kind="Hash", version=1
+        )._get_epk_range_for_partition_key(pk_value=self.PK_VALUE)
+
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash"})  # no 'version'
+        capturing = self._CapturingRoutingMapProvider(self.PK_RANGE_ID)
+
+        container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=capturing,
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertIsNotNone(
+            capturing.captured_ranges,
+            "get_overlapping_ranges was never called by get_session_token.",
+        )
+        self.assertEqual(len(capturing.captured_ranges), 1)
+        actual_epk = capturing.captured_ranges[0]
+        self.assertEqual(
+            actual_epk.min, expected_epk.min,
+            "Missing 'version' must default to V1 hashing. If the actual EPK "
+            "differs from the expected V1 hash, the fix regressed to "
+            "version=None and produced the raw-binary encoding instead.",
+        )
+        self.assertEqual(actual_epk.max, expected_epk.max)
+
+    def test_v1_and_v2_produce_different_effective_partition_keys(self):
+        """Sanity check: V1 and V2 hashing produce distinct EPKs for the same
+        pk_value. If this ever regresses to equal, the V1-EPK assertion in
+        test_missing_version_produces_v1_hash_epk_not_raw_binary becomes vacuous."""
+        from azure.cosmos.partition_key import PartitionKey
+        v1_epk = PartitionKey(
+            path=["/pk"], kind="Hash", version=1
+        )._get_epk_range_for_partition_key(pk_value=self.PK_VALUE)
+        v2_epk = PartitionKey(
+            path=["/pk"], kind="Hash", version=2
+        )._get_epk_range_for_partition_key(pk_value=self.PK_VALUE)
+        self.assertNotEqual(
+            v1_epk.min, v2_epk.min,
+            "V1 and V2 must produce distinct EPKs — if identical, the "
+            "'version' parameter no longer influences hashing.",
+        )
+
+
+# Unit tests for set_session_token_header. When a request targets a single
+# partition, the helper must send only that partition's token, not a
+# comma-joined token covering every cached partition.
+
+class _SessionTokenGemStub:
+    """Stub for the global endpoint manager used by session token helpers."""
+
+    def can_use_multiple_write_locations(self, request):  # noqa: D401
+        return False
+
+
+class _SessionTokenClientStub:
+    """Minimal client connection stub for session token header tests."""
+
+    def __init__(self, collection_link, collection_rid, partition_tokens):
+        self.session = _session.Session("https://stub.documents.azure.com")
+        # Seed per-partition tokens that a real client would populate after writes.
+        self.session.session_container.collection_name_to_rid[collection_link] = collection_rid
+        self.session.session_container.rid_to_session_token[collection_rid] = {
+            pk_range_id: VectorSessionToken.create(tok) for pk_range_id, tok in partition_tokens.items()
+        }
+        self._container_properties_cache = {
+            collection_link: {"_rid": collection_rid},
+        }
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self._global_endpoint_manager = _SessionTokenGemStub()
+
+
+def _build_session_request(collection_link):
+    """Build a session-consistency document read request for the given path."""
+    request_object = RequestObject(ResourceType.Document, _OperationType.Read, None)
+    headers = {HttpHeaders.ConsistencyLevel: documents.ConsistencyLevel.Session}
+    return request_object, headers, collection_link
+
+
+@pytest.mark.cosmosEmulator
+class TestSetSessionTokenHeaderFeedRange(unittest.TestCase):
+    """Sync coverage for single-partition session token selection."""
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "rid_session_token_sync"
+    PARTITION_TOKENS = {
+        "0": "1#5",
+        "1": "1#10",
+        "2": "1#7",
+    }
+
+    def test_per_partition_id_selects_single_partition_token_from_compound_state(self):
+        # When a partition id is supplied, only that partition's token should be sent.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        set_session_token_header(
+            client, headers, path, request, {}, partition_key_range_id="1",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertEqual(
+            token, "1:1#10",
+            "Expected single-partition token '1:1#10', got {!r}.".format(token),
+        )
+        self.assertNotIn(",", token or "", "Per-id selection should never emit a compound token.")
+
+    def test_no_partition_id_returns_compound_for_cross_partition_query(self):
+        # Cross-partition queries (no partition id, no partition key) keep the joined token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        set_session_token_header(client, headers, path, request, {}, partition_key_range_id=None)
+
+        token = headers.get(HttpHeaders.SessionToken, "")
+        self.assertIn(",", token, "Cross-partition branch must emit a compound token.")
+        parts = sorted(token.split(","))
+        self.assertEqual(
+            parts, sorted(["0:1#5", "1:1#10", "2:1#7"]),
+            "Compound token entries do not match the seeded state: {!r}".format(token),
+        )
+
+    def test_per_partition_id_returns_no_compound_when_no_state_for_partition(self):
+        # If we have no cached token for the targeted partition, the helper must not
+        # silently fall back to a compound token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        set_session_token_header(
+            client, headers, path, request, {}, partition_key_range_id="999",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertIsNone(
+            token,
+            "Missing per-id state must not set a session token header.",
+        )
+
+
+@pytest.mark.cosmosEmulator
+class TestSetSessionTokenHeaderFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
+    """Async coverage for single-partition session token selection."""
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "rid_session_token_async"
+    PARTITION_TOKENS = {
+        "0": "1#5",
+        "1": "1#10",
+        "2": "1#7",
+    }
+
+    async def test_per_partition_id_selects_single_partition_token_from_compound_state_async(self):
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id="1",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertEqual(token, "1:1#10")
+        self.assertNotIn(",", token or "")
+
+    async def test_no_partition_id_returns_compound_for_cross_partition_query_async(self):
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id=None,
+        )
+
+        token = headers.get(HttpHeaders.SessionToken, "")
+        self.assertIn(",", token)
+        parts = sorted(token.split(","))
+        self.assertEqual(parts, sorted(["0:1#5", "1:1#10", "2:1#7"]))
+
+    async def test_per_partition_id_returns_no_compound_when_no_state_for_partition_async(self):
+        # Async equivalent of the sync test above: if there is no cached token
+        # for the targeted partition, the async helper must not fall back to a
+        # compound (cross-partition) token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id="999",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertIsNone(
+            token,
+            "Missing per-id state must not set a session token header.",
+        )

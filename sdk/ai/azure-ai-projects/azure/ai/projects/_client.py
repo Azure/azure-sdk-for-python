@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -24,7 +24,13 @@ from .operations import (
     DeploymentsOperations,
     EvaluationRulesOperations,
     IndexesOperations,
+    ToolboxesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -47,6 +53,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -59,8 +67,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
      enable preview features. Default value is None.
     :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is "v1". Note that overriding this default value may result in unsupported
-     behavior.
+     None. Default value is None. If not set, the operation's default API version will be used. Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -103,6 +111,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

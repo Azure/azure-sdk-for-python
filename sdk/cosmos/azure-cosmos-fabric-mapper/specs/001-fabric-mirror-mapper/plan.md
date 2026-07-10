@@ -18,14 +18,14 @@ This repo does not modify the Azure Cosmos DB Python SDK directly; instead it pr
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+  
-**Primary Dependencies**: `mssql-python` (primary SQL driver, pure Python), `lark` (query parsing), `azure-identity` (authentication), stdlib `logging`  
-**Storage**: N/A  
-**Testing**: pytest  
-**Target Platform**: Windows + Linux + macOS  
-**Project Type**: single (Python library package)  
-**Performance Goals**: query translation overhead typically < 2ms per query for common patterns; no extra network hops beyond driver execution  
-**Constraints**: no secrets in logs/errors; mapping OFF by default; deterministic translation for supported subset  
+**Language/Version**: Python 3.11+
+**Primary Dependencies**: `mssql-python` (primary SQL driver, pure Python), `lark` (query parsing), `azure-identity` (authentication), stdlib `logging`
+**Storage**: N/A
+**Testing**: pytest
+**Target Platform**: Windows + Linux + macOS
+**Project Type**: single (Python library package)
+**Performance Goals**: query translation overhead typically < 2ms per query for common patterns; no extra network hops beyond driver execution
+**Constraints**: no secrets in logs/errors; mapping OFF by default; deterministic translation for supported subset
 **Scale/Scope**: start with a well-defined Cosmos SQL subset used by typical applications; expand via feature flags and a compatibility matrix
 
 **Driver Strategy Update (2026-01-30)**:

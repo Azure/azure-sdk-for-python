@@ -1,0 +1,6 @@
+{
+    "ignoreWords": [
+        "agentserver",
+        "ghcopilot"
+    ]
+}

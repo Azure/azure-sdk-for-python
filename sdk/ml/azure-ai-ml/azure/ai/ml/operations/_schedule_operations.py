@@ -5,7 +5,7 @@
 from datetime import datetime, timezone
 from typing import Any, Iterable, List, Optional, Tuple, cast
 
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,

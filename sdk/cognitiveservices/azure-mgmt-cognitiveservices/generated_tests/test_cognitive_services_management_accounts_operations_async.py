@@ -458,3 +458,46 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_accounts_evaluate_deployment_policies(self, resource_group):
+        response = await self.client.accounts.evaluate_deployment_policies(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            body={
+                "deployments": [
+                    {
+                        "name": "str",
+                        "properties": {
+                            "model": {
+                                "callRateLimit": {
+                                    "count": 0.0,
+                                    "renewalPeriod": 0.0,
+                                    "rules": [
+                                        {
+                                            "count": 0.0,
+                                            "dynamicThrottlingEnabled": bool,
+                                            "key": "str",
+                                            "matchPatterns": [{"method": "str", "path": "str"}],
+                                            "minCount": 0.0,
+                                            "renewalPeriod": 0.0,
+                                        }
+                                    ],
+                                },
+                                "format": "str",
+                                "name": "str",
+                                "publisher": "str",
+                                "source": "str",
+                                "sourceAccount": "str",
+                                "version": "str",
+                            },
+                            "raiPolicyName": "str",
+                        },
+                    }
+                ]
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...

@@ -20,9 +20,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -31,15 +31,22 @@ import time
 from pprint import pprint
 from typing import Union
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+from openai.types.evals.create_eval_completions_run_data_source_param import SourceFileContent, SourceFileContentContent
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    AzureAIModelTargetParam,
+    TestingCriterionAzureAIEvaluator,
+    ModelSamplingConfigParam,
+    TargetCompletionEvalRunDataSource,
+)
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -54,45 +61,45 @@ with (
     # Notes: for data_mapping:
     # {{sample.output_text}} is the string output of the provide model target for the given input in {{item.query}}
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence_detection",
-            "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        }
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="violence_detection",
+            evaluator_name="builtin.violence",
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        )
     ]
     eval_object = openai_client.evals.create(
         name="Model Evaluation",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    model = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
-    data_source = {
-        "type": "azure_ai_target_completions",
-        "source": {
-            "type": "file_content",
-            "content": [
-                {"item": {"query": "What is the capital of France?"}},
-                {"item": {"query": "How do I reverse a string in Python?"}},
+    model = os.environ["FOUNDRY_MODEL_NAME"]
+    data_source = TargetCompletionEvalRunDataSource(
+        type="azure_ai_target_completions",
+        source=SourceFileContent(
+            type="file_content",
+            content=[
+                SourceFileContentContent(item={"query": "What is the capital of France?"}),
+                SourceFileContentContent(item={"query": "How do I reverse a string in Python?"}),
             ],
-        },
-        "input_messages": {
-            "type": "template",
+        ),
+        input_messages={
+            "type": "template",  # type: ignore
             "template": [
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        "target": {
-            "type": "azure_ai_model",
-            "model": model,
-            "sampling_params": {  # Note: model sampling parameters are optional and can differ per model
-                "top_p": 1.0,
-                "max_completion_tokens": 2048,
-            },
-        },
-    }
+        target=AzureAIModelTargetParam(
+            type="azure_ai_model",
+            model=model,
+            sampling_params=ModelSamplingConfigParam(  # Note: model sampling parameters are optional and can differ per model
+                top_p=1.0,
+                max_completion_tokens=2048,
+            ),
+        ),
+    )
 
     agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id, name=f"Evaluation Run for Model {model}", data_source=data_source  # type: ignore

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2021-01-01/examples/ListMarketplaceTerms.json
+# x-ms-original-file: specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/MarketplaceOrdering/stable/2021-01-01/examples/ListMarketplaceTerms.json
 if __name__ == "__main__":
     main()

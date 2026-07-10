@@ -20,17 +20,17 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 import os
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -42,7 +42,7 @@ class CalendarEvent(BaseModel):
     participants: list[str]
 
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -50,7 +50,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        model=os.environ["FOUNDRY_MODEL_NAME"],
         instructions="""
             Extracts calendar event information from the input messages,
             and return it in the desired structured output format.

@@ -1,5 +1,100 @@
 # Release History
 
+## 11.0.0b2 (2026-05-25)
+
+### Features Added
+
+  - Client `ConsumptionManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ConsumptionManagementClient` added method `send_request`
+  - Model `Balance` added property `system_data`
+  - Model `Budget` added property `system_data`
+  - Model `ChargeSummary` added property `system_data`
+  - Model `CreditSummary` added property `tags`
+  - Model `CreditSummary` added property `system_data`
+  - Model `EventSummary` added property `system_data`
+  - Model `LegacyChargeSummary` added property `system_data`
+  - Model `LegacyReservationRecommendation` added property `system_data`
+  - Model `LegacyReservationRecommendationProperties` added property `last_usage_date`
+  - Model `LegacyReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacySharedScopeReservationRecommendationProperties` added property `last_usage_date`
+  - Model `LegacySharedScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacySingleScopeReservationRecommendationProperties` added property `last_usage_date`
+  - Model `LegacySingleScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacyUsageDetail` added property `system_data`
+  - Model `LotSummary` added property `system_data`
+  - Model `ManagementGroupAggregatedCostResult` added property `system_data`
+  - Model `Marketplace` added property `system_data`
+  - Model `ModernChargeSummary` added property `system_data`
+  - Model `ModernReservationRecommendation` added property `system_data`
+  - Model `ModernReservationRecommendationProperties` added property `last_usage_date`
+  - Model `ModernReservationRecommendationProperties` added property `total_hours`
+  - Model `ModernReservationTransaction` added property `system_data`
+  - Model `ModernSharedScopeReservationRecommendationProperties` added property `last_usage_date`
+  - Model `ModernSharedScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `ModernSingleScopeReservationRecommendationProperties` added property `last_usage_date`
+  - Model `ModernSingleScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `ModernUsageDetail` added property `system_data`
+  - Model `PriceSheetProperties` added property `savings_plan`
+  - Model `PriceSheetResult` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `ReservationDetail` added property `system_data`
+  - Model `ReservationRecommendation` added property `system_data`
+  - Model `ReservationRecommendationDetailsModel` added property `system_data`
+  - Model `ReservationSummary` added property `system_data`
+  - Model `ReservationTransaction` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TagsResult` added property `system_data`
+  - Enum `Term` added member `P1_M`
+  - Model `UsageDetail` added property `system_data`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ExtensionResource`
+  - Added model `OperationStatus`
+  - Added enum `OperationStatusType`
+  - Added enum `OrganizationType`
+  - Added model `PricesheetDownloadProperties`
+  - Added model `SavingsPlan`
+  - Added model `SystemData`
+  - Operation group `PriceSheetOperations` added method `begin_download_by_billing_account_period`
+  - Operation group `ReservationRecommendationDetailsOperations` added parameter `filter` in method `get`
+  - Operation group `ReservationTransactionsOperations` added parameter `use_markup_if_partner` in method `list`
+  - Operation group `ReservationTransactionsOperations` added parameter `preview_markup_percentage` in method `list`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `BudgetComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `ChargeSummary` deleted or renamed its instance variable `tags`
+  - Model `EventSummary` moved instance variable `transaction_date`, `description`, `new_credit`, `adjustments`, `credit_expired`, `charges`, `closed_balance`, `event_type`, `invoice_number`, `billing_profile_id`, `billing_profile_display_name`, `lot_id`, `lot_source`, `canceled_credit`, `credit_currency`, `billing_currency`, `reseller`, `credit_expired_in_billing_currency`, `new_credit_in_billing_currency`, `adjustments_in_billing_currency`, `charges_in_billing_currency`, `closed_balance_in_billing_currency` and `e_tag_properties_e_tag` under property `properties` whose type is `EventProperties`
+  - Model `LegacyReservationRecommendation` moved instance variable `look_back_period`, `instance_flexibility_ratio`, `instance_flexibility_group`, `normalized_size`, `recommended_quantity_normalized`, `meter_id`, `resource_type`, `term`, `cost_with_no_reserved_instances`, `recommended_quantity`, `total_cost_with_reserved_instances`, `net_savings`, `first_usage_date`, `scope` and `sku_properties` under property `properties` whose type is `LegacyReservationRecommendationProperties`
+  - Model `LotSummary` moved instance variable `original_amount`, `closed_balance`, `source`, `start_date`, `expiration_date`, `po_number`, `purchased_date`, `status`, `credit_currency`, `billing_currency`, `original_amount_in_billing_currency`, `closed_balance_in_billing_currency`, `reseller` and `e_tag_properties_e_tag` under property `properties` whose type is `LotProperties`
+  - Model `ManagementGroupAggregatedCostResult` moved instance variable `billing_period_id`, `usage_start`, `usage_end`, `azure_charges`, `marketplace_charges`, `charges_billed_separately`, `currency`, `children`, `included_subscriptions` and `excluded_subscriptions` under property `properties` whose type is `ManagementGroupAggregatedCostProperties`
+  - Model `ModernReservationRecommendation` moved instance variable `location_properties_location`, `look_back_period`, `instance_flexibility_ratio`, `instance_flexibility_group`, `normalized_size`, `recommended_quantity_normalized`, `meter_id`, `term`, `cost_with_no_reserved_instances`, `recommended_quantity`, `resource_type`, `total_cost_with_reserved_instances`, `net_savings`, `first_usage_date`, `scope`, `sku_properties` and `sku_name` under property `properties` whose type is `ModernReservationRecommendationProperties`
+  - Model `PriceSheetResult` moved instance variable `pricesheets`, `next_link` and `download` under property `properties` whose type is `PriceSheetModel`
+  - Model `ProxyResource` deleted or renamed its instance variable `e_tag`
+  - Model `ReservationRecommendationDetailsModel` moved instance variable `currency`, `resource`, `resource_group`, `savings`, `scope` and `usage` under property `properties` whose type is `ReservationRecommendationDetailsProperties`
+  - Model `ReservationTransaction` moved instance variable `event_date`, `reservation_order_id`, `description`, `event_type`, `quantity`, `amount`, `currency`, `reservation_order_name`, `purchasing_enrollment`, `purchasing_subscription_guid`, `purchasing_subscription_name`, `arm_sku_name`, `term`, `region`, `account_name`, `account_owner_email`, `department_name`, `cost_center`, `current_enrollment`, `billing_frequency`, `billing_month`, `monetary_commitment` and `overage` under property `properties` whose type is `LegacyReservationTransactionProperties`
+  - Model `Resource` deleted or renamed its instance variable `etag`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `TagsResult` moved instance variable `tags`, `next_link` and `previous_link` under property `properties` whose type is `TagProperties`
+  - Method `ChargesOperations.list` changed its parameter `start_date`/`end_date`/`apply` from `positional_or_keyword` to `keyword_only`
+  - Method `EventsOperations.list_by_billing_profile` changed its parameter `start_date`/`end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `MarketplacesOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get_by_billing_period` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `scope`/`region`/`term`/`look_back_period`/`product` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsDetailsOperations.list` changed its parameter `start_date`/`end_date`/`reservation_id`/`reservation_order_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `grain`/`start_date`/`end_date`/`reservation_id`/`reservation_order_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
+  - Method `UsageDetailsOperations.list` changed its parameter `expand`/`skiptoken`/`metric` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `DownloadProperties`/`ErrorDetails`/`Events`/`LegacyReservationTransaction`/`Lots`/`ReservationTransactionResource`/`ResourceAttributes` which actually were not used by SDK users
+
 ## 11.0.0b1 (2022-12-07)
 
 ### Features Added

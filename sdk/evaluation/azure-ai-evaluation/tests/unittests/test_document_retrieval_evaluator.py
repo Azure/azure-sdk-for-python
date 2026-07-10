@@ -7,12 +7,14 @@ import json
 import pathlib
 import random
 from azure.ai.evaluation import evaluate
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._document_retrieval import (
     DocumentRetrievalEvaluator,
     RetrievalGroundTruthDocument,
     RetrievedDocument,
 )
+
+random.seed(42)
 
 
 def _get_file(name):
@@ -50,7 +52,8 @@ def test_success(doc_retrieval_eval_data):
         result = evaluator(**record)
 
         assert isinstance(result, dict)
-        assert "ndcg@3" in result
+        assert "document_retrieval_properties" in result
+        assert "ndcg@3" in result["document_retrieval_properties"]
 
 
 def test_groundtruth_min_gte_max():
@@ -147,44 +150,54 @@ def test_thresholds(doc_retrieval_eval_data):
 
         expected_keys = [
             "ndcg@3",
+            "ndcg@3_passed",
             "ndcg@3_result",
             "ndcg@3_threshold",
             "ndcg@3_higher_is_better",
             "xdcg@3",
+            "xdcg@3_passed",
             "xdcg@3_result",
             "xdcg@3_threshold",
             "xdcg@3_higher_is_better",
             "fidelity",
+            "fidelity_passed",
             "fidelity_result",
             "fidelity_threshold",
             "fidelity_higher_is_better",
             "top1_relevance",
+            "top1_relevance_passed",
             "top1_relevance_result",
             "top1_relevance_threshold",
             "top1_relevance_higher_is_better",
             "top3_max_relevance",
+            "top3_max_relevance_passed",
             "top3_max_relevance_result",
             "top3_max_relevance_threshold",
             "top3_max_relevance_higher_is_better",
             "total_retrieved_documents",
+            "total_retrieved_documents_passed",
             "total_retrieved_documents_result",
             "total_retrieved_documents_threshold",
             "total_retrieved_documents_higher_is_better",
             "total_ground_truth_documents",
+            "total_ground_truth_documents_passed",
             "total_ground_truth_documents_result",
             "total_ground_truth_documents_threshold",
             "total_ground_truth_documents_higher_is_better",
             "holes",
+            "holes_passed",
             "holes_result",
             "holes_threshold",
             "holes_higher_is_better",
             "holes_ratio",
+            "holes_ratio_passed",
             "holes_ratio_result",
             "holes_ratio_threshold",
             "holes_ratio_higher_is_better",
         ]
 
-        assert set(expected_keys) == set(results.keys())
+        assert "document_retrieval_properties" in results
+        assert set(expected_keys) == set(results["document_retrieval_properties"].keys())
 
 
 def test_invalid_input(bad_doc_retrieval_eval_data):
@@ -253,8 +266,9 @@ def test_no_retrieved_documents():
     evaluator = DocumentRetrievalEvaluator()
     result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
 
-    assert result["ndcg@3"] == 0
-    assert result["holes"] == 0
+    properties = result["document_retrieval_properties"]
+    assert properties["ndcg@3"] == 0
+    assert properties["holes"] == 0
 
 
 def test_no_labeled_retrieved_documents():
@@ -273,5 +287,144 @@ def test_no_labeled_retrieved_documents():
     evaluator = DocumentRetrievalEvaluator()
     result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
 
-    assert result["ndcg@3"] == 0
-    assert result["holes"] == len(retrieved_docs)
+    properties = result["document_retrieval_properties"]
+    assert properties["ndcg@3"] == 0
+    assert properties["holes"] == len(retrieved_docs)
+
+
+def _assert_exception_metadata(exc, *, category, blame=ErrorBlame.USER_ERROR):
+    """Assert that an EvaluationException has the expected blame, category, and target populated."""
+    assert exc.blame == blame
+    assert exc.category == category
+    assert exc.target == ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR
+
+
+def test_init_label_min_not_int_error_metadata():
+    with pytest.raises(EvaluationException) as exc_info:
+        DocumentRetrievalEvaluator(ground_truth_label_min=0.5, ground_truth_label_max=4)  # type: ignore
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_init_label_max_not_int_error_metadata():
+    with pytest.raises(EvaluationException) as exc_info:
+        DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=4.5)  # type: ignore
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_init_label_min_gte_max_error_metadata():
+    with pytest.raises(EvaluationException) as exc_info:
+        DocumentRetrievalEvaluator(ground_truth_label_min=2, ground_truth_label_max=1)
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_empty_ground_truth_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(retrieval_ground_truth=[], retrieved_documents=[])
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.MISSING_FIELD)
+
+
+def test_missing_ground_truth_fields_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(
+            retrieval_ground_truth=[{"document_id": "doc_0"}],
+            retrieved_documents=[{"document_id": "doc_0", "relevance_score": 1.0}],
+        )
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.MISSING_FIELD)
+
+
+def test_non_integer_query_relevance_label_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(
+            retrieval_ground_truth=[{"document_id": "doc_0", "query_relevance_label": 1.5}],
+            retrieved_documents=[{"document_id": "doc_0", "relevance_score": 1.0}],
+        )
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_query_relevance_label_below_min_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=1, ground_truth_label_max=4)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(
+            retrieval_ground_truth=[{"document_id": "doc_0", "query_relevance_label": 0}],
+            retrieved_documents=[{"document_id": "doc_0", "relevance_score": 1.0}],
+        )
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_query_relevance_label_above_max_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(
+            retrieval_ground_truth=[{"document_id": "doc_0", "query_relevance_label": 5}],
+            retrieved_documents=[{"document_id": "doc_0", "relevance_score": 1.0}],
+        )
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_missing_retrieved_document_fields_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(
+            retrieval_ground_truth=[{"document_id": "doc_0", "query_relevance_label": 1}],
+            retrieved_documents=[{"document_id": "doc_0"}],
+        )
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.MISSING_FIELD)
+
+
+def test_non_numeric_relevance_score_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(
+            retrieval_ground_truth=[{"document_id": "doc_0", "query_relevance_label": 1}],
+            retrieved_documents=[{"document_id": "doc_0", "relevance_score": "not-a-number"}],
+        )
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_too_many_documents_error_metadata():
+    groundtruth_docs = [
+        RetrievalGroundTruthDocument(
+            {"document_id": f"doc_{x}", "query_relevance_label": random.choice([0, 1, 2, 3, 4])}
+        )
+        for x in range(0, 10001)
+    ]
+    retrieved_docs = [
+        RetrievedDocument({"document_id": f"doc_{x}", "relevance_score": random.uniform(-10, 10)})
+        for x in range(0, 10001)
+    ]
+
+    evaluator = DocumentRetrievalEvaluator()
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.INVALID_VALUE)
+
+
+def test_missing_threshold_error_metadata():
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=2)
+
+    with pytest.raises(EvaluationException) as exc_info:
+        evaluator._get_binary_result(unknown_metric=1.0)
+
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.FAILED_EXECUTION, blame=ErrorBlame.SYSTEM_ERROR)

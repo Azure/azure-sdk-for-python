@@ -5,11 +5,11 @@
 # ------------------------------------
 # cSpell:disable
 
+from typing import Any, Dict, Optional
 import pytest
 import httpx
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from test_base import TestBase, servicePreparer
-from typing import Any, Dict, Optional
 from openai import OpenAI
 from azure.core.credentials import TokenCredential
 from azure.ai.projects import AIProjectClient
@@ -57,7 +57,7 @@ class TestResponses(TestBase):
         ------+---------------------------------------------+-----------------------------------
         POST   /openai/responses                             client.responses.create()
         """
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         client = self.create_client(operation_group="agents", **kwargs).get_openai_client()
 
@@ -105,12 +105,12 @@ class TestResponses(TestBase):
     )
     def test_user_agent_patching_via_response_create(
         self, project_ua, openai_default_header, expected_ua, patch_openai
-    ):
+    ):  # pylint: disable=redefined-outer-name,unused-argument
         client = _build_client(project_ua, openai_default_header)
 
         calls = []
 
-        def fake_send(request: httpx.Request, *args: Any, **kwargs: Any):
+        def fake_send(request: httpx.Request, *_args: Any, **kwargs: Any):
             # Capture headers that would be sent over the wire.
             calls.append(dict(request.headers))
             return httpx.Response(

@@ -33,4 +33,4 @@ class TestPlanetaryComputerMgmtGeoCatalogsOperationsAsync(AzureMgmtRecordedTestC
     async def test_geo_catalogs_list_by_subscription(self, resource_group):
         response = self.client.geo_catalogs.list_by_subscription()
         result = [r async for r in response]
-        assert response
+        assert len(result)

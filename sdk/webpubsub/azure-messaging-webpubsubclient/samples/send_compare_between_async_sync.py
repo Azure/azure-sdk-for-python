@@ -13,6 +13,8 @@ from azure.messaging.webpubsubclient.aio import WebPubSubClientCredential as Web
 from azure.messaging.webpubsubclient import WebPubSubClient as Client
 from azure.messaging.webpubsubclient import WebPubSubClientCredential
 from azure.messaging.webpubsubclient.models import WebPubSubDataType
+from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,16 +25,17 @@ TIME_COST_ASYNC = 0.0
 
 
 def client_access_url_provider():
-    service_client = WebPubSubServiceClient.from_connection_string( # type: ignore
-        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
+    service_client = WebPubSubServiceClient(
+        endpoint=os.getenv("WEBPUBSUB_ENDPOINT", ""), hub="hub", credential=DefaultAzureCredential()
     )
     return service_client.get_client_access_token(
         roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
     )["url"]
 
 async def client_access_url_provider_async():
-    service_client_async = WebPubSubServiceClientAsync.from_connection_string( # type: ignore
-        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
+    credential = AsyncDefaultAzureCredential()
+    service_client_async = WebPubSubServiceClientAsync(
+        endpoint=os.getenv("WEBPUBSUB_ENDPOINT", ""), hub="hub", credential=credential
     )
     return (await service_client_async.get_client_access_token(
         roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
@@ -81,7 +84,7 @@ async def send_async() -> None:
 
 if __name__ == "__main__":
     send()
-    asyncio.get_event_loop().run_until_complete(send_async())
+    asyncio.run(send_async())
     print(
         f"it takes {TIME_COST} seconds to send {MESSAGE_COUNT} messages with Sync API"
     )

@@ -99,9 +99,60 @@ class DatasetConfigurationBuilder:
         if self.is_indirect_attack and context_items:
             # XPIA: Create separate SeedPrompt with injected attack string
             seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
-        # Note: For standard attacks, context is stored in objective metadata (above)
-        # rather than as separate SeedPrompts, because PyRIT's converters don't support
-        # non-text data types and we don't want context to be sent through converters.
+        elif context_items:
+            # Standard attacks: create context SeedPrompts at lower sequence so they
+            # flow into prepended_conversation (conversation history) via PyRIT.
+            # The objective text becomes next_message at the highest sequence.
+            # _CallbackChatTarget extracts prompt_metadata (tool_name, context_type)
+            # from these history messages and reconstructs context["contexts"] for
+            # the callback, enabling ACA's agent_callback to build FunctionTool injections.
+            #
+            # Always use text data type here — binary_path is not supported by
+            # OpenAIChatTarget for conversation history messages.
+            # Sequences start at 1 to align with _create_context_prompts convention
+            # (sequence 0 is reserved for the objective in other code paths).
+            for idx, ctx in enumerate(context_items):
+                if not ctx or not isinstance(ctx, dict):
+                    continue
+                content = ctx.get("content", "")
+                if not content:
+                    continue
+                ctx_metadata = {
+                    "is_context": True,
+                    "context_index": idx,
+                    "original_content_length": len(content),
+                }
+                if ctx.get("tool_name"):
+                    ctx_metadata["tool_name"] = ctx["tool_name"]
+                if ctx.get("context_type"):
+                    ctx_metadata["context_type"] = ctx["context_type"]
+                seeds.append(
+                    SeedPrompt(
+                        value=content,
+                        data_type="text",
+                        prompt_group_id=group_uuid,
+                        metadata=ctx_metadata,
+                        role="user",
+                        sequence=idx + 1,
+                    )
+                )
+            # Add objective as a user SeedPrompt at a higher sequence so PyRIT
+            # uses it as next_message (the actual prompt sent to the target).
+            # Tagged with is_objective so downstream processing (e.g.
+            # FoundryResultProcessor context lookup) can distinguish it from
+            # context SeedPrompts in the same group.
+            objective_prompt_metadata = objective_metadata.copy()
+            objective_prompt_metadata["is_objective"] = True
+            seeds.append(
+                SeedPrompt(
+                    value=objective_content,
+                    data_type="text",
+                    prompt_group_id=group_uuid,
+                    metadata=objective_prompt_metadata,
+                    role="user",
+                    sequence=len(context_items) + 1,
+                )
+            )
 
         # 3. Create seed group
         seed_group = SeedGroup(seeds=seeds)

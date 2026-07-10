@@ -45,6 +45,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-01-01-preview/TriggerRecoveryPointMove_Post.json
+# x-ms-original-file: 2026-01-31-preview/TriggerRecoveryPointMove_Post.json
 if __name__ == "__main__":
     main()

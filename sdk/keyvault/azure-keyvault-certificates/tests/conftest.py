@@ -33,7 +33,11 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     add_general_regex_sanitizer,
     remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
+
+# Exclude standalone live traffic test scripts from pytest collection
+collect_ignore = ["test_san_live_traffic.py"]
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -52,6 +56,9 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3430: $..id
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
+
+    # Ignore the Accept header to avoid test playback mismatches from generation updates
+    set_custom_default_matcher(ignored_headers="Accept")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -82,6 +89,10 @@ def patch_sleep():
 
 @pytest.fixture(scope="session")
 def event_loop(request):
-    loop = asyncio.get_event_loop()
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
     yield loop
     loop.close()

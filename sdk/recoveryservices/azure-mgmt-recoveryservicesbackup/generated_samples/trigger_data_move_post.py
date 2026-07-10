@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.begin_bms_trigger_data_move(
+    client.begin_bms_trigger_data_move(
         vault_name="target-rsv",
         resource_group_name="targetRG",
         parameters={
@@ -41,9 +41,8 @@ def main():
             "sourceResourceId": "/subscriptions/04cf684a-d41f-4550-9f70-7708a3a2283b/resourceGroups/sourceRG/providers/Microsoft.RecoveryServices/vaults/source-rsv",
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/BackupDataMove/TriggerDataMove_Post.json
+# x-ms-original-file: 2026-01-31-preview/BackupDataMove/TriggerDataMove_Post.json
 if __name__ == "__main__":
     main()

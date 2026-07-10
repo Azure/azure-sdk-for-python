@@ -32,4 +32,4 @@ class TestIoTOperationsMgmtInstanceOperations(AzureMgmtRecordedTestCase):
     def test_instance_list_by_subscription(self, resource_group):
         response = self.client.instance.list_by_subscription()
         result = [r for r in response]
-        assert response
+        assert len(result)

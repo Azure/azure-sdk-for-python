@@ -1,7 +1,7 @@
 # Architecture Update: Per-Request Mirror Serving Control
 
-**Date**: February 2, 2026  
-**Status**: Implemented in SDK Integration Guide  
+**Date**: February 2, 2026
+**Status**: Implemented in SDK Integration Guide
 **Impact**: SDK Integration Implementation Only (No Mapper Code Changes)
 
 ## Change Summary
@@ -98,7 +98,7 @@ class ContainerProxy:
             # Validate mirror_config exists
             # Delegate to mapper
             return execute_mirrored_query(query, parameters, self.client_connection._mirror_config)
-        
+
         # Default: use Cosmos DB
         return self._query_items_original(query, parameters, **kwargs)
 ```

@@ -7,10 +7,8 @@ import os
 
 import pytest
 from azure.keyvault.keys import KeyCurveName, KeyVaultKey
-from azure.keyvault.keys.crypto import (EncryptionAlgorithm, KeyWrapAlgorithm,
-                                        SignatureAlgorithm)
-from azure.keyvault.keys.crypto._providers import \
-    get_local_cryptography_provider
+from azure.keyvault.keys.crypto import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from azure.keyvault.keys.crypto._providers import get_local_cryptography_provider
 
 from keys import EC_KEYS, RSA_KEYS
 
@@ -48,14 +46,14 @@ def test_rsa_encrypt_decrypt(key, algorithm):
         (EncryptionAlgorithm.a256_cbcpad, 32),
         (EncryptionAlgorithm.a192_cbcpad, 24),
         (EncryptionAlgorithm.a128_cbcpad, 16),
-    )
+    ),
 )
 def test_symmetric_encrypt_decrypt(algorithm, key_size):
     jwk = {
         "k": os.urandom(key_size),
-        "kid":"http://localhost/keys/key/version",
+        "kid": "http://localhost/keys/key/version",
         "kty": "oct-HSM",
-        "key_ops": ("encrypt", "decrypt")
+        "key_ops": ("encrypt", "decrypt"),
     }
     key = KeyVaultKey(key_id="http://localhost/keys/key/version", jwk=jwk)
     provider = get_local_cryptography_provider(key.key)
@@ -119,9 +117,9 @@ def test_rsa_wrap_unwrap(key, algorithm):
 def test_symmetric_wrap_unwrap(algorithm):
     jwk = {
         "k": os.urandom(32),
-        "kid":"http://localhost/keys/key/version",
+        "kid": "http://localhost/keys/key/version",
         "kty": "oct",
-        "key_ops": ("unwrapKey", "wrapKey")
+        "key_ops": ("unwrapKey", "wrapKey"),
     }
     key = KeyVaultKey(key_id="http://localhost/keys/key/version", jwk=jwk)
     provider = get_local_cryptography_provider(key.key)

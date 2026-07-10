@@ -25,13 +25,13 @@ dependencies = [
   "lark>=1.1.9",
   "azure-identity>=1.16.0",
   "azure-core>=1.30.0",
+  "azure-cosmos>=4.7.0",
 ]
 dynamic = ["version", "readme"]
 
 [project.optional-dependencies]
 sql = ["mssql-python>=1.0.0"]
 odbc = ["pyodbc>=5.1.0"]
-cosmos = ["azure-cosmos>=4.7.0"]
 dev = [
   "pytest>=8.2.0",
   "pytest-cov>=5.0.0",
@@ -46,6 +46,8 @@ version = {attr = "azure.cosmos.fabric_mapper._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
+include = ["azure.cosmos.fabric_mapper*"]
+namespaces = true
 exclude = ["tests", "tests.*", "samples", "specs", "specs.*"]
 
 [tool.setuptools.package-data]

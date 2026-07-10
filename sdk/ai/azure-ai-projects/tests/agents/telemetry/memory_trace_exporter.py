@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import List, Sequence
 from opentelemetry.sdk.trace import Span
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
-from typing import List, Sequence
 
 
 class MemoryTraceExporter(SpanExporter):
@@ -46,4 +46,4 @@ class MemoryTraceExporter(SpanExporter):
         return [span for span in self._trace_list if span.name == name]
 
     def get_spans(self) -> List[Span]:
-        return [span for span in self._trace_list]
+        return list(self._trace_list)

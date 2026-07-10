@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-01-01-preview/ResourceGuardProxyCRUD/DeleteResourceGuardProxy.json
+# x-ms-original-file: 2026-01-31-preview/ResourceGuardProxyCRUD/DeleteResourceGuardProxy.json
 if __name__ == "__main__":
     main()

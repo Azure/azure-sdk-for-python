@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AccessDetail,
+    AdditionalDetails,
     ErrorAdditionalInfo,
     ErrorDetail,
     ErrorResponse,
@@ -22,6 +24,7 @@ from ._models import (  # type: ignore
     ExtensionPropertiesAksAssignedIdentity,
     ExtensionStatus,
     Identity,
+    ManagementDetails,
     OperationStatusResult,
     PatchExtension,
     PatchExtensionProperties,
@@ -36,6 +39,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     AKSIdentityType,
+    AutoUpgradeMode,
     CreatedByType,
     LevelType,
     ProvisioningState,
@@ -46,6 +50,8 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AccessDetail",
+    "AdditionalDetails",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -54,6 +60,7 @@ __all__ = [
     "ExtensionPropertiesAksAssignedIdentity",
     "ExtensionStatus",
     "Identity",
+    "ManagementDetails",
     "OperationStatusResult",
     "PatchExtension",
     "PatchExtensionProperties",
@@ -65,6 +72,7 @@ __all__ = [
     "ScopeNamespace",
     "SystemData",
     "AKSIdentityType",
+    "AutoUpgradeMode",
     "CreatedByType",
     "LevelType",
     "ProvisioningState",

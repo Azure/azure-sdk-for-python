@@ -1,14 +1,27 @@
 # Release History
 
-## 1.39.1 (Unreleased)
+## 1.41.0 (2026-05-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`. #46668
 
 ### Other Changes
+
+- Invalid values for the `AZURE_LOG_LEVEL`, `AZURE_TRACING_ENABLED`, and `AZURE_SDK_TRACING_IMPLEMENTATION` environment variables no longer raise errors. Instead, a warning is logged and the default value is used (`INFO` for `AZURE_LOG_LEVEL`). #46668
+
+## 1.40.0 (2026-04-30)
+
+### Features Added
+
+- Added support for per-operation `http_logging_level` overrides in `HttpLoggingPolicy`. #44115
+- Introduced the keyword argument `additional_allowed_query_params` to `DistributedTracingPolicy` and `HttpLoggingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes or logs. #46482
+    - Users can specify this at the SDK client level by passing `additional_allowed_query_params` to the client constructor. For example: `client = ServiceClient(..., additional_allowed_query_params={"custom_param"})`. This will apply to all operations performed by the client.
+
+### Other Changes
+
+- URL attributes in HTTP tracing spans will now have query parameters sanitized by default. To add additional query parameters that should not be redacted, use the `additional_allowed_query_params` argument in your client constructor. #46482
+- Python 3.9 is no longer supported. Please use Python version 3.10 or later.
 
 ## 1.39.0 (2026-03-18)
 
@@ -343,7 +356,7 @@
 
 ## 1.25.0 (2022-08-04)
 
-Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ### Features Added
 

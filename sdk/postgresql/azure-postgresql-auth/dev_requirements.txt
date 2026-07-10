@@ -1,0 +1,10 @@
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+aiohttp
+pytest
+pytest-asyncio
+psycopg2-binary>=2.9.0
+psycopg[binary]>=3.1.0
+psycopg-pool>=3.1.0
+sqlalchemy>=2.0.0

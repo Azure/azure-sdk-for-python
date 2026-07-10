@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.queue import (
     CorsRule,
@@ -14,10 +18,6 @@ from azure.storage.queue import (
     RetentionPolicy,
 )
 from azure.storage.queue.aio import QueueServiceClient
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 
 class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
@@ -82,8 +82,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -229,13 +228,9 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
     # --Test cases for errors ---------------------------------------
 
     @QueuePreparer()
-    async def test_retention_no_days(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Assert
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        pytest.raises(ValueError, RetentionPolicy, True, None)
+    async def test_retention_no_days(self):
+        with pytest.raises(ValueError):
+            RetentionPolicy(True, None)
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -246,12 +241,12 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         cors = []
-        for _ in range(0, 6):
+        for _ in range(6):
             cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await qsc.set_service_properties()
+            await qsc.set_service_properties(None, None, None, cors)
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -269,7 +264,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await qsc.set_service_properties()
+            await qsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

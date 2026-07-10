@@ -6,7 +6,10 @@ from azure.cosmos.fabric_mapper.results import map_result_set
 
 def test_result_mapping_to_dicts():
     """Test mapping tabular rows to dict documents."""
-    rs = ResultSet(columns=["id", "partitionKey", "value"], rows=[("1", "p1", 100), ("2", "p2", 200)])
+    rs = ResultSet(
+        columns=["id", "partitionKey", "value"],
+        rows=[("1", "p1", 100), ("2", "p2", 200)],
+    )
     items = map_result_set(rs, select_value=False)
     assert items == [
         {"id": "1", "partitionKey": "p1", "value": 100},

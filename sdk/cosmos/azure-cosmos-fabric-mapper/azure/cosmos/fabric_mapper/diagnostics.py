@@ -11,7 +11,6 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-
 # Patterns that match secrets in connection strings and similar contexts
 _SECRET_PATTERNS: list[re.Pattern[str]] = [
     re.compile(r"(?i)(password\s*=\s*)([^;\s]+)"),
@@ -25,10 +24,10 @@ _SECRET_PATTERNS: list[re.Pattern[str]] = [
 
 def redact(text: str) -> str:
     """Redact secrets from text for safe logging.
-    
+
     Args:
         text: Input text that may contain secrets
-        
+
     Returns:
         Text with secrets replaced by '<redacted>'
     """
@@ -41,14 +40,14 @@ def redact(text: str) -> str:
 @dataclass(frozen=True)
 class DiagnosticPayload:
     """Container for diagnostic information with built-in redaction."""
-    
+
     kind: str
     message: str
     details: dict[str, Any] | None = None
 
     def safe_message(self) -> str:
         """Get a safe-to-log message with secrets redacted.
-        
+
         Returns:
             Redacted message suitable for logging
         """

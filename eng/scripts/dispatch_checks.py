@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import glob
 import os
 import sys
 import time
@@ -15,6 +16,7 @@ from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from devtools_testutils.proxy_startup import prepare_local_tool
 from packaging.requirements import Requirement
 
@@ -49,6 +51,7 @@ INSTALL_AND_TEST_CHECKS = {
     "sdist",
     "devtest",
     "optional",
+    "import_all",
     "latestdependency",
     "mindependency",
 }
@@ -72,6 +75,57 @@ def _cleanup_isolate_dirs() -> None:
 
 def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def get_check_dest_dir(
+    package: str, check: str, dest_dir: Optional[str]
+) -> Optional[str]:
+    if dest_dir and check == "apistub":
+        package_name = ParsedSetup.from_path(package).name
+        return os.path.join(dest_dir, package_name)
+    return dest_dir
+
+
+async def _tee_stream(
+    proc: "asyncio.subprocess.Process", package: str, check: str
+) -> tuple:
+    """Read the child's stdout and stderr concurrently, mirroring each line to
+    this process's stdout/stderr while also accumulating the full text for the
+    final :class:`CheckResult`.
+
+    This exists because the default ``proc.communicate()`` path buffers all
+    output until the child exits. When a check hangs and the pipeline agent
+    cancels the parent at the job timeout, none of that buffered output is
+    ever printed -- the log shows ``CMD: ...`` followed by silence until the
+    cancellation marker. Streaming line-by-line ensures the last bytes the
+    child produced before getting stuck are visible in the pipeline log.
+
+    Should only be used when checks are running sequentially (``max_parallel
+    == 1``) -- otherwise output from concurrent children will interleave.
+    """
+    prefix = f"[{os.path.basename(os.path.normpath(package))} :: {check}] "
+
+    async def _pump(stream: Optional[asyncio.StreamReader], sink: IO[str]) -> str:
+        if stream is None:
+            return ""
+        chunks: List[str] = []
+        while True:
+            line_b = await stream.readline()
+            if not line_b:
+                break
+            line = line_b.decode(errors="replace")
+            chunks.append(line)
+            sink.write(prefix + line)
+            sink.flush()
+        return "".join(chunks)
+
+    stdout_text, stderr_text = await asyncio.gather(
+        _pump(proc.stdout, sys.stdout),
+        _pump(proc.stderr, sys.stderr),
+    )
+    # Make sure the process is reaped so returncode is populated.
+    await proc.wait()
+    return stdout_text, stderr_text
 
 
 def _checks_require_recording_restore(checks: List[str]) -> bool:
@@ -138,6 +192,8 @@ async def run_check(
     mark_arg: Optional[str],
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
+    python_version: Optional[str] = None,
+    stream_live: bool = False,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -155,21 +211,38 @@ async def run_check(
     :type total: int
     :param proxy_port: Dedicated proxy port assigned to this check instance.
     :type proxy_port: int
+    :param stream_live: If True, tee the child's stdout/stderr to this process's
+        stdout/stderr line-by-line while also capturing them. Use only when
+        checks run sequentially (``max_parallel == 1``) to avoid interleaved
+        output. This prevents silent hangs from hiding all diagnostics when the
+        agent kills the parent before the child exits.
+    :type stream_live: bool
     :returns: A :class:`CheckResult` describing exit code, duration and captured output.
     :rtype: CheckResult
     """
     async with semaphore:
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
+        if check == "apistub":
+            cmd += ["--install-deps", "--token-file"]
+        if python_version:
+            cmd += ["--python", python_version]
         if service:
             cmd += ["--service", service]
         if mark_arg:
             cmd += ["--mark_arg", mark_arg]
-        if dest_dir and check == "apistub":
-            cmd += ["--dest-dir", dest_dir]
+        if check == "apistub":
+            check_dest_dir = get_check_dest_dir(package, check, dest_dir)
+            if check_dest_dir:
+                cmd += ["--dest-dir", check_dest_dir]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
+        # Force the child Python process to use unbuffered stdio. Without this,
+        # the child's output can sit in its own internal buffers for minutes
+        # (or never appear at all if the agent kills us at the job timeout),
+        # making hung checks look like total silence in the pipeline log.
+        env["PYTHONUNBUFFERED"] = "1"
 
         if in_ci():
             env["PROXY_ASSETS_FOLDER"] = os.path.join(
@@ -188,42 +261,53 @@ async def run_check(
             logger.error(f"Failed to start check {check} for {package}: {ex}")
             return CheckResult(package, check, 127, 0.0, "", str(ex))
 
-        stdout_b, stderr_b = await proc.communicate()
+        if stream_live:
+            if in_ci():
+                print(f"##[group]{package} :: {check} :: ?")
+            stdout, stderr = await _tee_stream(proc, package, check)
+            if in_ci():
+                print("##[endgroup]")
+        else:
+            stdout_b, stderr_b = await proc.communicate()
+            stdout = stdout_b.decode(errors="replace")
+            stderr = stderr_b.decode(errors="replace")
         duration = time.time() - start
-        stdout = stdout_b.decode(errors="replace")
-        stderr = stderr_b.decode(errors="replace")
         exit_code = proc.returncode or 0
         status = "OK" if exit_code == 0 else f"FAIL({exit_code})"
         logger.info(
             f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s"
         )
-        # Print captured output after completion to avoid interleaving
-        header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
-        trailer = "=" * len(header)
-        if in_ci():
-            print(f"##[group]{package} :: {check} :: {exit_code}")
+        # When streaming live we've already mirrored every line to the parent's
+        # stdout/stderr as it was produced, so skip the post-hoc grouped dump
+        # to avoid duplicating every line.
+        if not stream_live:
+            # Print captured output after completion to avoid interleaving
+            header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
+            trailer = "=" * len(header)
+            if in_ci():
+                print(f"##[group]{package} :: {check} :: {exit_code}")
 
-        if stdout:
-            print(header)
-            print(_normalize_newlines(stdout).rstrip())
-            print(trailer)
-        if stderr:
-            print(header.replace("OUTPUT", "STDERR"))
-            print(_normalize_newlines(stderr).rstrip())
-            print(trailer)
+            if stdout:
+                print(header)
+                print(_normalize_newlines(stdout).rstrip())
+                print(trailer)
+            if stderr:
+                print(header.replace("OUTPUT", "STDERR"))
+                print(_normalize_newlines(stderr).rstrip())
+                print(trailer)
 
-        if in_ci():
-            print("##[endgroup]")
+            if in_ci():
+                print("##[endgroup]")
 
         # if we have any output collections to complete, do so now here
 
         # finally, we need to clean up any temp dirs created by --isolate
         if in_ci():
             package_name = os.path.basename(os.path.normpath(package))
-            isolate_dir = os.path.join(
-                root_dir, ".venv", package_name, f".venv_{check}"
-            )
-            ISOLATE_DIRS_TO_CLEAN.append(isolate_dir)
+            venv_pkg_root = os.path.join(root_dir, ".venv", package_name)
+            # match both .venv_{check} and version-qualified .venv_{check}_py311 etc.
+            for d in glob.glob(os.path.join(venv_pkg_root, f".venv_{check}*")):
+                ISOLATE_DIRS_TO_CLEAN.append(d)
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -324,12 +408,31 @@ async def run_all_checks(
         logger.info(
             f"Assigning proxy port {next_proxy_port} to check {check} for package {package}"
         )
-        scheduled.append((package, check, next_proxy_port))
+
+        # Check if this package overrides the Python version for analysis
+        pkg_python_version = get_config_setting(package, "analyze_python_version", None)
+        if pkg_python_version:
+            logger.info(
+                f"Package {package} overrides analyze Python version to {pkg_python_version}"
+            )
+
+        scheduled.append((package, check, next_proxy_port, pkg_python_version))
         next_proxy_port += 1
 
     total = len(scheduled)
 
-    for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
+    # Mirror the child's stdio live to the parent's stdout/stderr when no
+    # concurrent children could interleave output. This makes hangs visible
+    # in real time instead of being hidden behind a post-hoc grouped dump
+    # that never prints if the agent cancels us at the job timeout. We check
+    # both the semaphore cap AND the actual number of tasks because cosmos
+    # (and similar live test legs) ship a single check per matrix leg but
+    # leave --max-parallel at its CPU-count default.
+    stream_live = max_parallel == 1 or total <= 1
+
+    for idx, (package, check, proxy_port, pkg_python_version) in enumerate(
+        scheduled, start=1
+    ):
         tasks.append(
             asyncio.create_task(
                 run_check(
@@ -343,6 +446,8 @@ async def run_all_checks(
                     mark_arg,
                     dest_dir,
                     service,
+                    pkg_python_version,
+                    stream_live=stream_live,
                 )
             )
         )
@@ -358,7 +463,7 @@ async def run_all_checks(
         raise
     # Normalize exceptions
     norm_results: List[CheckResult] = []
-    for res, (package, check, _) in zip(results, scheduled):
+    for res, (package, check, _, _) in zip(results, scheduled):
         if isinstance(res, CheckResult):
             norm_results.append(res)
         elif isinstance(res, Exception):
@@ -406,14 +511,12 @@ def configure_interrupt_handling():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="""
+    parser = argparse.ArgumentParser(description="""
 This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `checks` environments for each package identified as in scope.
 In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-"""
-    )
+""")
 
     parser.add_argument(
         "glob_string",
@@ -587,7 +690,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
                 f"Ensuring {len(checks)} test proxies are running for requested checks..."
             )
         # Pass through service if set and not "auto"
-        effective_service = args.service if (args.service and args.service != "auto") else None
+        effective_service = (
+            args.service if (args.service and args.service != "auto") else None
+        )
         exit_code = asyncio.run(
             run_all_checks(
                 targeted_packages,

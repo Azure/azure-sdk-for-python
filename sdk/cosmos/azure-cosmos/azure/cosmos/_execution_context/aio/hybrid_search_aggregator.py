@@ -10,6 +10,7 @@ from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_c
     _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
+from ..._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
@@ -293,7 +294,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
     async def _get_target_partition_key_range(self, target_all_ranges):
         if target_all_ranges:
-            return [item async for item in self._client._ReadPartitionKeyRanges(collection_link=self._resource_link)]
+            feed_options = {}
+            if Constants.ContainerRID in self._options:
+                feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
+            return [item async for item in self._client._ReadPartitionKeyRanges(
+                collection_link=self._resource_link, feed_options=feed_options)]
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -25,19 +25,21 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ComputeLimitMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -48,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +71,7 @@ def build_guest_subscriptions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,7 +100,7 @@ def build_guest_subscriptions_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -127,7 +129,7 @@ def build_guest_subscriptions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/guestSubscriptions/{guestSubscriptionId}"
     path_format_arguments = {
@@ -150,7 +152,7 @@ def build_guest_subscriptions_list_by_subscription_location_resource_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -175,7 +177,7 @@ def build_shared_limits_get_request(location: str, name: str, subscription_id: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -202,7 +204,7 @@ def build_shared_limits_create_request(location: str, name: str, subscription_id
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,7 +231,7 @@ def build_shared_limits_create_request(location: str, name: str, subscription_id
 def build_shared_limits_delete_request(location: str, name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimits/{name}"
     path_format_arguments = {
@@ -252,7 +254,7 @@ def build_shared_limits_list_by_subscription_location_resource_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -260,6 +262,426 @@ def build_shared_limits_list_by_subscription_location_resource_request(  # pylin
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_features_get_request(location: str, feature_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/features/{featureName}"
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "featureName": _SERIALIZER.url("feature_name", feature_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_features_list_by_subscription_location_resource_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/features"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_features_enable_request(location: str, feature_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/features/{featureName}/enable"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "featureName": _SERIALIZER.url("feature_name", feature_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_features_disable_request(
+    location: str, feature_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/features/{featureName}/disable"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "featureName": _SERIALIZER.url("feature_name", feature_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vm_families_get_request(
+    location: str, vm_family_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/vmFamilies/{vmFamilyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vm_families_list_by_subscription_location_resource_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/vmFamilies"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_shared_limit_caps_get_request(
+    location: str, vm_family_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_shared_limit_caps_create_or_update_request(  # pylint: disable=name-too-long
+    location: str, vm_family_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_shared_limit_caps_delete_request(
+    location: str, vm_family_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_shared_limit_caps_list_by_subscription_location_resource_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_shared_limit_caps_set_member_cap_overrides_request(  # pylint: disable=name-too-long
+    location: str, vm_family_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}/setMemberCapOverrides"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_member_cap_overrides_get_request(
+    location: str, vm_family_name: str, member_subscription_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}/memberCapOverrides/{memberSubscriptionId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+        "memberSubscriptionId": _SERIALIZER.url("member_subscription_id", member_subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_member_cap_overrides_create_or_update_request(  # pylint: disable=name-too-long
+    location: str, vm_family_name: str, member_subscription_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}/memberCapOverrides/{memberSubscriptionId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+        "memberSubscriptionId": _SERIALIZER.url("member_subscription_id", member_subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_member_cap_overrides_delete_request(  # pylint: disable=name-too-long
+    location: str, vm_family_name: str, member_subscription_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}/memberCapOverrides/{memberSubscriptionId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
+        "memberSubscriptionId": _SERIALIZER.url("member_subscription_id", member_subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_member_cap_overrides_list_by_parent_request(  # pylint: disable=name-too-long
+    location: str, vm_family_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}/memberCapOverrides"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "vmFamilyName": _SERIALIZER.url("vm_family_name", vm_family_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -337,7 +759,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -350,7 +775,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -432,6 +860,7 @@ class GuestSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -453,7 +882,7 @@ class GuestSubscriptionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GuestSubscription, response.json())
 
@@ -493,7 +922,7 @@ class GuestSubscriptionsOperations:
         self,
         location: str,
         guest_subscription_id: str,
-        resource: JSON,
+        resource: _types.GuestSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -505,7 +934,7 @@ class GuestSubscriptionsOperations:
         :param guest_subscription_id: The name of the GuestSubscription. Required.
         :type guest_subscription_id: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.GuestSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -545,7 +974,7 @@ class GuestSubscriptionsOperations:
         self,
         location: str,
         guest_subscription_id: str,
-        resource: Union[_models.GuestSubscription, JSON, IO[bytes]],
+        resource: Union[_models.GuestSubscription, _types.GuestSubscription, IO[bytes]],
         **kwargs: Any
     ) -> _models.GuestSubscription:
         """Adds a subscription as a guest to consume the compute limits shared by the host subscription.
@@ -554,9 +983,10 @@ class GuestSubscriptionsOperations:
         :type location: str
         :param guest_subscription_id: The name of the GuestSubscription. Required.
         :type guest_subscription_id: str
-        :param resource: Resource create parameters. Is one of the following types: GuestSubscription,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.GuestSubscription or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a GuestSubscription type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.GuestSubscription or
+         ~azure.mgmt.computelimit.types.GuestSubscription or IO[bytes]
         :return: GuestSubscription. The GuestSubscription is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.GuestSubscription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -597,6 +1027,7 @@ class GuestSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -618,7 +1049,7 @@ class GuestSubscriptionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GuestSubscription, response.json())
 
@@ -739,7 +1170,10 @@ class GuestSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -752,7 +1186,10 @@ class GuestSubscriptionsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GuestSubscription], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.GuestSubscription],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -835,6 +1272,7 @@ class SharedLimitsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -856,7 +1294,7 @@ class SharedLimitsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SharedLimit, response.json())
 
@@ -893,7 +1331,13 @@ class SharedLimitsOperations:
 
     @overload
     def create(
-        self, location: str, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        name: str,
+        resource: _types.SharedLimit,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SharedLimit:
         """Enables sharing of a compute limit by the host subscription with its guest subscriptions.
 
@@ -902,7 +1346,7 @@ class SharedLimitsOperations:
         :param name: The name of the SharedLimit. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.SharedLimit
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -933,7 +1377,11 @@ class SharedLimitsOperations:
 
     @distributed_trace
     def create(
-        self, location: str, name: str, resource: Union[_models.SharedLimit, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        name: str,
+        resource: Union[_models.SharedLimit, _types.SharedLimit, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SharedLimit:
         """Enables sharing of a compute limit by the host subscription with its guest subscriptions.
 
@@ -941,9 +1389,10 @@ class SharedLimitsOperations:
         :type location: str
         :param name: The name of the SharedLimit. Required.
         :type name: str
-        :param resource: Resource create parameters. Is one of the following types: SharedLimit, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.SharedLimit or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SharedLimit type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimit or
+         ~azure.mgmt.computelimit.types.SharedLimit or IO[bytes]
         :return: SharedLimit. The SharedLimit is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SharedLimit
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -984,6 +1433,7 @@ class SharedLimitsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1005,7 +1455,7 @@ class SharedLimitsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SharedLimit, response.json())
 
@@ -1121,7 +1571,10 @@ class SharedLimitsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1134,7 +1587,1886 @@ class SharedLimitsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SharedLimit], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SharedLimit],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class FeaturesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computelimit.ComputeLimitMgmtClient`'s
+        :attr:`features` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-20",
+        params_added_on={"2026-03-20": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
+        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01"],
+    )
+    def get(self, location: str, feature_name: str, **kwargs: Any) -> _models.Feature:
+        """Gets the properties of a compute limit feature.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param feature_name: The name of the Feature. Required.
+        :type feature_name: str
+        :return: Feature. The Feature is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.Feature
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Feature] = kwargs.pop("cls", None)
+
+        _request = build_features_get_request(
+            location=location,
+            feature_name=feature_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Feature, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-20",
+        params_added_on={"2026-03-20": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01"],
+    )
+    def list_by_subscription_location_resource(self, location: str, **kwargs: Any) -> ItemPaged["_models.Feature"]:
+        """Lists all compute limit features for the subscription at the specified location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of Feature
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.computelimit.models.Feature]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Feature]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_features_list_by_subscription_location_resource_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Feature],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": ["api_version", "subscription_id", "location", "feature_name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-06-01", "2026-07-01"],
+    )
+    def _enable_initial(
+        self,
+        location: str,
+        feature_name: str,
+        body: Optional[Union[_models.FeatureEnableRequest, _types.FeatureEnableRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_features_enable_request(
+            location=location,
+            feature_name=feature_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_enable(
+        self,
+        location: str,
+        feature_name: str,
+        body: Optional[_models.FeatureEnableRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param feature_name: The name of the Feature. Required.
+        :type feature_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.computelimit.models.FeatureEnableRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computelimit.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_enable(
+        self,
+        location: str,
+        feature_name: str,
+        body: Optional[_types.FeatureEnableRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param feature_name: The name of the Feature. Required.
+        :type feature_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.computelimit.types.FeatureEnableRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computelimit.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_enable(
+        self,
+        location: str,
+        feature_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param feature_name: The name of the Feature. Required.
+        :type feature_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computelimit.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": ["api_version", "subscription_id", "location", "feature_name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-06-01", "2026-07-01"],
+    )
+    def begin_enable(
+        self,
+        location: str,
+        feature_name: str,
+        body: Optional[Union[_models.FeatureEnableRequest, _types.FeatureEnableRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param feature_name: The name of the Feature. Required.
+        :type feature_name: str
+        :param body: The content of the action request. Is either a FeatureEnableRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.computelimit.models.FeatureEnableRequest or
+         ~azure.mgmt.computelimit.types.FeatureEnableRequest or IO[bytes]
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computelimit.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._enable_initial(
+                location=location,
+                feature_name=feature_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-04-30",
+        params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+    )
+    def _disable_initial(self, location: str, feature_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_features_disable_request(
+            location=location,
+            feature_name=feature_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-30",
+        params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+    )
+    def begin_disable(
+        self, location: str, feature_name: str, **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Disables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param feature_name: The name of the Feature. Required.
+        :type feature_name: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computelimit.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._disable_initial(
+                location=location,
+                feature_name=feature_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class VmFamiliesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computelimit.ComputeLimitMgmtClient`'s
+        :attr:`vm_families` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-30",
+        params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+    )
+    def get(self, location: str, vm_family_name: str, **kwargs: Any) -> _models.VmFamily:
+        """Gets the properties of a VM family.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the VmFamily. Required.
+        :type vm_family_name: str
+        :return: VmFamily. The VmFamily is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.VmFamily
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VmFamily] = kwargs.pop("cls", None)
+
+        _request = build_vm_families_get_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VmFamily, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-30",
+        params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "filter", "accept"]},
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+    )
+    def list_by_subscription_location_resource(
+        self, location: str, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.VmFamily"]:
+        """Lists all VM families for the subscription at the specified location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :keyword filter: The filter to apply to the list operation. Filter can be applied to the
+         'category' property. Example: $filter=category eq 'generalPurposeCategory'. Default value is
+         None.
+        :paramtype filter: str
+        :return: An iterator like instance of VmFamily
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.computelimit.models.VmFamily]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VmFamily]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_vm_families_list_by_subscription_location_resource_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VmFamily],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class SharedLimitCapsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computelimit.ComputeLimitMgmtClient`'s
+        :attr:`shared_limit_caps` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
+        api_versions_list=["2026-07-01"],
+    )
+    def get(self, location: str, vm_family_name: str, **kwargs: Any) -> _models.SharedLimitCap:
+        """Gets the shared limit cap configuration for a VM family, as visible to the caller's
+        subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SharedLimitCap] = kwargs.pop("cls", None)
+
+        _request = build_shared_limit_caps_get_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SharedLimitCap, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        resource: _models.SharedLimitCap,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SharedLimitCap:
+        """Creates or replaces the shared limit cap configuration for a VM family.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimitCap
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        resource: _types.SharedLimitCap,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SharedLimitCap:
+        """Creates or replaces the shared limit cap configuration for a VM family.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.types.SharedLimitCap
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SharedLimitCap:
+        """Creates or replaces the shared limit cap configuration for a VM family.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        resource: Union[_models.SharedLimitCap, _types.SharedLimitCap, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SharedLimitCap:
+        """Creates or replaces the shared limit cap configuration for a VM family.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param resource: Resource create parameters. Is either a SharedLimitCap type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimitCap or
+         ~azure.mgmt.computelimit.types.SharedLimitCap or IO[bytes]
+        :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SharedLimitCap] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_shared_limit_caps_create_or_update_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SharedLimitCap, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name"]},
+        api_versions_list=["2026-07-01"],
+    )
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, location: str, vm_family_name: str, **kwargs: Any
+    ) -> None:
+        """Deletes the shared limit cap configuration for a VM family. The caller's subscription is
+        treated as the host subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_shared_limit_caps_delete_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-07-01"],
+    )
+    def list_by_subscription_location_resource(
+        self, location: str, **kwargs: Any
+    ) -> ItemPaged["_models.SharedLimitCap"]:
+        """Lists all shared limit cap configurations visible to the caller's subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of SharedLimitCap
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.computelimit.models.SharedLimitCap]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SharedLimitCap]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_shared_limit_caps_list_by_subscription_location_resource_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SharedLimitCap],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def set_member_cap_overrides(
+        self,
+        location: str,
+        vm_family_name: str,
+        body: _models.SetMemberCapOverridesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SetMemberCapOverridesResult:
+        """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
+        becomes the new complete set of overrides; supplying an empty array clears all existing
+        overrides.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computelimit.models.SetMemberCapOverridesRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SetMemberCapOverridesResult. The SetMemberCapOverridesResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SetMemberCapOverridesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def set_member_cap_overrides(
+        self,
+        location: str,
+        vm_family_name: str,
+        body: _types.SetMemberCapOverridesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SetMemberCapOverridesResult:
+        """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
+        becomes the new complete set of overrides; supplying an empty array clears all existing
+        overrides.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computelimit.types.SetMemberCapOverridesRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SetMemberCapOverridesResult. The SetMemberCapOverridesResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SetMemberCapOverridesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def set_member_cap_overrides(
+        self,
+        location: str,
+        vm_family_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SetMemberCapOverridesResult:
+        """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
+        becomes the new complete set of overrides; supplying an empty array clears all existing
+        overrides.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SetMemberCapOverridesResult. The SetMemberCapOverridesResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SetMemberCapOverridesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def set_member_cap_overrides(
+        self,
+        location: str,
+        vm_family_name: str,
+        body: Union[_models.SetMemberCapOverridesRequest, _types.SetMemberCapOverridesRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SetMemberCapOverridesResult:
+        """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
+        becomes the new complete set of overrides; supplying an empty array clears all existing
+        overrides.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param body: The content of the action request. Is either a SetMemberCapOverridesRequest type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.computelimit.models.SetMemberCapOverridesRequest or
+         ~azure.mgmt.computelimit.types.SetMemberCapOverridesRequest or IO[bytes]
+        :return: SetMemberCapOverridesResult. The SetMemberCapOverridesResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.SetMemberCapOverridesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SetMemberCapOverridesResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_shared_limit_caps_set_member_cap_overrides_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SetMemberCapOverridesResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class MemberCapOverridesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computelimit.ComputeLimitMgmtClient`'s
+        :attr:`member_cap_overrides` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "location",
+                "vm_family_name",
+                "member_subscription_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def get(
+        self, location: str, vm_family_name: str, member_subscription_id: str, **kwargs: Any
+    ) -> _models.MemberCapOverride:
+        """Gets the cap override configured for a single member subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param member_subscription_id: The name of the MemberCapOverride. Required.
+        :type member_subscription_id: str
+        :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MemberCapOverride] = kwargs.pop("cls", None)
+
+        _request = build_member_cap_overrides_get_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            member_subscription_id=member_subscription_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MemberCapOverride, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        member_subscription_id: str,
+        resource: _models.MemberCapOverride,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MemberCapOverride:
+        """Creates or replaces the cap override for a single member subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param member_subscription_id: The name of the MemberCapOverride. Required.
+        :type member_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.models.MemberCapOverride
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        member_subscription_id: str,
+        resource: _types.MemberCapOverride,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MemberCapOverride:
+        """Creates or replaces the cap override for a single member subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param member_subscription_id: The name of the MemberCapOverride. Required.
+        :type member_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.types.MemberCapOverride
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        member_subscription_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MemberCapOverride:
+        """Creates or replaces the cap override for a single member subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param member_subscription_id: The name of the MemberCapOverride. Required.
+        :type member_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "location",
+                "vm_family_name",
+                "member_subscription_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def create_or_update(
+        self,
+        location: str,
+        vm_family_name: str,
+        member_subscription_id: str,
+        resource: Union[_models.MemberCapOverride, _types.MemberCapOverride, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.MemberCapOverride:
+        """Creates or replaces the cap override for a single member subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param member_subscription_id: The name of the MemberCapOverride. Required.
+        :type member_subscription_id: str
+        :param resource: Resource create parameters. Is either a MemberCapOverride type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.MemberCapOverride or
+         ~azure.mgmt.computelimit.types.MemberCapOverride or IO[bytes]
+        :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MemberCapOverride] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_member_cap_overrides_create_or_update_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            member_subscription_id=member_subscription_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MemberCapOverride, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "member_subscription_id"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, location: str, vm_family_name: str, member_subscription_id: str, **kwargs: Any
+    ) -> None:
+        """Removes the per-member cap override for a member subscription.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :param member_subscription_id: The name of the MemberCapOverride. Required.
+        :type member_subscription_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_member_cap_overrides_delete_request(
+            location=location,
+            vm_family_name=vm_family_name,
+            member_subscription_id=member_subscription_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
+        api_versions_list=["2026-07-01"],
+    )
+    def list_by_parent(
+        self, location: str, vm_family_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.MemberCapOverride"]:
+        """Lists all per-member cap overrides configured under a SharedLimitCap.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param vm_family_name: The name of the SharedLimitCap. Required.
+        :type vm_family_name: str
+        :return: An iterator like instance of MemberCapOverride
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.computelimit.models.MemberCapOverride]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MemberCapOverride]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_member_cap_overrides_list_by_parent_request(
+                    location=location,
+                    vm_family_name=vm_family_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MemberCapOverride],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

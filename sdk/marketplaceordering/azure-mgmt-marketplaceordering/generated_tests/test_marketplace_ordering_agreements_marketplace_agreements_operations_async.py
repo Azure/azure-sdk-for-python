@@ -21,7 +21,7 @@ class TestMarketplaceOrderingAgreementsMarketplaceAgreementsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_marketplace_agreements_get(self, resource_group):
         response = await self.client.marketplace_agreements.get(
             offer_type="str",
             publisher_id="str",
@@ -35,7 +35,7 @@ class TestMarketplaceOrderingAgreementsMarketplaceAgreementsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create(self, resource_group):
+    async def test_marketplace_agreements_create(self, resource_group):
         response = await self.client.marketplace_agreements.create(
             offer_type="str",
             publisher_id="str",
@@ -71,7 +71,7 @@ class TestMarketplaceOrderingAgreementsMarketplaceAgreementsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sign(self, resource_group):
+    async def test_marketplace_agreements_sign(self, resource_group):
         response = await self.client.marketplace_agreements.sign(
             publisher_id="str",
             offer_id="str",
@@ -84,7 +84,7 @@ class TestMarketplaceOrderingAgreementsMarketplaceAgreementsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cancel(self, resource_group):
+    async def test_marketplace_agreements_cancel(self, resource_group):
         response = await self.client.marketplace_agreements.cancel(
             publisher_id="str",
             offer_id="str",
@@ -97,7 +97,7 @@ class TestMarketplaceOrderingAgreementsMarketplaceAgreementsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_agreement(self, resource_group):
+    async def test_marketplace_agreements_get_agreement(self, resource_group):
         response = await self.client.marketplace_agreements.get_agreement(
             publisher_id="str",
             offer_id="str",
@@ -110,7 +110,7 @@ class TestMarketplaceOrderingAgreementsMarketplaceAgreementsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_marketplace_agreements_list(self, resource_group):
         response = await self.client.marketplace_agreements.list(
             api_version="2021-01-01",
         )

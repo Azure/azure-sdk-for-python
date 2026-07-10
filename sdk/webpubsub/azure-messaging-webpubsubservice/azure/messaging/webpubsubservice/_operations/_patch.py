@@ -559,7 +559,22 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
                 endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs
             )
         else:
-            token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
+            user_id = kwargs.pop("user_id", None)
+            roles = kwargs.pop("roles", None)
+            minutes_to_expire = kwargs.pop("minutes_to_expire", None)
+            groups = kwargs.pop("groups", None)
+            token = (
+                super()
+                .generate_client_token(
+                    user_id=user_id,
+                    role=roles,
+                    minutes_to_expire=minutes_to_expire,
+                    group=groups,
+                    client_type=client_protocol,
+                    **kwargs
+                )
+                .get("token")
+            )
         return {
             "baseUrl": client_url,
             "token": token,
@@ -597,7 +612,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
 
         """
         # Call the base implementation to get ItemPaged[dict]
-        paged_json = super().list_connections(group=group, top=top, **kwargs)
+        paged_json = super().list_connections_in_group(group=group, top=top, **kwargs)
 
         # Wrap the iterator to convert each item to GroupMember
         class GroupMemberPaged(ItemPaged):
@@ -1262,6 +1277,31 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
             raise HttpResponseError(response=response)
         if cls:
             return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def has_permission(
+        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
+    ) -> bool:
+        """Check if a connection has permission to the specified action.
+
+        Check if a connection has permission to the specified action.
+
+        :param permission: The permission: current supported actions are joinLeaveGroup and
+         sendToGroup. Known values are: "sendToGroup" and "joinLeaveGroup". Required.
+        :type permission: str
+        :param connection_id: Target connection Id. Required.
+        :type connection_id: str
+        :keyword target_name: The meaning of the target depends on the specific permission. For
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
+         the group name. Default value is None.
+        :paramtype target_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return super().check_permission(
+            permission=permission, connection_id=connection_id, target_name=target_name, **kwargs
+        )
 
 
 __all__: List[str] = [

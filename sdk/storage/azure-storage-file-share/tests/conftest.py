@@ -16,8 +16,9 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
     add_uri_regex_sanitizer,
-    test_proxy
+    test_proxy,
 )
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

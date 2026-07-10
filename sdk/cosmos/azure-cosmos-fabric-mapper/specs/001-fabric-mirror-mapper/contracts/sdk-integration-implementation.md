@@ -31,7 +31,7 @@ class CosmosClient:
         mirror_config: Optional[Dict[str, Any]] = None,  # NEW PARAMETER
     ):
         """Initialize Cosmos client.
-        
+
         Args:
             url: Cosmos DB account endpoint
             credential: Authentication credential
@@ -63,7 +63,7 @@ from typing import Any, Dict, List, Optional
 
 class MirrorServingNotAvailableError(Exception):
     """Raised when mirror serving is requested but mapper package is not installed."""
-    
+
     def __init__(self):
         super().__init__(
             "Mirror serving was requested but the azure-cosmos-fabric-mapper package "
@@ -78,10 +78,10 @@ class MirrorServingNotAvailableError(Exception):
 
 def _lazy_import_mapper():
     """Dynamically import mapper package only when needed.
-    
+
     Returns:
         Module handle to azure_cosmos_fabric_mapper.sdk_hook.contract
-        
+
     Raises:
         MirrorServingNotAvailableError: If package is not installed
     """
@@ -98,27 +98,27 @@ def execute_mirrored_query(
     mirror_config: Dict[str, Any],
 ) -> List[Dict[str, Any]]:
     """Execute query against Fabric mirror using mapper package.
-    
+
     Args:
         query: Cosmos SQL query text
         parameters: List of parameter dicts with 'name' and 'value' keys
         mirror_config: Dict with fabric_server, fabric_database, fabric_table, fabric_schema
-        
+
     Returns:
         List of Cosmos-like document dicts
-        
+
     Raises:
         MirrorServingNotAvailableError: If mapper package not installed
         UnsupportedCosmosQueryError: If query uses unsupported features
         DriverError: If connection to Fabric fails
     """
     contract = _lazy_import_mapper()
-    
+
     # Import mapper types
     from azure_cosmos_fabric_mapper import MirrorServingConfiguration
     from azure_cosmos_fabric_mapper.credentials import DefaultAzureSqlCredential
     from azure_cosmos_fabric_mapper.driver import get_driver_client
-    
+
     # Convert Cosmos parameter format to mapper format
     param_dict = {}
     if parameters:
@@ -127,7 +127,7 @@ def execute_mirrored_query(
             # Mapper uses {"pk": "val"} (without @ prefix)
             param_name = param["name"].lstrip("@")
             param_dict[param_name] = param["value"]
-    
+
     # Build configuration
     config = MirrorServingConfiguration(
         fabric_server=mirror_config["fabric_server"],
@@ -135,16 +135,16 @@ def execute_mirrored_query(
         fabric_table=mirror_config["fabric_table"],
         fabric_schema=mirror_config.get("fabric_schema", "dbo"),
     )
-    
+
     # Create credentials
     credentials = DefaultAzureSqlCredential()
-    
+
     # Create request
     request = contract.MirroredQueryRequest(
         query=query,
         parameters=param_dict,
     )
-    
+
     # Execute using default credentials and auto-selected driver
     # (prefers mssql-python, falls back to pyodbc if unavailable)
     results = contract.run_mirrored_query(
@@ -153,7 +153,7 @@ def execute_mirrored_query(
         credentials=credentials,
         driver_client=get_driver_client(config, credentials),
     )
-    
+
     return results
 ```
 
@@ -182,7 +182,7 @@ class ContainerProxy:
         **kwargs
     ) -> Iterable[Dict[str, Any]]:
         """Query items in the container.
-        
+
         Args:
             query: Cosmos SQL query
             parameters: Query parameters
@@ -191,10 +191,10 @@ class ContainerProxy:
             max_item_count: Max items per page
             use_mirror_serving: If True, route query to Fabric mirror (requires mirror_config
                                on client). If False or None, use Cosmos DB (default).
-            
+
         Returns:
             Iterable of item dicts
-            
+
         Raises:
             MirrorServingNotAvailableError: If mirror serving requested but mapper not installed
             ValueError: If mirror serving requested but mirror_config not provided on client
@@ -208,7 +208,7 @@ class ContainerProxy:
                     "was not provided to CosmosClient constructor. Please provide mirror_config "
                     "or set use_mirror_serving=False to use Cosmos DB."
                 )
-            
+
             # Delegate to mapper
             try:
                 return execute_mirrored_query(
@@ -225,7 +225,7 @@ class ContainerProxy:
                     f"Mirror serving query failed: {exc}. "
                     "You can disable mirror serving for this query with use_mirror_serving=False"
                 ) from exc
-        
+
         # EXISTING: Default Cosmos execution path
         return self._query_items_original(
             query=query,
@@ -235,7 +235,7 @@ class ContainerProxy:
             max_item_count=max_item_count,
             **kwargs
         )
-    
+
     def _query_items_original(self, query, parameters, partition_key, enable_cross_partition_query, max_item_count, **kwargs):
         """Original query_items implementation (existing SDK code)."""
         # ... existing implementation ...
@@ -359,12 +359,12 @@ def test_query_items_default_behavior():
         mirror_config={"fabric_server": "...", "fabric_database": "...", "fabric_table": "..."}
     )
     container = client.get_database_client("db").get_container_client("cont")
-    
+
     # Should not attempt to import mapper when use_mirror_serving not specified
     with patch('azure.cosmos._mirror_integration._lazy_import_mapper') as mock_import:
         items = list(container.query_items(query="SELECT * FROM c"))
         mock_import.assert_not_called()
-    
+
     # Should not attempt to import mapper when use_mirror_serving=False
     with patch('azure.cosmos._mirror_integration._lazy_import_mapper') as mock_import:
         items = list(container.query_items(query="SELECT * FROM c", use_mirror_serving=False))
@@ -382,10 +382,10 @@ def test_mirror_serving_requested_but_mapper_missing():
         mirror_config={"fabric_server": "...", "fabric_database": "...", "fabric_table": "..."}
     )
     container = client.get_database_client("db").get_container_client("cont")
-    
+
     with pytest.raises(MirrorServingNotAvailableError) as exc_info:
         list(container.query_items(query="SELECT * FROM c", use_mirror_serving=True))
-    
+
     assert "pip install azure-cosmos-fabric-mapper" in str(exc_info.value)
 ```
 
@@ -404,17 +404,17 @@ def test_mirror_serving_delegates_to_mapper_when_requested():
         }
     )
     container = client.get_database_client("db").get_container_client("cont")
-    
+
     with patch('azure.cosmos._mirror_integration.execute_mirrored_query') as mock_exec:
         mock_exec.return_value = [{"id": "1", "name": "test"}]
-        
+
         # Request mirror serving
         items = list(container.query_items(
             query="SELECT * FROM c WHERE c.category = @cat",
             parameters=[{"name": "@cat", "value": "books"}],
             use_mirror_serving=True
         ))
-        
+
         # Verify mapper was called with correct arguments
         mock_exec.assert_called_once()
         args = mock_exec.call_args
@@ -434,9 +434,9 @@ def test_mirror_serving_delegates_to_mapper_when_requested():
 | `container.py` | Modification | Add `use_mirror_serving` param and conditional routing in `query_items()` |
 | `tests/unit/test_mirror_integration.py` | New file | Unit tests for per-request mirror serving behavior |
 
-**Total lines added**: ~200 lines  
-**Impact on existing code**: Minimal (one conditional branch in query path, one new optional parameter)  
-**Breaking changes**: None  
+**Total lines added**: ~200 lines
+**Impact on existing code**: Minimal (one conditional branch in query path, one new optional parameter)
+**Breaking changes**: None
 **Per-request control**: Users decide Cosmos DB vs Fabric mirror on each query
 
 ---

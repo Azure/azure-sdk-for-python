@@ -199,7 +199,7 @@ class FacetResult(_Model):
 
 
 class HybridSearch(_Model):
-    """TThe query parameters to configure hybrid search behaviors.
+    """The query parameters to configure hybrid search behaviors.
 
     :ivar max_text_recall_size: Determines the maximum number of documents to be retrieved by the
      text query portion of a hybrid search request. Those documents will be combined with the
@@ -540,7 +540,7 @@ class SearchDocumentsResult(_Model):
     :vartype debug_info: ~azure.search.documents.models.DebugInfo
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
      the requested results in a single response. You can use this JSON along with.
-    :vartype next_page_parameters: ~azure.search.documents.models.SearchRequest
+    :vartype next_page_parameters: ~azure.search.documents.models._models.SearchRequest
     :ivar results: The sequence of results returned by the query. Required.
     :vartype results: list[~azure.search.documents.models.SearchResult]
     :ivar next_link: Continuation URL returned when the query can't return all the requested
@@ -579,7 +579,7 @@ class SearchDocumentsResult(_Model):
      specified or set to 'none'."""
     debug_info: Optional["_models.DebugInfo"] = rest_field(name="@search.debug", visibility=["read"])
     """Debug information that applies to the search results as a whole."""
-    next_page_parameters: Optional["_models.SearchRequest"] = rest_field(
+    next_page_parameters: Optional["_models._models.SearchRequest"] = rest_field(
         name="@search.nextPageParameters", visibility=["read"]
     )
     """Continuation JSON payload returned when the query can't return all the requested results in a
@@ -601,8 +601,8 @@ class SearchDocumentsResult(_Model):
     )
     """Type of partial response that was returned for a semantic ranking request. Known values are:
      \"baseResults\" and \"rerankedResults\"."""
-    semantic_query_rewrites_result_type: Optional[Union[str, "_models.SemanticQueryRewritesResultType"]] = rest_field(
-        name="@search.semanticQueryRewritesResultType", visibility=["read"]
+    semantic_query_rewrites_result_type: Optional[Union[str, "_models._enums.SemanticQueryRewritesResultType"]] = (
+        rest_field(name="@search.semanticQueryRewritesResultType", visibility=["read"])
     )
     """Type of query rewrite that was used to retrieve documents. \"originalQueryOnly\""""
 

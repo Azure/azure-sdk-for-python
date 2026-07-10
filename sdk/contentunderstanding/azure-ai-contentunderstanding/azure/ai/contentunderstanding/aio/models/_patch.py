@@ -10,8 +10,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import re
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
+from ... import models as _models
+from ..._utils.model_base import _deserialize
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
@@ -61,6 +63,26 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             return _parse_operation_id(operation_location)
         except (KeyError, ValueError) as e:
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
+
+    @property
+    def usage(self) -> Optional["_models.UsageDetails"]:
+        """Returns the usage details from the completed analyze operation.
+
+        This property is available after the operation has completed successfully.
+        It provides information about the resources consumed during analysis,
+        including document pages, contextualization tokens, and LLM token breakdown.
+
+        :return: The usage details, or None if the operation is not yet complete
+            or usage information is not available.
+        :rtype: ~azure.ai.contentunderstanding.models.UsageDetails or None
+        """
+        if not self.done():
+            return None
+        response = self.polling_method()._pipeline_response.http_response  # type: ignore # pylint: disable=protected-access
+        usage_data = response.json().get("usage")
+        if usage_data is None:
+            return None
+        return _deserialize(_models.UsageDetails, usage_data)
 
     @classmethod
     def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip

@@ -61,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/UpdateStrategies_CreateOrUpdate.json
+# x-ms-original-file: 2026-03-02-preview/UpdateStrategies_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

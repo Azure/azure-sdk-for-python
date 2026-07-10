@@ -257,7 +257,8 @@ class BackupDatasourceParameters(_Model):
     """Parameters for Backup Datasource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AdlsBlobBackupDatasourceParameters, BlobBackupDatasourceParameters,
+    AdlsBlobBackupDatasourceParameters, AdlsBlobBackupDatasourceParametersForAutoProtection,
+    BlobBackupDatasourceParameters, BlobBackupDatasourceParametersForAutoProtection,
     KubernetesClusterBackupDatasourceParameters
 
     :ivar object_type: Type of the specific object - used for deserializing. Required. Default
@@ -363,6 +364,47 @@ class AdlsBlobBackupDatasourceParameters(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object_type = "AdlsBlobBackupDatasourceParameters"  # type: ignore
+
+
+class AdlsBlobBackupDatasourceParametersForAutoProtection(
+    BackupDatasourceParameters, discriminator="AdlsBlobBackupDatasourceParametersForAutoProtection"
+):  # pylint: disable=name-too-long
+    """Parameters to be used during configuration of backup of azure data lake storage account blobs
+    using AutoProtection settings.
+
+    :ivar auto_protection_settings: AutoProtection settings. Required.
+    :vartype auto_protection_settings:
+     ~azure.mgmt.dataprotection.models.BlobBackupRuleBasedAutoProtectionSettings
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "AdlsBlobBackupDatasourceParametersForAutoProtection".
+    :vartype object_type: str
+    """
+
+    auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings" = rest_field(
+        name="autoProtectionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AutoProtection settings. Required."""
+    object_type: Literal["AdlsBlobBackupDatasourceParametersForAutoProtection"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"AdlsBlobBackupDatasourceParametersForAutoProtection\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "AdlsBlobBackupDatasourceParametersForAutoProtection"  # type: ignore
 
 
 class AuthCredentials(_Model):
@@ -1047,8 +1089,8 @@ class AzureBackupRestoreRequest(_Model):
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     """
 
@@ -1075,8 +1117,8 @@ class AzureBackupRestoreRequest(_Model):
     identity_details: Optional["_models.IdentityDetails"] = rest_field(
         name="identityDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned."""
+    """Contains information of the Identity Details for the BI. If it is null, default will be
+     considered as System Assigned."""
 
     @overload
     def __init__(
@@ -1120,8 +1162,8 @@ class AzureBackupRecoveryPointBasedRestoreRequest(
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar recovery_point_id: Required.
     :vartype recovery_point_id: str
@@ -1218,8 +1260,8 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar recovery_point_time: The recovery time in ISO 8601 format example -
      2020-08-14T17:30:00.0000000Z. Required.
@@ -1322,8 +1364,8 @@ class AzureBackupRestoreWithRehydrationRequest(
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar recovery_point_id: Required.
     :vartype recovery_point_id: str
@@ -1685,8 +1727,8 @@ class BackupInstance(_Model):
      validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
      and "DeepValidation".
     :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar object_type: Required.
     :vartype object_type: str
@@ -1743,8 +1785,8 @@ class BackupInstance(_Model):
     identity_details: Optional["_models.IdentityDetails"] = rest_field(
         name="identityDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned."""
+    """Contains information of the Identity Details for the BI. If it is null, default will be
+     considered as System Assigned."""
     object_type: str = rest_field(name="objectType", visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -1902,21 +1944,75 @@ class BackupPolicy(BaseBackupPolicy, discriminator="BackupPolicy"):
 class BackupSchedule(_Model):
     """Schedule for backup.
 
-    :ivar repeating_time_intervals: Repeating time interval which only support the following ISO
-     8601 format [R/startDateTime/Duration]. Example: R/2007-03-01T13:00:00Z/P1Y2M10DT2H30M.
-     Required.
+    :ivar repeating_time_intervals: Repeating time intervals that define the backup schedule. Each
+     value must follow the format: ``R/YYYY-MM-DDThh:mm:ss[.fff][Z|(+/-)hh:mm]/Duration`` Only the
+     exact formats listed below are supported. Other ISO 8601 variations are not accepted. Supported
+     time formats:
+
+     * `Thh:mm:ss.fff` (with milliseconds)
+     * `Thh:mm:ss` (with seconds)
+     * `Thh:mm` (hours and minutes only)
+
+     A timezone indicator (``Z``, ``+hh:mm``, or ``-hh:mm``) may be appended to any of the
+     above.
+
+     Unsupported formats include compact notation such as ``T1430``, ``T143045``, or ``T14.5``.
+
+     Examples:
+
+     * `R/2023-10-15T14:30:00Z/P1W`
+     * `R/2023-10-15T14:30:45.123+05:30/P1D`
+     * `R/2023-10-15T14:30Z/P1D`. Required.
     :vartype repeating_time_intervals: list[str]
-    :ivar time_zone: Time zone for a schedule. Example: Pacific Standard Time.
+    :ivar time_zone: Time Zone for a schedule. Supported timezone indicators include:
+
+     * 'Z' for UTC
+     * '+00:00'
+     * '+05:30'
+     * '-08:00'
+
+     Examples:
+
+     * 2023-10-15T14:30:45Z
+     * 2023-10-15T14:30:45.123+05:30
+     * 2023-10-15T14:30-08:00.
     :vartype time_zone: str
     """
 
     repeating_time_intervals: list[str] = rest_field(
         name="repeatingTimeIntervals", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Repeating time interval which only support the following ISO 8601 format
-     [R/startDateTime/Duration]. Example: R/2007-03-01T13:00:00Z/P1Y2M10DT2H30M. Required."""
+    """Repeating time intervals that define the backup schedule. Each value must follow the format:
+      ``R/YYYY-MM-DDThh:mm:ss[.fff][Z|(+/-)hh:mm]/Duration`` Only the exact formats listed below are
+      supported. Other ISO 8601 variations are not accepted. Supported time formats:
+ 
+      * `Thh:mm:ss.fff` (with milliseconds)
+      * `Thh:mm:ss` (with seconds)
+      * `Thh:mm` (hours and minutes only)
+ 
+      A timezone indicator (``Z``, ``+hh:mm``, or ``-hh:mm``) may be appended to any of the
+      above.
+ 
+      Unsupported formats include compact notation such as ``T1430``, ``T143045``, or ``T14.5``.
+ 
+      Examples:
+ 
+      * `R/2023-10-15T14:30:00Z/P1W`
+      * `R/2023-10-15T14:30:45.123+05:30/P1D`
+      * `R/2023-10-15T14:30Z/P1D`. Required."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """Time zone for a schedule. Example: Pacific Standard Time."""
+    """Time Zone for a schedule. Supported timezone indicators include:
+ 
+      * 'Z' for UTC
+      * '+00:00'
+      * '+05:30'
+      * '-08:00'
+ 
+      Examples:
+ 
+      * 2023-10-15T14:30:45Z
+      * 2023-10-15T14:30:45.123+05:30
+      * 2023-10-15T14:30-08:00."""
 
     @overload
     def __init__(
@@ -1953,7 +2049,7 @@ class BackupVault(_Model):
     :vartype resource_move_details: ~azure.mgmt.dataprotection.models.ResourceMoveDetails
     :ivar security_settings: Security Settings.
     :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
-    :ivar storage_settings: Storage Settings. Required.
+    :ivar storage_settings: Storage Settings.
     :vartype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
     :ivar is_vault_protected_by_resource_guard: Is vault protected by resource guard.
     :vartype is_vault_protected_by_resource_guard: bool
@@ -1995,10 +2091,10 @@ class BackupVault(_Model):
         name="securitySettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Security Settings."""
-    storage_settings: list["_models.StorageSetting"] = rest_field(
+    storage_settings: Optional[list["_models.StorageSetting"]] = rest_field(
         name="storageSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Storage Settings. Required."""
+    """Storage Settings."""
     is_vault_protected_by_resource_guard: Optional[bool] = rest_field(
         name="isVaultProtectedByResourceGuard", visibility=["read"]
     )
@@ -2028,9 +2124,9 @@ class BackupVault(_Model):
     def __init__(
         self,
         *,
-        storage_settings: list["_models.StorageSetting"],
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
+        storage_settings: Optional[list["_models.StorageSetting"]] = None,
         feature_settings: Optional["_models.FeatureSettings"] = None,
         resource_guard_operation_requests: Optional[list[str]] = None,
         replicated_regions: Optional[list[str]] = None,
@@ -2220,6 +2316,177 @@ class BaseResourceProperties(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class BlobBackupAutoProtectionRule(_Model):
+    """Indicates a Blob Backup Auto Protection Rule.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar mode: Exclude removes candidates (after inclusion). Required. "Exclude"
+    :vartype mode: str or ~azure.mgmt.dataprotection.models.BlobBackupRuleMode
+    :ivar type: Pattern type: Prefix, only pattern type supported for now. Required. "Prefix"
+    :vartype type: str or ~azure.mgmt.dataprotection.models.BlobBackupPatternType
+    :ivar pattern: The string pattern to evaluate against container names. For now this accepts
+     literal strings only (no wildcards or regex). Required.
+    :vartype pattern: str
+    """
+
+    object_type: str = rest_field(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required."""
+    mode: Union[str, "_models.BlobBackupRuleMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exclude removes candidates (after inclusion). Required. \"Exclude\""""
+    type: Union[str, "_models.BlobBackupPatternType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pattern type: Prefix, only pattern type supported for now. Required. \"Prefix\""""
+    pattern: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The string pattern to evaluate against container names. For now this accepts literal strings
+     only (no wildcards or regex). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+        mode: Union[str, "_models.BlobBackupRuleMode"],
+        type: Union[str, "_models.BlobBackupPatternType"],
+        pattern: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobBackupAutoProtectionSettings(_Model):
+    """The settings for Blob Backup Auto Protection.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobBackupRuleBasedAutoProtectionSettings
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is None.
+    :vartype object_type: str
+    :ivar enabled: Flag to enable whether auto protection. Required.
+    :vartype enabled: bool
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required. Default value is None."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Flag to enable whether auto protection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+        enabled: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobBackupDatasourceParametersForAutoProtection(
+    BackupDatasourceParameters, discriminator="BlobBackupDatasourceParametersForAutoProtection"
+):  # pylint: disable=name-too-long
+    """Paramters to be used during configuration of backup of blobs using AutoProtection settings.
+
+    :ivar auto_protection_settings: AutoProtection settings. Required.
+    :vartype auto_protection_settings:
+     ~azure.mgmt.dataprotection.models.BlobBackupRuleBasedAutoProtectionSettings
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "BlobBackupDatasourceParametersForAutoProtection".
+    :vartype object_type: str
+    """
+
+    auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings" = rest_field(
+        name="autoProtectionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AutoProtection settings. Required."""
+    object_type: Literal["BlobBackupDatasourceParametersForAutoProtection"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"BlobBackupDatasourceParametersForAutoProtection\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auto_protection_settings: "_models.BlobBackupRuleBasedAutoProtectionSettings",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "BlobBackupDatasourceParametersForAutoProtection"  # type: ignore
+
+
+class BlobBackupRuleBasedAutoProtectionSettings(
+    BlobBackupAutoProtectionSettings, discriminator="BlobBackupRuleBasedAutoProtectionSettings"
+):  # pylint: disable=name-too-long
+    """Parameters to be used for Blob Backup Rule Based Auto Protection settings.
+
+    :ivar enabled: Flag to enable whether auto protection. Required.
+    :vartype enabled: bool
+    :ivar object_type: Required. Default value is "BlobBackupRuleBasedAutoProtectionSettings".
+    :vartype object_type: str
+    :ivar rules: Rules are evaluated in the order provided. Inclusion adds candidates; exclusion
+     removes candidates. If no rules are present, all containers are considered eligible when
+     enabled = true.
+    :vartype rules: list[~azure.mgmt.dataprotection.models.BlobBackupAutoProtectionRule]
+    """
+
+    object_type: Literal["BlobBackupRuleBasedAutoProtectionSettings"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"BlobBackupRuleBasedAutoProtectionSettings\"."""
+    rules: Optional[list["_models.BlobBackupAutoProtectionRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Rules are evaluated in the order provided. Inclusion adds candidates; exclusion removes
+     candidates. If no rules are present, all containers are considered eligible when enabled =
+     true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        rules: Optional[list["_models.BlobBackupAutoProtectionRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "BlobBackupRuleBasedAutoProtectionSettings"  # type: ignore
 
 
 class CheckNameAvailabilityRequest(_Model):
@@ -2934,11 +3201,12 @@ class DefaultResourceProperties(BaseResourceProperties, discriminator="DefaultRe
     """Default source properties.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
+     DEFAULT_RESOURCE_PROPERTIES.
     :vartype object_type: str or ~azure.mgmt.dataprotection.models.DEFAULT_RESOURCE_PROPERTIES
     """
 
     object_type: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of the specific object - used for deserializing. Required."""
+    """Type of the specific object - used for deserializing. Required. DEFAULT_RESOURCE_PROPERTIES."""
 
     @overload
     def __init__(
@@ -2992,8 +3260,8 @@ class DeletedBackupInstance(BackupInstance):
      validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
      and "DeepValidation".
     :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
-    :ivar identity_details: Contains information of the Identity Details for the BI.
-     If it is null, default will be considered as System Assigned.
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
     :ivar object_type: Required.
     :vartype object_type: str
@@ -3058,6 +3326,176 @@ class DeletedBackupInstanceResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.DeletedBackupInstance"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeletedBackupVault(_Model):
+    """Deleted Backup Vault - uses composition with BackupVault and additional deletion metadata.
+
+    :ivar monitoring_settings: Monitoring Settings.
+    :vartype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+    :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
+     "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.dataprotection.models.ProvisioningState
+    :ivar resource_move_state: Resource move state for backup vault. Known values are: "Unknown",
+     "InProgress", "PrepareFailed", "CommitFailed", "Failed", "PrepareTimedout", "CommitTimedout",
+     "CriticalFailure", "PartialSuccess", and "MoveSucceeded".
+    :vartype resource_move_state: str or ~azure.mgmt.dataprotection.models.ResourceMoveState
+    :ivar resource_move_details: Resource move details for backup vault.
+    :vartype resource_move_details: ~azure.mgmt.dataprotection.models.ResourceMoveDetails
+    :ivar security_settings: Security Settings.
+    :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
+    :ivar storage_settings: Storage Settings.
+    :vartype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
+    :ivar is_vault_protected_by_resource_guard: Is vault protected by resource guard.
+    :vartype is_vault_protected_by_resource_guard: bool
+    :ivar feature_settings: Feature Settings.
+    :vartype feature_settings: ~azure.mgmt.dataprotection.models.FeatureSettings
+    :ivar secure_score: Secure Score of Backup Vault. Known values are: "None", "Minimum",
+     "Adequate", "Maximum", and "NotSupported".
+    :vartype secure_score: str or ~azure.mgmt.dataprotection.models.SecureScoreLevel
+    :ivar bcdr_security_level: Security Level of Backup Vault. Known values are: "Poor", "Fair",
+     "Good", "Excellent", and "NotSupported".
+    :vartype bcdr_security_level: str or ~azure.mgmt.dataprotection.models.BCDRSecurityLevel
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar replicated_regions: List of replicated regions for Backup Vault.
+    :vartype replicated_regions: list[str]
+    :ivar original_backup_vault_id: Resource Id of the original backup vault. Required.
+    :vartype original_backup_vault_id: str
+    :ivar original_backup_vault_name: Resource name of the original backup vault. Required.
+    :vartype original_backup_vault_name: str
+    :ivar original_backup_vault_resource_path: Resource path of the original backup vault.
+     Required.
+    :vartype original_backup_vault_resource_path: str
+    :ivar resource_deletion_info: Deletion info for the tracked resource (Backup Vault). Required.
+    :vartype resource_deletion_info: ~azure.mgmt.dataprotection.models.ResourceDeletionInfo
+    """
+
+    monitoring_settings: Optional["_models.MonitoringSettings"] = rest_field(
+        name="monitoringSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monitoring Settings."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the BackupVault resource. Known values are: \"Failed\", \"Provisioning\",
+     \"Succeeded\", \"Unknown\", and \"Updating\"."""
+    resource_move_state: Optional[Union[str, "_models.ResourceMoveState"]] = rest_field(
+        name="resourceMoveState", visibility=["read"]
+    )
+    """Resource move state for backup vault. Known values are: \"Unknown\", \"InProgress\",
+     \"PrepareFailed\", \"CommitFailed\", \"Failed\", \"PrepareTimedout\", \"CommitTimedout\",
+     \"CriticalFailure\", \"PartialSuccess\", and \"MoveSucceeded\"."""
+    resource_move_details: Optional["_models.ResourceMoveDetails"] = rest_field(
+        name="resourceMoveDetails", visibility=["read"]
+    )
+    """Resource move details for backup vault."""
+    security_settings: Optional["_models.SecuritySettings"] = rest_field(
+        name="securitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Security Settings."""
+    storage_settings: Optional[list["_models.StorageSetting"]] = rest_field(
+        name="storageSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage Settings."""
+    is_vault_protected_by_resource_guard: Optional[bool] = rest_field(
+        name="isVaultProtectedByResourceGuard", visibility=["read"]
+    )
+    """Is vault protected by resource guard."""
+    feature_settings: Optional["_models.FeatureSettings"] = rest_field(
+        name="featureSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Feature Settings."""
+    secure_score: Optional[Union[str, "_models.SecureScoreLevel"]] = rest_field(name="secureScore", visibility=["read"])
+    """Secure Score of Backup Vault. Known values are: \"None\", \"Minimum\", \"Adequate\",
+     \"Maximum\", and \"NotSupported\"."""
+    bcdr_security_level: Optional[Union[str, "_models.BCDRSecurityLevel"]] = rest_field(
+        name="bcdrSecurityLevel", visibility=["read"]
+    )
+    """Security Level of Backup Vault. Known values are: \"Poor\", \"Fair\", \"Good\", \"Excellent\",
+     and \"NotSupported\"."""
+    resource_guard_operation_requests: Optional[list[str]] = rest_field(
+        name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceGuardOperationRequests on which LAC check will be performed."""
+    replicated_regions: Optional[list[str]] = rest_field(
+        name="replicatedRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of replicated regions for Backup Vault."""
+    original_backup_vault_id: str = rest_field(name="originalBackupVaultId", visibility=["read"])
+    """Resource Id of the original backup vault. Required."""
+    original_backup_vault_name: str = rest_field(name="originalBackupVaultName", visibility=["read"])
+    """Resource name of the original backup vault. Required."""
+    original_backup_vault_resource_path: str = rest_field(name="originalBackupVaultResourcePath", visibility=["read"])
+    """Resource path of the original backup vault. Required."""
+    resource_deletion_info: "_models.ResourceDeletionInfo" = rest_field(
+        name="resourceDeletionInfo", visibility=["read"]
+    )
+    """Deletion info for the tracked resource (Backup Vault). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        monitoring_settings: Optional["_models.MonitoringSettings"] = None,
+        security_settings: Optional["_models.SecuritySettings"] = None,
+        storage_settings: Optional[list["_models.StorageSetting"]] = None,
+        feature_settings: Optional["_models.FeatureSettings"] = None,
+        resource_guard_operation_requests: Optional[list[str]] = None,
+        replicated_regions: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeletedBackupVaultResource(ProxyResource):
+    """Deleted Backup Vault Resource (available from version 2025-09-01).
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.dataprotection.models.DeletedBackupVault
+    """
+
+    properties: Optional["_models.DeletedBackupVault"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DeletedBackupVault"] = None,
     ) -> None: ...
 
     @overload
@@ -3593,9 +4031,8 @@ class FeatureValidationResponse(FeatureValidationResponseBase, discriminator="Fe
 
 
 class FetchSecondaryRPsRequestParameters(_Model):
-    """Information about BI whose secondary RecoveryPoints are requested
-    Source region and
-    BI ARM path.
+    """Information about BI whose secondary RecoveryPoints are requested Source region and BI ARM
+    path.
 
     :ivar source_region: Source region in which BackupInstance is located.
     :vartype source_region: str
@@ -4700,7 +5137,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -4805,9 +5242,8 @@ class OperationResource(_Model):
     :ivar end_time: End time of the operation.
     :vartype end_time: ~datetime.datetime
     :ivar error: Required if status == failed or status == canceled. This is the OData v4 error
-     format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
-     The full set of optional properties (e.g. inner errors / details) can be found in the "Error
-     Response" section.
+     format, used by the RPC and will go into the v2.2 Azure REST API guidelines. The full set of
+     optional properties (e.g. inner errors / details) can be found in the "Error Response" section.
     :vartype error: ~azure.mgmt.dataprotection.models.Error
     :ivar id: It should match what is used to GET the operation result.
     :vartype id: str
@@ -4828,9 +5264,8 @@ class OperationResource(_Model):
     """End time of the operation."""
     error: Optional["_models.Error"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required if status == failed or status == canceled. This is the OData v4 error format, used by
-     the RPC and will go into the v2.2 Azure REST API guidelines.
-     The full set of optional properties (e.g. inner errors / details) can be found in the \"Error
-     Response\" section."""
+     the RPC and will go into the v2.2 Azure REST API guidelines. The full set of optional
+     properties (e.g. inner errors / details) can be found in the \"Error Response\" section."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """It should match what is used to GET the operation result."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5220,6 +5655,29 @@ class RecoveryPointDataStoreDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ResourceDeletionInfo(_Model):
+    """Deletion info for a tracked resource (Backup Vault).
+
+    :ivar deletion_time: Specifies time of deletion for the tracked resource (Backup Vault).
+    :vartype deletion_time: ~datetime.datetime
+    :ivar scheduled_purge_time: Specifies the scheduled purge time for the tracked resource (Backup
+     Vault).
+    :vartype scheduled_purge_time: ~datetime.datetime
+    :ivar delete_activity_id: Delete activity ID for troubleshooting the deletion of the tracked
+     resource.
+    :vartype delete_activity_id: str
+    """
+
+    deletion_time: Optional[datetime.datetime] = rest_field(name="deletionTime", visibility=["read"], format="rfc3339")
+    """Specifies time of deletion for the tracked resource (Backup Vault)."""
+    scheduled_purge_time: Optional[datetime.datetime] = rest_field(
+        name="scheduledPurgeTime", visibility=["read"], format="rfc3339"
+    )
+    """Specifies the scheduled purge time for the tracked resource (Backup Vault)."""
+    delete_activity_id: Optional[str] = rest_field(name="deleteActivityId", visibility=["read"])
+    """Delete activity ID for troubleshooting the deletion of the tracked resource."""
 
 
 class ResourceGuard(_Model):
@@ -5745,8 +6203,7 @@ class ScheduleBasedBackupCriteria(BackupCriteria, discriminator="ScheduleBasedBa
     """Schedule based backup criteria.
 
     :ivar absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
-     "FirstOfWeek" / "FirstOfMonth"
-     and should be part of AbsoluteMarker enum.
+     "FirstOfWeek" / "FirstOfMonth" and should be part of AbsoluteMarker enum.
     :vartype absolute_criteria: list[str or ~azure.mgmt.dataprotection.models.AbsoluteMarker]
     :ivar days_of_month: This is day of the month from 1 to 28 other wise last of month.
     :vartype days_of_month: list[~azure.mgmt.dataprotection.models.Day]
@@ -5767,8 +6224,7 @@ class ScheduleBasedBackupCriteria(BackupCriteria, discriminator="ScheduleBasedBa
         name="absoluteCriteria", visibility=["read", "create", "update", "delete", "query"]
     )
     """it contains absolute values like \"AllBackup\" / \"FirstOfDay\" / \"FirstOfWeek\" /
-     \"FirstOfMonth\"
-     and should be part of AbsoluteMarker enum."""
+     \"FirstOfMonth\" and should be part of AbsoluteMarker enum."""
     days_of_month: Optional[list["_models.Day"]] = rest_field(
         name="daysOfMonth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6404,8 +6860,7 @@ class TargetDetails(_Model):
      Below will be the common prefix for all of them. Required.
     :vartype file_prefix: str
     :ivar restore_target_location_type: Denotes the target location where the data will be
-     restored,
-     string value for the enum
+     restored, string value for the enum
      {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
      Required. Known values are: "Invalid", "AzureBlobs", and "AzureFiles".
     :vartype restore_target_location_type: str or
@@ -6414,21 +6869,19 @@ class TargetDetails(_Model):
      Required.
     :vartype url: str
     :ivar target_resource_arm_id: Full ARM Id denoting the restore destination. It is the ARM Id
-     pointing to container / file share
-     This is optional if the target subscription can be identified with the URL field. If not
-     then this is needed if CrossSubscriptionRestore field of BackupVault is in any of the disabled
-     states.
+     pointing to container / file share This is optional if the target subscription can be
+     identified with the URL field. If not then this is needed if CrossSubscriptionRestore field of
+     BackupVault is in any of the disabled states.
     :vartype target_resource_arm_id: str
     """
 
     file_prefix: str = rest_field(name="filePrefix", visibility=["read", "create", "update", "delete", "query"])
-    """Restore operation may create multiple files inside location pointed by Url
-     Below will be the common prefix for all of them. Required."""
+    """Restore operation may create multiple files inside location pointed by Url Below will be the
+     common prefix for all of them. Required."""
     restore_target_location_type: Union[str, "_models.RestoreTargetLocationType"] = rest_field(
         name="restoreTargetLocationType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Denotes the target location where the data will be restored,
-     string value for the enum
+    """Denotes the target location where the data will be restored, string value for the enum
      {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
      Required. Known values are: \"Invalid\", \"AzureBlobs\", and \"AzureFiles\"."""
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6437,8 +6890,7 @@ class TargetDetails(_Model):
         name="targetResourceArmId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Full ARM Id denoting the restore destination. It is the ARM Id pointing to container / file
-     share
-     This is optional if the target subscription can be identified with the URL field. If not
+     share This is optional if the target subscription can be identified with the URL field. If not
      then this is needed if CrossSubscriptionRestore field of BackupVault is in any of the disabled
      states."""
 

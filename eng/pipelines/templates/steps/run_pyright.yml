@@ -6,7 +6,7 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  # this step should run on python 3.9.
+  # this step should run on python 3.10.
   # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run Pyright'
@@ -18,10 +18,7 @@ steps:
         --check="pyright"
         --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
+
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
 
   - task: PythonScript@0
@@ -34,8 +31,5 @@ steps:
         --check="verifytypes"
         --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
+
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))

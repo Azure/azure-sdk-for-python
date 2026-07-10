@@ -1,5 +1,28 @@
 # Release History
 
+## 6.0.0b2 (2026-04-28)
+
+### Features Added
+
+  - Client `AppConfigurationManagementClient` added operation group `network_security_perimeter_configurations`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Added model `AccessRule`
+  - Added enum `AccessRuleDirection`
+  - Added model `AccessRuleProperties`
+  - Added model `AccessRulePropertiesSubscription`
+  - Added enum `IssueType`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NetworkSecurityProfile`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added enum `Severity`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
 ## 6.0.0b1 (2026-01-19)
 
 ### Features Added

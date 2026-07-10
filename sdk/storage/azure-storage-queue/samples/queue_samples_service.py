@@ -20,6 +20,8 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
+# pylint: disable=unused-variable
+
 import os
 import sys
 
@@ -140,7 +142,7 @@ class QueueServiceSamples(object):
             sys.exit(1)
 
         # Instantiate the QueueServiceClient from a connection string
-        from azure.storage.queue import QueueServiceClient, QueueClient
+        from azure.storage.queue import QueueServiceClient
 
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 

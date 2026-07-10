@@ -1,0 +1,28 @@
+{
+  "paths": {
+    "/responses": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateResponse": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {"type": "string"}
+        }
+      }
+    }
+  }
+}

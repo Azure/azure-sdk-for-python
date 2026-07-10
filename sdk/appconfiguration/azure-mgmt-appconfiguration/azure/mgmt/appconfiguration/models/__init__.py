@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AccessRule,
+    AccessRuleProperties,
+    AccessRulePropertiesSubscription,
     ApiKey,
     AzureFrontDoorProperties,
     CheckNameAvailabilityParameters,
@@ -38,6 +41,10 @@ from ._models import (  # type: ignore
     MetricSpecification,
     MoboBrokerResource,
     NameAvailabilityStatus,
+    NetworkSecurityPerimeter,
+    NetworkSecurityPerimeterConfiguration,
+    NetworkSecurityPerimeterConfigurationProperties,
+    NetworkSecurityProfile,
     OperationDefinition,
     OperationDefinitionDisplay,
     OperationProperties,
@@ -48,11 +55,14 @@ from ._models import (  # type: ignore
     PrivateLinkResource,
     PrivateLinkResourceProperties,
     PrivateLinkServiceConnectionState,
+    ProvisioningIssue,
+    ProvisioningIssueProperties,
     ProxyResource,
     RegenerateKeyParameters,
     Replica,
     ReplicaProperties,
     Resource,
+    ResourceAssociation,
     ResourceIdentity,
     ServiceSpecification,
     Sku,
@@ -65,6 +75,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AccessRuleDirection,
     ActionsRequired,
     AuthenticationMode,
     CompositionType,
@@ -73,10 +84,14 @@ from ._enums import (  # type: ignore
     CreateMode,
     CreatedByType,
     IdentityType,
+    IssueType,
+    NetworkSecurityPerimeterConfigurationProvisioningState,
     PrivateLinkDelegation,
     ProvisioningState,
     PublicNetworkAccess,
     ReplicaProvisioningState,
+    ResourceAssociationAccessMode,
+    Severity,
     SnapshotStatus,
 )
 from ._patch import __all__ as _patch_all
@@ -84,6 +99,9 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AccessRule",
+    "AccessRuleProperties",
+    "AccessRulePropertiesSubscription",
     "ApiKey",
     "AzureFrontDoorProperties",
     "CheckNameAvailabilityParameters",
@@ -108,6 +126,10 @@ __all__ = [
     "MetricSpecification",
     "MoboBrokerResource",
     "NameAvailabilityStatus",
+    "NetworkSecurityPerimeter",
+    "NetworkSecurityPerimeterConfiguration",
+    "NetworkSecurityPerimeterConfigurationProperties",
+    "NetworkSecurityProfile",
     "OperationDefinition",
     "OperationDefinitionDisplay",
     "OperationProperties",
@@ -118,11 +140,14 @@ __all__ = [
     "PrivateLinkResource",
     "PrivateLinkResourceProperties",
     "PrivateLinkServiceConnectionState",
+    "ProvisioningIssue",
+    "ProvisioningIssueProperties",
     "ProxyResource",
     "RegenerateKeyParameters",
     "Replica",
     "ReplicaProperties",
     "Resource",
+    "ResourceAssociation",
     "ResourceIdentity",
     "ServiceSpecification",
     "Sku",
@@ -132,6 +157,7 @@ __all__ = [
     "TelemetryProperties",
     "TrackedResource",
     "UserIdentity",
+    "AccessRuleDirection",
     "ActionsRequired",
     "AuthenticationMode",
     "CompositionType",
@@ -140,10 +166,14 @@ __all__ = [
     "CreateMode",
     "CreatedByType",
     "IdentityType",
+    "IssueType",
+    "NetworkSecurityPerimeterConfigurationProvisioningState",
     "PrivateLinkDelegation",
     "ProvisioningState",
     "PublicNetworkAccess",
     "ReplicaProvisioningState",
+    "ResourceAssociationAccessMode",
+    "Severity",
     "SnapshotStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

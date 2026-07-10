@@ -27,6 +27,92 @@ import binascii
 import json
 
 
+from collections import namedtuple
+
+# ``status`` is included so callers can detect non-online ranges (e.g.
+# splitting / offline) without re-fetching the raw service payload. It is
+# the only PKR field beyond id/min/max/parents kept in the cache today;
+# default ``None`` keeps construction sites that don't pass it backward
+# compatible.
+_PKRangeBase = namedtuple(
+    '_PKRangeBase',
+    ['id', 'minInclusive', 'maxExclusive', 'parents', 'status', 'throughputFraction'],
+    defaults=(None, None),
+)
+
+
+class PKRange(_PKRangeBase):
+    """Compact partition key range with dict-compatible access."""
+    __slots__ = ()
+
+    def __getitem__(self, key):
+        if isinstance(key, (int, slice)):
+            return super().__getitem__(key)
+        try:
+            return getattr(self, key)
+        except AttributeError as exc:
+            raise KeyError(key) from exc
+
+    def get(self, key, default=None):
+        return getattr(self, key, default)
+
+    def __contains__(self, key):
+        """Return True only if ``key`` names a field that has a non-empty value.
+
+        Diverges intentionally from ``dict``-style semantics: an absent or
+        empty (``None`` / ``()``) field reports as not-present, so callers may
+        use ``key in pkr`` as a single truthy presence check (the same
+        expression that earlier worked against raw service dicts where the
+        field was simply missing when empty).
+
+        :param str key: The field name to check.
+        :returns: True if the field is present and has a non-empty value.
+        :rtype: bool
+        """
+        if key not in self._fields:
+            return False
+        val = getattr(self, key)
+        return val is not None and val != ()
+
+    def items(self):
+        return zip(self._fields, self)
+
+    def __eq__(self, other):
+        if isinstance(other, dict):
+            for f in ('id', 'minInclusive', 'maxExclusive'):
+                if self.get(f) != other.get(f):
+                    return False
+            self_parents = self.parents or ()
+            other_parents = other.get('parents') or ()
+            return tuple(self_parents) == tuple(other_parents)
+        return super().__eq__(other)
+
+    def __hash__(self):
+        return super().__hash__()
+
+    @classmethod
+    def from_dict(cls, raw):
+        """Build a compact ``PKRange`` from a raw service-response dict.
+
+        Centralized factory used by both the full-build path
+        (``collection_routing_map._build_routing_map_from_ranges``) and the
+        incremental-merge path (``_routing_map_provider_common.process_fetched_ranges``)
+        so the field-mapping policy lives in exactly one place.
+
+        :param dict raw: A raw partition-key-range dict from the service response.
+        :returns: A compact ``PKRange`` namedtuple.
+        :rtype: PKRange
+        """
+        return cls(
+            id=raw[PartitionKeyRange.Id],
+            minInclusive=raw[PartitionKeyRange.MinInclusive],
+            maxExclusive=raw[PartitionKeyRange.MaxExclusive],
+            parents=tuple(raw.get(PartitionKeyRange.Parents) or ()),
+            status=raw.get(PartitionKeyRange.Status),
+            throughputFraction=raw.get(PartitionKeyRange.ThroughputFraction),
+        )
+
+
 class PartitionKeyRange(object):
     """Partition Key Range Constants"""
 
@@ -34,10 +120,15 @@ class PartitionKeyRange(object):
     MaxExclusive = "maxExclusive"
     Id = "id"
     Parents = "parents"
+    Status = "status"
+    ThroughputFraction = "throughputFraction"
 
 
 class Range(object):
-    """description of class"""
+    """Range of a partition key."""
+    # __slots__ reduces per-instance memory from ~250 bytes to ~64 bytes.
+    # Significant when 100K+ partition ranges are cached per client.
+    __slots__ = ('min', 'max', 'isMinInclusive', 'isMaxInclusive')
 
     MinPath = "min"
     MaxPath = "max"
@@ -50,8 +141,10 @@ class Range(object):
         if range_max is None:
             raise ValueError("max is missing")
 
-        self.min = range_min.upper()
-        self.max = range_max.upper()
+        upper_min = range_min.upper()
+        self.min = range_min if range_min == upper_min else upper_min
+        upper_max = range_max.upper()
+        self.max = range_max if range_max == upper_max else upper_max
         self.isMinInclusive = isMinInclusive
         self.isMaxInclusive = isMaxInclusive
 
@@ -235,6 +328,57 @@ class Range(object):
         normalized_child_range = self.to_normalized_range()
         return (normalized_parent_range.min <= normalized_child_range.min and
                 normalized_parent_range.max >= normalized_child_range.max)
+
+
+def _second_range_is_after_first_range(range1, range2):
+    """Checks if range2 starts strictly after range1 ends (no overlap).
+
+    :param Range range1: The first range.
+    :param Range range2: The second range.
+    :return: True if range2 is entirely after range1, False if they overlap.
+    :rtype: bool
+    """
+    if range1.max > range2.min:
+        return False
+
+    if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
+        return False
+
+    return True
+
+
+def _is_sorted_and_non_overlapping(ranges):
+    """Validates that a list of ranges is sorted and non-overlapping.
+
+    :param list ranges: List of Range objects.
+    :return: True if sorted and non-overlapping, False otherwise.
+    :rtype: bool
+    """
+    for idx, r in list(enumerate(ranges))[1:]:
+        previous_r = ranges[idx - 1]
+        if not _second_range_is_after_first_range(previous_r, r):
+            return False
+    return True
+
+
+def _subtract_range(r, partition_key_range):
+    """Evaluates and returns r - partition_key_range
+
+    :param dict partition_key_range: Partition key range.
+    :param Range r: query range.
+    :return: The subtract r - partition_key_range.
+    :rtype: Range
+    """
+    left = max(partition_key_range[PartitionKeyRange.MaxExclusive], r.min)
+
+    if left == r.min:
+        leftInclusive = r.isMinInclusive
+    else:
+        leftInclusive = False
+
+    queryRange = Range(left, r.max, leftInclusive, r.isMaxInclusive)
+    return queryRange
+
 
 class PartitionKeyRangeWrapper(object):
     """Internal class for a representation of a unique partition for an account

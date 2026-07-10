@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
-from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -18,8 +16,8 @@ class TestDeploymentsAsync(TestBase):
     async def test_deployments_async(self, **kwargs):
 
         model_publisher = "OpenAI"
-        model_name = kwargs.get("azure_ai_model_deployment_name")
-        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        model_name = kwargs.get("foundry_model_name")
+        model_deployment_name = kwargs.get("foundry_model_name")
 
         async with self.create_async_client(**kwargs) as project_client:
 

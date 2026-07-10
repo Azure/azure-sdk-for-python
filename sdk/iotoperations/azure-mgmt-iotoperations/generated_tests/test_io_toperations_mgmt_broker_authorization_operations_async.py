@@ -60,6 +60,7 @@ class TestIoTOperationsMgmtBrokerAuthorizationOperationsAsync(AzureMgmtRecordedT
                                 }
                             ],
                         },
+                        "healthState": "str",
                         "provisioningState": "str",
                     },
                     "systemData": {

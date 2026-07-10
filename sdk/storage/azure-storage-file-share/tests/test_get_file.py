@@ -4,22 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
-import os
 import tempfile
-import uuid
 from io import BytesIO
 
 import pytest
-from azure.core.exceptions import HttpResponseError, ResourceModifiedError
-from azure.storage.fileshare import ShareFileClient, ShareServiceClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 from test_helpers import ProgressTracker
 
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
+from azure.storage.fileshare import ShareFileClient, ShareServiceClient
+
 # ------------------------------------------------------------------------------
-TEST_FILE_PREFIX = 'file'
+TEST_FILE_PREFIX = "file"
 # ------------------------------------------------------------------------------
 
 
@@ -35,27 +34,29 @@ class TestStorageGetFile(StorageRecordedTestCase):
         credential = storage_account_key
 
         self.fsc = ShareServiceClient(
-            url, credential=credential.secret,
+            url,
+            credential=credential.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
-        self.share_name = self.get_resource_name('utshare')
-        self.directory_name = self.get_resource_name('utdir')
+        self.share_name = self.get_resource_name("utshare")
+        self.directory_name = self.get_resource_name("utdir")
 
         if not self.is_playback():
             share = self.fsc.create_share(self.share_name)
             share.create_directory(self.directory_name)
 
-        self.byte_file = self.get_resource_name('bytefile')
+        self.byte_file = self.get_resource_name("bytefile")
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
 
         if not self.is_playback():
-            byte_file = self.directory_name + '/' + self.byte_file
+            byte_file = self.directory_name + "/" + self.byte_file
             file_client = ShareFileClient(
                 self.account_url(storage_account_name, "file"),
                 share_name=self.share_name,
                 file_path=byte_file,
-                credential=credential.secret
+                credential=credential.secret,
             )
             file_client.upload_file(self.byte_data)
 
@@ -73,7 +74,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         def read(self, count):
             return self.wrapped_file.read(count)
-    
+
         def seekable(self):
             return False
 
@@ -86,15 +87,16 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        file_data = "hello world啊齄丂狛狜".encode("utf-8")
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-                self.account_url(storage_account_name, "file"),
-                share_name=self.share_name,
-                file_path=self.directory_name + '/' + file_name,
-                credential=storage_account_key.secret,
-                max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + "/" + file_name,
+            credential=storage_account_key.secret,
+            max_single_get_size=self.MAX_SINGLE_GET_SIZE,
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         # Act
@@ -110,17 +112,33 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        base64_data = (
+            "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0"
+            "xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYm"
+            "ZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm"
+            "5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM"
+            "0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gI"
+            "GCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNz"
+            "s/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRob"
+            "HB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2h"
+            "pamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tb"
+            "a3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECA"
+            "wQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9Q"
+            "UVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2"
+            "en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6"
+            "uvs7e7v8PHy8/T19vf4+fr7/P3+/w=="
+        )
         binary_data = base64.b64decode(base64_data)
 
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-                self.account_url(storage_account_name, "file"),
-                share_name=self.share_name,
-                file_path=self.directory_name + '/' + file_name,
-                credential=storage_account_key.secret,
-                max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + "/" + file_name,
+            credential=storage_account_key.secret,
+            max_single_get_size=self.MAX_SINGLE_GET_SIZE,
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(binary_data)
 
         # Act
@@ -136,15 +154,16 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_data = b''
+        file_data = b""
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-                self.account_url(storage_account_name, "file"),
-                share_name=self.share_name,
-                file_path=self.directory_name + '/' + file_name,
-                credential=storage_account_key.secret,
-                max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + "/" + file_name,
+            credential=storage_account_key.secret,
+            max_single_get_size=self.MAX_SINGLE_GET_SIZE,
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         # Act
@@ -166,10 +185,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         file_content = file_client.download_file(max_concurrency=2).readall()
@@ -189,15 +209,17 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -206,11 +228,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Assert
         assert self.byte_data == file_content
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(self.byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -222,15 +240,17 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -239,11 +259,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Assert
         assert self.byte_data == file_content
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(self.byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -257,16 +273,18 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -275,11 +293,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Assert
         assert file_data == file_content
-        self.assert_download_progress(
-            len(file_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(file_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -292,11 +306,12 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=38,
-            max_chunk_get_size=38)
-        data = b'hello world python storage test chunks' * 5
+            max_chunk_get_size=38,
+        )
+        data = b"hello world python storage test chunks" * 5
         file_client.upload_file(data)
         resp = file_client.download_file()
         chunks = resp.chunks()
@@ -320,10 +335,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         chunk_size_list = []
@@ -352,10 +368,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -378,15 +395,17 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -410,15 +429,17 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -444,16 +465,18 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -482,18 +505,20 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + self.byte_file,
+            credential=storage_account_key.secret,
+        )
         file_client.delete_file()
 
         snapshot_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             snapshot=share_snapshot,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -519,29 +544,34 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + self.byte_file,
+            credential=storage_account_key.secret,
+        )
         file_client.delete_file()
 
         snapshot_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             snapshot=share_snapshot,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(temp_file)
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(
+                temp_file
+            )
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
@@ -562,29 +592,34 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + self.byte_file,
+            credential=storage_account_key.secret,
+        )
         file_client.delete_file()
 
         snapshot_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             snapshot=share_snapshot,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(
+                temp_file
+            )
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
@@ -604,8 +639,9 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + file_name,
+            credential=storage_account_key.secret,
+        )
         file_client.upload_file(file_data)
 
         # Create a snapshot of the share and delete the file
@@ -616,22 +652,26 @@ class TestStorageGetFile(StorageRecordedTestCase):
         snapshot_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             snapshot=share_snapshot,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(
+                temp_file
+            )
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
@@ -651,10 +691,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
@@ -664,7 +705,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
             actual = temp_file.read()
-            assert self.byte_data[1:end_range + 1] == actual
+            assert self.byte_data[1 : end_range + 1] == actual
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -678,10 +719,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
@@ -701,15 +743,16 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_data = b''
+        file_data = b""
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         # Act
@@ -732,15 +775,17 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -750,20 +795,16 @@ class TestStorageGetFile(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             length = end_range - start_range + 1
             bytes_read = file_client.download_file(
-                offset=start_range,
-                length=length,
-                raw_response_hook=callback,
-                max_concurrency=2).readinto(temp_file)
+                offset=start_range, length=length, raw_response_hook=callback, max_concurrency=2
+            ).readinto(temp_file)
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
             actual = temp_file.read()
-            assert self.byte_data[start_range:end_range + 1] == actual
+            assert self.byte_data[start_range : end_range + 1] == actual
         self.assert_download_progress(
-            end_range - start_range + 1,
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+            end_range - start_range + 1, self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress
+        )
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -775,10 +816,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -799,10 +841,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -828,10 +871,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         # Act
@@ -852,7 +896,6 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-
         self._setup(storage_account_name, storage_account_key)
         file_size = 1024
         file_data = self.get_random_bytes(file_size)
@@ -860,10 +903,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         # Act
@@ -887,19 +931,20 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # parallel tests introduce random order of requests, can only run live
 
         self._setup(storage_account_name, storage_account_key)
-        text_file = self.get_resource_name('textfile')
+        text_file = self.get_resource_name("textfile")
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + text_file,
+            file_path=self.directory_name + "/" + text_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(text_data)
 
         # Act
-        file_content = file_client.download_file(max_concurrency=2, encoding='utf-8').readall()
+        file_content = file_client.download_file(max_concurrency=2, encoding="utf-8").readall()
 
         # Assert
         assert text_data == file_content
@@ -913,35 +958,36 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # parallel tests introduce random order of requests, can only run live
 
         self._setup(storage_account_name, storage_account_key)
-        text_file = self.get_resource_name('textfile')
+        text_file = self.get_resource_name("textfile")
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + text_file,
+            file_path=self.directory_name + "/" + text_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(text_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         # Act
         file_content = file_client.download_file(
-            raw_response_hook=callback, max_concurrency=2, encoding='utf-8').readall()
+            raw_response_hook=callback, max_concurrency=2, encoding="utf-8"
+        ).readall()
 
         # Assert
         assert text_data == file_content
         self.assert_download_progress(
-            len(text_data.encode('utf-8')),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+            len(text_data.encode("utf-8")), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress
+        )
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -955,30 +1001,29 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + text_file,
+            file_path=self.directory_name + "/" + text_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(text_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         # Act
         file_content = file_client.download_file(
-            raw_response_hook=callback, max_concurrency=1, encoding='utf-8').readall()
+            raw_response_hook=callback, max_concurrency=1, encoding="utf-8"
+        ).readall()
 
         # Assert
         assert text_data == file_content
-        self.assert_download_progress(
-            len(text_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(text_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -992,29 +1037,27 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(file_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback, encoding='utf-8').readall()
+        file_content = file_client.download_file(raw_response_hook=callback, encoding="utf-8").readall()
 
         # Assert
         assert file_data == file_content
-        self.assert_download_progress(
-            len(file_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(file_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1023,20 +1066,21 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
-        data = text.encode('utf-16')
+        text = "hello 啊齄丂狛狜 world"
+        data = text.encode("utf-16")
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(data)
 
         # Act
-        file_content = file_client.download_file(encoding='UTF-16').readall()
+        file_content = file_client.download_file(encoding="UTF-16").readall()
 
         # Assert
         assert text == file_content
@@ -1048,35 +1092,33 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
-        data = text.encode('utf-16')
+        text = "hello 啊齄丂狛狜 world"
+        data = text.encode("utf-16")
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(data)
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
-        file_content = file_client.download_file(raw_response_hook=callback, encoding='UTF-16').readall()
+        file_content = file_client.download_file(raw_response_hook=callback, encoding="UTF-16").readall()
 
         # Assert
         assert text == file_content
-        self.assert_download_progress(
-            len(data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1088,10 +1130,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -1115,10 +1158,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -1140,18 +1184,20 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + self.byte_file,
+            credential=storage_account_key.secret,
+        )
         file_client.delete_file()
 
         snapshot_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             snapshot=share_snapshot,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -1178,18 +1224,20 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + self.byte_file,
+            credential=storage_account_key.secret,
+        )
         file_client.delete_file()
 
         snapshot_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             snapshot=share_snapshot,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -1210,16 +1258,18 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(byte_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -1228,11 +1278,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Assert
         assert byte_data == file_content.readall()
-        self.assert_download_progress(
-            len(byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -1248,16 +1294,18 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
         file_client.upload_file(byte_data)
 
         progress = []
+
         def callback(response):
-            current = response.context['download_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["download_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -1266,11 +1314,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Assert
         assert byte_data == file_content.readall()
-        self.assert_download_progress(
-            len(byte_data),
-            self.MAX_CHUNK_GET_SIZE,
-            self.MAX_SINGLE_GET_SIZE,
-            progress)
+        self.assert_download_progress(len(byte_data), self.MAX_CHUNK_GET_SIZE, self.MAX_SINGLE_GET_SIZE, progress)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -1284,10 +1328,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         file_content = file_client.download_file(validate_content=True)
@@ -1307,10 +1352,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         file_content = file_client.download_file(offset=0, length=1024, validate_content=True)
 
@@ -1318,14 +1364,14 @@ class TestStorageGetFile(StorageRecordedTestCase):
         assert file_content.properties.content_settings.content_md5 is None
 
         props = file_client.get_file_properties()
-        props.content_settings.content_md5 = b'MDAwMDAwMDA='
+        props.content_settings.content_md5 = b"MDAwMDAwMDA="
         file_client.set_http_headers(props.content_settings)
 
         # Act
         file_content = file_client.download_file(offset=0, length=1024, validate_content=True)
 
         # Assert
-        assert b'MDAwMDAwMDA=' == file_content.properties.content_settings.content_md5
+        assert b"MDAwMDAwMDA=" == file_content.properties.content_settings.content_md5
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1333,19 +1379,19 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-
         self._setup(storage_account_name, storage_account_key)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         file_content = file_client.download_file(offset=0, length=1024, validate_content=True)
-    
+
         # Assert
         assert file_content.properties.server_encrypted
 
@@ -1355,15 +1401,15 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-
         self._setup(storage_account_name, storage_account_key)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + self.byte_file,
+            file_path=self.directory_name + "/" + self.byte_file,
             credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
+        )
 
         # Act
         props = file_client.get_file_properties()
@@ -1383,10 +1429,11 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key.secret)
+            file_path=self.directory_name + "/" + file_name,
+            credential=storage_account_key.secret,
+        )
 
-        data = b'a' * 512
+        data = b"a" * 512
         file.upload_file(data)
 
         progress = ProgressTracker(len(data), len(data))
@@ -1409,12 +1456,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=1024,
-            max_chunk_get_size=1024)
+            max_chunk_get_size=1024,
+        )
 
-        data = b'a' * 5120
+        data = b"a" * 5120
         file.upload_file(data)
 
         progress = ProgressTracker(len(data), 1024)
@@ -1438,12 +1486,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=1024,
-            max_chunk_get_size=1024)
+            max_chunk_get_size=1024,
+        )
 
-        data = b'a' * 5120
+        data = b"a" * 5120
         file.upload_file(data)
 
         progress = ProgressTracker(len(data), 1024)
@@ -1467,12 +1516,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
         file = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=self.directory_name + '/' + file_name,
+            file_path=self.directory_name + "/" + file_name,
             credential=storage_account_key.secret,
             max_single_get_size=1024,
-            max_chunk_get_size=1024)
+            max_chunk_get_size=1024,
+        )
 
-        data = b'a' * 5120
+        data = b"a" * 5120
         file.upload_file(data)
 
         length = 4096
@@ -1481,15 +1531,13 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         stream = file.download_file(
-            offset=512,
-            length=length,
-            max_concurrency=3,
-            progress_hook=progress.assert_progress
+            offset=512, length=length, max_concurrency=3, progress_hook=progress.assert_progress
         )
         read = stream.readinto(result)
 
         # Assert
         progress.assert_complete()
         assert length == read
+
 
 # ------------------------------------------------------------------------------

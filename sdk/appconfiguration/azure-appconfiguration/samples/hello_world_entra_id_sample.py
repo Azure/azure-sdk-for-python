@@ -17,6 +17,7 @@ USAGE: python hello_world_entra_id_sample.py
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
+
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.identity import DefaultAzureCredential

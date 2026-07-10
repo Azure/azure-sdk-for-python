@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/GetExtensionAsyncOperationStatus.json
+# x-ms-original-file: 2025-03-01/GetExtensionAsyncOperationStatus.json
 if __name__ == "__main__":
     main()

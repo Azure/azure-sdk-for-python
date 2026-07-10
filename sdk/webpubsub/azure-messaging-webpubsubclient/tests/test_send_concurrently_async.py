@@ -15,9 +15,11 @@ from testcase_async import WebpubsubClientTestAsync
 class TestWebpubsubClientSendConcurrentlyAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_send_concurrently_async(self, webpubsubclient_connection_string):
-        client = await self.create_client(connection_string=webpubsubclient_connection_string)
+    async def test_send_concurrently_async(self, webpubsubclient_endpoint):
+        client = await self.create_client(endpoint=webpubsubclient_endpoint)
+        connected_event, _, _ = await self.setup_events(client)
         async with client:
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
             group_name = "test_send_concurrently_async"
             await client.join_group(group_name)
             await asyncio.gather(*[client.send_to_group(group_name, f"hello_{idx}", "text") for idx in range(100)])

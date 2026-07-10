@@ -5,7 +5,7 @@ It also walks through the setup necessary to run mypy and pyright, static type c
 
 For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md).
 
-> Note: If you are seeing typing errors in **generated code**, please first try to regenerate with the latest version of the generator. If typing errors persist, open an issue in the [generator repo](https://github.com/Azure/autorest.python).
+> Note: If you are seeing typing errors in **generated code**, please first try to regenerate with the latest version of the generator. If typing errors persist, open an issue in the [TypeSpec repo](https://github.com/microsoft/typespec) for TypeSpec-based SDKs or the [autorest.python repo](https://github.com/Azure/autorest.python) for swagger-based SDKs.
 
 ## Table of contents
   - [Intro to typing in Python](#intro-to-typing-in-python)
@@ -114,7 +114,12 @@ given the expressiveness of Python as a language. So, in practice, what should y
     - include the path to the `py.typed` in the
       MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in)).
       This is important as it ensures the `py.typed` is included in both the sdist/bdist.
-    - set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` in the setup.py.
+    - set `[tool.setuptools.package-data]` in `pyproject.toml` to include the `py.typed` file. For example:
+      ```toml
+      [tool.setuptools.package-data]
+      pytyped = ["py.typed"]
+      ```
+      For legacy packages still using `setup.py`, set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` instead.
       Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
@@ -130,41 +135,56 @@ Almost anything can be used as a type in annotations.
    or [collections.abc](https://docs.python.org/3/library/collections.abc.html), or external packages
 3) Types from the [typing](https://docs.python.org/3/library/typing.html)
    or [typing_extensions](https://github.com/python/typing_extensions) modules
-4) Built-in generic types, like `list` or `dict`*.
-   > *Note: Supported in Python 3.9+. For <3.9, You must include `from __future__ import annotations` import to be able to pass in generic `list[str]` as a type hint rather than `typing.List[str]`.
+4) Built-in generic types, like `list` or `dict`.
 
-Here are a few considerations and notes on Python version support:
+Here are a few considerations and notes on Python version support. The Azure SDK for Python supports Python 3.10 and higher, so the examples in this guide assume Python 3.10 as the baseline.
 
 - With [PEP585](https://peps.python.org/pep-0585/) and [PEP563](https://peps.python.org/pep-0563/), importing certain
   generic collection types from `typing` has been [deprecated](https://peps.python.org/pep-0585/#implementation) in
   favor for using the types in `collections.abc` or generic collection type hints (like `list`) from the standard library.
-  If you'd like to use types from `collections.abc`, you can check the Python version at runtime (`collections.abc` types did not have [] notation / indexing support added until 3.9).
+  Since Python 3.10 is the minimum supported version, you can import directly from `collections.abc` and use `[]` indexing without a version check:
 
 ```python
-import sys
-
-if sys.version_info < (3, 9):
-    from typing import Sequence
-else:
-    from collections.abc import Sequence
+from collections.abc import Sequence
 ```
 
-- The `typing-extensions` library backports types that are introduced only in later versions of Python (e.g. `Protocol`
-  which was introduced in Python 3.8) so that they can be used in earlier Python versions.
+- The `typing-extensions` library backports types that are introduced only in later versions of Python so that they can be used in earlier Python versions. Since the Azure SDK for Python supports Python 3.10 and higher, most commonly used typing constructs (e.g. `Protocol`, `Literal`, `TypedDict`, `Final`, `runtime_checkable`, `TypeAlias`, `ParamSpec`, `Concatenate`) are available directly from `typing` and do not need `typing-extensions`.
 
 ```python
-from typing_extensions import Protocol
+from typing import Protocol
+```
+
+  Features added after 3.10 still require `typing-extensions` on the Python 3.10 baseline, including:
+
+  - `Self` (3.11)
+  - `LiteralString` (3.11)
+  - `Required` / `NotRequired` for `TypedDict` (3.11)
+  - Generic `TypedDict` (3.11)
+  - `Never` / `assert_never` / `assert_type` / `reveal_type` (3.11)
+  - `TypeVarTuple` / `Unpack` (3.11)
+  - `dataclass_transform` (3.11)
+  - `@override` (3.12)
+  - PEP 695 `type` statement / `TypeAliasType` (3.12)
+  - `ReadOnly` for `TypedDict` (3.13)
+
+```python
+# Self was added to typing in 3.11, so import from typing_extensions on 3.10
+from typing_extensions import Self
+
+class Tree:
+    @classmethod
+    def build(cls) -> Self:
+        return cls()
 ```
 
 If using `typing-extensions`, you must add it to the install dependencies for your library (do not rely on install by `azure-core`)
-[[example](https://github.com/Azure/azure-sdk-for-python/blob/5fd52b9ee039f8711322bd7ea43af763d326291a/sdk/eventhub/azure-eventhub/setup.py#L73)].
+[[example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/pyproject.toml#L27)].
 When importing a backported type into code, `typing-extensions` does a try/except on your behalf (either importing
 from `typing` if supported, or `typing-extensions` if the Python version is too old) so there is no need to do this
 check yourself.
 
 See the [typing-extensions](https://github.com/python/typing_extensions) docs to check what has been
-backported. This document calls out which types are needed through `typing-extensions` based on support of Python 3.7+.
-Some commonly used types imported from `typing-extensions` are Literal, TypedDict, Protocol, runtime_checkable, and Final.
+backported. This document calls out which types are needed through `typing-extensions` only when they are not yet available in the standard `typing` module on Python 3.10.
 
 ## Install and run type checkers on your client library code
 
@@ -181,7 +201,7 @@ environment run in CI and brings in the third party stub packages necessary. To 
 
 ### Run mypy
 
-mypy is currently pinned to version [1.9.0](https://pypi.org/project/mypy/1.9.0/).
+mypy is currently pinned to version [1.19.1](https://pypi.org/project/mypy/1.19.1/).
 
 To run mypy on your library, run `azpysdk mypy` at the package level:
 
@@ -189,7 +209,7 @@ To run mypy on your library, run `azpysdk mypy` at the package level:
 
 If you don't want to use `azpysdk` you can also install and run mypy on its own:
 
-`pip install mypy==1.9.0`
+`pip install mypy==1.19.1`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
@@ -211,7 +231,7 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-We pin the version of pyright to version [1.1.287](https://github.com/microsoft/pyright).
+We pin the version of pyright to version [1.1.407](https://github.com/microsoft/pyright).
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
@@ -221,7 +241,7 @@ To run pyright on your library, run `azpysdk pyright` at the package level:
 
 If you don't want to use `azpysdk` you can also install and run pyright on its own:
 
-`pip install pyright==1.1.287`
+`pip install pyright==1.1.407`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -253,7 +273,7 @@ To run verifytypes on your library, run `azpysdk verifytypes` at the package lev
 
 If you don't want to use `azpysdk` you can also install and run pyright/verifytypes on its own:
 
-`pip install pyright==1.1.287`
+`pip install pyright==1.1.407`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright --verifytypes azure.ai.textanalytics --ignoreexternal`
 
@@ -382,7 +402,7 @@ def begin_export_project(
 
 Per PEP 484, type checkers have moved towards requiring the Optional type to be made explicit when a default of None is provided.
 
-> Note: The `X | None` syntax is only supported in Python 3.10+.
+> Note: Since Python 3.10 is the minimum supported version, you can also use the `X | None` syntax (PEP 604) instead of `Optional[X]`.
 
 ### Typing for collections
 
@@ -422,11 +442,10 @@ specified a generic `typing.Dict` here, the `entity` passed must be a `dict` or 
 accepted.
 
 With [PEP 589](https://peps.python.org/pep-0589/), a `TypedDict` was introduced in Python 3.8 which allows you to add
-type hints for dictionaries with a fixed set of keys. The syntax for this looks similar to building a dataclass:
+type hints for dictionaries with a fixed set of keys. It is available directly from `typing` in Python 3.10. The syntax for this looks similar to building a dataclass:
 
 ```python
-# from typing import TypedDict  # Python >= 3.8
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 
 class Employee(TypedDict):
@@ -464,11 +483,10 @@ e.g. `isinstance(employee, Employee)` will throw a `TypeError`. Usage of `TypedD
 type checkers and Intellisense how a specific dict should be constructed and help the type checkers warn users if
 they try to access keys which don't exist.
 
-Use of generic TypedDict is also supported via typing_extensions (>=4.3.0). For example,
+Generic `TypedDict` is supported in Python 3.11+. On Python 3.10, use `typing_extensions` (>=4.3.0) to use generic `TypedDict`. For example,
 
 ```python
-# from typing import TypedDict  # Python >= 3.8
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict  # use typing_extensions for generic TypedDict on 3.10
 from typing import Generic, TypeVar, List
 
 T = TypeVar("T")
@@ -485,8 +503,6 @@ employee = Employee[str](name="krista", title="swe", id=123, current=True, addit
 ```
 
 See the [TypedDict](https://docs.python.org/3/library/typing.html#typing.TypedDict) docs for more options.
-
-> Note that TypedDict is backported to older versions of Python by using typing_extensions.
 
 #### List
 
@@ -801,13 +817,10 @@ If it's possible that a type alias could be confused with a global assignment, e
 This removes ambiguity for the type checker and indicates this isn't a normal variable assignment.
 
 ```python
-# from typing import TypeAlias Python >=3.10
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 x: TypeAlias = 1
 ```
-
-> Note that TypeAlias is backported to older versions of Python by using typing_extensions.
 
 ### Use typing.overload to overload a function
 
@@ -1095,8 +1108,7 @@ Below we create a `SupportsFly` protocol class which expects a `fly()` method on
 into `ascend()`.
 
 ```python
-# from typing import Protocol  # Python >=3.8
-from typing_extensions import Protocol
+from typing import Protocol
 
 
 class SupportsFly(Protocol):
@@ -1157,8 +1169,7 @@ See more on Protocols in the [reference documentation](https://docs.python.org/3
 If a Protocol is marked with @runtime_checkable, it can be used with `isinstance()` and `issubclass()` at runtime.
 
 ```python
-# from typing import runtime_checkable  Python >=3.8
-from typing_extensions import runtime_checkable, Protocol
+from typing import runtime_checkable, Protocol
 
 
 @runtime_checkable
@@ -1173,8 +1184,6 @@ assert isinstance(Penguin, SupportsFly)  # False
 Because this is a runtime check, only the presence of the required methods defined by the Protocol is checked -- not
 their type signatures.
 
-> Note that runtime_checkable is backported to older versions of Python by using typing_extensions.
-
 ### Use typing.Literal to restrict based on exact values
 
 [PEP 586](https://peps.python.org/pep-0586/) introduced the `typing.Literal` type which can be used to indicate that an
@@ -1182,8 +1191,7 @@ expression has a literal specific value. A Literal can contain one or more liter
 values:
 
 ```python
-# from typing import Literal  Python >=3.8
-from typing_extensions import Literal
+from typing import Literal
 
 doc_type = Literal["prebuilt-receipt"]
 allowed_content_types = Literal["application/json", "text/plain", "image/png", "image/jpeg"]
@@ -1249,7 +1257,7 @@ main.py:51: note: Revealed type is "__main__.SelectionMark"
 To solve this issue, we can update the `get_element` function to have overloads based on their Literal `kind`:
 
 ```python
-from typing_extensions import Literal, overload
+from typing import Literal, overload
 
 
 @overload
@@ -1293,8 +1301,7 @@ making `isinstance` checks to understand the result. The following example shows
 a Union of types which each contain a discriminator property, `kind`, typed as a Literal.
 
 ```python
-from typing import Union
-from typing_extensions import Literal
+from typing import Union, Literal
 
 
 # client library code
@@ -1361,8 +1368,6 @@ elif isinstance(ele, FormLine):
 
 Therefore, it is preferred to use `typing.Literal` in this situation to provide the best type checking experience for our users.
 
-> Note that Literal is backported to older versions of Python by using typing_extensions.
-
 ### Use typing.NewType to restrict a type to a specific context
 
 `NewType` can be useful to catch errors where a particular type is expected. `NewType` will take an existing type and
@@ -1398,8 +1403,7 @@ At runtime, `NewType` will return an object that returns its argument when calle
 It is best used when a variable's scope spans a large amount of modules and you want to ensure that it stays immutable (i.e. no line of code tries to change it).
 
 ```python
-# from typing import Final  Python >=3.8
-from typing_extensions import Final
+from typing import Final
 
 MAX_BLOB_SIZE: Final = 4 * 1024 * 1024
 ```
@@ -1414,7 +1418,7 @@ Found 1 error in 1 file (checked 1 source file)
 Additionally, If you have a method that should not be overridden or a class that should not be subclassed, consider decorating with `@final`.
 
 ```python
-from typing_extensions import final
+from typing import final
 
 class BlobClient:
     @final

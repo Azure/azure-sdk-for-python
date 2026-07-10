@@ -30,22 +30,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.relationships.create_or_update(
-        resource_group_name="rgopenapi",
-        health_model_name="model1",
-        relationship_name="rel1",
+    response = client.relationships.begin_create_or_update(
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        relationship_name="web-frontend-to-orders-api",
         resource={
             "properties": {
-                "childEntityName": "Entity2",
-                "displayName": "My relationship",
-                "labels": {"key9681": "ixfvzsfnpvkkbrce"},
-                "parentEntityName": "Entity1",
+                "childEntityName": "orders-api",
+                "displayName": "Web Frontend depends on Orders API",
+                "parentEntityName": "web-frontend",
+                "tags": {"environment": "production", "team": "online-store"},
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/Relationships_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01-preview/Relationships_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

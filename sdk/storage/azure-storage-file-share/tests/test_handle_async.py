@@ -3,17 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 
-import pytest
-from azure.storage.fileshare.aio import ShareServiceClient
+import unittest
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
+import pytest
+from azure.storage.fileshare.aio import ShareServiceClient
+
 # ------------------------------------------------------------------------------
-TEST_SHARE_NAME = 'test-share'
+TEST_SHARE_NAME = "test-share"
 # ------------------------------------------------------------------------------
 
 
@@ -61,13 +62,13 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with pytest.raises(ValueError):
-            await root.close_handle('*')
+            await root.close_handle("*")
 
         handles_info = await root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
-        assert 1 == handles_info['closed_handles_count']
-        assert handles_info['failed_handles_count'] == 0
+        assert 1 == handles_info["closed_handles_count"]
+        assert handles_info["failed_handles_count"] == 0
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
@@ -91,8 +92,8 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
         handles_info = await root.close_all_handles(recursive=True)
 
         # Assert at least 1 handle has been closed
-        assert handles_info['closed_handles_count'] > 1
-        assert handles_info['failed_handles_count'] == 0
+        assert handles_info["closed_handles_count"] > 1
+        assert handles_info["failed_handles_count"] == 0
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
@@ -105,9 +106,9 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
-        share = self.fsc.get_share_client('mytestshare')
-        root = share.get_directory_client('testdir')
-        file_client = root.get_file_client('testfile.txt')
+        share = self.fsc.get_share_client("mytestshare")
+        root = share.get_directory_client("testdir")
+        file_client = root.get_file_client("testfile.txt")
 
         # Act
         handles = []
@@ -116,10 +117,10 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         self._validate_handles(handles)
-        assert handles[0]['access_rights'][0] == 'Write'
-        assert handles[0]['client_name'] is not None
+        assert handles[0]["access_rights"][0] == "Write"
+        assert handles[0]["client_name"] is not None
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

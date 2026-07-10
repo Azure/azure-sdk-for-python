@@ -1,0 +1,26 @@
+name: API.md Workflow Unit Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "scripts/api_md_workflow/**"
+      - ".github/workflows/api-md-workflow-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Run API.md workflow unit tests
+        run: python -m unittest discover scripts/api_md_workflow "*_test.py"

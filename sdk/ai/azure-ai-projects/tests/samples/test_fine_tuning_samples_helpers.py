@@ -11,33 +11,8 @@ from typing import Any, Mapping, Optional
 
 from devtools_testutils import add_general_string_sanitizer
 
+from llm_instructions import fine_tuning_instructions
 from test_samples_helpers import get_sample_env_vars
-
-fine_tuning_instructions = """
-We just ran Python code and captured print/log output in an attached log file (TXT).
-Validate whether sample execution/output is correct for a fine-tuning workflow.
-
-Successful output typically shows one or more of:
-- Training/validation files prepared or uploaded successfully.
-- Fine-tuning job creation with a returned job id/name.
-- Job details/status output that indicates the request was accepted and processed.
-
-Mark `correct = false` for:
-- Exceptions, stack traces, explicit error/failure messages.
-- Authentication/authorization/service errors that block job creation.
-- File upload/read failures for required training/validation data.
-- Fine-tuning job creation failures or malformed output that indicates broken processing.
-
-Important distinction:
-- Intermediate/transitional job states (for example queued/running) are valid and should not fail by themselves.
-- The output does not need to show completed training unless the sample is explicitly designed to wait for completion.
-
-Mark `correct = true` when execution succeeds and output is consistent with initiating/inspecting
-the intended fine-tuning workflow.
-
-Always include `reason` with a concise explanation tied to the observed print output.
-""".strip()
-
 
 SCRUBBED_FINE_TUNING_CONFIG: dict[str, Any] = {
     "sft": {

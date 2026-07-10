@@ -6,12 +6,11 @@
 # cSpell:disable
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 
 
 class TestAgentFunctionToolAsync(TestBase):
@@ -28,7 +27,7 @@ class TestAgentFunctionToolAsync(TestBase):
         3. Receive function results and incorporate them into responses
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         agent_name = "function-tool-agent-async"
 
         # Setup
@@ -150,7 +149,9 @@ class TestAgentFunctionToolAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_agent_function_tool_multi_turn_with_multiple_calls_async(self, **kwargs):
+    async def test_agent_function_tool_multi_turn_with_multiple_calls_async(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """
         Test multi-turn conversation where agent calls functions multiple times (async version).
 
@@ -160,7 +161,7 @@ class TestAgentFunctionToolAsync(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -370,7 +371,7 @@ class TestAgentFunctionToolAsync(TestBase):
         remembering parameters from the first query.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         async with (

@@ -1,0 +1,4 @@
+directory: specification/consumption/resource-manager/Microsoft.Consumption/Consumption
+commit: 833a2f8fe1b9c1df1cf4deb1981565b5acc79492
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

@@ -10,7 +10,6 @@ from azure.core.exceptions import ServiceResponseError
 
 import test_config
 from azure.cosmos import _location_cache, _partition_health_tracker
-from azure.cosmos import CosmosClient
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENTATIVE, UNHEALTHY
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
@@ -185,20 +184,25 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
             pass
 
 @pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosAADCircuitBreaker
 class TestPerPartitionCircuitBreakerMM:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, **kwargs):
+        endpoint = default_endpoint or self.host
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
-        client = CosmosClient(default_endpoint, self.master_key,
-                              preferred_locations=[REGION_1, REGION_2],
-                              multiple_write_locations=True,
-                              transport=custom_transport, **kwargs)
+        client_kwargs = {
+            "preferred_locations": [REGION_1, REGION_2],
+            "multiple_write_locations": True,
+            "transport": custom_transport,
+            **kwargs,
+        }
+        client = test_config.TestConfig.create_data_client_for_endpoint(endpoint, **client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}

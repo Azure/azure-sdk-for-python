@@ -52,6 +52,7 @@ from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -79,7 +80,12 @@ async def main() -> None:
 
         print(f"Creating classifier '{analyzer_id}'...")
 
-        # Define content categories for classification
+        # Define content categories for classification.
+        # Each category has a description that helps the AI model identify matching documents.
+        # Optionally, set analyzer_id on a category to route matched segments to a prebuilt
+        # or custom analyzer for field extraction. For example, setting
+        # analyzer_id="prebuilt-invoice" on the Invoice category will automatically extract
+        # invoice fields (vendor, line items, totals, etc.) from segments classified as Invoice.
         categories = {
             "Loan_Application": ContentCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, "
@@ -89,7 +95,8 @@ async def main() -> None:
             "Invoice": ContentCategoryDefinition(
                 description="Billing documents issued by sellers or service providers to request "
                 "payment for goods or services, detailing items, prices, taxes, totals, "
-                "and payment terms."
+                "and payment terms.",
+                analyzer_id="prebuilt-invoice",  # Route Invoice segments for field extraction
             ),
             "Bank_Statement": ContentCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity "
@@ -163,6 +170,19 @@ async def main() -> None:
         else:
             print("No content found in the analysis result.")
         # [END analyze_with_classifier]
+
+        # [START classifier_to_llm_input_async]
+        # Convert classification results to LLM-friendly text.
+        # to_llm_input automatically detects classification results: it expands the parent
+        # into per-segment blocks, each with its category label in the YAML front matter.
+        # Segments are separated by a ***** divider.
+        print("\n" + "=" * 60)
+        print("CLASSIFICATION RESULT AS LLM INPUT")
+        print("=" * 60)
+
+        text = to_llm_input(analyze_result)
+        print(text)
+        # [END classifier_to_llm_input_async]
 
         # Clean up - delete the classifier
         print(f"\nCleaning up: deleting classifier '{analyzer_id}'...")

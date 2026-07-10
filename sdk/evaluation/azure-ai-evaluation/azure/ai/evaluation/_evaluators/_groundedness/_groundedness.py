@@ -12,7 +12,10 @@ else:
     from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common._validators import (
+    GroundednessConversationValidator,
+    ValidatorInterface,
+)
 from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.utils import (
     ErrorBlame,
@@ -114,14 +117,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         self._higher_is_better = True
 
-        # Initialize input validator
-        self._validator = ConversationValidator(
+        # Initialize input validator. ``GroundednessConversationValidator``
+        # carries a wider ``UNSUPPORTED_TOOLS`` list than the shared base:
+        # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding``
+        # are still rejected here pending a context-extractor helper.
+        self._validator = GroundednessConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=False,
             check_for_unsupported_tools=True,
         )
 
-        self._validator_with_query = ConversationValidator(
+        self._validator_with_query = GroundednessConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=True,
             check_for_unsupported_tools=True,
@@ -284,7 +290,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
 
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -332,20 +338,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
-                return {
-                    self._result_key: self.threshold,
-                    f"{self._result_key}_result": "pass",
-                    f"{self._result_key}_threshold": self.threshold,
-                    f"{self._result_key}_reason": f"Not applicable: {ex.message}",
-                    f"{self._result_key}_details": {},
-                    f"{self._result_key}_prompt_tokens": 0,
-                    f"{self._result_key}_completion_tokens": 0,
-                    f"{self._result_key}_total_tokens": 0,
-                    f"{self._result_key}_finish_reason": "",
-                    f"{self._result_key}_model": "",
-                    f"{self._result_key}_sample_input": "",
-                    f"{self._result_key}_sample_output": "",
-                }
+                return self._return_not_applicable_result(ex.message, self.threshold)
             else:
                 raise ex
 
@@ -412,7 +405,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         try:
             logger.debug("Extracting context from response")
             tool_calls = self._parse_tools_from_response(response=response)
-            logger.debug(f"Tool Calls parsed successfully: {tool_calls}")
+            logger.debug("Tool calls parsed successfully: count=%d", len(tool_calls) if tool_calls else 0)
 
             if not tool_calls:
                 return NO_CONTEXT

@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from unittest.mock import patch, MagicMock
+from packaging.version import Version
 
 try:
     import tomllib as toml
@@ -69,3 +71,39 @@ def test_check_file_sets_is_stable_false_for_beta(tmp_path, monkeypatch):
     assert data["packaging"]["is_stable"] is False
     # title still populated
     assert data["packaging"]["title"] == "FooClient"
+
+
+def test_get_version_info_treats_0_0_0_as_invalid():
+    """get_version_info should return empty strings when the latest PyPI version is 0.0.0."""
+    with patch("pypi_tools.pypi.PyPIClient") as MockClient:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.get_ordered_versions.return_value = [Version("0.0.0")]
+
+        result = pu.get_version_info("azure-some-package", tag_is_stable=False)
+
+    assert result == ("", "")
+
+
+def test_get_version_info_treats_0_0_0_prerelease_as_invalid():
+    """get_version_info should return empty strings when the latest PyPI version is 0.0.0b1."""
+    with patch("pypi_tools.pypi.PyPIClient") as MockClient:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.get_ordered_versions.return_value = [Version("0.0.0b1")]
+
+        result = pu.get_version_info("azure-some-package", tag_is_stable=False)
+
+    assert result == ("", "")
+
+
+def test_get_version_info_does_not_filter_0_0_0_1():
+    """get_version_info should NOT filter 0.0.0.1 — its base version is not 0.0.0."""
+    with patch("pypi_tools.pypi.PyPIClient") as MockClient:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.get_ordered_versions.return_value = [Version("0.0.0.1")]
+
+        result = pu.get_version_info("azure-some-package", tag_is_stable=False)
+
+    assert result == ("0.0.0.1", "0.0.0.1")

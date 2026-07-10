@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: File Search + Code Interpreter
 
@@ -39,7 +37,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
         2. Code Interpreter: Agent calculates the average of those numbers
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -121,7 +119,7 @@ End of sensor log.
         2. Code Interpreter: Agent executes the code and returns the computed result
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

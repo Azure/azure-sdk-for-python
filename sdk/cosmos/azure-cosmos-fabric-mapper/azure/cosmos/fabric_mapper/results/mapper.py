@@ -15,11 +15,11 @@ from ..driver.base import ResultSet
 
 def map_result_set(result_set: ResultSet, select_value: bool) -> list[Any]:
     """Map a tabular result set to Cosmos-like result format.
-    
+
     Args:
         result_set: Tabular result from driver
         select_value: True if SELECT VALUE (return scalars), False for SELECT (return dicts)
-        
+
     Returns:
         List of documents (dicts) or scalars, matching Cosmos result shape
     """
@@ -31,7 +31,12 @@ def map_result_set(result_set: ResultSet, select_value: bool) -> list[Any]:
         return [row[0] for row in result_set.rows]
 
     # Heuristic: if single column with JSON-like name, try to parse as JSON
-    if len(result_set.columns) == 1 and result_set.columns[0].lower() in {"doc", "document", "json", "_rawbody"}:
+    if len(result_set.columns) == 1 and result_set.columns[0].lower() in {
+        "doc",
+        "document",
+        "json",
+        "_rawbody",
+    }:
         out: list[Any] = []
         for (v,) in result_set.rows:
             if v is None:

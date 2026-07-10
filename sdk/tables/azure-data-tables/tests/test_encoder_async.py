@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -99,7 +100,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -111,7 +112,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -124,7 +125,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -140,7 +141,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -160,7 +161,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -199,7 +200,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -222,7 +223,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -279,7 +280,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(
                     lambda: client.get_entity("PK", "RK"),
                     {k: v for k, v in test_entity.items() if v is not None},
@@ -355,7 +356,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -409,7 +410,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -525,7 +526,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -552,7 +553,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -579,7 +580,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -600,7 +601,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK3", "RK3"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -634,7 +635,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK5", "RK5"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -653,7 +654,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_payload_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -672,7 +673,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE.value), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -687,7 +688,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -703,7 +704,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={"Content-Type": "application/json"},
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
@@ -2419,7 +2420,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 "bar",
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='bar')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2428,7 +2429,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 {"PartitionKey": "foo", "RowKey": "bar"},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='bar')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2438,7 +2439,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 "RK'@*$!%",  # cspell:disable-line
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2447,7 +2448,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 {"PartitionKey": "foo", "RowKey": "RK'@*$!%"},  # cspell:disable-line
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2536,7 +2537,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 non_utf8_char,
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2545,7 +2546,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 {"PartitionKey": "PK", "RowKey": non_utf8_char},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2566,7 +2567,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 EnumStrOptions.ONE,
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='One')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
 
@@ -2575,7 +2576,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 {"PartitionKey": "foo", "RowKey": EnumStrOptions.ONE},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='One')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"Accept": "application/json", "If-Match": "*"},
             )
             assert resp is None
             await client.delete_table()

@@ -75,8 +75,8 @@ USAGE:
     Example resource ID format:
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}
 
-    Important: Cross-resource copying requires credential-based authentication (such as DefaultAzureCredential).
-    API keys cannot be used for cross-resource operations.
+    Note: If API keys are not provided, DefaultAzureCredential will be used.
+    Cross-resource copying with DefaultAzureCredential requires 'Cognitive Services User' role on both source and target resources.
 """
 
 import asyncio
@@ -208,7 +208,7 @@ async def main() -> None:
                 resource=source_analyzer,
             )
             await poller.result()
-            print(f"  Source analyzer created successfully!")
+            print("  Source analyzer created successfully!")
 
             # Step 2: Grant copy authorization
             # Authorization must be granted by the source resource before the target resource can copy
@@ -216,7 +216,7 @@ async def main() -> None:
             # - The source analyzer ID to be copied
             # - The target Azure resource ID that is allowed to receive the copy
             # - The target region where the copy will be performed (optional, defaults to current region)
-            print(f"\nStep 2: Granting copy authorization from source resource...")
+            print("\nStep 2: Granting copy authorization from source resource...")
             print(f"  Target Azure Resource ID: {target_resource_id}")
             print(f"  Target Region: {target_region}")
 
@@ -226,7 +226,7 @@ async def main() -> None:
                 target_region=target_region,
             )
 
-            print(f"  Authorization granted successfully!")
+            print("  Authorization granted successfully!")
             print(f"  Target Azure Resource ID: {copy_auth.target_azure_resource_id}")
             print(f"  Target Region: {target_region}")
             print(f"  Expires at: {copy_auth.expires_at}")
@@ -235,7 +235,7 @@ async def main() -> None:
             # The copy_analyzer method must be called on the target client because the target
             # resource is the one receiving and creating the copy. The target resource validates
             # that authorization was previously granted by the source resource.
-            print(f"\nStep 3: Copying analyzer from source to target...")
+            print("\nStep 3: Copying analyzer from source to target...")
             print(f"  Source Analyzer ID: {source_analyzer_id}")
             print(f"  Source Azure Resource ID: {source_resource_id}")
             print(f"  Source Region: {source_region}")
@@ -248,22 +248,22 @@ async def main() -> None:
                 source_region=source_region,
             )
             await copy_poller.result()
-            print(f"  Analyzer copied successfully to target resource!")
+            print("  Analyzer copied successfully to target resource!")
 
             # Step 4: Verify the copy
             # Retrieve the analyzer from the target resource to verify the copy was successful
-            print(f"\nStep 4: Verifying the copied analyzer...")
+            print("\nStep 4: Verifying the copied analyzer...")
             copied_analyzer = await target_client.get_analyzer(
                 analyzer_id=target_analyzer_id
             )
             print(f"  Target Analyzer ID: {copied_analyzer.analyzer_id}")
             print(f"  Description: {copied_analyzer.description}")
             print(f"  Status: {copied_analyzer.status}")
-            print(f"\nCross-resource copy completed successfully!")
+            print("\nCross-resource copy completed successfully!")
 
     finally:
         # Clean up - create new client instances for cleanup since the original ones are closed
-        print(f"\nCleaning up...")
+        print("\nCleaning up...")
         cleanup_source_client = ContentUnderstandingClient(
             endpoint=source_endpoint, credential=source_credential
         )

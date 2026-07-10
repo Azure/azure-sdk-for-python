@@ -30,21 +30,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.authentication_settings.create_or_update(
-        resource_group_name="myResourceGroup",
-        health_model_name="myHealthModel",
-        authentication_setting_name="myAuthSetting",
+    response = client.authentication_settings.begin_create_or_update(
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        authentication_setting_name="default-auth",
         resource={
             "properties": {
                 "authenticationKind": "ManagedIdentity",
-                "displayName": "myDisplayName",
+                "displayName": "Default managed identity",
                 "managedIdentityName": "SystemAssigned",
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/AuthenticationSettings_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01-preview/AuthenticationSettings_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

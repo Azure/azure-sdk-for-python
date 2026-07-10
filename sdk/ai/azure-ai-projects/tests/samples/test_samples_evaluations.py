@@ -19,32 +19,11 @@ from test_samples_helpers import get_sample_env_vars
 evaluationsPreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="sanitized-model-deployment-name",
-    azure_ai_agent_name="sanitized-agent-name",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_model_name="sanitized-model-deployment-name",
+    foundry_agent_name="sanitized-agent-name",
+    foundry_instant_model_name="sanitized-instant-model-name",
 )
-
-evaluations_instructions = """
-We just ran Python code for an evaluation sample and captured print/log output in an attached log file (TXT).
-Your job: determine if the sample code executed to completion WITHOUT throwing an unhandled exception.
-
-Respond TRUE (correct=true) if:
-- The output shows the evaluation was created and produced results (any results, including zeros)
-- The sample ran to completion (no unhandled Python exceptions/tracebacks)
-- Evaluation metric JSON with fields like "failed": 0, "error": null, "not_applicable": 0 is NORMAL
-  successful output — these are counters, NOT errors
-- Status messages like "in_progress", "Waiting for eval run" are normal polling behavior
-- HTTP debug headers (x-stainless-read-timeout, x-ms-client-request-id, etc.) are normal and irrelevant
-- "deleted": true/false in cleanup output is normal
-- The absence of explicit "success" text is fine — no crash means success
-
-Respond FALSE (correct=false) ONLY if:
-- There is an actual Python traceback or unhandled exception
-- There is an explicit error message like "Evaluation run failed" or "FAILED_EXECUTION"
-- There is an actual timeout error or connection failure (NOT an HTTP header containing "timeout")
-- The output shows corrupted or malformed data that prevented completion
-
-Always respond with `reason` indicating the reason for the response.""".strip()
 
 
 def _preprocess_eval_validation(entries: list[str]) -> str:
@@ -100,6 +79,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Main evaluation samples (13):
     - sample_agent_evaluation.py
     - sample_model_evaluation.py
+    - sample_model_evaluation_instant_model.py
     - sample_agent_response_evaluation.py
     - sample_agent_response_evaluation_with_function_tool.py
     - sample_evaluations_builtin_with_inline_data.py
@@ -117,6 +97,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_fluency.py
     - sample_groundedness.py
     - sample_intent_resolution.py
+    - sample_quality_grader.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
@@ -146,6 +127,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
       uses azure-monitor-query to fetch traces.
     - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
       azure-mgmt-authorization and azure-mgmt-resource, AND uploads Dataset.
+    - sample_human_evaluations.py: Requires Azure Application Insights (fetches
+      the connection string from the Foundry project and emits OTel events via
+      `azure-monitor-opentelemetry`); not meaningful to record/replay.
 
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
@@ -164,9 +148,30 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
                 "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
                 "sample_evaluations_score_model_grader_with_image.py",  # Eval fails: image inputs not supported for configured grader model
+                "sample_evaluations_score_model_grader_with_image_model_target.py",  # Eval fails: image inputs not supported for configured grader model
+                "sample_evaluations_score_model_grader_with_audio.py",  # Eval fails: audio inputs not supported for configured grader model
+                "sample_evaluations_score_model_grader_with_audio_model_target.py",  # Eval fails: audio inputs not supported for configured grader model
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
+                "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
+                "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
+                "sample_human_evaluations.py",  # Requires real Foundry App Insights connection string + emits OTel events; not suitable for recorded playback
+                "sample_multiturn_conversation_evaluation.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_conversation_simulation.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_trace_evaluation_agent_filter.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_trace_evaluation_by_id.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_rubric_evaluator_generation_all_sources.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_lifecycle.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_basic.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_manual.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
+                "sample_agent_trace_evaluation_smart_filter.py",  # PR #47217: recording not yet available
+                "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
+                "sample_endpoint_evaluator_with_api_key.py",  # Requires external scoring endpoint and azure-mgmt-cognitiveservices
+                "sample_endpoint_evaluator_with_entra_id.py",  # Requires external scoring endpoint with Easy Auth and azure-mgmt-cognitiveservices
             ],
         ),
     )
@@ -182,11 +187,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        executor.validate_print_calls_by_llm()
 
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_agentic_evaluator_samples[sample_coherence]
@@ -197,6 +198,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             "evaluations/agentic_evaluators",
             samples_to_skip=[
                 "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
+                "sample_quality_grader.py",
                 "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
                 "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
             ],
@@ -214,11 +216,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        executor.validate_print_calls_by_llm()
 
     # To run this test, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_generic_agentic_evaluator_sample
@@ -245,8 +243,4 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        executor.validate_print_calls_by_llm()

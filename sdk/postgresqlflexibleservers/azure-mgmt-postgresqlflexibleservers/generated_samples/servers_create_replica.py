@@ -51,7 +51,6 @@ def main():
                     "primaryUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/exampleresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/exampleprimaryidentity",
                     "type": "AzureKeyVault",
                 },
-                "pointInTimeUTC": "2025-06-01T18:35:22.123456Z",
                 "sourceServerResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/exampleresourcegroup/providers/Microsoft.DBforPostgreSQL/flexibleServers/examplesourceserver",
             },
         },
@@ -59,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/ServersCreateReplica.json
+# x-ms-original-file: 2026-04-01-preview/ServersCreateReplica.json
 if __name__ == "__main__":
     main()

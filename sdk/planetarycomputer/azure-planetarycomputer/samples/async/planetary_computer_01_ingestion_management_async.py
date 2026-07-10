@@ -53,9 +53,7 @@ import uuid
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -84,15 +82,11 @@ async def create_managed_identity_ingestion_sources(
         logging.info(f"Deleted existing source: {source.id}")
 
     # Create connection info with managed identity
-    connection_info = ManagedIdentityConnection(
-        container_uri=container_uri, object_id=managed_identity_object_id
-    )
+    connection_info = ManagedIdentityConnection(container_uri=container_uri, object_id=managed_identity_object_id)
 
     # Create ingestion source with unique ID
     source_id = str(uuid.uuid4())
-    ingestion_source = ManagedIdentityIngestionSource(
-        id=source_id, connection_info=connection_info
-    )
+    ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
     created_source = await client.ingestion.create_source(body=ingestion_source)
     logging.info(f"Created managed identity ingestion source: {created_source.id}")
 
@@ -123,9 +117,7 @@ async def create_or_replace_source(
             "AZURE_INGESTION_SAS_CONTAINER_URI environment variable must be set for create_or_replace_source"
         )
     if not sas_token:
-        raise ValueError(
-            "AZURE_INGESTION_SAS_TOKEN environment variable must be set for create_or_replace_source"
-        )
+        raise ValueError("AZURE_INGESTION_SAS_TOKEN environment variable must be set for create_or_replace_source")
 
     # Create connection info with SAS token
     connection_info = SharedAccessSignatureTokenConnection(
@@ -133,21 +125,17 @@ async def create_or_replace_source(
     )
 
     # Create ingestion source
-    ingestion_source = SharedAccessSignatureTokenIngestionSource(
-        id=source_id, connection_info=connection_info
-    )
+    ingestion_source = SharedAccessSignatureTokenIngestionSource(id=source_id, connection_info=connection_info)
 
     # First call - replaces the existing source with original token
-    logging.info(
-        f"First call to create_or_replace_source with existing source ID: {source_id}"
-    )
-    first_result = await client.ingestion.replace_source(
-        id=source_id, body=ingestion_source
-    )
+    logging.info(f"First call to create_or_replace_source with existing source ID: {source_id}")
+    first_result = await client.ingestion.replace_source(id=source_id, body=ingestion_source)
     logging.info(f"First call result: {first_result.id}")
 
     # Second call - replaces again with modified token (demonstrates update capability)
-    updated_token = "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    updated_token = (
+        "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    )
 
     updated_connection_info = SharedAccessSignatureTokenConnection(
         container_uri=sas_container_uri, shared_access_signature_token=updated_token
@@ -157,9 +145,7 @@ async def create_or_replace_source(
     )
 
     logging.info("Second call to create_or_replace_source with updated SAS token")
-    second_result = await client.ingestion.replace_source(
-        id=source_id, body=updated_ingestion_source
-    )
+    second_result = await client.ingestion.replace_source(id=source_id, body=updated_ingestion_source)
     logging.info(f"Second call result: {second_result.id}")
 
     return second_result.id
@@ -190,9 +176,7 @@ async def create_github_public_ingestion(
     # Delete all existing ingestions
     logging.info("Deleting all existing ingestions...")
     async for ingestion in client.ingestion.list(collection_id=collection_id):
-        await client.ingestion.begin_delete(
-            collection_id=collection_id, ingestion_id=ingestion.id, polling=True
-        )
+        await client.ingestion.begin_delete(collection_id=collection_id, ingestion_id=ingestion.id, polling=True)
         logging.info(f"Deleted existing ingestion: {ingestion.id}")
 
     # Create ingestion definition
@@ -206,9 +190,7 @@ async def create_github_public_ingestion(
 
     # Create the ingestion
     logging.info("Creating ingestion for sample catalog...")
-    ingestion_response = await client.ingestion.create(
-        collection_id=collection_id, body=ingestion_definition
-    )
+    ingestion_response = await client.ingestion.create(collection_id=collection_id, body=ingestion_definition)
     ingestion_id = ingestion_response.id
     logging.info(f"Created ingestion: {ingestion_id}")
 
@@ -221,29 +203,21 @@ async def create_github_public_ingestion(
     ingestion = await client.ingestion.update(
         collection_id=collection_id, ingestion_id=ingestion_id, body=updated_definition
     )
-    logging.info(
-        f"Updated ingestion display name to: {updated_definition.display_name}"
-    )
+    logging.info(f"Updated ingestion display name to: {updated_definition.display_name}")
 
     return ingestion_id
 
 
-async def get_ingestion_by_id(
-    client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str
-):
+async def get_ingestion_by_id(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
     """Retrieve a specific ingestion by ID.
 
     This demonstrates using get to fetch a specific ingestion directly
     instead of listing all ingestions.
     """
-    logging.info(
-        f"Retrieving ingestion: {ingestion_id} from collection: {collection_id}"
-    )
+    logging.info(f"Retrieving ingestion: {ingestion_id} from collection: {collection_id}")
 
     try:
-        ingestion = await client.ingestion.get(
-            collection_id=collection_id, ingestion_id=ingestion_id
-        )
+        ingestion = await client.ingestion.get(collection_id=collection_id, ingestion_id=ingestion_id)
 
         logging.info(f"Successfully retrieved ingestion: {ingestion.id}")
         logging.info(f"  Display name: {ingestion.display_name}")
@@ -257,9 +231,7 @@ async def get_ingestion_by_id(
         return None
 
 
-async def list_ingestion_runs(
-    client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str
-):
+async def list_ingestion_runs(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
     """List all runs for a specific ingestion.
 
     This demonstrates using list_runs to get all execution runs for an ingestion,
@@ -268,9 +240,7 @@ async def list_ingestion_runs(
     logging.info(f"Listing runs for ingestion: {ingestion_id}")
 
     try:
-        async for run in client.ingestion.list_runs(
-            collection_id=collection_id, ingestion_id=ingestion_id
-        ):
+        async for run in client.ingestion.list_runs(collection_id=collection_id, ingestion_id=ingestion_id):
             operation = run.operation
             logging.info(f"  Run ID: {run.id}")
             logging.info(f"    Status: {operation.status}")
@@ -284,16 +254,12 @@ async def list_ingestion_runs(
             if operation.status_history:
                 for status_item in operation.status_history:
                     if status_item.error_code:
-                        logging.info(
-                            f"    Error: {status_item.error_code} - {status_item.error_message}"
-                        )
+                        logging.info(f"    Error: {status_item.error_code} - {status_item.error_message}")
     except Exception as e:
         logging.error(f"Failed to list runs for ingestion {ingestion_id}: {str(e)}")
 
 
-async def create_sas_token_ingestion_source(
-    client: PlanetaryComputerProClient, sas_container_uri: str, sas_token: str
-):
+async def create_sas_token_ingestion_source(client: PlanetaryComputerProClient, sas_container_uri: str, sas_token: str):
     """Create a SAS token ingestion source with example values."""
 
     # Validate required parameters
@@ -327,15 +293,11 @@ async def create_sas_token_ingestion_source(
     return created_sas_source.id
 
 
-async def create_ingestion_run(
-    client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str
-):
+async def create_ingestion_run(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
     """Create an ingestion run."""
 
     # Create ingestion run
-    run_response = await client.ingestion.create_run(
-        collection_id=collection_id, ingestion_id=ingestion_id
-    )
+    run_response = await client.ingestion.create_run(collection_id=collection_id, ingestion_id=ingestion_id)
     logging.info(f"Created ingestion run: {run_response.id}")
     return run_response.id
 
@@ -362,6 +324,8 @@ async def manage_operations(client: "PlanetaryComputerProClient"):
 
     # Cancel all operations
     try:
+        # Cancel all operations across the entire GeoCatalog instance.
+        # WARNING: This cancels ALL pending/running operations, not just those for a specific collection.
         await client.ingestion.cancel_all_operations()
     except HttpResponseError as e:
         raise RuntimeError("Failed to cancel all operations") from e
@@ -375,9 +339,7 @@ async def main():
     # Get optional ingestion-specific configuration (for examples)
     container_uri = os.environ.get("PLANETARYCOMPUTER_INGESTION_CONTAINER_URI")
     source_catalog_url = os.environ.get("PLANETARYCOMPUTER_INGESTION_CATALOG_URL")
-    managed_identity_object_id = os.environ.get(
-        "PLANETARYCOMPUTER_MANAGED_IDENTITY_OBJECT_ID"
-    )
+    managed_identity_object_id = os.environ.get("PLANETARYCOMPUTER_MANAGED_IDENTITY_OBJECT_ID")
     sas_container_uri = os.environ.get("AZURE_INGESTION_SAS_CONTAINER_URI")
     sas_token = os.environ.get("AZURE_INGESTION_SAS_TOKEN")
 
@@ -405,23 +367,15 @@ async def main():
 
     # Execute ingestion management workflow
     # 1. Create managed identity and SAS token ingestion sources
-    await create_managed_identity_ingestion_sources(
-        client, container_uri, managed_identity_object_id
-    )
-    sas_source_id = await create_sas_token_ingestion_source(
-        client, sas_container_uri, sas_token
-    )
+    await create_managed_identity_ingestion_sources(client, container_uri, managed_identity_object_id)
+    sas_source_id = await create_sas_token_ingestion_source(client, sas_container_uri, sas_token)
 
     # 2. Demonstrate advanced source operations (idempotent)
-    updated_source_id = await create_or_replace_source(
-        client, sas_container_uri, sas_token, sas_source_id
-    )
+    updated_source_id = await create_or_replace_source(client, sas_container_uri, sas_token, sas_source_id)
     await get_source_by_id(client, updated_source_id)
 
     # 3. Run actual ingestion hosted on GitHub
-    public_ingestion_id = await create_github_public_ingestion(
-        client, collection_id, source_catalog_url
-    )
+    public_ingestion_id = await create_github_public_ingestion(client, collection_id, source_catalog_url)
 
     # 4. Demonstrate advanced ingestion operations
     await get_ingestion_by_id(client, collection_id, public_ingestion_id)

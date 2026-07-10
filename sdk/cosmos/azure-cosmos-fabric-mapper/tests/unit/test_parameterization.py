@@ -1,6 +1,9 @@
 """Parameterization tests - ensure secrets never end up in SQL strings."""
 
+import pytest
+
 from azure.cosmos.fabric_mapper.config import MirrorServingConfiguration
+from azure.cosmos.fabric_mapper.errors import UnsupportedCosmosQueryError
 from azure.cosmos.fabric_mapper.translate import translate
 
 
@@ -46,3 +49,72 @@ def test_multiple_parameters_maintain_order():
     assert "@minValue" not in res.sql
     # Params should be in correct order
     assert res.params == ["p1", "active", 100]
+
+
+def test_null_parameter_uses_is_null_without_binding():
+    config = MirrorServingConfiguration("example", "database", "container")
+
+    result = translate(
+        "SELECT * FROM c WHERE c.deleted = @deleted",
+        parameters=[{"name": "@deleted", "value": None}],
+        config=config,
+    )
+
+    assert result.sql.endswith("WHERE c.deleted IS NULL")
+    assert result.params == []
+
+
+def test_parenthesized_null_parameter_uses_is_null():
+    config = MirrorServingConfiguration("example", "database", "container")
+
+    result = translate(
+        "SELECT * FROM c WHERE c.deleted = (@deleted)",
+        parameters=[{"name": "@deleted", "value": None}],
+        config=config,
+    )
+
+    assert result.sql.endswith("WHERE c.deleted IS NULL")
+    assert result.params == []
+
+
+def test_null_parameter_arithmetic_is_rejected():
+    config = MirrorServingConfiguration("example", "database", "container")
+
+    with pytest.raises(UnsupportedCosmosQueryError, match="arithmetic"):
+        translate(
+            "SELECT * FROM c WHERE c.value = @value + 1",
+            parameters=[{"name": "@value", "value": None}],
+            config=config,
+        )
+
+
+def test_reversed_null_parameter_arithmetic_is_rejected():
+    config = MirrorServingConfiguration("example", "database", "container")
+
+    with pytest.raises(UnsupportedCosmosQueryError, match="arithmetic"):
+        translate(
+            "SELECT * FROM c WHERE @value = c.value + 1",
+            parameters=[{"name": "@value", "value": None}],
+            config=config,
+        )
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "SELECT * FROM c WHERE c.x + c.y = @value",
+        "SELECT * FROM c WHERE 1 + @value = c.y",
+        "SELECT * FROM c WHERE c.x + c.or = @value",
+        "SELECT * FROM c WHERE c.x + c.where = @value",
+        "SELECT * FROM c WHERE c.x + c.having = @value",
+    ],
+)
+def test_null_parameter_partial_arithmetic_matches_are_rejected(query):
+    config = MirrorServingConfiguration("example", "database", "container")
+
+    with pytest.raises(UnsupportedCosmosQueryError, match="arithmetic"):
+        translate(
+            query,
+            parameters=[{"name": "@value", "value": None}],
+            config=config,
+        )

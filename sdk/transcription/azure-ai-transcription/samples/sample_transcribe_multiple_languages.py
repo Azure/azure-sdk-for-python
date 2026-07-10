@@ -25,6 +25,10 @@ DESCRIPTION:
     the "major locale" for each language (e.g., always "en-US" for English
     regardless of accent).
 
+    `locales` also applies to Enhanced Mode. In Enhanced Mode the service
+    operates in multilingual mode by default; if `locales` is specified, the
+    first locale is used as a hint to guide recognition.
+
 USAGE:
     python sample_transcribe_multiple_languages.py
 

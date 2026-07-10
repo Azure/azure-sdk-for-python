@@ -6,12 +6,19 @@
     "aiservices",
     "ansii",
     "aread",
+    "azcopy",
+    "Azcopy",
     "azureai",
     "azureopenai",
     "balapvbyostoragecanary",
     "closefd",
     "cogsvc",
     "CSDL",
+    "dargilco",
+    "dedup",
+    "deser",
+    "devtools",
+    "dotenv",
     "evals",
     "FineTuning",
     "fspath",
@@ -19,17 +26,26 @@
     "ftchkpt",
     "ftjob",
     "GENAI",
+    "genexpr",
     "getconnectionwithcredentials",
     "GLEU",
     "inpainting",
     "Ministral",
     "mpkjc",
     "quantitive",
+    "recsmplmdl",
+    "reraises",
+    "simpleqna",
+    "skoid",
+    "testutils",
     "Tadmaq",
     "Udbk",
     "UPIA",
+    "unsanitized",
+    "Vnext",
+    "westus",
     "xhigh",
-    "genexpr"
+    "likert"
   ],
   "ignorePaths": [
     "*.csv",
@@ -37,6 +53,8 @@
     "*.jsonl"
   ],
   "words": [
-    "Pxqzykebv"
+    "Pxqzykebv",
+    "qtumf",
+    "sess"
   ]
 }

@@ -21,9 +21,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -32,14 +32,6 @@ import time
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.ai.projects.models import (
-    OperationState,
-    EvaluationRunClusterInsightRequest,
-    Insight,
-    InsightModelConfiguration,
-)
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -48,14 +40,22 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.ai.projects.models import (
+    OperationState,
+    EvaluationRunClusterInsightRequest,
+    Insight,
+    InsightModelConfiguration,
+)
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
 
 if not model_deployment_name:
-    raise ValueError("AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable is not set")
+    raise ValueError("FOUNDRY_MODEL_NAME environment variable is not set")
 
 with (
     DefaultAzureCredential() as credential,
@@ -135,7 +135,7 @@ with (
         print(f"Started insight generation (id: {clusterInsight.insight_id})")
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            print(f"Waiting for insight to be generated...")
+            print("Waiting for insight to be generated...")
             clusterInsight = project_client.beta.insights.get(insight_id=clusterInsight.insight_id)
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)
