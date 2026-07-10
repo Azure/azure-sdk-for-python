@@ -94,7 +94,9 @@ with tracer.start_as_current_span(scenario):
             instructions="You are a helpful assistant that answers general questions",
         )
 
-        agent = client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
+        agent = client.agents.create_version(
+            agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"), definition=agent_definition
+        )
 
         client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")

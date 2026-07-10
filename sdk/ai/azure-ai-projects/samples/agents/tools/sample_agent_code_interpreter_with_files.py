@@ -55,7 +55,7 @@ with (
 
     # Create agent with code interpreter tool
     agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant.",

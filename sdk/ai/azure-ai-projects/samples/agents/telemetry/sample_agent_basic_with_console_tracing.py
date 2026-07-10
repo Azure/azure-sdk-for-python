@@ -83,7 +83,7 @@ tracer = trace.get_tracer(__name__)
 AIProjectInstrumentor().instrument()
 
 scenario = os.path.basename(__file__)
-agent_name = "MyAgent"
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 with tracer.start_as_current_span(scenario):
     with (
         DefaultAzureCredential() as credential,

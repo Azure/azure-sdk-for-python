@@ -74,7 +74,7 @@ with (
 
     # Create agent with code interpreter tool
     agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=agent_definition,
         description="Code interpreter agent for data analysis and visualization.",
     )
