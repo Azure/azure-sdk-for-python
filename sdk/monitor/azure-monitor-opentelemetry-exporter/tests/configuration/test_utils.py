@@ -18,7 +18,6 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_CHANGE_VERSION_KEY,
 )
 
 
@@ -36,7 +35,14 @@ class TestConfigurationProfile(unittest.TestCase):
 
     def test_fill_empty_profile(self):
         """Test filling an empty profile with all parameters."""
-        _ConfigurationProfile.fill(os="w", rp="f", attach="m", version="1.0.0", component="ext", region="westus")
+        _ConfigurationProfile.fill(
+            os="w",
+            rp="f",
+            attach="m",
+            version="1.0.0",
+            component="ext",
+            region="westus",
+        )
 
         self.assertEqual(_ConfigurationProfile.os, "w")
         self.assertEqual(_ConfigurationProfile.rp, "f")
@@ -82,21 +88,17 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
-        self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.has_exception)
 
     def test_custom_initialization(self):
         """Test OneSettingsResponse with custom values."""
         settings = {"key": "value"}
-        response = OneSettingsResponse(
-            etag="test-etag", refresh_interval=3600, settings=settings, version=5, status_code=304
-        )
+        response = OneSettingsResponse(etag="test-etag", refresh_interval=3600, settings=settings, status_code=304)
 
         self.assertEqual(response.etag, "test-etag")
         self.assertEqual(response.refresh_interval, 3600)
         self.assertEqual(response.settings, settings)
-        self.assertEqual(response.version, 5)
         self.assertEqual(response.status_code, 304)
         self.assertFalse(response.has_exception)
 
@@ -107,7 +109,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
-        self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 500)
         self.assertTrue(response.has_exception)
 
@@ -118,7 +119,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.etag)
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
-        self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.has_exception)
 
@@ -143,9 +143,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "30"}
-        mock_response.content = json.dumps(
-            {"settings": {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"}}
-        ).encode("utf-8")
+        mock_response.content = json.dumps({"settings": {"key": "value", "FEATURE_X": "enabled"}}).encode("utf-8")
         mock_get.return_value = mock_response
 
         # Make request
@@ -153,14 +151,16 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Verify request was made correctly
         mock_get.assert_called_once_with(
-            "http://test.com", params={"param": "value"}, headers={"header": "value"}, timeout=10
+            "http://test.com",
+            params={"param": "value"},
+            headers={"header": "value"},
+            timeout=10,
         )
 
         # Verify response
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 1800)  # 30 minutes * 60
-        self.assertEqual(result.settings, {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"})
-        self.assertEqual(result.version, 5)
+        self.assertEqual(result.settings, {"key": "value", "FEATURE_X": "enabled"})
         self.assertEqual(result.status_code, 200)
         self.assertFalse(result.has_exception)
 
@@ -175,7 +175,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -190,7 +189,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -205,7 +203,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -220,7 +217,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -246,7 +242,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -280,7 +275,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
 
@@ -293,16 +287,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.headers = {"ETag": "test-etag", "x-ms-onesetinterval": "45"}
-        mock_response.content = json.dumps(
-            {"settings": {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"}}
-        ).encode("utf-8")
+        mock_response.content = json.dumps({"settings": {"feature": "enabled", "CHANGE_VERSION": "10"}}).encode("utf-8")
 
         result = _parse_onesettings_response(mock_response)
 
         self.assertEqual(result.etag, "test-etag")
         self.assertEqual(result.refresh_interval, 2700)  # 45 minutes * 60
-        self.assertEqual(result.settings, {"feature": "enabled", _ONE_SETTINGS_CHANGE_VERSION_KEY: "10"})
-        self.assertEqual(result.version, 10)
+        self.assertEqual(result.settings, {"feature": "enabled", "CHANGE_VERSION": "10"})
         self.assertEqual(result.status_code, 200)
 
     def test_parse_304_response(self):
@@ -317,7 +308,6 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         self.assertEqual(result.etag, "cached-etag")
         self.assertEqual(result.refresh_interval, 3600)  # 60 minutes * 60
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 304)
 
     def test_parse_invalid_json(self):
@@ -332,7 +322,6 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
-        self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
 
 
@@ -373,14 +362,24 @@ class TestEvaluateFeature(unittest.TestCase):
 
     def test_feature_override_matches(self):
         """Test feature override that matches current profile."""
-        settings = {"test_feature": {"default": "disabled", "override": [{"os": "w", "component": "ext"}]}}
+        settings = {
+            "test_feature": {
+                "default": "disabled",
+                "override": [{"os": "w", "component": "ext"}],
+            }
+        }
 
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)  # Override flips disabled to enabled
 
     def test_feature_override_no_match(self):
         """Test feature override that doesn't match current profile."""
-        settings = {"test_feature": {"default": "enabled", "override": [{"os": "l", "component": "dst"}]}}
+        settings = {
+            "test_feature": {
+                "default": "enabled",
+                "override": [{"os": "l", "component": "dst"}],
+            }
+        }
 
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)  # No override, stays default
@@ -651,8 +650,15 @@ class TestFeatureEvaluationIntegration(unittest.TestCase):
             "profiling": {
                 "default": "disabled",
                 "override": [
-                    {"os": "w", "ver": {"min": "2.0.0", "max": "3.0.0"}},  # Version doesn't match
-                    {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]},  # All match
+                    {
+                        "os": "w",
+                        "ver": {"min": "2.0.0", "max": "3.0.0"},
+                    },  # Version doesn't match
+                    {
+                        "component": "ext",
+                        "rp": ["f", "a"],
+                        "region": ["westus", "eastus"],
+                    },  # All match
                 ],
             },
         }
