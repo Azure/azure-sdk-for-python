@@ -24,7 +24,6 @@ from azure.ai.ml._artifacts._constants import (
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._restclient.arm_ml_service.models import ModelContainer as ArmModelContainer
 from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
@@ -349,7 +348,7 @@ class ModelOperations(_ScopeDependentOperations):
             [],
         )
 
-    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
+    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ArmModelVersion:  # name:latest
         if version:
             return ArmModelVersion._deserialize(
                 get_registry_versioned_asset(
@@ -385,7 +384,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return self._model_container_operation.get(name=name, workspace_name=self._workspace_name, **self._scope_kwargs)
 
-    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ModelVersionData]:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ArmModelVersion]:  # name:latest
         if self._registry_name:
             return self._get_with_registry(name, version)
         return self._get_with_workspace(name, version)
