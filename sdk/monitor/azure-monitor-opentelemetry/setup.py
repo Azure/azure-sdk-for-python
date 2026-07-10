@@ -93,6 +93,7 @@ setup(
         "opentelemetry-instrumentation-urllib>=0.64b0,<0.65.0",
         "opentelemetry-instrumentation-urllib3>=0.64b0,<0.65.0",
         "opentelemetry-instrumentation-logging>=0.64b0,<0.65.0",
+        "opentelemetry-instrumentation-httpx>=0.64b0,<0.65.0",
         "opentelemetry-resource-detector-azure<1.0.0,>=0.1.5",
     ],
     entry_points={
