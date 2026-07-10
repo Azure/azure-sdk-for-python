@@ -802,6 +802,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 workspace_name=None,
                 registry_name=self._registry_name,
+                registry_service_client=self._registry_service_client,
+                asset_plural="components",
+                arm_cls=ComponentVersion,
             )
             if self._registry_name
             else _get_latest(

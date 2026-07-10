@@ -239,6 +239,8 @@ def list_registry_assets(
     from_rest_fn,
     list_view_type=None,
     properties=None,
+    order_by=None,
+    top=None,
 ) -> ItemPaged:
     """Byte-identical registry versioned-asset / container list (same MFE endpoint + api-version + paging contract).
 
@@ -266,6 +268,10 @@ def list_registry_assets(
         params["listViewType"] = list_view_type
     if properties is not None:
         params["properties"] = properties
+    if order_by is not None:
+        params["$orderBy"] = order_by
+    if top is not None:
+        params["$top"] = top
 
     def get_next(continuation_token=None):
         if continuation_token:

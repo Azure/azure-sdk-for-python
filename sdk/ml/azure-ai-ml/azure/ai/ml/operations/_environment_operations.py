@@ -504,6 +504,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             self._registry_name,
+            registry_service_client=self._registry_service_client,
+            asset_plural="environments",
+            arm_cls=EnvironmentVersion,
         )
         return Environment._from_rest_object(result)
 

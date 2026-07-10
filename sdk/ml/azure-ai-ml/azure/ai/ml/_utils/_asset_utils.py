@@ -882,6 +882,9 @@ def _get_latest(
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
     order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
+    arm_cls: Any = None,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -903,17 +906,23 @@ def _get_latest(
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
-    result = (
-        version_operation.list(
-            name=asset_name,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
+    if registry_name:
+        # Byte-identical to the legacy v2021_10 registry version list ($orderBy + $top=1 on the MFE endpoint).
+        from azure.ai.ml._utils._registry_utils import list_registry_assets
+
+        result = list_registry_assets(
+            registry_service_client,
+            asset_plural,
+            asset_name,
+            resource_group_name,
+            registry_name,
+            arm_cls,
+            lambda x: x,
             order_by=order_by,
             top=1,
-            **kwargs,
         )
-        if registry_name
-        else version_operation.list(
+    else:
+        result = version_operation.list(
             name=asset_name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -921,7 +930,6 @@ def _get_latest(
             top=1,
             **kwargs,
         )
-    )
     try:
         latest = result.next()
     except StopIteration:

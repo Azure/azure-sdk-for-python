@@ -718,6 +718,9 @@ class ModelOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             self._registry_name,
+            registry_service_client=self._registry_service_client,
+            asset_plural="models",
+            arm_cls=ArmModelVersion,
         )
         return Model._from_rest_object(result)
 
