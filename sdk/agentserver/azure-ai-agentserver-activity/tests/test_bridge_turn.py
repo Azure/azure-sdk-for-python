@@ -71,8 +71,8 @@ def _make_request(activity_dict, *, method="POST", headers=None, path_params=Non
     )
 
 
-def _run(coro):
-    return asyncio.run(coro)
+def _run(coroutine):
+    return asyncio.run(coroutine)
 
 
 def _process(agent_app, adapter, request, *, digital_worker, is_hosted, bot_app_id):
