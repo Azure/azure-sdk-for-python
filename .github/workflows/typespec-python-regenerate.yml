@@ -71,7 +71,6 @@ jobs:
             HEAD_SHA=$(echo "$PR_JSON" | jq -r '.headRefOid')
             HEAD_OWNER=$(echo "$PR_JSON" | jq -r '.headRepositoryOwner.login')
             HEAD_REPO_NAME=$(echo "$PR_JSON" | jq -r '.headRepository.name')
-            # Security: refuse to run code from a fork of microsoft/typespec.
             # This job checks out and EXECUTES the PR head repo's code (npm
             # install/build/prepare/regenerate) with a write-scoped token, so a
             # fork head would run untrusted code in a privileged context.
