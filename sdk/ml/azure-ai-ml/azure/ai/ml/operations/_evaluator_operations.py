@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -20,6 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._registry_utils import list_registry_assets
 from azure.ai.ml._utils.utils import _get_evaluator_properties, _is_evaluator
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
@@ -181,12 +183,15 @@ class EvaluatorOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_op._model_versions_operation.list(
-                        name=name,
-                        registry_name=self._model_op._registry_name,
-                        cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                    list_registry_assets(
+                        self._model_op._registry_service_client,
+                        "models",
+                        name,
+                        self._model_op._resource_group_name,
+                        self._model_op._registry_name,
+                        ArmModelVersion,
+                        Model._from_rest_object,
                         properties=properties_str,
-                        **self._model_op._scope_kwargs,
                     )
                     if self._registry_name
                     else self._model_op._model_versions_operation.list(

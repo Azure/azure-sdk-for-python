@@ -238,6 +238,7 @@ def list_registry_assets(
     arm_cls,
     from_rest_fn,
     list_view_type=None,
+    properties=None,
 ) -> ItemPaged:
     """Byte-identical registry versioned-asset / container list (same MFE endpoint + api-version + paging contract).
 
@@ -250,6 +251,7 @@ def list_registry_assets(
     :param arm_cls: The arm hybrid model class to deserialize each response item into.
     :param from_rest_fn: Callable mapping a deserialized arm model to an SDK entity.
     :param list_view_type: Optional ``listViewType`` query value.
+    :param properties: Optional ``properties`` filter query value.
     :return: An iterator of SDK entities.
     :rtype: ~azure.core.paging.ItemPaged
     """
@@ -262,6 +264,8 @@ def list_registry_assets(
     params = {"api-version": REGISTRY_DATAPLANE_API_VERSION}
     if list_view_type is not None:
         params["listViewType"] = list_view_type
+    if properties is not None:
+        params["properties"] = properties
 
     def get_next(continuation_token=None):
         if continuation_token:
