@@ -37,6 +37,8 @@ SUPPLEMENTAL_CANDIDATE_SDK_NAMES = (
     "azure-mgmt-domainservices",
     "azure-mgmt-alertprocessingrules",
     "azure-mgmt-prometheusrulegroups",
+    "azure-mgmt-providerhub",
+    "azure-mgmt-marketplace",
 )
 
 SDK_NAME_RE = re.compile(r"\bazure-mgmt-[A-Za-z0-9][A-Za-z0-9_-]*\b")

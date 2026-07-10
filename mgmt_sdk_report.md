@@ -46,3 +46,5 @@
 | 45 | azure-mgmt-dataprotection | 2026-03-01 | 2.1.0b1 |  | 2026-04-07 | Not Started |  |
 | 46 | azure-mgmt-prometheusrulegroups | 2023-03-01 | 1.0.0b1 |  | 2026-07-09 | Not Started |  |
 | 47 | azure-mgmt-alertprocessingrules | 2021-08-08 | 1.0.0b1 |  | 2026-07-09 | Not Started |  |
+| 48 | azure-mgmt-providerhub |  | 1.0.0b1 |  |  | Not Started |  |
+| 49 | azure-mgmt-marketplace |  | 1.0.0b1 |  |  | Not Started |  |
