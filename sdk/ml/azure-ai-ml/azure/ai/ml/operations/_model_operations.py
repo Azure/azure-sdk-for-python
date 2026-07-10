@@ -47,6 +47,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
     get_sas_uri_for_registry_asset,
@@ -226,11 +227,12 @@ class ModelOperations(_ScopeDependentOperations):
                         )
 
                     model_rest = model._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=model_rest,
-                    ).result()
+                    result = begin_import_registry_asset(
+                        self._registry_service_client,
+                        self._resource_group_name,
+                        self._registry_name,
+                        model_rest,
+                    )
 
                     if not result:
                         model_rest_obj = self._get(name=str(model.name), version=model.version)

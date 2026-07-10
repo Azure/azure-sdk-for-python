@@ -53,6 +53,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     begin_create_or_update_registry_versioned_asset,
+    begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
     get_registry_container_asset,
@@ -361,11 +362,12 @@ class DataOperations(_ScopeDependentOperations):
                             error_category=ErrorCategory.USER_ERROR,
                         )
                     data_res_obj = data._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=data_res_obj,
-                    ).result()
+                    result = begin_import_registry_asset(
+                        self._registry_service_client,
+                        self._resource_group_name,
+                        self._registry_name,
+                        data_res_obj,
+                    )
 
                     if not result:
                         data_res_obj = self._get(name=data.name, version=data.version)

@@ -33,6 +33,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     begin_create_or_update_registry_versioned_asset,
+    begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
     get_registry_container_asset,
@@ -155,12 +156,12 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         )
 
                     environment_rest = environment._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=environment_rest,
-                        **self._kwargs,
-                    ).result()
+                    result = begin_import_registry_asset(
+                        self._registry_service_client,
+                        self._resource_group_name,
+                        self._registry_name,
+                        environment_rest,
+                    )
 
                     if not result:
                         env_rest_obj = self._get(name=environment.name, version=environment.version)
