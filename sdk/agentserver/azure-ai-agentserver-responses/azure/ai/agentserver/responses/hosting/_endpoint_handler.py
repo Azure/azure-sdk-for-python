@@ -21,6 +21,8 @@ from opentelemetry import context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
+from azure.ai.agentserver.responses.models._wire import to_wire_dict
+
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
     flush_spans,
@@ -34,7 +36,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     USER_ID,
 )
 from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY  # pylint: disable=import-error,no-name-in-module
-from azure.ai.agentserver.responses.models._generated import (
+from azure.ai.agentserver.responses.models import (
     AgentReference,
     CreateResponse,
     ResponseStreamEventType,
@@ -102,6 +104,10 @@ if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+def _json_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
+    return to_wire_dict(snapshot)
 
 
 def _extract_platform_context(request: Request) -> PlatformContext:
@@ -323,7 +329,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: dict[str, str]
         """
         sid = session_id or (getattr(getattr(self._host, "config", None), "session_id", "") or "")
-        headers = dict(self._response_headers)
+        headers = self._response_headers.copy()
         if sid:
             headers[SESSION_ID] = sid
         return headers
@@ -387,15 +393,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     ``context`` field already set.
         :rtype: _ExecutionContext
         """
-        stream = bool(getattr(parsed, "stream", False))
-        store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
-        background = bool(getattr(parsed, "background", False))
-        model = getattr(parsed, "model", None) or ""
+        stream = bool(parsed.get("stream", False))
+        store = True if parsed.get("store") is None else bool(parsed["store"])
+        background = bool(parsed.get("background", False))
+        model = parsed.get("model") or ""
         _expanded = get_input_expanded(parsed)
         input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
         previous_response_id: str | None = (
-            parsed.previous_response_id
-            if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
+            parsed["previous_response_id"]
+            if isinstance(parsed.get("previous_response_id"), str) and parsed.get("previous_response_id")
             else None
         )
         conversation_id = _resolve_conversation_id(parsed)
@@ -712,7 +718,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         snapshot.get("status"),
                         len(snapshot.get("output", [])),
                     )
-                    return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+                    return JSONResponse(
+                        _json_snapshot(snapshot),
+                        status_code=200,
+                        headers=self._session_headers(agent_session_id),
+                    )
                 except _HandlerError as exc:
                     logger.error(
                         "Handler error in sync create (response_id=%s)",
@@ -744,7 +754,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 ctx.response_id,
                 snapshot.get("status"),
             )
-            return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+            return JSONResponse(
+                _json_snapshot(snapshot),
+                status_code=200,
+                headers=self._session_headers(agent_session_id),
+            )
         except _HandlerError as exc:
             logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
             # Handler errors are server-side faults, not client errors
@@ -843,7 +857,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             snapshot.get("status"),
             len(snapshot.get("output", [])),
         )
-        return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+        return JSONResponse(_json_snapshot(snapshot), status_code=200, headers=_hdrs)
 
     def _handle_get_stream(
         self,
@@ -919,14 +933,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # (e.g., after a process restart).
             try:
                 response_obj = await self._provider.get_response(response_id, context=_context)
-                snapshot = response_obj.as_dict()
+                snapshot = to_wire_dict(response_obj)
                 logger.info(
                     "Retrieved response %s: status=%s output_count=%d",
                     response_id,
                     snapshot.get("status"),
                     len(snapshot.get("output", [])),
                 )
-                return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+                return JSONResponse(_json_snapshot(snapshot), status_code=200, headers=_hdrs)
             except FoundryResourceNotFoundError:
                 pass  # Fall through to 404 below
             except FoundryBadRequestError as exc:
@@ -960,9 +974,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # so use a combined message.
             try:
                 persisted = await self._provider.get_response(response_id, context=_context)
-                persisted_dict = persisted.as_dict()
                 # B2: SSE replay requires background mode.
-                if persisted_dict.get("background") is not True:
+                if persisted.get("background") is not True:
                     return _invalid_mode(
                         "This response cannot be streamed because it was not created with background=true.",
                         _hdrs,
@@ -1288,7 +1301,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 record.set_response_snapshot(
                     build_cancelled_response(record.response_id, record.agent_reference, record.model)
                 )
-                return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=_hdrs)
+                return JSONResponse(_json_snapshot(_RuntimeState.to_snapshot(record)), status_code=200, headers=_hdrs)
             return terminal_error
 
         # B11: initiate cancellation winddown
@@ -1307,7 +1320,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
         if record.response is not None:
-            record.response.background = record.mode_flags.background
+            record.response["background"] = record.mode_flags.background
         record.transition_to("cancelled")
 
         # Persist cancelled state to durable store (B11: cancellation always wins)
@@ -1324,7 +1337,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         await self._runtime_state.try_evict(record.response_id)
 
         logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
-        return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+        return JSONResponse(_json_snapshot(snapshot), status_code=200, headers=_hdrs)
 
     async def _handle_cancel_fallback(
         self,
@@ -1349,7 +1362,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         """
         try:
             response_obj = await self._provider.get_response(response_id, context=_context)
-            persisted = response_obj.as_dict()
+            persisted = to_wire_dict(response_obj)
 
             # B1: background check comes first — non-bg responses always
             # get the "synchronous" message regardless of terminal status.
@@ -1364,7 +1377,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             terminal_error = _check_cancel_terminal_status(stored_status, _hdrs)
             if terminal_error is not None:
                 if stored_status == "cancelled":
-                    return JSONResponse(persisted, status_code=200, headers=_hdrs)
+                    return JSONResponse(_json_snapshot(persisted), status_code=200, headers=_hdrs)
                 return terminal_error
         except FoundryResourceNotFoundError:
             pass  # Fall through to 404 below
@@ -1448,12 +1461,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return _deleted_response(response_id, _hdrs)
             except KeyError:
                 return _not_found(response_id, _hdrs)
-
         ordered_items = items if order == "asc" else list(reversed(items))
-        ordered_dicts: list[dict[str, Any]] = [
-            item.as_dict() if hasattr(item, "as_dict") else cast("dict[str, Any]", item) for item in ordered_items
-        ]
-        scoped_items = _apply_item_cursors(ordered_dicts, after=after, before=before)
+        ordered_items = list(items) if order == "asc" else list(reversed(items))
+        scoped_items = _apply_item_cursors(cast("list[dict[str, Any]]", ordered_items), after=after, before=before)
 
         page = scoped_items[:limit]
         has_more = len(scoped_items) > limit

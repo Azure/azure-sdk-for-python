@@ -4,63 +4,60 @@
 
 from __future__ import annotations
 
-from typing import Any, Literal, Optional, cast
+from typing import Any, Optional, cast
 
-from ._generated import (
+from azure.ai.agentserver.responses.models._wire import get_field as _get_field
+from azure.ai.agentserver.responses.models._wire import is_type as _is_wire_type
+from azure.ai.agentserver.responses.models._wire import set_field as _set_field
+from azure.ai.agentserver.responses.models import (
     ConversationParam_2,
     CreateResponse,
     Item,
     ItemMessage,
+    ItemReferenceParam,
     MessageContent,
     MessageContentInputTextContent,
     MessageRole,
     OutputItem,
     ResponseObject,
-    ToolChoiceAllowed,
-    ToolChoiceOptions,
     ToolChoiceParam,
 )
-from ._generated.sdk.models._utils.model_base import _deserialize
-
-# ---------------------------------------------------------------------------
-# Internal utilities for dict-safe field access
-# ---------------------------------------------------------------------------
 
 
-def _get_field(obj: Any, field: str, default: Any = None) -> Any:
-    """Get *field* from a model instance or a plain dict.
-
-    :param obj: The model instance or dict to read from.
-    :type obj: Any
-    :param field: The field name to retrieve.
-    :type field: str
-    :param default: The default value if the field is missing.
-    :type default: Any
-    :returns: The field value, or *default*.
-    :rtype: Any
-    """
-    if isinstance(obj, dict):
-        return obj.get(field, default)
-    return getattr(obj, field, default)
-
-
-def _is_type(obj: Any, model_cls: type, type_value: str) -> bool:
-    """Check whether *obj* is *model_cls* or a dict with matching ``type``.
+def _is_type(obj: Any, _model_cls: type, type_value: str) -> bool:
+    """Check whether *obj* has a matching wire ``type`` discriminator.
 
     :param obj: The object to check.
     :type obj: Any
-    :param model_cls: The model class to check against.
+    :param model_cls: Retained for call-site readability; ignored at runtime.
     :type model_cls: type
     :param type_value: The string type discriminator to match in dicts.
     :type type_value: str
-    :returns: True if *obj* matches the model class or type value.
+    :returns: True if *obj* matches the wire type value.
     :rtype: bool
     """
-    if isinstance(obj, model_cls):
-        return True
-    if isinstance(obj, dict):
-        return obj.get("type") == type_value
-    return False
+    return _is_wire_type(obj, type_value)
+
+
+def is_item_reference(item: Any) -> bool:
+    """Return whether *item* is an item reference payload.
+
+    Item references are identified by OpenAI's typed ``item_reference`` shape,
+    or by the legacy id-only shorthand.
+    """
+    if not isinstance(item, dict):
+        return False
+    if item.get("type") == "item_reference":
+        return "id" in item
+    return "id" in item and "type" not in item and "role" not in item and "content" not in item
+
+
+def _ensure_item_type(data: dict[str, Any]) -> dict[str, Any]:
+    if "type" in data or is_item_reference(data):
+        return data
+    if "role" in data or "content" in data:
+        return {**data, "type": "message"}
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -79,7 +76,7 @@ def get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[st
     :returns: The conversation ID, or ``None`` if no conversation is set.
     :rtype: str | None
     """
-    conv = request.conversation
+    conv = _get_field(request, "conversation")
     if conv is None:
         return None
     if isinstance(conv, str):
@@ -103,33 +100,31 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
     :returns: A list of typed input items.
     :rtype: list[Item]
     """
-    inp = request.input
+    inp = _get_field(request, "input")
     if inp is None:
         return []
     if isinstance(inp, str):
         return [
-            ItemMessage(
-                role=MessageRole.USER,
-                content=[MessageContentInputTextContent(text=inp)],
-            )
+            {
+                "type": "message",
+                "role": MessageRole.USER,
+                "content": [{"type": "input_text", "text": inp}],
+            }
         ]
     # Normalize items: per the OpenAI spec, items without an explicit
     # ``type`` default to ``"message"`` (C-MSG-01 compliance).
     items: list[Item] = []
     for raw in inp:
-        d = dict(raw) if isinstance(raw, dict) else raw
-        if isinstance(d, dict) and "type" not in d:
-            d = {**d, "type": "message"}
-        if isinstance(d, Item):
-            items.append(d)
-        else:
-            items.append(_deserialize(Item, d))
+        item = raw
+        if isinstance(item, dict):
+            item = _ensure_item_type(item)
+        items.append(item)
 
     # Auto-expand string content on message items so downstream consumers
     # always see list[MessageContent] (matches .NET ExpandContent behaviour).
     for item in items:
-        if isinstance(item, ItemMessage) and isinstance(item.content, str):
-            item.content = get_content_expanded(item)
+        if _is_type(item, ItemMessage, "message") and isinstance(_get_field(item, "content"), str):
+            _set_field(item, "content", get_content_expanded(item))
 
     return items
 
@@ -169,23 +164,20 @@ def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoicePara
     :rtype: ToolChoiceParam | None
     :raises ValueError: If the tool_choice value is an unrecognized string.
     """
-    tc = request.tool_choice
+    tc = _get_field(request, "tool_choice")
     if tc is None:
         return None
-    if isinstance(tc, ToolChoiceParam):
+    if isinstance(tc, dict) and "type" in tc:
         return tc
     if isinstance(tc, str):
-        normalized = tc if not isinstance(tc, ToolChoiceOptions) else tc.value
+        normalized = getattr(tc, "value", tc)
         if normalized in ("auto", "required"):
-            return ToolChoiceAllowed(mode=cast(Literal["auto", "required"], normalized), tools=[])
+            return cast(ToolChoiceParam, {"type": "allowed_tools", "mode": normalized, "tools": []})
         if normalized == "none":
             return None
         raise ValueError(
             f"Unrecognized tool_choice string value: '{normalized}'. Expected 'auto', 'required', or 'none'."
         )
-    # dict fallback — wrap in ToolChoiceParam if it has a "type" key
-    if isinstance(tc, dict) and "type" in tc:
-        return ToolChoiceParam(tc)
     return None
 
 
@@ -199,17 +191,13 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
     :returns: The typed conversation parameter, or ``None``.
     :rtype: ConversationParam_2 | None
     """
-    conv = request.conversation
+    conv = _get_field(request, "conversation")
     if conv is None:
         return None
-    if isinstance(conv, ConversationParam_2):
+    if isinstance(conv, dict) and conv.get("id"):
         return conv
     if isinstance(conv, str):
-        return ConversationParam_2(id=conv) if conv else None
-    # dict fallback
-    if isinstance(conv, dict):
-        cid = conv.get("id")
-        return ConversationParam_2(id=cid) if cid else None
+        return cast(ConversationParam_2, {"id": conv}) if conv else None
     return None
 
 
@@ -231,19 +219,18 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
     :returns: A list of instruction items.
     :rtype: list[Item]
     """
-    instr = response.instructions
+    instr = _get_field(response, "instructions")
     if instr is None:
         return []
     if isinstance(instr, str):
         return [
-            ItemMessage(
-                {
-                    "id": "",
-                    "status": "completed",
-                    "role": MessageRole.DEVELOPER.value,
-                    "content": [{"type": "input_text", "text": instr}],
-                }
-            )
+            {
+                "id": "",
+                "status": "completed",
+                "type": "message",
+                "role": MessageRole.DEVELOPER.value,
+                "content": [{"type": "input_text", "text": instr}],
+            }
         ]
     return list(instr)
 
@@ -256,9 +243,7 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
 def get_output_item_id(item: OutputItem) -> str:
     """Extract the ``id`` field from any :class:`OutputItem` subtype.
 
-    The base :class:`OutputItem` class does not define ``id``, but all
-    concrete subtypes do. Falls back to dict-style access for unknown
-    subtypes.
+    All concrete output item wire payloads must include an ``id`` field.
 
     :param item: The output item to extract the ID from.
     :type item: OutputItem
@@ -269,14 +254,6 @@ def get_output_item_id(item: OutputItem) -> str:
     item_id = _get_field(item, "id")
     if item_id is not None:
         return str(item_id)
-
-    # Fallback: Model subclass supports Mapping protocol
-    try:
-        raw_id = item["id"]  # type: ignore[index]
-        if raw_id is not None:
-            return str(raw_id)
-    except (KeyError, TypeError):
-        pass
 
     raise ValueError(
         f"OutputItem of type '{type(item).__name__}' does not have a valid id. "
@@ -306,7 +283,7 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     if content is None:
         return []
     if isinstance(content, str):
-        return [MessageContentInputTextContent(text=content)] if content else []
+        return cast(list[MessageContent], [{"type": "input_text", "text": content}]) if content else []
     return list(content)
 
 
@@ -366,11 +343,8 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
 
     Returns ``None`` for :class:`ItemReferenceParam` or unrecognised types.
 
-    The conversion leverages ``_deserialize(OutputItem, data)`` which
-    resolves the correct subtype via the ``type`` discriminator.  All 24
-    input/output discriminator pairs share the same string values, so the
-    dict representation produced by ``dict(item)`` is directly compatible
-    with ``OutputItem`` deserialization.
+    The input/output discriminator pairs share the same string values, so the
+    item wire payload is directly compatible with the output item wire contract.
 
     :param item: The input item to convert.
     :type item: Item
@@ -387,7 +361,7 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
     if item_id is None:
         return None  # ItemReferenceParam or unrecognised
 
-    data = dict(item)
+    data = _ensure_item_type(item.copy())
     data["id"] = item_id
 
     item_type = data.get("type", "")
@@ -398,16 +372,15 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
     elif item_type in _PRESERVE_STATUS_ITEM_TYPES:
         pass  # keep the original status from the input item
 
-    return _deserialize(OutputItem, data)
+    return cast(OutputItem, data)
 
 
 def to_item(output_item: OutputItem) -> Item | None:
     """Convert an :class:`OutputItem` back to the corresponding :class:`Item`.
 
-    Both hierarchies share the same ``type`` discriminator values, so
-    serialising an :class:`OutputItem` to a dict and deserializing as
-    :class:`Item` produces the correct concrete subtype (e.g.
-    :class:`OutputItemMessage` → :class:`ItemMessage`).
+    Both hierarchies share the same ``type`` discriminator values, so the
+    output item's wire dict is directly compatible with the input item contract
+    (e.g. ``OutputItemMessage`` → ``ItemMessage``).
 
     Returns ``None`` if the output item type has no :class:`Item` counterpart.
 
@@ -416,8 +389,11 @@ def to_item(output_item: OutputItem) -> Item | None:
     :returns: The corresponding input item, or ``None``.
     :rtype: Item | None
     """
-    try:
-        data = dict(output_item)
-        return _deserialize(Item, data)
-    except Exception:  # pylint: disable=broad-except
+    if not isinstance(output_item, dict):
         return None
+    if output_item.get("type") == "output_message":
+        return cast(Item, {**output_item, "type": "message"})
+    item = _ensure_item_type(output_item.copy())
+    if "type" not in item:
+        return None
+    return cast(Item, item)

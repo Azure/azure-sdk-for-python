@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses.hosting._validation import parse_create_response
-from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
+from azure.ai.agentserver.responses.models._validators import validate_create_response_payload
 from azure.ai.agentserver.responses.models.errors import RequestValidationError
 
 # ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ def test_parse_create_response_rejects_invalid_payload() -> None:
 
 def test_parse_create_response_allows_valid_payload() -> None:
     parsed = parse_create_response({"model": "gpt-4o"})
-    assert parsed.model == "gpt-4o"
+    assert parsed["model"] == "gpt-4o"
 
 
 def test_parse_create_response_rejects_non_object_body() -> None:
@@ -39,39 +39,39 @@ def test_parse_create_response_rejects_non_object_body() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Generated validator tests (validate_CreateResponse directly)
+# Generated validator wrapper tests
 # ---------------------------------------------------------------------------
 
 
 def test_generated_create_response_validator_accepts_string_input() -> None:
-    errors = validate_CreateResponse({"input": "hello world"})
+    errors = validate_create_response_payload({"input": "hello world"})
     assert errors == []
 
 
 def test_generated_create_response_validator_accepts_array_input_items() -> None:
     # ItemMessage requires role + content in addition to type (GAP-01: type is
     # optional on input, but role/content remain required by the spec).
-    errors = validate_CreateResponse({"input": [{"type": "message", "role": "user", "content": "hello"}]})
+    errors = validate_create_response_payload({"input": [{"type": "message", "role": "user", "content": "hello"}]})
     assert errors == []
 
 
 def test_generated_create_response_validator_rejects_non_string_non_array_input() -> None:
-    errors = validate_CreateResponse({"input": 123})
+    errors = validate_create_response_payload({"input": 123})
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
 
 
 def test_generated_create_response_validator_rejects_non_object_input_item() -> None:
-    errors = validate_CreateResponse({"input": [123]})
+    errors = validate_create_response_payload({"input": [123]})
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
 
 
 def test_generated_create_response_validator_rejects_input_item_missing_type() -> None:
-    errors = validate_CreateResponse({"input": [{}]})
+    errors = validate_create_response_payload({"input": [{}]})
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
 
 
 def test_generated_create_response_validator_rejects_input_item_type_with_wrong_primitive() -> None:
-    errors = validate_CreateResponse({"input": [{"type": 1}]})
+    errors = validate_create_response_payload({"input": [{"type": 1}]})
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
 
 
@@ -91,12 +91,12 @@ _VALID_INPUT_ITEMS: dict[str, dict] = {
 
 @pytest.mark.parametrize("item_type", list(_VALID_INPUT_ITEMS))
 def test_generated_create_response_validator_accepts_multiple_input_item_types(item_type: str) -> None:
-    errors = validate_CreateResponse({"input": [_VALID_INPUT_ITEMS[item_type]]})
+    errors = validate_create_response_payload({"input": [_VALID_INPUT_ITEMS[item_type]]})
     assert errors == []
 
 
 def test_generated_create_response_validator_accepts_mixed_input_item_types() -> None:
-    errors = validate_CreateResponse(
+    errors = validate_create_response_payload(
         {
             "input": [
                 _VALID_INPUT_ITEMS["message"],

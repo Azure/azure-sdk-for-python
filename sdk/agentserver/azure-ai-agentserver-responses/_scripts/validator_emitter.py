@@ -56,13 +56,25 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
     ordered_schemas = _ordered(schemas)
     target_roots = sorted(dict.fromkeys(roots)) if roots else sorted(ordered_schemas)
 
-    lines: list[str] = [_header(), "", "from __future__ import annotations", "", "from typing import Any", ""]
+    lines: list[str] = [_header(), "", "from __future__ import annotations", "", "from typing import Any, get_args", ""]
     lines.extend(
         [
+            "try:",
+            "    from . import types as _response_types",
+            "except Exception:",
+            "    _response_types = None",
+            "",
             "try:",
             "    from . import _enums as _generated_enums",
             "except Exception:",
             "    _generated_enums = None",
+            "",
+            "_LITERAL_ENUM_ALIASES = {",
+            "    'ServiceTier': 'ServiceTierEnum',",
+            "}",
+            "_LITERAL_ENUM_VALUES = {",
+            "    'Verbosity': ('low', 'medium', 'high'),",
+            "}",
             "",
             "def _append_error(errors: list[dict[str, str]], path: str, message: str) -> None:",
             "    errors.append({'path': path, 'message': message})",
@@ -103,6 +115,14 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             '    _append_error(errors, path, f"Expected {expected}, got {_type_label(value)}")',
             "",
             "def _enum_values(enum_name: str) -> tuple[tuple[str, ...] | None, str | None]:",
+            "    if enum_name in _LITERAL_ENUM_VALUES:",
+            "        return _LITERAL_ENUM_VALUES[enum_name], None",
+            "    if _response_types is not None:",
+            "        alias_name = _LITERAL_ENUM_ALIASES.get(enum_name, enum_name)",
+            "        literal_alias = getattr(_response_types, alias_name, None)",
+            "        literal_values = get_args(literal_alias)",
+            "        if literal_values:",
+            "            return tuple(str(value) for value in literal_values), None",
             "    if _generated_enums is None:",
             "        return None, f'enum type _enums.{enum_name} is unavailable'",
             "    enum_cls = getattr(_generated_enums, enum_name, None)",

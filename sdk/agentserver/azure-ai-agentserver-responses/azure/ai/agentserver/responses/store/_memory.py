@@ -11,8 +11,10 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
+from azure.ai.agentserver.responses.models._wire import get_field, to_wire_dict
+from azure.ai.agentserver.responses.models import OutputItem, ResponseObject, ResponseStreamEvent
+
 from .._response_context import PlatformContext
-from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
@@ -84,7 +86,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         and tracks conversation membership for history resolution.
 
         :param response: The response envelope to persist.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models.Response
         :param input_items: Optional resolved output items to associate with the response.
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item IDs to link to the response.
@@ -94,7 +96,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :rtype: None
         :raises ValueError: If a non-deleted response with the same ID already exists.
         """
-        response_id = str(getattr(response, "id"))
+        response_payload = to_wire_dict(response)
+        response_id = str(response_payload["id"])
         async with self._locked():
             entry = self._entries.get(response_id)
             if entry is not None and not entry.deleted:
@@ -110,21 +113,21 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                     input_ids.append(item_id)
 
             history_ids = list(history_item_ids) if history_item_ids is not None else []
-            output_ids = self._store_output_items_unlocked(response)
+            output_ids = self._store_output_items_unlocked(response_payload)
             self._entries[response_id] = _StoreEntry(
                 execution=ResponseExecution(
                     response_id=response_id,
-                    mode_flags=self._resolve_mode_flags_from_response(response),
+                    mode_flags=self._resolve_mode_flags_from_response(response_payload),
                 ),
                 replay=StreamReplayState(response_id=response_id),
-                response=deepcopy(response),
+                response=deepcopy(response_payload),
                 input_item_ids=input_ids,
                 output_item_ids=output_ids,
                 history_item_ids=history_ids,
                 deleted=False,
             )
 
-            conversation_id = get_conversation_id(response)
+            conversation_id = get_conversation_id(response_payload)
             if conversation_id is not None:
                 self._conversation_responses[conversation_id].append(response_id)
 
@@ -136,7 +139,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A deep copy of the stored response envelope.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.Response
+        :rtype: ~azure.ai.agentserver.responses.models.Response
         :raises KeyError: If the response does not exist or has been deleted.
         """
         async with self._locked():
@@ -152,21 +155,22 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         the execution snapshot.
 
         :param response: The response envelope with updated fields.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models.Response
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        response_id = str(getattr(response, "id"))
+        response_payload = to_wire_dict(response)
+        response_id = str(response_payload["id"])
         async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None or entry.deleted:
                 raise KeyError(f"response '{response_id}' not found")
 
-            entry.response = deepcopy(response)
-            entry.execution.set_response_snapshot(deepcopy(response))
-            entry.output_item_ids = self._store_output_items_unlocked(response)
+            entry.response = deepcopy(response_payload)
+            entry.execution.set_response_snapshot(deepcopy(response_payload))
+            entry.output_item_ids = self._store_output_items_unlocked(response_payload)
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Delete a stored response envelope by identifier.
@@ -366,7 +370,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param response_id: The unique identifier of the response to update.
         :type response_id: str
         :param response: The response snapshot to associate with the execution.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models.Response
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and updated, ``False`` otherwise.
         :rtype: bool
@@ -376,7 +380,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             if entry is None:
                 return False
 
-            entry.execution.set_response_snapshot(response)
+            entry.execution.set_response_snapshot(to_wire_dict(response))
             self._apply_ttl_unlocked(entry, ttl_seconds)
             return True
 
@@ -665,11 +669,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         Must be called while holding ``self._lock``.
 
         :param response: The response envelope whose output items should be stored.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models.Response
         :returns: Ordered list of output item IDs.
         :rtype: list[str]
         """
-        output = getattr(response, "output", None)
+        output = get_field(response, "output")
         if not output:
             return []
         output_ids: list[str] = []
@@ -682,10 +686,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
     @staticmethod
     def _extract_item_id(item: Any) -> str | None:
-        """Extract item identifier from object-like or mapping-like values.
-
-        Supports both dict-like (``item["id"]``) and attribute-like (``item.id``)
-        access patterns.
+        """Extract item identifier from mapping-like wire values.
 
         :param item: The item to extract an ID from.
         :type item: Any
@@ -697,20 +698,19 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         if isinstance(item, dict):
             value = item.get("id")
             return str(value) if value is not None else None
-        value = getattr(item, "id", None)
-        return str(value) if value is not None else None
+        return None
 
     @staticmethod
     def _resolve_mode_flags_from_response(response: ResponseObject) -> ResponseModeFlags:
         """Build mode flags from a response snapshot where available.
 
         :param response: The response envelope to extract mode flags from.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models.Response
         :returns: Mode flags derived from the response's ``stream``, ``store``, and ``background`` attributes.
         :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseModeFlags
         """
         return ResponseModeFlags(
-            stream=bool(getattr(response, "stream", False)),
-            store=bool(getattr(response, "store", True)),
-            background=bool(getattr(response, "background", False)),
+            stream=bool(get_field(response, "stream", False)),
+            store=bool(get_field(response, "store", True)),
+            background=bool(get_field(response, "background", False)),
         )

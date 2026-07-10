@@ -23,7 +23,7 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
-from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
+from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
 
 app = ResponsesAgentServerHost()
 

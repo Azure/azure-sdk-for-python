@@ -1,32 +1,31 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Contract type assertions for every public handler/consumer surface.
+"""Contract shape assertions for every public handler/consumer surface.
 
-Every public API that returns model objects MUST return proper discriminated
-subtypes — never base classes, never plain dicts.  These tests assert the
-``isinstance`` contract so regressions are caught immediately.
+Public APIs now return dict-native wire payloads. These tests assert the
+discriminator and field-shape contract so regressions are caught immediately.
 
 Surfaces covered:
   1. context.request            → CreateResponse
-  2. context.get_input_items()  → Sequence[Item] with subtype fidelity
+  2. context.get_input_items()  → Sequence[Item] wire dicts
   3. context.get_input_text()   → str
-  4. context.get_history()      → Sequence[OutputItem] with subtype fidelity
-  5. stream.response            → ResponseObject
-  6. stream.response.output     → list of OutputItem subtypes
-  7. Builder emit_* returns     → ResponseStreamEvent subtypes
-  8. Generator convenience      → ResponseStreamEvent subtypes
+  4. context.get_history()      → Sequence[OutputItem] wire dicts
+  5. stream.response            → ResponseObject wire dict
+  6. stream.response.output     → list of OutputItem wire dicts
+  7. Builder emit_* returns     → ResponseStreamEvent wire dicts
+  8. Generator convenience      → ResponseStreamEvent wire dicts
 """
 
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock
 
 import pytest
 
 from azure.ai.agentserver.responses._response_context import ResponseContext
-from azure.ai.agentserver.responses.models._generated import (
+from azure.ai.agentserver.responses.models import (
     CreateResponse,
     Item,
     ItemMessage,
@@ -61,7 +60,7 @@ def _mode_flags() -> ResponseModeFlags:
 
 
 def _make_request(inp: Any) -> CreateResponse:
-    return CreateResponse(model="test-model", input=inp)
+    return cast(CreateResponse, {"model": "test-model", "input": inp})
 
 
 def _mock_provider(**overrides: Any) -> Any:
@@ -71,13 +70,23 @@ def _mock_provider(**overrides: Any) -> Any:
     return provider
 
 
+def _field(payload: Any, name: str) -> Any:
+    return payload.get(name) if isinstance(payload, dict) else None
+
+
+def _content_text(item: Any, index: int = 0) -> str:
+    content = _field(item, "content")
+    part = content[index]
+    return _field(part, "text")
+
+
 # =====================================================================
 # 1. context.request → CreateResponse
 # =====================================================================
 
 
 class TestContextRequestType:
-    """context.request must be a CreateResponse model instance."""
+    """context.request must be a CreateResponse wire payload."""
 
     @pytest.mark.asyncio
     async def test_request_is_create_response_model(self) -> None:
@@ -88,9 +97,8 @@ class TestContextRequestType:
             request=request,
         )
 
-        assert isinstance(ctx.request, CreateResponse)
-        # Attribute access works (not a dict)
-        assert ctx.request.model == "test-model"
+        assert isinstance(ctx.request, dict)
+        assert ctx.request["model"] == "test-model"
 
 
 # =====================================================================
@@ -103,16 +111,18 @@ class TestInputItemsContractTypes:
 
     @pytest.mark.asyncio
     async def test_inline_message_returns_item_message_subtype(self) -> None:
-        msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hi")])
-        request = CreateResponse(model="m", input=[msg.as_dict()])
+        msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
+        request = cast(CreateResponse, {"model": "m", "input": [msg]})
         ctx = ResponseContext(response_id="resp_type_2a", mode_flags=_mode_flags(), request=request)
 
         items = await ctx.get_input_items()
 
         assert isinstance(items, Sequence)
         assert len(items) == 1
-        assert isinstance(items[0], Item), f"Expected Item, got {type(items[0])}"
-        assert isinstance(items[0], ItemMessage), f"Expected ItemMessage, got {type(items[0])}"
+        assert isinstance(items[0], dict), f"Expected Item wire dict, got {type(items[0])}"
+        assert items[0]["type"] == "message"
+        assert items[0]["role"] == "user"
+        assert _content_text(items[0]) == "hi"
 
     @pytest.mark.asyncio
     async def test_resolved_reference_returns_typed_item(self) -> None:
@@ -127,7 +137,7 @@ class TestInputItemsContractTypes:
             }
         )
         provider = _mock_provider(get_items_return=[stored_msg])
-        request = CreateResponse(model="m", input=[{"type": "item_reference", "id": "msg_ref_01"}])
+        request = cast(CreateResponse, {"model": "m", "input": [{"type": "item_reference", "id": "msg_ref_01"}]})
         ctx = ResponseContext(
             response_id="resp_type_2b",
             mode_flags=_mode_flags(),
@@ -138,8 +148,10 @@ class TestInputItemsContractTypes:
         items = await ctx.get_input_items()
 
         assert len(items) == 1
-        assert isinstance(items[0], Item), f"Expected Item subtype, got {type(items[0])}"
-        assert isinstance(items[0], ItemMessage), f"Expected ItemMessage, got {type(items[0])}"
+        assert isinstance(items[0], dict), f"Expected Item wire dict, got {type(items[0])}"
+        assert items[0]["type"] == "message"
+        assert items[0]["id"] == "msg_ref_01"
+        assert _content_text(items[0]) == "resolved"
 
 
 # =====================================================================
@@ -226,18 +238,10 @@ class TestGetHistoryContractTypes:
         assert isinstance(history, Sequence)
         assert len(history) == 2
 
-        # First item must be OutputItemMessage, not base OutputItem
-        assert isinstance(history[0], OutputItem), f"Expected OutputItem, got {type(history[0])}"
-        assert isinstance(history[0], OutputItemMessage), f"Expected OutputItemMessage, got {type(history[0])}"
-        # Attribute access must work (not just dict access)
-        assert history[0].content[0].text == "previous reply"
-
-        # Second item must be OutputItemFunctionToolCall
-        assert isinstance(history[1], OutputItem), f"Expected OutputItem, got {type(history[1])}"
-        assert isinstance(history[1], OutputItemFunctionToolCall), (
-            f"Expected OutputItemFunctionToolCall, got {type(history[1])}"
-        )
-        assert history[1].name == "get_weather"
+        assert _field(history[0], "type") == "message"
+        assert _content_text(history[0]) == "previous reply"
+        assert _field(history[1], "type") == "function_call"
+        assert _field(history[1], "name") == "get_weather"
 
     @pytest.mark.asyncio
     async def test_caches_result_on_second_call(self) -> None:
@@ -267,7 +271,7 @@ class TestGetHistoryContractTypes:
         second = await ctx.get_history()
 
         assert first is second  # cached tuple
-        assert isinstance(first[0], OutputItemMessage)
+        assert _field(first[0], "type") == "message"
 
 
 # =====================================================================
@@ -276,21 +280,21 @@ class TestGetHistoryContractTypes:
 
 
 class TestStreamResponseType:
-    """stream.response must be a ResponseObject, not a dict."""
+    """stream.response must be a ResponseObject wire dict."""
 
     def test_response_is_response_object_model(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_5a", model="gpt-4o")
 
-        assert isinstance(stream.response, ResponseObject)
-        assert stream.response.id == "resp_type_5a"
-        assert stream.response.model == "gpt-4o"
+        assert isinstance(stream.response, dict)
+        assert stream.response["id"] == "resp_type_5a"
+        assert stream.response["model"] == "gpt-4o"
 
     def test_seed_response_preserves_type(self) -> None:
-        seed = ResponseObject({"id": "resp_type_5b", "object": "response", "output": [], "model": "gpt-4o"})
+        seed = cast(ResponseObject, {"id": "resp_type_5b", "object": "response", "output": [], "model": "gpt-4o"})
         stream = ResponseEventStream(response=seed)
 
-        assert isinstance(stream.response, ResponseObject)
-        assert stream.response.id == "resp_type_5b"
+        assert isinstance(stream.response, dict)
+        assert stream.response["id"] == "resp_type_5b"
 
 
 # =====================================================================
@@ -299,7 +303,7 @@ class TestStreamResponseType:
 
 
 class TestResponseOutputItemTypes:
-    """After output_item.done, response.output items must be proper subtypes."""
+    """After output_item.done, response.output items must have proper wire discriminators."""
 
     def test_message_output_item_is_output_item_message(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_6a")
@@ -313,12 +317,10 @@ class TestResponseOutputItemTypes:
         text.emit_done()
         message.emit_done()
 
-        assert len(stream.response.output) == 1
-        item = stream.response.output[0]
-        assert isinstance(item, OutputItem), f"Expected OutputItem, got {type(item)}"
-        assert isinstance(item, OutputItemMessage), f"Expected OutputItemMessage, got {type(item)}"
-        # Subtype-specific attribute access must work
-        assert item.content[0].text == "hello"
+        assert len(stream.response["output"]) == 1
+        item = stream.response["output"][0]
+        assert item["type"] == "message"
+        assert item["content"][0]["text"] == "hello"
 
     def test_function_call_output_item_is_function_tool_call(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_6b")
@@ -329,12 +331,11 @@ class TestResponseOutputItemTypes:
         fc.emit_arguments_done('{"city":"Seattle"}')
         fc.emit_done()
 
-        assert len(stream.response.output) == 1
-        item = stream.response.output[0]
-        assert isinstance(item, OutputItem), f"Expected OutputItem, got {type(item)}"
-        assert isinstance(item, OutputItemFunctionToolCall), f"Expected OutputItemFunctionToolCall, got {type(item)}"
-        assert item.name == "get_weather"
-        assert item.arguments == '{"city":"Seattle"}'
+        assert len(stream.response["output"]) == 1
+        item = stream.response["output"][0]
+        assert item["type"] == "function_call"
+        assert item["name"] == "get_weather"
+        assert item["arguments"] == '{"city":"Seattle"}'
 
     def test_reasoning_output_item_is_reasoning_item(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_6c")
@@ -347,10 +348,9 @@ class TestResponseOutputItemTypes:
         summary.emit_done()
         reasoning.emit_done()
 
-        assert len(stream.response.output) == 1
-        item = stream.response.output[0]
-        assert isinstance(item, OutputItem), f"Expected OutputItem, got {type(item)}"
-        assert isinstance(item, OutputItemReasoningItem), f"Expected OutputItemReasoningItem, got {type(item)}"
+        assert len(stream.response["output"]) == 1
+        item = stream.response["output"][0]
+        assert item["type"] == "reasoning"
 
     def test_multiple_output_items_all_typed(self) -> None:
         """Mixed output items must all be proper subtypes."""
@@ -373,9 +373,9 @@ class TestResponseOutputItemTypes:
         fc.emit_arguments_done("{}")
         fc.emit_done()
 
-        assert len(stream.response.output) == 2
-        assert isinstance(stream.response.output[0], OutputItemMessage)
-        assert isinstance(stream.response.output[1], OutputItemFunctionToolCall)
+        assert len(stream.response["output"]) == 2
+        assert stream.response["output"][0]["type"] == "message"
+        assert stream.response["output"][1]["type"] == "function_call"
 
 
 # =====================================================================
@@ -384,18 +384,18 @@ class TestResponseOutputItemTypes:
 
 
 class TestBuilderEventTypes:
-    """Every builder emit_* method must return a typed ResponseStreamEvent subtype."""
+    """Every builder emit_* method must return a typed ResponseStreamEvent wire dict."""
 
     def test_lifecycle_events_are_typed(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_7a")
 
         created = stream.emit_created()
-        assert isinstance(created, ResponseStreamEvent)
-        assert isinstance(created, ResponseCreatedEvent), f"Expected ResponseCreatedEvent, got {type(created)}"
+        assert isinstance(created, dict)
+        assert created["type"] == "response.created"
 
         in_progress = stream.emit_in_progress()
-        assert isinstance(in_progress, ResponseStreamEvent)
-        assert isinstance(in_progress, ResponseInProgressEvent)
+        assert isinstance(in_progress, dict)
+        assert in_progress["type"] == "response.in_progress"
 
         msg = stream.add_output_item_message()
         msg.emit_added()
@@ -407,8 +407,8 @@ class TestBuilderEventTypes:
         msg.emit_done()
 
         completed = stream.emit_completed()
-        assert isinstance(completed, ResponseStreamEvent)
-        assert isinstance(completed, ResponseCompletedEvent)
+        assert isinstance(completed, dict)
+        assert completed["type"] == "response.completed"
 
     def test_message_builder_events_are_typed(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_7b")
@@ -416,29 +416,29 @@ class TestBuilderEventTypes:
 
         message = stream.add_output_item_message()
         added = message.emit_added()
-        assert isinstance(added, ResponseStreamEvent)
-        assert isinstance(added, ResponseOutputItemAddedEvent)
+        assert isinstance(added, dict)
+        assert added["type"] == "response.output_item.added"
 
         text = message.add_text_content()
         content_added = text.emit_added()
-        assert isinstance(content_added, ResponseStreamEvent)
-        assert isinstance(content_added, ResponseContentPartAddedEvent)
+        assert isinstance(content_added, dict)
+        assert content_added["type"] == "response.content_part.added"
 
         delta = text.emit_delta("hello")
-        assert isinstance(delta, ResponseStreamEvent)
-        assert isinstance(delta, ResponseTextDeltaEvent)
+        assert isinstance(delta, dict)
+        assert delta["type"] == "response.output_text.delta"
 
         text_done = text.emit_text_done()
-        assert isinstance(text_done, ResponseStreamEvent)
-        assert isinstance(text_done, ResponseTextDoneEvent)
+        assert isinstance(text_done, dict)
+        assert text_done["type"] == "response.output_text.done"
 
         content_done = text.emit_done()
-        assert isinstance(content_done, ResponseStreamEvent)
-        assert isinstance(content_done, ResponseContentPartDoneEvent)
+        assert isinstance(content_done, dict)
+        assert content_done["type"] == "response.content_part.done"
 
         item_done = message.emit_done()
-        assert isinstance(item_done, ResponseStreamEvent)
-        assert isinstance(item_done, ResponseOutputItemDoneEvent)
+        assert isinstance(item_done, dict)
+        assert item_done["type"] == "response.output_item.done"
 
     def test_function_call_builder_events_are_typed(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_7c")
@@ -446,16 +446,16 @@ class TestBuilderEventTypes:
 
         fc = stream.add_output_item_function_call("fn", "call_1")
         added = fc.emit_added()
-        assert isinstance(added, ResponseOutputItemAddedEvent)
+        assert added["type"] == "response.output_item.added"
 
         delta = fc.emit_arguments_delta('{"k":')
-        assert isinstance(delta, ResponseFunctionCallArgumentsDeltaEvent)
+        assert delta["type"] == "response.function_call_arguments.delta"
 
         args_done = fc.emit_arguments_done('{"k":"v"}')
-        assert isinstance(args_done, ResponseFunctionCallArgumentsDoneEvent)
+        assert args_done["type"] == "response.function_call_arguments.done"
 
         done = fc.emit_done()
-        assert isinstance(done, ResponseOutputItemDoneEvent)
+        assert done["type"] == "response.output_item.done"
 
 
 # =====================================================================
@@ -464,7 +464,7 @@ class TestBuilderEventTypes:
 
 
 class TestGeneratorConvenienceTypes:
-    """Generator convenience methods must yield typed ResponseStreamEvent subtypes."""
+    """Generator convenience methods must yield ResponseStreamEvent wire dicts."""
 
     def test_output_item_message_events_are_typed(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_8a")
@@ -474,15 +474,16 @@ class TestGeneratorConvenienceTypes:
         events = list(stream.output_item_message("Hi there"))
 
         for event in events:
-            assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+            assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
 
-        # Verify specific subtypes for key events
-        assert isinstance(events[0], ResponseOutputItemAddedEvent)  # output_item.added
-        assert isinstance(events[1], ResponseContentPartAddedEvent)  # content_part.added
-        assert isinstance(events[2], ResponseTextDeltaEvent)  # output_text.delta
-        assert isinstance(events[3], ResponseTextDoneEvent)  # output_text.done
-        assert isinstance(events[4], ResponseContentPartDoneEvent)  # content_part.done
-        assert isinstance(events[5], ResponseOutputItemDoneEvent)  # output_item.done
+        assert [event["type"] for event in events] == [
+            "response.output_item.added",
+            "response.content_part.added",
+            "response.output_text.delta",
+            "response.output_text.done",
+            "response.content_part.done",
+            "response.output_item.done",
+        ]
 
     def test_output_item_function_call_events_are_typed(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_8b")
@@ -492,10 +493,10 @@ class TestGeneratorConvenienceTypes:
         events = list(stream.output_item_function_call("fn", "call_1", "{}"))
 
         for event in events:
-            assert isinstance(event, ResponseStreamEvent)
+            assert isinstance(event, dict)
 
-        assert isinstance(events[0], ResponseOutputItemAddedEvent)
-        assert isinstance(events[-1], ResponseOutputItemDoneEvent)
+        assert events[0]["type"] == "response.output_item.added"
+        assert events[-1]["type"] == "response.output_item.done"
 
     def test_output_item_reasoning_events_are_typed(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_8c")
@@ -505,10 +506,10 @@ class TestGeneratorConvenienceTypes:
         events = list(stream.output_item_reasoning_item("thinking"))
 
         for event in events:
-            assert isinstance(event, ResponseStreamEvent)
+            assert isinstance(event, dict)
 
-        assert isinstance(events[0], ResponseOutputItemAddedEvent)
-        assert isinstance(events[-1], ResponseOutputItemDoneEvent)
+        assert events[0]["type"] == "response.output_item.added"
+        assert events[-1]["type"] == "response.output_item.done"
 
 
 # =====================================================================
@@ -517,8 +518,7 @@ class TestGeneratorConvenienceTypes:
 
 
 class TestInMemoryProviderTypePreservation:
-    """Items stored and retrieved through InMemoryResponseProvider must
-    retain their discriminated subtype identity."""
+    """Items stored and retrieved through InMemoryResponseProvider retain wire discriminators."""
 
     @pytest.mark.asyncio
     async def test_stored_output_items_retrieved_as_subtypes(self) -> None:
@@ -527,8 +527,9 @@ class TestInMemoryProviderTypePreservation:
 
         provider = InMemoryResponseProvider()
 
-        # Build a response with typed output items on response.output
-        response = ResponseObject(
+        # Build a response with typed output item wire payloads on response.output
+        response = cast(
+            ResponseObject,
             {
                 "id": "resp_mem_1",
                 "object": "response",
@@ -551,7 +552,7 @@ class TestInMemoryProviderTypePreservation:
                         "status": "completed",
                     },
                 ],
-            }
+            },
         )
 
         await provider.create_response(response, input_items=None, history_item_ids=None)
@@ -562,15 +563,11 @@ class TestInMemoryProviderTypePreservation:
         assert len(items) == 2
         assert items[0] is not None
         assert items[1] is not None
-        assert isinstance(items[0], OutputItem)
-        assert isinstance(items[0], OutputItemMessage), f"Expected OutputItemMessage, got {type(items[0])}"
-        assert items[0].content[0].text == "stored text"
+        assert _field(items[0], "type") == "message"
+        assert _content_text(items[0]) == "stored text"
 
-        assert isinstance(items[1], OutputItem)
-        assert isinstance(items[1], OutputItemFunctionToolCall), (
-            f"Expected OutputItemFunctionToolCall, got {type(items[1])}"
-        )
-        assert items[1].name == "lookup"
+        assert _field(items[1], "type") == "function_call"
+        assert _field(items[1], "name") == "lookup"
 
     @pytest.mark.asyncio
     async def test_history_round_trip_preserves_subtypes(self) -> None:
@@ -580,7 +577,8 @@ class TestInMemoryProviderTypePreservation:
         provider = InMemoryResponseProvider()
 
         # Create a completed response with output items
-        response = ResponseObject(
+        response = cast(
+            ResponseObject,
             {
                 "id": "resp_hist_rt_1",
                 "object": "response",
@@ -596,7 +594,7 @@ class TestInMemoryProviderTypePreservation:
                         "content": [{"type": "output_text", "text": "turn 1 reply", "annotations": []}],
                     }
                 ],
-            }
+            },
         )
         await provider.create_response(response, input_items=None, history_item_ids=None)
 
@@ -612,10 +610,10 @@ class TestInMemoryProviderTypePreservation:
 
         assert len(history) >= 1
         # The message from turn 1 must be a proper OutputItemMessage
-        msg_item = next((h for h in history if getattr(h, "id", None) == "msg_rt_1"), None)
+        msg_item = next((h for h in history if _field(h, "id") == "msg_rt_1"), None)
         assert msg_item is not None, "Expected msg_rt_1 in history"
-        assert isinstance(msg_item, OutputItemMessage), f"Expected OutputItemMessage, got {type(msg_item)}"
-        assert msg_item.content[0].text == "turn 1 reply"
+        assert _field(msg_item, "type") == "message"
+        assert _content_text(msg_item) == "turn 1 reply"
 
 
 # =====================================================================
@@ -625,7 +623,7 @@ class TestInMemoryProviderTypePreservation:
 
 class TestStreamLifecycleOutputTypes:
     """After a full create→in_progress→items→completed stream, response.output
-    must contain properly typed OutputItem subtypes (not base OutputItem)."""
+    must contain proper OutputItem wire discriminators."""
 
     def test_full_stream_lifecycle_output_types(self) -> None:
         stream = ResponseEventStream(response_id="resp_type_10a", model="gpt-4o")
@@ -642,16 +640,12 @@ class TestStreamLifecycleOutputTypes:
 
         stream.emit_completed()
 
-        output = stream.response.output
+        output = stream.response["output"]
         assert len(output) == 2
 
-        assert isinstance(output[0], OutputItemMessage), (
-            f"After full lifecycle, output[0] should be OutputItemMessage, got {type(output[0])}"
-        )
-        assert output[0].content[0].text == "Hello"
+        assert output[0]["type"] == "message"
+        assert output[0]["content"][0]["text"] == "Hello"
 
-        assert isinstance(output[1], OutputItemFunctionToolCall), (
-            f"After full lifecycle, output[1] should be OutputItemFunctionToolCall, got {type(output[1])}"
-        )
-        assert output[1].name == "get_temp"
-        assert output[1].arguments == '{"unit":"C"}'
+        assert output[1]["type"] == "function_call"
+        assert output[1]["name"] == "get_temp"
+        assert output[1]["arguments"] == '{"unit":"C"}'

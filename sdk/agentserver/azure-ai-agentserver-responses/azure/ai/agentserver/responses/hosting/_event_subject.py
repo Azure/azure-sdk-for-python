@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import AsyncIterator
 
-from ..models._generated import ResponseStreamEvent
+from azure.ai.agentserver.responses.models import ResponseStreamEvent
 
 
 class _ResponseEventSubject:
@@ -37,7 +37,7 @@ class _ResponseEventSubject:
     async def publish(self, event: ResponseStreamEvent) -> None:
         """Push a new event to all current subscribers and append it to the replay buffer.
 
-        :param event: The normalised event (``ResponseStreamEvent`` model instance).
+        :param event: The normalised event wire payload.
         :type event: ResponseStreamEvent
         """
         async with self._lock:
@@ -84,7 +84,7 @@ class _ResponseEventSubject:
                 item = await q.get()
                 if item is self._DONE:
                     return
-                assert isinstance(item, ResponseStreamEvent)
+                assert isinstance(item, dict) and isinstance(item.get("type"), str)
                 yield item
         finally:
             # Clean up subscription on client disconnect or normal completion

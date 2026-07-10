@@ -115,7 +115,7 @@ class CreateSpan:
         self._ended = True
         if self._hook is None:
             return
-        self._hook.on_span_end(self.name, dict(self.tags), error)
+        self._hook.on_span_end(self.name, self.tags.copy(), error)
 
 
 def start_create_span(name: str, tags: dict[str, Any], hook: CreateSpanHook | None = None) -> CreateSpan:
@@ -130,9 +130,9 @@ def start_create_span(name: str, tags: dict[str, Any], hook: CreateSpanHook | No
     :return: The started ``CreateSpan`` instance.
     :rtype: CreateSpan
     """
-    span = CreateSpan(name=name, tags=dict(tags), _hook=hook)
+    span = CreateSpan(name=name, tags=tags.copy(), _hook=hook)
     if hook is not None:
-        hook.on_span_start(name, dict(span.tags))
+        hook.on_span_start(name, span.tags.copy())
     return span
 
 
@@ -316,7 +316,7 @@ class InMemoryCreateSpanHook:
         self.spans.append(
             RecordedSpan(
                 name=name,
-                tags=dict(tags),
+                tags=tags.copy(),
                 started_at=datetime.now(timezone.utc),
             )
         )
@@ -337,6 +337,6 @@ class InMemoryCreateSpanHook:
             self.on_span_start(name, tags)
 
         span = self.spans[-1]
-        span.tags = dict(tags)
+        span.tags = tags.copy()
         span.error = error
         span.ended_at = datetime.now(timezone.utc)

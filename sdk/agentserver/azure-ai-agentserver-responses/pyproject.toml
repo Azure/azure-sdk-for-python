@@ -48,7 +48,10 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+pytyped = [
+    "py.typed",
+    "models/_generated/py.typed",
+]
 
 [tool.mypy]
 python_version = "3.10"
