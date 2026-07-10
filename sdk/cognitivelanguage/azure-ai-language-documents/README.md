@@ -403,7 +403,7 @@ For example:
 from azure.core.exceptions import HttpResponseError
 
 try:
-    client.analyze_documents_job_status("invalid-job-id")
+    client.get_job_state("invalid-job-id")
 except HttpResponseError as error:
     print(f"Query failed: {error.message}")
 
