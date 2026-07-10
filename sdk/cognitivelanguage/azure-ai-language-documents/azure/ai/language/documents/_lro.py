@@ -6,7 +6,7 @@
 
 from azure.core.polling.base_polling import LROBasePolling
 
-_FINISHED = frozenset(["succeeded", "canceled", "cancelled", "failed"])
+_FINISHED = frozenset(["succeeded", "canceled", "cancelled", "failed", "partiallycompleted"])
 
 
 class AnalyzeDocumentsLROPollingMethod(LROBasePolling):
