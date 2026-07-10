@@ -99,7 +99,6 @@ _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
 _ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
-_ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
 _ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
@@ -352,6 +351,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry-instrumentation-tornado",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.httpx",
     "opentelemetry.instrumentation.wsgi",
 )
 
