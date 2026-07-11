@@ -9,7 +9,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from util import create_version_with_endpoint, create_version_with_endpoint_async
+    from samples.util import create_version_with_endpoint, create_version_with_endpoint_async
 else:
     _SAMPLES_UTIL_PATH = Path(__file__).resolve().parents[1] / "util.py"
     _PKG_ROOT = Path(__file__).resolve().parents[2]
