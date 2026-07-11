@@ -15,7 +15,7 @@ the user handler with:
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
 * a structured close-event log line carrying
-  ``azure.ai.agentserver.invocations_ws.session_id``,
+  ``azure.ai.agentserver.session_id``,
   ``azure.ai.agentserver.invocations_ws.close_code``, and
   ``azure.ai.agentserver.invocations_ws.duration_ms``.
 """
@@ -375,7 +375,7 @@ class _WSHandlerMixin(_MixinBase):
     ) -> None:
         """Emit the structured close-event log line for one WS connection.
 
-        The log record carries ``azure.ai.agentserver.invocations_ws.session_id``,
+        The log record carries ``azure.ai.agentserver.session_id``,
         ``azure.ai.agentserver.invocations_ws.close_code``, and
         ``azure.ai.agentserver.invocations_ws.duration_ms`` via the standard
         ``logging`` ``extra`` dict — a structured-logging formatter or an
@@ -402,7 +402,7 @@ class _WSHandlerMixin(_MixinBase):
             extra[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
 
         # NOTE: ``extra`` keys deliberately use dotted names
-        # (``azure.ai.agentserver.invocations_ws.session_id`` etc.) so they
+        # (``azure.ai.agentserver.session_id`` etc.) so they
         # line up 1:1 with the keys defined in :class:`InvocationsWSConstants`.
         # The trade-off is that printf-style log formatters can't address
         # them directly — use a structured (JSON / OTel) formatter, or

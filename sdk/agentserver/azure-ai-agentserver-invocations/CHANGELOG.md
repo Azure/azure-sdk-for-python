@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs.
+- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute.
 
 ## 1.0.0b6 (2026-06-28)
 
