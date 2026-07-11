@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for OpenTelemetry propagation through ``/invocations_ws``."""
-from opentelemetry import baggage as _otel_baggage
+from opentelemetry import baggage as _otel_baggage, trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
@@ -32,27 +32,34 @@ def test_ws_merges_incoming_and_session_baggage(monkeypatch):
         assert websocket.receive_text() == "ready"
 
     assert captured_baggage["caller.key"] == "caller-value"
-    assert (
-        captured_baggage["azure.ai.agentserver.session_id"]
-        == "ws-session-123"
-    )
+    assert captured_baggage["azure.ai.agentserver.session_id"] == "ws-session-123"
 
 
-def test_ws_handler_span_has_a365_context(monkeypatch):
-    """WS child spans inherit trace context and A365 correlation attributes."""
+def test_customer_ws_handler_span_is_exported_with_a365_context(monkeypatch):
+    """A span created by customer handler code is exported with WS correlation."""
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "ws-session-456")
 
     exporter = InMemorySpanExporter()
     provider = TracerProvider()
-    provider.add_span_processor(_FoundryEnrichmentSpanProcessor())
+    provider.add_span_processor(
+        _FoundryEnrichmentSpanProcessor(
+            project_id="project-123",
+        )
+    )
     provider.add_span_processor(SimpleSpanProcessor(exporter))
-    tracer = provider.get_tracer("test.ws.handler")
+    customer_tracer = trace.get_tracer(
+        "customer.websocket.agent",
+        tracer_provider=provider,
+    )
 
     app = InvocationAgentServerHost(configure_observability=None)
 
     @app.ws_handler
     async def handler(websocket: WebSocket) -> None:
-        with tracer.start_as_current_span("ws_handler_work"):
+        with customer_tracer.start_as_current_span(
+            "customer.websocket.process_message",
+        ) as span:
+            span.set_attribute("customer.message.type", "audio")
             await websocket.send_text("ready")
 
     trace_id = "0af7651916cd43dd8448eb211c80319c"
@@ -69,7 +76,12 @@ def test_ws_handler_span_has_a365_context(monkeypatch):
     spans = exporter.get_finished_spans()
     assert len(spans) == 1
     span = spans[0]
+    assert span.name == "customer.websocket.process_message"
+    assert span.instrumentation_scope.name == "customer.websocket.agent"
+    assert span.attributes["customer.message.type"] == "audio"
     assert format(span.context.trace_id, "032x") == trace_id
     assert span.parent is not None
+    assert span.parent.is_remote
     assert format(span.parent.span_id, "016x") == parent_span_id
     assert span.attributes["microsoft.session.id"] == "ws-session-456"
+    assert span.attributes["microsoft.foundry.project.id"] == "project-123"
