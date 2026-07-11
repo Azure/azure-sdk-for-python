@@ -1,12 +1,11 @@
 # Release History
 
-## 12.27.0b1 (Unreleased)
+## 12.27.0b1 (2026-07-21)
 
 ### Features Added
 - Added `list_ranges` and `list_ranges_diff` APIs to `ShareFileClient` which return an auto-paging iterable of
 `FileRange` and support continuation tokens and `results_per_page` for enumerating file ranges across multiple
 service responses.
-- Added a new `FileRange` model with `start`, `end`, and `cleared` properties.
 
 ### Other Changes
 - Deprecated `ShareFileClient`'s `get_ranges` and `get_ranges_diff` APIs in favor of `list_ranges` and
