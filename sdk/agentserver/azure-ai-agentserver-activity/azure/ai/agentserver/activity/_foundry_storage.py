@@ -1,28 +1,32 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """M365 Agents SDK storage adapter backed by per-key Foundry state stores."""
-# pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-# pylint: disable=docstring-keyword-should-match-keyword-only,import-error,no-name-in-module
 
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Callable, Optional, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from azure.ai.agentserver.core.storage import FoundryStateStore, FoundryStorageEndpoint, FoundryStorageNotFoundError
 from azure.core.credentials_async import AsyncTokenCredential
 
+if TYPE_CHECKING:
+    # Only needed to give the TypeVar bound below a concrete type for static
+    # analysis; never imported at runtime so the package stays importable
+    # without the optional M365 Agents SDK.
+    # pylint: disable=import-error,no-name-in-module
+    from microsoft_agents.hosting.core.storage import StoreItem
+
 try:
-    from microsoft_agents.hosting.core.storage import AsyncStorageBase, Storage
+    # pylint: disable=import-error,no-name-in-module
+    from microsoft_agents.hosting.core.storage import AsyncStorageBase
 except ImportError:  # pragma: no cover - keeps package importable without optional M365 SDK bits.
-    class Storage:  # type: ignore[no-redef]
+
+    class AsyncStorageBase:  # type: ignore[no-redef]  # pylint: disable=too-few-public-methods
         """Fallback base class used only when the M365 Agents SDK is not installed."""
 
-    class AsyncStorageBase(Storage):  # type: ignore[no-redef]
-        """Fallback base class used only when the M365 Agents SDK is not installed."""
 
-
-StoreItemT = TypeVar("StoreItemT")
+StoreItemT = TypeVar("StoreItemT", bound="StoreItem")
 
 #: Segment the M365 Agents SDK ``UserState`` uses to build per-user storage keys
 #: (``f"{channel_id}/users/{user_id}"`` -- see
@@ -75,6 +79,26 @@ class FoundryStorage(AsyncStorageBase):
         item_ttl_seconds: int | None = None,
         is_user_scoped: Callable[[str], bool] = _default_is_user_scoped,
     ) -> None:
+        """Create the adapter. No backing stores are created until first use.
+
+        :keyword credential: Async token credential shared by every per-key
+            store, or ``None`` to build an owned ``DefaultAzureCredential``.
+        :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential | None
+        :keyword endpoint: Foundry storage endpoint or project endpoint URL
+            override, or ``None`` to resolve from the environment.
+        :paramtype endpoint: ~azure.ai.agentserver.core.storage.FoundryStorageEndpoint | str | None
+        :keyword item_ttl_seconds: Store-level TTL applied to every per-key
+            store, or ``None`` to use ``FoundryStateStore``'s own default.
+        :paramtype item_ttl_seconds: int | None
+        :keyword is_user_scoped: Predicate deciding which keys get
+            ``user_isolation=True`` on their backing store.
+        :paramtype is_user_scoped: ~collections.abc.Callable[[str], bool]
+        :raises ImportError: If no ``credential`` is supplied and
+            ``azure-identity`` is not installed.
+        :return: None.
+        :rtype: None
+        """
+        super().__init__()
         self._owns_credential = credential is None
         if credential is None:
             try:
@@ -95,6 +119,14 @@ class FoundryStorage(AsyncStorageBase):
         self._creation_lock = asyncio.Lock()
 
     def _new_store(self, key: str) -> FoundryStateStore:
+        """Build (but do not create server-side) the per-key backing store.
+
+        :param key: The M365 storage key this store will be bound to.
+        :type key: str
+        :return: The unbound client for *key*; the server-side resource is
+            created lazily by :meth:`_get_store`.
+        :rtype: ~azure.ai.agentserver.core.storage.FoundryStateStore
+        """
         kwargs: dict[str, Any] = {
             "credential": self._credential,
             "endpoint": self._endpoint,
@@ -105,8 +137,18 @@ class FoundryStorage(AsyncStorageBase):
         return FoundryStateStore(key, **kwargs)
 
     async def _get_store(self, key: str, *, ensure_exists: bool) -> FoundryStateStore:
-        """Return the cached per-key store, creating the client (and, when
-        ``ensure_exists``, the server-side store resource) on first use."""
+        """Return the cached per-key store, creating it (client and, when
+        ``ensure_exists``, the server-side resource) on first use.
+
+        :param key: The M365 storage key to resolve a store for.
+        :type key: str
+        :keyword ensure_exists: When ``True``, calls ``get_or_create()`` once
+            per key so a subsequent write does not 404 against a store that
+            was never created.
+        :paramtype ensure_exists: bool
+        :return: The cached (or newly created) per-key store.
+        :rtype: ~azure.ai.agentserver.core.storage.FoundryStateStore
+        """
         store = self._stores.get(key)
         if store is None:
             async with self._creation_lock:
@@ -122,7 +164,11 @@ class FoundryStorage(AsyncStorageBase):
         return store
 
     async def aclose(self) -> None:
-        """Close every cached per-key store and an owned default credential."""
+        """Close every cached per-key store and an owned default credential.
+
+        :return: None.
+        :rtype: None
+        """
         for store in list(self._stores.values()):
             await store.aclose()
         self._stores.clear()
@@ -131,36 +177,70 @@ class FoundryStorage(AsyncStorageBase):
             await self._credential.close()
 
     async def __aenter__(self) -> "FoundryStorage":
+        """Enter the async context manager.
+
+        :return: This instance.
+        :rtype: ~azure.ai.agentserver.activity.FoundryStorage
+        """
         return self
 
     async def __aexit__(self, *args: Any) -> None:
+        """Exit the async context manager, closing all cached stores.
+
+        :param args: The exception type, value, and traceback (unused).
+        :type args: object
+        :return: None.
+        :rtype: None
+        """
         await self.aclose()
 
     async def _read_item(
         self,
         key: str,
         *,
-        target_cls: Type[StoreItemT] | None = None,
+        target_cls: type[StoreItemT] | None = None,
         **kwargs: Any,
-    ) -> Tuple[Optional[str], Optional[StoreItemT]]:
-        """Fetch one item. A store that does not exist yet is just a missing key."""
+    ) -> tuple[str | None, StoreItemT | None]:
+        """Fetch one item. A store that does not exist yet is just a missing key.
+
+        :param key: The M365 storage key to read (also the store name).
+        :type key: str
+        :keyword target_cls: The ``StoreItem`` subclass to deserialize into.
+        :paramtype target_cls: type[StoreItemT] | None
+        :return: ``(key, item)`` if found, otherwise ``(None, None)``.
+        :rtype: tuple[str | None, StoreItemT | None]
+        """
         _ = kwargs
         store = await self._get_store(key, ensure_exists=False)
         try:
             item = await store.get(key)
         except FoundryStorageNotFoundError:
             item = None
-        if item is None:
+        if item is None or target_cls is None:
             return None, None
-        return key, target_cls.from_json_to_store_item(item.value)  # type: ignore[attr-defined]
+        return key, target_cls.from_json_to_store_item(item.value)
 
     async def _write_item(self, key: str, value: StoreItemT) -> None:
-        """Create-or-replace one item, creating its backing store on first write."""
+        """Create-or-replace one item, creating its backing store on first write.
+
+        :param key: The M365 storage key to write (also the store name).
+        :type key: str
+        :param value: The ``StoreItem`` to persist.
+        :type value: StoreItemT
+        :return: None.
+        :rtype: None
+        """
         store = await self._get_store(key, ensure_exists=True)
-        await store.set(key, value.store_item_to_json())  # type: ignore[attr-defined]
+        await store.set(key, value.store_item_to_json())
 
     async def _delete_item(self, key: str) -> None:
-        """Delete one item. Missing keys (or stores) are ignored."""
+        """Delete one item. Missing keys (or stores) are ignored.
+
+        :param key: The M365 storage key to delete (also the store name).
+        :type key: str
+        :return: None.
+        :rtype: None
+        """
         store = await self._get_store(key, ensure_exists=False)
         try:
             await store.delete(key)
