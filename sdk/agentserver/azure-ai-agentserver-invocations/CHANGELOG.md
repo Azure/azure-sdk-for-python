@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b7 (Unreleased)
+
+### Bugs Fixed
+
+- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs.
+
 ## 1.0.0b6 (2026-06-28)
 
 ### Features Added

@@ -27,6 +27,7 @@ import uuid
 from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING, Any, Optional
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
@@ -198,58 +199,74 @@ class _WSHandlerMixin(_MixinBase):
         session_id = self.config.session_id or str(uuid.uuid4())
         start_ns = time.monotonic_ns()
 
-        # NOTE: when no ``@ws_handler`` is registered, the route itself is
-        # not registered (see ``_ensure_ws_route_registered``), so this
-        # endpoint is unreachable in that state — Starlette returns 404.
-
-        # Accept the upgrade *before* invoking the user handler — per spec.
+        # Preserve caller baggage extracted by TraceContextMiddleware and add
+        # the session correlation key consumed by the A365 enrichment
+        # processor for child spans and logs.
+        ctx = _otel_context.get_current()
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", session_id, context=ctx,
+        )
+        baggage_token = _otel_context.attach(ctx)
         try:
-            await websocket.accept()
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            await self._finalize_session(
-                websocket=None,
-                session_id=session_id,
-                start_ns=start_ns,
-                close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
-                error_code="accept_failed",
-            )
-            logger.error(
-                "WebSocket accept failed for session %s: %s",
-                session_id, exc, exc_info=True,
-            )
-            return
+            # NOTE: when no ``@ws_handler`` is registered, the route itself is
+            # not registered (see ``_ensure_ws_route_registered``), so this
+            # endpoint is unreachable in that state — Starlette returns 404.
 
-        close_code: int = InvocationsWSConstants.CLOSE_NORMAL
-        handler_exc: Optional[BaseException] = None
-        try:
-            close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
-        except BaseException as exc:  # pylint: disable=broad-exception-caught
-            # ``_invoke_user_handler`` catches ``Exception`` but not
-            # ``BaseException`` (notably ``asyncio.CancelledError``).  Capture
-            # the exception so the ``finally`` block below can record it,
-            # then re-raise via ``finally`` so cancellation is never
-            # swallowed.
-            close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
-            handler_exc = exc
-            raise
+            # Accept the upgrade *before* invoking the user handler — per spec.
+            try:
+                await websocket.accept()
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                await self._finalize_session(
+                    websocket=None,
+                    session_id=session_id,
+                    start_ns=start_ns,
+                    close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                    error_code="accept_failed",
+                )
+                logger.error(
+                    "WebSocket accept failed for session %s: %s",
+                    session_id, exc, exc_info=True,
+                )
+                return
+
+            close_code: int = InvocationsWSConstants.CLOSE_NORMAL
+            handler_exc: Optional[BaseException] = None
+            try:
+                close_code, handler_exc = await self._invoke_user_handler(
+                    websocket, session_id
+                )
+            except BaseException as exc:  # pylint: disable=broad-exception-caught
+                # ``_invoke_user_handler`` catches ``Exception`` but not
+                # ``BaseException`` (notably ``asyncio.CancelledError``).
+                # Capture the exception so the ``finally`` block below can
+                # record it, then re-raise via ``finally`` so cancellation is
+                # never swallowed.
+                close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+                handler_exc = exc
+                raise
+            finally:
+                # Always finalize — emits the close-event log line and
+                # best-effort closes the socket — even when the handler
+                # raised a ``BaseException`` like ``CancelledError``.
+                error_code: Optional[str]
+                if handler_exc is None:
+                    error_code = None
+                elif isinstance(handler_exc, Exception):
+                    error_code = "internal_error"
+                else:
+                    error_code = "cancelled"
+                await self._finalize_session(
+                    websocket=websocket,
+                    session_id=session_id,
+                    start_ns=start_ns,
+                    close_code=close_code,
+                    error_code=error_code,
+                )
         finally:
-            # Always finalize — emits the close-event log line and
-            # best-effort closes the socket — even when the handler
-            # raised a ``BaseException`` like ``CancelledError``.
-            error_code: Optional[str]
-            if handler_exc is None:
-                error_code = None
-            elif isinstance(handler_exc, Exception):
-                error_code = "internal_error"
-            else:
-                error_code = "cancelled"
-            await self._finalize_session(
-                websocket=websocket,
-                session_id=session_id,
-                start_ns=start_ns,
-                close_code=close_code,
-                error_code=error_code,
-            )
+            try:
+                _otel_context.detach(baggage_token)
+            except ValueError:
+                pass
 
     async def _invoke_user_handler(
         self, websocket: WebSocket, session_id: str,

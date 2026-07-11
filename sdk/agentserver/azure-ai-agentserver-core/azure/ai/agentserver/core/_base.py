@@ -289,8 +289,9 @@ class AgentServerHost(Starlette):
         )
 
         # Extract W3C trace context (traceparent/tracestate) and baggage
-        # from incoming HTTP requests so that any spans created downstream
-        # (e.g. by MAF / agent-framework) are children of the caller's trace.
+        # from incoming HTTP requests and WebSocket connections so that any
+        # spans created downstream (e.g. by MAF / agent-framework) are
+        # children of the caller's trace.
         # We do NOT create a SERVER span ourselves — we only propagate context.
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
         self.add_middleware(TraceContextMiddleware)
