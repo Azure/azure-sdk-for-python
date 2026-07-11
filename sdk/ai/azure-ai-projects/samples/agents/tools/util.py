@@ -9,7 +9,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from samples.agents.util import create_version_with_endpoint, create_version_with_endpoint_async
+    from agents.util import create_version_with_endpoint, create_version_with_endpoint_async
 else:
     _AGENTS_UTIL_PATH = Path(__file__).resolve().parents[1] / "util.py"
     _PKG_ROOT = Path(__file__).resolve().parents[3]
