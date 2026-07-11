@@ -25,7 +25,7 @@ tracing exporters, and span operations:
 **Span operations:**
 
 - :class:`TraceContextMiddleware` — ASGI middleware that extracts W3C trace
-  context and baggage from incoming HTTP and WebSocket headers
+  context and baggage from incoming request headers
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
