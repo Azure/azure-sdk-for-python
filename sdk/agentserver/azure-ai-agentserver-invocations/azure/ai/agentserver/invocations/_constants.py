@@ -38,7 +38,6 @@ class InvocationsWSConstants:
     CLOSE_INTERNAL_ERROR = 1011  # handler raised an unhandled exception
 
     # Structured-log ``extra`` keys.
-    ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.session_id"
     ATTR_SPAN_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.close_code"
     ATTR_SPAN_DURATION_MS = "azure.ai.agentserver.invocations_ws.duration_ms"
     ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.invocations_ws.error.code"

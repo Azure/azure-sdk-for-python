@@ -33,6 +33,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
 )
+from azure.ai.agentserver.core._tracing import _BAGGAGE_SESSION_ID
 
 from ._constants import InvocationsWSConstants
 
@@ -204,7 +205,7 @@ class _WSHandlerMixin(_MixinBase):
         # processor for child spans and logs.
         ctx = _otel_context.get_current()
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", session_id, context=ctx,
+            _BAGGAGE_SESSION_ID, session_id, context=ctx,
         )
         baggage_token = _otel_context.attach(ctx)
         try:
@@ -394,7 +395,7 @@ class _WSHandlerMixin(_MixinBase):
         :paramtype error_code: Optional[str]
         """
         extra: dict[str, Any] = {
-            InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
+            _BAGGAGE_SESSION_ID: session_id,
             InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
             InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
         }
