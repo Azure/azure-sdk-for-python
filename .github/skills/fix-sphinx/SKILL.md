@@ -24,9 +24,15 @@ Intelligently fixes Sphinx documentation issues by:
 
 ## Running Sphinx
 
+**Prerequisites:**
+- Use a Python 3.11+ virtual environment
+- Ensure `azpysdk` is installed in the venv
+
 **Command:**
 ```powershell
 cd <package-path>
+# 1. activate venv
+# 2. install dev_requirements.txt
 azpysdk --isolate sphinx .
 ```
 
@@ -66,20 +72,9 @@ Run Sphinx checks directly on the package.
 **If virtual environment is missing:**
 Ask: "Do you have an existing virtual environment path, or should I create 'env'?"
 
-### Step 1: CRITICAL - Activate Virtual Environment FIRST
+### Step 1: CRITICAL - Activate Python Virtual Environment FIRST
 
-**IMMEDIATELY activate the virtual environment before ANY other command:**
-
-```powershell
-# Activate the provided virtual environment (e.g., env, venv)
-.\<venv-name>\Scripts\Activate.ps1
-
-# If creating new virtual environment:
-python -m venv env
-.\env\Scripts\Activate.ps1
-```
-
-**⚠️ IMPORTANT: ALL subsequent commands MUST run within the activated virtual environment. Never run commands outside the venv.**
+**⚠️ IMPORTANT: ALL subsequent commands MUST run within the activated Python virtual environment. Never run commands outside the venv.**
 
 ### Step 2: Install Dependencies (within activated venv)
 
