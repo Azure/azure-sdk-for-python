@@ -91,7 +91,7 @@ with (
 
     with create_version_with_endpoint(
         project_client=project_client,
-        agent_name="MyAgent",
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions=(
