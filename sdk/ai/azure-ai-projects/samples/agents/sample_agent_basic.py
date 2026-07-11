@@ -61,6 +61,9 @@ with (
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )
+        print(
+            f"Agent created (id: {created_version.id}, name: {created_version.name}, version: {created_version.version})"
+        )
 
         original_agent_endpoint = project_client.agents.get(agent_name=agent_name).agent_endpoint
         endpoint_config = AgentEndpointConfig(
@@ -75,8 +78,6 @@ with (
         print(f"Agent endpoint configured for version {created_version.version}")
 
         with project_client.get_openai_client(agent_name=agent_name) as openai_client:
-            agent = project_client.agents.get(agent_name=agent_name)
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
             conversation = openai_client.conversations.create(
                 items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],

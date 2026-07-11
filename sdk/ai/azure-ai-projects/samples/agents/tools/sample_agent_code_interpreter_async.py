@@ -54,9 +54,6 @@ async def main() -> None:
         ),
         project_client.get_openai_client(agent_name=agent_name) as openai_client,
     ):
-        agent = await project_client.agents.get(agent_name=agent_name)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
         # Create a conversation for the agent interaction
         conversation = await openai_client.conversations.create()
         print(f"Created conversation (id: {conversation.id})")
@@ -76,8 +73,6 @@ async def main() -> None:
 
         # Print final assistant text output.
         print(f"Agent response: {response.output_text}")
-
-        print("\nCleaning up...")
 
 
 if __name__ == "__main__":

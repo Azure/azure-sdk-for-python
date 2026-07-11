@@ -84,9 +84,6 @@ with (
     ),
     project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    agent = project_client.agents.get(agent_name=agent_name)
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
     stream_response = openai_client.responses.create(
         stream=True,
         tool_choice="required",
@@ -111,5 +108,3 @@ with (
         elif event.type == "response.completed":
             print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-
-    print("\nCleaning up...")

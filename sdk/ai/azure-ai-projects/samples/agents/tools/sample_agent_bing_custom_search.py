@@ -82,9 +82,6 @@ with (
     ),
     project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    agent = project_client.agents.get(agent_name=agent_name)
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
     user_input = os.environ.get("BING_CUSTOM_USER_INPUT") or input("Enter your question: \n")
 
     # Send initial request that will trigger the Bing Custom Search tool
@@ -115,5 +112,3 @@ with (
         elif event.type == "response.completed":
             print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-
-    print("Cleaning up...")

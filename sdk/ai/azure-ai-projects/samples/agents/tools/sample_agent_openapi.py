@@ -69,9 +69,6 @@ with (
     ),
     project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    agent = project_client.agents.get(agent_name=agent_name)
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
     response = openai_client.responses.create(
         input="Use the OpenAPI tool to print out, what is the weather in Seattle today.",
     )

@@ -67,9 +67,6 @@ with (
     ),
     project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    agent = project_client.agents.get(agent_name=agent_name)
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
     user_input = os.environ.get("A2A_USER_INPUT") or input(
         "Enter your question (e.g., 'What can the secondary agent do?'): \n"
     )

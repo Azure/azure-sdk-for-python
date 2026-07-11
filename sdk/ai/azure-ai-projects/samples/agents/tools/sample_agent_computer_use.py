@@ -82,9 +82,6 @@ with (
     ),
     project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    agent = project_client.agents.get(agent_name=agent_name)
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
-
     # Initial request with screenshot - start with Bing search page
     print("Starting computer automation session (initial screenshot: cua_browser_search.png)...")
     response = openai_client.responses.create(
