@@ -1419,8 +1419,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          None.
         :type file_mode: str
         :param nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
-         "Regular", "Directory", "SymLink", "BlockDevice", "CharacterDevice", "Socket", and "Fifo".
-         Default value is None.
+         "Regular", "Directory", and "SymLink". Default value is None.
         :type nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
         :param content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
          the data during transport. When the Content-MD5 header is specified, the File service compares

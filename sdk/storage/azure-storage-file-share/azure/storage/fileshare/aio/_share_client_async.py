@@ -910,9 +910,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             this generator will begin returning results from this point.
         :keyword List[str] include:
             Include this parameter to specify one or more datasets to include in the response.
-            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey",
-            "Permissions", "LinkCount", "NfsAttributes", and "All".
-            The values "Permissions", "LinkCount", and "NfsAttributes" apply only to NFS shares.
+            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
 
             .. versionadded:: 12.6.0
 

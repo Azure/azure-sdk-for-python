@@ -991,8 +991,6 @@ class DirectoryProperties(DictMixin):
     """NFS only. The owning group of the directory."""
     file_mode: Optional[str] = None
     """NFS only. The file mode of the directory."""
-    link_count: Optional[int] = None
-    """NFS only. The number of hard links of the directory."""
     nfs_file_type: Optional[Literal["Directory"]] = None
     """NFS only. The type of the directory."""
 
@@ -1026,7 +1024,6 @@ class DirectoryProperties(DictMixin):
         self.owner = kwargs.get("x-ms-owner")
         self.group = kwargs.get("x-ms-group")
         self.file_mode = kwargs.get("x-ms-mode")
-        self.link_count = kwargs.get("x-ms-link-count")
         self.nfs_file_type = kwargs.get("x-ms-file-file-type")
 
     @classmethod
@@ -1042,11 +1039,6 @@ class DirectoryProperties(DictMixin):
         props.change_time = generated.properties.change_time
         props.etag = generated.properties.etag
         props.permission_key = generated.permission_key
-        props.owner = generated.properties.uid
-        props.group = generated.properties.gid
-        props.file_mode = generated.properties.mode
-        props.link_count = generated.link_count
-        props.nfs_file_type = "Directory"
         return props
 
 
@@ -1114,34 +1106,13 @@ class DirectoryPropertiesPaged(PageIterator):
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        segment = self._response.segment
         self.current_page = [
             DirectoryProperties._from_generated(i)  # pylint: disable = protected-access
-            for i in segment.directory_items
+            for i in self._response.segment.directory_items
         ]
         self.current_page.extend(
-            FileProperties._from_generated(i, file_type="Regular")  # pylint: disable = protected-access
-            for i in segment.file_items
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="SymLink")  # pylint: disable = protected-access
-            for i in segment.sym_link_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="BlockDevice")  # pylint: disable = protected-access
-            for i in segment.block_device_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="CharacterDevice")  # pylint: disable = protected-access
-            for i in segment.char_device_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="Fifo")  # pylint: disable = protected-access
-            for i in segment.fifo_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="Socket")  # pylint: disable = protected-access
-            for i in segment.socket_items or []
+            FileProperties._from_generated(i)  # pylint: disable = protected-access
+            for i in self._response.segment.file_items
         )
         return self._response.next_marker or None, self.current_page
 
@@ -1366,14 +1337,8 @@ class FileProperties(DictMixin):
     """NFS only. The file mode of the file."""
     link_count: Optional[int] = None
     """NFS only. The number of hard links of the file."""
-    nfs_file_type: Optional[Literal["Regular", "SymLink", "BlockDevice", "CharacterDevice", "Socket", "Fifo"]] = None
+    nfs_file_type: Optional[Literal["Regular"]] = None
     """NFS only. The type of the file."""
-    link_text: Optional[str] = None
-    """NFS only. The link text of the symbolic link. Only applicable to symbolic links."""
-    device_major: Optional[int] = None
-    """NFS only. The major device number. Only applicable to block and character devices."""
-    device_minor: Optional[int] = None
-    """NFS only. The minor device number. Only applicable to block and character devices."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get("name")  # type: ignore [assignment]
@@ -1417,33 +1382,21 @@ class FileProperties(DictMixin):
         self.file_mode = kwargs.get("x-ms-mode")
         self.link_count = kwargs.get("x-ms-link-count")
         self.nfs_file_type = kwargs.get("x-ms-file-file-type")
-        self.link_text = None
-        self.device_major = None
-        self.device_minor = None
 
     @classmethod
-    def _from_generated(cls, generated, file_type=None):
+    def _from_generated(cls, generated):
         props = cls()
         props.name = unquote(generated.name.content) if generated.name.encoded else generated.name.content
         props.file_id = generated.file_id
         props.etag = generated.properties.etag
-        props.file_attributes = getattr(generated, "attributes", None)
+        props.file_attributes = generated.attributes
         props.last_modified = generated.properties.last_modified
         props.creation_time = generated.properties.creation_time
         props.last_access_time = generated.properties.last_access_time
         props.last_write_time = generated.properties.last_write_time
         props.change_time = generated.properties.change_time
         props.size = generated.properties.content_length
-        props.content_length = generated.properties.content_length
-        props.permission_key = getattr(generated, "permission_key", None)
-        props.owner = generated.properties.uid
-        props.group = generated.properties.gid
-        props.file_mode = generated.properties.mode
-        props.link_count = generated.link_count
-        props.nfs_file_type = file_type or getattr(generated, "file_type", None)
-        props.link_text = getattr(generated, "link_text", None)
-        props.device_major = getattr(generated, "device_major", None)
-        props.device_minor = getattr(generated, "device_minor", None)
+        props.permission_key = generated.permission_key
         return props
 
 
