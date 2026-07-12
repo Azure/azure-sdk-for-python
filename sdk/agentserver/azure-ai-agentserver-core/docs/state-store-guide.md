@@ -1,8 +1,7 @@
 # Durable State Store Guide
 
-`FoundryStateStore` is a durable, server-backed state-store client for agent
-state. It gives your agent an explicit store resource plus single-item
-operations over that store.
+`FoundryStateStore` is a durable, server-backed store for agent state. Each
+store holds JSON items that you read, write, and list by key.
 
 ## Overview
 
@@ -15,16 +14,11 @@ name is the main scoping tool for your data:
 - Set `item_ttl_seconds` once at store creation when you want idle items to
   age out automatically.
 
-The SDK is the developer-facing layer over the internal `/storage/state_stores/*`
-protocol: it keeps the transport/auth pipeline in `FoundryStorageClient`, while
-`FoundryStateStore` owns the ergonomic store-bound API.
-
 ## Typed Models
 
-Every request and response body is a real, typed model class -- generated
-from a formal TypeSpec contract (`type_spec/main.tsp`), not a raw `dict`.
-Import them from `azure.ai.agentserver.core.storage` when you want explicit
-type annotations or IDE/type-checker support:
+Every request and response is a typed model class, so you get IDE completion
+and type-checker support. Import them from
+`azure.ai.agentserver.core.storage`:
 
 | Returned by | Model |
 |---|---|
@@ -35,12 +29,10 @@ type annotations or IDE/type-checker support:
 | `delete(key)` | `DeletedStateStoreItem` |
 | `list_keys()` | `KeyPage` (of `StateStoreKey`) |
 
-The one deliberately **untyped** field is `StateStoreItem.value` /
-`CreateItemRequest.value` / `PutItemRequest.value` -- your item payload is
-opaque application JSON, so the SDK does not (and cannot) impose a schema on
-it beyond "JSON object". Serialize your own models to a plain `dict` before
-writing, and deserialize the returned `dict` back into your own model on
-read.
+Item values (`StateStoreItem.value`, `CreateItemRequest.value`,
+`PutItemRequest.value`) are your own application JSON. Pass a plain `dict`
+when writing and read one back on `get()`; the SDK stores and returns the
+value as-is.
 
 ```python
 from azure.ai.agentserver.core.storage import StateStore, StateStoreItem
@@ -91,9 +83,9 @@ await store.update(options=UpdateStateStoreRequest({"tags": None}))
 
 ## Getting Started
 
-`get_or_create()` is the recommended entry point: it resolves (or creates) the
-store's server-side resource in one call, so there is no separate lifecycle
-step before reading or writing items.
+`get_or_create()` is the recommended entry point: it fetches the store, or
+creates it if it does not exist, in a single call -- so you can read and write
+items right away.
 
 ```python
 from azure.ai.agentserver.core.storage import FoundryStateStore, StateStoreItem
@@ -120,8 +112,8 @@ By default, the client resolves:
 
 ## Store Name = Scope
 
-The protocol has no built-in session-isolation knob. If you want conversation
-or thread scoping, encode it directly into the store name:
+To scope data to a conversation or thread, encode it directly into the store
+name:
 
 ```python
 await FoundryStateStore.get_or_create("checkpoints/thread-abc")
@@ -129,14 +121,12 @@ await FoundryStateStore.get_or_create("workflow-state/run-42")
 await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolation=True)
 ```
 
-Because the store name is the logical identity, choose a stable naming scheme
-up front. The raw name may contain `/`; the SDK handles the required base64url
-path encoding on the wire.
+Because the store name is its identity, choose a stable naming scheme up
+front. Names may contain `/`, so you can use it as a hierarchy separator.
 
 ## Store Lifecycle
 
-Stores are **explicit resources**, but `get_or_create()` is the only lifecycle
-call you need for the common case:
+`get_or_create()` is the only lifecycle call you need for the common case:
 
 ```python
 store = await FoundryStateStore.get_or_create(
@@ -151,7 +141,7 @@ print(store.name)
 `key` they act on the bound store itself; with a `key` they act on one item.
 
 ```python
-info: StateStore | None = await store.get()          # the store's own descriptor, or None if absent
+info: StateStore | None = await store.get()          # the store's metadata, or None if absent
 info = await store.update(
     description="Checkpoint store for prod traffic",
     tags={"env": "prod", "team": "agents"},
@@ -183,10 +173,8 @@ store = await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolat
 - For direct callers, the platform derives user identity from the token.
 - For trusted callers acting on behalf of an end user, the SDK sends the
   delegated `x-ms-user-id` header on item operations automatically, resolved
-  **per request** from `azure.ai.agentserver.core.get_request_context().user_id`
-  -- the same request-scoped platform context every protocol host already
-  populates from the inbound `x-agent-user-id` header. There is nothing to
-  configure on `FoundryStateStore` itself: a client instance can safely serve
+  per request from the current agent request context. There is nothing to
+  configure on `FoundryStateStore`: a single client instance can safely serve
   requests for different users over its lifetime.
 - Store-management calls (`get_or_create`, `get()` with no key, `update()`,
   `delete()` with no key) stay store-scoped and never send the delegated user
@@ -194,7 +182,7 @@ store = await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolat
 
 ## Values, Tags, and TTL
 
-Each item value is a JSON **object**. Store plain JSON, not Python objects.
+Each item value is a JSON object -- pass a `dict`.
 
 ```python
 await store.create_item(
@@ -243,7 +231,7 @@ updated = await store.set(
 print(updated.etag)
 ```
 
-`set()` maps to the protocol's single-item `PUT`: create-or-replace by key.
+`set()` creates the item, or replaces it if the key already exists.
 
 ### Fetch one item
 
@@ -254,7 +242,7 @@ if item is not None:
 ```
 
 `get(key)` returns `None` when the item is missing; `get()` with no `key`
-returns the store's own descriptor instead (or `None` if the store is absent).
+returns the store's metadata instead (or `None` if the store is absent).
 
 ### Delete one item
 
