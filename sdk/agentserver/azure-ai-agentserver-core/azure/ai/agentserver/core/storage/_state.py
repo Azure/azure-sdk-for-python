@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import base64
+import json
 from collections.abc import Mapping
 from typing import Any, overload
 
@@ -20,14 +21,18 @@ from ._client import JSON_CONTENT_TYPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import FoundryStorageConflictError, FoundryStorageNotFoundError
 from ._state_serializer import (
+    CreateItemRequest,
+    CreateStateStoreRequest,
     DeletedStateStore,
     DeletedStateStoreItem,
     JSONObject,
     KeyPage,
     Order,
+    PutItemRequest,
     StateStore,
     StateStoreItem,
     StateStoreItemMetadata,
+    UpdateStateStoreRequest,
     deserialize_deleted_state_item,
     deserialize_deleted_state_store,
     deserialize_list_keys_response,
@@ -53,6 +58,55 @@ def _encode_segment(value: str) -> str:
 def _validate_key(key: str) -> None:
     if not key:
         raise ValueError("key must be a non-empty string")
+
+
+def _resolve_create_options(
+    *,
+    user_isolation: bool,
+    item_ttl_seconds: int,
+    description: str | None,
+    tags: Mapping[str, str] | None,
+    options: CreateStateStoreRequest | None,
+) -> tuple[bool, int, str | None, Mapping[str, str] | None]:
+    """Reconcile the scattered creation keywords with an optional typed ``options`` request.
+
+    ``options`` is a convenience alternative to passing ``user_isolation`` /
+    ``item_ttl_seconds`` / ``description`` / ``tags`` individually; the two
+    are mutually exclusive. ``options.name`` is ignored -- the store's name
+    always comes from this client's required ``name`` parameter, not from
+    the request object.
+    """
+    if options is None:
+        return user_isolation, item_ttl_seconds, description, tags
+    if user_isolation or item_ttl_seconds != DEFAULT_ITEM_TTL_SECONDS or description is not None or tags is not None:
+        raise ValueError(
+            "options is mutually exclusive with user_isolation/item_ttl_seconds/description/tags; "
+            "set those fields on options instead."
+        )
+    return (
+        options.user_isolation if options.user_isolation is not None else False,
+        options.item_ttl_seconds if options.item_ttl_seconds is not None else DEFAULT_ITEM_TTL_SECONDS,
+        options.description,
+        options.tags,
+    )
+
+
+def _resolve_tags_option(
+    tags: Mapping[str, str] | None,
+    options: CreateItemRequest | PutItemRequest | None,
+) -> Mapping[str, str] | None:
+    """Reconcile the ``tags`` keyword with an optional typed ``options`` request.
+
+    Only ``options.tags`` is read here; ``options.key`` / ``options.value``
+    (present on ``CreateItemRequest`` / ``PutItemRequest``) are ignored --
+    ``key`` and ``value`` always come from the method's own required
+    parameters, not from the request object.
+    """
+    if options is None:
+        return tags
+    if tags is not None:
+        raise ValueError("tags and options are mutually exclusive; set tags on options instead.")
+    return options.tags
 
 
 class FoundryStateStore(FoundryStorageClient):
@@ -84,6 +138,7 @@ class FoundryStateStore(FoundryStorageClient):
         item_ttl_seconds: int = DEFAULT_ITEM_TTL_SECONDS,
         description: str | None = None,
         tags: Mapping[str, str] | None = None,
+        options: CreateStateStoreRequest | None = None,
         api_version: str = "v1",
         **kwargs: Any,
     ) -> None:
@@ -114,12 +169,27 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword tags: Optional mutable store metadata tags, set at creation.
             Change them later with :meth:`update`.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
+        :keyword options: A typed ``CreateStateStoreRequest`` bundling
+            ``user_isolation`` / ``item_ttl_seconds`` / ``description`` /
+            ``tags`` in one object, as an alternative to passing them
+            individually. Mutually exclusive with those keywords;
+            ``options.name`` is ignored (``name`` above always wins).
+        :paramtype options: ~azure.ai.agentserver.core.storage.CreateStateStoreRequest or None
         :keyword api_version: Storage API version.
         :paramtype api_version: str
-        :raises ValueError: If ``name`` is empty.
+        :raises ValueError: If ``name`` is empty, or if both ``options`` and
+            one of ``user_isolation`` / ``item_ttl_seconds`` / ``description``
+            / ``tags`` are supplied.
         """
         if not name:
             raise ValueError("name must be a non-empty string")
+        user_isolation, item_ttl_seconds, description, tags = _resolve_create_options(
+            user_isolation=user_isolation,
+            item_ttl_seconds=item_ttl_seconds,
+            description=description,
+            tags=tags,
+            options=options,
+        )
         self._owns_credential = False
         if credential is None:
             try:
@@ -158,6 +228,7 @@ class FoundryStateStore(FoundryStorageClient):
         item_ttl_seconds: int = DEFAULT_ITEM_TTL_SECONDS,
         description: str | None = None,
         tags: Mapping[str, str] | None = None,
+        options: CreateStateStoreRequest | None = None,
         api_version: str = "v1",
         **kwargs: Any,
     ) -> "FoundryStateStore":
@@ -185,6 +256,9 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword tags: See the constructor. Only applied if the store does not
             already exist.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
+        :keyword options: See the constructor. Only applied if the store does
+            not already exist.
+        :paramtype options: ~azure.ai.agentserver.core.storage.CreateStateStoreRequest or None
         :keyword api_version: Storage API version.
         :paramtype api_version: str
         :return: The bound, ready-to-use store client.
@@ -198,6 +272,7 @@ class FoundryStateStore(FoundryStorageClient):
             item_ttl_seconds=item_ttl_seconds,
             description=description,
             tags=tags,
+            options=options,
             api_version=api_version,
             **kwargs,
         )
@@ -274,6 +349,7 @@ class FoundryStateStore(FoundryStorageClient):
         *,
         description: str | None | object = _UNSET,
         tags: Mapping[str, str] | None | object = _UNSET,
+        options: UpdateStateStoreRequest | None = None,
     ) -> StateStore:
         """Update the bound store's mutable metadata (``description`` / ``tags``).
 
@@ -283,9 +359,32 @@ class FoundryStateStore(FoundryStorageClient):
         :keyword tags: The new tags (replaces the existing set wholesale), or
             ``None`` to clear them. Omit to leave the tags unchanged.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
+        :keyword options: A typed ``UpdateStateStoreRequest`` bundling
+            ``description`` / ``tags`` in one object, as an alternative to
+            passing them individually. A field's *absence* from ``options``
+            (not just a ``None`` value) means "leave unchanged", matching
+            ``description`` / ``tags``'s own unset-vs-null semantics -- build
+            ``options`` via its mapping constructor (for example
+            ``UpdateStateStoreRequest({"tags": None})``) to clear a field, or
+            omit the key to leave it unchanged. Mutually exclusive with
+            ``description`` / ``tags``.
+        :paramtype options: ~azure.ai.agentserver.core.storage.UpdateStateStoreRequest or None
         :return: The updated store descriptor.
         :rtype: ~azure.ai.agentserver.core.storage.StateStore
+        :raises ValueError: If both ``options`` and ``description`` / ``tags``
+            are supplied.
         """
+        if options is not None:
+            if description is not _UNSET or tags is not _UNSET:
+                raise ValueError("options is mutually exclusive with description/tags; set fields on options instead.")
+            body = json.dumps(dict(options)).encode("utf-8")
+            response = await self._send_storage_request(self._request("PATCH", self._store_path(), content=body))
+            if "description" in options:
+                self._description = options.description
+            if "tags" in options:
+                self._tags = dict(options.tags) if options.tags else {}
+            return deserialize_state_store(response.text())
+
         body = serialize_store_update_request(description, tags)
         response = await self._send_storage_request(self._request("PATCH", self._store_path(), content=body))
         if description is not _UNSET:
@@ -297,9 +396,21 @@ class FoundryStateStore(FoundryStorageClient):
         return deserialize_state_store(response.text())
 
     async def create_item(
-        self, key: str, value: JSONObject, *, tags: Mapping[str, str] | None = None
+        self,
+        key: str,
+        value: JSONObject,
+        *,
+        tags: Mapping[str, str] | None = None,
+        options: CreateItemRequest | None = None,
     ) -> StateStoreItemMetadata:
-        """Create a new item and fail on duplicate keys."""
+        """Create a new item and fail on duplicate keys.
+
+        :keyword options: A typed ``CreateItemRequest`` as an alternative to
+            ``tags`` (only ``options.tags`` is read; ``key`` / ``value`` above
+            always win). Mutually exclusive with ``tags``.
+        :paramtype options: ~azure.ai.agentserver.core.storage.CreateItemRequest or None
+        """
+        tags = _resolve_tags_option(tags, options)
         body = serialize_item_create_request(key, value, tags)
         response = await self._send_storage_request(
             self._request("POST", f"{self._store_path()}/items", content=body, include_user_id=True)
@@ -314,10 +425,18 @@ class FoundryStateStore(FoundryStorageClient):
         tags: Mapping[str, str] | None = None,
         if_match: str | None = None,
         require_exists: bool = False,
+        options: PutItemRequest | None = None,
     ) -> StateStoreItemMetadata:
-        """Create or replace one item by key."""
+        """Create or replace one item by key.
+
+        :keyword options: A typed ``PutItemRequest`` as an alternative to
+            ``tags`` (only ``options.tags`` is read; ``key`` / ``value`` above
+            always win). Mutually exclusive with ``tags``.
+        :paramtype options: ~azure.ai.agentserver.core.storage.PutItemRequest or None
+        """
         if if_match is not None and require_exists:
             raise ValueError("if_match and require_exists are mutually exclusive")
+        tags = _resolve_tags_option(tags, options)
         body = serialize_item_put_request(value, tags)
         header = "*" if require_exists else if_match
         response = await self._send_storage_request(

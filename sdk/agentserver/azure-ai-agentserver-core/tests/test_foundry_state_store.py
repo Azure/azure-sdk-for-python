@@ -12,6 +12,9 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from azure.ai.agentserver.core import FoundryAgentRequestContext, reset_request_context, set_request_context
 from azure.ai.agentserver.core.storage import (
+    CreateItemRequest,
+    CreateStateStoreRequest,
+    DEFAULT_ITEM_TTL_SECONDS,
     DeletedStateStore,
     DeletedStateStoreItem,
     FoundryStateStore,
@@ -19,10 +22,12 @@ from azure.ai.agentserver.core.storage import (
     FoundryStorageEndpoint,
     FoundryStorageNotFoundError,
     KeyPage,
+    PutItemRequest,
     StateStore,
     StateStoreItem,
     StateStoreItemMetadata,
     StateStoreKey,
+    UpdateStateStoreRequest,
 )
 
 _BASE_URL = "https://foundry.example.com/storage/"
@@ -263,6 +268,46 @@ async def test_get_or_create_forwards_creation_options_to_create() -> None:
     assert result == info
 
 
+def test_constructor_accepts_a_typed_options_request_instead_of_scattered_kwargs() -> None:
+    request = CreateStateStoreRequest(
+        name="ignored-name",
+        user_isolation=True,
+        item_ttl_seconds=600,
+        description="checkpoint store",
+        tags={"team": "agents"},
+    )
+    store = FoundryStateStore("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT, options=request)
+
+    # The store's own `name` always wins over `options.name`.
+    assert store.name == "checkpoints"
+    assert store._user_isolation is True
+    assert store._item_ttl_seconds == 600
+    assert store._description == "checkpoint store"
+    assert store._tags == {"team": "agents"}
+
+
+def test_constructor_options_falls_back_to_defaults_for_absent_fields() -> None:
+    request = CreateStateStoreRequest({"name": "checkpoints"})  # user_isolation/item_ttl_seconds/etc. all absent
+    store = FoundryStateStore("checkpoints", credential=MagicMock(), endpoint=_ENDPOINT, options=request)
+
+    assert store._user_isolation is False
+    assert store._item_ttl_seconds == DEFAULT_ITEM_TTL_SECONDS
+    assert store._description is None
+    assert store._tags == {}
+
+
+def test_constructor_rejects_options_combined_with_individual_creation_kwargs() -> None:
+    request = CreateStateStoreRequest(name="checkpoints", user_isolation=True)
+    with pytest.raises(ValueError):
+        FoundryStateStore(
+            "checkpoints",
+            credential=MagicMock(),
+            endpoint=_ENDPOINT,
+            options=request,
+            item_ttl_seconds=600,
+        )
+
+
 # ---------------------------------------------------------------------------
 # get() -- overloaded on key: None fetches the store descriptor, else an item
 # ---------------------------------------------------------------------------
@@ -405,6 +450,74 @@ async def test_update_sends_only_present_fields() -> None:
     assert result.updated_at == 3
 
 
+@pytest.mark.asyncio
+async def test_update_accepts_a_typed_options_request_instead_of_scattered_kwargs() -> None:
+    store = _make_store(
+        _make_response(
+            200,
+            {
+                "id": "ss_1",
+                "object": "state_store",
+                "name": "prefs",
+                "user_isolation": False,
+                "item_ttl_seconds": 2592000,
+                "description": "updated",
+                "tags": {"env": "prod"},
+                "created_at": 1,
+                "updated_at": 3,
+            },
+        ),
+        name="prefs",
+    )
+
+    result = await store.update(options=UpdateStateStoreRequest({"description": "updated", "tags": {"env": "prod"}}))
+
+    request = _sent_request(store)
+    assert json.loads(request.content.decode("utf-8")) == {"description": "updated", "tags": {"env": "prod"}}
+    assert result.updated_at == 3
+    assert store._description == "updated"
+    assert store._tags == {"env": "prod"}
+
+
+@pytest.mark.asyncio
+async def test_update_options_preserves_unset_vs_explicit_null() -> None:
+    """A field *absent* from options (built via its mapping constructor) means
+    "leave unchanged"; a field present with a ``None`` value means "clear it" --
+    the same distinction ``description``/``tags`` keywords make via ``_UNSET``."""
+    store = _make_store(
+        _make_response(
+            200,
+            {
+                "id": "ss_1",
+                "object": "state_store",
+                "name": "prefs",
+                "user_isolation": False,
+                "item_ttl_seconds": 2592000,
+                "tags": {},
+                "created_at": 1,
+                "updated_at": 2,
+            },
+        ),
+        name="prefs",
+        description="existing description",
+    )
+
+    await store.update(options=UpdateStateStoreRequest({"tags": None}))  # description omitted -> left unchanged
+
+    request = _sent_request(store)
+    assert json.loads(request.content.decode("utf-8")) == {"tags": None}
+    assert store._description == "existing description"  # unchanged, since options omitted it
+    assert store._tags == {}  # cleared, since options set it to null
+
+
+@pytest.mark.asyncio
+async def test_update_rejects_options_combined_with_description_or_tags() -> None:
+    store = _make_store(_make_response(200, {}), name="prefs")
+
+    with pytest.raises(ValueError):
+        await store.update(description="x", options=UpdateStateStoreRequest({"tags": {"a": "b"}}))
+
+
 # ---------------------------------------------------------------------------
 # delete() -- overloaded on key: None deletes the store, else one item
 # ---------------------------------------------------------------------------
@@ -482,6 +595,51 @@ async def test_create_item_posts_key_value_and_tags() -> None:
 
 
 @pytest.mark.asyncio
+async def test_create_item_accepts_a_typed_options_request_instead_of_tags() -> None:
+    store = _make_store(
+        _make_response(
+            201,
+            {
+                "id": "it_1",
+                "object": "state_store.item",
+                "key": "step/1",
+                "etag": '"0x8DC"',
+                "created_at": 10,
+                "updated_at": 10,
+            },
+        ),
+        name="checkpoints",
+    )
+
+    await store.create_item(
+        "step/1",
+        {"done": False},
+        options=CreateItemRequest(key="ignored", value={"ignored": True}, tags={"kind": "checkpoint"}),
+    )
+
+    request = _sent_request(store)
+    # key/value always come from create_item()'s own parameters, not from options.
+    assert json.loads(request.content.decode("utf-8")) == {
+        "key": "step/1",
+        "value": {"done": False},
+        "tags": {"kind": "checkpoint"},
+    }
+
+
+@pytest.mark.asyncio
+async def test_create_item_rejects_options_combined_with_tags() -> None:
+    store = _make_store(_make_response(201, {}), name="checkpoints")
+
+    with pytest.raises(ValueError):
+        await store.create_item(
+            "step/1",
+            {"done": False},
+            tags={"kind": "checkpoint"},
+            options=CreateItemRequest(key="step/1", value={"done": False}),
+        )
+
+
+@pytest.mark.asyncio
 async def test_set_puts_value_and_if_match_header() -> None:
     store = _make_store(
         _make_response(
@@ -509,6 +667,41 @@ async def test_set_puts_value_and_if_match_header() -> None:
     assert request.headers["If-Match"] == '"0x8DC"'
     assert json.loads(request.content.decode("utf-8")) == {"value": {"done": True}, "tags": {"kind": "checkpoint"}}
     assert result.etag == '"0x8DD"'
+
+
+@pytest.mark.asyncio
+async def test_set_accepts_a_typed_options_request_instead_of_tags() -> None:
+    store = _make_store(
+        _make_response(
+            200,
+            {
+                "id": "it_1",
+                "object": "state_store.item",
+                "key": "step/1",
+                "etag": '"0x8DD"',
+                "created_at": 10,
+                "updated_at": 20,
+            },
+        ),
+        name="checkpoints",
+    )
+
+    await store.set(
+        "step/1", {"done": True}, options=PutItemRequest(value={"ignored": True}, tags={"kind": "checkpoint"})
+    )
+
+    request = _sent_request(store)
+    assert json.loads(request.content.decode("utf-8")) == {"value": {"done": True}, "tags": {"kind": "checkpoint"}}
+
+
+@pytest.mark.asyncio
+async def test_set_rejects_options_combined_with_tags() -> None:
+    store = _make_store(_make_response(200, {}), name="checkpoints")
+
+    with pytest.raises(ValueError):
+        await store.set(
+            "step/1", {"done": True}, tags={"kind": "checkpoint"}, options=PutItemRequest(value={"done": True})
+        )
 
 
 @pytest.mark.asyncio

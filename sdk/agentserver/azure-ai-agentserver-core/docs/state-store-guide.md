@@ -49,6 +49,46 @@ store_info: StateStore | None = await store.get()
 item: StateStoreItem | None = await store.get("step-1")
 ```
 
+### Accepted request options
+
+Every write method that takes more than one optional keyword also accepts an
+`options` keyword: a typed request model bundling those keywords into one
+object, as an alternative to passing them individually. The two are mutually
+exclusive per call.
+
+| Method | Scattered keywords | `options=` |
+|---|---|---|
+| `get_or_create()` / constructor | `user_isolation`, `item_ttl_seconds`, `description`, `tags` | `CreateStateStoreRequest` |
+| `update()` | `description`, `tags` | `UpdateStateStoreRequest` |
+| `create_item()` | `tags` | `CreateItemRequest` (only `.tags` is read; `key`/`value` always come from `create_item()`'s own parameters) |
+| `set()` | `tags` | `PutItemRequest` (only `.tags` is read; `key`/`value` always come from `set()`'s own parameters) |
+
+```python
+from azure.ai.agentserver.core.storage import CreateStateStoreRequest
+
+store = await FoundryStateStore.get_or_create(
+    "checkpoints/thread-abc",
+    options=CreateStateStoreRequest(
+        user_isolation=True,
+        item_ttl_seconds=3600,
+        description="Checkpoint store for thread abc",
+    ),
+)
+```
+
+For `update()`, build `options` via `UpdateStateStoreRequest`'s *mapping*
+constructor (a `dict`), not its keyword constructor, if you need to clear a
+field: a key's *absence* means "leave unchanged", a key present with a
+`None` value means "clear it" -- the same distinction the `description` /
+`tags` keywords make via omission vs. an explicit `None`.
+
+```python
+from azure.ai.agentserver.core.storage import UpdateStateStoreRequest
+
+# Clears tags, leaves description unchanged (it is absent from the mapping).
+await store.update(options=UpdateStateStoreRequest({"tags": None}))
+```
+
 ## Getting Started
 
 `get_or_create()` is the recommended entry point: it resolves (or creates) the
