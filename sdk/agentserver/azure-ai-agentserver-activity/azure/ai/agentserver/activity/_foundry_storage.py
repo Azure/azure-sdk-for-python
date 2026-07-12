@@ -5,6 +5,8 @@
 from __future__ import annotations
 
 import asyncio
+import re
+from collections import OrderedDict
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from azure.ai.agentserver.core.storage import FoundryStateStore, FoundryStorageEndpoint, FoundryStorageNotFoundError
@@ -28,17 +30,26 @@ except ImportError:  # pragma: no cover - keeps package importable without optio
 
 StoreItemT = TypeVar("StoreItemT", bound="StoreItem")
 
-#: Segment the M365 Agents SDK ``UserState`` uses to build per-user storage keys
-#: (``f"{channel_id}/users/{user_id}"`` -- see
-#: ``microsoft_agents.hosting.core.state.user_state.UserState.get_storage_key``).
-#: Keys containing this segment get ``user_isolation=True`` on their backing
-#: store by default.
-_USER_SCOPE_SEGMENT = "/users/"
+#: Regex matching the M365 storage keys that identify a single user, so their
+#: backing store gets ``user_isolation=True``. Two shapes are recognized:
+#:
+#: * ``"{channel}/users/{user_id}"`` -- the M365 ``UserState`` key shape (see
+#:   ``microsoft_agents.hosting.core.state.user_state.UserState.get_storage_key``).
+#: * ``"auth:_SignInState:{channel}:{user_id}"`` -- the M365 ``Authorization``
+#:   sign-in state key shape.
+_USER_SCOPED_KEY_RE = re.compile(r"/users/|^auth:_SignInState:[^:]+:[^:]+$")
+
+#: Upper bound on the number of per-key ``FoundryStateStore`` clients the adapter
+#: keeps in its in-memory LRU cache. Once exceeded, the least-recently-used store
+#: is evicted and closed; its server-side state is untouched and gets a fresh
+#: client on next access. Chosen large enough that the coldest (evicted) store is
+#: never one being actively fanned out to in a single batch read/write/delete.
+_MAX_CACHED_STORES = 1024
 
 
 def _default_is_user_scoped(key: str) -> bool:
-    """Match the M365 ``UserState`` key shape ``"{channel_id}/users/{user_id}"``."""
-    return _USER_SCOPE_SEGMENT in key
+    """Match the per-user M365 key shapes (``UserState`` and ``Authorization`` sign-in state)."""
+    return _USER_SCOPED_KEY_RE.search(key) is not None
 
 
 class FoundryStorage(AsyncStorageBase):
@@ -68,7 +79,8 @@ class FoundryStorage(AsyncStorageBase):
         (30 days) when omitted.
     :keyword is_user_scoped: Predicate deciding which keys get
         ``user_isolation=True`` on their backing store. Defaults to matching the
-        M365 ``UserState`` key shape (``"{channel_id}/users/{user_id}"``).
+        per-user M365 key shapes ``"{channel}/users/{user_id}"`` (``UserState``)
+        and ``"auth:_SignInState:{channel}:{user_id}"`` (``Authorization``).
     """
 
     def __init__(
@@ -113,8 +125,10 @@ class FoundryStorage(AsyncStorageBase):
         self._endpoint = endpoint
         self._item_ttl_seconds = item_ttl_seconds
         self._is_user_scoped = is_user_scoped
+        self._max_cached_stores = _MAX_CACHED_STORES
 
-        self._stores: dict[str, FoundryStateStore] = {}
+        # LRU-ordered cache: most-recently-used key at the end, coldest at the front.
+        self._stores: "OrderedDict[str, FoundryStateStore]" = OrderedDict()
         self._ensured_keys: set[str] = set()
         self._creation_lock = asyncio.Lock()
 
@@ -155,6 +169,7 @@ class FoundryStorage(AsyncStorageBase):
         """
         store = self._stores.get(key)
         if store is not None and (not ensure_exists or key in self._ensured_keys):
+            self._stores.move_to_end(key)  # mark most-recently-used
             return store
         async with self._creation_lock:
             if ensure_exists and key not in self._ensured_keys:
@@ -166,7 +181,28 @@ class FoundryStorage(AsyncStorageBase):
                 if store is None:
                     store = FoundryStateStore(key, **self._store_kwargs(key))
                     self._stores[key] = store
+            self._stores.move_to_end(key)  # mark most-recently-used
+            await self._evict_if_needed()
         return store
+
+    async def _evict_if_needed(self) -> None:
+        """Evict and close least-recently-used stores until the cache is within bounds.
+
+        Must be called while holding ``_creation_lock``. Only ever evicts the
+        coldest entries (front of the LRU order), which -- given ``max_cached_stores``
+        exceeds the fan-out width of any single batch -- are never stores currently
+        being read from or written to. Evicting a key drops it from
+        ``_ensured_keys`` too; a later access simply recreates its client (and
+        re-runs ``get_or_create`` on the next write), the server-side state being
+        untouched.
+
+        :return: None.
+        :rtype: None
+        """
+        while len(self._stores) > self._max_cached_stores:
+            evicted_key, evicted_store = self._stores.popitem(last=False)
+            self._ensured_keys.discard(evicted_key)
+            await evicted_store.aclose()
 
     async def aclose(self) -> None:
         """Close every cached per-key store and an owned default credential.
