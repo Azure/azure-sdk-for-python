@@ -12,17 +12,17 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from azure.ai.agentserver.core import FoundryAgentRequestContext, reset_request_context, set_request_context
 from azure.ai.agentserver.core.storage import (
-    DeletedStateItem,
     DeletedStateStore,
+    DeletedStateStoreItem,
     FoundryStateStore,
     FoundryStorageConflictError,
     FoundryStorageEndpoint,
     FoundryStorageNotFoundError,
     KeyPage,
-    StateItem,
-    StateItemMetadata,
-    StateKey,
-    StateStoreInfo,
+    StateStore,
+    StateStoreItem,
+    StateStoreItemMetadata,
+    StateStoreKey,
 )
 
 _BASE_URL = "https://foundry.example.com/storage/"
@@ -78,6 +78,78 @@ def _sent_request(store: FoundryStateStore) -> Any:
     return store._client.send_request.call_args[0][0]
 
 
+def _state_store_body(**overrides: Any) -> dict[str, Any]:
+    body: dict[str, Any] = {
+        "id": "ss_1",
+        "object": "state_store",
+        "name": "checkpoints",
+        "user_isolation": False,
+        "item_ttl_seconds": 2592000,
+        "description": None,
+        "tags": {},
+        "created_at": 1,
+        "updated_at": 1,
+    }
+    body.update(overrides)
+    return body
+
+
+def _state_store(**overrides: Any) -> StateStore:
+    return StateStore(_state_store_body(**overrides))
+
+
+def _item_metadata_body(**overrides: Any) -> dict[str, Any]:
+    body: dict[str, Any] = {
+        "id": "it_1",
+        "object": "state_store.item",
+        "key": "step/1",
+        "etag": '"0x8DD"',
+        "created_at": 10,
+        "updated_at": 20,
+    }
+    body.update(overrides)
+    return body
+
+
+def _item_metadata(**overrides: Any) -> StateStoreItemMetadata:
+    return StateStoreItemMetadata(_item_metadata_body(**overrides))
+
+
+def _item_body(**overrides: Any) -> dict[str, Any]:
+    body: dict[str, Any] = {
+        "id": "it_1",
+        "object": "state_store.item",
+        "key": "step/1",
+        "value": {},
+        "etag": '"0x8DD"',
+        "created_at": 10,
+        "updated_at": 20,
+    }
+    body.update(overrides)
+    return body
+
+
+def _item(**overrides: Any) -> StateStoreItem:
+    return StateStoreItem(_item_body(**overrides))
+
+
+def _key_body(**overrides: Any) -> dict[str, Any]:
+    body: dict[str, Any] = {
+        "id": "it_1",
+        "object": "state_store.item",
+        "key": "step/1",
+        "etag": '"0x8DD"',
+        "created_at": 10,
+        "updated_at": 20,
+    }
+    body.update(overrides)
+    return body
+
+
+def _key(**overrides: Any) -> StateStoreKey:
+    return StateStoreKey(_key_body(**overrides))
+
+
 class _DelegatedUserContext:
     """Binds a request-scoped ``user_id`` for the duration of a ``with`` block.
 
@@ -104,7 +176,7 @@ class _DelegatedUserContext:
 
 @pytest.mark.asyncio
 async def test_get_or_create_returns_existing_store_when_present(monkeypatch: pytest.MonkeyPatch) -> None:
-    info = StateStoreInfo(id="ss_1", name="checkpoints", user_isolation=False, item_ttl_seconds=2592000)
+    info = _state_store()
     fetch = AsyncMock(return_value=info)
     create = AsyncMock()
     monkeypatch.setattr(FoundryStateStore, "_fetch_properties", fetch)
@@ -121,7 +193,7 @@ async def test_get_or_create_returns_existing_store_when_present(monkeypatch: py
 
 @pytest.mark.asyncio
 async def test_get_or_create_creates_store_when_absent(monkeypatch: pytest.MonkeyPatch) -> None:
-    info = StateStoreInfo(id="ss_1", name="checkpoints", user_isolation=False, item_ttl_seconds=2592000)
+    info = _state_store()
     fetch = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
     create = AsyncMock(return_value=info)
     monkeypatch.setattr(FoundryStateStore, "_fetch_properties", fetch)
@@ -138,7 +210,7 @@ async def test_get_or_create_creates_store_when_absent(monkeypatch: pytest.Monke
 
 @pytest.mark.asyncio
 async def test_get_or_create_refetches_when_create_races_with_another_caller(monkeypatch: pytest.MonkeyPatch) -> None:
-    created_elsewhere = StateStoreInfo(id="ss_1", name="checkpoints", user_isolation=False, item_ttl_seconds=2592000)
+    created_elsewhere = _state_store()
     fetch = AsyncMock(side_effect=[FoundryStorageNotFoundError("not found"), created_elsewhere])
     create = AsyncMock(side_effect=FoundryStorageConflictError("duplicate store"))
     monkeypatch.setattr(FoundryStateStore, "_fetch_properties", fetch)
@@ -155,30 +227,21 @@ async def test_get_or_create_refetches_when_create_races_with_another_caller(mon
 
 @pytest.mark.asyncio
 async def test_get_or_create_forwards_creation_options_to_create() -> None:
-    info = StateStoreInfo(
-        id="ss_1",
-        name="checkpoints",
+    info = _state_store(
         user_isolation=True,
         item_ttl_seconds=600,
         description="checkpoint store",
         tags={"team": "agents"},
-        created_at=1,
-        updated_at=1,
     )
     store = _make_store(
         _make_response(
             201,
-            {
-                "id": "ss_1",
-                "object": "state_store",
-                "name": "checkpoints",
-                "user_isolation": True,
-                "item_ttl_seconds": 600,
-                "description": "checkpoint store",
-                "tags": {"team": "agents"},
-                "created_at": 1,
-                "updated_at": 1,
-            },
+            _state_store_body(
+                user_isolation=True,
+                item_ttl_seconds=600,
+                description="checkpoint store",
+                tags={"team": "agents"},
+            ),
         ),
         name="checkpoints",
         user_isolation=True,
@@ -232,6 +295,7 @@ async def test_get_with_no_key_returns_the_store_descriptor() -> None:
     assert request.method == "GET"
     assert request.url == f"{_BASE_URL}state_stores/{_encode_segment(store_name)}?api-version=v1"
     assert "x-ms-user-id" not in request.headers  # store-level ops never send the delegated user header
+    assert result is not None
     assert result.name == store_name
     assert result.id == "ss_1"
 
@@ -271,14 +335,9 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
     assert request.url == (
         f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
     )
-    assert result == StateItem(
-        id="it_1",
-        key="step/1",
+    assert result == _item(
         value={"done": True},
         tags={"kind": "checkpoint"},
-        etag='"0x8DD"',
-        created_at=10,
-        updated_at=20,
     )
 
 
@@ -364,7 +423,7 @@ async def test_delete_with_no_key_deletes_the_store() -> None:
     assert request.method == "DELETE"
     assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
     assert "x-ms-user-id" not in request.headers
-    assert result == DeletedStateStore(id="ss_1", name="prefs", deleted=True)
+    assert result == DeletedStateStore({"id": "ss_1", "object": "state_store", "name": "prefs", "deleted": True})
 
 
 @pytest.mark.asyncio
@@ -381,7 +440,9 @@ async def test_delete_with_key_returns_deleted_item_marker() -> None:
     assert request.method == "DELETE"
     assert request.headers["If-Match"] == '"0x8DD"'
     assert request.headers["x-ms-user-id"] == "user-42"
-    assert result == DeletedStateItem(id="it_1", key="step/1", deleted=True)
+    assert result == DeletedStateStoreItem(
+        {"id": "it_1", "object": "state_store.item", "key": "step/1", "deleted": True}
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -417,13 +478,7 @@ async def test_create_item_posts_key_value_and_tags() -> None:
         "tags": {"kind": "checkpoint"},
     }
     assert "If-Match" not in request.headers
-    assert result == StateItemMetadata(
-        id="it_1",
-        key="step/1",
-        etag='"0x8DC"',
-        created_at=10,
-        updated_at=10,
-    )
+    assert result == _item_metadata(etag='"0x8DC"', created_at=10, updated_at=10)
 
 
 @pytest.mark.asyncio
@@ -516,16 +571,7 @@ async def test_list_keys_uses_query_parameters_and_returns_page() -> None:
         "?api-version=v1&tags.kind=checkpoint&tags.phase=run&limit=10&after=it_0&order=asc"
     )
     assert page == KeyPage(
-        keys=[
-            StateKey(
-                id="it_1",
-                key="step/1",
-                tags={"kind": "checkpoint"},
-                etag='"0x8DD"',
-                created_at=10,
-                updated_at=20,
-            )
-        ],
+        keys=[_key(tags={"kind": "checkpoint"})],
         first_id="it_1",
         last_id="it_1",
         has_more=False,

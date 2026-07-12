@@ -146,7 +146,7 @@ async with store:
     print(item.value)  # {"done": False}
 ```
 
-Reads return typed `StateItem` values; writes return typed item metadata and use
+Reads return typed `StateStoreItem` values; writes return typed item metadata and use
 single-item `If-Match` concurrency. Session/conversation scoping is expressed in
 the store name itself, and item expiry is controlled by the store's
 `item_ttl_seconds` setting. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)

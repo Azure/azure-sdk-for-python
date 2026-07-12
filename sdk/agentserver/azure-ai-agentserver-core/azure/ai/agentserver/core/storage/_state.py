@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import base64
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, overload
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.rest import HttpRequest
@@ -20,14 +20,14 @@ from ._client import JSON_CONTENT_TYPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import FoundryStorageConflictError, FoundryStorageNotFoundError
 from ._state_serializer import (
+    DeletedStateStore,
+    DeletedStateStoreItem,
     JSONObject,
     KeyPage,
     Order,
-    StateItem,
-    StateItemMetadata,
-    StateStoreInfo,
-    DeletedStateItem,
-    DeletedStateStore,
+    StateStore,
+    StateStoreItem,
+    StateStoreItemMetadata,
     deserialize_deleted_state_item,
     deserialize_deleted_state_store,
     deserialize_list_keys_response,
@@ -254,7 +254,7 @@ class FoundryStateStore(FoundryStorageClient):
             headers["If-Match"] = if_match
         return HttpRequest(method, self._endpoint.build_url(path, **query), content=content, headers=headers)
 
-    async def _create_properties(self) -> StateStoreInfo:
+    async def _create_properties(self) -> StateStore:
         body = serialize_store_create_request(
             self._name,
             user_isolation=self._user_isolation,
@@ -265,7 +265,7 @@ class FoundryStateStore(FoundryStorageClient):
         response = await self._send_storage_request(self._request("POST", "state_stores", content=body))
         return deserialize_state_store(response.text())
 
-    async def _fetch_properties(self) -> StateStoreInfo:
+    async def _fetch_properties(self) -> StateStore:
         response = await self._send_storage_request(self._request("GET", self._store_path()))
         return deserialize_state_store(response.text())
 
@@ -274,7 +274,7 @@ class FoundryStateStore(FoundryStorageClient):
         *,
         description: str | None | object = _UNSET,
         tags: Mapping[str, str] | None | object = _UNSET,
-    ) -> StateStoreInfo:
+    ) -> StateStore:
         """Update the bound store's mutable metadata (``description`` / ``tags``).
 
         :keyword description: The new description, or ``None`` to clear it.
@@ -284,7 +284,7 @@ class FoundryStateStore(FoundryStorageClient):
             ``None`` to clear them. Omit to leave the tags unchanged.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
         :return: The updated store descriptor.
-        :rtype: ~azure.ai.agentserver.core.storage.StateStoreInfo
+        :rtype: ~azure.ai.agentserver.core.storage.StateStore
         """
         body = serialize_store_update_request(description, tags)
         response = await self._send_storage_request(self._request("PATCH", self._store_path(), content=body))
@@ -293,12 +293,12 @@ class FoundryStateStore(FoundryStorageClient):
                 description if isinstance(description, str) or description is None else self._description
             )
         if tags is not _UNSET:
-            self._tags = {} if tags is None else dict(tags)
+            self._tags = dict(tags) if isinstance(tags, Mapping) else {}
         return deserialize_state_store(response.text())
 
     async def create_item(
         self, key: str, value: JSONObject, *, tags: Mapping[str, str] | None = None
-    ) -> StateItemMetadata:
+    ) -> StateStoreItemMetadata:
         """Create a new item and fail on duplicate keys."""
         body = serialize_item_create_request(key, value, tags)
         response = await self._send_storage_request(
@@ -314,7 +314,7 @@ class FoundryStateStore(FoundryStorageClient):
         tags: Mapping[str, str] | None = None,
         if_match: str | None = None,
         require_exists: bool = False,
-    ) -> StateItemMetadata:
+    ) -> StateStoreItemMetadata:
         """Create or replace one item by key."""
         if if_match is not None and require_exists:
             raise ValueError("if_match and require_exists are mutually exclusive")
@@ -331,7 +331,11 @@ class FoundryStateStore(FoundryStorageClient):
         )
         return deserialize_state_item_metadata(response.text())
 
-    async def get(self, key: str | None = None) -> StateItem | StateStoreInfo | None:
+    @overload
+    async def get(self, key: None = None) -> StateStore | None: ...
+    @overload
+    async def get(self, key: str) -> StateStoreItem | None: ...
+    async def get(self, key: str | None = None) -> StateStoreItem | StateStore | None:
         """Fetch the bound store's own descriptor, or one item by key.
 
         :param key: The item key to fetch, or ``None`` (the default) to fetch
@@ -339,8 +343,8 @@ class FoundryStateStore(FoundryStorageClient):
         :type key: str or None
         :return: The store descriptor (``key=None``) or the item (``key=<key>``),
             or ``None`` if it does not exist.
-        :rtype: ~azure.ai.agentserver.core.storage.StateStoreInfo or
-            ~azure.ai.agentserver.core.storage.StateItem or None
+        :rtype: ~azure.ai.agentserver.core.storage.StateStore or
+            ~azure.ai.agentserver.core.storage.StateStoreItem or None
         """
         if key is None:
             try:
@@ -355,9 +359,13 @@ class FoundryStateStore(FoundryStorageClient):
             return None
         return deserialize_state_item(response.text())
 
+    @overload
+    async def delete(self, key: None = None, *, if_match: str | None = None) -> DeletedStateStore: ...
+    @overload
+    async def delete(self, key: str, *, if_match: str | None = None) -> DeletedStateStoreItem: ...
     async def delete(
         self, key: str | None = None, *, if_match: str | None = None
-    ) -> DeletedStateItem | DeletedStateStore:
+    ) -> DeletedStateStoreItem | DeletedStateStore:
         """Delete the bound store (cascades to every item), or one item by key.
 
         :param key: The item key to delete, or ``None`` (the default) to
@@ -369,7 +377,7 @@ class FoundryStateStore(FoundryStorageClient):
         :return: The deleted-store marker (``key=None``) or the deleted-item
             marker (``key=<key>``).
         :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStore or
-            ~azure.ai.agentserver.core.storage.DeletedStateItem
+            ~azure.ai.agentserver.core.storage.DeletedStateStoreItem
         """
         if key is None:
             response = await self._send_storage_request(self._request("DELETE", self._store_path()))

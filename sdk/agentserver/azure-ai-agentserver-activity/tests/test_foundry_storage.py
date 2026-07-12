@@ -11,7 +11,7 @@ import pytest
 
 from azure.ai.agentserver.activity import FoundryStorage
 import azure.ai.agentserver.activity._foundry_storage as module
-from azure.ai.agentserver.core.storage import FoundryStorageNotFoundError, StateItem
+from azure.ai.agentserver.core.storage import FoundryStorageNotFoundError, StateStoreItem
 
 
 class _TestStoreItem:
@@ -64,7 +64,19 @@ async def test_read_missing_key_does_not_create_a_store(monkeypatch: pytest.Monk
 @pytest.mark.asyncio
 async def test_read_deserializes_existing_item(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
-    store.get = AsyncMock(return_value=StateItem(id="i1", key="k", value={"count": 3}, etag="e1"))
+    store.get = AsyncMock(
+        return_value=StateStoreItem(
+            {
+                "id": "i1",
+                "object": "state_store.item",
+                "key": "k",
+                "value": {"count": 3},
+                "etag": "e1",
+                "created_at": 0,
+                "updated_at": 0,
+            }
+        )
+    )
     _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 

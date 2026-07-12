@@ -217,6 +217,7 @@ async def test_state_store_sample_flow() -> None:
         description="Sample checkpoint store",
         tags={"scenario": "state-store-sample", "env": "dev"},
     )
+    assert updated_store.tags is not None
     assert updated_store.tags["env"] == "dev"
 
     stale_item = await store.get("step-1")

@@ -14,22 +14,22 @@ from ._errors import (
 )
 from ._state import DEFAULT_ITEM_TTL_SECONDS, FoundryStateStore
 from ._state_serializer import (
-    DeletedStateItem,
     DeletedStateStore,
+    DeletedStateStoreItem,
     JSONObject,
     JSONValue,
     KeyPage,
     Order,
-    StateItem,
-    StateItemMetadata,
-    StateKey,
-    StateStoreInfo,
+    StateStore,
+    StateStoreItem,
+    StateStoreItemMetadata,
+    StateStoreKey,
 )
 
 __all__ = [
     "DEFAULT_ITEM_TTL_SECONDS",
-    "DeletedStateItem",
     "DeletedStateStore",
+    "DeletedStateStoreItem",
     "FOUNDRY_TOKEN_SCOPE",
     "FoundryStateStore",
     "FoundryStorageApiError",
@@ -44,8 +44,8 @@ __all__ = [
     "JSONValue",
     "KeyPage",
     "Order",
-    "StateItem",
-    "StateItemMetadata",
-    "StateKey",
-    "StateStoreInfo",
+    "StateStore",
+    "StateStoreItem",
+    "StateStoreItemMetadata",
+    "StateStoreKey",
 ]
