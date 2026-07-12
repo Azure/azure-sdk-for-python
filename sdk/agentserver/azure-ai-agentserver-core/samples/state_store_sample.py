@@ -6,8 +6,8 @@ FILE: state_store_sample.py
 
 DESCRIPTION:
     Demonstrates the explicit Foundry state-store client (`FoundryStateStore`):
-    store creation, item create/update/get/delete, metadata updates, optimistic
-    concurrency, and tag-filtered key listing.
+    resolving a store with `get_or_create`, item create/update/get/delete,
+    metadata updates, optimistic concurrency, and tag-filtered key listing.
 
 USAGE:
     python state_store_sample.py
@@ -29,12 +29,6 @@ from azure.ai.agentserver.core.storage import (
 )
 
 
-async def ensure_store(store: FoundryStateStore) -> None:
-    """Create the backing store resource or reuse the existing one."""
-    info = await store.get_or_create()
-    print(f"using store name={info.name}, id={info.id}, ttl={info.item_ttl_seconds}")
-
-
 async def create_and_get_item(store: FoundryStateStore) -> None:
     """Create an item, then fetch it back."""
     created = await store.create_item(
@@ -51,7 +45,7 @@ async def create_and_get_item(store: FoundryStateStore) -> None:
 
 async def update_metadata(store: FoundryStateStore) -> None:
     """Update mutable store metadata."""
-    info = await store.update_metadata(
+    info = await store.update(
         description="Sample checkpoint store",
         tags={"scenario": "state-store-sample", "env": "dev"},
     )
@@ -94,19 +88,23 @@ async def delete_item_and_store(store: FoundryStateStore) -> None:
     deleted_item = await store.delete("audit-1")
     print(f"deleted item -> key={deleted_item.key}, deleted={deleted_item.deleted}")
 
-    deleted_store = await store.delete_store()
+    deleted_store = await store.delete()
     print(f"deleted store -> name={deleted_store.name}, deleted={deleted_store.deleted}")
 
 
 async def main() -> None:
     store_name = f"checkpoints/sample-thread-{uuid4().hex}"
-    async with FoundryStateStore(
+    # get_or_create resolves (or creates, on first use) the server-side store
+    # resource in one call, so there is no separate lifecycle step before
+    # reading or writing items.
+    store = await FoundryStateStore.get_or_create(
         store_name,
         user_isolation=True,
         item_ttl_seconds=3600,
         description="Sample state store",
-    ) as store:
-        await ensure_store(store)
+    )
+    async with store:
+        print(f"using store name={store.name}")
         await create_and_get_item(store)
         await update_metadata(store)
         await optimistic_concurrency(store)

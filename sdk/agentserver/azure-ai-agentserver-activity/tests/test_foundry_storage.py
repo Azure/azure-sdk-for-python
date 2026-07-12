@@ -28,7 +28,6 @@ class _TestStoreItem:
 
 def _fake_store() -> MagicMock:
     store = MagicMock()
-    store.get_or_create = AsyncMock()
     store.get = AsyncMock(return_value=None)
     store.set = AsyncMock()
     store.delete = AsyncMock()
@@ -37,22 +36,29 @@ def _fake_store() -> MagicMock:
 
 
 def _patch_stores(monkeypatch: pytest.MonkeyPatch, stores_by_key: dict[str, MagicMock]) -> MagicMock:
-    factory = MagicMock(side_effect=lambda key, **kwargs: stores_by_key[key])
-    monkeypatch.setattr(module, "FoundryStateStore", factory)
-    return factory
+    """Patch ``FoundryStateStore`` so both the plain constructor (reads/deletes)
+    and the ``get_or_create`` classmethod (writes) resolve to the given fakes."""
+
+    def factory(key: str, **kwargs: Any) -> MagicMock:
+        return stores_by_key[key]
+
+    mock_cls = MagicMock(side_effect=factory)
+    mock_cls.get_or_create = AsyncMock(side_effect=lambda key, **kwargs: stores_by_key[key])
+    monkeypatch.setattr(module, "FoundryStateStore", mock_cls)
+    return mock_cls
 
 
 @pytest.mark.asyncio
 async def test_read_missing_key_does_not_create_a_store(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
-    factory = _patch_stores(monkeypatch, {"k": store})
+    mock_cls = _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 
     result = await storage.read(["k"], target_cls=_TestStoreItem)
 
     assert result == {}
-    factory.assert_called_once()  # client constructed to issue the GET ...
-    store.get_or_create.assert_not_awaited()  # ... but the store resource is never created for a read
+    mock_cls.assert_called_once()  # plain client constructed to issue the GET ...
+    mock_cls.get_or_create.assert_not_awaited()  # ... but the store resource is never created for a read
 
 
 @pytest.mark.asyncio
@@ -69,9 +75,10 @@ async def test_read_deserializes_existing_item(monkeypatch: pytest.MonkeyPatch) 
 
 
 @pytest.mark.asyncio
-async def test_read_treats_store_not_found_as_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_read_treats_missing_item_as_none(monkeypatch: pytest.MonkeyPatch) -> None:
+    """FoundryStateStore.get() already returns None for a missing store/item."""
     store = _fake_store()
-    store.get = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
+    store.get = AsyncMock(return_value=None)
     _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 
@@ -83,25 +90,25 @@ async def test_read_treats_store_not_found_as_missing(monkeypatch: pytest.Monkey
 @pytest.mark.asyncio
 async def test_write_creates_the_store_then_sets_the_item(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
-    _patch_stores(monkeypatch, {"k": store})
+    mock_cls = _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 
     await storage.write({"k": _TestStoreItem({"turn": 4})})
 
-    store.get_or_create.assert_awaited_once()
+    mock_cls.get_or_create.assert_awaited_once()
     store.set.assert_awaited_once_with("k", {"turn": 4})
 
 
 @pytest.mark.asyncio
 async def test_write_only_ensures_the_store_exists_once(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
-    _patch_stores(monkeypatch, {"k": store})
+    mock_cls = _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 
     await storage.write({"k": _TestStoreItem({"turn": 1})})
     await storage.write({"k": _TestStoreItem({"turn": 2})})
 
-    store.get_or_create.assert_awaited_once()
+    mock_cls.get_or_create.assert_awaited_once()
     assert store.set.await_count == 2
 
 

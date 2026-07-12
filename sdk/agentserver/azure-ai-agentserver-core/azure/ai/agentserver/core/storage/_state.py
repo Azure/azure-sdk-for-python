@@ -14,6 +14,8 @@ from typing import Any
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.rest import HttpRequest
 
+from azure.ai.agentserver.core._request_context import get_request_context
+
 from ._client import JSON_CONTENT_TYPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import FoundryStorageConflictError, FoundryStorageNotFoundError
@@ -58,8 +60,18 @@ class FoundryStateStore(FoundryStorageClient):
 
     The instance is bound to a single caller-chosen store ``name``. Session or
     conversation scoping is expressed by encoding that identity into the store
-    name itself (for example ``checkpoints/<conversation-id>``), matching spec
-    PR 247's removal of built-in session isolation.
+    name itself (for example ``checkpoints/<conversation-id>``).
+
+    Prefer :meth:`get_or_create` over the constructor: it resolves (or creates)
+    the store's server-side resource in one call, so you never need a separate
+    lifecycle step before reading or writing items::
+
+        store = await FoundryStateStore.get_or_create("checkpoints/thread-abc")
+        await store.set("step-1", {"done": False})
+
+    ``get`` and ``delete`` are overloaded on whether *key* is supplied: with no
+    *key* they act on the store itself (its descriptor, or the whole store
+    cascade-deleted); with a *key* they act on one item within it.
     """
 
     def __init__(
@@ -72,11 +84,14 @@ class FoundryStateStore(FoundryStorageClient):
         item_ttl_seconds: int = DEFAULT_ITEM_TTL_SECONDS,
         description: str | None = None,
         tags: Mapping[str, str] | None = None,
-        user_id: str | None = None,
         api_version: str = "v1",
         **kwargs: Any,
     ) -> None:
         """Create a store-bound durable state-store client.
+
+        Prefer :meth:`get_or_create`, which also resolves the server-side store
+        resource; use the constructor directly only when you already know the
+        store exists and want to skip that round trip.
 
         :param name: The logical state-store name. Encode conversation/thread
             identity into this name when you need that scope.
@@ -87,17 +102,18 @@ class FoundryStateStore(FoundryStorageClient):
         :param endpoint: Foundry storage endpoint or project endpoint URL.
         :type endpoint: FoundryStorageEndpoint | str | None
         :keyword user_isolation: Whether item operations should be partitioned
-            per resolved user.
+            per resolved user. Fixed at store creation; ignored if the store
+            already exists.
         :paramtype user_isolation: bool
         :keyword item_ttl_seconds: Store-level default TTL inherited by every
-            item.
+            item. Fixed at store creation; ignored if the store already exists.
         :paramtype item_ttl_seconds: int
-        :keyword description: Optional mutable store description.
+        :keyword description: Optional mutable store description, set at
+            creation. Change it later with :meth:`update`.
         :paramtype description: str or None
-        :keyword tags: Optional mutable store metadata tags.
+        :keyword tags: Optional mutable store metadata tags, set at creation.
+            Change them later with :meth:`update`.
         :paramtype tags: ~collections.abc.Mapping[str, str] or None
-        :keyword user_id: Delegated end-user identity for trusted callers.
-        :paramtype user_id: str or None
         :keyword api_version: Storage API version.
         :paramtype api_version: str
         :raises ValueError: If ``name`` is empty.
@@ -129,8 +145,70 @@ class FoundryStateStore(FoundryStorageClient):
         self._item_ttl_seconds = item_ttl_seconds
         self._description = description
         self._tags = {} if tags is None else dict(tags)
-        self._user_id = user_id
         super().__init__(credential, resolved, **kwargs)
+
+    @classmethod
+    async def get_or_create(
+        cls,
+        name: str,
+        credential: AsyncTokenCredential | None = None,
+        endpoint: FoundryStorageEndpoint | str | None = None,
+        *,
+        user_isolation: bool = False,
+        item_ttl_seconds: int = DEFAULT_ITEM_TTL_SECONDS,
+        description: str | None = None,
+        tags: Mapping[str, str] | None = None,
+        api_version: str = "v1",
+        **kwargs: Any,
+    ) -> "FoundryStateStore":
+        """Return a client bound to *name*, creating the store if needed.
+
+        This is the recommended entry point: it resolves the server-side store
+        resource in one call (fetch, or create on first use) so callers never
+        need a separate lifecycle step before reading or writing items.
+
+        :param name: The logical state-store name. See the constructor.
+        :type name: str
+        :param credential: Async token credential. See the constructor.
+        :type credential: AsyncTokenCredential | None
+        :param endpoint: Foundry storage endpoint or project endpoint URL.
+        :type endpoint: FoundryStorageEndpoint | str | None
+        :keyword user_isolation: See the constructor. Only applied if the store
+            does not already exist.
+        :paramtype user_isolation: bool
+        :keyword item_ttl_seconds: See the constructor. Only applied if the
+            store does not already exist.
+        :paramtype item_ttl_seconds: int
+        :keyword description: See the constructor. Only applied if the store
+            does not already exist.
+        :paramtype description: str or None
+        :keyword tags: See the constructor. Only applied if the store does not
+            already exist.
+        :paramtype tags: ~collections.abc.Mapping[str, str] or None
+        :keyword api_version: Storage API version.
+        :paramtype api_version: str
+        :return: The bound, ready-to-use store client.
+        :rtype: FoundryStateStore
+        """
+        store = cls(
+            name,
+            credential,
+            endpoint,
+            user_isolation=user_isolation,
+            item_ttl_seconds=item_ttl_seconds,
+            description=description,
+            tags=tags,
+            api_version=api_version,
+            **kwargs,
+        )
+        try:
+            await store._fetch_properties()
+        except FoundryStorageNotFoundError:
+            try:
+                await store._create_properties()
+            except FoundryStorageConflictError:
+                await store._fetch_properties()
+        return store
 
     async def aclose(self) -> None:
         """Close the pipeline client and any owned default credential."""
@@ -163,14 +241,20 @@ class FoundryStateStore(FoundryStorageClient):
         headers: dict[str, str] = {}
         if content is not None:
             headers["Content-Type"] = JSON_CONTENT_TYPE
-        if include_user_id and self._user_id is not None:
-            headers[DELEGATED_USER_ID_HEADER] = self._user_id
+        if include_user_id:
+            # x-ms-user-id is a per-request delegation header, not a store-level
+            # setting: it must reflect the caller resolved for *this* request
+            # (azure.ai.agentserver.core's request-scoped platform context),
+            # not a value fixed when this (possibly long-lived, reused) client
+            # was constructed.
+            user_id = get_request_context().user_id
+            if user_id is not None:
+                headers[DELEGATED_USER_ID_HEADER] = user_id
         if if_match is not None:
             headers["If-Match"] = if_match
         return HttpRequest(method, self._endpoint.build_url(path, **query), content=content, headers=headers)
 
-    async def create(self) -> StateStoreInfo:
-        """Create the bound store resource."""
+    async def _create_properties(self) -> StateStoreInfo:
         body = serialize_store_create_request(
             self._name,
             user_isolation=self._user_isolation,
@@ -181,49 +265,40 @@ class FoundryStateStore(FoundryStorageClient):
         response = await self._send_storage_request(self._request("POST", "state_stores", content=body))
         return deserialize_state_store(response.text())
 
-    async def create_or_get(self) -> StateStoreInfo:
-        """Create the bound store resource, or fetch it when it already exists."""
-        try:
-            return await self.create()
-        except FoundryStorageConflictError:
-            return await self.get_properties()
-
-    async def get_or_create(self) -> StateStoreInfo:
-        """Fetch the bound store resource, or create it when it does not exist."""
-        try:
-            return await self.get_properties()
-        except FoundryStorageNotFoundError:
-            try:
-                return await self.create()
-            except FoundryStorageConflictError:
-                return await self.get_properties()
-
-    async def get_properties(self) -> StateStoreInfo:
-        """Fetch the bound store descriptor."""
+    async def _fetch_properties(self) -> StateStoreInfo:
         response = await self._send_storage_request(self._request("GET", self._store_path()))
         return deserialize_state_store(response.text())
 
-    async def update_metadata(
+    async def update(
         self,
         *,
         description: str | None | object = _UNSET,
         tags: Mapping[str, str] | None | object = _UNSET,
     ) -> StateStoreInfo:
-        """Update mutable store metadata on the bound store."""
+        """Update the bound store's mutable metadata (``description`` / ``tags``).
+
+        :keyword description: The new description, or ``None`` to clear it.
+            Omit to leave the description unchanged.
+        :paramtype description: str or None
+        :keyword tags: The new tags (replaces the existing set wholesale), or
+            ``None`` to clear them. Omit to leave the tags unchanged.
+        :paramtype tags: ~collections.abc.Mapping[str, str] or None
+        :return: The updated store descriptor.
+        :rtype: ~azure.ai.agentserver.core.storage.StateStoreInfo
+        """
         body = serialize_store_update_request(description, tags)
         response = await self._send_storage_request(self._request("PATCH", self._store_path(), content=body))
         if description is not _UNSET:
-            self._description = description if isinstance(description, str) or description is None else self._description
+            self._description = (
+                description if isinstance(description, str) or description is None else self._description
+            )
         if tags is not _UNSET:
             self._tags = {} if tags is None else dict(tags)
         return deserialize_state_store(response.text())
 
-    async def delete_store(self) -> DeletedStateStore:
-        """Delete the bound store and cascade-delete its items."""
-        response = await self._send_storage_request(self._request("DELETE", self._store_path()))
-        return deserialize_deleted_state_store(response.text())
-
-    async def create_item(self, key: str, value: JSONObject, *, tags: Mapping[str, str] | None = None) -> StateItemMetadata:
+    async def create_item(
+        self, key: str, value: JSONObject, *, tags: Mapping[str, str] | None = None
+    ) -> StateItemMetadata:
         """Create a new item and fail on duplicate keys."""
         body = serialize_item_create_request(key, value, tags)
         response = await self._send_storage_request(
@@ -256,16 +331,49 @@ class FoundryStateStore(FoundryStorageClient):
         )
         return deserialize_state_item_metadata(response.text())
 
-    async def get(self, key: str) -> StateItem | None:
-        """Fetch one item by key, returning ``None`` when it is absent."""
+    async def get(self, key: str | None = None) -> StateItem | StateStoreInfo | None:
+        """Fetch the bound store's own descriptor, or one item by key.
+
+        :param key: The item key to fetch, or ``None`` (the default) to fetch
+            the bound store's own descriptor instead.
+        :type key: str or None
+        :return: The store descriptor (``key=None``) or the item (``key=<key>``),
+            or ``None`` if it does not exist.
+        :rtype: ~azure.ai.agentserver.core.storage.StateStoreInfo or
+            ~azure.ai.agentserver.core.storage.StateItem or None
+        """
+        if key is None:
+            try:
+                return await self._fetch_properties()
+            except FoundryStorageNotFoundError:
+                return None
         try:
-            response = await self._send_storage_request(self._request("GET", self._item_path(key), include_user_id=True))
+            response = await self._send_storage_request(
+                self._request("GET", self._item_path(key), include_user_id=True)
+            )
         except FoundryStorageNotFoundError:
             return None
         return deserialize_state_item(response.text())
 
-    async def delete(self, key: str, *, if_match: str | None = None) -> DeletedStateItem:
-        """Delete one item by key."""
+    async def delete(
+        self, key: str | None = None, *, if_match: str | None = None
+    ) -> DeletedStateItem | DeletedStateStore:
+        """Delete the bound store (cascades to every item), or one item by key.
+
+        :param key: The item key to delete, or ``None`` (the default) to
+            delete the bound store itself, cascading to every item under it.
+        :type key: str or None
+        :keyword if_match: Optional concurrency token. Only meaningful for a
+            single-item delete (``key`` supplied); ignored for a store delete.
+        :paramtype if_match: str or None
+        :return: The deleted-store marker (``key=None``) or the deleted-item
+            marker (``key=<key>``).
+        :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStore or
+            ~azure.ai.agentserver.core.storage.DeletedStateItem
+        """
+        if key is None:
+            response = await self._send_storage_request(self._request("DELETE", self._store_path()))
+            return deserialize_deleted_state_store(response.text())
         response = await self._send_storage_request(
             self._request("DELETE", self._item_path(key), include_user_id=True, if_match=if_match)
         )

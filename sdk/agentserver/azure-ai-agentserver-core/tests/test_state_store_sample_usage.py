@@ -35,7 +35,6 @@ def _make_store_with_responses(*responses: MagicMock) -> FoundryStateStore:
     store._item_ttl_seconds = 3600
     store._description = "Sample state store"
     store._tags = {}
-    store._user_id = "user-42"
     mock_pipeline = AsyncMock()
     mock_pipeline.send_request = AsyncMock(side_effect=list(responses))
     mock_pipeline.close = AsyncMock()
@@ -47,10 +46,10 @@ def _make_store_with_responses(*responses: MagicMock) -> FoundryStateStore:
 async def test_state_store_sample_flow() -> None:
     store = _make_store_with_responses(
         _make_response(
-            201,
+            200,
             {
                 "id": "ss_1",
-                "object": "statestore",
+                "object": "state_store",
                 "name": "checkpoints/thread-abc",
                 "user_isolation": True,
                 "item_ttl_seconds": 3600,
@@ -64,7 +63,7 @@ async def test_state_store_sample_flow() -> None:
             201,
             {
                 "id": "it_1",
-                "object": "statestore_item",
+                "object": "state_store.item",
                 "key": "step-1",
                 "etag": '"0x8DA"',
                 "created_at": 2,
@@ -75,7 +74,7 @@ async def test_state_store_sample_flow() -> None:
             200,
             {
                 "id": "it_1",
-                "object": "statestore_item",
+                "object": "state_store.item",
                 "key": "step-1",
                 "value": {"done": False, "attempt": 1},
                 "tags": {"kind": "checkpoint"},
@@ -88,7 +87,7 @@ async def test_state_store_sample_flow() -> None:
             200,
             {
                 "id": "ss_1",
-                "object": "statestore",
+                "object": "state_store",
                 "name": "checkpoints/thread-abc",
                 "user_isolation": True,
                 "item_ttl_seconds": 3600,
@@ -102,7 +101,7 @@ async def test_state_store_sample_flow() -> None:
             200,
             {
                 "id": "it_1",
-                "object": "statestore_item",
+                "object": "state_store.item",
                 "key": "step-1",
                 "value": {"done": False, "attempt": 1},
                 "tags": {"kind": "checkpoint"},
@@ -115,7 +114,7 @@ async def test_state_store_sample_flow() -> None:
             200,
             {
                 "id": "it_1",
-                "object": "statestore_item",
+                "object": "state_store.item",
                 "key": "step-1",
                 "etag": '"0x8DB"',
                 "created_at": 2,
@@ -131,7 +130,7 @@ async def test_state_store_sample_flow() -> None:
             201,
             {
                 "id": "it_2",
-                "object": "statestore_item",
+                "object": "state_store.item",
                 "key": "step-2",
                 "etag": '"0x8DC"',
                 "created_at": 5,
@@ -142,7 +141,7 @@ async def test_state_store_sample_flow() -> None:
             201,
             {
                 "id": "it_3",
-                "object": "statestore_item",
+                "object": "state_store.item",
                 "key": "audit-1",
                 "etag": '"0x8DD"',
                 "created_at": 6,
@@ -156,7 +155,7 @@ async def test_state_store_sample_flow() -> None:
                 "data": [
                     {
                         "id": "it_1",
-                        "object": "statestore_item",
+                        "object": "state_store.item",
                         "key": "step-1",
                         "tags": {"kind": "checkpoint"},
                         "etag": '"0x8DB"',
@@ -176,7 +175,7 @@ async def test_state_store_sample_flow() -> None:
                 "data": [
                     {
                         "id": "it_2",
-                        "object": "statestore_item",
+                        "object": "state_store.item",
                         "key": "step-2",
                         "tags": {"kind": "checkpoint"},
                         "etag": '"0x8DC"',
@@ -191,15 +190,20 @@ async def test_state_store_sample_flow() -> None:
         ),
         _make_response(
             200,
-            {"id": "it_3", "object": "statestore_item.deleted", "key": "audit-1", "deleted": True},
+            {"id": "it_3", "object": "state_store.item", "key": "audit-1", "deleted": True},
         ),
         _make_response(
             200,
-            {"id": "ss_1", "object": "statestore.deleted", "name": "checkpoints/thread-abc", "deleted": True},
+            {"id": "ss_1", "object": "state_store", "name": "checkpoints/thread-abc", "deleted": True},
         ),
     )
 
-    store_info = await store.get_or_create()
+    # This test drives a hand-built store double directly (bypassing the real
+    # constructor/classmethod), so it exercises the store-resolution wire call
+    # via the private helper get_or_create() delegates to, rather than the
+    # classmethod itself (which constructs its own instance -- see
+    # test_foundry_state_store.py's get_or_create orchestration tests for that).
+    store_info = await store._fetch_properties()
     assert store_info.id == "ss_1"
 
     created = await store.create_item("step-1", {"done": False, "attempt": 1}, tags={"kind": "checkpoint"})
@@ -209,7 +213,7 @@ async def test_state_store_sample_flow() -> None:
     assert item is not None
     assert item.value["attempt"] == 1
 
-    updated_store = await store.update_metadata(
+    updated_store = await store.update(
         description="Sample checkpoint store",
         tags={"scenario": "state-store-sample", "env": "dev"},
     )
@@ -237,5 +241,5 @@ async def test_state_store_sample_flow() -> None:
     deleted_item = await store.delete("audit-1")
     assert deleted_item.deleted is True
 
-    deleted_store = await store.delete_store()
+    deleted_store = await store.delete()
     assert deleted_store.deleted is True

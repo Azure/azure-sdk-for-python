@@ -118,14 +118,14 @@ class FoundryStorage(AsyncStorageBase):
         self._ensured_keys: set[str] = set()
         self._creation_lock = asyncio.Lock()
 
-    def _new_store(self, key: str) -> FoundryStateStore:
-        """Build (but do not create server-side) the per-key backing store.
+    def _store_kwargs(self, key: str) -> dict[str, Any]:
+        """Build the keyword arguments for the per-key backing store.
 
-        :param key: The M365 storage key this store will be bound to.
+        :param key: The M365 storage key the store will be bound to.
         :type key: str
-        :return: The unbound client for *key*; the server-side resource is
-            created lazily by :meth:`_get_store`.
-        :rtype: ~azure.ai.agentserver.core.storage.FoundryStateStore
+        :return: Keyword arguments for ``FoundryStateStore(key, **kwargs)`` /
+            ``FoundryStateStore.get_or_create(key, **kwargs)``.
+        :rtype: dict[str, ~typing.Any]
         """
         kwargs: dict[str, Any] = {
             "credential": self._credential,
@@ -134,33 +134,38 @@ class FoundryStorage(AsyncStorageBase):
         }
         if self._item_ttl_seconds is not None:
             kwargs["item_ttl_seconds"] = self._item_ttl_seconds
-        return FoundryStateStore(key, **kwargs)
+        return kwargs
 
     async def _get_store(self, key: str, *, ensure_exists: bool) -> FoundryStateStore:
-        """Return the cached per-key store, creating it (client and, when
-        ``ensure_exists``, the server-side resource) on first use.
+        """Return the cached per-key store, creating it on first use.
+
+        Reads/deletes get a plain (unconfirmed) client -- ``FoundryStateStore``
+        gracefully treats a not-yet-created store as a missing key/item, so no
+        network round trip is needed just to look something up. Writes need
+        the server-side store to actually exist, so the first write for a key
+        upgrades the cache entry via :meth:`~FoundryStateStore.get_or_create`.
 
         :param key: The M365 storage key to resolve a store for.
         :type key: str
-        :keyword ensure_exists: When ``True``, calls ``get_or_create()`` once
-            per key so a subsequent write does not 404 against a store that
-            was never created.
+        :keyword ensure_exists: When ``True``, ensures the server-side store
+            resource exists (once per key) before returning.
         :paramtype ensure_exists: bool
         :return: The cached (or newly created) per-key store.
         :rtype: ~azure.ai.agentserver.core.storage.FoundryStateStore
         """
         store = self._stores.get(key)
-        if store is None:
-            async with self._creation_lock:
+        if store is not None and (not ensure_exists or key in self._ensured_keys):
+            return store
+        async with self._creation_lock:
+            if ensure_exists and key not in self._ensured_keys:
+                store = await FoundryStateStore.get_or_create(key, **self._store_kwargs(key))
+                self._stores[key] = store
+                self._ensured_keys.add(key)
+            else:
                 store = self._stores.get(key)
                 if store is None:
-                    store = self._new_store(key)
+                    store = FoundryStateStore(key, **self._store_kwargs(key))
                     self._stores[key] = store
-        if ensure_exists and key not in self._ensured_keys:
-            async with self._creation_lock:
-                if key not in self._ensured_keys:
-                    await store.get_or_create()
-                    self._ensured_keys.add(key)
         return store
 
     async def aclose(self) -> None:
@@ -212,10 +217,7 @@ class FoundryStorage(AsyncStorageBase):
         """
         _ = kwargs
         store = await self._get_store(key, ensure_exists=False)
-        try:
-            item = await store.get(key)
-        except FoundryStorageNotFoundError:
-            item = None
+        item = await store.get(key)
         if item is None or target_cls is None:
             return None, None
         return key, target_cls.from_json_to_store_item(item.value)

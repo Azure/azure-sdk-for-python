@@ -2,8 +2,7 @@
 
 `FoundryStateStore` is a durable, server-backed state-store client for agent
 state. It gives your agent an explicit store resource plus single-item
-operations over that store: create the store once, then create, replace, fetch,
-delete, and list items inside it.
+operations over that store.
 
 ## Overview
 
@@ -22,16 +21,20 @@ protocol: it keeps the transport/auth pipeline in `FoundryStorageClient`, while
 
 ## Getting Started
 
+`get_or_create()` is the recommended entry point: it resolves (or creates) the
+store's server-side resource in one call, so there is no separate lifecycle
+step before reading or writing items.
+
 ```python
 from azure.ai.agentserver.core.storage import FoundryStateStore
 
-async with FoundryStateStore(
+store = await FoundryStateStore.get_or_create(
     "checkpoints/thread-abc",
     user_isolation=True,
     item_ttl_seconds=3600,
     description="Checkpoint store for thread abc",
-) as store:
-    await store.get_or_create()
+)
+async with store:
     await store.set("step-1", {"done": False})
 
     item = await store.get("step-1")
@@ -46,13 +49,13 @@ By default, the client resolves:
 
 ## Store Name = Scope
 
-The protocol no longer has a built-in session-isolation knob. If you want
-conversation or thread scoping, encode it directly into the store name:
+The protocol has no built-in session-isolation knob. If you want conversation
+or thread scoping, encode it directly into the store name:
 
 ```python
-FoundryStateStore("checkpoints/thread-abc")
-FoundryStateStore("workflow-state/run-42")
-FoundryStateStore("user-prefs/defaults", user_isolation=True)
+await FoundryStateStore.get_or_create("checkpoints/thread-abc")
+await FoundryStateStore.get_or_create("workflow-state/run-42")
+await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolation=True)
 ```
 
 Because the store name is the logical identity, choose a stable naming scheme
@@ -61,55 +64,62 @@ path encoding on the wire.
 
 ## Store Lifecycle
 
-Stores are **explicit resources**. Create or resolve them before writing items.
+Stores are **explicit resources**, but `get_or_create()` is the only lifecycle
+call you need for the common case:
 
 ```python
-info = await store.create()
-print(info.id, info.name, info.item_ttl_seconds)
+store = await FoundryStateStore.get_or_create(
+    "checkpoints/thread-abc",
+    user_isolation=True,
+    item_ttl_seconds=3600,
+)
+print(store.name)
+```
 
-info = await store.create_or_get()
-print(info.id, info.name, info.item_ttl_seconds)
+`get()` and `delete()` are overloaded on whether you pass a `key`: with no
+`key` they act on the bound store itself; with a `key` they act on one item.
 
-info = await store.get_or_create()
-print(info.id, info.name, info.item_ttl_seconds)
-
-info = await store.get_properties()
-info = await store.update_metadata(
+```python
+info = await store.get()          # the store's own descriptor, or None if absent
+info = await store.update(
     description="Checkpoint store for prod traffic",
     tags={"env": "prod", "team": "agents"},
 )
 
-deleted = await store.delete_store()
+deleted = await store.delete()    # deletes the store, cascading to every item
 assert deleted.deleted is True
 ```
 
 ### Key points
 
-- `create()` raises `FoundryStorageConflictError` if the store name already exists.
-- `get_or_create()` fetches the store first, or creates it when it is absent.
-- `create_or_get()` creates the store first, or fetches the existing descriptor on `409`.
-- Neither helper updates existing `user_isolation`, `item_ttl_seconds`, `description`, or `tags`.
-- `update_metadata()` only changes `description` and `tags`.
+- `get_or_create()` fetches the store first, or creates it when it is absent
+  (falling back to a fetch if another caller created it in the meantime). It
+  does not update `user_isolation`, `item_ttl_seconds`, `description`, or
+  `tags` on a store that already exists -- those are only applied on first
+  creation.
+- `update()` only changes `description` and `tags`.
 - `user_isolation` and `item_ttl_seconds` are fixed at create time.
-- `delete_store()` cascades to every item under that store name.
+- `delete()` with no `key` cascades to every item under that store name.
 
-## User Isolation and Delegated User IDs
+## User Isolation and the Delegated User Header
 
 Set `user_isolation=True` when the same store name should fan out per user.
 
 ```python
-store = FoundryStateStore(
-    "user-prefs/defaults",
-    user_isolation=True,
-    user_id="aad-user-42",
-)
+store = await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolation=True)
 ```
 
-- For direct callers, the platform can derive user identity from the token.
-- For trusted callers acting on behalf of an end user, pass `user_id` so the SDK
-  sends the delegated `x-ms-user-id` header on item operations.
-- Store-management calls (`create`, `get_properties`, `update_metadata`,
-  `delete_store`) stay store-scoped and do not send the delegated user header.
+- For direct callers, the platform derives user identity from the token.
+- For trusted callers acting on behalf of an end user, the SDK sends the
+  delegated `x-ms-user-id` header on item operations automatically, resolved
+  **per request** from `azure.ai.agentserver.core.get_request_context().user_id`
+  -- the same request-scoped platform context every protocol host already
+  populates from the inbound `x-agent-user-id` header. There is nothing to
+  configure on `FoundryStateStore` itself: a client instance can safely serve
+  requests for different users over its lifetime.
+- Store-management calls (`get_or_create`, `get()` with no key, `update()`,
+  `delete()` with no key) stay store-scoped and never send the delegated user
+  header.
 
 ## Values, Tags, and TTL
 
@@ -128,8 +138,7 @@ Tags are simple string labels used only for filtering `list_keys()`.
 TTL is **store-level**, not per-item:
 
 ```python
-store = FoundryStateStore("otp/user-42", item_ttl_seconds=300)
-await store.get_or_create()
+store = await FoundryStateStore.get_or_create("otp/user-42", item_ttl_seconds=300)
 ```
 
 - Default: `30 days`
@@ -173,7 +182,8 @@ if item is not None:
     print(item.id, item.key, item.value, item.tags, item.etag)
 ```
 
-`get()` returns `None` when the item is missing.
+`get(key)` returns `None` when the item is missing; `get()` with no `key`
+returns the store's own descriptor instead (or `None` if the store is absent).
 
 ### Delete one item
 
@@ -240,7 +250,8 @@ All storage errors derive from `FoundryStorageError`.
 |---|---|---|
 | `FoundryStoragePreconditionError` | 412 | `If-Match` failed; `current_etag` may be populated. |
 | `FoundryStorageNotFoundError` | 404 | Store or resource path not found. |
-| `FoundryStorageBadRequestError` | 400 / 409 | Invalid request or duplicate/conflict. |
+| `FoundryStorageConflictError` | 409 | A `create`/`create_item` duplicated an existing name/key. |
+| `FoundryStorageBadRequestError` | 400 | Invalid request; `param` names the offending field. |
 | `FoundryStorageApiError` | other 4xx/5xx | Server-side failure. |
 
 ```python
@@ -257,16 +268,51 @@ except FoundryStorageError as err:
     print(err.message, err.response_body)
 ```
 
+## Limits
+
+All request-body and query fields are bounded server-side; a violating request
+is rejected with `400 Bad Request` (`error.param` names the offending field).
+
+**Store (`get_or_create`, `update`):**
+
+| Field | Constraints | Mutability |
+|-------|-------------|------------|
+| `name` | 1-128 chars. Unicode; may contain `/` as a hierarchy separator. Unique within the project + agent. | Immutable |
+| `user_isolation` | Boolean. Omitted -> `false` (agent-level, shared). | Immutable (fixed at first creation) |
+| `item_ttl_seconds` | Default `2592000` (30 days); `-1` = never expire; else `1`-`2147483647`. Write-sliding per item (renews on write, not read). | Immutable (fixed at first creation) |
+| `description` | <= 1024 chars. Free-form. | Mutable via `update()` |
+| `tags` | <= 16 entries. Key: 1-64 chars, `[a-zA-Z0-9_.-]`. Value: <= 256 chars. Replaced wholesale. | Mutable via `update()` |
+
+**Item (`create_item`, `set`):**
+
+| Field | Constraints | Mutability |
+|-------|-------------|------------|
+| `key` | 1-128 chars. Unicode; may contain `/`. Unique within the store. | Immutable |
+| `value` | Opaque JSON object, <= 1 MB serialized inline. | Mutable via `set()` (replace) |
+| `tags` | <= 16 entries, same shape as store tags. | Mutable via `set()` (replace) |
+
+Items carry no TTL of their own -- expiry is inherited from the store's
+`item_ttl_seconds`.
+
+**Query parameters (`list_keys`):**
+
+| Parameter | Constraints |
+|-----------|-------------|
+| `limit` | 1-100. Default `20`. |
+| `order` | `"asc"` or `"desc"`. Default `"desc"`. |
+| `after` / `before` | Opaque cursor; mutually exclusive. |
+
 ## Best Practices
 
-1. **Create stores deliberately.** Do not assume item writes will create the
-   store for you.
-2. **Encode conversation scope in the store name.** The store name replaces the
-   old session-isolation knob.
+1. **Prefer `get_or_create()`.** It is the only lifecycle call you need for the
+   common case; do not assume item writes will create the store for you.
+2. **Encode conversation scope in the store name.** There is no separate
+   session-isolation knob.
 3. **Use `user_isolation=True` only when needed.** Prefer a stable store naming
    scheme first, then add per-user partitioning when the store name is shared.
 4. **Use `if_match` for read-modify-write flows.** Counters and checkpoints are
    race-prone without it.
 5. **Keep values as JSON objects.** Serialize your own models explicitly.
-6. **Reuse the client.** It owns an HTTP pipeline; construct it once and close it
-   with `async with` or `await store.aclose()`.
+6. **Reuse the client.** It owns an HTTP pipeline; construct it once (via
+   `get_or_create()`) and close it with `async with` or `await store.aclose()`.
+

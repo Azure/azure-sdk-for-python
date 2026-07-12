@@ -130,16 +130,17 @@ async def on_shutdown():
 
 `FoundryStateStore` is a durable, server-backed key-value store for agent state
 — session memory, per-user preferences, counters, and checkpoints — bound to
-one explicit, caller-named store, with an explicit store lifecycle, single-item
-optimistic concurrency, tag-filtered key listing, and store-level TTL.
+one explicit, caller-named store, with single-item optimistic concurrency,
+tag-filtered key listing, and store-level TTL.
 
 ```python
 from azure.ai.agentserver.core.storage import FoundryStateStore
 
 # Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
 # The store name is the scope -- encode conversation/thread identity into it.
-async with FoundryStateStore("checkpoints/thread-abc", user_isolation=True) as store:
-    await store.get_or_create()
+# get_or_create() resolves (or creates, on first use) the store in one call.
+store = await FoundryStateStore.get_or_create("checkpoints/thread-abc", user_isolation=True)
+async with store:
     await store.set("step-1", {"done": False})
     item = await store.get("step-1")
     print(item.value)  # {"done": False}
