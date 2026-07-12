@@ -746,6 +746,20 @@ class TestNormalizeFunctionCallTypes:
         assert result[0]["content"][0]["tool_result"] == "result data"
         assert "function_call_output" not in result[0]["content"][0]
 
+    def test_function_call_nested_payload_key_renamed(self):
+        # A nested ``function_call`` payload key is renamed to ``tool_call`` so downstream code that
+        # reads ``content["tool_call"]`` finds it (canonical single-source behavior).
+        messages = [
+            {
+                "role": "assistant",
+                "content": [{"type": "function_call", "function_call": {"name": "f", "arguments": {}}}],
+            }
+        ]
+        result = _normalize_function_call_types(messages)
+        assert result[0]["content"][0]["type"] == "tool_call"
+        assert result[0]["content"][0]["tool_call"] == {"name": "f", "arguments": {}}
+        assert "function_call" not in result[0]["content"][0]
+
     def test_openapi_call_to_tool_call(self):
         messages = [
             {
@@ -777,6 +791,21 @@ class TestNormalizeFunctionCallTypes:
 
     def test_non_list_passthrough(self):
         assert _normalize_function_call_types("not a list") == "not a list"
+
+
+@pytest.mark.unittest
+class TestPreprocessHelpersSingleSource:
+    """The message-preprocessing helpers have one definition in ``_common.utils`` and are re-exported
+    from ``_base_prompty_eval`` for backward compatibility."""
+
+    def test_base_prompty_eval_reexports_the_same_utils_helpers(self):
+        from azure.ai.evaluation._common import utils as u
+        from azure.ai.evaluation._evaluators._common import _base_prompty_eval as b
+
+        assert b._is_intermediate_response is u._is_intermediate_response
+        assert b._drop_mcp_approval_messages is u._drop_mcp_approval_messages
+        assert b._normalize_function_call_types is u._normalize_function_call_types
+        assert b._preprocess_messages is u._preprocess_messages
 
 
 @pytest.mark.unittest
