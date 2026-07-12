@@ -97,5 +97,3 @@ with (
         elif event.type == "response.completed":
             print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-
-    print("\nCleaning up...")

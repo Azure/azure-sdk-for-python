@@ -154,5 +154,3 @@ with (
         )
 
         print(f"Follow-up response received (ID: {response.id})")
-
-    print("\nCleaning up...")

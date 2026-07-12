@@ -163,8 +163,6 @@ async def main():
 
             print(f"Follow-up response received (ID: {response.id})")
 
-        print("\nCleaning up...")
-
 
 if __name__ == "__main__":
     asyncio.run(main())

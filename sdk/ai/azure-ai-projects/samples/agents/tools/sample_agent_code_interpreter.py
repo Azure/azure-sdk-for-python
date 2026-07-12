@@ -70,5 +70,3 @@ with (
 
     # Print final assistant text output.
     print(f"Agent response: {response.output_text}")
-
-    print("\nCleaning up...")

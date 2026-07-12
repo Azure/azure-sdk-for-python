@@ -88,8 +88,6 @@ async def main():
         )
         print(f"Response created: {response.id}")
 
-        print("\nCleaning up...")
-
         # Save the image to a file
         image_data = [output.result for output in response.output if output.type == "image_generation_call"]
         if image_data and image_data[0]:
