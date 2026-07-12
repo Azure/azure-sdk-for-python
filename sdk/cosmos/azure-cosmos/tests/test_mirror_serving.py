@@ -33,7 +33,9 @@ import pytest
 
 from azure.core.exceptions import AzureError
 from azure.cosmos._mirror_integration import (
+    close_mirror_driver,
     execute_mirrored_query,
+    execute_mirrored_query_with_cache,
     _validate_mirror_config,
     _get_config_value,
 )
@@ -188,6 +190,7 @@ class TestContainerMirrorServing(unittest.TestCase):
         container.client_connection = MagicMock()
         container.client_connection.mirror_config = mirror_config
         container.client_connection._mirror_driver_client = None
+        container.client_connection._mirror_driver_closed = False
         container.id = "test-container"
         return container
 
@@ -222,12 +225,12 @@ class TestContainerMirrorServing(unittest.TestCase):
                 "Note: Fabric mirroring is only supported with CosmosDB Fabric native accounts."
             )
 
-    @patch("azure.cosmos.container.execute_mirrored_query")
+    @patch("azure.cosmos.container.execute_mirrored_query_with_cache")
     def test_mirror_query_returns_iterable_results(self, mock_execute):
         from azure.cosmos.container import ContainerProxy
 
         expected_results = [{"id": "1"}, {"id": "2"}]
-        mock_execute.return_value = (expected_results, "driver")
+        mock_execute.return_value = expected_results
         response_hook = MagicMock()
         container = self._make_container(mirror_config={"server": "s", "database": "db"})
 
@@ -235,12 +238,10 @@ class TestContainerMirrorServing(unittest.TestCase):
             container,
             {"query": "SELECT * FROM c", "response_hook": response_hook},
         )
-
         assert list(pager) == expected_results
-        assert container.client_connection._mirror_driver_client == "driver"
         response_hook.assert_called_once_with({}, expected_results)
 
-    @patch("azure.cosmos.container.execute_mirrored_query")
+    @patch("azure.cosmos._mirror_integration.execute_mirrored_query")
     def test_concurrent_first_queries_reuse_driver(self, mock_execute):
         from azure.cosmos.container import ContainerProxy
 
@@ -266,6 +267,22 @@ class TestContainerMirrorServing(unittest.TestCase):
         assert results == [[{"id": "1"}], [{"id": "1"}]]
         assert cached_clients == [None, mirror_driver]
 
+    @patch("azure.cosmos.container.execute_mirrored_query_with_cache")
+    def test_mirror_query_rejects_unsupported_options_and_continuation_tokens(self, mock_execute):
+        from azure.cosmos.container import ContainerProxy
+
+        container = self._make_container(mirror_config={"server": "s", "database": "db"})
+        with pytest.raises(ValueError, match="partition_key"):
+            ContainerProxy._execute_mirror_query(
+                container,
+                {"query": "SELECT * FROM c", "partition_key": "tenant"},
+            )
+
+        pager = ContainerProxy._execute_mirror_query(container, {"query": "SELECT * FROM c"})
+        with pytest.raises(ValueError, match="continuation tokens"):
+            next(pager.by_page("unsupported-token"))
+        mock_execute.assert_not_called()
+
     def test_client_close_closes_cached_mirror_driver(self):
         from azure.cosmos.cosmos_client import CosmosClient
 
@@ -276,6 +293,74 @@ class TestContainerMirrorServing(unittest.TestCase):
 
         mirror_driver.close.assert_called_once_with()
         assert client.client_connection._mirror_driver_client is None
+
+    @patch("azure.cosmos._mirror_integration.execute_mirrored_query")
+    def test_cached_driver_failure_evicts_driver(self, mock_execute):
+        cached_driver = MagicMock()
+        replacement_driver = MagicMock()
+        connection = MagicMock()
+        connection._mirror_driver_lock = threading.Lock()
+        connection._mirror_driver_closed = False
+        connection._mirror_driver_client = cached_driver
+        mock_execute.side_effect = [
+            RuntimeError("connection failed"),
+            ([{"id": "1"}], replacement_driver),
+        ]
+
+        with pytest.raises(RuntimeError, match="connection failed"):
+            execute_mirrored_query_with_cache(
+                connection=connection,
+                query="SELECT * FROM c",
+                parameters=None,
+                mirror_config={"server": "s", "database": "db"},
+            )
+
+        cached_driver.close.assert_called_once_with()
+        assert connection._mirror_driver_client is None
+        results = execute_mirrored_query_with_cache(
+            connection=connection,
+            query="SELECT * FROM c",
+            parameters=None,
+            mirror_config={"server": "s", "database": "db"},
+        )
+        assert results == [{"id": "1"}]
+        assert mock_execute.call_args.kwargs["cached_client"] is None
+
+    @patch("azure.cosmos._mirror_integration.execute_mirrored_query")
+    def test_client_close_waits_for_active_query(self, mock_execute):
+        query_started = threading.Event()
+        allow_query_to_finish = threading.Event()
+        mirror_driver = MagicMock()
+        connection = MagicMock()
+        connection._mirror_driver_lock = threading.Lock()
+        connection._mirror_driver_closed = False
+        connection._mirror_driver_client = None
+
+        def execute_query(**_):
+            query_started.set()
+            allow_query_to_finish.wait(timeout=1)
+            return [{"id": "1"}], mirror_driver
+
+        mock_execute.side_effect = execute_query
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            query_future = executor.submit(
+                execute_mirrored_query_with_cache,
+                connection,
+                "SELECT * FROM c",
+                None,
+                {"server": "s", "database": "db"},
+            )
+            assert query_started.wait(timeout=1)
+            close_future = executor.submit(close_mirror_driver, connection)
+            time.sleep(0.02)
+            assert not close_future.done()
+            allow_query_to_finish.set()
+            assert query_future.result() == [{"id": "1"}]
+            close_future.result()
+
+        mirror_driver.close.assert_called_once_with()
+        assert connection._mirror_driver_client is None
+        assert connection._mirror_driver_closed is True
 
 
 if __name__ == "__main__":

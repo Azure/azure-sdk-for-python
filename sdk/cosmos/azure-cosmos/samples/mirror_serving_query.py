@@ -46,43 +46,42 @@ def mirror_query_example():
 
     # Create client with mirror_config
     # Note: Fabric mirroring is only supported with CosmosDB Fabric native accounts.
-    client = cosmos_client.CosmosClient(
-        HOST,
-        MASTER_KEY,
-        mirror_config={
-            "server": FABRIC_SERVER,
-            "database": FABRIC_DATABASE,
-        },
-    )
+    with cosmos_client.CosmosClient(
+            HOST,
+            MASTER_KEY,
+            mirror_config={
+                "server": FABRIC_SERVER,
+                "database": FABRIC_DATABASE,
+            },
+    ) as client:
+        database = client.get_database_client(DATABASE_ID)
+        container = database.get_container_client(CONTAINER_ID)
 
-    database = client.get_database_client(DATABASE_ID)
-    container = database.get_container_client(CONTAINER_ID)
+        # Use use_mirror_serving=True to route this query through Fabric
+        # This is useful for analytical queries like GROUP BY, complex aggregations,
+        # and ORDER BY that benefit from Fabric's SQL engine.
+        print("Querying via Fabric mirror...")
+        try:
+            items = container.query_items(
+                query="SELECT c.category, COUNT(1) as count FROM c GROUP BY c.category",
+                use_mirror_serving=True,
+            )
+            for item in items:
+                print(item)
+        except exceptions.MirrorServingNotAvailableError:
+            print(
+                "azure-cosmos-fabric-mapper package is not installed. "
+                "Install with: pip install azure-cosmos-fabric-mapper[sql]"
+            )
 
-    # Use use_mirror_serving=True to route this query through Fabric
-    # This is useful for analytical queries like GROUP BY, complex aggregations,
-    # and ORDER BY that benefit from Fabric's SQL engine.
-    print("Querying via Fabric mirror...")
-    try:
+        # Regular Cosmos DB query (no mirror) — works as usual
+        print("\nQuerying Cosmos DB directly...")
         items = container.query_items(
-            query="SELECT c.category, COUNT(1) as count FROM c GROUP BY c.category",
-            use_mirror_serving=True,
+            query="SELECT TOP 5 * FROM c",
+            enable_cross_partition_query=True,
         )
         for item in items:
             print(item)
-    except exceptions.MirrorServingNotAvailableError:
-        print(
-            "azure-cosmos-fabric-mapper package is not installed. "
-            "Install with: pip install azure-cosmos-fabric-mapper[sql]"
-        )
-
-    # Regular Cosmos DB query (no mirror) — works as usual
-    print("\nQuerying Cosmos DB directly...")
-    items = container.query_items(
-        query="SELECT TOP 5 * FROM c",
-        enable_cross_partition_query=True,
-    )
-    for item in items:
-        print(item)
 
 
 if __name__ == "__main__":

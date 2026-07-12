@@ -33,6 +33,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
+from ._mirror_integration import close_mirror_driver
 from ._cosmos_responses import CosmosDict
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
@@ -270,11 +271,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return self.client_connection.pipeline_client.__exit__(*args)
         finally:
             try:
-                mirror_driver = self.client_connection._mirror_driver_client  # pylint: disable=protected-access
-                if mirror_driver is not None:
-                    mirror_driver.close()
+                close_mirror_driver(self.client_connection)
             finally:
-                self.client_connection._mirror_driver_client = None  # pylint: disable=protected-access
                 try:
                     self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
                 except Exception:  # pylint: disable=broad-except

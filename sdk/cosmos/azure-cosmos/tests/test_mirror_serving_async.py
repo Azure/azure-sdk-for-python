@@ -108,7 +108,7 @@ class TestAsyncContainerMirrorServing(unittest.TestCase):
 
 
 class TestAsyncContainerMirrorBehavior(unittest.IsolatedAsyncioTestCase):
-    @patch("azure.cosmos.aio._container.execute_mirrored_query")
+    @patch("azure.cosmos.aio._container.execute_mirrored_query_with_cache")
     async def test_mirror_query_is_iterable_without_blocking_event_loop(self, mock_execute):
         from azure.cosmos.aio._container import ContainerProxy
 
@@ -116,13 +116,14 @@ class TestAsyncContainerMirrorBehavior(unittest.IsolatedAsyncioTestCase):
 
         def execute_query(**_):
             time.sleep(0.05)
-            return expected_results, "driver"
+            return expected_results
 
         mock_execute.side_effect = execute_query
         response_hook = MagicMock()
         container = MagicMock()
         container.client_connection.mirror_config = {"server": "s", "database": "db"}
         container.client_connection._mirror_driver_client = None
+        container.client_connection._mirror_driver_closed = False
         container.id = "test-container"
 
         pager = ContainerProxy._execute_mirror_query(
@@ -134,10 +135,9 @@ class TestAsyncContainerMirrorBehavior(unittest.IsolatedAsyncioTestCase):
 
         assert results == expected_results
         assert event_loop_tick.done()
-        assert container.client_connection._mirror_driver_client == "driver"
         response_hook.assert_called_once_with({}, expected_results)
 
-    @patch("azure.cosmos.aio._container.execute_mirrored_query")
+    @patch("azure.cosmos._mirror_integration.execute_mirrored_query")
     async def test_concurrent_first_queries_reuse_driver(self, mock_execute):
         from azure.cosmos.aio._container import ContainerProxy
 
@@ -153,6 +153,7 @@ class TestAsyncContainerMirrorBehavior(unittest.IsolatedAsyncioTestCase):
         container = MagicMock()
         container.client_connection.mirror_config = {"server": "s", "database": "db"}
         container.client_connection._mirror_driver_client = None
+        container.client_connection._mirror_driver_closed = False
         container.client_connection._mirror_driver_lock = threading.Lock()
         container.id = "test-container"
         pagers = [
@@ -168,6 +169,25 @@ class TestAsyncContainerMirrorBehavior(unittest.IsolatedAsyncioTestCase):
         assert results == [[{"id": "1"}], [{"id": "1"}]]
         assert cached_clients == [None, mirror_driver]
 
+    @patch("azure.cosmos.aio._container.execute_mirrored_query_with_cache")
+    async def test_mirror_query_rejects_unsupported_options_and_continuation_tokens(self, mock_execute):
+        from azure.cosmos.aio._container import ContainerProxy
+
+        container = MagicMock()
+        container.client_connection.mirror_config = {"server": "s", "database": "db"}
+        container.id = "test-container"
+        with pytest.raises(ValueError, match="session_token"):
+            ContainerProxy._execute_mirror_query(
+                container,
+                {"query": "SELECT * FROM c", "session_token": "token"},
+            )
+
+        pager = ContainerProxy._execute_mirror_query(container, {"query": "SELECT * FROM c"})
+        pages = pager.by_page("unsupported-token")
+        with pytest.raises(ValueError, match="continuation tokens"):
+            await pages.__anext__()
+        mock_execute.assert_not_called()
+
     async def test_client_close_closes_cached_mirror_driver_off_event_loop(self):
         from azure.cosmos.aio._cosmos_client import CosmosClient
 
@@ -182,6 +202,54 @@ class TestAsyncContainerMirrorBehavior(unittest.IsolatedAsyncioTestCase):
         assert event_loop_tick.done()
         mirror_driver.close.assert_called_once_with()
         assert client.client_connection._mirror_driver_client is None
+
+    @patch("azure.cosmos._mirror_integration.execute_mirrored_query")
+    async def test_close_waits_for_cancelled_query_worker(self, mock_execute):
+        from azure.cosmos.aio._container import ContainerProxy
+        from azure.cosmos.aio._cosmos_client import CosmosClient
+
+        query_started = threading.Event()
+        allow_query_to_finish = threading.Event()
+        mirror_driver = MagicMock()
+        connection = MagicMock()
+        connection.mirror_config = {"server": "s", "database": "db"}
+        connection._mirror_driver_lock = threading.Lock()
+        connection._mirror_driver_closed = False
+        connection._mirror_driver_client = None
+
+        def execute_query(**_):
+            query_started.set()
+            allow_query_to_finish.wait(timeout=1)
+            return [{"id": "1"}], mirror_driver
+
+        mock_execute.side_effect = execute_query
+        container = MagicMock()
+        container.client_connection = connection
+        container.id = "test-container"
+        pager = ContainerProxy._execute_mirror_query(container, {"query": "SELECT * FROM c"})
+
+        async def collect():
+            return [item async for item in pager]
+
+        query_task = asyncio.create_task(collect())
+        assert await asyncio.to_thread(query_started.wait, 1)
+        query_task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await query_task
+
+        client = MagicMock()
+        client.client_connection = connection
+        connection._global_endpoint_manager.close = AsyncMock()
+        connection.pipeline_client.__aexit__ = AsyncMock()
+        close_task = asyncio.create_task(CosmosClient.__aexit__(client, None, None, None))
+        await asyncio.sleep(0.02)
+        assert not close_task.done()
+        allow_query_to_finish.set()
+        await close_task
+
+        mirror_driver.close.assert_called_once_with()
+        assert connection._mirror_driver_client is None
+        assert connection._mirror_driver_closed is True
 
 
 class TestAsyncClientMirrorDocstring(unittest.TestCase):

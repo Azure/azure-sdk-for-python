@@ -40,6 +40,7 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from .._base import build_options as _build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
+from .._mirror_integration import close_mirror_driver
 from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
@@ -248,11 +249,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return await self.client_connection.pipeline_client.__aexit__(*args)
         finally:
             try:
-                mirror_driver = self.client_connection._mirror_driver_client  # pylint: disable=protected-access
-                if mirror_driver is not None:
-                    await asyncio.to_thread(mirror_driver.close)
+                await asyncio.to_thread(close_mirror_driver, self.client_connection)
             finally:
-                self.client_connection._mirror_driver_client = None  # pylint: disable=protected-access
                 try:
                     self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
                 except Exception:  # pylint: disable=broad-except

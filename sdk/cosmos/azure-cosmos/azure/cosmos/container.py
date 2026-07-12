@@ -40,7 +40,7 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
-from ._mirror_integration import execute_mirrored_query
+from ._mirror_integration import execute_mirrored_query_with_cache
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -762,30 +762,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "Note: Fabric mirroring is only supported with CosmosDB Fabric native accounts."
             )
 
+        if kwargs:
+            unsupported_options = ", ".join(sorted(kwargs))
+            raise ValueError(
+                f"Mirror serving does not support these query options: {unsupported_options}."
+            )
+
         mirror_config_with_table = dict(self.client_connection.mirror_config)
         if "table_override" not in mirror_config_with_table and "fabric_table" not in mirror_config_with_table:
             mirror_config_with_table["fabric_table"] = self.id
 
-        def get_next(_: Optional[str]) -> list[dict[str, Any]]:
-            cached_client = self.client_connection._mirror_driver_client
-            if cached_client is None:
-                with self.client_connection._mirror_driver_lock:
-                    cached_client = self.client_connection._mirror_driver_client
-                    results, driver_client = execute_mirrored_query(
-                        query=query_str,
-                        parameters=parameters,
-                        mirror_config=mirror_config_with_table,
-                        cached_client=cached_client,
-                    )
-                    self.client_connection._mirror_driver_client = driver_client
-            else:
-                results, driver_client = execute_mirrored_query(
-                    query=query_str,
-                    parameters=parameters,
-                    mirror_config=mirror_config_with_table,
-                    cached_client=cached_client,
-                )
-            self.client_connection._mirror_driver_client = driver_client
+        def get_next(continuation_token: Optional[str]) -> list[dict[str, Any]]:
+            if continuation_token is not None:
+                raise ValueError("Mirror serving does not support continuation tokens.")
+            results = execute_mirrored_query_with_cache(
+                connection=self.client_connection,
+                query=query_str,
+                parameters=parameters,
+                mirror_config=mirror_config_with_table,
+            )
             if response_hook:
                 response_hook({}, results)
             return results

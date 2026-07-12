@@ -47,7 +47,7 @@ from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..exceptions import CosmosHttpResponseError
-from .._mirror_integration import execute_mirrored_query
+from .._mirror_integration import execute_mirrored_query_with_cache
 from ..offer import ThroughputProperties
 from ..partition_key import (_get_partition_key_from_partition_key_definition, PartitionKeyType,
                              _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
@@ -560,33 +560,26 @@ class ContainerProxy:
                 "Note: Fabric mirroring is only supported with CosmosDB Fabric native accounts."
             )
 
+        if kwargs:
+            unsupported_options = ", ".join(sorted(kwargs))
+            raise ValueError(
+                f"Mirror serving does not support these query options: {unsupported_options}."
+            )
+
         mirror_config_with_table = dict(self.client_connection.mirror_config)
         if "table_override" not in mirror_config_with_table and "fabric_table" not in mirror_config_with_table:
             mirror_config_with_table["fabric_table"] = self.id
 
-        async def get_next(_: Optional[str]) -> list[dict[str, Any]]:
-            def execute_query() -> tuple[list[dict[str, Any]], Any]:
-                cached_client = self.client_connection._mirror_driver_client
-                if cached_client is None:
-                    with self.client_connection._mirror_driver_lock:
-                        cached_client = self.client_connection._mirror_driver_client
-                        results, driver_client = execute_mirrored_query(
-                            query=query_str,
-                            parameters=parameters,
-                            mirror_config=mirror_config_with_table,
-                            cached_client=cached_client,
-                        )
-                        self.client_connection._mirror_driver_client = driver_client
-                        return results, driver_client
-                return execute_mirrored_query(
-                    query=query_str,
-                    parameters=parameters,
-                    mirror_config=mirror_config_with_table,
-                    cached_client=cached_client,
-                )
-
-            results, driver_client = await asyncio.to_thread(execute_query)
-            self.client_connection._mirror_driver_client = driver_client
+        async def get_next(continuation_token: Optional[str]) -> list[dict[str, Any]]:
+            if continuation_token is not None:
+                raise ValueError("Mirror serving does not support continuation tokens.")
+            results = await asyncio.to_thread(
+                execute_mirrored_query_with_cache,
+                connection=self.client_connection,
+                query=query_str,
+                parameters=parameters,
+                mirror_config=mirror_config_with_table,
+            )
             if response_hook:
                 response_hook({}, results)
             return results

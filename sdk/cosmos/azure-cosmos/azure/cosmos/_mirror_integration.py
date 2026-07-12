@@ -21,6 +21,9 @@
 
 """Integration layer for optional Fabric mirror serving."""
 
+# pylint: disable=protected-access
+
+import importlib
 from typing import Any, Dict, List, Optional
 
 from .exceptions import MirrorServingNotAvailableError
@@ -39,8 +42,7 @@ def _lazy_import_mapper():
     :raises ~azure.cosmos.exceptions.MirrorServingNotAvailableError: If package is not installed.
     """
     try:
-        from azure.cosmos.fabric_mapper.sdk_hook import contract  # pylint: disable=import-error
-        return contract
+        return importlib.import_module("azure.cosmos.fabric_mapper.sdk_hook.contract")
     except ImportError as exc:
         raise MirrorServingNotAvailableError() from exc
 
@@ -96,16 +98,16 @@ def execute_mirrored_query(
     _validate_mirror_config(mirror_config)
     contract = _lazy_import_mapper()
 
-    from azure.cosmos.fabric_mapper import MirrorServingConfiguration  # pylint: disable=import-error
-    from azure.cosmos.fabric_mapper.credentials import DefaultAzureSqlCredential  # pylint: disable=import-error
-    from azure.cosmos.fabric_mapper.driver import get_driver_client  # pylint: disable=import-error
+    mapper = importlib.import_module("azure.cosmos.fabric_mapper")
+    credentials_module = importlib.import_module("azure.cosmos.fabric_mapper.credentials")
+    driver_module = importlib.import_module("azure.cosmos.fabric_mapper.driver")
 
     server = _get_config_value(mirror_config, "server", "fabric_server")
     database = _get_config_value(mirror_config, "database", "fabric_database")
     table = _get_config_value(mirror_config, "table_override", "fabric_table", default="")
     schema = _get_config_value(mirror_config, "fabric_schema", default="dbo")
 
-    config = MirrorServingConfiguration(
+    config = mapper.MirrorServingConfiguration(
         fabric_server=server,
         fabric_database=database,
         fabric_table=table,
@@ -119,10 +121,14 @@ def execute_mirrored_query(
 
     # Use user-provided credential or fall back to default
     user_credential = mirror_config.get("credential")
-    credentials = user_credential if user_credential is not None else DefaultAzureSqlCredential()
+    credentials = (
+        user_credential
+        if user_credential is not None
+        else credentials_module.DefaultAzureSqlCredential()
+    )
 
     created_driver = cached_client is None
-    driver_client = cached_client or get_driver_client(config=config, credentials=credentials)
+    driver_client = cached_client or driver_module.get_driver_client(config=config, credentials=credentials)
 
     try:
         results = contract.run_mirrored_query(
@@ -140,3 +146,59 @@ def execute_mirrored_query(
         raise
 
     return results, driver_client
+
+
+def execute_mirrored_query_with_cache(
+    connection: Any,
+    query: str,
+    parameters: Optional[List[Dict[str, Any]]],
+    mirror_config: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    """Execute a mirrored query while coordinating the cached driver lifecycle.
+
+    :param connection: Cosmos connection that owns the cached mirror driver.
+    :type connection: Any
+    :param str query: Cosmos SQL query text.
+    :param parameters: Optional query parameters.
+    :type parameters: Optional[list[dict[str, Any]]]
+    :param dict mirror_config: Fabric mirror configuration.
+    :returns: Query results.
+    :rtype: list[dict[str, Any]]
+    """
+    with connection._mirror_driver_lock:
+        if connection._mirror_driver_closed:
+            raise ValueError("Cannot execute a mirror query after CosmosClient has been closed.")
+
+        cached_client = connection._mirror_driver_client
+        try:
+            results, driver_client = execute_mirrored_query(
+                query=query,
+                parameters=parameters,
+                mirror_config=mirror_config,
+                cached_client=cached_client,
+            )
+        except BaseException as query_error:
+            if cached_client is not None:
+                connection._mirror_driver_client = None
+                try:
+                    cached_client.close()
+                except Exception as close_error:  # pylint: disable=broad-except
+                    raise query_error from close_error
+            raise
+
+        connection._mirror_driver_client = driver_client
+        return results
+
+
+def close_mirror_driver(connection: Any) -> None:
+    """Close the cached mirror driver after all active mirror queries finish.
+
+    :param connection: Cosmos connection that owns the cached mirror driver.
+    :type connection: Any
+    """
+    with connection._mirror_driver_lock:
+        connection._mirror_driver_closed = True
+        mirror_driver = connection._mirror_driver_client
+        connection._mirror_driver_client = None
+        if mirror_driver is not None:
+            mirror_driver.close()

@@ -184,8 +184,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Mirror serving configuration (for per-request routing)
         self._mirror_config = kwargs.pop('mirror_config', None)
+        if self._mirror_config is not None:
+            self._mirror_config = dict(self._mirror_config)
         self._mirror_driver_client = None
         self._mirror_driver_lock = threading.Lock()
+        self._mirror_driver_closed = False
 
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
