@@ -121,23 +121,24 @@ assert deleted.deleted is True
 - `user_isolation` and `item_ttl_seconds` are fixed at create time.
 - `delete()` with no `key` cascades to every item under that store name.
 
-## User Isolation and the Delegated User Header
+## User Isolation
 
-Set `user_isolation=True` when the same store name should fan out per user.
+Set `user_isolation=True` when the same store name should fan out per end user.
 
 ```python
 store = await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolation=True)
 ```
 
-- For direct callers, the platform derives user identity from the token.
-- For trusted callers acting on behalf of an end user, the SDK sends the
-  delegated `x-ms-user-id` header on item operations automatically, resolved
-  per request from the current agent request context. There is nothing to
-  configure on `FoundryStateStore`: a single client instance can safely serve
-  requests for different users over its lifetime.
+- Item operations on a user-isolated store are automatically scoped to the
+  current end user. You never pass or configure a user identity, and a single
+  client instance can safely serve requests for different users over its
+  lifetime.
+- For hosted agents, the platform mints an opaque per-request call ID that the
+  SDK forwards on every storage call; the service derives the end user from it.
+  There is nothing to wire up.
 - Store-management calls (`get_or_create`, `get()` with no key, `update()`,
-  `delete()` with no key) stay store-scoped and never send the delegated user
-  header.
+  `delete()` with no key) stay store-scoped and are shared across every user of
+  the store.
 
 ## Values, Tags, and TTL
 

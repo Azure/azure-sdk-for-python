@@ -14,8 +14,6 @@ from typing import Any, overload
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.rest import HttpRequest
 
-from azure.ai.agentserver.core._request_context import get_request_context
-
 from ._client import JSON_CONTENT_TYPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import FoundryStorageConflictError, FoundryStorageNotFoundError
@@ -41,7 +39,6 @@ from ._state_serializer import (
 )
 
 DEFAULT_ITEM_TTL_SECONDS = 30 * 24 * 60 * 60
-DELEGATED_USER_ID_HEADER = "x-ms-user-id"
 _UNSET = object()
 
 
@@ -234,22 +231,12 @@ class FoundryStateStore(FoundryStorageClient):
         path: str,
         *,
         content: bytes | None = None,
-        include_user_id: bool = False,
         if_match: str | None = None,
         **query: str,
     ) -> HttpRequest:
         headers: dict[str, str] = {}
         if content is not None:
             headers["Content-Type"] = JSON_CONTENT_TYPE
-        if include_user_id:
-            # x-ms-user-id is a per-request delegation header, not a store-level
-            # setting: it must reflect the caller resolved for *this* request
-            # (azure.ai.agentserver.core's request-scoped platform context),
-            # not a value fixed when this (possibly long-lived, reused) client
-            # was constructed.
-            user_id = get_request_context().user_id
-            if user_id is not None:
-                headers[DELEGATED_USER_ID_HEADER] = user_id
         if if_match is not None:
             headers["If-Match"] = if_match
         return HttpRequest(method, self._endpoint.build_url(path, **query), content=content, headers=headers)
@@ -305,9 +292,7 @@ class FoundryStateStore(FoundryStorageClient):
     ) -> StateStoreItemMetadata:
         """Create a new item and fail on duplicate keys."""
         body = serialize_item_create_request(key, value, tags)
-        response = await self._send_storage_request(
-            self._request("POST", f"{self._store_path()}/items", content=body, include_user_id=True)
-        )
+        response = await self._send_storage_request(self._request("POST", f"{self._store_path()}/items", content=body))
         return deserialize_state_item_metadata(response.text())
 
     async def set(
@@ -329,7 +314,6 @@ class FoundryStateStore(FoundryStorageClient):
                 "PUT",
                 self._item_path(key),
                 content=body,
-                include_user_id=True,
                 if_match=header,
             )
         )
@@ -356,9 +340,7 @@ class FoundryStateStore(FoundryStorageClient):
             except FoundryStorageNotFoundError:
                 return None
         try:
-            response = await self._send_storage_request(
-                self._request("GET", self._item_path(key), include_user_id=True)
-            )
+            response = await self._send_storage_request(self._request("GET", self._item_path(key)))
         except FoundryStorageNotFoundError:
             return None
         return deserialize_state_item(response.text())
@@ -386,9 +368,7 @@ class FoundryStateStore(FoundryStorageClient):
         if key is None:
             response = await self._send_storage_request(self._request("DELETE", self._store_path()))
             return deserialize_deleted_state_store(response.text())
-        response = await self._send_storage_request(
-            self._request("DELETE", self._item_path(key), include_user_id=True, if_match=if_match)
-        )
+        response = await self._send_storage_request(self._request("DELETE", self._item_path(key), if_match=if_match))
         return deserialize_deleted_state_item(response.text())
 
     async def list_keys(
@@ -414,7 +394,5 @@ class FoundryStateStore(FoundryStorageClient):
         if before is not None:
             query["before"] = before
         query["order"] = order
-        response = await self._send_storage_request(
-            self._request("GET", f"{self._store_path()}/items:keys", include_user_id=True, **query)
-        )
+        response = await self._send_storage_request(self._request("GET", f"{self._store_path()}/items:keys", **query))
         return deserialize_list_keys_response(response.text())

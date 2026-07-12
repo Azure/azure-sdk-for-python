@@ -21,6 +21,7 @@ from azure.ai.agentserver.core._platform_headers import (
     REQUEST_ID,
     TRACEPARENT,
 )
+from azure.ai.agentserver.core._request_context import get_request_context
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
@@ -53,6 +54,24 @@ class ServerVersionUserAgentPolicy(SansIOHTTPPolicy[HttpRequest, HttpResponse]):
     def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
         """Set the ``User-Agent`` header before the request is sent."""
         request.http_request.headers["User-Agent"] = self._get_server_version()
+
+
+class PlatformCallIdPolicy(SansIOHTTPPolicy[HttpRequest, HttpResponse]):
+    """Forward the per-request Foundry call ID on every outbound storage request.
+
+    Container protocol version ``2.0.0`` mints an opaque per-request call ID
+    (``x-agent-foundry-call-id``) that the container **MUST** forward on all
+    outbound calls to Foundry 1P services (Storage, Toolboxes/MCP proxy, A2A) so
+    the service resolves the caller context -- including the end-user identity
+    used for per-user isolation -- server-side. This policy stamps that header on
+    every request from the current
+    :func:`~azure.ai.agentserver.core.get_request_context`. It is a no-op under
+    protocol version ``1.0.0`` or local development, where no call ID is bound.
+    """
+
+    def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
+        """Merge the platform call-ID header before the request is sent."""
+        request.http_request.headers.update(get_request_context().platform_headers())
 
 
 def _mask_storage_url(url: str) -> str:

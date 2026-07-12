@@ -26,7 +26,7 @@ from azure.ai.agentserver.core._version import VERSION
 
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import raise_for_storage_error
-from ._policies import FoundryStorageLoggingPolicy, ServerVersionUserAgentPolicy
+from ._policies import FoundryStorageLoggingPolicy, PlatformCallIdPolicy, ServerVersionUserAgentPolicy
 
 #: OAuth scope used to acquire bearer tokens for the Foundry storage API.
 FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
@@ -72,6 +72,7 @@ class FoundryStorageClient:
             policies=[
                 policies.RequestIdPolicy(),
                 policies.HeadersPolicy(),
+                PlatformCallIdPolicy(),
                 ua_policy,
                 policies.AsyncRetryPolicy(),
                 policies.AsyncBearerTokenCredentialPolicy(credential, FOUNDRY_TOKEN_SCOPE),

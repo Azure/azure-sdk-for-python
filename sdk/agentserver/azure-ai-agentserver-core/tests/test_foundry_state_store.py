@@ -24,6 +24,9 @@ from azure.ai.agentserver.core.storage import (
     StateStoreItemMetadata,
     StateStoreKey,
 )
+from azure.ai.agentserver.core.storage._policies import PlatformCallIdPolicy
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.rest import HttpRequest
 
 _BASE_URL = "https://foundry.example.com/storage/"
 _ENDPOINT = FoundryStorageEndpoint(storage_base_url=_BASE_URL)
@@ -150,23 +153,38 @@ def _key(**overrides: Any) -> StateStoreKey:
     return StateStoreKey(_key_body(**overrides))
 
 
-class _DelegatedUserContext:
-    """Binds a request-scoped ``user_id`` for the duration of a ``with`` block.
+# ---------------------------------------------------------------------------
+# PlatformCallIdPolicy -- forwards x-agent-foundry-call-id on every request
+# ---------------------------------------------------------------------------
 
-    ``x-ms-user-id`` is resolved per request from
-    ``azure.ai.agentserver.core.get_request_context()``, not from a
-    store-level/constructor setting -- see ``_state.py``'s ``_request()``.
-    """
 
-    def __init__(self, user_id: str) -> None:
-        self._user_id = user_id
-        self._token = None
+def _pipeline_request(method: str = "GET") -> PipelineRequest:
+    http_request = HttpRequest(method, f"{_BASE_URL}state_stores")
+    return PipelineRequest(http_request, PipelineContext(None))
 
-    def __enter__(self) -> None:
-        self._token = set_request_context(FoundryAgentRequestContext(user_id=self._user_id))
 
-    def __exit__(self, *args: object) -> None:
-        reset_request_context(self._token)
+def test_platform_call_id_policy_forwards_call_id_when_bound() -> None:
+    policy = PlatformCallIdPolicy()
+    request = _pipeline_request()
+    token = set_request_context(FoundryAgentRequestContext(call_id="cid", user_id="uid"))
+    try:
+        policy.on_request(request)
+    finally:
+        reset_request_context(token)
+
+    assert request.http_request.headers["x-agent-foundry-call-id"] == "cid"
+    # user_id is the sole hosted-agent derivation via the opaque call ID; it is
+    # never forwarded to storage as its own header.
+    assert "x-ms-user-id" not in request.http_request.headers
+
+
+def test_platform_call_id_policy_is_noop_without_context() -> None:
+    policy = PlatformCallIdPolicy()
+    request = _pipeline_request()
+
+    policy.on_request(request)
+
+    assert "x-agent-foundry-call-id" not in request.http_request.headers
 
 
 # ---------------------------------------------------------------------------
@@ -294,7 +312,6 @@ async def test_get_with_no_key_returns_the_store_descriptor() -> None:
     request = _sent_request(store)
     assert request.method == "GET"
     assert request.url == f"{_BASE_URL}state_stores/{_encode_segment(store_name)}?api-version=v1"
-    assert "x-ms-user-id" not in request.headers  # store-level ops never send the delegated user header
     assert result is not None
     assert result.name == store_name
     assert result.id == "ss_1"
@@ -326,12 +343,10 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
         name="checkpoints",
     )
 
-    with _DelegatedUserContext("user-42"):
-        result = await store.get("step/1")
+    result = await store.get("step/1")
 
     request = _sent_request(store)
     assert request.method == "GET"
-    assert request.headers["x-ms-user-id"] == "user-42"
     assert request.url == (
         f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items/{_encode_segment('step/1')}?api-version=v1"
     )
@@ -345,30 +360,6 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
 async def test_get_with_key_returns_none_when_item_is_absent() -> None:
     store = _make_store(_make_response(404, {"error": {"message": "not found"}}), name="checkpoints")
     assert await store.get("missing") is None
-
-
-@pytest.mark.asyncio
-async def test_get_without_request_context_omits_delegated_user_header() -> None:
-    """No request context bound (e.g. outside a request) -> no x-ms-user-id sent."""
-    store = _make_store(
-        _make_response(
-            200,
-            {
-                "id": "it_1",
-                "object": "state_store.item",
-                "key": "step/1",
-                "value": {},
-                "created_at": 1,
-                "updated_at": 1,
-            },
-        ),
-        name="checkpoints",
-    )
-
-    await store.get("step/1")
-
-    request = _sent_request(store)
-    assert "x-ms-user-id" not in request.headers
 
 
 # ---------------------------------------------------------------------------
@@ -422,7 +413,6 @@ async def test_delete_with_no_key_deletes_the_store() -> None:
     request = _sent_request(store)
     assert request.method == "DELETE"
     assert request.url == f"{_BASE_URL}state_stores/{_encode_segment('prefs')}?api-version=v1"
-    assert "x-ms-user-id" not in request.headers
     assert result == DeletedStateStore({"id": "ss_1", "object": "state_store", "name": "prefs", "deleted": True})
 
 
@@ -433,13 +423,11 @@ async def test_delete_with_key_returns_deleted_item_marker() -> None:
         name="checkpoints",
     )
 
-    with _DelegatedUserContext("user-42"):
-        result = await store.delete("step/1", if_match='"0x8DD"')
+    result = await store.delete("step/1", if_match='"0x8DD"')
 
     request = _sent_request(store)
     assert request.method == "DELETE"
     assert request.headers["If-Match"] == '"0x8DD"'
-    assert request.headers["x-ms-user-id"] == "user-42"
     assert result == DeletedStateStoreItem(
         {"id": "it_1", "object": "state_store.item", "key": "step/1", "deleted": True}
     )
@@ -560,12 +548,10 @@ async def test_list_keys_uses_query_parameters_and_returns_page() -> None:
         name="checkpoints",
     )
 
-    with _DelegatedUserContext("user-42"):
-        page = await store.list_keys(tags={"kind": "checkpoint", "phase": "run"}, limit=10, after="it_0", order="asc")
+    page = await store.list_keys(tags={"kind": "checkpoint", "phase": "run"}, limit=10, after="it_0", order="asc")
 
     request = _sent_request(store)
     assert request.method == "GET"
-    assert request.headers["x-ms-user-id"] == "user-42"
     assert request.url == (
         f"{_BASE_URL}state_stores/{_encode_segment('checkpoints')}/items:keys"
         "?api-version=v1&tags.kind=checkpoint&tags.phase=run&limit=10&after=it_0&order=asc"
