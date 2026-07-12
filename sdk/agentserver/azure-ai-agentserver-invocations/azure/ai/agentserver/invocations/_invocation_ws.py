@@ -402,9 +402,12 @@ class _WSHandlerMixin(_MixinBase):
         if error_code:
             extra[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
 
-        # NOTE: ``extra`` keys deliberately use dotted names
-        # (``azure.ai.agentserver.session_id`` etc.) so they
-        # line up 1:1 with the keys defined in :class:`InvocationsWSConstants`.
+        # NOTE: ``extra`` keys deliberately use dotted names so they line up
+        # 1:1 with their source constants — the session-ID key comes from the
+        # shared ``_BAGGAGE_SESSION_ID`` (``azure.ai.agentserver.session_id``)
+        # in ``azure-ai-agentserver-core`` so HTTP and WebSocket logs correlate,
+        # while the close-code / duration / error keys come from
+        # :class:`InvocationsWSConstants`.
         # The trade-off is that printf-style log formatters can't address
         # them directly — use a structured (JSON / OTel) formatter, or
         # access via ``LogRecord.__dict__["<key>"]`` for plain ``logging``.

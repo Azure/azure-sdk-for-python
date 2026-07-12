@@ -493,16 +493,23 @@ class _FoundryEnrichmentSpanProcessor:
         # Set agent identity attributes at span end so they cannot be
         # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
         #
-        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
-        # _on_ending, which causes set_attribute() to silently no-op despite the
-        # spec requiring mutability during OnEnding.  We write to _attributes
-        # directly until the SDK is fixed.  The try/except guards against future
-        # SDK changes that may rename or remove the internal field.
+        # Workaround: the OTel SDK freezes span attributes before OnEnding,
+        # despite the spec requiring mutability during that hook, so
+        # set_attribute() no-ops here.  opentelemetry-sdk <=1.40.0 sets
+        # _end_time first (tripping the is_recording() guard) and >=1.43.0
+        # additionally marks BoundedAttributes._immutable=True (making direct
+        # writes raise).  We write to _attributes directly, temporarily clearing
+        # the immutable flag when present, until the SDK honours the spec.  The
+        # try/except guards against future SDK changes that may rename or remove
+        # these internal fields.
         # TODO: switch to span.set_attribute() once the SDK honours the spec.
         attrs = getattr(span, "_attributes", None)
         if attrs is None:
             return
+        was_immutable = getattr(attrs, "_immutable", False)
         try:
+            if was_immutable:
+                attrs._immutable = False  # pylint: disable=protected-access
             if self.agent_name:
                 attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
@@ -515,6 +522,12 @@ class _FoundryEnrichmentSpanProcessor:
                 attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
+        finally:
+            if was_immutable:
+                try:
+                    attrs._immutable = True  # pylint: disable=protected-access
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug("Failed to restore span attribute immutability", exc_info=True)
 
     def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
         pass

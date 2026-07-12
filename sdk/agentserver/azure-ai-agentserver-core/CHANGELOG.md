@@ -5,6 +5,7 @@
 ### Bugs Fixed
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+- Restored Foundry agent identity span attributes (agent name/version/id, blueprint ID, tenant ID) with `opentelemetry-sdk` 1.43.0+, which now freezes span attributes before the on-ending hook.
 
 ## 2.0.0b7 (2026-06-28)
 
