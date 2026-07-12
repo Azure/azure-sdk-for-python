@@ -19,6 +19,36 @@ The SDK is the developer-facing layer over the internal `/storage/state_stores/*
 protocol: it keeps the transport/auth pipeline in `FoundryStorageClient`, while
 `FoundryStateStore` owns the ergonomic store-bound API.
 
+## Typed Models
+
+Every request and response body is a real, typed model class -- generated
+from a formal TypeSpec contract (`type_spec/main.tsp`), not a raw `dict`.
+Import them from `azure.ai.agentserver.core.storage` when you want explicit
+type annotations or IDE/type-checker support:
+
+| Returned by | Model |
+|---|---|
+| `get_or_create()`, `get()` (no `key`), `update()` | `StateStore` |
+| `delete()` (no `key`) | `DeletedStateStore` |
+| `create_item()`, `set()` | `StateStoreItemMetadata` |
+| `get(key)` | `StateStoreItem` |
+| `delete(key)` | `DeletedStateStoreItem` |
+| `list_keys()` | `KeyPage` (of `StateStoreKey`) |
+
+The one deliberately **untyped** field is `StateStoreItem.value` /
+`CreateItemRequest.value` / `PutItemRequest.value` -- your item payload is
+opaque application JSON, so the SDK does not (and cannot) impose a schema on
+it beyond "JSON object". Serialize your own models to a plain `dict` before
+writing, and deserialize the returned `dict` back into your own model on
+read.
+
+```python
+from azure.ai.agentserver.core.storage import StateStore, StateStoreItem
+
+store_info: StateStore | None = await store.get()
+item: StateStoreItem | None = await store.get("step-1")
+```
+
 ## Getting Started
 
 `get_or_create()` is the recommended entry point: it resolves (or creates) the
@@ -26,7 +56,7 @@ store's server-side resource in one call, so there is no separate lifecycle
 step before reading or writing items.
 
 ```python
-from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.storage import FoundryStateStore, StateStoreItem
 
 store = await FoundryStateStore.get_or_create(
     "checkpoints/thread-abc",
@@ -37,7 +67,8 @@ store = await FoundryStateStore.get_or_create(
 async with store:
     await store.set("step-1", {"done": False})
 
-    item = await store.get("step-1")
+    item: StateStoreItem | None = await store.get("step-1")
+    assert item is not None
     print(item.value)  # {"done": False}
     print(item.etag)
 ```
@@ -80,7 +111,7 @@ print(store.name)
 `key` they act on the bound store itself; with a `key` they act on one item.
 
 ```python
-info = await store.get()          # the store's own descriptor, or None if absent
+info: StateStore | None = await store.get()          # the store's own descriptor, or None if absent
 info = await store.update(
     description="Checkpoint store for prod traffic",
     tags={"env": "prod", "team": "agents"},
@@ -177,7 +208,7 @@ print(updated.etag)
 ### Fetch one item
 
 ```python
-item = await store.get("step-1")
+item: StateStoreItem | None = await store.get("step-1")
 if item is not None:
     print(item.id, item.key, item.value, item.tags, item.etag)
 ```
@@ -222,7 +253,9 @@ await store.set("counter", {"value": 2}, require_exists=True)
 `list_keys()` returns a keys-only page within the bound store.
 
 ```python
-page = await store.list_keys(tags={"kind": "checkpoint"}, limit=50, order="asc")
+from azure.ai.agentserver.core.storage import KeyPage
+
+page: KeyPage = await store.list_keys(tags={"kind": "checkpoint"}, limit=50, order="asc")
 for key in page.keys:
     print(key.id, key.key, key.tags, key.etag)
 
