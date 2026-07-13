@@ -41,6 +41,13 @@ from azure.core.serialization import as_attribute_dict
 from .._util import _DSL_TIMEOUT_SECOND
 
 
+def _snake_keys(d: dict) -> dict:
+    # The arm_ml_service hybrid distribution dict exposes typed fields by their snake_case attribute
+    # name and un-modeled (e.g. Ray) fields by their camelCase wire key, and the discriminator casing
+    # can differ across Python versions. Normalize to snake_case so the content comparison is stable.
+    return {re.sub(r"(?<!^)(?=[A-Z])", "_", k).lower(): v for k, v in d.items()}
+
+
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -528,11 +535,11 @@ class TestCommandFunction:
                 shm_size="3g",
             )
             expected_resources = {
-                "instance_count": 1,
-                "instance_type": "STANDARD_D2_v2",
+                "instanceCount": 1,
+                "instanceType": "STANDARD_D2_v2",
                 "properties": {"key": "new_val"},
-                "docker_args": "testCommand",
-                "shm_size": "3g",
+                "dockerArgs": "testCommand",
+                "shmSize": "3g",
             }
             actual_resources = node1.resources._to_rest_object().as_dict()
             assert actual_resources == expected_resources
@@ -713,7 +720,7 @@ class TestCommandFunction:
         # valid
         node1.distribution = {"type": "Pytorch", "process_count_per_instance": 4}
         assert isinstance(node1.distribution, PyTorchDistribution)
-        rest_dist = node1._to_rest_object()["distribution"]
+        rest_dist = _snake_keys(node1._to_rest_object()["distribution"])
         assert rest_dist == {
             "distribution_type": "PyTorch",
             "process_count_per_instance": 4,
@@ -721,7 +728,7 @@ class TestCommandFunction:
 
         node1.distribution = {"type": "TensorFlow", "parameter_server_count": 1}
         assert isinstance(node1.distribution, TensorFlowDistribution)
-        rest_dist = node1._to_rest_object()["distribution"]
+        rest_dist = _snake_keys(node1._to_rest_object()["distribution"])
         assert rest_dist == {
             "distribution_type": "TensorFlow",
             "parameter_server_count": 1,
@@ -729,7 +736,7 @@ class TestCommandFunction:
 
         node1.distribution = {"type": "mpi", "process_count_per_instance": 1}
         assert isinstance(node1.distribution, MpiDistribution)
-        rest_dist = node1._to_rest_object()["distribution"]
+        rest_dist = _snake_keys(node1._to_rest_object()["distribution"])
         assert rest_dist == {
             "distribution_type": "Mpi",
             "process_count_per_instance": 1,
@@ -744,7 +751,7 @@ class TestCommandFunction:
             "worker_node_additional_args": "--disable-usage-stats",
         }
         assert isinstance(node1.distribution, RayDistribution)
-        rest_dist = node1._to_rest_object()["distribution"]
+        rest_dist = _snake_keys(node1._to_rest_object()["distribution"])
         assert rest_dist == {
             "distribution_type": "Ray",
             "port": 1234,
@@ -756,7 +763,7 @@ class TestCommandFunction:
 
         node1.distribution = {"type": "ray", "address": "10.0.0.1:1234"}
         assert isinstance(node1.distribution, RayDistribution)
-        rest_dist = node1._to_rest_object()["distribution"]
+        rest_dist = _snake_keys(node1._to_rest_object()["distribution"])
         assert rest_dist == {"distribution_type": "Ray", "address": "10.0.0.1:1234"}
 
         # invalid
