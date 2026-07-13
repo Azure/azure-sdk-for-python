@@ -1,14 +1,43 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
+## 1.3.0 (Unreleased)
 
 ### Features Added
 
+- **Azure Realtime Native Voice Support**: Added `AzureRealtimeNativeVoice` and
+  `AzureRealtimeNativeVoiceName`, and expanded `voice` fields to accept Azure realtime native voices.
+- **Input Text Streaming Support**: Added `ClientEventInputTextDelta` and `ClientEventInputTextDone`
+  for incrementally streaming text input into existing conversation items.
+- **Hosted Agent Invocation Input**: Added `invoke_input` to `ResponseCreateParams` and
+  `ServerEventResponseInvocationDelta` for hosted agent invocation passthrough data.
+- **Echo Cancellation Configuration**: Added `EchoCancellationReferenceSource` and new
+  `reference_source` / `channels` options on `AudioEchoCancellation` to support both the default
+  server loopback reference path and client-provided stereo echo reference input.
+- **Parallel Tool Call Control**: Added `parallel_tool_calls` to session models so callers can
+  control whether tool calls may run in parallel.
+- **Session Expiration**: Added `expires_at` to `ResponseSession`, a server-set `datetime` indicating
+  when the session expires.
+
 ### Breaking Changes
+
+- **Default API Version Update**: Changed the SDK default API version from `2026-06-01-preview` to
+  the GA version `2026-07-15`. Pass `api_version="2026-06-01-preview"` explicitly to keep the previous
+  default behavior.
 
 ### Bugs Fixed
 
+- **Image Input Field Rename**: Renamed `RequestImageContentPart.url` to `image_url`. Update
+  image input construction to use `image_url=` instead of `url=`.
+
 ### Other Changes
+
+- **Removed Preview Features**: The following features introduced in `1.3.0b1` are not part of the GA
+  release and have been removed:
+  - **WebRTC Call Negotiation Support**: Removed `ClientEventRtcCallSdpCreate`,
+    `ServerEventRtcCallSdpCreated`, `ServerEventRtcCallError`, and `RtcCallErrorDetails`.
+  - **Audio Playback Lifecycle Events**: Removed `ServerEventOutputAudioBufferStarted` and
+    `ServerEventOutputAudioBufferStopped`.
+  - **Smart End-of-Turn Detection**: Removed `SmartEndOfTurnDetection`.
 
 ## 1.3.0b1 (2026-05-28)
 
