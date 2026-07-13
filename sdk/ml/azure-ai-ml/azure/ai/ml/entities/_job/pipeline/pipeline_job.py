@@ -77,9 +77,7 @@ from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationEx
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineJob(
-    Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchemaValidatableMixin
-):
+class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchemaValidatableMixin):
     """Pipeline job.
 
     You should not instantiate this class directly. Instead, you should
@@ -157,16 +155,12 @@ class PipelineJob(
             ComponentSource.DSL,
             ComponentSource.YAML_COMPONENT,
         ]:
-            self._inputs = self._build_inputs_dict(
-                inputs, input_definition_dict=component.inputs
-            )
+            self._inputs = self._build_inputs_dict(inputs, input_definition_dict=component.inputs)
             # for pipeline component created pipeline jobs,
             # it's output should have same value with the component outputs,
             # then override it with given outputs (filter out None value)
             pipeline_outputs = {k: v for k, v in (outputs or {}).items() if v}
-            self._outputs = self._build_pipeline_outputs_dict(
-                {**component.outputs, **pipeline_outputs}
-            )
+            self._outputs = self._build_pipeline_outputs_dict({**component.outputs, **pipeline_outputs})
         else:
             # Build inputs/outputs dict without meta when definition not available
             self._inputs = self._build_inputs_dict(inputs)
@@ -186,16 +180,12 @@ class PipelineJob(
         # If component is Pipeline component, jobs will be component.jobs
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
-        self.component: Union[PipelineComponent, str] = cast(
-            Union[PipelineComponent, str], component
-        )
+        self.component: Union[PipelineComponent, str] = cast(Union[PipelineComponent, str], component)
         if "type" not in kwargs:
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
             description = component.description if description is None else description
-            display_name = (
-                component.display_name if display_name is None else display_name
-            )
+            display_name = component.display_name if display_name is None else display_name
         super(PipelineJob, self).__init__(
             name=name,
             description=description,
@@ -240,11 +230,7 @@ class PipelineJob(
         :return: Jobs of pipeline job.
         :rtype: dict
         """
-        res: dict = (
-            self.component.jobs
-            if isinstance(self.component, PipelineComponent)
-            else self._jobs
-        )
+        res: dict = self.component.jobs if isinstance(self.component, PipelineComponent) else self._jobs
         return res
 
     @property
@@ -273,17 +259,11 @@ class PipelineJob(
             elif isinstance(value, dict):
                 value = PipelineJobSettings(**value)
             else:
-                raise TypeError(
-                    "settings must be PipelineJobSettings or dict but got {}".format(
-                        type(value)
-                    )
-                )
+                raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
 
     @classmethod
-    def _create_validation_error(
-        cls, message: str, no_personal_data_message: str
-    ) -> ValidationException:
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> ValidationException:
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -329,8 +309,7 @@ class PipelineJob(
             # Skip top level parameter missing type error
             validation_result.merge_with(
                 self.component._customized_validate(),
-                condition_skip=lambda x: x.error_code
-                == ValidationErrorCode.PARAMETER_TYPE_UNKNOWN
+                condition_skip=lambda x: x.error_code == ValidationErrorCode.PARAMETER_TYPE_UNKNOWN
                 and x.yaml_path.startswith("inputs"),
             )
             # Validate compute
@@ -349,9 +328,7 @@ class PipelineJob(
             used_pipeline_inputs = set(
                 itertools.chain(
                     *[
-                        self.component._get_input_binding_dict(
-                            node if not isinstance(node, LoopNode) else node.body
-                        )[0]
+                        self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
                         for node in self.jobs.values()
                         if not isinstance(node, ConditionNode)
                         # condition node has no inputs
@@ -362,9 +339,7 @@ class PipelineJob(
         if not isinstance(self.component, Component):
             return validation_result
         for key, meta in self.component.inputs.items():
-            if (
-                key not in used_pipeline_inputs
-            ):  # pylint: disable=possibly-used-before-assignment
+            if key not in used_pipeline_inputs:  # pylint: disable=possibly-used-before-assignment
                 # Only validate inputs certainly used.
                 continue
             # raise error when required input with no default value not set
@@ -415,20 +390,12 @@ class PipelineJob(
 
             on_init, on_finalize = self.settings.on_init, self.settings.on_finalize
 
-        append_on_init_error = partial(
-            validation_result.append_error, "settings.on_init"
-        )
-        append_on_finalize_error = partial(
-            validation_result.append_error, "settings.on_finalize"
-        )
+        append_on_init_error = partial(validation_result.append_error, "settings.on_init")
+        append_on_finalize_error = partial(validation_result.append_error, "settings.on_finalize")
         # on_init and on_finalize cannot be same
         if on_init == on_finalize:
-            append_on_init_error(
-                f"Invalid on_init job {on_init}, it should be different from on_finalize."
-            )
-            append_on_finalize_error(
-                f"Invalid on_finalize job {on_finalize}, it should be different from on_init."
-            )
+            append_on_init_error(f"Invalid on_init job {on_init}, it should be different from on_finalize.")
+            append_on_finalize_error(f"Invalid on_finalize job {on_finalize}, it should be different from on_init.")
         # pipeline should have at least one normal node
         if len(set(self.jobs.keys()) - {on_init, on_finalize}) == 0:
             validation_result.append_error(
@@ -457,13 +424,9 @@ class PipelineJob(
                 """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
-                    _new_input_output_data: _GroupAttrDict = cast(
-                        _GroupAttrDict, _input_output_data
-                    )
+                    _new_input_output_data: _GroupAttrDict = cast(_GroupAttrDict, _input_output_data)
                     # flatten to avoid nested cases
-                    flattened_values: List[Input] = list(
-                        _new_input_output_data.flatten(_name).values()
-                    )
+                    flattened_values: List[Input] = list(_new_input_output_data.flatten(_name).values())
                     # handle invalid empty group
                     if len(flattened_values) == 0:
                         return None
@@ -478,9 +441,7 @@ class PipelineJob(
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
             for _input_name in _validate_job.inputs:
-                _data_bindings = _try_get_data_bindings(
-                    _input_name, _validate_job.inputs[_input_name]
-                )
+                _data_bindings = _try_get_data_bindings(_input_name, _validate_job.inputs[_input_name])
                 if _data_bindings is None:
                     continue
                 for _data_binding in _data_bindings:
@@ -492,15 +453,11 @@ class PipelineJob(
                 if _is_control_flow_node(_job_name):
                     continue
                 for _input_name in _job.inputs:
-                    _data_bindings = _try_get_data_bindings(
-                        _input_name, _job.inputs[_input_name]
-                    )
+                    _data_bindings = _try_get_data_bindings(_input_name, _job.inputs[_input_name])
                     if _data_bindings is None:
                         continue
                     for _data_binding in _data_bindings:
-                        if is_data_binding_expression(
-                            _data_binding, ["parent", "jobs", _validate_job_name]
-                        ):
+                        if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                             return False
             return True
 
@@ -510,38 +467,25 @@ class PipelineJob(
                 append_on_init_error(f"On_init job name {on_init} not exists in jobs.")
             else:
                 if _is_control_flow_node(on_init):
-                    append_on_init_error(
-                        "On_init job should not be a control flow node."
-                    )
+                    append_on_init_error("On_init job should not be a control flow node.")
                 elif not _is_isolated_job(on_init):
-                    append_on_init_error(
-                        "On_init job should not have connection to other execution node."
-                    )
+                    append_on_init_error("On_init job should not have connection to other execution node.")
         # validate on_finalize
         if on_finalize is not None:
             if on_finalize not in self.jobs:
-                append_on_finalize_error(
-                    f"On_finalize job name {on_finalize} not exists in jobs."
-                )
+                append_on_finalize_error(f"On_finalize job name {on_finalize} not exists in jobs.")
             else:
                 if _is_control_flow_node(on_finalize):
-                    append_on_finalize_error(
-                        "On_finalize job should not be a control flow node."
-                    )
+                    append_on_finalize_error("On_finalize job should not be a control flow node.")
                 elif not _is_isolated_job(on_finalize):
-                    append_on_finalize_error(
-                        "On_finalize job should not have connection to other execution node."
-                    )
+                    append_on_finalize_error("On_finalize job should not have connection to other execution node.")
         return validation_result
 
     def _remove_pipeline_input(self) -> None:
         """Remove None pipeline input.If not remove, it will pass "None" to backend."""
         redundant_pipeline_inputs = []
         for pipeline_input_name, pipeline_input in self._inputs.items():
-            if (
-                isinstance(pipeline_input, PipelineInput)
-                and pipeline_input._data is None
-            ):
+            if isinstance(pipeline_input, PipelineInput) and pipeline_input._data is None:
                 redundant_pipeline_inputs.append(pipeline_input_name)
         for redundant_pipeline_input in redundant_pipeline_inputs:
             self._inputs.pop(redundant_pipeline_input)
@@ -619,23 +563,17 @@ class PipelineJob(
             source = ComponentSource.REMOTE_WORKSPACE_JOB
             rest_component_jobs = {}
         # add _source on pipeline job.settings
-        if (
-            "_source" not in settings_dict
-        ):  # pylint: disable=possibly-used-before-assignment
+        if "_source" not in settings_dict:  # pylint: disable=possibly-used-before-assignment
             settings_dict.update({"_source": source})
 
         # TODO: Revisit this logic when multiple types of component jobs are supported
         rest_compute = self.compute
         # This will be resolved in job_operations _resolve_arm_id_or_upload_dependencies.
-        component_id = (
-            self.component if isinstance(self.component, str) else self.component.id
-        )
+        component_id = self.component if isinstance(self.component, str) else self.component.id
 
         # TODO remove it in the future.
         # MFE not support pass None or empty input value. Remove the empty inputs in pipeline job.
-        built_inputs = {
-            k: v for k, v in built_inputs.items() if v is not None and v != ""
-        }
+        built_inputs = {k: v for k, v in built_inputs.items() if v is not None and v != ""}
 
         pipeline_job = RestPipelineJob(
             compute_id=rest_compute,
@@ -655,9 +593,7 @@ class PipelineJob(
                 to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
                 RestJobInput,
             ),
-            outputs=to_hybrid_rest_model(
-                to_rest_data_outputs(built_outputs), RestJobOutput
-            ),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(built_outputs), RestJobOutput),
             settings=settings_dict,
             services=(
                 to_hybrid_rest_model(
@@ -692,22 +628,10 @@ class PipelineJob(
         from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
         from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
         # Unpack the component jobs
-        sub_nodes = (
-            PipelineComponent._resolve_sub_nodes(properties.jobs)
-            if properties.jobs
-            else {}
-        )
+        sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
-        settings_dict = (
-            transform_dict_keys(properties.settings, camel_to_snake)
-            if properties.settings
-            else None
-        )
-        settings_sdk = (
-            PipelineJobSettings(**settings_dict)
-            if settings_dict
-            else PipelineJobSettings()
-        )
+        settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
+        settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()
         # Create component or use component id
         if getattr(properties, "component_id", None):
             component = properties.component_id
@@ -734,22 +658,12 @@ class PipelineJob(
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=(
-                SystemData._from_rest_object(obj.system_data)
-                if obj.system_data
-                else None
-            ),
-            services=(
-                JobServiceBase._from_rest_job_services(properties.services)
-                if properties.services
-                else None
-            ),
+            creation_context=(SystemData._from_rest_object(obj.system_data) if obj.system_data else None),
+            services=(JobServiceBase._from_rest_job_services(properties.services) if properties.services else None),
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
             identity=(
-                _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-                if properties.identity
-                else None
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
             ),
         )
 
@@ -763,33 +677,23 @@ class PipelineJob(
     def _component_items_from_path(cls, data: Dict) -> Generator:
         if "jobs" in data:
             for node_name, job_instance in data["jobs"].items():
-                potential_component_path = (
-                    job_instance["component"] if "component" in job_instance else None
-                )
-                if isinstance(
-                    potential_component_path, str
-                ) and potential_component_path.startswith("file:"):
+                potential_component_path = job_instance["component"] if "component" in job_instance else None
+                if isinstance(potential_component_path, str) and potential_component_path.startswith("file:"):
                     yield node_name, potential_component_path
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
-    ) -> "PipelineJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "PipelineJob":
         path_first_occurrence: dict = {}
         component_first_occurrence = {}
         for node_name, component_path in cls._component_items_from_path(data):
             if component_path in path_first_occurrence:
-                component_first_occurrence[node_name] = path_first_occurrence[
-                    component_path
-                ]
+                component_first_occurrence[node_name] = path_first_occurrence[component_path]
                 # set components to be replaced here may break the validation logic
             else:
                 path_first_occurrence[component_path] = node_name
 
         # use this instead of azure.ai.ml.entities._util.load_from_dict to avoid parsing
-        loaded_schema = cls._create_schema_for_validation(context=context).load(
-            data, **kwargs
-        )
+        loaded_schema = cls._create_schema_for_validation(context=context).load(data, **kwargs)
 
         # replace repeat component with first occurrence to reduce arm id resolution
         # current load yaml file logic is in azure.ai.ml._schema.core.schema.YamlFileSchema.load_from_file
@@ -825,9 +729,7 @@ class PipelineJob(
         telemetry_values.pop("is_anonymous")
         return telemetry_values
 
-    def _to_component(
-        self, context: Optional[Dict] = None, **kwargs: Any
-    ) -> "PipelineComponent":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "PipelineComponent":
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.
@@ -851,11 +753,7 @@ class PipelineJob(
         return PipelineComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             display_name=self.display_name,
-            inputs=self._to_inputs(
-                inputs=self.inputs, pipeline_job_dict=pipeline_job_dict
-            ),
-            outputs=self._to_outputs(
-                outputs=self.outputs, pipeline_job_dict=pipeline_job_dict
-            ),
+            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
+            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             jobs=self.jobs,
         )

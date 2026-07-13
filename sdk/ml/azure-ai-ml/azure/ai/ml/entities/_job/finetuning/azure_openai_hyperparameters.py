@@ -116,9 +116,7 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
         return not self.__eq__(other)
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestAzureOpenAiHyperParameters
-    ) -> "AzureOpenAIHyperparameters":
+    def _from_rest_object(cls, obj: RestAzureOpenAiHyperParameters) -> "AzureOpenAIHyperparameters":
         aoai_hyperparameters = cls(
             batch_size=obj.batch_size,
             learning_rate_multiplier=obj.learning_rate_multiplier,

@@ -59,7 +59,9 @@ class TestEnvironmentOperation:
             "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context"
         ) as check_upload, patch(
             "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset"
-        ), patch.object(EnvironmentVersionData, "_deserialize", return_value=Mock()):
+        ), patch.object(
+            EnvironmentVersionData, "_deserialize", return_value=Mock()
+        ):
             mock_environment_operation.create_or_update(env)
             check_upload.assert_called_once()
 
@@ -73,6 +75,8 @@ class TestEnvironmentOperation:
             "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context"
         ) as check_upload, patch(
             "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset"
-        ), patch.object(EnvironmentVersionData, "_deserialize", return_value=Mock()):
+        ), patch.object(
+            EnvironmentVersionData, "_deserialize", return_value=Mock()
+        ):
             mock_environment_operation.create_or_update(env)
             check_upload.assert_not_called()

@@ -67,7 +67,9 @@ def _rest_job_from_dict(job_dict):
             ck = snake_to_camel(k)
             if k in ("inputs", "outputs") and isinstance(v, dict):
                 new_props[ck] = {
-                    name: ({snake_to_camel(fk): fv for fk, fv in fields.items()} if isinstance(fields, dict) else fields)
+                    name: (
+                        {snake_to_camel(fk): fv for fk, fv in fields.items()} if isinstance(fields, dict) else fields
+                    )
                     for name, fields in v.items()
                 }
             else:

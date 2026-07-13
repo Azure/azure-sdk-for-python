@@ -89,9 +89,7 @@ class TestInputOutputBuilder:
             assert isinstance(job_in_path, PipelineInput)
             assert isinstance(job_in_number.result(), int)
             assert isinstance(job_in_path.result(), Input)
-            node1 = component_func(
-                component_in_number=job_in_number, component_in_path=job_in_path
-            )
+            node1 = component_func(component_in_number=job_in_number, component_in_path=job_in_path)
             # calling result() will convert pipeline input to actual value
             node2 = component_func(
                 component_in_number=job_in_number.result(),
@@ -102,13 +100,10 @@ class TestInputOutputBuilder:
                 "output2": node2.outputs.component_out_path,
             }
 
-        pipeline_job1 = my_pipeline(
-            job_in_number=1, job_in_path=Input(path="fake_path1")
-        )
+        pipeline_job1 = my_pipeline(job_in_number=1, job_in_path=Input(path="fake_path1"))
 
         rest_pipeline_job = omit_with_wildcard(
-            _rest_props_snake(pipeline_job1._to_rest_object().properties),
-            *common_omit_fields
+            _rest_props_snake(pipeline_job1._to_rest_object().properties), *common_omit_fields
         )
         expected_pipeline_job1 = {
             "node1": {
@@ -151,13 +146,10 @@ class TestInputOutputBuilder:
         }
         assert rest_pipeline_job["jobs"] == expected_pipeline_job1
 
-        pipeline_job2 = my_pipeline(
-            job_in_number=2, job_in_path=Input(path="fake_path2")
-        )
+        pipeline_job2 = my_pipeline(job_in_number=2, job_in_path=Input(path="fake_path2"))
 
         rest_pipeline_job = omit_with_wildcard(
-            _rest_props_snake(pipeline_job2._to_rest_object().properties),
-            *common_omit_fields
+            _rest_props_snake(pipeline_job2._to_rest_object().properties), *common_omit_fields
         )
 
         expected_pipeline_job2 = {
@@ -206,8 +198,7 @@ class TestInputOutputBuilder:
         pipeline_job1.jobs["node2"].inputs["component_in_path"].path == "fake_path1"
 
         rest_pipeline_job = omit_with_wildcard(
-            _rest_props_snake(pipeline_job1._to_rest_object().properties),
-            *common_omit_fields
+            _rest_props_snake(pipeline_job1._to_rest_object().properties), *common_omit_fields
         )
         assert rest_pipeline_job["jobs"] == expected_pipeline_job1
 
@@ -222,9 +213,7 @@ class TestInputOutputBuilder:
             # Note: call result will get actual value
             assert isinstance(job_in_number.result(), int)
             assert isinstance(job_in_path.result(), Input)
-            component_func(
-                component_in_number=job_in_number, component_in_path=job_in_path
-            )
+            component_func(component_in_number=job_in_number, component_in_path=job_in_path)
 
         @pipeline
         def my_pipeline_level_2(job_in_number, job_in_path):
@@ -233,17 +222,12 @@ class TestInputOutputBuilder:
             assert isinstance(job_in_number.result(), int)
             assert isinstance(job_in_path.result(), Input)
             my_pipeline_level_1(job_in_number=job_in_number, job_in_path=job_in_path)
-            component_func(
-                component_in_number=job_in_number, component_in_path=job_in_path
-            )
+            component_func(component_in_number=job_in_number, component_in_path=job_in_path)
 
-        pipeline_job2 = my_pipeline_level_2(
-            job_in_number=2, job_in_path=Input(path="fake_path2")
-        )
+        pipeline_job2 = my_pipeline_level_2(job_in_number=2, job_in_path=Input(path="fake_path2"))
 
         rest_pipeline_job = omit_with_wildcard(
-            _rest_props_snake(pipeline_job2._to_rest_object().properties),
-            *common_omit_fields
+            _rest_props_snake(pipeline_job2._to_rest_object().properties), *common_omit_fields
         )
 
         expected_pipeline_job = {
@@ -284,9 +268,7 @@ class TestInputOutputBuilder:
         if input1:
             pass
         else:
-            assert (
-                False
-            ), "bool test for PipelineInput in non-pipeline scenario should always return True."
+            assert False, "bool test for PipelineInput in non-pipeline scenario should always return True."
 
         # pipeline scenario, should raise UserErrorException
         @pipeline
@@ -308,9 +290,7 @@ class TestInputOutputBuilder:
         # case1: node input from another node's output
         @pipeline
         def another_nodes_output():
-            node1 = component_func1(
-                component_in_number=1, component_in_path=Input(path="test_path")
-            )
+            node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
             node1.name = "node1"
             node2 = component_func1(
                 component_in_number=2,
@@ -328,16 +308,12 @@ class TestInputOutputBuilder:
         # case2.1: node input from pipeline input, which has literal value
         @pipeline
         def literal_pipeline_val(component_in_path: Input):
-            node2 = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            node2 = component_func1(component_in_number=2, component_in_path=component_in_path)
             node2.name = "node2"
             assert node2.inputs.component_in_path._get_data_owner() == None
 
         assert_node_owners_expected(
-            pipeline_job=literal_pipeline_val(
-                component_in_path=Input(path="test_path")
-            ),
+            pipeline_job=literal_pipeline_val(component_in_path=Input(path="test_path")),
             expected_owners={"node2": None},
             input_name="component_in_path",
         )
@@ -345,17 +321,13 @@ class TestInputOutputBuilder:
         # case2.2: node input from pipeline input, which is from another node's output
         @pipeline
         def sub_pipeline(component_in_path: Input):
-            node2 = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            node2 = component_func1(component_in_number=2, component_in_path=component_in_path)
             node2.name = "node2"
             assert node2.inputs.component_in_path._get_data_owner().name == "node1"
 
         @pipeline
         def parent_pipeline():
-            node1 = component_func1(
-                component_in_number=1, component_in_path=Input(path="test_path")
-            )
+            node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
             node1.name = "node1"
             sub_pipeline(component_in_path=node1.outputs.component_out_path)
 
@@ -368,23 +340,17 @@ class TestInputOutputBuilder:
         # case2.3: node input from pipeline input, which is from subgraph's output
         @pipeline
         def sub_pipeline1(component_in_path: Input):
-            node1 = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            node1 = component_func1(component_in_number=2, component_in_path=component_in_path)
             return node1.outputs
 
         @pipeline
         def sub_pipeline2(component_in_path: Input):
-            node2 = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            node2 = component_func1(component_in_number=2, component_in_path=component_in_path)
             assert node2.inputs.component_in_path._get_data_owner().name == "node1"
 
         @pipeline
         def parent_pipeline():
-            src = component_func1(
-                component_in_number=1, component_in_path=Input(path="test_path")
-            )
+            src = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
             sub1 = sub_pipeline1(component_in_path=src)
             sub_pipeline2(component_in_path=sub1.outputs.component_out_path)
 
@@ -397,9 +363,7 @@ class TestInputOutputBuilder:
         # case3.1: node input from subgraph's output, which is from a normal node
         @pipeline
         def sub_pipeline(component_in_path: Input):
-            sub_node = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            sub_node = component_func1(component_in_number=2, component_in_path=component_in_path)
             return sub_node.outputs
 
         @pipeline
@@ -421,9 +385,7 @@ class TestInputOutputBuilder:
         # case3.2: node input from subgraph's output, which is from another subgraph
         @pipeline
         def sub_pipeline_1(component_in_path: Input):
-            sub_node_1 = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            sub_node_1 = component_func1(component_in_number=2, component_in_path=component_in_path)
             return sub_node_1.outputs
 
         @pipeline
@@ -453,25 +415,19 @@ class TestInputOutputBuilder:
 
         @pipeline
         def sub_pipeline(component_in_path: Input):
-            inner_node = component_func1(
-                component_in_number=2, component_in_path=component_in_path
-            )
+            inner_node = component_func1(component_in_number=2, component_in_path=component_in_path)
             return inner_node.outputs
 
         @pipeline
         def parent_pipeline():
-            node1 = component_func1(
-                component_in_number=1, component_in_path=Input(path="test_path1")
-            )
+            node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path1"))
             node1.name = "node1"
             sub1 = sub_pipeline(component_in_path=node1.outputs.component_out_path)
             after1 = component_func1(component_in_path=sub1.outputs.component_out_path)
             source_of_branch_1 = after1.inputs.component_in_path._get_data_owner()
             assert source_of_branch_1.name == "inner_node"
 
-            node2 = component_func1(
-                component_in_number=3, component_in_path=Input(path="test_path2")
-            )
+            node2 = component_func1(component_in_number=3, component_in_path=Input(path="test_path2"))
             node2.name = "node2"
             sub2 = sub_pipeline(component_in_path=node2.outputs.component_out_path)
             after2 = component_func1(component_in_path=sub2.outputs.component_out_path)
@@ -481,14 +437,8 @@ class TestInputOutputBuilder:
             # subgraph called twice, source for each branch should not be the same
             assert source_of_branch_1._instance_id != source_of_branch_2._instance_id
             # one is from node1, the other is from node2
-            assert (
-                source_of_branch_1.inputs.component_in_path._get_data_owner().name
-                == "node1"
-            )
-            assert (
-                source_of_branch_2.inputs.component_in_path._get_data_owner().name
-                == "node2"
-            )
+            assert source_of_branch_1.inputs.component_in_path._get_data_owner().name == "node1"
+            assert source_of_branch_2.inputs.component_in_path._get_data_owner().name == "node2"
 
         parent_pipeline()
 
@@ -562,9 +512,7 @@ class TestInputOutputBuilder:
 
         @pipeline
         def my_pipeline():
-            node1 = component_func1(
-                component_in_number=1, component_in_path=Input(path="test_path")
-            )
+            node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
             node1.name = "node1"
             # node input literal value, don't have owner
             assert node1.inputs.component_in_number._get_data_owner() is None

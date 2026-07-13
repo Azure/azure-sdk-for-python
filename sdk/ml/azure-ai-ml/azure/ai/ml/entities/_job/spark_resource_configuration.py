@@ -37,19 +37,12 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(
-        self,
-        *,
-        instance_type: Optional[str] = None,
-        runtime_version: Optional[str] = None
-    ) -> None:
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None) -> None:
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 
     def _to_rest_object(self) -> RestSparkResourceConfiguration:
-        return RestSparkResourceConfiguration(
-            instance_type=self.instance_type, runtime_version=self.runtime_version
-        )
+        return RestSparkResourceConfiguration(instance_type=self.instance_type, runtime_version=self.runtime_version)
 
     @classmethod
     def _from_rest_object(
@@ -59,9 +52,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             return None
         if isinstance(obj, dict):
             return SparkResourceConfiguration(**obj)
-        return SparkResourceConfiguration(
-            instance_type=obj.instance_type, runtime_version=obj.runtime_version
-        )
+        return SparkResourceConfiguration(instance_type=obj.instance_type, runtime_version=obj.runtime_version)
 
     def _validate(self) -> None:
         # TODO: below logic is duplicated to SparkResourceConfigurationSchema, maybe make SparkJob schema validatable
@@ -74,9 +65,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                 error_category=ErrorCategory.USER_ERROR,
             )
         if self.instance_type.lower() not in self.instance_type_list:
-            msg = "Instance type must be specified for the list of {}".format(
-                ",".join(self.instance_type_list)
-            )
+            msg = "Instance type must be specified for the list of {}".format(",".join(self.instance_type_list))
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
@@ -87,10 +76,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SparkResourceConfiguration):
             return NotImplemented
-        return (
-            self.instance_type == other.instance_type
-            and self.runtime_version == other.runtime_version
-        )
+        return self.instance_type == other.instance_type and self.runtime_version == other.runtime_version
 
     def __ne__(self, other: object) -> bool:
         if not isinstance(other, SparkResourceConfiguration):

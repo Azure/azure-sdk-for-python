@@ -51,9 +51,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         training_data = kwargs.pop("training_data", None)
         validation_data = kwargs.pop("validation_data", None)
         hyperparameters = kwargs.pop("hyperparameters", None)
-        if hyperparameters and not isinstance(
-            hyperparameters, AzureOpenAIHyperparameters
-        ):
+        if hyperparameters and not isinstance(hyperparameters, AzureOpenAIHyperparameters):
             raise ValidationException(
                 category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.JOB,
@@ -98,11 +96,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         """
         # TSP rest models coerce SDK Input entities to dicts at construction, so
         # convert to TSP JobInput types up front rather than mutating after.
-        model = (
-            MLFlowModelJobInput(uri=self._model.path)
-            if isinstance(self._model, Input)
-            else self._model
-        )
+        model = MLFlowModelJobInput(uri=self._model.path) if isinstance(self._model, Input) else self._model
         training_data = (
             UriFileJobInput(uri=self._training_data.path)
             if isinstance(self._training_data, Input)
@@ -119,9 +113,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
             model_provider=self._model_provider,
             training_data=training_data,
             validation_data=validation_data,
-            hyper_parameters=(
-                self.hyperparameters._to_rest_object() if self.hyperparameters else None
-            ),
+            hyper_parameters=(self.hyperparameters._to_rest_object() if self.hyperparameters else None),
         )
 
         finetuning_job = RestFineTuningJob(
@@ -137,9 +129,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
             is_archived=False,
             # The shared ``to_rest_data_outputs`` helper emits msrest models; convert to the
             # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
-            outputs=to_hybrid_rest_model(
-                to_rest_data_outputs(self.outputs), RestJobOutput
-            ),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
         )
 
         result = RestJobBase(properties=finetuning_job)
@@ -162,9 +152,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         # if inside_pipeline:
         #    schema_dict = AutoMLClassificationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         # else:
-        schema_dict = AzureOpenAIFineTuningSchema(
-            context={BASE_PATH_CONTEXT_KEY: "./"}
-        ).dump(self)
+        schema_dict = AzureOpenAIFineTuningSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
         return schema_dict
 
@@ -225,9 +213,7 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
             model=finetuning_details.model,
             training_data=finetuning_details.training_data,
             validation_data=finetuning_details.validation_data,
-            hyperparameters=AzureOpenAIHyperparameters._from_rest_object(
-                finetuning_details.hyper_parameters
-            ),
+            hyperparameters=AzureOpenAIHyperparameters._from_rest_object(finetuning_details.hyper_parameters),
             **job_args_dict,
         )
 
@@ -270,17 +256,13 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         #        **kwargs,
         #    )
         # else:
-        loaded_data = load_from_dict(
-            AzureOpenAIFineTuningSchema, data, context, additional_message, **kwargs
-        )
+        loaded_data = load_from_dict(AzureOpenAIFineTuningSchema, data, context, additional_message, **kwargs)
 
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 
     @classmethod
-    def _create_instance_from_schema_dict(
-        cls, loaded_data: Dict
-    ) -> "AzureOpenAIFineTuningJob":
+    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "AzureOpenAIFineTuningJob":
         """Create an instance from a schema dictionary.
 
         :param loaded_data: dictionary containing the data.

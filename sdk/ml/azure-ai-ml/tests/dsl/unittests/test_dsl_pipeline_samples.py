@@ -175,9 +175,7 @@ class TestDSLPipelineSamples:
             return "sampledata1235:2"
 
         # change internal assets into arm id
-        with mock.patch(
-            "azure.ai.ml._ml_client.DataOperations.get", side_effect=get_dataset
-        ):
+        with mock.patch("azure.ai.ml._ml_client.DataOperations.get", side_effect=get_dataset):
             pipeline = dataset_input(mock_machinelearning_client)
         job_yaml = str(samples_dir / "dataset_input/pipeline.yml")
         omit_fields = [
@@ -377,9 +375,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = pipeline_with_parallel_components()
-        job_yaml = str(
-            samples_dir / "parallel_component_with_tabular_input/pipeline.yml"
-        )
+        job_yaml = str(samples_dir / "parallel_component_with_tabular_input/pipeline.yml")
         omit_fields = [
             "name",
             "properties.display_name",
@@ -482,9 +478,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline.yml")
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
@@ -499,9 +493,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
@@ -516,9 +508,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
@@ -533,10 +523,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir
-            / "data_transfer_job_in_pipeline/import_database/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_database/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
         ]
@@ -550,10 +537,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir
-            / "data_transfer_job_in_pipeline/import_stored_database/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_stored_database/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
         ]
@@ -565,10 +549,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir
-            / "data_transfer_job_in_pipeline/import_file_system/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_file_system/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
         ]
@@ -580,10 +561,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(
-            samples_dir
-            / "data_transfer_job_in_pipeline/export_database/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_database/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
             "properties.inputs.cosmos_folder.uri",
@@ -596,23 +574,18 @@ class TestDSLPipelineSamples:
             generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
         )
 
-        job_yaml = str(
-            samples_dir
-            / "data_transfer_job_in_pipeline/export_file_system/pipeline_inline.yml"
-        )
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_file_system/pipeline_inline.yml")
 
         with pytest.raises(ValidationException) as e:
             data_transfer_job_in_pipeline()
             assert (
-                "Sink is a required field for export data task and we don't support exporting file system for now."
-                in e
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
             )
 
         with pytest.raises(ValidationException) as e:
             load_job(source=job_yaml)
             assert (
-                "Sink is a required field for export data task and we don't support exporting file system for now."
-                in e
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
             )
 
     def test_data_transfer_multi_job_in_pipeline(self) -> None:

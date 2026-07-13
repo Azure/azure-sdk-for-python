@@ -31,27 +31,19 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         self.type = None
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestSamplingAlgorithm
-    ) -> Optional["SamplingAlgorithm"]:
+    def _from_rest_object(cls, obj: RestSamplingAlgorithm) -> Optional["SamplingAlgorithm"]:
         if not obj:
             return None
 
         sampling_algorithm: Any = None
         if obj.sampling_algorithm_type == SamplingAlgorithmType.RANDOM:
-            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(
-                obj
-            )  # pylint: disable=protected-access
+            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.GRID:
-            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(
-                obj
-            )  # pylint: disable=protected-access
+            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.BAYESIAN:
-            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(
-                obj
-            )  # pylint: disable=protected-access
+            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
         return cast(Optional["SamplingAlgorithm"], sampling_algorithm)
 
@@ -102,9 +94,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestRandomSamplingAlgorithm
-    ) -> "RandomSamplingAlgorithm":
+    def _from_rest_object(cls, obj: RestRandomSamplingAlgorithm) -> "RandomSamplingAlgorithm":
         # ``logbase`` is not modeled on the shared arm_ml_service RandomSamplingAlgorithm; it is
         # preserved as an unknown wire key on the hybrid model (a MutableMapping, not a dict subclass),
         # so read it from the mapping when present, otherwise fall back to attribute access for msrest.
@@ -140,9 +130,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
         return RestGridSamplingAlgorithm()
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestGridSamplingAlgorithm
-    ) -> "GridSamplingAlgorithm":
+    def _from_rest_object(cls, obj: RestGridSamplingAlgorithm) -> "GridSamplingAlgorithm":
         return cls()
 
 
@@ -167,7 +155,5 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
         return RestBayesianSamplingAlgorithm()
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestBayesianSamplingAlgorithm
-    ) -> "BayesianSamplingAlgorithm":
+    def _from_rest_object(cls, obj: RestBayesianSamplingAlgorithm) -> "BayesianSamplingAlgorithm":
         return cls()

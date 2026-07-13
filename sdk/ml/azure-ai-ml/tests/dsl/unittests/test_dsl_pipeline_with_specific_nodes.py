@@ -74,12 +74,8 @@ class TestDSLPipelineWithSpecificNodes:
     def test_dsl_pipeline_sweep_node(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
-        @dsl.pipeline(
-            name="train_with_sweep_in_pipeline", default_compute="cpu-cluster"
-        )
-        def train_with_sweep_in_pipeline(
-            raw_data, primary_metric: str = "AUC", max_total_trials: int = 10
-        ):
+        @dsl.pipeline(name="train_with_sweep_in_pipeline", default_compute="cpu-cluster")
+        def train_with_sweep_in_pipeline(raw_data, primary_metric: str = "AUC", max_total_trials: int = 10):
             component_to_sweep: CommandComponent = load_component(source=yaml_file)
             cmd_node1: Command = component_to_sweep(
                 component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
@@ -113,9 +109,7 @@ class TestDSLPipelineWithSpecificNodes:
                 max_total_trials=10,
             )
 
-            component_to_link = load_component(
-                source=yaml_file, params_override=[{"name": "node_to_link"}]
-            )
+            component_to_link = load_component(source=yaml_file, params_override=[{"name": "node_to_link"}])
             link_node = component_to_link(
                 component_in_number=2,
                 component_in_path=sweep_job1.outputs.component_out_path,
@@ -133,9 +127,7 @@ class TestDSLPipelineWithSpecificNodes:
             max_total_trials=100,
             primary_metric="accuracy",
         )
-        assert (
-            len(pipeline.jobs) == 4
-        ), f"Expect 4 nodes are collected but got {len(pipeline.jobs)}"
+        assert len(pipeline.jobs) == 4, f"Expect 4 nodes are collected but got {len(pipeline.jobs)}"
         assert pipeline.component._source == "DSL"
         assert pipeline.component._job_types == {"sweep": 3, "command": 1}
         assert pipeline.component._job_sources == {"YAML.COMPONENT": 4}
@@ -145,13 +137,9 @@ class TestDSLPipelineWithSpecificNodes:
         sweep_node_dict = sweep_node._to_dict()
         assert pydash.get(sweep_node_dict, "limits.max_total_trials", None) == 10
         sweep_node_rest_obj = sweep_node._to_rest_object()
-        sweep_node_dict_from_rest = Sweep._from_rest_object(
-            sweep_node_rest_obj
-        )._to_dict()
+        sweep_node_dict_from_rest = Sweep._from_rest_object(sweep_node_rest_obj)._to_dict()
         omit_fields = ["trial"]
-        assert pydash.omit(sweep_node_dict, *omit_fields) == pydash.omit(
-            sweep_node_dict_from_rest, *omit_fields
-        )
+        assert pydash.omit(sweep_node_dict, *omit_fields) == pydash.omit(sweep_node_dict_from_rest, *omit_fields)
 
         pipeline_dict = pipeline._to_dict()
         for dot_key, expected_value in [
@@ -175,9 +163,7 @@ class TestDSLPipelineWithSpecificNodes:
             "outputs",  # TODO: figure out why outputs can't be regenerated correctly
         ]
         # Change float to string to make dict from local and rest compatible
-        pipeline_dict["inputs"]["max_total_trials"] = str(
-            pipeline_dict["inputs"]["max_total_trials"]
-        )
+        pipeline_dict["inputs"]["max_total_trials"] = str(pipeline_dict["inputs"]["max_total_trials"])
         pipeline_dict["jobs"]["link_node"]["inputs"]["component_in_number"] = str(
             pipeline_dict["jobs"]["link_node"]["inputs"]["component_in_number"]
         )
@@ -215,12 +201,8 @@ class TestDSLPipelineWithSpecificNodes:
                 sampling_algorithm="random",
             )
             hello_sweep.compute = "cpu-cluster"
-            hello_sweep.set_limits(
-                max_total_trials=2, max_concurrent_trials=3, timeout=600
-            )
-            hello_sweep.early_termination = BanditPolicy(
-                evaluation_interval=2, slack_factor=0.1, delay_evaluation=1
-            )
+            hello_sweep.set_limits(max_total_trials=2, max_concurrent_trials=3, timeout=600)
+            hello_sweep.early_termination = BanditPolicy(evaluation_interval=2, slack_factor=0.1, delay_evaluation=1)
 
         dsl_pipeline: PipelineJob = train_with_sweep_in_pipeline()
         dsl_pipeline.jobs["hello_sweep"].outputs.trained_model_dir = Output(
@@ -234,13 +216,9 @@ class TestDSLPipelineWithSpecificNodes:
         sweep_node.component._id = "azureml:test_component:1"
         sweep_node_dict = sweep_node._to_dict()
         sweep_node_rest_obj = sweep_node._to_rest_object()
-        sweep_node_dict_from_rest = Sweep._from_rest_object(
-            sweep_node_rest_obj
-        )._to_dict()
+        sweep_node_dict_from_rest = Sweep._from_rest_object(sweep_node_rest_obj)._to_dict()
         omit_fields = ["trial"]
-        assert pydash.omit(sweep_node_dict, *omit_fields) == pydash.omit(
-            sweep_node_dict_from_rest, *omit_fields
-        )
+        assert pydash.omit(sweep_node_dict, *omit_fields) == pydash.omit(sweep_node_dict_from_rest, *omit_fields)
 
     def test_dsl_pipeline_with_sweep_distributed_component_setting_instance_type(
         self,
@@ -250,9 +228,7 @@ class TestDSLPipelineWithSpecificNodes:
         @dsl.pipeline(force_rerun=True)
         def train_with_sweep_in_pipeline(raw_data):
             component_to_sweep: CommandComponent = load_component(source=yaml_file)
-            cmd_node: Command = component_to_sweep(
-                component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
-            )
+            cmd_node: Command = component_to_sweep(component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data)
             sweep_job: Sweep = cmd_node.sweep(
                 primary_metric="AUC",  # primary_metric,
                 goal="maximize",
@@ -262,9 +238,7 @@ class TestDSLPipelineWithSpecificNodes:
             sweep_job.compute = "test-aks-large"
             sweep_job.set_limits(max_total_trials=10)
 
-        pipeline: PipelineJob = train_with_sweep_in_pipeline(
-            raw_data=Input(path="/a/path/on/ds", mode="ro_mount")
-        )
+        pipeline: PipelineJob = train_with_sweep_in_pipeline(raw_data=Input(path="/a/path/on/ds", mode="ro_mount"))
         pipeline.settings.default_compute = "test-aks-large"
 
         pytorch_node = pipeline.jobs["sweep_job"]
@@ -275,9 +249,7 @@ class TestDSLPipelineWithSpecificNodes:
             "limits": {"max_total_trials": 10},
             "sampling_algorithm": "random",
             "objective": {"goal": "maximize", "primary_metric": "AUC"},
-            "search_space": {
-                "component_in_number": {"values": [2, 3, 4, 5], "type": "choice"}
-            },
+            "search_space": {"component_in_number": {"values": [2, 3, 4, 5], "type": "choice"}},
             "name": "sweep_job",
             "type": "sweep",
             "computeId": "test-aks-large",
@@ -325,9 +297,7 @@ class TestDSLPipelineWithSpecificNodes:
         regenerated_parallel_node._base_path = Path(yaml_file).parent
         parallel_node_dict_from_rest = regenerated_parallel_node._to_dict()
         omit_fields = ["component"]
-        assert pydash.omit(parallel_node_dict, *omit_fields) == pydash.omit(
-            parallel_node_dict_from_rest, *omit_fields
-        )
+        assert pydash.omit(parallel_node_dict, *omit_fields) == pydash.omit(parallel_node_dict_from_rest, *omit_fields)
 
     def test_dsl_pipeline_with_spark(self) -> None:
         add_greeting_column_func = load_component(
@@ -367,18 +337,14 @@ class TestDSLPipelineWithSpecificNodes:
 
         spark_node_dict_from_rest = regenerated_spark_node._to_dict()
         omit_fields = []
-        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(
-            spark_node_dict_from_rest, *omit_fields
-        )
+        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
         omit_fields = [
             "jobs.add_greeting_column.componentId",
             "jobs.add_greeting_column.properties",
             "jobs.count_by_row.componentId",
             "jobs.count_by_row.properties",
         ]
-        actual_job = pydash.omit(
-            as_attribute_dict(dsl_pipeline._to_rest_object().properties), *omit_fields
-        )
+        actual_job = pydash.omit(as_attribute_dict(dsl_pipeline._to_rest_object().properties), *omit_fields)
         assert actual_job == {
             "description": "submit a pipeline with spark job",
             "display_name": "spark_pipeline_from_yaml",
@@ -421,8 +387,7 @@ class TestDSLPipelineWithSpecificNodes:
                 },
                 "count_by_row": {
                     "_source": "YAML.COMPONENT",
-                    "args": "--file_input ${{inputs.file_input}} "
-                    "--output ${{outputs.output}}",
+                    "args": "--file_input ${{inputs.file_input}} " "--output ${{outputs.output}}",
                     "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 2,
@@ -470,9 +435,7 @@ class TestDSLPipelineWithSpecificNodes:
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
-            "component_in_path": Input(
-                type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"
-            ),
+            "component_in_path": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
             "component_in_number": 0.01,
         }
         outputs = {"component_out_path": Output(type="mlflow_model", mode="rw_mount")}
@@ -677,12 +640,8 @@ class TestDSLPipelineWithSpecificNodes:
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_copy_function")
         def pipeline(folder1, folder2):
             node1 = component_func(folder1=folder1, folder2=folder2)
-            node2 = data_transfer_job_func(
-                folder1=node1.outputs.output_folder, folder2=node1.outputs.output_folder
-            )
-            node3 = data_transfer_function(
-                folder1=node2.outputs.output, folder2=node2.outputs.output
-            )
+            node2 = data_transfer_job_func(folder1=node1.outputs.output_folder, folder2=node1.outputs.output_folder)
+            node3 = data_transfer_function(folder1=node2.outputs.output, folder2=node2.outputs.output)
             return {
                 "pipeline_output": node3.outputs.output,
             }
@@ -790,15 +749,11 @@ class TestDSLPipelineWithSpecificNodes:
             "query": query_source_snowflake,
         }
 
-        @dsl.pipeline(
-            experiment_name="test_pipeline_with_data_transfer_import_database_function"
-        )
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_function")
         def pipeline(query_source_snowflake, connection_target_azuresql):
             node1 = import_data(source=Database(**source), outputs=outputs)
 
-            source_snowflake = Database(
-                query=query_source_snowflake, connection=connection_target_azuresql
-            )
+            source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
             node2 = import_data(source=source_snowflake, outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
@@ -857,24 +812,20 @@ class TestDSLPipelineWithSpecificNodes:
             data_transfer_import_node = pipeline1.jobs[key]
             data_transfer_import_node_dict = data_transfer_import_node._to_dict()
 
-            data_transfer_import_node_rest_obj = (
-                data_transfer_import_node._to_rest_object()
-            )
-            regenerated_data_transfer_import_node = (
-                DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(
+                data_transfer_import_node_rest_obj
             )
 
-            data_transfer_import_node_dict_from_rest = (
-                regenerated_data_transfer_import_node._to_dict()
-            )
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
 
             # data_transfer_import_node_dict will dump to component dict according to schema, but
             # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
             omit_fields = ["component"]
 
-            assert pydash.omit(
-                data_transfer_import_node_dict, *omit_fields
-            ) == pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == pydash.omit(
+                data_transfer_import_node_dict_from_rest, *omit_fields
+            )
 
     def test_pipeline_with_data_transfer_import_stored_database_function(self):
         stored_procedure = "SelectEmployeeByJobAndDepartment"
@@ -888,9 +839,7 @@ class TestDSLPipelineWithSpecificNodes:
             "stored_procedure_params": stored_procedure_params,
         }
 
-        @dsl.pipeline(
-            experiment_name="test_pipeline_with_data_transfer_import_stored_database_function"
-        )
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_stored_database_function")
         def pipeline():
             node2 = import_data(source=Database(**source), outputs=outputs)
 
@@ -935,24 +884,20 @@ class TestDSLPipelineWithSpecificNodes:
             data_transfer_import_node = pipeline1.jobs[key]
             data_transfer_import_node_dict = data_transfer_import_node._to_dict()
 
-            data_transfer_import_node_rest_obj = (
-                data_transfer_import_node._to_rest_object()
-            )
-            regenerated_data_transfer_import_node = (
-                DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(
+                data_transfer_import_node_rest_obj
             )
 
-            data_transfer_import_node_dict_from_rest = (
-                regenerated_data_transfer_import_node._to_dict()
-            )
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
 
             # data_transfer_import_node_dict will dump to component dict according to schema, but
             # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
             omit_fields = ["component"]
 
-            assert pydash.omit(
-                data_transfer_import_node_dict, *omit_fields
-            ) == pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == pydash.omit(
+                data_transfer_import_node_dict_from_rest, *omit_fields
+            )
 
     def test_pipeline_with_data_transfer_import_file_system_function(self):
         path_source_s3 = "s3://my_bucket/my_folder"
@@ -965,15 +910,11 @@ class TestDSLPipelineWithSpecificNodes:
         }
         source = {"connection": connection_target, "path": path_source_s3}
 
-        @dsl.pipeline(
-            experiment_name="test_pipeline_with_data_transfer_import_file_system_function"
-        )
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_function")
         def pipeline(path_source_s3, connection_target):
             node2 = import_data(source=FileSystem(**source), outputs=outputs)
 
-            source_snowflake = FileSystem(
-                path=path_source_s3, connection=connection_target
-            )
+            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
             node4 = import_data(source=source_snowflake, outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
@@ -1042,24 +983,20 @@ class TestDSLPipelineWithSpecificNodes:
             data_transfer_import_node = pipeline1.jobs[key]
             data_transfer_import_node_dict = data_transfer_import_node._to_dict()
 
-            data_transfer_import_node_rest_obj = (
-                data_transfer_import_node._to_rest_object()
-            )
-            regenerated_data_transfer_import_node = (
-                DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(
+                data_transfer_import_node_rest_obj
             )
 
-            data_transfer_import_node_dict_from_rest = (
-                regenerated_data_transfer_import_node._to_dict()
-            )
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
 
             # data_transfer_import_node_dict will dump to component dict according to schema, but
             # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
             omit_fields = ["component"]
 
-            assert pydash.omit(
-                data_transfer_import_node_dict, *omit_fields
-            ) == pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == pydash.omit(
+                data_transfer_import_node_dict_from_rest, *omit_fields
+            )
 
     def test_pipeline_with_data_transfer_export_database_function(self):
         connection_target_azuresql = "azureml:my_azuresql_connection"
@@ -1075,15 +1012,11 @@ class TestDSLPipelineWithSpecificNodes:
             "table_name": table_name,
         }
 
-        @dsl.pipeline(
-            experiment_name="test_pipeline_with_data_transfer_export_database_function"
-        )
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_function")
         def pipeline(table_name, connection_target_azuresql):
             node2 = export_data(inputs={"source": cosmos_folder}, sink=sink)
 
-            source_snowflake = Database(
-                table_name=table_name, connection=connection_target_azuresql
-            )
+            source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
             node4 = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
@@ -1152,24 +1085,20 @@ class TestDSLPipelineWithSpecificNodes:
             data_transfer_import_node = pipeline1.jobs[key]
             data_transfer_import_node_dict = data_transfer_import_node._to_dict()
 
-            data_transfer_import_node_rest_obj = (
-                data_transfer_import_node._to_rest_object()
-            )
-            regenerated_data_transfer_import_node = (
-                DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(
+                data_transfer_import_node_rest_obj
             )
 
-            data_transfer_import_node_dict_from_rest = (
-                regenerated_data_transfer_import_node._to_dict()
-            )
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
 
             # data_transfer_import_node_dict will dump to component dict according to schema, but
             # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
             omit_fields = ["component"]
 
-            assert pydash.omit(
-                data_transfer_import_node_dict, *omit_fields
-            ) == pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == pydash.omit(
+                data_transfer_import_node_dict_from_rest, *omit_fields
+            )
 
     def test_pipeline_with_spark_function(self):
         # component func
@@ -1228,13 +1157,9 @@ class TestDSLPipelineWithSpecificNodes:
         def pipeline(iris_data, sample_rate):
             node1 = component_func(input1=iris_data, sample_rate=sample_rate)
             node1.compute = synapse_compute_name
-            node2 = spark_job_func(
-                input1=node1.outputs.output1, sample_rate=sample_rate
-            )
+            node2 = spark_job_func(input1=node1.outputs.output1, sample_rate=sample_rate)
             node2.compute = synapse_compute_name
-            node3 = spark_function(
-                input1=node2.outputs.output1, sample_rate=sample_rate
-            )
+            node3 = spark_function(input1=node2.outputs.output1, sample_rate=sample_rate)
             return {
                 "pipeline_output1": node1.outputs.output1,
                 "pipeline_output2": node2.outputs.output1,
@@ -1462,13 +1387,9 @@ class TestDSLPipelineWithSpecificNodes:
         def pipeline(iris_data, sample_rate):
             node1 = component_func(input1=iris_data, sample_rate=sample_rate)
             node1.compute = synapse_compute_name
-            node2 = spark_job_func(
-                input1=node1.outputs.output1, sample_rate=sample_rate
-            )
+            node2 = spark_job_func(input1=node1.outputs.output1, sample_rate=sample_rate)
             node2.compute = synapse_compute_name
-            node3 = spark_function(
-                input1=node2.outputs.output1, sample_rate=sample_rate
-            )
+            node3 = spark_function(input1=node2.outputs.output1, sample_rate=sample_rate)
             return {
                 "pipeline_output1": node1.outputs.output1,
                 "pipeline_output2": node2.outputs.output1,
@@ -1739,9 +1660,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline1_dict = pipeline1._to_dict()
         # Change float to string to make dict from local and rest compatible
-        pipeline1_dict["inputs"]["sample_rate"] = str(
-            pipeline1_dict["inputs"]["sample_rate"]
-        )
+        pipeline1_dict["inputs"]["sample_rate"] = str(pipeline1_dict["inputs"]["sample_rate"])
         assert pydash.omit(pipeline1_dict, *omit_field) == pydash.omit(
             pipeline_regenerated_from_rest._to_dict(), *omit_field
         )
@@ -1842,9 +1761,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_copy_job")
         def pipeline(folder1, folder2):
-            data_transfer_node = data_transfer_job_func(
-                folder1=folder1, folder2=folder2
-            )
+            data_transfer_node = data_transfer_job_func(folder1=folder1, folder2=folder2)
             return {
                 "pipeline_output": data_transfer_node.outputs.output,
             }
@@ -1919,9 +1836,7 @@ class TestDSLPipelineWithSpecificNodes:
                 mode="eval_mount",
             ),
         }
-        outputs = {
-            "job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")
-        }
+        outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
 
@@ -2027,8 +1942,7 @@ class TestDSLPipelineWithSpecificNodes:
                             ),
                             "entry_script": "score.py",
                             "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                            "program_arguments": "--job_output_path "
-                            "${{outputs.job_output_path}}",
+                            "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
                         "type": "parallel",
@@ -2053,9 +1967,7 @@ class TestDSLPipelineWithSpecificNodes:
             ),
         }
         input_data = "${{inputs.job_data_path}}"
-        outputs = {
-            "job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")
-        }
+        outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
         task = RunFunction(
             code="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
             entry_script="score.py",
@@ -2088,11 +2000,7 @@ class TestDSLPipelineWithSpecificNodes:
                 environment_variables=expected_environment_variables,
             )
             node1 = parallel_function(job_data_path=path)
-            node2 = parallel_function(
-                job_data_path=Input(
-                    type=AssetTypes.MLTABLE, path="new_path", mode="eval_mount"
-                )
-            )
+            node2 = parallel_function(job_data_path=Input(type=AssetTypes.MLTABLE, path="new_path", mode="eval_mount"))
 
             return {
                 "pipeline_output1": node1.outputs.job_output_path,
@@ -2156,8 +2064,7 @@ class TestDSLPipelineWithSpecificNodes:
                             ),
                             "entry_script": "score.py",
                             "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                            "program_arguments": "--job_output_path "
-                            "${{outputs.job_output_path}}",
+                            "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
                         "type": "parallel",
@@ -2194,8 +2101,7 @@ class TestDSLPipelineWithSpecificNodes:
                             ),
                             "entry_script": "score.py",
                             "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                            "program_arguments": "--job_output_path "
-                            "${{outputs.job_output_path}}",
+                            "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
                         "type": "parallel",
@@ -2222,9 +2128,7 @@ class TestDSLPipelineWithSpecificNodes:
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
-            "component_in_path": Input(
-                type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"
-            ),
+            "component_in_path": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
             "component_in_number": 0.01,
         }
         outputs = {"component_out_path": Output(type="mlflow_model", mode="rw_mount")}
@@ -2243,9 +2147,7 @@ class TestDSLPipelineWithSpecificNodes:
                 outputs=outputs,
             )
             node1 = command_function(component_in_number=number, component_in_path=path)
-            node2 = command_function(
-                component_in_number=1, component_in_path=Input(path="new_path")
-            )
+            node2 = command_function(component_in_number=1, component_in_path=Input(path="new_path"))
 
             return {
                 "pipeline_output1": node1.outputs.component_out_path,
@@ -2349,10 +2251,7 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_multi_parallel_components_with_file_input_pipeline_output(self) -> None:
-        components_dir = (
-            tests_root_dir
-            / "test_configs/dsl_pipeline/parallel_component_with_file_input"
-        )
+        components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
         convert_data = load_component(source=str(components_dir / "convert_data.yml"))
@@ -2361,16 +2260,10 @@ class TestDSLPipelineWithSpecificNodes:
         @dsl.pipeline(default_compute="cpu-cluster", experiment_name="sdk-cli-v2")
         def parallel_in_pipeline(job_data_path):
             batch_inference_node1 = batch_inference1(job_data_path=job_data_path)
-            convert_data_node = convert_data(
-                input_data=batch_inference_node1.outputs.job_output_path
-            )
+            convert_data_node = convert_data(input_data=batch_inference_node1.outputs.job_output_path)
             convert_data_node.outputs.file_output_data.type = AssetTypes.MLTABLE
-            batch_inference_node2 = batch_inference2(
-                job_data_path=convert_data_node.outputs.file_output_data
-            )
-            batch_inference_node2.inputs.job_data_path.mode = (
-                InputOutputModes.EVAL_MOUNT
-            )
+            batch_inference_node2 = batch_inference2(job_data_path=convert_data_node.outputs.file_output_data)
+            batch_inference_node2.inputs.job_data_path.mode = InputOutputModes.EVAL_MOUNT
 
             return {"job_out_data": batch_inference_node2.outputs.job_output_path}
 
@@ -2390,9 +2283,7 @@ class TestDSLPipelineWithSpecificNodes:
             "jobs.batch_inference_node2.componentId",
             "jobs.batch_inference_node2.properties",
         ]
-        actual_job = pydash.omit(
-            as_attribute_dict(pipeline._to_rest_object().properties), *omit_fields
-        )
+        actual_job = pydash.omit(as_attribute_dict(pipeline._to_rest_object().properties), *omit_fields)
         assert actual_job == {
             "display_name": "parallel_in_pipeline",
             "experiment_name": "sdk-cli-v2",
@@ -2424,8 +2315,7 @@ class TestDSLPipelineWithSpecificNodes:
                         "code": parse_local_path("./src", batch_inference1.base_path),
                         "entry_script": "score.py",
                         "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                        "program_arguments": "--job_output_path "
-                        "${{outputs.job_output_path}}",
+                        "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "type": "run_function",
                     },
                     "type": "parallel",
@@ -2455,8 +2345,7 @@ class TestDSLPipelineWithSpecificNodes:
                         "code": parse_local_path("./src", batch_inference2.base_path),
                         "entry_script": "score.py",
                         "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                        "program_arguments": "--job_output_path "
-                        "${{outputs.job_output_path}}",
+                        "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "type": "run_function",
                     },
                     "type": "parallel",
@@ -2474,9 +2363,7 @@ class TestDSLPipelineWithSpecificNodes:
                     "type": "command",
                 },
             },
-            "outputs": {
-                "job_out_data": {"job_output_type": "uri_folder", "mode": "Upload"}
-            },
+            "outputs": {"job_out_data": {"job_output_type": "uri_folder", "mode": "Upload"}},
             "properties": {},
             "settings": {"_source": "DSL", "default_compute": "cpu-cluster"},
             "tags": {},
@@ -2484,9 +2371,7 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_automl_node_in_pipeline(self) -> None:
         # create ClassificationJob with classification func inside pipeline is also supported
-        @dsl.pipeline(
-            name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster"
-        )
+        @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster")
         def train_with_automl_in_pipeline(
             main_data_input,
             target_column_name_input: str,
@@ -2514,9 +2399,7 @@ class TestDSLPipelineWithSpecificNodes:
             type=AssetTypes.MLTABLE,
             path="fake_path",
         )
-        pipeline1: PipelineJob = train_with_automl_in_pipeline(
-            job_input, "target", 10, 0.2
-        )
+        pipeline1: PipelineJob = train_with_automl_in_pipeline(job_input, "target", 10, 0.2)
 
         pipeline_dict1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_dict1 = pydash.omit(
@@ -2570,9 +2453,7 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline_dict1 == expected_dict
 
         # create ClassificationJob inside pipeline is NOT supported
-        @dsl.pipeline(
-            name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster"
-        )
+        @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster")
         def train_with_automl_in_pipeline(
             main_data_input,
             target_column_name_input: str,
@@ -2598,9 +2479,7 @@ class TestDSLPipelineWithSpecificNodes:
         component_func1 = load_component(source=path)
 
         @dsl.pipeline(name="train_with_automl_in_pipeline", force_rerun=False)
-        def train_with_automl_in_pipeline(
-            component_in_number, component_in_path, target_column_name_input: str
-        ):
+        def train_with_automl_in_pipeline(component_in_number, component_in_path, target_column_name_input: str):
             node1 = component_func1(
                 component_in_number=component_in_number,
                 component_in_path=component_in_path,
@@ -2690,9 +2569,7 @@ class TestDSLPipelineWithSpecificNodes:
                 enable_model_explainability=True,
                 outputs=dict(best_model=Output(type="mlflow_model")),
             )
-            return {
-                "pipeline_job_out_best_model": classification_node.outputs.best_model
-            }
+            return {"pipeline_job_out_best_model": classification_node.outputs.best_model}
 
         job_input = Input(
             type=AssetTypes.MLTABLE,
@@ -2741,9 +2618,7 @@ class TestDSLPipelineWithSpecificNodes:
                 }
             },
             # pipeline level will copy node level type
-            "outputs": {
-                "pipeline_job_out_best_model": {"job_output_type": "mlflow_model"}
-            },
+            "outputs": {"pipeline_job_out_best_model": {"job_output_type": "mlflow_model"}},
             "properties": {},
             "settings": {"_source": "DSL"},
             "tags": {},
@@ -2773,9 +2648,7 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline_dict2 == expected_dict
 
     def test_automl_node_without_variable_name(self) -> None:
-        @dsl.pipeline(
-            name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster"
-        )
+        @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster")
         def train_with_automl_in_pipeline(training_data, target_column_name_input: str):
             classification(
                 training_data=training_data,

@@ -47,7 +47,9 @@ class TestComponentOperation:
             return_value=CommandComponent(),
         ), patch(
             "azure.ai.ml.operations._component_operations.begin_create_or_update_registry_versioned_asset"
-        ) as mock_create, patch("azure.ai.ml.operations._component_operations.polling_wait"):
+        ) as mock_create, patch(
+            "azure.ai.ml.operations._component_operations.polling_wait"
+        ):
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
 
@@ -68,7 +70,9 @@ class TestComponentOperation:
             return_value=CommandComponent(),
         ), patch(
             "azure.ai.ml.operations._component_operations.begin_create_or_update_registry_versioned_asset"
-        ) as mock_create, patch("azure.ai.ml.operations._component_operations.polling_wait"):
+        ) as mock_create, patch(
+            "azure.ai.ml.operations._component_operations.polling_wait"
+        ):
             mock_component_operation.create_or_update(component)
             # for IPP components, we need to make sure _resolve_arm_id_or_upload_dependencies is not called
             mock_thing.assert_not_called()

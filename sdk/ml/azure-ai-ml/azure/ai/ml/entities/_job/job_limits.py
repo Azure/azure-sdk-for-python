@@ -68,9 +68,7 @@ class CommandJobLimits(JobLimits):
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: Union[RestCommandJobLimits, dict]
-    ) -> Optional["CommandJobLimits"]:
+    def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> Optional["CommandJobLimits"]:
         if not obj:
             return None
         if isinstance(obj, dict):

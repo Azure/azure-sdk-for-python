@@ -48,16 +48,8 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> RestQueueSettings:
         self._validate()
-        job_tier = (
-            JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None)
-            if self.job_tier
-            else None
-        )
-        priority = (
-            JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None)
-            if self.priority
-            else None
-        )
+        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
+        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None) if self.priority else None
         rest_obj = RestQueueSettings(job_tier=job_tier)
         # The shared arm_ml_service QueueSettings model dropped ``priority`` from its constructor; the legacy
         # msrest model carried it (as an int) on the wire, so preserve it as an unknown wire key.
@@ -66,32 +58,20 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: Union[Dict[str, Any], RestQueueSettings, None]
-    ) -> Optional["QueueSettings"]:
+    def _from_rest_object(cls, obj: Union[Dict[str, Any], RestQueueSettings, None]) -> Optional["QueueSettings"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
-            queue_settings = RestQueueSettings._deserialize(
-                obj, []
-            )  # pylint: disable=protected-access
+            queue_settings = RestQueueSettings._deserialize(obj, [])  # pylint: disable=protected-access
             return cls._from_rest_object(queue_settings)
-        job_tier = (
-            JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None)
-            if obj.job_tier
-            else None
-        )
+        job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
         # ``priority`` is an unknown wire key on the arm hybrid (a MutableMapping); read it via mapping
         # access when present, else fall back to attribute access for legacy msrest objects.
         if getattr(obj, "_is_model", False) is True:
             rest_priority = obj.get("priority")
         else:
             rest_priority = obj.priority if hasattr(obj, "priority") else None
-        priority = (
-            JobPriorityValues.REST_TO_ENTITY.get(rest_priority, None)
-            if rest_priority
-            else None
-        )
+        priority = JobPriorityValues.REST_TO_ENTITY.get(rest_priority, None) if rest_priority else None
         return cls(job_tier=job_tier, priority=priority)
 
     def _validate(self) -> None:

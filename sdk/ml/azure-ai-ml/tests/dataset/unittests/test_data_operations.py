@@ -142,9 +142,7 @@ class TestDataOperations:
         name_only = "some_name"
         version = "1"
         data_asset = Data(name=name_only, version=version)
-        with patch(
-            "azure.ai.ml.operations._data_operations.get_registry_versioned_asset"
-        ) as mock_get, patch(
+        with patch("azure.ai.ml.operations._data_operations.get_registry_versioned_asset") as mock_get, patch(
             "azure.ai.ml.operations._data_operations.DataVersionBase._deserialize", return_value=Mock()
         ), patch.object(Data, "_from_rest_object", return_value=data_asset):
             mock_data_operations_in_registry.get(name_only, version)

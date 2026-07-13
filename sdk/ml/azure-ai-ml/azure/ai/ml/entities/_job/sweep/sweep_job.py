@@ -266,16 +266,11 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             self.trial.command = map_single_brackets_and_warn(self.trial.command)
 
         if self.search_space is not None:
-            search_space = {
-                param: space._to_rest_object()
-                for (param, space) in self.search_space.items()
-            }
+            search_space = {param: space._to_rest_object() for (param, space) in self.search_space.items()}
 
         if self.trial is not None:
             validate_inputs_for_command(self.trial.command, self.inputs)
-        for (
-            key
-        ) in search_space.keys():  # pylint: disable=possibly-used-before-assignment
+        for key in search_space.keys():  # pylint: disable=possibly-used-before-assignment
             validate_key_contains_allowed_characters(key)
 
         if self.trial is not None:
@@ -284,8 +279,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
                 distribution=to_hybrid_rest_model(
                     (
                         self.trial.distribution._to_rest_object()
-                        if self.trial.distribution
-                        and not isinstance(self.trial.distribution, Dict)
+                        if self.trial.distribution and not isinstance(self.trial.distribution, Dict)
                         else None
                     ),
                     RestDistributionConfiguration,
@@ -296,8 +290,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
                 resources=to_hybrid_rest_model(
                     (
                         self.trial.resources._to_rest_object()
-                        if self.trial.resources
-                        and not isinstance(self.trial.resources, Dict)
+                        if self.trial.resources and not isinstance(self.trial.resources, Dict)
                         else None
                     ),
                     RestJobResourceConfiguration,
@@ -315,11 +308,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             # The shared rest helpers below emit msrest models; convert each nested child to its
             # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
             sampling_algorithm=to_hybrid_rest_model(
-                (
-                    self._get_rest_sampling_algorithm()
-                    if self.sampling_algorithm
-                    else None
-                ),
+                (self._get_rest_sampling_algorithm() if self.sampling_algorithm else None),
                 RestSamplingAlgorithm,
             ),
             limits=to_hybrid_rest_model(
@@ -329,8 +318,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             early_termination=to_hybrid_rest_model(
                 (
                     self.early_termination._to_rest_object()
-                    if self.early_termination
-                    and not isinstance(self.early_termination, str)
+                    if self.early_termination and not isinstance(self.early_termination, str)
                     else None
                 ),
                 RestEarlyTerminationPolicy,
@@ -347,9 +335,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
                 to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
                 RestJobInput,
             ),
-            outputs=to_hybrid_rest_model(
-                to_rest_data_outputs(self.outputs), RestJobOutput
-            ),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             identity=to_hybrid_rest_model(
                 self.identity._to_job_rest_object() if self.identity else None,
                 RestIdentityConfiguration,
@@ -362,11 +348,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         # ``resources`` exists on the 2023-08 SweepJob wire contract but was dropped from the
         # arm_ml_service (2025-12) SweepJob model; assign it via wire-key so it still serializes.
         sweep_resources = to_hybrid_rest_model(
-            (
-                self.resources._to_rest_object()
-                if self.resources and not isinstance(self.resources, dict)
-                else None
-            ),
+            (self.resources._to_rest_object() if self.resources and not isinstance(self.resources, dict) else None),
             RestJobResourceConfiguration,
         )
         if sweep_resources is not None:
@@ -389,12 +371,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         )
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
-    ) -> "SweepJob":
-        loaded_schema = load_from_dict(
-            SweepJobSchema, data, context, additional_message, **kwargs
-        )
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "SweepJob":
+        loaded_schema = load_from_dict(SweepJobSchema, data, context, additional_message, **kwargs)
         loaded_schema["trial"] = ParameterizedCommand(**(loaded_schema["trial"]))
         sweep_job = SweepJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_schema)
         return sweep_job
@@ -404,14 +382,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         properties: RestSweepJob = obj.properties
 
         # Unpack termination schema
-        early_termination = EarlyTerminationPolicy._from_rest_object(
-            properties.early_termination
-        )
+        early_termination = EarlyTerminationPolicy._from_rest_object(properties.early_termination)
 
         # Unpack sampling algorithm
-        sampling_algorithm = SamplingAlgorithm._from_rest_object(
-            properties.sampling_algorithm
-        )
+        sampling_algorithm = SamplingAlgorithm._from_rest_object(properties.sampling_algorithm)
 
         trial = ParameterizedCommand._load_from_sweep_job(obj.properties)
         # Compute also appears in both layers of the yaml, but only one of the REST.
@@ -431,33 +405,21 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=(
-                SystemData._from_rest_object(obj.system_data)
-                if obj.system_data
-                else None
-            ),
+            creation_context=(SystemData._from_rest_object(obj.system_data) if obj.system_data else None),
             trial=trial,  # type: ignore[arg-type]
             compute=properties.compute_id,
             sampling_algorithm=sampling_algorithm,
             search_space=_search_space,  # type: ignore[arg-type]
             limits=SweepJobLimits._from_rest_object(properties.limits),
             early_termination=early_termination,
-            objective=(
-                Objective._from_rest_object(properties.objective)
-                if properties.objective
-                else None
-            ),
+            objective=(Objective._from_rest_object(properties.objective) if properties.objective else None),
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
             identity=(
-                _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-                if properties.identity
-                else None
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
             ),
             queue_settings=properties.queue_settings,
-            resources=JobResourceConfiguration._from_rest_object(
-                properties.get("resources")
-            ),
+            resources=JobResourceConfiguration._from_rest_object(properties.get("resources")),
         )
 
     def _override_missing_properties_from_trial(self) -> None:
@@ -473,15 +435,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
         has_trial_limits_timeout = self.trial.limits and self.trial.limits.timeout
         if has_trial_limits_timeout and not self.limits:
-            time_out = (
-                self.trial.limits.timeout if self.trial.limits is not None else None
-            )
+            time_out = self.trial.limits.timeout if self.trial.limits is not None else None
             self.limits = SweepJobLimits(trial_timeout=time_out)
-        elif (
-            has_trial_limits_timeout
-            and self.limits is not None
-            and not self.limits.trial_timeout
-        ):
-            self.limits.trial_timeout = (
-                self.trial.limits.timeout if self.trial.limits is not None else None
-            )
+        elif has_trial_limits_timeout and self.limits is not None and not self.limits.trial_timeout:
+            self.limits.trial_timeout = self.trial.limits.timeout if self.trial.limits is not None else None

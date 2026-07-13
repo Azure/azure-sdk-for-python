@@ -86,18 +86,14 @@ def to_hybrid_rest_model(value: Any, arm_base_cls: Any) -> Any:
     if value is None:
         return None
     if isinstance(value, dict):
-        return {
-            key: to_hybrid_rest_model(item, arm_base_cls) for key, item in value.items()
-        }
+        return {key: to_hybrid_rest_model(item, arm_base_cls) for key, item in value.items()}
     if isinstance(value, list):
         return [to_hybrid_rest_model(item, arm_base_cls) for item in value]
     # Already an arm_ml_service hybrid model (e.g. a partially-migrated child): leave as-is.
     if hasattr(value, "_is_model"):
         return value
     # msrest model -> camelCase wire dict -> discriminated arm hybrid model.
-    return arm_base_cls._deserialize(
-        value.serialize(), []
-    )  # pylint: disable=protected-access
+    return arm_base_cls._deserialize(value.serialize(), [])  # pylint: disable=protected-access
 
 
 INPUT_MOUNT_MAPPING_FROM_REST = {
@@ -200,24 +196,13 @@ def build_input_output(
     return item
 
 
-def _validate_inputs_for(
-    input_consumer_name: str, input_consumer: str, inputs: Optional[Dict]
-) -> None:
+def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Optional[Dict]) -> None:
     implicit_inputs = re.findall(r"\${{inputs\.([\w\.-]+)}}", input_consumer)
     # optional inputs no need to validate whether they're in inputs
-    optional_inputs = re.findall(
-        r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer
-    )
+    optional_inputs = re.findall(r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer)
     for key in implicit_inputs:
-        if (
-            inputs is not None
-            and inputs.get(key, None) is None
-            and key not in optional_inputs
-        ):
-            msg = (
-                "Inputs to job does not contain '{}' referenced in "
-                + input_consumer_name
-            )
+        if inputs is not None and inputs.get(key, None) is None and key not in optional_inputs:
+            msg = "Inputs to job does not contain '{}' referenced in " + input_consumer_name
             raise ValidationException(
                 message=msg.format(key),
                 no_personal_data_message=msg.format("[key]"),
@@ -253,7 +238,9 @@ def validate_pipeline_input_key_characters(key: str) -> None:
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
     if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
-        msg = "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
+        msg = (
+            "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
+        )
         raise ValidationException(
             message=msg.format(key),
             no_personal_data_message=msg.format("[key]"),
@@ -309,11 +296,7 @@ def to_rest_dataset_literal_inputs(
                     if input_value.type in target_cls_dict:
                         input_data = target_cls_dict[input_value.type](
                             uri=input_value.path,
-                            mode=(
-                                INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()]
-                                if input_value.mode
-                                else None
-                            ),
+                            mode=(INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None),
                         )
                     else:
                         msg = f"Job input type {input_value.type} is not supported as job input."
@@ -376,11 +359,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
-                    mode=(
-                        INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
-                        if input_value.mode
-                        else None
-                    ),
+                    mode=(INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None),
                     path_on_compute=sourcePathOnCompute,
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
@@ -396,9 +375,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-        from_rest_inputs[input_name] = (
-            input_data  # pylint: disable=possibly-used-before-assignment
-        )
+        from_rest_inputs[input_name] = input_data  # pylint: disable=possibly-used-before-assignment
     return from_rest_inputs
 
 
@@ -421,18 +398,12 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
             else:
                 target_cls_dict = get_output_rest_cls_dict()
 
-                output_value_type = (
-                    output_value.type if output_value.type else AssetTypes.URI_FOLDER
-                )
+                output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
                 if output_value_type in target_cls_dict:
                     output = target_cls_dict[output_value_type](
                         asset_name=output_value.name,
                         uri=output_value.path,
-                        mode=(
-                            OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()]
-                            if output_value.mode
-                            else None
-                        ),
+                        mode=(OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None),
                         description=output_value.description,
                     )
                     # The shared arm_ml_service JobOutput models dropped ``assetVersion``/``pathOnCompute``
@@ -479,20 +450,12 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
             asset_version = output_value.get("assetVersion")
         else:
             sourcePathOnCompute = getattr(output_value, "pathOnCompute", None)
-            asset_version = (
-                output_value.asset_version
-                if hasattr(output_value, "asset_version")
-                else None
-            )
+            asset_version = output_value.asset_version if hasattr(output_value, "asset_version") else None
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
-                mode=(
-                    OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode]
-                    if output_value.mode
-                    else None
-                ),
+                mode=(OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None),
                 path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,
