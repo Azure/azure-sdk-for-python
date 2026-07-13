@@ -6,7 +6,7 @@
 
 import logging
 
-import httpx
+import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
