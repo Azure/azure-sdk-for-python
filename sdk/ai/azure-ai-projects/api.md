@@ -39,6 +39,57 @@ namespace azure.ai.projects
             ) -> HttpResponse: ...
 
 
+    class azure.ai.projects.RLEEnvironment: implements ContextManager 
+        property sandbox_id: Optional[str]    # Read-only
+
+        def __init__(
+                self, 
+                environment_id: str, 
+                *, 
+                cpu: Optional[str] = ..., 
+                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                runtime: RLEnvironmentRuntimeOperations, 
+                sandboxes: RLESandboxesOperations, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        def close(self) -> None: ...
+
+        @distributed_trace
+        def health(self) -> HealthResponse: ...
+
+        @distributed_trace
+        def metadata(self) -> GetMetadataResponse: ...
+
+        @distributed_trace
+        def reset(
+                self, 
+                seed: Optional[int] = None, 
+                episode_id: Optional[str] = None, 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @distributed_trace
+        def schema(self) -> SchemaResponse: ...
+
+        @distributed_trace
+        def state(self) -> RLEnvironmentState: ...
+
+        @distributed_trace
+        def step(
+                self, 
+                action: Any = None, 
+                **action_kwargs: Any
+            ) -> RLStepResult: ...
+
+
+    class azure.ai.projects.RLEError(RuntimeError):
+
+
 namespace azure.ai.projects.aio
 
     class azure.ai.projects.aio.AIProjectClient(AIProjectClientGenerated): implements AsyncContextManager 
@@ -77,6 +128,54 @@ namespace azure.ai.projects.aio
                 stream: bool = False, 
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
+
+
+    class azure.ai.projects.aio.AsyncRLEEnvironment: implements AsyncContextManager 
+        property sandbox_id: Optional[str]    # Read-only
+
+        def __init__(
+                self, 
+                environment_id: str, 
+                *, 
+                cpu: Optional[str] = ..., 
+                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                runtime: RLEnvironmentRuntimeOperations, 
+                sandboxes: RLESandboxesOperations, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        async def close(self) -> None: ...
+
+        @distributed_trace_async
+        async def health(self) -> HealthResponse: ...
+
+        @distributed_trace_async
+        async def metadata(self) -> GetMetadataResponse: ...
+
+        @distributed_trace_async
+        async def reset(
+                self, 
+                seed: Optional[int] = None, 
+                episode_id: Optional[str] = None, 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @distributed_trace_async
+        async def schema(self) -> SchemaResponse: ...
+
+        @distributed_trace_async
+        async def state(self) -> RLEnvironmentState: ...
+
+        @distributed_trace_async
+        async def step(
+                self, 
+                action: Any = None, 
+                **action_kwargs: Any
+            ) -> RLStepResult: ...
 
 
 namespace azure.ai.projects.aio.operations
@@ -2185,6 +2284,310 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[Index]: ...
 
 
+    class azure.ai.projects.aio.operations.RLESandboxesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_sandbox(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @overload
+        async def lease(
+                self, 
+                environment_id: str, 
+                body: CreateRLSandboxRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @overload
+        async def lease(
+                self, 
+                environment_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @overload
+        async def lease(
+                self, 
+                environment_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @distributed_trace
+        def list_sandboxes(
+                self, 
+                environment_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RLSandbox]: ...
+
+        @distributed_trace_async
+        async def release(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def resume(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @distributed_trace_async
+        async def stop(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+
+    class azure.ai.projects.aio.operations.RLEnvironmentRuntimeOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_metadata(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> GetMetadataResponse: ...
+
+        @distributed_trace_async
+        async def health(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> HealthResponse: ...
+
+        @overload
+        async def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                content_type: str = "application/json", 
+                episode_id: Optional[str] = ..., 
+                seed: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        async def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        async def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @distributed_trace_async
+        async def schema(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> SchemaResponse: ...
+
+        @distributed_trace_async
+        async def state(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLEnvironmentState: ...
+
+        @overload
+        async def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                action: dict[str, Any], 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        async def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        async def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+
+    class azure.ai.projects.aio.operations.RLEnvironmentsOperations(_RLEnvironmentsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_environment(
+                self, 
+                body: CreateRLEnvironmentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        async def create_environment(
+                self, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        async def create_environment(
+                self, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        def create_runtime(
+                self, 
+                environment_id: str, 
+                *, 
+                cpu: Optional[str] = ..., 
+                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                version: Optional[str] = ...
+            ) -> AsyncRLEEnvironment: ...
+
+        @distributed_trace_async
+        async def delete_environment(
+                self, 
+                environment_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_environment(
+                self, 
+                environment_id: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def list_environments(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RLEnvironment]: ...
+
+        @distributed_trace
+        def list_rl_environment_versions(
+                self, 
+                environment_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RLEnvironmentVersion]: ...
+
+        @overload
+        async def update_environment(
+                self, 
+                environment_id: str, 
+                body: UpdateRLEnvironmentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        async def update_environment(
+                self, 
+                environment_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        async def update_environment(
+                self, 
+                environment_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+
     class azure.ai.projects.aio.operations.TelemetryOperations:
 
         def __init__(self, outer_instance: AIProjectClient) -> None: ...
@@ -3920,6 +4323,44 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CreateRLEnvironmentRequest(_Model):
+        acr_image_path: str
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                acr_image_path: str, 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateRLSandboxRequest(_Model):
+        cpu: Optional[str]
+        disk: Optional[str]
+        env_vars: Optional[dict[str, str]]
+        memory: Optional[str]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cpu: Optional[str] = ..., 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[dict[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.CreateSkillVersionFromFilesBody(_Model):
         default: Optional[bool]
         files: list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
@@ -5555,6 +5996,9 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.GetMetadataResponse(_Model):
+
+
     class azure.ai.projects.models.GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CLOSED = "closed"
         OPENED = "opened"
@@ -5603,6 +6047,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.HealthResponse(_Model):
 
 
     class azure.ai.projects.models.HostedAgentDefinition(AgentDefinition, discriminator='hosted'):
@@ -7492,6 +7939,102 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.RLEnvironment(_Model):
+        acr_image_path: str
+        created_at_utc: datetime
+        environment_id: str
+        name: Optional[str]
+        project_id: str
+        updated_at_utc: datetime
+        version: str
+
+
+    class azure.ai.projects.models.RLEnvironmentState(_Model):
+        episode_id: Optional[str]
+        step_count: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                episode_id: Optional[str] = ..., 
+                step_count: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEnvironmentVersion(_Model):
+        acr_image_path: str
+        created_at_utc: datetime
+        environment_id: str
+        project_id: str
+        version: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                acr_image_path: str, 
+                created_at_utc: datetime, 
+                environment_id: str, 
+                project_id: str, 
+                version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLSandbox(_Model):
+        adc_sandbox_id: Optional[str]
+        created_at_utc: datetime
+        disk_image_id: str
+        environment_id: str
+        error: Optional[str]
+        project_id: str
+        sandbox_id: str
+        status: Union[str, RLSandboxStatus]
+        updated_at_utc: datetime
+        url: Optional[str]
+        version: str
+
+
+    class azure.ai.projects.models.RLSandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATING = "Creating"
+        FAILED = "Failed"
+        RELEASED = "Released"
+        RUNNING = "Running"
+        STOPPED = "Stopped"
+
+
+    class azure.ai.projects.models.RLStepResult(_Model):
+        done: Optional[bool]
+        info: Optional[dict[str, Any]]
+        metadata: Optional[dict[str, Any]]
+        observation: Optional[dict[str, Any]]
+        reward: Optional[float]
+        terminated: Optional[bool]
+        truncated: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                done: Optional[bool] = ..., 
+                info: Optional[dict[str, Any]] = ..., 
+                metadata: Optional[dict[str, Any]] = ..., 
+                observation: Optional[dict[str, Any]] = ..., 
+                reward: Optional[float] = ..., 
+                terminated: Optional[bool] = ..., 
+                truncated: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.RaiConfig(_Model):
         rai_policy_name: str
 
@@ -8001,6 +8544,9 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EVALUATION = "Evaluation"
         INSIGHT = "Insight"
+
+
+    class azure.ai.projects.models.SchemaResponse(_Model):
 
 
     class azure.ai.projects.models.SearchContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -9070,6 +9616,20 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.UpdateRLEnvironmentRequest(_Model):
+        acr_image_path: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                acr_image_path: str
             ) -> None: ...
 
         @overload
@@ -11476,6 +12036,310 @@ namespace azure.ai.projects.operations
                 name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Index]: ...
+
+
+    class azure.ai.projects.operations.RLESandboxesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def get_sandbox(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @overload
+        def lease(
+                self, 
+                environment_id: str, 
+                body: CreateRLSandboxRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @overload
+        def lease(
+                self, 
+                environment_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @overload
+        def lease(
+                self, 
+                environment_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @distributed_trace
+        def list_sandboxes(
+                self, 
+                environment_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RLSandbox]: ...
+
+        @distributed_trace
+        def release(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def resume(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+        @distributed_trace
+        def stop(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLSandbox: ...
+
+
+    class azure.ai.projects.operations.RLEnvironmentRuntimeOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def get_metadata(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> GetMetadataResponse: ...
+
+        @distributed_trace
+        def health(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> HealthResponse: ...
+
+        @overload
+        def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                content_type: str = "application/json", 
+                episode_id: Optional[str] = ..., 
+                seed: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @distributed_trace
+        def schema(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> SchemaResponse: ...
+
+        @distributed_trace
+        def state(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                **kwargs: Any
+            ) -> RLEnvironmentState: ...
+
+        @overload
+        def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                action: dict[str, Any], 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+        @overload
+        def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLStepResult: ...
+
+
+    class azure.ai.projects.operations.RLEnvironmentsOperations(_RLEnvironmentsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_environment(
+                self, 
+                body: CreateRLEnvironmentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        def create_environment(
+                self, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        def create_environment(
+                self, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        def create_runtime(
+                self, 
+                environment_id: str, 
+                *, 
+                cpu: Optional[str] = ..., 
+                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                version: Optional[str] = ...
+            ) -> RLEEnvironment: ...
+
+        @distributed_trace
+        def delete_environment(
+                self, 
+                environment_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_environment(
+                self, 
+                environment_id: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def list_environments(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RLEnvironment]: ...
+
+        @distributed_trace
+        def list_rl_environment_versions(
+                self, 
+                environment_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RLEnvironmentVersion]: ...
+
+        @overload
+        def update_environment(
+                self, 
+                environment_id: str, 
+                body: UpdateRLEnvironmentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        def update_environment(
+                self, 
+                environment_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        def update_environment(
+                self, 
+                environment_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
 
 
     class azure.ai.projects.operations.TelemetryOperations:
