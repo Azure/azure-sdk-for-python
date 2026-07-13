@@ -135,7 +135,12 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
     @property
     def _current_body(self) -> TranslationStatus:
         try:
-            return TranslationStatus(self._pipeline_response.http_response.json())
+            response = self._pipeline_response.http_response
+            # Ignore non-success responses (e.g. a transient polling error) so they do not
+            # corrupt the operation status, id, or details reported by the poller.
+            if not 200 <= response.status_code < 300:
+                return TranslationStatus()  # type: ignore[call-overload]
+            return TranslationStatus(response.json())
         except Exception:  # pylint: disable=broad-exception-caught
             return TranslationStatus()  # type: ignore[call-overload]
 
