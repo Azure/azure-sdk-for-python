@@ -1,5 +1,31 @@
 # Release History
 
+## 12.0.0 (2026-07-13)
+
+### Features Added
+
+  - Enum `TriggeredWebJobStatus` added member `ABORTED`
+  - Enum `TriggeredWebJobStatus` added member `RUNNING`
+
+### Breaking Changes
+
+  - Method `AppServiceEnvironmentsOperations.begin_delete_private_endpoint_connection` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `StaticSitesOperations.begin_delete_private_endpoint_connection` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection_slot` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `WebAppsOperations.begin_start_network_trace` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_network_trace_slot` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `AppServiceEnvironmentsOperations.begin_delete_private_endpoint_connection` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `StaticSitesOperations.begin_delete_private_endpoint_connection` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection_slot` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `WebAppsOperations.begin_start_network_trace` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_network_trace_slot` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+
 ## 11.0.0 (2026-04-29)
 
 ### Features Added
