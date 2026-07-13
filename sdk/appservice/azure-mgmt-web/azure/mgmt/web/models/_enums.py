@@ -903,6 +903,17 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SECURE_OBJECT."""
 
 
+class PlatformReleaseChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The platform release channel for the site."""
+
+    LATEST = "Latest"
+    """Latest receives updates earliest."""
+    STANDARD = "Standard"
+    """Standard receives updates after Latest."""
+    EXTENDED = "Extended"
+    """Extended receives updates last with extended support."""
+
+
 class ProviderOsTypeSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ProviderOsTypeSelected."""
 
@@ -1407,6 +1418,10 @@ class TriggeredWebJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FAILED."""
     ERROR = "Error"
     """ERROR."""
+    ABORTED = "Aborted"
+    """ABORTED."""
+    RUNNING = "Running"
+    """RUNNING."""
 
 
 class TriggerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

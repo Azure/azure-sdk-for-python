@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/KubeEnvironments_CreateOrUpdate.json
+# x-ms-original-file: 2026-03-15/KubeEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

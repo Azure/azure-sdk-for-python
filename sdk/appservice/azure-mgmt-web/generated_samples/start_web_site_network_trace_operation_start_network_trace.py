@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.web_apps.begin_start_network_trace(
+    response = client.web_apps.begin_start_network_trace(
         resource_group_name="testrg123",
         name="SampleApp",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-05-01/StartWebSiteNetworkTraceOperation_StartNetworkTrace.json
+# x-ms-original-file: 2026-03-15/StartWebSiteNetworkTraceOperation_StartNetworkTrace.json
 if __name__ == "__main__":
     main()

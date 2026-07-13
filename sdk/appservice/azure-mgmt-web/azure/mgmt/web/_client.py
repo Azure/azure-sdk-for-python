@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import WebSiteManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AiGatewaysOperations,
     AppServiceEnvironmentsOperations,
     AppServicePlansOperations,
     CertificatesOperations,
@@ -32,6 +33,8 @@ from .operations import (
     RecommendationsOperations,
     ResourceHealthMetadataOperations,
     SiteCertificatesOperations,
+    SitesOperations,
+    StaticSitesAsyncOperationsOperations,
     StaticSitesOperations,
     WebAppsOperations,
     WorkflowRunActionRepetitionsOperations,
@@ -45,6 +48,11 @@ from .operations import (
     WorkflowsOperations,
     _WebSiteManagementClientOperationsMixin,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -74,6 +82,13 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
     :ivar kube_environments: KubeEnvironmentsOperations operations
     :vartype kube_environments: azure.mgmt.web.operations.KubeEnvironmentsOperations
+    :ivar sites: SitesOperations operations
+    :vartype sites: azure.mgmt.web.operations.SitesOperations
+    :ivar static_sites_async_operations: StaticSitesAsyncOperationsOperations operations
+    :vartype static_sites_async_operations:
+     azure.mgmt.web.operations.StaticSitesAsyncOperationsOperations
+    :ivar ai_gateways: AiGatewaysOperations operations
+    :vartype ai_gateways: azure.mgmt.web.operations.AiGatewaysOperations
     :ivar workflow_runs: WorkflowRunsOperations operations
     :vartype workflow_runs: azure.mgmt.web.operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActionsOperations operations
@@ -115,9 +130,9 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-05-01".
-     Default value is "2025-05-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-15"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -188,6 +203,11 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
         self.kube_environments = KubeEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.static_sites_async_operations = StaticSitesAsyncOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateways = AiGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workflow_runs = WorkflowRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workflow_run_actions = WorkflowRunActionsOperations(
             self._client, self._config, self._serialize, self._deserialize

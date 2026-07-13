@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-05-01/DeleteAppServicePlan.json
+# x-ms-original-file: 2026-03-15/DeleteAppServicePlan.json
 if __name__ == "__main__":
     main()

@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.web_apps.begin_start_web_site_network_trace_operation_slot(
+    response = client.web_apps.begin_start_web_site_network_trace_operation_slot(
         resource_group_name="testrg123",
         name="SampleApp",
         slot="Production",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-05-01/StartWebSiteNetworkTraceOperation_Slot.json
+# x-ms-original-file: 2026-03-15/StartWebSiteNetworkTraceOperation_Slot.json
 if __name__ == "__main__":
     main()

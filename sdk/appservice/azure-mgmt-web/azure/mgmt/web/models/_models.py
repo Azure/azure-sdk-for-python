@@ -232,6 +232,179 @@ class AddressResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.web.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGateway(TrackedResource):
+    """An AI gateway resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.web.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.web.models.AiGatewayProperties
+    """
+
+    properties: Optional["_models.AiGatewayProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.AiGatewayProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiGatewayProperties(_Model):
+    """The properties of an AI gateway.
+
+    :ivar ai_gateway_id: The description of the resource.
+    :vartype ai_gateway_id: str
+    """
+
+    ai_gateway_id: Optional[str] = rest_field(name="aiGatewayId", visibility=["read"])
+    """The description of the resource."""
+
+
+class AiGatewayTagsUpdate(_Model):
+    """The type used for updating tags in AiGateway resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiIntegration(_Model):
+    """AI integration configuration for the app.
+
+    :ivar api_spec_path: Relative path to the API specification file from /home in site files.
+    :vartype api_spec_path: str
+    :ivar mcp: MCP configuration.
+    :vartype mcp: ~azure.mgmt.web.models.McpSettings
+    :ivar site_auth: External auth configuration for the MCP endpoint (used when EasyAuth is not
+     enabled).
+    :vartype site_auth: ~azure.mgmt.web.models.SiteAuthInfo
+    """
+
+    api_spec_path: Optional[str] = rest_field(
+        name="apiSpecPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relative path to the API specification file from /home in site files."""
+    mcp: Optional["_models.McpSettings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """MCP configuration."""
+    site_auth: Optional["_models.SiteAuthInfo"] = rest_field(
+        name="siteAuth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """External auth configuration for the MCP endpoint (used when EasyAuth is not enabled)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        api_spec_path: Optional[str] = None,
+        mcp: Optional["_models.McpSettings"] = None,
+        site_auth: Optional["_models.SiteAuthInfo"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AllowedAudiencesValidation(_Model):
     """The configuration settings of the Allowed Audiences validation flow.
 
@@ -1242,50 +1415,6 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.web.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AppServiceEnvironmentResource(TrackedResource):
@@ -8539,6 +8668,50 @@ class EnvironmentVariable(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ErrorAdditionalInfo(_Model):
+    """The resource management error additional info.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The additional info type."""
+    info: Optional[Any] = rest_field(visibility=["read"])
+    """The additional info."""
+
+
+class ErrorDetail(_Model):
+    """The error detail.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.web.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.web.models.ErrorAdditionalInfo]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read"])
+    """The error code."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """The error message."""
+    target: Optional[str] = rest_field(visibility=["read"])
+    """The error target."""
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    """The error details."""
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
+        name="additionalInfo", visibility=["read"]
+    )
+    """The error additional info."""
+
+
 class ErrorEntity(_Model):
     """Body of the error response returned from the API.
 
@@ -8631,6 +8804,34 @@ class ErrorProperties(_Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ErrorResponse(_Model):
+    """Error response.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.web.models.ErrorDetail
+    """
+
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error object."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ErrorDetail"] = None,
     ) -> None: ...
 
     @overload
@@ -12687,6 +12888,91 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class McpServerConfig(_Model):
+    """Configuration for an individual MCP server.
+
+    :ivar name: The name of the MCP server.
+    :vartype name: str
+    :ivar description: The description of the MCP server.
+    :vartype description: str
+    :ivar enabled: Whether the MCP server is enabled. Defaults to true when not specified on
+     creation.
+    :vartype enabled: bool
+    :ivar endpoint: The endpoint path for the MCP server.
+    :vartype endpoint: str
+    :ivar tool_list: The list of tools exposed by this MCP server.
+    :vartype tool_list: list[str]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the MCP server."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the MCP server."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the MCP server is enabled. Defaults to true when not specified on creation."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint path for the MCP server."""
+    tool_list: Optional[list[str]] = rest_field(
+        name="toolList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of tools exposed by this MCP server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        endpoint: Optional[str] = None,
+        tool_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class McpSettings(_Model):
+    """MCP configuration settings.
+
+    :ivar servers: Array of MCP server configurations. This array is replaced in its entirety on
+     update; individual servers cannot be patched independently. An empty array signals that MCP
+     should be disabled/deleted.
+    :vartype servers: list[~azure.mgmt.web.models.McpServerConfig]
+    """
+
+    servers: Optional[list["_models.McpServerConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of MCP server configurations. This array is replaced in its entirety on update;
+     individual servers cannot be patched independently. An empty array signals that MCP should be
+     disabled/deleted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        servers: Optional[list["_models.McpServerConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MetricAvailability(_Model):
     """Retention policy of a resource metric.
 
@@ -13576,6 +13862,142 @@ class NetworkFeaturesProperties(_Model):
     """The Hybrid Connection V2 (Service Bus) view."""
 
 
+class NetworkSecurityPerimeter(_Model):
+    """Network Security Perimeter.
+
+    :ivar id: ARM URI of the Network Security Perimeter resource.
+    :vartype id: str
+    :ivar perimeter_guid: GUID of the Network Security Perimeter resource.
+    :vartype perimeter_guid: str
+    :ivar location: Location where the Network Security Perimeter resource.
+    :vartype location: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ARM URI of the Network Security Perimeter resource."""
+    perimeter_guid: Optional[str] = rest_field(
+        name="perimeterGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GUID of the Network Security Perimeter resource."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Location where the Network Security Perimeter resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        perimeter_guid: Optional[str] = None,
+        location: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkSecurityPerimeterConfiguration(ProxyOnlyResource):
+    """Detailed view of a Network Security Perimeter Configured for the site.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: Name of the Network Security Perimeter Profile Access Rule.
+    :vartype properties: ~azure.mgmt.web.models.NetworkSecurityPerimeterConfigurationProperties
+    """
+
+    properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the Network Security Perimeter Profile Access Rule."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+    """Network Security Perimeter Configuration Properties.
+
+    :ivar provisioning_state: Reflects state of association persistence and configuration
+     propagation to App Service Data Plane.
+    :vartype provisioning_state: str
+    :ivar provisioning_issues: Reflects any misconfigurations and failures detected while
+     provisioning the association or while processing configuration changes.
+    :vartype provisioning_issues: list[~azure.mgmt.web.models.NspProvisioningIssue]
+    :ivar network_security_perimeter: Associated Network Security Perimeter resource.
+    :vartype network_security_perimeter: ~azure.mgmt.web.models.NetworkSecurityPerimeter
+    :ivar resource_associations: Representation of Network Security Perimeter Association.
+    :vartype resource_associations: ~azure.mgmt.web.models.NspResourceAssociation
+    :ivar profile: Associated Network Security Perimeter Profile.
+    :vartype profile: ~azure.mgmt.web.models.NspProfile
+    """
+
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Reflects state of association persistence and configuration propagation to App Service Data
+     Plane."""
+    provisioning_issues: Optional[list["_models.NspProvisioningIssue"]] = rest_field(
+        name="provisioningIssues", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reflects any misconfigurations and failures detected while provisioning the association or
+     while processing configuration changes."""
+    network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
+        name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Associated Network Security Perimeter resource."""
+    resource_associations: Optional["_models.NspResourceAssociation"] = rest_field(
+        name="resourceAssociations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Representation of Network Security Perimeter Association."""
+    profile: Optional["_models.NspProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Associated Network Security Perimeter Profile."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioning_issues: Optional[list["_models.NspProvisioningIssue"]] = None,
+        network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = None,
+        resource_associations: Optional["_models.NspResourceAssociation"] = None,
+        profile: Optional["_models.NspProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class NetworkTrace(_Model):
     """Network trace.
 
@@ -13644,6 +14066,370 @@ class Nonce(_Model):
         *,
         validate_nonce: Optional[bool] = None,
         nonce_expiration_interval: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspProfile(_Model):
+    """Network Security Perimeter Profile.
+
+    :ivar name: Name of the Network Security Perimeter Profile.
+    :vartype name: str
+    :ivar access_rules_version: Access Rules Version for the Network Security Perimeter Profile.
+    :vartype access_rules_version: str
+    :ivar access_rules: Access Rules for the Network Security Perimeter Profile.
+    :vartype access_rules: list[~azure.mgmt.web.models.NspProfileAccessRule]
+    :ivar diagnostic_settings_version: Diagnostic Settings Version for the Network Security
+     Perimeter Profile.
+    :vartype diagnostic_settings_version: str
+    :ivar enabled_log_categories: Enabled Log Categories for the Network Security Perimeter
+     Profile.
+    :vartype enabled_log_categories: list[str]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Network Security Perimeter Profile."""
+    access_rules_version: Optional[str] = rest_field(
+        name="accessRulesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access Rules Version for the Network Security Perimeter Profile."""
+    access_rules: Optional[list["_models.NspProfileAccessRule"]] = rest_field(
+        name="accessRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access Rules for the Network Security Perimeter Profile."""
+    diagnostic_settings_version: Optional[str] = rest_field(
+        name="diagnosticSettingsVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Diagnostic Settings Version for the Network Security Perimeter Profile."""
+    enabled_log_categories: Optional[list[str]] = rest_field(
+        name="enabledLogCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enabled Log Categories for the Network Security Perimeter Profile."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        access_rules_version: Optional[str] = None,
+        access_rules: Optional[list["_models.NspProfileAccessRule"]] = None,
+        diagnostic_settings_version: Optional[str] = None,
+        enabled_log_categories: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspProfileAccessRule(_Model):
+    """Network Security Perimeter Profile Access Rule.
+
+    :ivar name: Name of the Network Security Perimeter Profile Access Rule.
+    :vartype name: str
+    :ivar properties: Name of the Network Security Perimeter Profile Access Rule.
+    :vartype properties: ~azure.mgmt.web.models.NspProfileAccessRuleProperties
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Network Security Perimeter Profile Access Rule."""
+    properties: Optional["_models.NspProfileAccessRuleProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the Network Security Perimeter Profile Access Rule."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.NspProfileAccessRuleProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspProfileAccessRuleGranularFeature(_Model):
+    """Network Security Perimeter Profile Access Rule Granular Feature.
+
+    :ivar resource_type: Resource Type of Granular Feature.
+    :vartype resource_type: str
+    :ivar features: Names of applied Granular Features.
+    :vartype features: list[str]
+    """
+
+    resource_type: Optional[str] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource Type of Granular Feature."""
+    features: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Names of applied Granular Features."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_type: Optional[str] = None,
+        features: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspProfileAccessRuleProperties(_Model):
+    """Network Security Perimeter Profile Access Rule Properties.
+
+    :ivar direction: Direction of Access Rule (Inbound/Outbound).
+    :vartype direction: str
+    :ivar address_prefixes: IP Address Ranges of Access Rule.
+    :vartype address_prefixes: list[str]
+    :ivar service_tags: Service Tags of Access Rule.
+    :vartype service_tags: list[str]
+    :ivar applies_to: Granular Features of Access Rule.
+    :vartype applies_to: list[~azure.mgmt.web.models.NspProfileAccessRuleGranularFeature]
+    :ivar subscriptions: Subscriptions of Access Rule. Not supported by App Service.
+    :vartype subscriptions: list[~azure.mgmt.web.models.NspSubscription]
+    :ivar network_security_perimeters: NetworkSecurityPerimeter of Access Rule. Not supported by
+     App Service.
+    :vartype network_security_perimeters: list[~azure.mgmt.web.models.NetworkSecurityPerimeter]
+    :ivar fully_qualified_domain_names: Fully Qualified Domain Names of Access Rule. Not supported
+     by App Service.
+    :vartype fully_qualified_domain_names: list[str]
+    :ivar email_addresses: Email Addresses of Access Rule. Not supported by App Service.
+    :vartype email_addresses: list[str]
+    :ivar phone_numbers: Phone Numbers of Access Rule. Not supported by App Service.
+    :vartype phone_numbers: list[str]
+    """
+
+    direction: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Direction of Access Rule (Inbound/Outbound)."""
+    address_prefixes: Optional[list[str]] = rest_field(
+        name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP Address Ranges of Access Rule."""
+    service_tags: Optional[list[str]] = rest_field(
+        name="serviceTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Service Tags of Access Rule."""
+    applies_to: Optional[list["_models.NspProfileAccessRuleGranularFeature"]] = rest_field(
+        name="appliesTo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Granular Features of Access Rule."""
+    subscriptions: Optional[list["_models.NspSubscription"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subscriptions of Access Rule. Not supported by App Service."""
+    network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = rest_field(
+        name="networkSecurityPerimeters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetworkSecurityPerimeter of Access Rule. Not supported by App Service."""
+    fully_qualified_domain_names: Optional[list[str]] = rest_field(
+        name="fullyQualifiedDomainNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fully Qualified Domain Names of Access Rule. Not supported by App Service."""
+    email_addresses: Optional[list[str]] = rest_field(
+        name="emailAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Email Addresses of Access Rule. Not supported by App Service."""
+    phone_numbers: Optional[list[str]] = rest_field(
+        name="phoneNumbers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Phone Numbers of Access Rule. Not supported by App Service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        direction: Optional[str] = None,
+        address_prefixes: Optional[list[str]] = None,
+        service_tags: Optional[list[str]] = None,
+        applies_to: Optional[list["_models.NspProfileAccessRuleGranularFeature"]] = None,
+        subscriptions: Optional[list["_models.NspSubscription"]] = None,
+        network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = None,
+        fully_qualified_domain_names: Optional[list[str]] = None,
+        email_addresses: Optional[list[str]] = None,
+        phone_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspProvisioningIssue(_Model):
+    """Network Security Perimeter Association Provisioning Issue.
+
+    :ivar name: Provisioning Issue Name.
+    :vartype name: str
+    :ivar properties: Provisioning Issue Properties.
+    :vartype properties: ~azure.mgmt.web.models.NspProvisioningIssueProperties
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioning Issue Name."""
+    properties: Optional["_models.NspProvisioningIssueProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provisioning Issue Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.NspProvisioningIssueProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspProvisioningIssueProperties(_Model):
+    """Network Security Perimeter Association Provisioning Issue Properties.
+
+    :ivar issue_type: Provisioning Issue Type.
+    :vartype issue_type: str
+    :ivar severity: Provisioning Issue Severity.
+    :vartype severity: str
+    :ivar description: Provisioning Issue Description.
+    :vartype description: str
+    :ivar suggested_resource_ids: Recommended ARM Ids to resolve the issue.
+    :vartype suggested_resource_ids: list[str]
+    :ivar suggested_access_rules: Recommended access rules to resolve the issue.
+    :vartype suggested_access_rules: list[str]
+    """
+
+    issue_type: Optional[str] = rest_field(name="issueType", visibility=["read", "create", "update", "delete", "query"])
+    """Provisioning Issue Type."""
+    severity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioning Issue Severity."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioning Issue Description."""
+    suggested_resource_ids: Optional[list[str]] = rest_field(
+        name="suggestedResourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recommended ARM Ids to resolve the issue."""
+    suggested_access_rules: Optional[list[str]] = rest_field(
+        name="suggestedAccessRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recommended access rules to resolve the issue."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        issue_type: Optional[str] = None,
+        severity: Optional[str] = None,
+        description: Optional[str] = None,
+        suggested_resource_ids: Optional[list[str]] = None,
+        suggested_access_rules: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspResourceAssociation(_Model):
+    """Network Security Perimeter Resource Association.
+
+    :ivar name: Network Security Perimeter Resource Association Name.
+    :vartype name: str
+    :ivar access_mode: Network Security Perimeter Association Access Mode (Learning/Enforced).
+    :vartype access_mode: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Network Security Perimeter Resource Association Name."""
+    access_mode: Optional[str] = rest_field(
+        name="accessMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network Security Perimeter Association Access Mode (Learning/Enforced)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        access_mode: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NspSubscription(_Model):
+    """Network Security Perimeter Subscription.
+
+    :ivar id: Network Security Perimeter Subscription Id.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Network Security Perimeter Subscription Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -14209,6 +14995,8 @@ class OutboundVnetRouting(_Model):
     :ivar backup_restore_traffic: Enables Backup and Restore operations over virtual network.
      Previously called VnetBackupRestoreEnabled.
     :vartype backup_restore_traffic: bool
+    :ivar managed_identity_traffic: Enables Managed Identity operations over virtual network.
+    :vartype managed_identity_traffic: bool
     """
 
     all_traffic: Optional[bool] = rest_field(
@@ -14234,6 +15022,10 @@ class OutboundVnetRouting(_Model):
     )
     """Enables Backup and Restore operations over virtual network. Previously called
      VnetBackupRestoreEnabled."""
+    managed_identity_traffic: Optional[bool] = rest_field(
+        name="managedIdentityTraffic", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables Managed Identity operations over virtual network."""
 
     @overload
     def __init__(
@@ -14244,6 +15036,7 @@ class OutboundVnetRouting(_Model):
         content_share_traffic: Optional[bool] = None,
         image_pull_traffic: Optional[bool] = None,
         backup_restore_traffic: Optional[bool] = None,
+        managed_identity_traffic: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -18513,6 +19306,7 @@ class Site(TrackedResource):
         "repository_site_name",
         "usage_state",
         "enabled",
+        "site_scoped_certificates_enabled",
         "enabled_host_names",
         "availability_state",
         "host_name_ssl_states",
@@ -18526,6 +19320,7 @@ class Site(TrackedResource):
         "site_config",
         "function_app_config",
         "dapr_config",
+        "ai_integration",
         "workload_profile_name",
         "resource_config",
         "traffic_manager_host_names",
@@ -18564,6 +19359,7 @@ class Site(TrackedResource):
         "virtual_network_subnet_id",
         "managed_environment_id",
         "sku",
+        "platform_release_channel",
     ]
 
     @overload
@@ -18605,6 +19401,61 @@ class Site(TrackedResource):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class SiteAuthInfo(_Model):
+    """External auth configuration for the MCP endpoint (used when EasyAuth is not enabled). At
+    minimum, ``scopes`` and either ``wellKnownOpenIdConfiguration`` or ``issuer`` must be provided.
+
+    :ivar jwks_uri: JWKS URL for verifying JWT signatures.
+    :vartype jwks_uri: str
+    :ivar issuer: Expected 'iss' claim. Required for custom site authentication if
+     ``wellKnownOpenIdConfiguration`` is not provided.
+    :vartype issuer: str
+    :ivar audience: Expected 'aud' claim.
+    :vartype audience: str
+    :ivar well_known_open_id_configuration: OIDC metadata URL. Required for custom site
+     authentication if ``issuer`` is not provided.
+    :vartype well_known_open_id_configuration: str
+    :ivar scopes: OAuth scopes for Protected Resource Metadata (PRM). Required for custom site
+     authentication.
+    :vartype scopes: list[str]
+    """
+
+    jwks_uri: Optional[str] = rest_field(name="jwksUri", visibility=["read", "create", "update", "delete", "query"])
+    """JWKS URL for verifying JWT signatures."""
+    issuer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Expected 'iss' claim. Required for custom site authentication if
+     ``wellKnownOpenIdConfiguration`` is not provided."""
+    audience: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Expected 'aud' claim."""
+    well_known_open_id_configuration: Optional[str] = rest_field(
+        name="wellKnownOpenIdConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OIDC metadata URL. Required for custom site authentication if ``issuer`` is not provided."""
+    scopes: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OAuth scopes for Protected Resource Metadata (PRM). Required for custom site authentication."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        jwks_uri: Optional[str] = None,
+        issuer: Optional[str] = None,
+        audience: Optional[str] = None,
+        well_known_open_id_configuration: Optional[str] = None,
+        scopes: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SiteAuthSettings(ProxyOnlyResource):
@@ -19862,8 +20713,8 @@ class SiteConfig(_Model):
      <https://www.iana.org/time-zones>`_ (for a quick reference see
      `https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
      <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_). For Windows, expects one of
-     the time zones listed under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows
-     NT\CurrentVersion\Time Zones."""
+     the time zones listed under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows
+     NT\\CurrentVersion\\Time Zones."""
     minimum_elastic_instance_count: Optional[int] = rest_field(
         name="minimumElasticInstanceCount", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20931,6 +21782,7 @@ class SitePatchResource(ProxyOnlyResource):
         "repository_site_name",
         "usage_state",
         "enabled",
+        "site_scoped_certificates_enabled",
         "enabled_host_names",
         "availability_state",
         "host_name_ssl_states",
@@ -20941,6 +21793,7 @@ class SitePatchResource(ProxyOnlyResource):
         "last_modified_time_utc",
         "dns_configuration",
         "site_config",
+        "ai_integration",
         "traffic_manager_host_names",
         "scm_site_also_stopped",
         "target_swap_slot",
@@ -21025,6 +21878,9 @@ class SitePatchResourceProperties(_Model):
     :ivar enabled: <code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting
      this value to false disables the app (takes the app offline).
     :vartype enabled: bool
+    :ivar site_scoped_certificates_enabled: <code>true</code> if site scoped certificates are
+     enabled; otherwise, <code>false</code>.
+    :vartype site_scoped_certificates_enabled: bool
     :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to be assigned (see
      HostNames) AND enabled. Otherwise, the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
@@ -21049,6 +21905,8 @@ class SitePatchResourceProperties(_Model):
     :vartype dns_configuration: ~azure.mgmt.web.models.SiteDnsConfig
     :ivar site_config: Configuration of the app.
     :vartype site_config: ~azure.mgmt.web.models.SiteConfig
+    :ivar ai_integration: AI integration configuration for the app.
+    :vartype ai_integration: ~azure.mgmt.web.models.AiIntegration
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames associated with the app.
      Read-only.
     :vartype traffic_manager_host_names: list[str]
@@ -21149,6 +22007,10 @@ class SitePatchResourceProperties(_Model):
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """<code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting this value to
      false disables the app (takes the app offline)."""
+    site_scoped_certificates_enabled: Optional[bool] = rest_field(
+        name="siteScopedCertificatesEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """<code>true</code> if site scoped certificates are enabled; otherwise, <code>false</code>."""
     enabled_host_names: Optional[list[str]] = rest_field(name="enabledHostNames", visibility=["read"])
     """Enabled hostnames for the app.Hostnames need to be assigned (see HostNames) AND enabled.
      Otherwise, the app is not served on those hostnames."""
@@ -21184,6 +22046,10 @@ class SitePatchResourceProperties(_Model):
         name="siteConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration of the app."""
+    ai_integration: Optional["_models.AiIntegration"] = rest_field(
+        name="aiIntegration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AI integration configuration for the app."""
     traffic_manager_host_names: Optional[list[str]] = rest_field(name="trafficManagerHostNames", visibility=["read"])
     """Azure Traffic Manager hostnames associated with the app. Read-only."""
     scm_site_also_stopped: Optional[bool] = rest_field(
@@ -21303,6 +22169,7 @@ class SitePatchResourceProperties(_Model):
         self,
         *,
         enabled: Optional[bool] = None,
+        site_scoped_certificates_enabled: Optional[bool] = None,
         host_name_ssl_states: Optional[list["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: Optional[bool] = None,
@@ -21310,6 +22177,7 @@ class SitePatchResourceProperties(_Model):
         hyper_v: Optional[bool] = None,
         dns_configuration: Optional["_models.SiteDnsConfig"] = None,
         site_config: Optional["_models.SiteConfig"] = None,
+        ai_integration: Optional["_models.AiIntegration"] = None,
         scm_site_also_stopped: Optional[bool] = None,
         hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         client_affinity_enabled: Optional[bool] = None,
@@ -21471,6 +22339,9 @@ class SiteProperties(_Model):
     :ivar enabled: <code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting
      this value to false disables the app (takes the app offline).
     :vartype enabled: bool
+    :ivar site_scoped_certificates_enabled: <code>true</code> if site scoped certificates are
+     enabled; otherwise, <code>false</code>.
+    :vartype site_scoped_certificates_enabled: bool
     :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to be assigned (see
      HostNames) AND enabled. Otherwise, the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
@@ -21503,6 +22374,8 @@ class SiteProperties(_Model):
     :vartype function_app_config: ~azure.mgmt.web.models.FunctionAppConfig
     :ivar dapr_config: Dapr configuration of the app.
     :vartype dapr_config: ~azure.mgmt.web.models.DaprConfig
+    :ivar ai_integration: AI integration configuration for the app.
+    :vartype ai_integration: ~azure.mgmt.web.models.AiIntegration
     :ivar workload_profile_name: Workload profile name for function app to execute on.
     :vartype workload_profile_name: str
     :ivar resource_config: Function app resource requirements.
@@ -21619,6 +22492,10 @@ class SiteProperties(_Model):
      values are Free, Shared, Basic, Dynamic, FlexConsumption, Standard, Premium, PremiumV2,
      PremiumV3, Isolated, IsolatedV2.
     :vartype sku: str
+    :ivar platform_release_channel: The platform release channel for the site. Latest receives
+     updates earliest, followed by Standard, then Extended. Known values are: "Latest", "Standard",
+     and "Extended".
+    :vartype platform_release_channel: str or ~azure.mgmt.web.models.PlatformReleaseChannel
     """
 
     state: Optional[str] = rest_field(visibility=["read"])
@@ -21633,6 +22510,10 @@ class SiteProperties(_Model):
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """<code>true</code> if the app is enabled; otherwise, <code>false</code>. Setting this value to
      false disables the app (takes the app offline)."""
+    site_scoped_certificates_enabled: Optional[bool] = rest_field(
+        name="siteScopedCertificatesEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """<code>true</code> if site scoped certificates are enabled; otherwise, <code>false</code>."""
     enabled_host_names: Optional[list[str]] = rest_field(name="enabledHostNames", visibility=["read"])
     """Enabled hostnames for the app.Hostnames need to be assigned (see HostNames) AND enabled.
      Otherwise, the app is not served on those hostnames."""
@@ -21679,6 +22560,10 @@ class SiteProperties(_Model):
         name="daprConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """Dapr configuration of the app."""
+    ai_integration: Optional["_models.AiIntegration"] = rest_field(
+        name="aiIntegration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AI integration configuration for the app."""
     workload_profile_name: Optional[str] = rest_field(
         name="workloadProfileName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -21833,12 +22718,18 @@ class SiteProperties(_Model):
     """Current SKU of application based on associated App Service Plan. Some valid SKU values are
      Free, Shared, Basic, Dynamic, FlexConsumption, Standard, Premium, PremiumV2, PremiumV3,
      Isolated, IsolatedV2."""
+    platform_release_channel: Optional[Union[str, "_models.PlatformReleaseChannel"]] = rest_field(
+        name="platformReleaseChannel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The platform release channel for the site. Latest receives updates earliest, followed by
+     Standard, then Extended. Known values are: \"Latest\", \"Standard\", and \"Extended\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         enabled: Optional[bool] = None,
+        site_scoped_certificates_enabled: Optional[bool] = None,
         host_name_ssl_states: Optional[list["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: Optional[bool] = None,
@@ -21849,6 +22740,7 @@ class SiteProperties(_Model):
         site_config: Optional["_models.SiteConfig"] = None,
         function_app_config: Optional["_models.FunctionAppConfig"] = None,
         dapr_config: Optional["_models.DaprConfig"] = None,
+        ai_integration: Optional["_models.AiIntegration"] = None,
         workload_profile_name: Optional[str] = None,
         resource_config: Optional["_models.ResourceConfig"] = None,
         scm_site_also_stopped: Optional[bool] = None,
@@ -21877,6 +22769,7 @@ class SiteProperties(_Model):
         ] = None,
         virtual_network_subnet_id: Optional[str] = None,
         managed_environment_id: Optional[str] = None,
+        platform_release_channel: Optional[Union[str, "_models.PlatformReleaseChannel"]] = None,
     ) -> None: ...
 
     @overload
@@ -24380,6 +25273,104 @@ class StaticSiteResetPropertiesARMResourceProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
+class StaticSitesOperationStatus(_Model):
+    """Status object for a static sites asynchronous operation.
+
+    :ivar id: The fully qualified ID for the staticSitesOperationStatus.  For example,
+     /subscriptions/{subscriptionId}/providers/Microsoft.Web/staticSitesOperationStatuses/{operationId}.
+    :vartype id: str
+    :ivar type: The type of the resource.  For example, Microsoft.Web/staticSitesOperationStatuses.
+    :vartype type: str
+    :ivar name: The name of the staticSitesOperationStatus. For example,
+     a1f6e015-a5de-468f-ad54-9c75638d7134.
+    :vartype name: str
+    :ivar properties: Properties of the async operation status.
+    :vartype properties: ~azure.mgmt.web.models.StaticSitesOperationStatusProperties
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The fully qualified ID for the staticSitesOperationStatus.  For example,
+     /subscriptions/{subscriptionId}/providers/Microsoft.Web/staticSitesOperationStatuses/{operationId}."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource.  For example, Microsoft.Web/staticSitesOperationStatuses."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the staticSitesOperationStatus. For example, a1f6e015-a5de-468f-ad54-9c75638d7134."""
+    properties: Optional["_models.StaticSitesOperationStatusProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the async operation status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.StaticSitesOperationStatusProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StaticSitesOperationStatusProperties(_Model):
+    """Properties of a static sites asynchronous operation status.
+
+    :ivar status: The current status of the asynchronous operation performed. For example, Running,
+     Succeeded, Failed.
+    :vartype status: str
+    :ivar start_time: The start time of the asynchronous operation.
+    :vartype start_time: str
+    :ivar end_time: The end time of the asynchronous operation.
+    :vartype end_time: str
+    :ivar static_site_properties: The generic properties of a staticSite.
+    :vartype static_site_properties: ~azure.mgmt.web.models.StaticSite
+    :ivar error: Error details for the asynchronous operation, if any.
+    :vartype error: ~azure.mgmt.web.models.WorkflowErrorResponse
+    """
+
+    status: Optional[str] = rest_field(visibility=["read"])
+    """The current status of the asynchronous operation performed. For example, Running, Succeeded,
+     Failed."""
+    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    """The start time of the asynchronous operation."""
+    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
+    """The end time of the asynchronous operation."""
+    static_site_properties: Optional["_models.StaticSite"] = rest_field(
+        name="staticSiteProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The generic properties of a staticSite."""
+    error: Optional["_models.WorkflowErrorResponse"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error details for the asynchronous operation, if any."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        static_site_properties: Optional["_models.StaticSite"] = None,
+        error: Optional["_models.WorkflowErrorResponse"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StaticSitesWorkflowPreview(ProxyOnlyResource):
     """Preview for the Static Site Workflow to be generated.
 
@@ -26043,7 +27034,8 @@ class TriggeredJobRun(_Model):
     :vartype web_job_id: str
     :ivar web_job_name: Job name.
     :vartype web_job_name: str
-    :ivar status: Job status. Known values are: "Success", "Failed", and "Error".
+    :ivar status: Job status. Known values are: "Success", "Failed", "Error", "Aborted", and
+     "Running".
     :vartype status: str or ~azure.mgmt.web.models.TriggeredWebJobStatus
     :ivar start_time: Start time.
     :vartype start_time: ~datetime.datetime
@@ -26070,7 +27062,7 @@ class TriggeredJobRun(_Model):
     status: Optional[Union[str, "_models.TriggeredWebJobStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Job status. Known values are: \"Success\", \"Failed\", and \"Error\"."""
+    """Job status. Known values are: \"Success\", \"Failed\", \"Error\", \"Aborted\", and \"Running\"."""
     start_time: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )

@@ -1,5 +1,67 @@
 # Release History
 
+## 12.0.0 (2026-07-13)
+
+### Features Added
+
+  - Client `WebSiteManagementClient` added operation group `ai_gateways`
+  - Client `WebSiteManagementClient` added operation group `sites`
+  - Client `WebSiteManagementClient` added operation group `static_sites_async_operations`
+  - Model `OutboundVnetRouting` added property `managed_identity_traffic`
+  - Model `SitePatchResourceProperties` added property `ai_integration`
+  - Model `SitePatchResourceProperties` added property `site_scoped_certificates_enabled`
+  - Model `SiteProperties` added property `ai_integration`
+  - Model `SiteProperties` added property `platform_release_channel`
+  - Model `SiteProperties` added property `site_scoped_certificates_enabled`
+  - Enum `TriggeredWebJobStatus` added member `ABORTED`
+  - Enum `TriggeredWebJobStatus` added member `RUNNING`
+  - Added model `AiGateway`
+  - Added model `AiGatewayProperties`
+  - Added model `AiGatewayTagsUpdate`
+  - Added model `AiIntegration`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `McpServerConfig`
+  - Added model `McpSettings`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NspProfile`
+  - Added model `NspProfileAccessRule`
+  - Added model `NspProfileAccessRuleGranularFeature`
+  - Added model `NspProfileAccessRuleProperties`
+  - Added model `NspProvisioningIssue`
+  - Added model `NspProvisioningIssueProperties`
+  - Added model `NspResourceAssociation`
+  - Added model `NspSubscription`
+  - Added enum `PlatformReleaseChannel`
+  - Added model `SiteAuthInfo`
+  - Added model `StaticSitesOperationStatus`
+  - Added model `StaticSitesOperationStatusProperties`
+  - Added model `AiGatewaysOperations`
+  - Added model `SitesOperations`
+  - Added model `StaticSitesAsyncOperationsOperations`
+
+### Breaking Changes
+
+  - Method `AppServiceEnvironmentsOperations.begin_delete_private_endpoint_connection` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `StaticSitesOperations.begin_delete_private_endpoint_connection` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection_slot` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Any]`
+  - Method `WebAppsOperations.begin_start_network_trace` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_network_trace_slot` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[List[NetworkTrace]]`
+  - Method `AppServiceEnvironmentsOperations.begin_delete_private_endpoint_connection` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `StaticSitesOperations.begin_delete_private_endpoint_connection` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `WebAppsOperations.begin_delete_private_endpoint_connection_slot` changed return type from `LROPoller[None]` to `LROPoller[Any]`
+  - Method `WebAppsOperations.begin_start_network_trace` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_network_trace_slot` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed return type from `LROPoller[None]` to `LROPoller[List[NetworkTrace]]`
+
 ## 11.0.0 (2026-04-29)
 
 ### Features Added

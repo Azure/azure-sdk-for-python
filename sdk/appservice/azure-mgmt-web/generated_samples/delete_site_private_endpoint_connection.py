@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.web_apps.begin_delete_private_endpoint_connection(
+    response = client.web_apps.begin_delete_private_endpoint_connection(
         resource_group_name="rg",
         name="testSite",
         private_endpoint_connection_name="connection",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-05-01/DeleteSitePrivateEndpointConnection.json
+# x-ms-original-file: 2026-03-15/DeleteSitePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()
