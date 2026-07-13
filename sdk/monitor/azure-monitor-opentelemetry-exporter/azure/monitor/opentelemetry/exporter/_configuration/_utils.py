@@ -10,7 +10,6 @@ import requests  # pylint: disable=networking-import-outside-azure-core-transpor
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_CHANGE_VERSION_KEY,
 )
 
 
@@ -48,13 +47,12 @@ class OneSettingsResponse:
     """Response object containing OneSettings API response data.
 
     This class encapsulates the parsed response from a OneSettings API call,
-    including configuration settings, version information, error indicators and metadata.
+    including configuration settings, error indicators and metadata.
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
         refresh_interval (int): Interval in seconds for the next configuration refresh
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
-        version (Optional[int]): Configuration version number for change tracking
         status_code (int): HTTP status code from the response
         has_exception (bool): True if the request resulted in a transient error (network error, timeout, etc.)
     """
@@ -64,7 +62,6 @@ class OneSettingsResponse:
         etag: Optional[str] = None,
         refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
-        version: Optional[int] = None,
         status_code: int = 200,
         has_exception: bool = False,
     ):
@@ -76,19 +73,16 @@ class OneSettingsResponse:
                 Defaults to _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS.
             settings (Optional[Dict[str, str]], optional): Configuration settings dictionary.
                 Defaults to empty dict if None.
-            version (Optional[int], optional): Configuration version number. Defaults to None.
             status_code (int, optional): HTTP status code. Defaults to 200.
             has_exception (bool, optional): Indicates if request failed with a transient error. Defaults to False.
         """
         self.etag = etag
         self.refresh_interval = refresh_interval
         self.settings = settings or {}
-        self.version = version
         self.status_code = status_code
         self.has_exception = has_exception
 
 
-# pylint: disable=do-not-log-exceptions-if-not-debug
 def make_onesettings_request(
     url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
 ) -> OneSettingsResponse:
@@ -125,16 +119,16 @@ def make_onesettings_request(
 
         return _parse_onesettings_response(result)
     except requests.exceptions.Timeout as ex:
-        logger.warning("OneSettings request timed out: %s", str(ex))
+        logger.debug("OneSettings request timed out: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
     except requests.exceptions.RequestException as ex:
-        logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
+        logger.debug("Failed to fetch configuration from OneSettings: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
     except json.JSONDecodeError as ex:
-        logger.warning("Failed to parse OneSettings response: %s", str(ex))
+        logger.debug("Failed to parse OneSettings response: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
     except Exception as ex:  # pylint: disable=broad-exception-caught
-        logger.warning("Unexpected error while fetching configuration: %s", str(ex))
+        logger.debug("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
 
 
@@ -143,11 +137,11 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
 
     This function processes the OneSettings API response and extracts:
     - HTTP headers (ETag, refresh interval)
-    - Response body (configuration settings, version)
+    - Response body (configuration settings)
     - Status code handling (200, 304, 4xx, 5xx)
 
     The parser handles different HTTP status codes appropriately:
-    - 200: New configuration data available, parse settings and version
+    - 200: New configuration data available, parse settings
     - 304: Not modified, configuration unchanged (empty settings)
     - 400/404/414/500: Various error conditions, logged with warnings
 
@@ -159,7 +153,6 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         - etag: ETag header value for conditional requests
         - refresh_interval: Next refresh interval from headers
         - settings: Configuration key-value pairs (empty for 304/errors)
-        - version: Configuration version number for change tracking
         - status_code: HTTP status code of the response
     :rtype: OneSettingsResponse
     Note:
@@ -170,7 +163,6 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
     refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     settings: Dict[str, str] = {}
     status_code = response.status_code
-    version = None
 
     # Extract headers
     if response.headers:
@@ -181,7 +173,7 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
             if refresh_interval_header:
                 refresh_interval = int(refresh_interval_header) * 60
         except (ValueError, TypeError):
-            logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
+            logger.debug("Invalid refresh interval format: %s", refresh_interval_header)
             refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
 
     # Handle different status codes
@@ -195,22 +187,18 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
                 decoded_string = response.content.decode("utf-8")
                 config = json.loads(decoded_string)
                 settings = config.get("settings", {})
-                if settings and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None:
-                    version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))  # type: ignore
             except (UnicodeDecodeError, json.JSONDecodeError) as ex:
-                logger.warning("Failed to decode OneSettings response content: %s", str(ex))
-            except ValueError as ex:
-                logger.warning("Failed to parse OneSettings change version: %s", str(ex))
+                logger.debug("Failed to decode OneSettings response content: %s", str(ex))
     elif status_code == 400:
-        logger.warning("Bad request to OneSettings: %s", response.content)
+        logger.debug("Bad request to OneSettings: %s", response.content)
     elif status_code == 404:
-        logger.warning("OneSettings configuration not found: %s", response.content)
+        logger.debug("OneSettings configuration not found: %s", response.content)
     elif status_code == 414:
-        logger.warning("OneSettings request URI too long: %s", response.content)
+        logger.debug("OneSettings request URI too long: %s", response.content)
     elif status_code == 500:
-        logger.warning("Internal server error from OneSettings: %s", response.content)
+        logger.debug("Internal server error from OneSettings: %s", response.content)
 
-    return OneSettingsResponse(etag, refresh_interval, settings, version, status_code)
+    return OneSettingsResponse(etag, refresh_interval, settings, status_code)
 
 
 # mypy: disable-error-code="no-any-return"
