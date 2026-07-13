@@ -10,6 +10,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
     _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
+    _ONE_SETTINGS_BACKOFF_BASE_SECONDS,
     _RETRYABLE_STATUS_CODES,
 )
 from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile, OneSettingsResponse
@@ -46,6 +47,8 @@ class _ConfigurationManager(metaclass=Singleton):
         self._configuration_worker = None
         self._state_lock = Lock()  # Single lock for all state
         self._current_state = _ConfigurationState()
+        # Consecutive transient-error count for exponential backoff on change-detection (e2) calls
+        self._backoff_attempts = 0
         self._callbacks = []
         self._initialized = False
 
@@ -126,19 +129,34 @@ class _ConfigurationManager(metaclass=Singleton):
         # Poll CHANGE endpoint (e2)
         response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
 
-        # Check for transient errors - double interval and return
+        # Check for transient errors - apply exponential backoff and return
         if self._is_transient_error(response):
             with self._state_lock:
-                doubled_interval = self._current_state.refresh_interval_s * 2
-                current_refresh_interval = min(doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
+                # Progressive exponential backoff from a fixed base, capped at the max interval.
+                # Schedule (per spec): 1st failure -> 3600s, then 7200s, 14400s, ... up to 86400s.
+                self._backoff_attempts += 1
+                backoff_interval = min(
+                    _ONE_SETTINGS_BACKOFF_BASE_SECONDS * (2 ** (self._backoff_attempts - 1)),
+                    _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
+                )
 
             if response.has_exception:
                 error_description = "network error"
             else:
                 error_description = f"HTTP {response.status_code}"
 
-            logger.debug("OneSettings CHANGE request failed with transient error (%s). Retrying. ", error_description)
-            return current_refresh_interval  # type: ignore
+            logger.debug(
+                "OneSettings CHANGE request failed with transient error (%s). "
+                "Backing off (attempt %d) for %d seconds.",
+                error_description,
+                self._backoff_attempts,
+                backoff_interval,
+            )
+            return backoff_interval
+
+        # Non-transient response from the CHANGE endpoint counts as a success: reset backoff counter
+        with self._state_lock:
+            self._backoff_attempts = 0
 
         # Prepare new state updates
         new_state_updates: Dict[str, Any] = {}

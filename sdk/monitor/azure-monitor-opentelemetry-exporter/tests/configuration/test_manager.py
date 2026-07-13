@@ -363,8 +363,8 @@ class TestConfigurationManager(unittest.TestCase):
         # Execute
         result = manager.get_configuration_and_refresh_interval()
 
-        # Verify refresh interval was doubled
-        self.assertEqual(result, 1800)  # 900 * 2
+        # Verify first backoff interval (base 3600s * 2**0)
+        self.assertEqual(result, 3600)
 
         # Verify debug message was logged with correct error type
         mock_logger.debug.assert_called()
@@ -392,6 +392,8 @@ class TestConfigurationManager(unittest.TestCase):
                     manager._current_state = manager._current_state.with_updates(
                         etag="existing-etag", refresh_interval_s=1200
                     )
+                # Reset backoff counter so each status code is treated as an independent first failure
+                manager._backoff_attempts = 0
 
                 # Setup HTTP error response
                 http_error_response = OneSettingsResponse(
@@ -403,8 +405,8 @@ class TestConfigurationManager(unittest.TestCase):
                 # Execute
                 result = manager.get_configuration_and_refresh_interval()
 
-                # Verify refresh interval was doubled
-                self.assertEqual(result, 2400)  # 1200 * 2
+                # Verify first backoff interval (base 3600s * 2**0)
+                self.assertEqual(result, 3600)
 
                 # Verify debug message was logged with correct status code
                 mock_logger.debug.assert_called()
@@ -415,17 +417,14 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     @patch("azure.monitor.opentelemetry.exporter._configuration.logger")
     def test_transient_error_refresh_interval_cap(self, mock_logger, mock_worker_class, mock_request):
-        """Test that refresh interval is capped at 24 hours for transient errors."""
+        """Test that the exponential backoff interval is capped at 24 hours."""
         manager = _ConfigurationManager()
         manager.initialize()
 
-        # Set initial refresh interval to a high value that would exceed cap when doubled
-        high_refresh_interval = _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS // 2 + 1000  # Will exceed cap when doubled
-
         with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(
-                etag="existing-etag", refresh_interval_s=high_refresh_interval
-            )
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag")
+        # Simulate many prior consecutive failures so the next backoff would exceed the cap
+        manager._backoff_attempts = 10
 
         # Setup timeout response
         timeout_response = OneSettingsResponse(has_exception=True, status_code=200)
@@ -434,13 +433,59 @@ class TestConfigurationManager(unittest.TestCase):
         # Execute
         result = manager.get_configuration_and_refresh_interval()
 
-        # Verify refresh interval was capped at 24 hours
+        # Verify refresh interval was capped at 24 hours (3600 * 2**10 = 3,686,400 -> capped)
         self.assertEqual(result, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
 
         # Verify debug message was logged mentioning transient error
         mock_logger.debug.assert_called()
         debug_message = mock_logger.debug.call_args[0][0]
         self.assertIn("transient", debug_message)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_transient_error_progressive_backoff(self, mock_worker_class, mock_request):
+        """Test that consecutive transient errors produce a progressive exponential backoff."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag")
+
+        # Every call to the CHANGE endpoint fails transiently
+        mock_request.return_value = OneSettingsResponse(has_exception=True, status_code=200)
+
+        # Consecutive failures double the interval from the fixed 3600s base
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 3600)
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 7200)
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 14400)
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 28800)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_backoff_resets_after_success(self, mock_worker_class, mock_request):
+        """Test that the backoff counter resets after a successful response."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval_s=900)
+
+        error_response = OneSettingsResponse(has_exception=True, status_code=200)
+        success_response = OneSettingsResponse(etag="existing-etag", refresh_interval_s=900, status_code=304)
+
+        # Two consecutive failures advance the backoff
+        mock_request.return_value = error_response
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 3600)
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 7200)
+
+        # A success resets the counter and returns the server-provided interval
+        mock_request.return_value = success_response
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 900)
+        self.assertEqual(manager._backoff_attempts, 0)
+
+        # The next failure starts the backoff over from the base
+        mock_request.return_value = error_response
+        self.assertEqual(manager.get_configuration_and_refresh_interval(), 3600)
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
