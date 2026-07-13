@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -25,6 +26,7 @@ from ..models import (
     TranslationGlossary,
     DocumentTranslationInput,
     DocumentTranslationFileFormat,
+    FileFormatType,
 )
 from ...document._patch import (
     get_http_logging_policy,
@@ -56,10 +58,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
@@ -526,7 +525,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return (await super()._get_supported_formats(type="glossary", **kwargs)).value
+        return (await super()._get_supported_formats(type=FileFormatType.GLOSSARY, **kwargs)).value
 
     @distributed_trace_async
     async def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -537,7 +536,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return (await super()._get_supported_formats(type="document", **kwargs)).value
+        return (await super()._get_supported_formats(type=FileFormatType.DOCUMENT, **kwargs)).value
 
 
 __all__: List[str] = [

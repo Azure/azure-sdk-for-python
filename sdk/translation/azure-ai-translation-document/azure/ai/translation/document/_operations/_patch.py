@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -32,20 +33,20 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     _raise_if_bad_http_status_and_method,
 )
-from .. import _model_base, models as _models
+from .. import models as _models
+from .._utils import model_base as _model_base
 from ..models import (
     TranslationStatus,
 )
-from .._model_base import _deserialize
+from .._utils.model_base import _deserialize
 from ._operations import (
-    DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
-    SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
-    JSON,
+    _DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
+    _SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
     ClsType,
     build_single_document_translation_translate_request,
 )
 
-from .._vendor import prepare_multipart_form_data
+from .._utils.utils import prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -328,7 +329,10 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
                 deserialization_callback=get_long_running_output,
             )
         return DocumentTranslationLROPoller[_models.TranslationStatus](
-            self._client, raw_result, get_long_running_output, polling_method # pylint: disable=possibly-used-before-assignment
+            self._client,
+            raw_result,
+            get_long_running_output,
+            polling_method,  # pylint: disable=possibly-used-before-assignment
         )
 
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -27,6 +28,7 @@ from .models import (
     StartTranslationDetails,
     StorageInputType,
     DocumentTranslationFileFormat,
+    FileFormatType,
     TranslationStatus,
     DocumentTranslationError,
     DocumentTranslationInput,
@@ -660,7 +662,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return super()._get_supported_formats(type="glossary", **kwargs).value
+        return super()._get_supported_formats(type=FileFormatType.GLOSSARY, **kwargs).value
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -671,7 +673,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return super()._get_supported_formats(type="document", **kwargs).value
+        return super()._get_supported_formats(type=FileFormatType.DOCUMENT, **kwargs).value
 
 
 __all__: List[str] = [
