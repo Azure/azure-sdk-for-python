@@ -25,7 +25,6 @@ from .._patch import (
 )
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations._patch_rle_async import AsyncRLEEnvironment
-from ..operations._patch_rle import RLEError
 from .operations import TelemetryOperations
 
 logger = logging.getLogger(__name__)
@@ -312,7 +311,6 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
 __all__: List[str] = [
     "AIProjectClient",
     "AsyncRLEEnvironment",
-    "RLEError",
 ]  # Add all objects you want publicly available to users at this package level
 
 
