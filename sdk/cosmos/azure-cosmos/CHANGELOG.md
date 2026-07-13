@@ -8,6 +8,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed `KeyError: 'version'` in `SessionContainer.get_session_token` (sync and async) when the container's `partitionKey` definition returned by the service does not include the optional `version` field. The error was silently swallowed by a broad `except`, causing the client to send no `x-ms-session-token` header on subsequent reads. Against the Dedicated Gateway, this turned every Session-consistency read into an Integrated Cache miss. `partitionKey.version` is now treated as optional and defaults to `1`, matching how `PartitionKey` handles a missing version. See [PR 47143](https://github.com/Azure/azure-sdk-for-python/pull/47143)
 
 #### Other Changes
 
