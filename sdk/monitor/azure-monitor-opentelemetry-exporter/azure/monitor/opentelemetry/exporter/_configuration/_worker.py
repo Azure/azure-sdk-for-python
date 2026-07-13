@@ -4,7 +4,9 @@
 import logging
 import threading
 import random
-from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_PYTHON_TARGETING,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -141,9 +143,7 @@ class _ConfigurationWorker:
                     # Capture interval while we have the lock
                     interval = self._refresh_interval
             except Exception as ex:  # pylint: disable=broad-exception-caught
-                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                    "Configuration refresh failed: %s", ex
-                )
+                logger.debug("Configuration refresh failed: %s", ex)
                 # Use current interval on error
                 interval = self.get_refresh_interval()
 
