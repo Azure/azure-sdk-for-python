@@ -152,6 +152,9 @@ class AsyncPrompty:
             # Remove unsupported parameters for reasoning models
             for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
                 parameters.pop(key, None)
+            # Allow reasoning_effort to be overridden via kwargs
+            if "reasoning_effort" in kwargs:
+                parameters["reasoning_effort"] = kwargs["reasoning_effort"]
 
         configs = resolve_references(configs, base_path=path.parent)
         configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
