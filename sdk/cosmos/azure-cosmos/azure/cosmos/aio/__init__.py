@@ -24,11 +24,13 @@ from ._cosmos_client import CosmosClient
 from ._database import DatabaseProxy
 from ._user import UserProxy
 from ._scripts import ScriptsProxy
+from .._cosmos_responses import CosmosAsyncItemPaged
 
 __all__ = (
     "CosmosClient",
     "DatabaseProxy",
     "ContainerProxy",
     "ScriptsProxy",
-    "UserProxy"
+    "UserProxy",
+    "CosmosAsyncItemPaged"
 )
