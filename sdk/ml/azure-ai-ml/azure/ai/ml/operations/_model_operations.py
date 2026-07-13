@@ -579,6 +579,7 @@ class ModelOperations(_ScopeDependentOperations):
                         name=name,
                         registry_name=self._registry_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                        list_view_type=list_view_type,
                         **self._scope_kwargs,
                     )
                     if self._registry_name
