@@ -73,6 +73,35 @@ class TestDatastoreOperations:
         mock_datastore_operation.create_or_update(ds)
         mock_datastore_operation._operation.create_or_update.assert_called_once()
 
+    @pytest.mark.parametrize(
+        "path",
+        [
+            "blob_store.yml",
+            "file_store.yml",
+            "adls_gen1.yml",
+            "adls_gen2.yml",
+            "one_lake.yml",
+            "credential_less_one_lake.yml",
+        ],
+    )
+    def test_create_body_is_json_serializable(
+        self, mock_from_rest, mock_datastore_operation: DatastoreOperations, path
+    ) -> None:
+        # Regression test (regressed in 1.34.0): the datastore operation was switched to the
+        # TypeSpec/arm_ml_service client, whose ``SdkJSONEncoder`` only serializes hybrid models. The entity
+        # ``_to_rest_object()`` still builds a legacy msrest Datastore model, so passing it as the request body
+        # raised ``TypeError: Object of type Datastore is not JSON serializable`` on every ``datastore create``.
+        # Guard: the body handed to the operation must serialize cleanly with the same encoder the client uses.
+        import json
+
+        from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
+
+        ds = load_datastore(f"./tests/test_configs/datastore/{path}")
+        mock_datastore_operation.create_or_update(ds)
+        body = mock_datastore_operation._operation.create_or_update.call_args.kwargs["body"]
+        # Must not raise ``TypeError: Object of type Datastore is not JSON serializable``.
+        json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)
+
     @pytest.mark.skipif(
         (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
         reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",

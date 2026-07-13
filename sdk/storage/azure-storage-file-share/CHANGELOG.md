@@ -4,6 +4,14 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Return type of get_share_access_policies is now the publicly exposed SignedIdentifier model containing the publicly exposed AccessPolicy model. Previously we were leaking the internal generated SignedIdentifier model without exposing it in the api.
+
+
+### Other Changes
+- Custom transports that use legacy azure-core Request/Response types will not be supported moving forward
+- Removed support for Python 3.9, Python 3.10 or later is required to use this package
+
 ## 12.26.0 (2026-06-08)
 
 ### Features Added

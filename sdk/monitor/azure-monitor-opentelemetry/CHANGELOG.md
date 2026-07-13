@@ -1,5 +1,17 @@
 # Release History
 
+## 1.8.10 (Unreleased)
+
+### Features Added
+- Add httpx instrumentation support
+  ([#47953](https://github.com/Azure/azure-sdk-for-python/pull/47953))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.8.9 (2026-07-01)
 
 ### Bugs Fixed

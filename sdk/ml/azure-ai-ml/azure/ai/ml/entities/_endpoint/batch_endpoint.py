@@ -97,14 +97,12 @@ class BatchEndpoint(Endpoint):
 
     @classmethod
     def _from_rest_object(cls, obj: BatchEndpointData) -> "BatchEndpoint":
-        defaults: Optional[Dict[str, str]] = None
-        rest_defaults = obj.properties.defaults
-        if isinstance(rest_defaults, RestBatchEndpointDefaults):
-            if rest_defaults.deployment_name is not None:
-                defaults = {"deployment_name": rest_defaults.deployment_name}
-        elif isinstance(rest_defaults, dict):
-            defaults = dict(rest_defaults) if rest_defaults else None
-
+        # Pass the REST ``BatchEndpointDefaults`` object through unchanged so that
+        # ``endpoint.defaults.deployment_name`` remains gettable/settable. Callers
+        # (including the published batch-endpoint sample notebooks) rely on being
+        # able to do ``endpoint.defaults.deployment_name = <name>`` after a get().
+        # Serialization back to camelCase wire format is handled in
+        # ``_to_rest_batch_endpoint`` via the ``RestBatchEndpointDefaults`` branch.
         return BatchEndpoint(
             id=obj.id,
             name=obj.name,
@@ -113,7 +111,7 @@ class BatchEndpoint(Endpoint):
             auth_mode=camel_to_snake(obj.properties.auth_mode),
             description=obj.properties.description,
             location=obj.location,
-            defaults=defaults,
+            defaults=obj.properties.defaults,
             provisioning_state=obj.properties.provisioning_state,
             scoring_uri=obj.properties.scoring_uri,
             openapi_uri=obj.properties.swagger_uri,
