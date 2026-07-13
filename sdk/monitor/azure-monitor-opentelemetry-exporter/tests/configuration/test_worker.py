@@ -171,7 +171,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 start_time = time.time()
 
                 while time.time() - start_time < max_wait:
-                    if mock_logger.warning.called:
+                    if mock_logger.debug.called:
                         break
                     time.sleep(0.01)
 
@@ -180,10 +180,10 @@ class TestConfigurationWorker(unittest.TestCase):
                 self.assertTrue(worker._refresh_thread.is_alive())
 
                 # Error should be logged
-                mock_logger.warning.assert_called()
-                warning_call = mock_logger.warning.call_args[0]
-                self.assertIn("Configuration refresh failed", warning_call[0])
-                self.assertIn("Test error", str(warning_call[1]))
+                mock_logger.debug.assert_called()
+                debug_call = mock_logger.debug.call_args[0]
+                self.assertIn("Configuration refresh failed", debug_call[0])
+                self.assertIn("Test error", str(debug_call[1]))
 
             finally:
                 worker.shutdown()

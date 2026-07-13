@@ -1046,11 +1046,14 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_get_retry_delay_from_headers(headers), 120)
 
     def test_get_retry_delay_from_headers_http_date(self):
-        now = datetime.now(timezone.utc)
-        future = now + timedelta(seconds=121)
+        fixed_now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        future = fixed_now + timedelta(seconds=121)
         headers = {"Retry-After": future.strftime("%a, %d %b %Y %H:%M:%S GMT")}
-
-        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.datetime") as mock_dt:
+            mock_dt.datetime.now.return_value = fixed_now
+            mock_dt.datetime.strptime = datetime.strptime
+            mock_dt.timezone = timezone
+            self.assertEqual(_get_retry_delay_from_headers(headers), 121)
 
     def test_get_retry_delay_from_headers_invalid_or_non_positive(self):
         invalid_headers = (

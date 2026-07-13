@@ -4,10 +4,12 @@
 
 #### Features Added
 * `query_items_change_feed()` now returns a `CosmosItemPaged` (sync) / `CosmosAsyncItemPaged` (async), matching `query_items()`. This exposes the thread-safe public `get_response_headers()` API, allowing users to read the change feed continuation token (`etag`) from the latest page's response headers instead of relying on the non-thread-safe internal `client_connection.last_response_headers`. See [PR 47947](https://github.com/Azure/azure-sdk-for-python/pull/47947).
+* Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index_definition` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed `KeyError: 'version'` in `SessionContainer.get_session_token` (sync and async) when the container's `partitionKey` definition returned by the service does not include the optional `version` field. The error was silently swallowed by a broad `except`, causing the client to send no `x-ms-session-token` header on subsequent reads. Against the Dedicated Gateway, this turned every Session-consistency read into an Integrated Cache miss. `partitionKey.version` is now treated as optional and defaults to `1`, matching how `PartitionKey` handles a missing version. See [PR 47143](https://github.com/Azure/azure-sdk-for-python/pull/47143)
 
 #### Other Changes
 
