@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import base64
+from datetime import datetime, timezone
 from io import BytesIO
 from typing import Any, Callable, cast, List, Optional, Tuple, Union
 from urllib.parse import unquote
@@ -134,15 +136,22 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
             for i in range(batch.n_children):
                 child = batch.child(i)
                 try:
-                    cols[field_names[i]] = child.to_pylist()
+                    values = child.to_pylist()
                 except KeyError:
                     offsets = list(child.buffer(1))
                     entries = child.child(0)
                     keys = entries.child(0).to_pylist()
-                    values = entries.child(1).to_pylist()
-                    cols[field_names[i]] = [
-                        {keys[j]: values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
+                    map_values = entries.child(1).to_pylist()
+                    values = [
+                        {keys[j]: map_values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
                     ]
+                else:
+                    if any(isinstance(v, datetime) and v.tzinfo is None for v in values):
+                        values = [
+                            v.replace(tzinfo=timezone.utc) if isinstance(v, datetime) and v.tzinfo is None else v
+                            for v in values
+                        ]
+                cols[field_names[i]] = values
 
             for row in range(num_rows):
 
@@ -168,9 +177,11 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 blob.blob_type = BlobType(blob_type_val) if blob_type_val else None  # type: ignore[assignment]
 
                 # Composite sub-objects built from their own column sub-sets.
-                blob.content_settings = ContentSettings(
-                    **{kwarg: _get(col) for col, kwarg in _CONTENT_SETTINGS_FIELDS.items()}
-                )
+                content_settings_kwargs = {kwarg: _get(col) for col, kwarg in _CONTENT_SETTINGS_FIELDS.items()}
+                content_md5 = content_settings_kwargs.get("content_md5")
+                if isinstance(content_md5, str):
+                    content_settings_kwargs["content_md5"] = bytearray(base64.b64decode(content_md5))
+                blob.content_settings = ContentSettings(**content_settings_kwargs)
                 blob.lease = LeaseProperties(**{kwarg: _get(col) for col, kwarg in _LEASE_FIELDS.items()})
                 blob.copy = CopyProperties(**{kwarg: _get(col) for col, kwarg in _COPY_FIELDS.items()})
                 blob.immutability_policy = ImmutabilityPolicy(
