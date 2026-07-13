@@ -259,6 +259,22 @@ path: ./model.pkl"""
         assert len(result.allowed_deployment_templates) == 1
         assert result.allowed_deployment_templates[0].asset_id == allowed_dt
 
+    def test_get_with_label_workspace_does_not_refetch(self, mock_model_operation: ModelOperations) -> None:
+        """Bug 5423568: the deployment-template re-fetch is scoped to the registry.
+
+        Workspace models carry no deployment-template references, so the label path must not issue
+        the extra GET; this keeps workspace behaviour (and its recorded e2e sessions) unchanged.
+        """
+        resolved = Model(name="test-model", version="4")
+        with patch(
+            "azure.ai.ml.operations._model_operations._resolve_label_to_asset",
+            return_value=resolved,
+        ):
+            result = mock_model_operation.get(name="test-model", label="latest")
+
+        assert result is resolved
+        assert mock_model_operation._model_versions_operation.get.call_count == 0
+
     @patch.object(Model, "_from_rest_object", new=Mock())
     @patch.object(Model, "_from_container_rest_object", new=Mock())
     def test_list(self, mock_model_operation: ModelOperations) -> None:
