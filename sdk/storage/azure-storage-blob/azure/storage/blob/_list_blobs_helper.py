@@ -76,7 +76,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
         ("AccessTierChangeTime", "blob_tier_change_time", None),
         ("AccessTierInferred", "blob_tier_inferred", None),
         ("ArchiveStatus", "archive_status", None),
-        ("BlobSequenceNumber", "page_blob_sequence_number", None),
+        ("x-ms-blob-sequence-number", "page_blob_sequence_number", None),
         ("Sealed", "is_append_blob_sealed", None),
         ("LastAccessTime", "last_accessed_on", None),
         ("TagCount", "tag_count", None),

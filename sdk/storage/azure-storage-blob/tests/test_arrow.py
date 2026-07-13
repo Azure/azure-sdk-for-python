@@ -230,6 +230,25 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_arrow_list_page_blob_sequence_number(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "pageblob1")
+        blob_client.create_page_blob(size=512, sequence_number=7)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = list(container.list_blobs(response_format="arrow"))
+
+        assert len(blobs_list) == 1
+        blob = blobs_list[0]
+        assert blob.name == "pageblob1"
+        assert blob.blob_type == BlobType.PAGEBLOB
+        assert blob.page_blob_sequence_number == 7
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_arrow_list_blobs_paging(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
