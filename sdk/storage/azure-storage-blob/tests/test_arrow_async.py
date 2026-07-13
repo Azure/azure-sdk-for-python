@@ -282,6 +282,25 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_arrow_list_blob_names(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_names = ["blob1", "blob2", "blob3", "blob4"]
+        await self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        name_pages = container.list_blob_names(response_format="arrow", results_per_page=2).by_page()
+        first_page = [name async for name in await name_pages.__anext__()]
+        second_page = [name async for name in await name_pages.__anext__()]
+
+        assert all(isinstance(name, str) for name in first_page + second_page)
+        assert first_page == blob_names[:2]
+        assert second_page == blob_names[2:]
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_arrow_list_blobs_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
