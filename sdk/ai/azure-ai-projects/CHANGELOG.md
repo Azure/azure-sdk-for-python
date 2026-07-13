@@ -34,6 +34,12 @@
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
+* Added Reinforcement Learning Environments (RLE) support:
+  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLSandbox`, `CreateRLEnvironmentRequest`, `UpdateRLEnvironmentRequest`, `CreateRLSandboxRequest`, `RLStepResult`, `RLEnvironmentState`, `HealthResponse`, `GetMetadataResponse`, `SchemaResponse`, and the `RLSandboxStatus` enum.
+  * New root-client operation groups: `rl_environments`, `rle_sandboxes`, and `rl_environment_runtime`.
+  * New `project_client.rl_environments.create_runtime(environment_id, ...)` factory that returns a gym-style `RLEEnvironment` / `AsyncRLEEnvironment` context manager. The runtime helper leases, polls, runs, and releases sandboxes entirely through the project client — using the project endpoint, pipeline, and credential like any other integration.
+  * The runtime helper verifies sandbox health before every runtime call (`reset`, `step`, `state`, `metadata`, `schema`) by probing the environment `health` endpoint; an unhealthy sandbox surfaces as `HttpResponseError`.
+  * The `RLEEnvironment` / `AsyncRLEEnvironment` runtime helpers now return the generated `RLStepResult`, `RLEnvironmentState`, `HealthResponse`, `GetMetadataResponse`, and `SchemaResponse` models.
 
 
 ### Breaking Changes

@@ -14,6 +14,17 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    RLEnvironment,
+    RLEnvironmentVersion,
+    RLSandbox,
+    CreateRLEnvironmentRequest,
+    UpdateRLEnvironmentRequest,
+    CreateRLSandboxRequest,
+    RLStepResult,
+    RLEnvironmentState,
+    HealthResponse,
+    GetMetadataResponse,
+    SchemaResponse,
     A2APreviewTool,
     AISearchIndexResource,
     AgentBlueprintReference,
@@ -353,6 +364,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    RLSandboxStatus,
     AgentBlueprintReferenceType,
     AgentEndpointAuthorizationSchemeType,
     AgentEndpointProtocol,
@@ -442,6 +454,18 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "RLEnvironment",
+    "RLEnvironmentVersion",
+    "RLSandbox",
+    "CreateRLEnvironmentRequest",
+    "UpdateRLEnvironmentRequest",
+    "CreateRLSandboxRequest",
+    "RLStepResult",
+    "RLEnvironmentState",
+    "HealthResponse",
+    "GetMetadataResponse",
+    "SchemaResponse",
+    "RLSandboxStatus",
     "A2APreviewTool",
     "AISearchIndexResource",
     "AgentBlueprintReference",

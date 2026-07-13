@@ -1,160 +1,68 @@
-# pylint: disable=line-too-long,useless-suppression,networking-import-outside-azure-core-transport
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""RLE environment helpers."""
+"""RLE environment runtime helpers.
+
+These helpers layer a Gymnasium-style ergonomic surface on top of the generated RLE operations.
+Every request is issued through the :class:`~azure.ai.projects.AIProjectClient` pipeline against the
+Foundry project endpoint, exactly like the other operation groups on the client.
+"""
 
 from __future__ import annotations
 
-import json
-import os
 import threading
 import time
-import urllib.error
-import urllib.request
-from dataclasses import dataclass, field
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Mapping, Optional
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
+from ..models import (
+    CreateRLSandboxRequest,
+    GetMetadataResponse,
+    HealthResponse,
+    RLEnvironmentState,
+    RLSandboxStatus,
+    RLStepResult,
+    SchemaResponse,
+)
+from ._operations import (
+    RLEnvironmentRuntimeOperations,
+    RLEnvironmentsOperations as _RLEnvironmentsOperationsGenerated,
+    RLESandboxesOperations,
+)
 
-_DEFAULT_CONTROL_PLANE = os.environ.get("RLE_CONTROL_PLANE", "http://localhost:5000")
-_API_VERSION = "v1.0"
-_READY_STATUS = "Running"
-_FAILED_STATUS = "Failed"
-_TERMINAL_STATUSES = frozenset({_READY_STATUS, _FAILED_STATUS, "Stopped"})
+_DEFAULT_CREATE_TIMEOUT_S = 300.0
+_DEFAULT_POLL_INTERVAL_S = 2.0
 
 
 class RLEError(RuntimeError):
-    """Raised when a call to an RLE environment fails.
+    """Raised when leasing an RLE sandbox does not reach a usable state.
 
-    :keyword status: HTTP status code, when the failure came from an HTTP response.
-    :paramtype status: int or None
-    :keyword body: Raw response body, if any.
-    :paramtype body: str or None
+    HTTP failures from the service surface as :class:`~azure.core.exceptions.HttpResponseError`,
+    consistent with the other operation groups. ``RLEError`` covers client-side lease conditions,
+    such as a sandbox that fails to start or never becomes ready within the timeout.
     """
 
-    def __init__(self, message: str, *, status: Optional[int] = None, body: Optional[str] = None) -> None:
-        super().__init__(message)
-        self.status = status
-        self.body = body
+
+def _status_matches(status: Any, target: RLSandboxStatus) -> bool:
+    value = getattr(status, "value", status)
+    return str(value or "").lower() == target.value.lower()
 
 
-@dataclass
-class RLEStepResult:
-    """Outcome of an RLE ``reset`` or ``step`` call."""
+def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
+    """Normalize a step action into a plain JSON-serializable dictionary.
 
-    observation: Dict[str, Any] = field(default_factory=dict)
-    reward: Optional[float] = None
-    terminated: bool = False
-    truncated: bool = False
-    info: Dict[str, Any] = field(default_factory=dict)
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    raw: Dict[str, Any] = field(default_factory=dict)
-
-    @property
-    def done(self) -> bool:
-        """Derived Gymnasium ``done`` flag: ``terminated or truncated``."""
-        return self.terminated or self.truncated
-
-    @classmethod
-    def from_wire(cls, data: Optional[Dict[str, Any]]) -> "RLEStepResult":
-        """Create a result from the RLE service wire payload."""
-        data = data or {}
-        reward = data.get("reward")
-        has_split = "terminated" in data or "truncated" in data
-        legacy_done = bool(data.get("done", False))
-        terminated = bool(data.get("terminated", False if has_split else legacy_done))
-        truncated = bool(data.get("truncated", False))
-        info = data.get("info")
-        metadata = data.get("metadata") or {}
-        return cls(
-            observation=data.get("observation") or {},
-            reward=float(reward) if isinstance(reward, (int, float)) else None,
-            terminated=terminated,
-            truncated=truncated,
-            info=info if isinstance(info, dict) else dict(metadata),
-            metadata=metadata,
-            raw=data,
-        )
-
-
-@dataclass
-class RLEEnvState:
-    """Snapshot returned by an RLE environment ``state`` call."""
-
-    episode_id: Optional[str] = None
-    step_count: int = 0
-    raw: Dict[str, Any] = field(default_factory=dict)
-
-    @classmethod
-    def from_wire(cls, data: Optional[Dict[str, Any]]) -> "RLEEnvState":
-        """Create an environment state from the RLE service wire payload."""
-        data = data or {}
-        try:
-            step_count = int(data.get("step_count", 0))
-        except (TypeError, ValueError):
-            step_count = 0
-        return cls(episode_id=data.get("episode_id"), step_count=step_count, raw=data)
-
-
-class _SandboxLease:
-    __slots__ = ("id", "status", "url", "error", "raw")
-
-    def __init__(self, payload: Mapping[str, Any]) -> None:
-        self.id: str = str(payload.get("id", ""))
-        self.status: str = str(payload.get("status", ""))
-        self.url: Optional[str] = payload.get("url")
-        self.error: Optional[str] = payload.get("error")
-        self.raw: Dict[str, Any] = dict(payload)
-
-    @property
-    def is_ready(self) -> bool:
-        return self.status == _READY_STATUS
-
-    @property
-    def is_failed(self) -> bool:
-        return self.status == _FAILED_STATUS
-
-    @property
-    def is_terminal(self) -> bool:
-        return self.status in _TERMINAL_STATUSES
-
-
-def _sandbox_collection_url(control_plane: str, project: str, env_id: str, api_version: str = _API_VERSION) -> str:
-    base = control_plane.rstrip("/")
-    return f"{base}/rle/{api_version}/projects/{project}/environments/{env_id}/sandboxes"
-
-
-def _sandbox_url(control_plane: str, project: str, env_id: str, sandbox_id: str, api_version: str = _API_VERSION) -> str:
-    return f"{_sandbox_collection_url(control_plane, project, env_id, api_version)}/{sandbox_id}"
-
-
-def _create_body(
-    *,
-    version: Optional[str] = None,
-    cpu: Optional[float] = None,
-    memory: Optional[str] = None,
-    disk: Optional[str] = None,
-    env_vars: Optional[Mapping[str, str]] = None,
-) -> Dict[str, Any]:
-    body: Dict[str, Any] = {}
-    if version is not None:
-        body["version"] = version
-    if cpu is not None:
-        body["cpu"] = cpu
-    if memory is not None:
-        body["memory"] = memory
-    if disk is not None:
-        body["disk"] = disk
-    if env_vars:
-        body["envVars"] = dict(env_vars)
-    return body
-
-
-def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> Dict[str, Any]:
-    """Normalize a step action into a plain JSON-serializable dictionary."""
+    :param action: A single action as a mapping or a model exposing ``model_dump``/``to_dict``.
+     Mutually exclusive with ``action_kwargs``.
+    :type action: any
+    :param action_kwargs: Action fields supplied as keyword arguments. Mutually exclusive with ``action``.
+    :type action_kwargs: mapping[str, any]
+    :return: The action as a plain dictionary.
+    :rtype: dict
+    """
     if action is None:
         return dict(action_kwargs)
     if action_kwargs:
@@ -169,68 +77,63 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> Dict[str, An
 
 
 class RLEEnvironment:
-    """Gym-style client for a hosted RLE environment leased by environment ID.
+    """Gymnasium-style client for a hosted RLE environment, backed by the project client.
 
-    :param env_id: The hosted RLE environment ID. Required.
-    :type env_id: str
-    :keyword project: The RLE project name. If omitted, ``RLE_PROJECT`` is used.
-    :paramtype project: str or None
-    :keyword control_plane: The RLE control-plane endpoint. If omitted, ``RLE_CONTROL_PLANE`` is used,
-     falling back to ``http://localhost:5000``.
-    :paramtype control_plane: str or None
-    :keyword api_version: RLE control-plane API version. Default value is ``v1.0``.
-    :paramtype api_version: str
-    :keyword timeout_s: Per-request timeout, in seconds. Default value is 30.
-    :paramtype timeout_s: float
-    :keyword headers: Additional HTTP headers sent to the control plane and data plane.
-    :paramtype headers: mapping[str, str] or None
-    :keyword token: Bearer token used for authorization.
-    :paramtype token: str or None
+    Instances are created via :meth:`RLEnvironmentsOperations.create_runtime` and lease a sandbox
+    from the environment on first use. All requests flow through the owning
+    :class:`~azure.ai.projects.AIProjectClient` pipeline and the Foundry project endpoint.
+
+    :param environment_id: The hosted RLE environment ID to lease a sandbox from. Required.
+    :type environment_id: str
+    :keyword sandboxes: Generated sandbox operations bound to the project client. Required.
+    :paramtype sandboxes: ~azure.ai.projects.operations.RLESandboxesOperations
+    :keyword runtime: Generated runtime operations bound to the project client. Required.
+    :paramtype runtime: ~azure.ai.projects.operations.RLEnvironmentRuntimeOperations
+    :keyword version: Optional environment image version to lease. Defaults to the latest version.
+    :paramtype version: str or None
+    :keyword cpu: Requested CPU allocation, for example "1" or "500m".
+    :paramtype cpu: str or None
+    :keyword memory: Requested memory allocation, for example "2Gi".
+    :paramtype memory: str or None
+    :keyword disk: Requested disk allocation, for example "10Gi".
+    :paramtype disk: str or None
+    :keyword env_vars: Environment variables to inject into the sandbox.
+    :paramtype env_vars: mapping[str, str] or None
+    :keyword create_timeout_s: Maximum time to wait for the sandbox to become ready, in seconds.
+     Default value is 300.
+    :paramtype create_timeout_s: float
+    :keyword poll_interval_s: Interval between sandbox readiness polls, in seconds. Default value is 2.
+    :paramtype poll_interval_s: float
     """
 
     def __init__(
         self,
-        env_id: str,
+        environment_id: str,
         *,
-        project: Optional[str] = None,
-        control_plane: Optional[str] = None,
-        api_version: str = _API_VERSION,
-        timeout_s: float = 30.0,
-        headers: Optional[Mapping[str, str]] = None,
-        token: Optional[str] = None,
+        sandboxes: RLESandboxesOperations,
+        runtime: RLEnvironmentRuntimeOperations,
         version: Optional[str] = None,
-        cpu: Optional[float] = None,
+        cpu: Optional[str] = None,
         memory: Optional[str] = None,
         disk: Optional[str] = None,
         env_vars: Optional[Mapping[str, str]] = None,
-        create_timeout_s: float = 300.0,
-        poll_interval_s: float = 2.0,
+        create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
+        poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
     ) -> None:
-        if not env_id:
-            raise ValueError("env_id is required")
-        project = project or os.environ.get("RLE_PROJECT")
-        if not project:
-            raise ValueError("project is required (pass project= or set RLE_PROJECT)")
-        self.env_id = env_id
-        self.project = project
-        self.control_plane = (control_plane or _DEFAULT_CONTROL_PLANE).rstrip("/")
-        self.api_version = api_version
-        self.timeout_s = timeout_s
+        if not environment_id:
+            raise ValueError("environment_id is required")
+        self.environment_id = environment_id
+        self._sandboxes = sandboxes
+        self._runtime = runtime
+        self._lease_request = CreateRLSandboxRequest(
+            version=version,
+            cpu=cpu,
+            memory=memory,
+            disk=disk,
+            env_vars=dict(env_vars) if env_vars else None,
+        )
         self.create_timeout_s = create_timeout_s
         self.poll_interval_s = poll_interval_s
-        self._sandbox_opts = {
-            "version": version,
-            "cpu": cpu,
-            "memory": memory,
-            "disk": disk,
-            "env_vars": env_vars,
-        }
-        self._headers: Dict[str, str] = {"Content-Type": "application/json", "Accept": "application/json"}
-        if headers:
-            self._headers.update(headers)
-        if token:
-            self._headers["Authorization"] = f"Bearer {token}"
-        self.endpoint: Optional[str] = None
         self._sandbox_id: Optional[str] = None
         self._lease_lock = threading.Lock()
 
@@ -250,112 +153,183 @@ class RLEEnvironment:
         """Release the leased sandbox, best effort."""
         self._release_sandbox()
 
-    def _ensure_leased(self) -> None:
+    def _ensure_leased(self) -> str:
         if self._sandbox_id is not None:
-            return
+            return self._sandbox_id
         with self._lease_lock:
             if self._sandbox_id is not None:
-                return
-            collection = _sandbox_collection_url(self.control_plane, self.project, self.env_id, self.api_version)
-            created = _SandboxLease(self._http("POST", collection, _create_body(**self._sandbox_opts)))
-            if not created.id:
-                raise RLEError("control plane did not return a sandbox id")
-            self._sandbox_id = created.id
-            lease = created
-            sandbox_url = _sandbox_url(self.control_plane, self.project, self.env_id, created.id, self.api_version)
+                return self._sandbox_id
+            sandbox = self._sandboxes.lease(self.environment_id, self._lease_request)
+            if not sandbox.sandbox_id:
+                raise RLEError("service did not return a sandbox id")
+            sandbox_id = sandbox.sandbox_id
+            self._sandbox_id = sandbox_id
             deadline = time.monotonic() + self.create_timeout_s
-            while not lease.is_ready:
-                if lease.is_failed:
-                    raise RLEError(f"sandbox {created.id} failed to start: {lease.error or 'unknown error'}")
-                if time.monotonic() > deadline:
+            while not _status_matches(sandbox.status, RLSandboxStatus.RUNNING):
+                if _status_matches(sandbox.status, RLSandboxStatus.FAILED):
+                    raise RLEError(f"sandbox {sandbox_id} failed to start: {sandbox.error or 'unknown error'}")
+                if time.monotonic() >= deadline:
                     raise RLEError(
-                        f"sandbox {created.id} not ready after {self.create_timeout_s:.0f}s "
-                        f"(last status: {lease.status or 'unknown'})"
+                        f"sandbox {sandbox_id} not ready after {self.create_timeout_s:.0f}s "
+                        f"(last status: {sandbox.status or 'unknown'})"
                     )
                 time.sleep(self.poll_interval_s)
-                lease = _SandboxLease(self._http("GET", sandbox_url))
-            if not lease.url:
-                raise RLEError(f"sandbox {created.id} is Running but reported no data-plane url")
-            self.endpoint = lease.url.rstrip("/")
+                sandbox = self._sandboxes.get_sandbox(self.environment_id, sandbox_id)
+            return sandbox_id
+
+    def _ensure_healthy(self, sandbox_id: str) -> None:
+        """Confirm the sandbox reports healthy before issuing a runtime request.
+
+        A failed health probe surfaces as :class:`~azure.core.exceptions.HttpResponseError`,
+        consistent with the other operation groups.
+
+        :param sandbox_id: The leased sandbox ID to health-check.
+        :type sandbox_id: str
+        """
+        self._runtime.health(self.environment_id, sandbox_id)
+
+    def _ensure_ready(self) -> str:
+        """Ensure a sandbox is leased and healthy, returning its ID.
+
+        :return: The ID of the leased, healthy sandbox.
+        :rtype: str
+        """
+        sandbox_id = self._ensure_leased()
+        self._ensure_healthy(sandbox_id)
+        return sandbox_id
 
     def _release_sandbox(self) -> None:
         sandbox_id = self._sandbox_id
         if sandbox_id is None:
             return
         self._sandbox_id = None
-        self.endpoint = None
-        url = _sandbox_url(self.control_plane, self.project, self.env_id, sandbox_id, self.api_version)
         try:
-            self._http("DELETE", url, expect_body=False)
-        except RLEError:
+            self._sandboxes.release(self.environment_id, sandbox_id)
+        except HttpResponseError:
             pass
 
     @distributed_trace
-    def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **extra: Any) -> RLEStepResult:
-        """Start a new episode and return the initial observation."""
-        body: Dict[str, Any] = {
-            key: value for key, value in {"seed": seed, "episode_id": episode_id, **extra}.items() if value is not None
-        }
-        return RLEStepResult.from_wire(self._request("POST", "/reset", body))
+    def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **kwargs: Any) -> RLStepResult:
+        """Start a new episode and return the initial observation.
+
+        :param seed: Optional seed for deterministic episode initialization.
+        :type seed: int or None
+        :param episode_id: Optional caller-supplied episode identifier.
+        :type episode_id: str or None
+        :return: The initial step result for the new episode.
+        :rtype: ~azure.ai.projects.models.RLStepResult
+        """
+        sandbox_id = self._ensure_ready()
+        return self._runtime.reset(self.environment_id, sandbox_id, seed=seed, episode_id=episode_id, **kwargs)
 
     @distributed_trace
-    def step(self, action: Any = None, **action_kwargs: Any) -> RLEStepResult:
-        """Apply an action and return the resulting observation, reward, and done state."""
-        return RLEStepResult.from_wire(self._request("POST", "/step", {"action": coerce_action(action, action_kwargs)}))
+    def step(self, action: Any = None, **action_kwargs: Any) -> RLStepResult:
+        """Apply an action and return the resulting observation, reward, and done state.
+
+        :param action: The action to apply, as a mapping or model. Mutually exclusive with keyword fields.
+        :type action: any
+        :return: The step result after applying the action.
+        :rtype: ~azure.ai.projects.models.RLStepResult
+        """
+        sandbox_id = self._ensure_ready()
+        return self._runtime.step(self.environment_id, sandbox_id, action=coerce_action(action, action_kwargs))
 
     @distributed_trace
-    def state(self) -> RLEEnvState:
-        """Return the current environment state."""
-        return RLEEnvState.from_wire(self._request("GET", "/state"))
+    def state(self) -> RLEnvironmentState:
+        """Return the current environment state.
+
+        :return: The current environment state.
+        :rtype: ~azure.ai.projects.models.RLEnvironmentState
+        """
+        sandbox_id = self._ensure_ready()
+        return self._runtime.state(self.environment_id, sandbox_id)
 
     @distributed_trace
-    def health(self) -> Dict[str, Any]:
-        """Return environment health information."""
-        return self._request("GET", "/health")
+    def health(self) -> HealthResponse:
+        """Return environment health information.
+
+        :return: Environment health information.
+        :rtype: ~azure.ai.projects.models.HealthResponse
+        """
+        sandbox_id = self._ensure_leased()
+        return self._runtime.health(self.environment_id, sandbox_id)
 
     @distributed_trace
-    def metadata(self) -> Dict[str, Any]:
-        """Return environment metadata."""
-        return self._request("GET", "/metadata")
+    def metadata(self) -> GetMetadataResponse:
+        """Return environment metadata.
+
+        :return: Environment metadata.
+        :rtype: ~azure.ai.projects.models.GetMetadataResponse
+        """
+        sandbox_id = self._ensure_ready()
+        return self._runtime.get_metadata(self.environment_id, sandbox_id)
 
     @distributed_trace
-    def schema(self) -> Dict[str, Any]:
-        """Return the environment action and observation schema."""
-        return self._request("GET", "/schema")
+    def schema(self) -> SchemaResponse:
+        """Return the environment action and observation schema.
 
-    def _request(self, method: str, path: str, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        self._ensure_leased()
-        return self._http(method, f"{self.endpoint}{path}", body)
+        :return: The environment action and observation schema.
+        :rtype: ~azure.ai.projects.models.SchemaResponse
+        """
+        sandbox_id = self._ensure_ready()
+        return self._runtime.schema(self.environment_id, sandbox_id)
 
-    def _http(
+
+class RLEnvironmentsOperations(_RLEnvironmentsOperationsGenerated):
+    """RLE environment operations, extended with a Gymnasium-style runtime helper."""
+
+    def create_runtime(
         self,
-        method: str,
-        url: str,
-        body: Optional[Dict[str, Any]] = None,
+        environment_id: str,
         *,
-        expect_body: bool = True,
-    ) -> Dict[str, Any]:
-        data = json.dumps(body or {}).encode("utf-8") if method == "POST" else None
-        request = urllib.request.Request(url, data=data, headers=self._headers, method=method)
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout_s) as response:  # nosec
-                raw = response.read().decode("utf-8")
-        except urllib.error.HTTPError as err:
-            detail = ""
-            try:
-                detail = err.read().decode("utf-8", "replace")
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
-            raise RLEError(f"{method} {url} failed: HTTP {err.code}", status=err.code, body=detail) from err
-        except urllib.error.URLError as err:
-            raise RLEError(f"{method} {url} failed: {err.reason}") from err
+        version: Optional[str] = None,
+        cpu: Optional[str] = None,
+        memory: Optional[str] = None,
+        disk: Optional[str] = None,
+        env_vars: Optional[Mapping[str, str]] = None,
+        create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
+        poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
+    ) -> RLEEnvironment:
+        """Create a Gymnasium-style runtime helper that leases a sandbox from an RLE environment.
 
-        if not raw or not expect_body:
-            return {}
-        try:
-            return json.loads(raw)
-        except json.JSONDecodeError as err:
-            raise RLEError(f"{method} {url} returned non-JSON body", body=raw) from err
+        The returned :class:`RLEEnvironment` is a context manager that leases a sandbox on entry,
+        waits until it is ready, and releases it on exit. All requests are issued through this
+        client's pipeline and the Foundry project endpoint.
+
+        :param environment_id: The hosted RLE environment ID to lease a sandbox from. Required.
+        :type environment_id: str
+        :keyword version: Optional environment image version to lease. Defaults to the latest version.
+        :paramtype version: str or None
+        :keyword cpu: Requested CPU allocation, for example "1" or "500m".
+        :paramtype cpu: str or None
+        :keyword memory: Requested memory allocation, for example "2Gi".
+        :paramtype memory: str or None
+        :keyword disk: Requested disk allocation, for example "10Gi".
+        :paramtype disk: str or None
+        :keyword env_vars: Environment variables to inject into the sandbox.
+        :paramtype env_vars: mapping[str, str] or None
+        :keyword create_timeout_s: Maximum time to wait for the sandbox to become ready, in seconds.
+         Default value is 300.
+        :paramtype create_timeout_s: float
+        :keyword poll_interval_s: Interval between sandbox readiness polls, in seconds. Default value is 2.
+        :paramtype poll_interval_s: float
+        :return: A runtime helper bound to this client.
+        :rtype: ~azure.ai.projects.operations.RLEEnvironment
+        """
+        sandboxes = RLESandboxesOperations(self._client, self._config, self._serialize, self._deserialize)
+        runtime = RLEnvironmentRuntimeOperations(self._client, self._config, self._serialize, self._deserialize)
+        return RLEEnvironment(
+            environment_id,
+            sandboxes=sandboxes,
+            runtime=runtime,
+            version=version,
+            cpu=cpu,
+            memory=memory,
+            disk=disk,
+            env_vars=env_vars,
+            create_timeout_s=create_timeout_s,
+            poll_interval_s=poll_interval_s,
+        )
 
 
-__all__ = ["RLEEnvironment", "RLEStepResult", "RLEEnvState", "RLEError"]
+__all__ = ["RLEEnvironment", "RLEError", "RLEnvironmentsOperations", "coerce_action"]

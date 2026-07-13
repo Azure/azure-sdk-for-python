@@ -1148,3 +1148,21 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIXED_RATIO = "FixedRatio"
     """FIXED_RATIO."""
+
+
+# RLE (reinforcement learning) enums grafted from generated code
+
+
+class RLSandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle status of an RLE sandbox."""
+
+    CREATING = "Creating"
+    """RLSandbox is being provisioned."""
+    RUNNING = "Running"
+    """RLSandbox is ready to accept runtime requests at ``url``."""
+    STOPPED = "Stopped"
+    """RLSandbox is stopped but retained and may be resumed."""
+    RELEASED = "Released"
+    """RLSandbox has been released and can no longer be used."""
+    FAILED = "Failed"
+    """RLSandbox entered a terminal failure state. See ``error`` for details."""

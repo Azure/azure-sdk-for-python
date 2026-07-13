@@ -19,12 +19,18 @@ from ._operations import ConnectionsOperations  # type: ignore
 from ._operations import DatasetsOperations  # type: ignore
 from ._operations import DeploymentsOperations  # type: ignore
 from ._operations import IndexesOperations  # type: ignore
+from ._operations import RLEnvironmentsOperations  # type: ignore
+from ._operations import RLESandboxesOperations  # type: ignore
+from ._operations import RLEnvironmentRuntimeOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "RLEnvironmentsOperations",
+    "RLESandboxesOperations",
+    "RLEnvironmentRuntimeOperations",
     "BetaOperations",
     "AgentsOperations",
     "EvaluationRulesOperations",

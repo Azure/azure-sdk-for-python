@@ -15272,3 +15272,366 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.WORK_IQ_PREVIEW  # type: ignore
+
+
+# RLE (reinforcement learning) models grafted from generated code
+
+
+class CreateRLEnvironmentRequest(_Model):
+    """Request body for creating a hosted RLE environment.
+
+    :ivar name: Optional caller-provided display name for the environment.
+    :vartype name: str
+    :ivar acr_image_path: Container image reference (Azure Container Registry path) that backs the
+     environment. Required.
+    :vartype acr_image_path: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional caller-provided display name for the environment."""
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read", "create", "update", "delete", "query"])
+    """Container image reference (Azure Container Registry path) that backs the environment. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acr_image_path: str,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateRLSandboxRequest(_Model):
+    """Request body for leasing a new sandbox from an RLE environment.
+
+    :ivar version: Optional environment image version to lease. Defaults to the latest version.
+    :vartype version: str
+    :ivar cpu: Requested CPU allocation. Encoded as a string (e.g. "1", "2", "500m").
+    :vartype cpu: str
+    :ivar memory: Requested memory allocation, for example "2Gi".
+    :vartype memory: str
+    :ivar disk: Requested disk allocation, for example "10Gi".
+    :vartype disk: str
+    :ivar env_vars: Environment variables to inject into the sandbox.
+    :vartype env_vars: dict[str, str]
+    """
+
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional environment image version to lease. Defaults to the latest version."""
+    cpu: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Requested CPU allocation. Encoded as a string (e.g. \"1\", \"2\", \"500m\")."""
+    memory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Requested memory allocation, for example \"2Gi\"."""
+    disk: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Requested disk allocation, for example \"10Gi\"."""
+    env_vars: Optional[dict[str, str]] = rest_field(
+        name="envVars", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Environment variables to inject into the sandbox."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        version: Optional[str] = None,
+        cpu: Optional[str] = None,
+        memory: Optional[str] = None,
+        disk: Optional[str] = None,
+        env_vars: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetMetadataResponse(_Model):
+    """GetMetadataResponse."""
+
+
+class HealthResponse(_Model):
+    """HealthResponse."""
+
+
+class RLEnvironment(_Model):
+    """A hosted reinforcement-learning environment that sandboxes are leased from.
+
+    :ivar environment_id: Hosted RLE environment identifier, assigned by the service. Required.
+    :vartype environment_id: str
+    :ivar project_id: Foundry project identifier that owns this environment. Required.
+    :vartype project_id: str
+    :ivar name: Caller-provided display name for the environment. Optional on create.
+    :vartype name: str
+    :ivar acr_image_path: Container image reference (Azure Container Registry path) that backs the
+     environment. Required.
+    :vartype acr_image_path: str
+    :ivar version: Latest version identifier for the environment image. Required.
+    :vartype version: str
+    :ivar created_at_utc: Timestamp the environment was first created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar updated_at_utc: Timestamp the environment was last updated, in UTC. Required.
+    :vartype updated_at_utc: ~datetime.datetime
+    """
+
+    environment_id: str = rest_field(name="environmentId", visibility=["read"])
+    """Hosted RLE environment identifier, assigned by the service. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read"])
+    """Foundry project identifier that owns this environment. Required."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Caller-provided display name for the environment. Optional on create."""
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read"])
+    """Container image reference (Azure Container Registry path) that backs the environment. Required."""
+    version: str = rest_field(visibility=["read"])
+    """Latest version identifier for the environment image. Required."""
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the environment was first created, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the environment was last updated, in UTC. Required."""
+
+
+class RLEnvironmentState(_Model):
+    """Snapshot returned by the RLE environment ``state`` endpoint.
+
+    :ivar episode_id: Current episode identifier, when one is active.
+    :vartype episode_id: str
+    :ivar step_count: Number of completed steps in the current episode.
+    :vartype step_count: int
+    """
+
+    episode_id: Optional[str] = rest_field(name="episodeId", visibility=["read", "create", "update", "delete", "query"])
+    """Current episode identifier, when one is active."""
+    step_count: Optional[int] = rest_field(name="stepCount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of completed steps in the current episode."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        episode_id: Optional[str] = None,
+        step_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLEnvironmentVersion(_Model):
+    """A historical version snapshot of a hosted RLE environment.
+
+    :ivar environment_id: Identifier of the parent RLE environment. Required.
+    :vartype environment_id: str
+    :ivar project_id: Foundry project identifier that owns the parent environment. Required.
+    :vartype project_id: str
+    :ivar version: Version identifier for this snapshot. Required.
+    :vartype version: str
+    :ivar acr_image_path: Container image reference (Azure Container Registry path) for this
+     version. Required.
+    :vartype acr_image_path: str
+    :ivar created_at_utc: Timestamp this version was created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    """
+
+    environment_id: str = rest_field(name="environmentId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the parent RLE environment. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read", "create", "update", "delete", "query"])
+    """Foundry project identifier that owns the parent environment. Required."""
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version identifier for this snapshot. Required."""
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read", "create", "update", "delete", "query"])
+    """Container image reference (Azure Container Registry path) for this version. Required."""
+    created_at_utc: datetime.datetime = rest_field(
+        name="createdAtUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp this version was created, in UTC. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment_id: str,
+        project_id: str,
+        version: str,
+        acr_image_path: str,
+        created_at_utc: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RLSandbox(_Model):
+    """A sandbox leased from a hosted RLE environment.
+
+    :ivar sandbox_id: RLSandbox identifier, assigned by the service. Required.
+    :vartype sandbox_id: str
+    :ivar project_id: Foundry project identifier that owns the sandbox. Required.
+    :vartype project_id: str
+    :ivar environment_id: Identifier of the parent RLE environment from which the sandbox was
+     leased. Required.
+    :vartype environment_id: str
+    :ivar version: Environment image version the sandbox is running. Required.
+    :vartype version: str
+    :ivar disk_image_id: Identifier of the disk image backing the sandbox. Required.
+    :vartype disk_image_id: str
+    :ivar adc_sandbox_id: Underlying ADC sandbox identifier, when one has been provisioned.
+    :vartype adc_sandbox_id: str
+    :ivar url: Base URL for the sandbox runtime API. Present once the sandbox is ``Running``.
+    :vartype url: str
+    :ivar status: RLSandbox lifecycle status. The SDK treats ``Running`` as ready and ``Failed`` as
+     failed; ``Stopped`` is a non-terminal pause and ``Released`` is terminal. Required. Known
+     values are: "Creating", "Running", "Stopped", "Released", and "Failed".
+    :vartype status: str or ~azure.ai.projects.models.RLSandboxStatus
+    :ivar error: Failure detail when the sandbox enters a failed state.
+    :vartype error: str
+    :ivar created_at_utc: Timestamp the sandbox was first leased, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar updated_at_utc: Timestamp the sandbox was last updated, in UTC. Required.
+    :vartype updated_at_utc: ~datetime.datetime
+    """
+
+    sandbox_id: str = rest_field(name="id", visibility=["read"])
+    """RLSandbox identifier, assigned by the service. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read"])
+    """Foundry project identifier that owns the sandbox. Required."""
+    environment_id: str = rest_field(name="environmentId", visibility=["read"])
+    """Identifier of the parent RLE environment from which the sandbox was leased. Required."""
+    version: str = rest_field(visibility=["read"])
+    """Environment image version the sandbox is running. Required."""
+    disk_image_id: str = rest_field(name="diskImageId", visibility=["read"])
+    """Identifier of the disk image backing the sandbox. Required."""
+    adc_sandbox_id: Optional[str] = rest_field(name="adcSandboxId", visibility=["read"])
+    """Underlying ADC sandbox identifier, when one has been provisioned."""
+    url: Optional[str] = rest_field(visibility=["read"])
+    """Base URL for the sandbox runtime API. Present once the sandbox is ``Running``."""
+    status: Union[str, "_models.RLSandboxStatus"] = rest_field(visibility=["read"])
+    """RLSandbox lifecycle status. The SDK treats ``Running`` as ready and ``Failed`` as failed;
+     ``Stopped`` is a non-terminal pause and ``Released`` is terminal. Required. Known values are:
+     \"Creating\", \"Running\", \"Stopped\", \"Released\", and \"Failed\"."""
+    error: Optional[str] = rest_field(visibility=["read"])
+    """Failure detail when the sandbox enters a failed state."""
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the sandbox was first leased, in UTC. Required."""
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
+    """Timestamp the sandbox was last updated, in UTC. Required."""
+
+
+class RLStepResult(_Model):
+    """Outcome returned by RLE ``reset`` and ``step`` in the OpenEnv / Gymnasium wire shape.
+
+    :ivar observation: Environment-specific observation payload.
+    :vartype observation: dict[str, any]
+    :ivar reward: Reward for the transition, when the environment provides one.
+    :vartype reward: float
+    :ivar terminated: True when the episode reached a natural terminal state.
+    :vartype terminated: bool
+    :ivar truncated: True when an external limit ended the episode.
+    :vartype truncated: bool
+    :ivar done: Legacy single terminal flag. New payloads should prefer ``terminated`` and
+     ``truncated``.
+    :vartype done: bool
+    :ivar info: Gymnasium info payload.
+    :vartype info: dict[str, any]
+    :ivar metadata: Legacy metadata payload. The SDK maps it to ``info`` when ``info`` is absent.
+    :vartype metadata: dict[str, any]
+    """
+
+    observation: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Environment-specific observation payload."""
+    reward: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reward for the transition, when the environment provides one."""
+    terminated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """True when the episode reached a natural terminal state."""
+    truncated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """True when an external limit ended the episode."""
+    done: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Legacy single terminal flag. New payloads should prefer ``terminated`` and ``truncated``."""
+    info: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Gymnasium info payload."""
+    metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Legacy metadata payload. The SDK maps it to ``info`` when ``info`` is absent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        observation: Optional[dict[str, Any]] = None,
+        reward: Optional[float] = None,
+        terminated: Optional[bool] = None,
+        truncated: Optional[bool] = None,
+        done: Optional[bool] = None,
+        info: Optional[dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaResponse(_Model):
+    """SchemaResponse."""
+
+
+class UpdateRLEnvironmentRequest(_Model):
+    """Request body for updating a hosted RLE environment. Produces a new version.
+
+    :ivar acr_image_path: New container image reference (Azure Container Registry path) for the
+     environment. Required.
+    :vartype acr_image_path: str
+    """
+
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read", "create", "update", "delete", "query"])
+    """New container image reference (Azure Container Registry path) for the environment. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acr_image_path: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
