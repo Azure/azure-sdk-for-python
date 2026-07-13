@@ -3,6 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+"""Shared sample helpers.
+
+This file is the canonical source for the sample utility helpers.
+
+The following paths are symbolic links to this file:
+- samples/agents/util.py -> ../util.py
+- samples/agents/tools/util.py -> ../../util.py
+- samples/agents/telemetry/util.py -> ../../util.py
+"""
+
 import hashlib
 import os
 import sys
