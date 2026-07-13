@@ -48,7 +48,7 @@ namespace azure.ai.translation.document
         V2026_03_01 = "2026-03-01"
 
 
-    class azure.ai.translation.document.DocumentTranslationClient(GeneratedDocumentTranslationClient): implements ContextManager 
+    class azure.ai.translation.document.DocumentTranslationClient(DocumentTranslationClientOperationsMixin, GeneratedDocumentTranslationClient): implements ContextManager 
 
         def __init__(
                 self, 
@@ -173,7 +173,7 @@ namespace azure.ai.translation.document
             ) -> HttpResponse: ...
 
 
-    class azure.ai.translation.document.DocumentTranslationError(Model):
+    class azure.ai.translation.document.DocumentTranslationError(_Model):
         code: Union[str, TranslationErrorCode]
         inner_error: Optional[InnerTranslationError]
         message: str
@@ -192,23 +192,23 @@ namespace azure.ai.translation.document
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.DocumentTranslationFileFormat(Model):
-        content_types: List[str]
+    class azure.ai.translation.document.DocumentTranslationFileFormat(_Model):
+        content_types: list[str]
         default_format_version: Optional[str]
-        file_extensions: List[str]
+        file_extensions: list[str]
         file_format: str
-        format_versions: Optional[List[str]]
+        format_versions: Optional[list[str]]
         type: Optional[Union[str, FileFormatType]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                content_types: List[str], 
+                content_types: list[str], 
                 default_format_version: Optional[str] = ..., 
-                file_extensions: List[str], 
+                file_extensions: list[str], 
                 file_format: str, 
-                format_versions: Optional[List[str]] = ..., 
+                format_versions: Optional[list[str]] = ..., 
                 type: Optional[Union[str, FileFormatType]] = ...
             ) -> None: ...
 
@@ -253,7 +253,7 @@ namespace azure.ai.translation.document
             ): ...
 
 
-    class azure.ai.translation.document.SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin): implements ContextManager 
+    class azure.ai.translation.document.SingleDocumentTranslationClient(_SingleDocumentTranslationClientOperationsMixin): implements ContextManager 
 
         def __init__(
                 self, 
@@ -291,7 +291,7 @@ namespace azure.ai.translation.document
         @overload
         def translate(
                 self, 
-                body: JSON, 
+                body: DocumentTranslateContent, 
                 *, 
                 allow_fallback: Optional[bool] = ..., 
                 category: Optional[str] = ..., 
@@ -355,7 +355,8 @@ namespace azure.ai.translation.document
 
 
     class azure.ai.translation.document.TranslationTarget(GeneratedTranslationTarget):
-        category_id: Optional[str]
+        property category_id: Optional[str]
+        category_id: str
         deployment_name: Optional[str]
         glossaries: Optional[List[TranslationGlossary]]
         language: str
@@ -393,7 +394,7 @@ namespace azure.ai.translation.document.aio
             ): ...
 
 
-    class azure.ai.translation.document.aio.DocumentTranslationClient(GeneratedDocumentTranslationClient): implements AsyncContextManager 
+    class azure.ai.translation.document.aio.DocumentTranslationClient(DocumentTranslationClientOperationsMixin, GeneratedDocumentTranslationClient): implements AsyncContextManager 
 
         def __init__(
                 self, 
@@ -518,7 +519,7 @@ namespace azure.ai.translation.document.aio
             ) -> Awaitable[AsyncHttpResponse]: ...
 
 
-    class azure.ai.translation.document.aio.SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin): implements AsyncContextManager 
+    class azure.ai.translation.document.aio.SingleDocumentTranslationClient(_SingleDocumentTranslationClientOperationsMixin): implements AsyncContextManager 
 
         def __init__(
                 self, 
@@ -556,7 +557,7 @@ namespace azure.ai.translation.document.aio
         @overload
         async def translate(
                 self, 
-                body: JSON, 
+                body: DocumentTranslateContent, 
                 *, 
                 allow_fallback: Optional[bool] = ..., 
                 category: Optional[str] = ..., 
@@ -570,7 +571,7 @@ namespace azure.ai.translation.document.aio
 
 namespace azure.ai.translation.document.models
 
-    class azure.ai.translation.document.models.BatchOptions(Model):
+    class azure.ai.translation.document.models.BatchOptions(_Model):
         translate_text_within_image: Optional[bool]
 
         @overload
@@ -584,10 +585,10 @@ namespace azure.ai.translation.document.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.models.DocumentBatch(Model):
+    class azure.ai.translation.document.models.DocumentBatch(_Model):
         source: SourceInput
         storage_type: Optional[Union[str, StorageInputType]]
-        targets: List[TranslationTarget]
+        targets: list[TranslationTarget]
 
         @overload
         def __init__(
@@ -595,14 +596,14 @@ namespace azure.ai.translation.document.models
                 *, 
                 source: SourceInput, 
                 storage_type: Optional[Union[str, StorageInputType]] = ..., 
-                targets: List[TranslationTarget]
+                targets: list[TranslationTarget]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.models.DocumentFilter(Model):
+    class azure.ai.translation.document.models.DocumentFilter(_Model):
         prefix: Optional[str]
         suffix: Optional[str]
 
@@ -660,23 +661,23 @@ namespace azure.ai.translation.document.models
         def __init__(self, mapping: Mapping[str, Any]): ...
 
 
-    class azure.ai.translation.document.models.DocumentTranslateContent(Model):
-        document: Union[str, bytes, IO[str], IO[bytes], Tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], Tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
-        glossary: Optional[List[Union[str, bytes, IO[str], IO[bytes], Tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], Tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]]
+    class azure.ai.translation.document.models.DocumentTranslateContent(_Model):
+        document: Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
+        glossary: Optional[list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 document: FileType, 
-                glossary: Optional[List[FileType]] = ...
+                glossary: Optional[list[FileType]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.models.DocumentTranslationError(Model):
+    class azure.ai.translation.document.models.DocumentTranslationError(_Model):
         code: Union[str, TranslationErrorCode]
         inner_error: Optional[InnerTranslationError]
         message: str
@@ -695,23 +696,23 @@ namespace azure.ai.translation.document.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.models.DocumentTranslationFileFormat(Model):
-        content_types: List[str]
+    class azure.ai.translation.document.models.DocumentTranslationFileFormat(_Model):
+        content_types: list[str]
         default_format_version: Optional[str]
-        file_extensions: List[str]
+        file_extensions: list[str]
         file_format: str
-        format_versions: Optional[List[str]]
+        format_versions: Optional[list[str]]
         type: Optional[Union[str, FileFormatType]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                content_types: List[str], 
+                content_types: list[str], 
                 default_format_version: Optional[str] = ..., 
-                file_extensions: List[str], 
+                file_extensions: list[str], 
                 file_format: str, 
-                format_versions: Optional[List[str]] = ..., 
+                format_versions: Optional[list[str]] = ..., 
                 type: Optional[Union[str, FileFormatType]] = ...
             ) -> None: ...
 
@@ -744,11 +745,11 @@ namespace azure.ai.translation.document.models
 
 
     class azure.ai.translation.document.models.FileFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DOCUMENT = "document"
-        GLOSSARY = "glossary"
+        DOCUMENT = "Document"
+        GLOSSARY = "Glossary"
 
 
-    class azure.ai.translation.document.models.InnerTranslationError(Model):
+    class azure.ai.translation.document.models.InnerTranslationError(_Model):
         code: str
         inner_error: Optional[InnerTranslationError]
         message: str
@@ -767,7 +768,7 @@ namespace azure.ai.translation.document.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.models.SourceInput(Model):
+    class azure.ai.translation.document.models.SourceInput(_Model):
         filter: Optional[DocumentFilter]
         language: Optional[str]
         source_url: str
@@ -787,15 +788,15 @@ namespace azure.ai.translation.document.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.translation.document.models.StartTranslationDetails(Model):
-        inputs: List[DocumentBatch]
+    class azure.ai.translation.document.models.StartTranslationDetails(_Model):
+        inputs: list[DocumentBatch]
         options: Optional[BatchOptions]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                inputs: List[DocumentBatch], 
+                inputs: list[DocumentBatch], 
                 options: Optional[BatchOptions] = ...
             ) -> None: ...
 
@@ -874,7 +875,7 @@ namespace azure.ai.translation.document.models
         def __init__(self, mapping: Mapping[str, Any]): ...
 
 
-    class azure.ai.translation.document.models.TranslationStatusSummary(Model):
+    class azure.ai.translation.document.models.TranslationStatusSummary(_Model):
         canceled: int
         failed: int
         in_progress: int
@@ -911,7 +912,8 @@ namespace azure.ai.translation.document.models
 
 
     class azure.ai.translation.document.models.TranslationTarget(GeneratedTranslationTarget):
-        category_id: Optional[str]
+        property category_id: Optional[str]
+        category_id: str
         deployment_name: Optional[str]
         glossaries: Optional[List[TranslationGlossary]]
         language: str
@@ -932,6 +934,191 @@ namespace azure.ai.translation.document.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]): ...
+
+
+namespace azure.ai.translation.document.types
+
+    class azure.ai.translation.document.types.BatchOptions(TypedDict, total=False):
+        key "translateTextWithinImage": bool
+        translate_text_within_image: bool
+
+
+    class azure.ai.translation.document.types.DocumentBatch(TypedDict, total=False):
+        key "source": Required[SourceInput]
+        key "storageType": Union[str, StorageInputType]
+        key "targets": Required[list[TranslationTarget]]
+        source: SourceInput
+        storage_type: Union[str, StorageInputType]
+        targets: list[TranslationTarget]
+
+
+    class azure.ai.translation.document.types.DocumentFilter(TypedDict, total=False):
+        key "prefix": str
+        key "suffix": str
+        prefix: str
+        suffix: str
+
+
+    class azure.ai.translation.document.types.DocumentStatus(TypedDict, total=False):
+        key "characterCharged": int
+        key "createdDateTimeUtc": Required[str]
+        key "deploymentName": str
+        key "error": ForwardRef('DocumentTranslationError', module='types')
+        key "id": Required[str]
+        key "imageCharacterDetected": int
+        key "imageCharged": int
+        key "lastActionDateTimeUtc": Required[str]
+        key "path": str
+        key "progress": Required[float]
+        key "sourcePath": Required[str]
+        key "status": Required[Union[str, Status]]
+        key "to": Required[str]
+        key "totalImageScansFailed": int
+        key "totalImageScansSucceeded": int
+        characters_charged: int
+        created_on: str
+        deployment_name: str
+        error: DocumentTranslationError
+        id: str
+        image_characters_detected: int
+        images_charged: int
+        last_updated_on: str
+        source_document_url: str
+        status: Union[str, Status]
+        total_image_scans_failed: int
+        total_image_scans_succeeded: int
+        translated_document_url: str
+        translated_to: str
+        translation_progress: float
+
+
+    class azure.ai.translation.document.types.DocumentTranslateContent(TypedDict, total=False):
+        key "document": Required[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
+        document: FileType
+        glossary: list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
+
+
+    class azure.ai.translation.document.types.DocumentTranslationError(TypedDict, total=False):
+        key "code": Required[Union[str, TranslationErrorCode]]
+        key "innerError": ForwardRef('InnerTranslationError', module='types')
+        key "message": Required[str]
+        key "target": str
+        code: Union[str, TranslationErrorCode]
+        inner_error: InnerTranslationError
+        message: str
+        target: str
+
+
+    class azure.ai.translation.document.types.DocumentTranslationFileFormat(TypedDict, total=False):
+        key "contentTypes": Required[list[str]]
+        key "defaultVersion": str
+        key "fileExtensions": Required[list[str]]
+        key "format": Required[str]
+        key "type": Union[str, FileFormatType]
+        content_types: list[str]
+        default_format_version: str
+        file_extensions: list[str]
+        file_format: str
+        format_versions: list[str]
+        type: Union[str, FileFormatType]
+        versions: list[str]
+
+
+    class azure.ai.translation.document.types.InnerTranslationError(TypedDict, total=False):
+        key "code": Required[str]
+        key "innerError": ForwardRef('InnerTranslationError', module='types')
+        key "message": Required[str]
+        key "target": str
+        code: str
+        inner_error: InnerTranslationError
+        message: str
+        target: str
+
+
+    class azure.ai.translation.document.types.SourceInput(TypedDict, total=False):
+        key "filter": ForwardRef('DocumentFilter', module='types')
+        key "language": str
+        key "sourceUrl": Required[str]
+        key "storageSource": Union[str, TranslationStorageSource]
+        filter: DocumentFilter
+        language: str
+        source_url: str
+        storage_source: Union[str, TranslationStorageSource]
+
+
+    class azure.ai.translation.document.types.StartTranslationDetails(TypedDict, total=False):
+        key "inputs": Required[list[DocumentBatch]]
+        key "options": ForwardRef('BatchOptions', module='types')
+        inputs: list[DocumentBatch]
+        options: BatchOptions
+
+
+    class azure.ai.translation.document.types.SupportedFileFormats(TypedDict, total=False):
+        key "value": Required[list[DocumentTranslationFileFormat]]
+        value: list[DocumentTranslationFileFormat]
+
+
+    class azure.ai.translation.document.types.TranslationGlossary(TypedDict, total=False):
+        key "format": Required[str]
+        key "glossaryUrl": Required[str]
+        key "storageSource": Union[str, TranslationStorageSource]
+        key "version": str
+        file_format: str
+        format_version: str
+        glossary_url: str
+        storage_source: Union[str, TranslationStorageSource]
+
+
+    class azure.ai.translation.document.types.TranslationStatus(TypedDict, total=False):
+        key "createdDateTimeUtc": Required[str]
+        key "error": ForwardRef('DocumentTranslationError', module='types')
+        key "id": Required[str]
+        key "lastActionDateTimeUtc": Required[str]
+        key "status": Required[Union[str, Status]]
+        key "summary": Required[TranslationStatusSummary]
+        created_on: str
+        error: DocumentTranslationError
+        id: str
+        last_updated_on: str
+        status: Union[str, Status]
+        summary: TranslationStatusSummary
+
+
+    class azure.ai.translation.document.types.TranslationStatusSummary(TypedDict, total=False):
+        key "cancelled": Required[int]
+        key "failed": Required[int]
+        key "inProgress": Required[int]
+        key "notYetStarted": Required[int]
+        key "success": Required[int]
+        key "total": Required[int]
+        key "totalCharacterCharged": Required[int]
+        key "totalImageCharged": int
+        key "totalImageScansFailed": int
+        key "totalImageScansSucceeded": int
+        canceled: int
+        failed: int
+        in_progress: int
+        not_yet_started: int
+        success: int
+        total: int
+        total_characters_charged: int
+        total_image_scans_failed: int
+        total_image_scans_succeeded: int
+        total_images_charged: int
+
+
+    class azure.ai.translation.document.types.TranslationTarget(TypedDict, total=False):
+        key "category": str
+        key "deploymentName": str
+        key "language": Required[str]
+        key "storageSource": Union[str, TranslationStorageSource]
+        key "targetUrl": Required[str]
+        category: str
+        deployment_name: str
+        glossaries: list[TranslationGlossary]
+        language: str
+        storage_source: Union[str, TranslationStorageSource]
+        target_url: str
 
 
 ```

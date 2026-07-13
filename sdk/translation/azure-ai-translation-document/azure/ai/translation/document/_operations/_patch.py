@@ -93,7 +93,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :rtype: str
         """
         # pylint: disable=protected-access
-        if self._polling_method._current_body:
+        if self._polling_method._current_body and self._polling_method._current_body.id:
             return self._polling_method._current_body.id
         return self._polling_method._get_id_from_headers()
 

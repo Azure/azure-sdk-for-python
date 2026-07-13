@@ -73,7 +73,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :return: The str ID for the translation operation.
         :rtype: str
         """
-        if self._polling_method._current_body:
+        if self._polling_method._current_body and self._polling_method._current_body.id:
             return self._polling_method._current_body.id
         return self._polling_method._get_id_from_headers()
 
