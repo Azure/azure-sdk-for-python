@@ -10,7 +10,7 @@ from unittest.mock import patch
 import pytest
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobProperties, BlobType
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 
@@ -20,6 +20,9 @@ from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_DATA = b"abc123"
+# A fixed blob layout used by the prefix / start_from / end_before listing tests,
+# matching the set used by the equivalent .NET Arrow tests.
+LISTING_BLOB_NAMES = ["foo", "bar", "baz", "foo/foo", "foo/bar", "baz/foo", "baz/foo/bar", "baz/bar/foo"]
 # ------------------------------------------------------------------------------
 
 
@@ -271,6 +274,168 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
 
         self.verify_blobs(blobs_list, [blob_name])
         assert blobs_list[0].name == blob_name
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        await blob_client.upload_blob(TEST_DATA, overwrite=True)
+        snapshot = await blob_client.create_snapshot()
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["snapshots"])]
+
+        assert len(blobs_list) == 2
+        # The snapshot must be deserialized from Arrow onto exactly one of the listed entries.
+        assert any(blob.snapshot == snapshot["snapshot"] for blob in blobs_list)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_versions(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        create_resp = await blob_client.upload_blob(TEST_DATA, overwrite=True)
+        await blob_client.set_blob_metadata({"key": "value"})
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["versions"])]
+
+        assert len(blobs_list) == 2
+        assert all(blob.version_id for blob in blobs_list)
+        # The original version is not current; exactly one entry is the current version.
+        assert any(blob.is_current_version for blob in blobs_list)
+        assert any(blob.version_id == create_resp["version_id"] for blob in blobs_list)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_uncommitted(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        await blob_client.stage_block("MDAwMDA=", TEST_DATA)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [
+            blob async for blob in container.list_blobs(response_format="arrow", include=["uncommittedblobs"])
+        ]
+
+        assert len(blobs_list) == 1
+        assert blobs_list[0].name == "blob1"
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_empty_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(["blob1"])
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["metadata"])]
+
+        assert len(blobs_list) == 1
+        # A blob with no metadata must deserialize to an empty dict, not None.
+        assert blobs_list[0].metadata == {}
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_prefix(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(LISTING_BLOB_NAMES)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(name_starts_with="foo", response_format="arrow")]
+
+        assert len(blobs_list) == 3
+        assert all(blob.name.startswith("foo") for blob in blobs_list)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_start_from(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(LISTING_BLOB_NAMES)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", start_from="foo")]
+
+        assert len(blobs_list) == 3
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_end_before(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(LISTING_BLOB_NAMES)
+
+        container = self.bsc.get_container_client(self.container_name)
+        # end_before is an Arrow-only listing bound.
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", end_before="foo")]
+
+        assert len(blobs_list) == 5
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_start_from_end_before(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(LISTING_BLOB_NAMES)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [
+            blob async for blob in container.list_blobs(response_format="arrow", start_from="foo", end_before="foo/foo")
+        ]
+
+        assert len(blobs_list) == 2
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_preserves_whitespace(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_names = ["  prefix", "suffix  ", "  "]
+        await self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+
+        found = {blob.name for blob in blobs_list}
+        for blob_name in blob_names:
+            assert blob_name in found
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_error(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name + "missing")
+
+        with pytest.raises(ResourceNotFoundError) as exc:
+            [blob async for blob in container.list_blobs(response_format="arrow")]
+        assert exc.value.error_code == "ContainerNotFound"
 
     @BlobPreparer()
     @recorded_by_proxy_async
