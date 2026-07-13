@@ -31,7 +31,3 @@ More sample code should go here, along with links out to the appropriate example
 # Contributing
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
-
-# Test
-
-Test content
