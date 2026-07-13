@@ -18,6 +18,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from ._operations._patch import AsyncDocumentTranslationLROPoller, AsyncDocumentTranslationLROPollingMethod
 from .._operations._patch import TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
+from ._operations._patch import DocumentTranslationClientOperationsMixin
 from ..models import (
     DocumentStatus,
     TranslationStatus,
@@ -40,7 +41,7 @@ JSON = MutableMapping[str, Any]
 POLLING_INTERVAL = 1
 
 
-class DocumentTranslationClient(GeneratedDocumentTranslationClient):
+class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, GeneratedDocumentTranslationClient):
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -118,7 +119,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """Close the :class:`~azure.ai.translation.document.aio.DocumentTranslationClient` session."""
         await self._client.__aexit__()
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_translation(
         self,
         source_url: str,
@@ -175,7 +176,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: StartTranslationDetails, **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -196,7 +197,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: JSON, **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -254,7 +255,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: IO[bytes], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -275,7 +276,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container

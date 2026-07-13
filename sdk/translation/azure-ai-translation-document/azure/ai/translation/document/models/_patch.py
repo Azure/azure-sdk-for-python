@@ -162,8 +162,6 @@ class TranslationTarget(GeneratedTranslationTarget):
 
     target_url: str
     """Location of the folder / container with your documents. Required."""
-    category_id: Optional[str]
-    """Category / custom system for translation request."""
     deployment_name: Optional[str]
     """Deployment name of the custom translation model for the translation request."""
     language: str
@@ -197,8 +195,23 @@ class TranslationTarget(GeneratedTranslationTarget):
         if not target and len(args) == 2:
             kwargs["target_url"] = args[0]
             kwargs["language"] = args[1]
+            args = ()
+        if "category_id" in kwargs:
+            kwargs["category"] = kwargs.pop("category_id")
 
         super().__init__(*args, **kwargs)
+
+    @property
+    def category_id(self) -> Optional[str]:
+        """Category / custom system for translation request.
+
+        :rtype: str or None
+        """
+        return self.category
+
+    @category_id.setter
+    def category_id(self, value: Optional[str]) -> None:
+        self.category = value
 
 
 class TranslationGlossary(GeneratedTranslationGlossary):
@@ -257,6 +270,7 @@ class TranslationGlossary(GeneratedTranslationGlossary):
         if not glossary and len(args) == 2:
             kwargs["glossary_url"] = args[0]
             kwargs["file_format"] = args[1]
+            args = ()
 
         super().__init__(*args, **kwargs)
 

@@ -292,8 +292,13 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self.__begin_translation_initial(  # type: ignore[func-returns-value]
-                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            raw_result = self._begin_translation_initial(  # type: ignore[func-returns-value]
+                body=body,  # type: ignore[arg-type]
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
             )
         kwargs.pop("error_map", None)
 
@@ -340,7 +345,7 @@ class SingleDocumentTranslationClientOperationsMixin(
     GeneratedSingleDocumentTranslationClientOperationsMixin
 ):  # pylint: disable=name-too-long
 
-    @overload
+    @overload  # type: ignore[override]
     def translate(
         self,
         body: _models.DocumentTranslateContent,

@@ -18,6 +18,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 
 from ._operations._patch import DocumentTranslationLROPoller, DocumentTranslationLROPollingMethod, TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
+from ._operations._patch import DocumentTranslationClientOperationsMixin
 from .models import (
     DocumentBatch,
     SourceInput,
@@ -184,7 +185,7 @@ def get_http_logging_policy(**kwargs):
     return http_logging_policy
 
 
-class DocumentTranslationClient(GeneratedDocumentTranslationClient):
+class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, GeneratedDocumentTranslationClient):
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
@@ -243,7 +244,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
         return self._client.close()
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_translation(
         self,
         source_url: str,
@@ -300,7 +301,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    def begin_translation(
+    def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: StartTranslationDetails, **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -321,7 +322,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    def begin_translation(self, inputs: JSON, **kwargs: Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
+    def begin_translation(  # pylint: disable=arguments-renamed
+        self, inputs: JSON, **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language.
 
@@ -377,7 +380,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    def begin_translation(
+    def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: IO[bytes], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -398,7 +401,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    def begin_translation(
+    def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
