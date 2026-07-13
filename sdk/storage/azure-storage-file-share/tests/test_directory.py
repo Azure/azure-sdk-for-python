@@ -13,7 +13,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import (
     generate_share_sas,
     NTFSAttributes,
@@ -915,40 +915,6 @@ class TestStorageDirectory(StorageRecordedTestCase):
         try:
             share_client.delete_share()
         except:
-            pass
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_list_subdirectories_and_files_include_all(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        share_client = self.fsc.get_share_client(self.share_name)
-        directory = share_client.create_directory("dir1")
-        directory.create_subdirectory("subdir1")
-        directory.upload_file("file1", "data1")
-
-        # Act: "All" is supported on SMB shares and includes the SMB datasets
-        list_dir = list(directory.list_directories_and_files(include=["All"]))
-
-        # Assert: SMB properties are populated, NFS-only properties are not
-        assert len(list_dir) == 2
-        for props in list_dir:
-            assert props.etag is not None
-            assert props.file_attributes is not None
-            assert props.permission_key is not None
-            assert props.creation_time is not None
-            assert props.last_write_time is not None
-            assert props.change_time is not None
-            assert props.file_id is not None
-            assert props.owner is None
-            assert props.group is None
-            assert props.file_mode is None
-
-        try:
-            share_client.delete_share()
-        except HttpResponseError:
             pass
 
     @FileSharePreparer()

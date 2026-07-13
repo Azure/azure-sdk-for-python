@@ -201,34 +201,13 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        segment = self._response.segment
         self.current_page = [
             DirectoryProperties._from_generated(i)  # pylint: disable = protected-access
-            for i in segment.directory_items
+            for i in self._response.segment.directory_items
         ]
         self.current_page.extend(
-            FileProperties._from_generated(i, file_type="Regular")  # pylint: disable = protected-access
-            for i in segment.file_items
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="SymLink")  # pylint: disable = protected-access
-            for i in segment.sym_link_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="BlockDevice")  # pylint: disable = protected-access
-            for i in segment.block_device_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="CharacterDevice")  # pylint: disable = protected-access
-            for i in segment.char_device_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="Fifo")  # pylint: disable = protected-access
-            for i in segment.fifo_items or []
-        )
-        self.current_page.extend(
-            FileProperties._from_generated(i, file_type="Socket")  # pylint: disable = protected-access
-            for i in segment.socket_items or []
+            FileProperties._from_generated(i)  # pylint: disable = protected-access
+            for i in self._response.segment.file_items
         )
         return self._response.next_marker or None, self.current_page
 

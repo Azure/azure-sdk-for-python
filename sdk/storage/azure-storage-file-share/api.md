@@ -290,7 +290,6 @@ namespace azure.storage.fileshare
         last_access_time: Optional[datetime]
         last_modified: datetime
         last_write_time: Optional[Union[datetime, str]]
-        link_count: Optional[int]
         metadata: Dict[str, str]
         name: str
         nfs_file_type: Optional[Literal["Directory"]]
@@ -387,8 +386,6 @@ namespace azure.storage.fileshare
         content_settings: ContentSettings
         copy: CopyProperties
         creation_time: Optional[Union[datetime, str]]
-        device_major: Optional[int]
-        device_minor: Optional[int]
         etag: str
         file_attributes: Union[str, NTFSAttributes]
         file_id: str
@@ -401,10 +398,9 @@ namespace azure.storage.fileshare
         last_write_time: Optional[Union[datetime, str]]
         lease: LeaseProperties
         link_count: Optional[int]
-        link_text: Optional[str]
         metadata: Dict[str, str]
         name: str
-        nfs_file_type: Optional[Literal["Regular", "SymLink", "BlockDevice", "CharacterDevice", "Socket", "Fifo"]]
+        nfs_file_type: Optional[Literal["Regular"]]
         owner: Optional[str]
         parent_id: Optional[str]
         path: Optional[str]
@@ -423,62 +419,6 @@ namespace azure.storage.fileshare
         def __getitem__(self, key): ...
 
         def __init__(self, **kwargs: Any) -> None: ...
-
-        def __len__(self): ...
-
-        def __ne__(self, other): ...
-
-        def __repr__(self): ...
-
-        def __setitem__(
-                self, 
-                key, 
-                item
-            ): ...
-
-        def __str__(self): ...
-
-        def get(
-                self, 
-                key, 
-                default = None
-            ): ...
-
-        def has_key(self, k): ...
-
-        def items(self): ...
-
-        def keys(self): ...
-
-        def update(
-                self, 
-                *args, 
-                **kwargs
-            ): ...
-
-        def values(self): ...
-
-
-    class azure.storage.fileshare.FileRange(DictMixin):
-        cleared: bool
-        end: int
-        start: int
-
-        def __contains__(self, key): ...
-
-        def __delitem__(self, key): ...
-
-        def __eq__(self, other): ...
-
-        def __getitem__(self, key): ...
-
-        def __init__(
-                self, 
-                start: int, 
-                end: int, 
-                *, 
-                cleared: bool = False
-            ) -> None: ...
 
         def __len__(self): ...
 
@@ -1569,32 +1509,6 @@ namespace azure.storage.fileshare
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Handle]: ...
-
-        @distributed_trace
-        def list_ranges(
-                self, 
-                *, 
-                lease: Union[ShareLeaseClient, str] = ..., 
-                length: Optional[int] = ..., 
-                offset: Optional[int] = ..., 
-                results_per_page: Optional[int] = ..., 
-                timeout: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[FileRange]: ...
-
-        @distributed_trace
-        def list_ranges_diff(
-                self, 
-                previous_sharesnapshot: Union[str, Dict[str, Any]], 
-                *, 
-                include_renames: Optional[bool] = ..., 
-                lease: Union[ShareLeaseClient, str] = ..., 
-                length: Optional[int] = ..., 
-                offset: Optional[int] = ..., 
-                results_per_page: Optional[int] = ..., 
-                timeout: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[FileRange]: ...
 
         @distributed_trace
         def rename_file(
@@ -3152,32 +3066,6 @@ namespace azure.storage.fileshare.aio
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Handle]: ...
-
-        @distributed_trace
-        def list_ranges(
-                self, 
-                *, 
-                lease: Union[ShareLeaseClient, str] = ..., 
-                length: Optional[int] = ..., 
-                offset: Optional[int] = ..., 
-                results_per_page: Optional[int] = ..., 
-                timeout: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[FileRange]: ...
-
-        @distributed_trace
-        def list_ranges_diff(
-                self, 
-                previous_sharesnapshot: Union[str, Dict[str, Any]], 
-                *, 
-                include_renames: Optional[bool] = ..., 
-                lease: Union[ShareLeaseClient, str] = ..., 
-                length: Optional[int] = ..., 
-                offset: Optional[int] = ..., 
-                results_per_page: Optional[int] = ..., 
-                timeout: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[FileRange]: ...
 
         @distributed_trace_async
         async def rename_file(

@@ -55,142 +55,6 @@ class AccessPolicy(_serialization.Model):
         self.permission = permission
 
 
-class BlockDeviceItem(_serialization.Model):
-    """A listed block device item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: ~azure.storage.fileshare.models.StringEncoded
-    :ivar file_id:
-    :vartype file_id: str
-    :ivar properties: File properties. Required.
-    :vartype properties: ~azure.storage.fileshare.models.FileProperty
-    :ivar link_count:
-    :vartype link_count: int
-    :ivar device_major:
-    :vartype device_major: int
-    :ivar device_minor:
-    :vartype device_minor: int
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "Name", "type": "StringEncoded"},
-        "file_id": {"key": "FileId", "type": "str"},
-        "properties": {"key": "Properties", "type": "FileProperty"},
-        "link_count": {"key": "LinkCount", "type": "int"},
-        "device_major": {"key": "DeviceMajor", "type": "int"},
-        "device_minor": {"key": "DeviceMinor", "type": "int"},
-    }
-    _xml_map = {"name": "BlockDevice"}
-
-    def __init__(
-        self,
-        *,
-        name: "_models.StringEncoded",
-        properties: "_models.FileProperty",
-        file_id: Optional[str] = None,
-        link_count: Optional[int] = None,
-        device_major: Optional[int] = None,
-        device_minor: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
-        :keyword file_id:
-        :paramtype file_id: str
-        :keyword properties: File properties. Required.
-        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
-        :keyword link_count:
-        :paramtype link_count: int
-        :keyword device_major:
-        :paramtype device_major: int
-        :keyword device_minor:
-        :paramtype device_minor: int
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.file_id = file_id
-        self.properties = properties
-        self.link_count = link_count
-        self.device_major = device_major
-        self.device_minor = device_minor
-
-
-class CharDeviceItem(_serialization.Model):
-    """A listed character device item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: ~azure.storage.fileshare.models.StringEncoded
-    :ivar file_id:
-    :vartype file_id: str
-    :ivar properties: File properties. Required.
-    :vartype properties: ~azure.storage.fileshare.models.FileProperty
-    :ivar link_count:
-    :vartype link_count: int
-    :ivar device_major:
-    :vartype device_major: int
-    :ivar device_minor:
-    :vartype device_minor: int
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "Name", "type": "StringEncoded"},
-        "file_id": {"key": "FileId", "type": "str"},
-        "properties": {"key": "Properties", "type": "FileProperty"},
-        "link_count": {"key": "LinkCount", "type": "int"},
-        "device_major": {"key": "DeviceMajor", "type": "int"},
-        "device_minor": {"key": "DeviceMinor", "type": "int"},
-    }
-    _xml_map = {"name": "CharDevice"}
-
-    def __init__(
-        self,
-        *,
-        name: "_models.StringEncoded",
-        properties: "_models.FileProperty",
-        file_id: Optional[str] = None,
-        link_count: Optional[int] = None,
-        device_major: Optional[int] = None,
-        device_minor: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
-        :keyword file_id:
-        :paramtype file_id: str
-        :keyword properties: File properties. Required.
-        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
-        :keyword link_count:
-        :paramtype link_count: int
-        :keyword device_major:
-        :paramtype device_major: int
-        :keyword device_minor:
-        :paramtype device_minor: int
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.file_id = file_id
-        self.properties = properties
-        self.link_count = link_count
-        self.device_major = device_major
-        self.device_minor = device_minor
-
-
 class ClearRange(_serialization.Model):
     """ClearRange.
 
@@ -445,8 +309,6 @@ class DirectoryItem(_serialization.Model):
     :vartype attributes: str
     :ivar permission_key:
     :vartype permission_key: str
-    :ivar link_count:
-    :vartype link_count: int
     """
 
     _validation = {
@@ -459,7 +321,6 @@ class DirectoryItem(_serialization.Model):
         "properties": {"key": "Properties", "type": "FileProperty"},
         "attributes": {"key": "Attributes", "type": "str"},
         "permission_key": {"key": "PermissionKey", "type": "str"},
-        "link_count": {"key": "LinkCount", "type": "int"},
     }
     _xml_map = {"name": "Directory"}
 
@@ -471,7 +332,6 @@ class DirectoryItem(_serialization.Model):
         properties: Optional["_models.FileProperty"] = None,
         attributes: Optional[str] = None,
         permission_key: Optional[str] = None,
-        link_count: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -485,8 +345,6 @@ class DirectoryItem(_serialization.Model):
         :paramtype attributes: str
         :keyword permission_key:
         :paramtype permission_key: str
-        :keyword link_count:
-        :paramtype link_count: int
         """
         super().__init__(**kwargs)
         self.name = name
@@ -494,61 +352,6 @@ class DirectoryItem(_serialization.Model):
         self.properties = properties
         self.attributes = attributes
         self.permission_key = permission_key
-        self.link_count = link_count
-
-
-class FifoItem(_serialization.Model):
-    """A listed FIFO item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: ~azure.storage.fileshare.models.StringEncoded
-    :ivar file_id:
-    :vartype file_id: str
-    :ivar properties: File properties. Required.
-    :vartype properties: ~azure.storage.fileshare.models.FileProperty
-    :ivar link_count:
-    :vartype link_count: int
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "Name", "type": "StringEncoded"},
-        "file_id": {"key": "FileId", "type": "str"},
-        "properties": {"key": "Properties", "type": "FileProperty"},
-        "link_count": {"key": "LinkCount", "type": "int"},
-    }
-    _xml_map = {"name": "Fifo"}
-
-    def __init__(
-        self,
-        *,
-        name: "_models.StringEncoded",
-        properties: "_models.FileProperty",
-        file_id: Optional[str] = None,
-        link_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
-        :keyword file_id:
-        :paramtype file_id: str
-        :keyword properties: File properties. Required.
-        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
-        :keyword link_count:
-        :paramtype link_count: int
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.file_id = file_id
-        self.properties = properties
-        self.link_count = link_count
 
 
 class FileHTTPHeaders(_serialization.Model):
@@ -631,11 +434,6 @@ class FileItem(_serialization.Model):
     :vartype attributes: str
     :ivar permission_key:
     :vartype permission_key: str
-    :ivar link_count:
-    :vartype link_count: int
-    :ivar file_type: Type of the file. Known values are: "Regular", "Directory", "SymLink",
-     "BlockDevice", "CharacterDevice", "Socket", and "Fifo".
-    :vartype file_type: str or ~azure.storage.fileshare.models.NfsFileType
     """
 
     _validation = {
@@ -649,8 +447,6 @@ class FileItem(_serialization.Model):
         "properties": {"key": "Properties", "type": "FileProperty"},
         "attributes": {"key": "Attributes", "type": "str"},
         "permission_key": {"key": "PermissionKey", "type": "str"},
-        "link_count": {"key": "LinkCount", "type": "int"},
-        "file_type": {"key": "FileType", "type": "str"},
     }
     _xml_map = {"name": "File"}
 
@@ -662,8 +458,6 @@ class FileItem(_serialization.Model):
         file_id: Optional[str] = None,
         attributes: Optional[str] = None,
         permission_key: Optional[str] = None,
-        link_count: Optional[int] = None,
-        file_type: Optional[Union[str, "_models.NfsFileType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -677,11 +471,6 @@ class FileItem(_serialization.Model):
         :paramtype attributes: str
         :keyword permission_key:
         :paramtype permission_key: str
-        :keyword link_count:
-        :paramtype link_count: int
-        :keyword file_type: Type of the file. Known values are: "Regular", "Directory", "SymLink",
-         "BlockDevice", "CharacterDevice", "Socket", and "Fifo".
-        :paramtype file_type: str or ~azure.storage.fileshare.models.NfsFileType
         """
         super().__init__(**kwargs)
         self.name = name
@@ -689,8 +478,6 @@ class FileItem(_serialization.Model):
         self.properties = properties
         self.attributes = attributes
         self.permission_key = permission_key
-        self.link_count = link_count
-        self.file_type = file_type
 
 
 class FileProperty(_serialization.Model):
@@ -715,12 +502,6 @@ class FileProperty(_serialization.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar etag:
     :vartype etag: str
-    :ivar uid:
-    :vartype uid: str
-    :ivar gid:
-    :vartype gid: str
-    :ivar mode:
-    :vartype mode: str
     """
 
     _validation = {
@@ -735,9 +516,6 @@ class FileProperty(_serialization.Model):
         "change_time": {"key": "ChangeTime", "type": "iso-8601"},
         "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
         "etag": {"key": "Etag", "type": "str"},
-        "uid": {"key": "Uid", "type": "str"},
-        "gid": {"key": "Gid", "type": "str"},
-        "mode": {"key": "Mode", "type": "str"},
     }
 
     def __init__(
@@ -750,9 +528,6 @@ class FileProperty(_serialization.Model):
         change_time: Optional[datetime.datetime] = None,
         last_modified: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
-        uid: Optional[str] = None,
-        gid: Optional[str] = None,
-        mode: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -773,12 +548,6 @@ class FileProperty(_serialization.Model):
         :paramtype last_modified: ~datetime.datetime
         :keyword etag:
         :paramtype etag: str
-        :keyword uid:
-        :paramtype uid: str
-        :keyword gid:
-        :paramtype gid: str
-        :keyword mode:
-        :paramtype mode: str
         """
         super().__init__(**kwargs)
         self.content_length = content_length
@@ -788,9 +557,6 @@ class FileProperty(_serialization.Model):
         self.change_time = change_time
         self.last_modified = last_modified
         self.etag = etag
-        self.uid = uid
-        self.gid = gid
-        self.mode = mode
 
 
 class FileRange(_serialization.Model):
@@ -836,16 +602,6 @@ class FilesAndDirectoriesListSegment(_serialization.Model):
     :vartype directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
     :ivar file_items: Required.
     :vartype file_items: list[~azure.storage.fileshare.models.FileItem]
-    :ivar sym_link_items:
-    :vartype sym_link_items: list[~azure.storage.fileshare.models.SymLinkItem]
-    :ivar block_device_items:
-    :vartype block_device_items: list[~azure.storage.fileshare.models.BlockDeviceItem]
-    :ivar char_device_items:
-    :vartype char_device_items: list[~azure.storage.fileshare.models.CharDeviceItem]
-    :ivar fifo_items:
-    :vartype fifo_items: list[~azure.storage.fileshare.models.FifoItem]
-    :ivar socket_items:
-    :vartype socket_items: list[~azure.storage.fileshare.models.SocketItem]
     """
 
     _validation = {
@@ -856,54 +612,21 @@ class FilesAndDirectoriesListSegment(_serialization.Model):
     _attribute_map = {
         "directory_items": {"key": "DirectoryItems", "type": "[DirectoryItem]", "xml": {"itemsName": "Directory"}},
         "file_items": {"key": "FileItems", "type": "[FileItem]", "xml": {"itemsName": "File"}},
-        "sym_link_items": {"key": "SymLinkItems", "type": "[SymLinkItem]", "xml": {"itemsName": "SymLink"}},
-        "block_device_items": {
-            "key": "BlockDeviceItems",
-            "type": "[BlockDeviceItem]",
-            "xml": {"itemsName": "BlockDevice"},
-        },
-        "char_device_items": {"key": "CharDeviceItems", "type": "[CharDeviceItem]", "xml": {"itemsName": "CharDevice"}},
-        "fifo_items": {"key": "FifoItems", "type": "[FifoItem]", "xml": {"itemsName": "Fifo"}},
-        "socket_items": {"key": "SocketItems", "type": "[SocketItem]", "xml": {"itemsName": "Socket"}},
     }
     _xml_map = {"name": "Entries"}
 
     def __init__(
-        self,
-        *,
-        directory_items: list["_models.DirectoryItem"],
-        file_items: list["_models.FileItem"],
-        sym_link_items: Optional[list["_models.SymLinkItem"]] = None,
-        block_device_items: Optional[list["_models.BlockDeviceItem"]] = None,
-        char_device_items: Optional[list["_models.CharDeviceItem"]] = None,
-        fifo_items: Optional[list["_models.FifoItem"]] = None,
-        socket_items: Optional[list["_models.SocketItem"]] = None,
-        **kwargs: Any
+        self, *, directory_items: list["_models.DirectoryItem"], file_items: list["_models.FileItem"], **kwargs: Any
     ) -> None:
         """
         :keyword directory_items: Required.
         :paramtype directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
         :keyword file_items: Required.
         :paramtype file_items: list[~azure.storage.fileshare.models.FileItem]
-        :keyword sym_link_items:
-        :paramtype sym_link_items: list[~azure.storage.fileshare.models.SymLinkItem]
-        :keyword block_device_items:
-        :paramtype block_device_items: list[~azure.storage.fileshare.models.BlockDeviceItem]
-        :keyword char_device_items:
-        :paramtype char_device_items: list[~azure.storage.fileshare.models.CharDeviceItem]
-        :keyword fifo_items:
-        :paramtype fifo_items: list[~azure.storage.fileshare.models.FifoItem]
-        :keyword socket_items:
-        :paramtype socket_items: list[~azure.storage.fileshare.models.SocketItem]
         """
         super().__init__(**kwargs)
         self.directory_items = directory_items
         self.file_items = file_items
-        self.sym_link_items = sym_link_items
-        self.block_device_items = block_device_items
-        self.char_device_items = char_device_items
-        self.fifo_items = fifo_items
-        self.socket_items = socket_items
 
 
 class HandleItem(_serialization.Model):
@@ -1973,60 +1696,6 @@ class SmbMultichannel(_serialization.Model):
         self.enabled = enabled
 
 
-class SocketItem(_serialization.Model):
-    """A listed socket item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: ~azure.storage.fileshare.models.StringEncoded
-    :ivar file_id:
-    :vartype file_id: str
-    :ivar properties: File properties. Required.
-    :vartype properties: ~azure.storage.fileshare.models.FileProperty
-    :ivar link_count:
-    :vartype link_count: int
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "Name", "type": "StringEncoded"},
-        "file_id": {"key": "FileId", "type": "str"},
-        "properties": {"key": "Properties", "type": "FileProperty"},
-        "link_count": {"key": "LinkCount", "type": "int"},
-    }
-    _xml_map = {"name": "Socket"}
-
-    def __init__(
-        self,
-        *,
-        name: "_models.StringEncoded",
-        properties: "_models.FileProperty",
-        file_id: Optional[str] = None,
-        link_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
-        :keyword file_id:
-        :paramtype file_id: str
-        :keyword properties: File properties. Required.
-        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
-        :keyword link_count:
-        :paramtype link_count: int
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.file_id = file_id
-        self.properties = properties
-        self.link_count = link_count
-
-
 class SourceLeaseAccessConditions(_serialization.Model):
     """Parameter group.
 
@@ -2210,67 +1879,6 @@ class StringEncoded(_serialization.Model):
         super().__init__(**kwargs)
         self.encoded = encoded
         self.content = content
-
-
-class SymLinkItem(_serialization.Model):
-    """A listed symbolic link item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: ~azure.storage.fileshare.models.StringEncoded
-    :ivar file_id:
-    :vartype file_id: str
-    :ivar properties: File properties. Required.
-    :vartype properties: ~azure.storage.fileshare.models.FileProperty
-    :ivar link_count:
-    :vartype link_count: int
-    :ivar link_text:
-    :vartype link_text: str
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "Name", "type": "StringEncoded"},
-        "file_id": {"key": "FileId", "type": "str"},
-        "properties": {"key": "Properties", "type": "FileProperty"},
-        "link_count": {"key": "LinkCount", "type": "int"},
-        "link_text": {"key": "LinkText", "type": "str"},
-    }
-    _xml_map = {"name": "SymLink"}
-
-    def __init__(
-        self,
-        *,
-        name: "_models.StringEncoded",
-        properties: "_models.FileProperty",
-        file_id: Optional[str] = None,
-        link_count: Optional[int] = None,
-        link_text: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
-        :keyword file_id:
-        :paramtype file_id: str
-        :keyword properties: File properties. Required.
-        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
-        :keyword link_count:
-        :paramtype link_count: int
-        :keyword link_text:
-        :paramtype link_text: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.file_id = file_id
-        self.properties = properties
-        self.link_count = link_count
-        self.link_text = link_text
 
 
 class UserDelegationKey(_serialization.Model):

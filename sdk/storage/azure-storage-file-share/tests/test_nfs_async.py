@@ -13,11 +13,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline.transport import (  # pylint: disable=no-name-in-module
-    AioHttpTransportResponse,
-    AsyncHttpTransport,
-)
+from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.fileshare import (
     ContentSettings,
     DirectoryProperties,
@@ -27,57 +23,18 @@ from azure.storage.fileshare import (
 from azure.storage.fileshare.aio import ShareDirectoryClient, ShareFileClient
 from azure.storage.fileshare.aio import ShareServiceClient as AsyncShareServiceClient
 
-from requests.structures import CaseInsensitiveDict
-
-from test_helpers_async import MockAioHttpClientResponse
-from test_nfs import LIST_FILES_AND_DIRECTORIES_NFS_XML
-
 TEST_INTENT = "backup"
 TEST_FILE_PREFIX = "file"
 TEST_DIRECTORY_PREFIX = "directory"
-
-
-class MockListTransport(AsyncHttpTransport):
-    """A transport that returns a canned XML body for the list operation (an HTTP GET)."""
-
-    def __init__(self, body: bytes) -> None:
-        self._body = body
-
-    async def send(self, request, **kwargs) -> AioHttpTransportResponse:
-        rest_response = AioHttpTransportResponse(
-            request=request,
-            aiohttp_response=MockAioHttpClientResponse(
-                request.url,
-                self._body,
-                CaseInsensitiveDict({"Content-Type": "application/xml", "Content-Length": str(len(self._body))}),
-            ),
-            decompress=False,
-        )
-        await rest_response.load_body()
-        return rest_response
-
-    async def open(self) -> None:
-        pass
-
-    async def close(self) -> None:
-        pass
-
-    async def __aenter__(self) -> "MockListTransport":
-        return self
-
-    async def __aexit__(self, *args: Any) -> None:
-        pass
 
 
 class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
     fsc: AsyncShareServiceClient = None
 
-    async def _setup(self, storage_account_name: str, storage_account_key: Optional[str] = None) -> None:
+    async def _setup(self, storage_account_name: str):
         self.account_url = self.account_url(storage_account_name, "file")
-        self.credential = getattr(storage_account_key, "secret", None) or self.get_credential(
-            AsyncShareServiceClient, is_async=True
-        )
+        self.credential = self.get_credential(AsyncShareServiceClient, is_async=True)
         self.fsc = AsyncShareServiceClient(
             account_url=self.account_url, credential=self.credential, token_intent=TEST_INTENT
         )
@@ -89,7 +46,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
             if self.is_live:
                 try:
                     await fsc.create_share(self.share_name, protocols="NFS")
-                except ResourceExistsError:
+                except:
                     pass
 
     def teardown_method(self):
@@ -101,7 +58,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
                     token_intent=TEST_INTENT,
                 )
                 fsc.delete_share(self.share_name)
-            except HttpResponseError:
+            except:
                 pass
 
     # --Helpers----------------------------------------------------------
@@ -302,6 +259,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         directory_name = self._get_directory_name()
         directory_client = share_client.get_directory_client(directory_name)
         source_file_name = self._get_file_name("file1")
+        source_file_client = directory_client.get_file_client(source_file_name)
         hard_link_file_name = self._get_file_name("file2")
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
@@ -360,6 +318,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         directory_name = self._get_directory_name()
         directory_client = share_client.get_directory_client(directory_name)
         source_file_name = self._get_file_name("file1")
+        source_file_client = directory_client.get_file_client(source_file_name)
         symbolic_link_file_name = self._get_file_name("file2")
         symbolic_link_file_client = directory_client.get_file_client(symbolic_link_file_name)
         target = f"{directory_name}/{source_file_name}"
@@ -371,129 +330,3 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceNotFoundError) as e:
             await symbolic_link_file_client.get_symlink()
         assert "ParentNotFound" in e.value.args[0]
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
-    async def test_list_directories_and_files(self, **kwargs: Any):
-        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
-        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
-
-        await self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
-
-        share_client = self.fsc.get_share_client(self.share_name)
-        directory_name = self._get_directory_name()
-        owner, group, file_mode = "345", "123", "0644"
-        directory_client = await share_client.create_directory(
-            directory_name, owner=owner, group=group, file_mode="0755"
-        )
-
-        file_name = self._get_file_name("file1")
-        file_client = directory_client.get_file_client(file_name)
-        await file_client.create_file(size=1024, owner=owner, group=group, file_mode="0644")
-
-        symlink_name = self._get_file_name("file2")
-        symlink_client = directory_client.get_file_client(symlink_name)
-        target = f"{directory_name}/{file_name}"
-        await symlink_client.create_symlink(target=target, owner=owner, group=group)
-
-        # Act
-        items = []
-        async for item in directory_client.list_directories_and_files(
-            include=["Timestamps", "ETag", "Permissions", "LinkCount", "NfsAttributes"],
-            include_extended_info=True,
-        ):
-            items.append(item)
-        items_by_name = {item.name: item for item in items}
-
-        # Assert: file
-        file_props = items_by_name[file_name]
-        assert isinstance(file_props, FileProperties)
-        assert file_props.owner == owner
-        assert file_props.group == group
-        assert file_props.file_mode == file_mode
-        assert file_props.nfs_file_type == "Regular"
-        assert file_props.link_count == 1
-        assert file_props.file_attributes is None
-        assert file_props.permission_key is None
-        assert file_props.etag is not None
-
-        # Assert: symbolic link
-        symlink_props = items_by_name[symlink_name]
-        assert isinstance(symlink_props, FileProperties)
-        assert symlink_props.owner == owner
-        assert symlink_props.group == group
-        assert symlink_props.nfs_file_type == "SymLink"
-        assert symlink_props.link_count == 1
-
-    @FileSharePreparer()
-    async def test_list_directories_and_files_special_types_mock(self):
-        directory_client = ShareDirectoryClient(
-            "https://fakeaccount.file.core.windows.net",
-            share_name="share",
-            directory_path="",
-            credential="ZmFrZWtleWZha2VrZXlmYWtla2V5",
-            transport=MockListTransport(LIST_FILES_AND_DIRECTORIES_NFS_XML),
-        )
-
-        items = []
-        async for item in directory_client.list_directories_and_files():
-            items.append(item)
-        items_by_name = {item.name: item for item in items}
-        assert len(items) == 7
-
-        directory = items_by_name["subdir"]
-        assert isinstance(directory, DirectoryProperties)
-        assert directory.is_directory is True
-        assert directory.owner == "0"
-        assert directory.group == "0"
-        assert directory.file_mode == "0755"
-        assert directory.link_count == 2
-        assert directory.nfs_file_type == "Directory"
-
-        regular = items_by_name["regular.txt"]
-        assert isinstance(regular, FileProperties)
-        assert regular.is_directory is False
-        assert regular.size == 80
-        assert regular.owner == "1000"
-        assert regular.group == "1000"
-        assert regular.file_mode == "0644"
-        assert regular.link_count == 2
-        assert regular.nfs_file_type == "Regular"
-
-        symlink = items_by_name["symlink.txt"]
-        assert isinstance(symlink, FileProperties)
-        assert symlink.nfs_file_type == "SymLink"
-        assert symlink.file_mode == "0777"
-        assert symlink.link_count == 1
-        assert symlink.link_text == "/mnt/s2/dir2/regular.txt"
-
-        block_device = items_by_name["block_device"]
-        assert isinstance(block_device, FileProperties)
-        assert block_device.nfs_file_type == "BlockDevice"
-        assert block_device.owner == "0"
-        assert block_device.group == "0"
-        assert block_device.file_mode == "0640"
-        assert block_device.link_count == 1
-        assert block_device.device_major == 8
-        assert block_device.device_minor == 0
-
-        char_device = items_by_name["char_device"]
-        assert isinstance(char_device, FileProperties)
-        assert char_device.nfs_file_type == "CharacterDevice"
-        assert char_device.file_mode == "0644"
-        assert char_device.device_major == 1
-        assert char_device.device_minor == 7
-
-        fifo = items_by_name["fifo_pipe"]
-        assert isinstance(fifo, FileProperties)
-        assert fifo.nfs_file_type == "Fifo"
-        assert fifo.owner == "1000"
-        assert fifo.group == "1000"
-        assert fifo.file_mode == "0644"
-        assert fifo.link_count == 1
-
-        socket = items_by_name["unix_socket"]
-        assert isinstance(socket, FileProperties)
-        assert socket.nfs_file_type == "Socket"
-        assert socket.file_mode == "0755"
-        assert socket.link_count == 1
