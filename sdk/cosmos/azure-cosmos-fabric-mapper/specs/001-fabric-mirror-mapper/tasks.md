@@ -12,7 +12,7 @@ description: "Task list for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
-**Driver Strategy Update (2026-01-30)**: Tasks updated to reflect `mssql-python` as primary SQL driver (pure Python, no system dependencies on Windows) with `pyodbc` as legacy support. See [research/python-sql-driver-options.md](research/python-sql-driver-options.md).
+**Driver Strategy Update (2026-01-30)**: Tasks updated to reflect `mssql-python` as primary SQL driver (pure Python, no system dependencies on Windows) with `pyodbc` as legacy support. See `research/python-sql-driver-options.md`.
 
 **Key Task Additions**:
 - T013a: Create mssql-python driver adapter (primary)

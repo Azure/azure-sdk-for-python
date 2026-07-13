@@ -3,11 +3,7 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Azure Cosmos → Fabric mirror mapper.
-
-This package is designed to be an optional dependency. When not installed, upstream
-callers (like the Cosmos SDK) should behave normally until mirror serving is explicitly enabled.
-"""
+"""Azure Cosmos to Fabric mirror mapper."""
 
 from .config import MirrorServingConfiguration
 from .credentials import CredentialSource

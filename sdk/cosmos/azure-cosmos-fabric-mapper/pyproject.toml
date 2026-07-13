@@ -68,6 +68,7 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --strict-markers"
 markers = [
+  "cosmosEmulator: marks tests selected by the Cosmos CI pipeline",
   "integration: marks tests as integration tests",
   "e2e: marks tests as end-to-end tests requiring live services",
 ]

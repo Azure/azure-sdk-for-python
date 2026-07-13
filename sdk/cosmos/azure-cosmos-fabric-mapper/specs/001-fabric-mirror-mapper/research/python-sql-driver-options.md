@@ -210,10 +210,10 @@ Before switching, validate:
 
 - [mssql-python PyPI](https://pypi.org/project/mssql-python/)
 - [mssql-python GitHub Wiki](https://github.com/microsoft/mssql-python/wiki)
-- [Microsoft Learn: Quickstart with mssql-python](https://learn.microsoft.com/en-us/sql/connect/python/mssql-python/python-sql-driver-mssql-python-quickstart)
-- [Microsoft Learn: Connect to Fabric SQL database with mssql-python](https://learn.microsoft.com/en-us/fabric/database/sql/connect-python)
-- [Microsoft Fabric Connectivity Documentation](https://learn.microsoft.com/en-us/fabric/data-warehouse/connectivity)
-- [Microsoft Learn: Connect to Fabric Data Warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/how-to-connect)
+- [Microsoft Learn: Quickstart with mssql-python](https://learn.microsoft.com/sql/connect/python/mssql-python/python-sql-driver-mssql-python-quickstart)
+- [Microsoft Learn: Connect to Fabric SQL database with mssql-python](https://learn.microsoft.com/fabric/database/sql/connect-python)
+- [Microsoft Fabric Connectivity Documentation](https://learn.microsoft.com/fabric/data-warehouse/connectivity)
+- [Microsoft Learn: Connect to Fabric Data Warehouse](https://learn.microsoft.com/fabric/data-warehouse/how-to-connect)
 
 ## Decision
 

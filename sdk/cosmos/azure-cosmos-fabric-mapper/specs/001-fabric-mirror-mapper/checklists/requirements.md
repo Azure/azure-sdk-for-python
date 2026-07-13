@@ -2,7 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-01-28
-**Feature**: [spec.md](../spec.md)
+**Feature**: `specs/001-fabric-mirror-mapper/spec.md`
 
 ## Content Quality
 

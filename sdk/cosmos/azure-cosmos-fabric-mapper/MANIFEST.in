@@ -2,3 +2,4 @@ include *.md
 include LICENSE
 include azure/cosmos/fabric_mapper/py.typed
 recursive-include tests *.py *.json
+recursive-include doc *.rst

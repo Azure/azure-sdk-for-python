@@ -133,9 +133,9 @@ Based on research into Python SQL driver options for Microsoft Fabric SQL endpoi
 
 ## References
 
-- Research document: [specs/001-fabric-mirror-mapper/research/python-sql-driver-options.md](specs/001-fabric-mirror-mapper/research/python-sql-driver-options.md)
-- Microsoft Learn: [Quickstart with mssql-python](https://learn.microsoft.com/en-us/sql/connect/python/mssql-python/python-sql-driver-mssql-python-quickstart)
-- Microsoft Learn: [Connect to Fabric SQL with mssql-python](https://learn.microsoft.com/en-us/fabric/database/sql/connect-python)
+- Research document: `specs/001-fabric-mirror-mapper/research/python-sql-driver-options.md`
+- Microsoft Learn: [Quickstart with mssql-python](https://learn.microsoft.com/sql/connect/python/mssql-python/python-sql-driver-mssql-python-quickstart)
+- Microsoft Learn: [Connect to Fabric SQL with mssql-python](https://learn.microsoft.com/fabric/database/sql/connect-python)
 - PyPI: [mssql-python](https://pypi.org/project/mssql-python/)
 - GitHub: [microsoft/mssql-python](https://github.com/microsoft/mssql-python)
 

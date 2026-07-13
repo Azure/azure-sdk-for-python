@@ -1,6 +1,6 @@
 # Implementation Plan: Azure Cosmos → Fabric Mirror Mapper (Python)
 
-**Branch**: `001-fabric-mirror-mapper` | **Date**: 2026-01-30 | **Spec**: [specs/001-fabric-mirror-mapper/spec.md](spec.md)
+**Branch**: `001-fabric-mirror-mapper` | **Date**: 2026-01-30 | **Spec**: `specs/001-fabric-mirror-mapper/spec.md`
 **Input**: Feature specification from `specs/001-fabric-mirror-mapper/spec.md`
 
 **Status**: Updated with SQL driver research findings (mssql-python as primary driver)
@@ -14,7 +14,7 @@ Build a separately installable Python package (`azure-cosmos-fabric-mapper`) tha
 
 This repo does not modify the Azure Cosmos DB Python SDK directly; instead it produces **minimal SDK integration instructions** that keep all mapping concerns isolated in the mapper module and preserve normal SDK behavior when the mapper is not installed.
 
-**Key Update (2026-01-30)**: Driver strategy changed from pyodbc to `mssql-python` as primary driver based on [research findings](research/python-sql-driver-options.md) - eliminates system ODBC driver requirement on Windows.
+**Key Update (2026-01-30)**: Driver strategy changed from pyodbc to `mssql-python` as primary driver based on `research/python-sql-driver-options.md` - eliminates system ODBC driver requirement on Windows.
 
 ## Technical Context
 
@@ -35,13 +35,13 @@ This repo does not modify the Azure Cosmos DB Python SDK directly; instead it pr
   - **Benefits**: No ODBC driver installation, official Fabric support, simplified deployment
 - **Legacy support**: `pyodbc` maintained for backward compatibility (optional)
 - Both drivers use same DB-API 2.0 interface, minimal code duplication
-- See [research/python-sql-driver-options.md](research/python-sql-driver-options.md) for detailed analysis
+- See `research/python-sql-driver-options.md` for detailed analysis
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Based on [.specify/memory/constitution.md](../../.specify/memory/constitution.md):
+Based on the repository SDK design requirements:
 
 - ✅ **Optional dependency**: mapper is a separately published package; SDK only imports it when mirror serving is explicitly enabled.
 - ✅ **Minimal SDK changes**: integration requires only a narrow hook + dynamic import; no mapping logic lands in the SDK.
@@ -147,7 +147,7 @@ All critical decisions have been locked:
 - Full Microsoft Entra ID authentication support
 - DB-API 2.0 compliant (drop-in replacement for pyodbc)
 
-See [research/python-sql-driver-options.md](research/python-sql-driver-options.md) for detailed analysis.
+See `research/python-sql-driver-options.md` for detailed analysis.
 
 ## Phase 1: Design & Contracts
 

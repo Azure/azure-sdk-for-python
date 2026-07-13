@@ -20,8 +20,10 @@
     "parameterize",
     "parameterized",
     "pyodbc",
+    "reexecuted",
     "sekrit",
     "setuptools",
+    "SNAME",
     "unparam"
   ]
 }

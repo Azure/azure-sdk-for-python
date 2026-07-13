@@ -27,7 +27,7 @@ This document resolves key technical unknowns and locks the decisions needed to 
 
 - **Decision**: Define a small internal "driver client" protocol following Python DB-API 2.0 specification, with `mssql-python` as the primary driver and optional `pyodbc` support for backward compatibility.
 - **Rationale**:
-  - **`mssql-python` advantages** (see [detailed research](research/python-sql-driver-options.md)):
+  - **`mssql-python` advantages** (see `research/python-sql-driver-options.md`):
     - **Zero system dependencies on Windows** - Single `pip install`, no ODBC driver installation required
     - **Official Microsoft driver** - First-party support, actively maintained
     - **Explicitly documented for Fabric SQL** - Microsoft docs show usage with "SQL database in Fabric"

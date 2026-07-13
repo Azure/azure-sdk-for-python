@@ -186,9 +186,9 @@ Both drivers use the same DB-API 2.0 interface and connection string format.
 
 ## Next steps
 
-- Review the [API contract documentation](specs/001-fabric-mirror-mapper/contracts/python-api.md)
+- Review the API contract in `specs/001-fabric-mirror-mapper/contracts/python-api.md`
   for detailed translation rules and supported query patterns.
-- See the [specs/001-fabric-mirror-mapper/](specs/001-fabric-mirror-mapper/) directory for
+- See the `specs/001-fabric-mirror-mapper/` directory for
   design documents and architecture details.
 
 ## Contributing
