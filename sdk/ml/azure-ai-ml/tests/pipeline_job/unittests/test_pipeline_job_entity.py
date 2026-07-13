@@ -47,9 +47,39 @@ from azure.ai.ml.exceptions import ValidationException
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
 
+def _rest_job_from_dict(job_dict):
+    """Build an arm JobBase from a (msrest-era) rest fixture.
+
+    arm ``JobBase._deserialize`` expects camelCase wire keys, but these fixtures are authored in
+    snake_case (fully, or just for the input/output ``*_type`` discriminators). Camelize the
+    envelope + ``properties`` schema field keys and the input/output *field* keys (never the
+    user-defined input/output/job names, nor free-form ``tags``/``properties``/``settings``/``jobs``
+    values, which downstream entity code reads as-is) so the arm discriminators resolve.
+    """
+    from azure.ai.ml._utils.utils import snake_to_camel
+
+    d = json.loads(json.dumps(job_dict))
+    d = {snake_to_camel(k): v for k, v in d.items()}
+    props = d.get("properties")
+    if isinstance(props, dict):
+        new_props = {}
+        for k, v in props.items():
+            ck = snake_to_camel(k)
+            if k in ("inputs", "outputs") and isinstance(v, dict):
+                new_props[ck] = {
+                    name: ({snake_to_camel(fk): fv for fk, fv in fields.items()} if isinstance(fields, dict) else fields)
+                    for name, fields in v.items()
+                }
+            else:
+                # jobs / tags / properties / settings values are free-form and read as-is downstream.
+                new_props[ck] = v
+        d["properties"] = new_props
+    return RestJob._deserialize(d, [])
+
+
 def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
     """Rest pipeline json -> rest pipeline object -> pipeline entity"""
-    rest_obj = RestJob.from_dict(json.loads(json.dumps(job_dict)))
+    rest_obj = _rest_job_from_dict(job_dict)
     internal_pipeline = PipelineJob._from_rest_object(rest_obj)
     return internal_pipeline
 
@@ -239,7 +269,7 @@ class TestPipelineJobEntity:
         rest_job_file = "./tests/test_configs/pipeline_jobs/invalid/with_invalid_job_input_type_mode.json"
         with open(rest_job_file, "r") as f:
             job_dict = yaml.safe_load(f)
-        rest_obj = RestJob.from_dict(json.loads(json.dumps(job_dict)))
+        rest_obj = _rest_job_from_dict(job_dict)
         pipeline = PipelineJob._from_rest_object(rest_obj)
         pipeline_dict = pipeline._to_dict()
         assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
