@@ -84,8 +84,12 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         # resource's managed identity, so a plain container URL (no SAS) is passed. This
         # avoids any dependency on the storage account key / shared-key access.
         # This can be reverted to set_bodiless_matcher() after tests are re-recorded.
+        # "Accept" is excluded because the generated begin_translation request no longer sends
+        # "Accept: application/json" (the 202 response has no body); excluding it keeps the
+        # existing recordings valid without re-recording every translation-flow test.
         set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+            compare_bodies=False,
+            excluded_headers="Accept,Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id",
         )
         return self.storage_endpoint + container_name
 
