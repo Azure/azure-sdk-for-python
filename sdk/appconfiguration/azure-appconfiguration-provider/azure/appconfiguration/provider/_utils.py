@@ -113,7 +113,7 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     # Get startup timeout
     startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
     if startup_timeout < 0:
-        raise ValueError("Startup timeout must be at least 1 second.")
+         raise ValueError("Startup timeout must be greater than or equal to 0 seconds.")
 
     return {
         "endpoint": endpoint,
