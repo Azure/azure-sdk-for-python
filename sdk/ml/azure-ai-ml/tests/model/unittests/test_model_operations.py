@@ -595,35 +595,41 @@ path: ./model.pkl"""
         """Test _get_with_registry retrieves model with specific version from registry."""
         name = "test_model"
         version = "1"
-        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
-        mock_model_operation_reg._model_versions_operation.get.return_value = mock_model_version
+        sentinel = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_registry_versioned_asset",
+            return_value={"properties": {}},
+        ) as mock_get_asset, patch.object(ModelVersionData, "_deserialize", return_value=sentinel):
+            result = mock_model_operation_reg._get_with_registry(name=name, version=version)
 
-        result = mock_model_operation_reg._get_with_registry(name=name, version=version)
-
-        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
-            name=name,
-            version=version,
-            registry_name=mock_model_operation_reg._registry_name,
-            **mock_model_operation_reg._scope_kwargs,
+        mock_get_asset.assert_called_once_with(
+            mock_model_operation_reg._registry_service_client,
+            "models",
+            name,
+            version,
+            mock_model_operation_reg._resource_group_name,
+            mock_model_operation_reg._registry_name,
         )
-        assert result == mock_model_version
-        assert mock_model_operation_reg._model_container_operation.get.call_count == 0
+        assert result == sentinel
 
     def test_get_with_registry_without_version(self, mock_model_operation_reg: ModelOperations) -> None:
         """Test _get_with_registry retrieves model container when no version specified."""
         name = "test_model"
-        mock_model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_model_operation_reg._model_container_operation.get.return_value = mock_model_container
+        sentinel = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_registry_container_asset",
+            return_value={"properties": {}},
+        ) as mock_get_container, patch.object(ModelContainerData, "_deserialize", return_value=sentinel):
+            result = mock_model_operation_reg._get_with_registry(name=name, version=None)
 
-        result = mock_model_operation_reg._get_with_registry(name=name, version=None)
-
-        mock_model_operation_reg._model_container_operation.get.assert_called_once_with(
-            name=name,
-            registry_name=mock_model_operation_reg._registry_name,
-            **mock_model_operation_reg._scope_kwargs,
+        mock_get_container.assert_called_once_with(
+            mock_model_operation_reg._registry_service_client,
+            "models",
+            name,
+            mock_model_operation_reg._resource_group_name,
+            mock_model_operation_reg._registry_name,
         )
-        assert result == mock_model_container
-        assert mock_model_operation_reg._model_versions_operation.get.call_count == 0
+        assert result == sentinel
 
     def test_get_delegates_to_workspace(self, mock_model_operation: ModelOperations) -> None:
         """Test _get method delegates to _get_with_workspace when workspace is set."""
@@ -646,15 +652,19 @@ path: ./model.pkl"""
         """Test _get method delegates to _get_with_registry when registry is set."""
         name = "test_model"
         version = "1"
-        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
-        mock_model_operation_reg._model_versions_operation.get.return_value = mock_model_version
+        sentinel = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_registry_versioned_asset",
+            return_value={"properties": {}},
+        ) as mock_get_asset, patch.object(ModelVersionData, "_deserialize", return_value=sentinel):
+            result = mock_model_operation_reg._get(name=name, version=version)
 
-        result = mock_model_operation_reg._get(name=name, version=version)
-
-        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
-            name=name,
-            version=version,
-            registry_name=mock_model_operation_reg._registry_name,
-            **mock_model_operation_reg._scope_kwargs,
+        mock_get_asset.assert_called_once_with(
+            mock_model_operation_reg._registry_service_client,
+            "models",
+            name,
+            version,
+            mock_model_operation_reg._resource_group_name,
+            mock_model_operation_reg._registry_name,
         )
-        assert result == mock_model_version
+        assert result == sentinel
