@@ -237,14 +237,15 @@ class TestComputeEntity:
             name="ci-from-service",
             location="eastus",
             properties=MsrestComputeInstance(
-                properties=MsrestComputeInstanceProperties(
-                    vm_size="STANDARD_DS3_V2",
-                    enable_root_access=False,
-                    release_quota_on_stop=True,
-                    enable_os_patching=True,
-                ),
+                properties=MsrestComputeInstanceProperties(vm_size="STANDARD_DS3_V2"),
             ),
         )
+        # arm_ml_service ComputeInstanceProperties does not declare enableRootAccess / releaseQuotaOnStop /
+        # enableOSPatching as typed fields; the real response carries them as camelCase wire keys, which
+        # ``_from_rest_object`` reads via the hybrid mapping's ``.get()``.
+        rest.properties.properties["enableRootAccess"] = False
+        rest.properties.properties["releaseQuotaOnStop"] = True
+        rest.properties.properties["enableOSPatching"] = True
 
         instance = ComputeInstance._from_rest_object(rest)
         assert instance.enable_root_access is False

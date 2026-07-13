@@ -425,7 +425,7 @@ class TestJobOperations:
         assert body.tags == {"k": "v"}
         assert body.properties == {"pk": "pv"}
         # Legacy MFE PUT paths must be untouched when the shortcut succeeds.
-        mock_job_operation.service_client_01_2024_preview.jobs.create_or_update.assert_not_called()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.create_or_update.assert_not_called()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_not_called()
 
     @pytest.mark.parametrize(
