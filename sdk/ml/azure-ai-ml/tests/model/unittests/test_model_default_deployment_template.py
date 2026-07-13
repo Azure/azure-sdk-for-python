@@ -182,6 +182,9 @@ class TestModelDeploymentTemplateReference:
         rest_properties.stage = "Production"
         rest_properties.job_name = None
         rest_properties.intellectual_property = None
+        # arm ModelVersionProperties is a MutableMapping; make the mapping ``.get()`` return None so the
+        # optional camelCase template/IP keys are treated as absent (response without those fields).
+        rest_properties.get = Mock(return_value=None)
 
         rest_object = Mock(spec=ModelVersion)
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"

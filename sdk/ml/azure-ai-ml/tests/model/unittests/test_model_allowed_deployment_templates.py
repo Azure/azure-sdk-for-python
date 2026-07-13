@@ -313,6 +313,7 @@ allowed_deployment_templates:
 
         # Now simulate deserialization from the REST object
         # We can't do a full round-trip via _from_rest_object because it expects ARM IDs,
-        # but we can verify the REST serialization is correct
-        assert rest_object.properties.allowed_deployment_templates[0].asset_id == allowed[0].asset_id
-        assert rest_object.properties.allowed_deployment_templates[1].asset_id == allowed[1].asset_id
+        # but we can verify the REST serialization is correct. arm ModelVersionProperties has no typed
+        # ``allowed_deployment_templates`` field; the templates are carried as camelCase wire keys.
+        assert rest_object.properties["allowedDeploymentTemplates"][0]["assetId"] == allowed[0].asset_id
+        assert rest_object.properties["allowedDeploymentTemplates"][1]["assetId"] == allowed[1].asset_id
