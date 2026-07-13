@@ -19,7 +19,7 @@
 | 14 | azure-mgmt-serialconsole | 2024-07-01 | 1.1.0b2 | [#47125](https://github.com/Azure/azure-sdk-for-python/pull/47125) | 2026-05-26 | Doing | [48017](https://github.com/Azure/azure-sdk-for-python/pull/48017) |
 | 15 | azure-mgmt-consumption | 2024-08-01 | 11.0.0b2 | [#47108](https://github.com/Azure/azure-sdk-for-python/pull/47108) | 2026-05-25 | Doing | [48019](https://github.com/Azure/azure-sdk-for-python/pull/48019) |
 | 16 | azure-mgmt-cdn | 2025-12-01 | 14.0.0b1 | [#47073](https://github.com/Azure/azure-sdk-for-python/pull/47073) | 2026-05-22 | Doing | [48021](https://github.com/Azure/azure-sdk-for-python/pull/48021) |
-| 17 | azure-mgmt-resource-databoundaries | 2024-08-01 | 1.0.0b2 | [#47043](https://github.com/Azure/azure-sdk-for-python/pull/47043) | 2026-05-21 | Not Started | [48022](https://github.com/Azure/azure-sdk-for-python/pull/48022) |
+| 17 | azure-mgmt-resource-databoundaries | 2024-08-01 | 1.0.0b2 | [#47043](https://github.com/Azure/azure-sdk-for-python/pull/47043) | 2026-05-21 | Doing | [48023](https://github.com/Azure/azure-sdk-for-python/pull/48023) |
 | 18 | azure-mgmt-resource-deployments | 2025-04-01 | 1.0.0b2 | [#47044](https://github.com/Azure/azure-sdk-for-python/pull/47044) | 2026-05-21 | Not Started |  |
 | 19 | azure-mgmt-resource-subscriptions | 2022-12-01 | 1.0.0b2 | [#47042](https://github.com/Azure/azure-sdk-for-python/pull/47042) | 2026-05-21 | Not Started |  |
 | 20 | azure-mgmt-hybridkubernetes | 2026-05-01 | 2.0.0b1 | [#47018](https://github.com/Azure/azure-sdk-for-python/pull/47018) | 2026-05-20 | Not Started |  |
