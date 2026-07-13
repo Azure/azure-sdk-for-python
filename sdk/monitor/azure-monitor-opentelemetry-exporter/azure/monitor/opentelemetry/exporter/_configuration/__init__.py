@@ -71,14 +71,18 @@ class _ConfigurationManager(metaclass=Singleton):
             self._initialized = True
 
     def register_callback(self, callback):
-        # Register a callback to be invoked when configuration changes.
-        if not self._initialized:
-            return
+        # Register a callback to be invoked when configuration changes. Registration is independent of
+        # initialize(): the callback simply sits in the list until the worker fires a config change, so
+        # there is no need to guard on initialization state.
         self._callbacks.append(callback)
 
     def _notify_callbacks(self, settings: Dict[str, str]):
         # Notify all registered callbacks of configuration changes.
-        for cb in self._callbacks:
+        # Snapshot the list first so a concurrent register_callback on another thread can't trigger
+        # "list changed size during iteration". list.append and list(...) are individually atomic
+        # under the GIL, so no lock is needed here (and _state_lock stays scoped to config state).
+        callbacks = list(self._callbacks)
+        for cb in callbacks:
             try:
                 cb(settings)
             except Exception as ex:  # pylint: disable=broad-except
@@ -178,8 +182,14 @@ class _ConfigurationManager(metaclass=Singleton):
                 # Do not update etag to allow retry on next call
                 new_state_updates.pop("etag", None)
         else:
-            # Unexpected non-transient status code
-            logger.debug("Unexpected response status from CHANGE endpoint: %d", response.status_code)
+            # Non-retryable HTTP error from the CHANGE endpoint (e.g. 400/404/414). Retryable errors
+            # (network/timeout and _RETRYABLE_STATUS_CODES) are already handled as transient above.
+            # These remaining errors are effectively permanent from the SDK's perspective and won't be
+            # resolved by retrying at the normal cadence, so keep the current cached configuration, do
+            # not advance the ETag, and slow-poll at the max interval. Config fetching is internal, so
+            # this stays silent (debug only) and never surfaces to users.
+            logger.debug("Non-retryable response status from CHANGE endpoint: %d", response.status_code)
+            return _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS
 
         notify_callbacks = False
         current_refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
@@ -210,8 +220,16 @@ class _ConfigurationManager(metaclass=Singleton):
         if self._configuration_worker:
             self._configuration_worker.shutdown()
             self._configuration_worker = None
+        # Worker thread is now joined, so no callback notifications are in flight and no other thread
+        # is registering callbacks, so we can clear this state directly.
         self._initialized = False
         self._callbacks.clear()
         # Clear the singleton instance from the metaclass
         if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
             del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access
+        # Also reset the module-level cache in _state so get_configuration_manager() does not return
+        # this stale, shut-down instance on the next call. Both singleton mechanisms (the Singleton
+        # metaclass and the _state module global) must be cleared together to stay consistent.
+        from azure.monitor.opentelemetry.exporter._configuration import _state
+
+        _state._configuration_manager = None  # pylint: disable=protected-access

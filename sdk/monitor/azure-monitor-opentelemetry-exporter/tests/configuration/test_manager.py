@@ -8,6 +8,7 @@ from azure.monitor.opentelemetry.exporter._configuration import (
     _ConfigurationManager,
     _ConfigurationState,
 )
+from azure.monitor.opentelemetry.exporter._configuration import _state
 from azure.monitor.opentelemetry.exporter._configuration._state import (
     get_configuration_manager,
 )
@@ -96,6 +97,8 @@ class TestConfigurationManager(unittest.TestCase):
                 existing_instance.shutdown()
         if _ConfigurationManager in Singleton._instances:
             del Singleton._instances[_ConfigurationManager]
+        # Reset the _state module-level cache too, so both singleton mechanisms start clean
+        _state._configuration_manager = None
 
     def tearDown(self):
         """Clean up after each test."""
@@ -108,6 +111,8 @@ class TestConfigurationManager(unittest.TestCase):
                 instance.shutdown()
         if _ConfigurationManager in Singleton._instances:
             del Singleton._instances[_ConfigurationManager]
+        # Reset the _state module-level cache too, so both singleton mechanisms start clean
+        _state._configuration_manager = None
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_singleton_pattern(self, mock_worker_class):
@@ -126,6 +131,44 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Worker should only be initialized once
         mock_worker_class.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_shutdown_clears_state_module_global(self, mock_worker_class):
+        """Test that shutdown() resets both singleton mechanisms so no stale instance is returned."""
+        # get_configuration_manager caches the instance in the _state module global
+        manager = get_configuration_manager()
+        manager.initialize()
+        self.assertIs(_state._configuration_manager, manager)
+
+        # Shut down: both the metaclass entry and the module global must be cleared
+        manager.shutdown()
+        self.assertIsNone(_state._configuration_manager)
+
+        # A subsequent lookup must return a genuinely fresh instance, not the stale shut-down one
+        new_manager = get_configuration_manager()
+        self.assertIsNotNone(new_manager)
+        self.assertIsNot(new_manager, manager)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_before_init_is_stored(self, mock_worker_class):
+        """Callbacks registered before initialize() are stored (registration is init-independent)."""
+        manager = _ConfigurationManager()
+        callback = Mock()
+
+        manager.register_callback(callback)
+
+        self.assertIn(callback, manager._callbacks)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_after_init(self, mock_worker_class):
+        """Callbacks registered after initialize() are stored."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        callback = Mock()
+
+        manager.register_callback(callback)
+
+        self.assertIn(callback, manager._callbacks)
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_worker_initialization(self, mock_worker_class):
@@ -248,6 +291,55 @@ class TestConfigurationManager(unittest.TestCase):
 
         # Verify state was updated with CONFIG response
         self.assertEqual(manager.get_settings(), {"key": "config_value"})
+        self.assertEqual(result, 1800)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_config_fetch_failure_keeps_cache_and_etag(self, mock_worker_class, mock_request):
+        """Test that a failed CONFIG (e1) fetch keeps cached settings and does not advance the ETag.
+
+        When CHANGE (e2) signals a new config (200) but the subsequent CONFIG (e1) fetch fails,
+        the SDK must retain its current cached settings and NOT advance the cached ETag, so that
+        the fetch is naturally re-attempted on the next change signal (per spec). The failure must
+        not trigger exponential backoff (e1 errors are never retried independently).
+        """
+        manager = _ConfigurationManager()
+        manager.initialize()
+
+        # Simulate state after startup (etag + settings already cached)
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(
+                etag="old-etag",
+                refresh_interval_s=1800,
+                settings_cache={"old_key": "old_value"},
+            )
+
+        # CHANGE signals a new config, but CONFIG fetch fails with a server error
+        change_response = OneSettingsResponse(etag="new-etag", refresh_interval_s=1800, status_code=200)
+        config_response = OneSettingsResponse(status_code=500, has_exception=False)
+
+        def mock_request_side_effect(url, query_dict, headers=None):
+            if url == _ONE_SETTINGS_CHANGE_URL:
+                return change_response
+            if url == _ONE_SETTINGS_CONFIG_URL:
+                return config_response
+            return OneSettingsResponse()
+
+        mock_request.side_effect = mock_request_side_effect
+
+        # Execute
+        result = manager.get_configuration_and_refresh_interval()
+
+        # Both endpoints were called
+        self.assertEqual(mock_request.call_count, 2)
+
+        # Cached settings must be retained (not cleared or overwritten)
+        self.assertEqual(manager.get_settings(), {"old_key": "old_value"})
+        # ETag must NOT be advanced, so the fetch is re-attempted on the next change signal
+        self.assertEqual(manager._current_state.etag, "old-etag")
+        # e1 failures must not trigger exponential backoff
+        self.assertEqual(manager._backoff_attempts, 0)
+        # Refresh interval comes from the CHANGE response (normal cadence, not slow-poll)
         self.assertEqual(result, 1800)
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
@@ -490,30 +582,40 @@ class TestConfigurationManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_non_transient_error_no_backoff(self, mock_worker_class, mock_request):
-        """Test that non-transient errors don't trigger backoff."""
+        """Test that non-retryable HTTP errors slow-poll at the max interval without backoff."""
         manager = _ConfigurationManager()
         manager.initialize()
 
-        # Set initial state with etag (simulates post-startup)
-        with manager._state_lock:
-            manager._current_state = manager._current_state.with_updates(etag="existing-etag", refresh_interval_s=1800)
+        # Non-retryable client errors (not in _RETRYABLE_STATUS_CODES): malformed request, missing
+        # set, URI too long. All should slow-poll silently rather than back off.
+        for status_code in (400, 404, 414):
+            with self.subTest(status_code=status_code):
+                mock_request.reset_mock()
 
-        # Setup non-retryable HTTP error response (e.g., 400 Bad Request)
-        bad_request_response = OneSettingsResponse(
-            status_code=400,  # Not in _RETRYABLE_STATUS_CODES
-            has_exception=False,
-            refresh_interval_s=1800,  # Should remain unchanged
-        )
-        mock_request.return_value = bad_request_response
+                # Reset state with etag (simulates post-startup) and clear any prior backoff
+                with manager._state_lock:
+                    manager._current_state = manager._current_state.with_updates(
+                        etag="existing-etag", refresh_interval_s=1800
+                    )
+                manager._backoff_attempts = 0
 
-        # Execute
-        result = manager.get_configuration_and_refresh_interval()
+                bad_response = OneSettingsResponse(
+                    status_code=status_code,
+                    has_exception=False,
+                    refresh_interval_s=1800,
+                )
+                mock_request.return_value = bad_response
 
-        # Verify refresh interval was updated to response value
-        self.assertEqual(result, 1800)
+                result = manager.get_configuration_and_refresh_interval()
 
-        # Verify only CHANGE endpoint was called
-        mock_request.assert_called_once()
+                # Non-retryable errors slow-poll at the max interval (no backoff, cached config kept)
+                self.assertEqual(result, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
+                # Backoff counter must not be incremented for non-retryable errors
+                self.assertEqual(manager._backoff_attempts, 0)
+                # Cached ETag must not be advanced
+                self.assertEqual(manager._current_state.etag, "existing-etag")
+                # Only the CHANGE endpoint was called (no CONFIG fetch)
+                mock_request.assert_called_once()
 
     @patch("azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request")
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
@@ -545,9 +647,14 @@ class TestConfigurationManager(unittest.TestCase):
     def test_configuration_manager_disabled(self):
         """Test that configuration manager is disabled when environment variable is set."""
 
-        # When controlplane is disabled, get_configuration_manager should return None
-        manager = get_configuration_manager()
+        # When controlplane is disabled, get_configuration_manager should return None and log a debug message
+        with self.assertLogs("azure.monitor.opentelemetry.exporter._configuration._state", level="DEBUG") as log_ctx:
+            manager = get_configuration_manager()
         self.assertIsNone(manager)
+        self.assertTrue(
+            any("control plane disabled" in message for message in log_ctx.output),
+            log_ctx.output,
+        )
 
     @patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "false"})
     def test_configuration_manager_enabled(self):

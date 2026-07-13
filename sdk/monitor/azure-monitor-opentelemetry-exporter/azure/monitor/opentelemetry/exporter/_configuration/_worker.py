@@ -5,6 +5,7 @@ import logging
 import threading
 import random
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_PYTHON_TARGETING,
 )
 
@@ -44,11 +45,11 @@ class _ConfigurationWorker:
 
         Note:
             The background thread is created as a daemon thread and includes a random
-            0-15 second startup delay to stagger configuration requests across multiple
+            5-15 second startup delay to stagger configuration requests across multiple
             SDK instances during startup or recovery from outages.
         """
         self._configuration_manager = configuration_manager
-        self._default_refresh_interval_s = 3600  # Default to 60 minutes in seconds
+        self._default_refresh_interval_s = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
         self._lock = threading.Lock()  # Single lock for all worker state
 
         self._shutdown_event = threading.Event()
@@ -107,7 +108,7 @@ class _ConfigurationWorker:
         """Main configuration refresh loop executed in the background thread.
 
         This method implements the core logic of the configuration worker:
-        1. Applies random startup delay (0-15 seconds) to stagger requests
+        1. Applies random startup delay (5-15 seconds) to stagger requests
         2. Continuously loops until shutdown is requested
         3. Calls the configuration update function to fetch new settings
         4. Updates the refresh interval based on the server response
@@ -136,12 +137,14 @@ class _ConfigurationWorker:
 
         while not self._shutdown_event.is_set():
             try:
+                # Fetch configuration WITHOUT holding _lock: this performs blocking network I/O and
+                # callback invocation, and _lock only guards _refresh_interval_s. Holding it here would
+                # make shutdown() and get_refresh_interval_s() block for the full request duration.
+                interval = self._configuration_manager.get_configuration_and_refresh_interval(
+                    _ONE_SETTINGS_PYTHON_TARGETING
+                )
                 with self._lock:
-                    self._refresh_interval_s = self._configuration_manager.get_configuration_and_refresh_interval(
-                        _ONE_SETTINGS_PYTHON_TARGETING
-                    )
-                    # Capture interval while we have the lock
-                    interval = self._refresh_interval_s
+                    self._refresh_interval_s = interval
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 logger.debug("Configuration refresh failed: %s", ex)
                 # Use current interval on error

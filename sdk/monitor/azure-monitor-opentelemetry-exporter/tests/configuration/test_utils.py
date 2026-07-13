@@ -255,14 +255,19 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
             with self.subTest(status_code=status_code):
                 mock_response = Mock()
                 mock_response.status_code = status_code
-                mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(f"HTTP {status_code}")
+                mock_response.headers = {}
+                mock_response.content = b""
                 mock_get.return_value = mock_response
 
                 result = make_onesettings_request("http://test.com")
 
-                # Should return response with exception indicator
-                self.assertTrue(result.has_exception)
-                self.assertEqual(result.status_code, 200)  # Default status when exception occurs
+                # HTTP errors are NOT surfaced as transient exceptions here; the real status code is
+                # preserved so callers can classify retryable vs non-retryable. has_exception is
+                # reserved for genuine network/timeout failures.
+                self.assertFalse(result.has_exception)
+                self.assertEqual(result.status_code, status_code)
+                self.assertIsNone(result.etag)
+                self.assertEqual(result.settings, {})
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_exception_legacy(self, mock_get):
