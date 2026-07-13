@@ -7,10 +7,16 @@
 ### Bugs Fixed
 - Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.
 - Fixed `DeploymentTemplate.creation_context` always being `None` when retrieved via `get()` or `list()`. The created/modified timestamps and identity returned by the service (as `createdTime` / `modifiedTime` / `createdBy`) are now populated on `creation_context`, making `DeploymentTemplate` consistent with `Model` and `Environment`.
-- Fixed `BatchEndpoint` defaults serialization regression where `deployment_name` was sent to the service as snake_case instead of camelCase (`deploymentName`), causing `begin_create_or_update` to fail with "Could not find member 'deployment_name' on object of type 'BatchEndpointDefaults'". Serialization now emits the correct camelCase wire format, while `BatchEndpoint.defaults` returned from `get()` continues to expose an object that supports attribute access (e.g. `endpoint.defaults.deployment_name`), preserving backward compatibility with existing code and samples.
+- Fixed `deployment_templates.list(name=...)` raising `AttributeError: 'str' object has no attribute 'request_timeout'`. In the list response, `requestSettings` / `livenessProbe` / `readinessProbe` arrive as stringified dicts nested under `properties`; these are now parsed before conversion, giving `list()` parity with `models.list()` / `environments.list()`.
+- Fixed `deployment_templates.get(name)` failing with a 404 (`DeploymentTemplate {name}:latest not found`) when no version was supplied, because the literal string `"latest"` was sent as the version. The latest version is now resolved client-side (the service exposes no `latest` label and no server-side ordering), and `get()` accepts a `label` keyword (`label="latest"` resolves to the latest version) mirroring `models.get()`. `delete(name)` resolves the latest version the same way.
 
 ### Other Changes
 - Migrated SDK entities and their consumers off the per-version msrest REST clients onto the shared `arm_ml_service` hybrid client. This is an internal change; the on-the-wire request/response contract is unchanged.
+
+## 1.34.1 (unreleased)
+
+### Bugs Fixed
+- Fixed `BatchEndpoint` defaults serialization regression where `deployment_name` was sent to the service as snake_case instead of camelCase (`deploymentName`), causing `begin_create_or_update` to fail with "Could not find member 'deployment_name' on object of type 'BatchEndpointDefaults'". Serialization now emits the correct camelCase wire format, while `BatchEndpoint.defaults` returned from `get()` continues to expose an object that supports attribute access (e.g. `endpoint.defaults.deployment_name`), preserving backward compatibility with existing code and samples.
 
 ## 1.34.0 (2026-06-11)
 
