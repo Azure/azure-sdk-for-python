@@ -26,8 +26,9 @@ Python HTTP path, and that packages the request and the response so a Rust-serve
 page looks exactly like a legacy one. Both the sync and async client connections
 import from here, so the two paths share one source of truth and cannot drift.
 It has three jobs: decide if a page is safe for Rust (the ``can_use_*`` gates),
-build the request the binding reads (``build_query_items_prepared_request``), and
-finish the response to match legacy (``finalize_rust_query_page_response``).
+build the request the binding reads (``build_query_items_prepared_request`` /
+``build_read_all_items_prepared_request``), and finish the response to match
+legacy (``finalize_rust_query_page_response``).
 Without this file the query fast paths in the client would have nothing to call
 and every query page would stay on the Python HTTP path.
 
@@ -44,7 +45,7 @@ from azure.core.utils import CaseInsensitiveDict
 from . import _base as base
 from . import _utils
 from . import http_constants
-from ._backend.base import OP_QUERY_ITEMS, PreparedRequest
+from ._backend.base import OP_QUERY_ITEMS, OP_READ_ALL_ITEMS, PreparedRequest
 from ._constants import _Constants as Constants
 from ._helpers._body_wire import serialize_body_to_bytes
 from ._helpers._pk_wire import serialize_partition_key_to_wire
@@ -200,6 +201,39 @@ def can_use_rust_backend_for_read_all_items_page(
     return True
 
 
+def _build_prepared_headers_for_rust_feed_dispatch(
+    *,
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> dict[str, Any]:
+    prepared_headers = dict(req_headers)
+    excluded_locations = options.get(Constants.Kwargs.EXCLUDED_LOCATIONS)
+    if excluded_locations is not None:
+        prepared_headers[Constants.Kwargs.EXCLUDED_LOCATIONS] = excluded_locations
+    timeout_value = options.get(Constants.Kwargs.TIMEOUT)
+    if timeout_value is not None:
+        prepared_headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
+    return prepared_headers
+
+
+def _resolve_partition_key_header_for_feed_dispatch(
+    *,
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> str:
+    partition_key_header = req_headers.get(http_constants.HttpHeaders.PartitionKey)
+    if isinstance(partition_key_header, str):
+        return partition_key_header
+    if "partitionKey" in options:
+        return serialize_partition_key_to_wire(options.get("partitionKey"))
+    return "[]"
+
+
+def _extract_container_link_from_docs_path(path: str) -> str:
+    normalized_path = base.TrimBeginningAndEndingSlashes(path)
+    return normalized_path[: -len("/docs")] if normalized_path.endswith("/docs") else normalized_path
+
+
 def build_query_items_prepared_request(
     *,
     path: str,
@@ -216,31 +250,51 @@ def build_query_items_prepared_request(
     That header string is exactly what the Rust side decodes to pick the query scope,
     so both ends agree on it.
     """
-    prepared_headers = dict(req_headers)
-    excluded_locations = options.get(Constants.Kwargs.EXCLUDED_LOCATIONS)
-    if excluded_locations is not None:
-        prepared_headers[Constants.Kwargs.EXCLUDED_LOCATIONS] = excluded_locations
-    timeout_value = options.get(Constants.Kwargs.TIMEOUT)
-    if timeout_value is not None:
-        prepared_headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
-
-    partition_key_header = req_headers.get(http_constants.HttpHeaders.PartitionKey)
-    if not isinstance(partition_key_header, str):
-        if "partitionKey" in options:
-            partition_key_header = serialize_partition_key_to_wire(options.get("partitionKey"))
-        else:
-            partition_key_header = "[]"
-
-    normalized_path = base.TrimBeginningAndEndingSlashes(path)
-    container_link = (
-        normalized_path[: -len("/docs")] if normalized_path.endswith("/docs") else normalized_path
+    prepared_headers = _build_prepared_headers_for_rust_feed_dispatch(
+        options=options,
+        req_headers=req_headers,
+    )
+    partition_key_header = _resolve_partition_key_header_for_feed_dispatch(
+        options=options,
+        req_headers=req_headers,
     )
     return PreparedRequest(
         op=OP_QUERY_ITEMS,
-        container_link=container_link,
+        container_link=_extract_container_link_from_docs_path(path),
         body_bytes=serialize_body_to_bytes(query_payload),
         partition_key_header=partition_key_header,
         headers=prepared_headers,
+        item_id=None,
+    )
+
+
+def build_read_all_items_prepared_request(
+    *,
+    path: str,
+    options: Mapping[str, Any],
+    req_headers: Mapping[str, Any],
+) -> PreparedRequest:
+    """Build the PreparedRequest for one read_all_items page dispatch.
+
+    Builds the native read-feed request the Rust side reads for partition-targeted
+    read_all_items. Note the binding currently only reaches this for a partition-
+    targeted scope (a PartitionKey header present); whole-container read_all_items is
+    served through the query-page path instead, because the driver does not yet
+    support cross-partition read-feed fan-out. Preserves parity-sensitive request
+    metadata (partition key targeting, timeout, excluded locations, forwarded headers).
+    """
+    return PreparedRequest(
+        op=OP_READ_ALL_ITEMS,
+        container_link=_extract_container_link_from_docs_path(path),
+        body_bytes=b"",
+        partition_key_header=_resolve_partition_key_header_for_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
+        ),
+        headers=_build_prepared_headers_for_rust_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
+        ),
         item_id=None,
     )
 
@@ -254,13 +308,18 @@ def finalize_rust_query_page_response(
     response_headers: Optional[CaseInsensitiveDict],
     response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]],
 ) -> CaseInsensitiveDict:
-    """Apply legacy-parity post-processing after Rust query-page parse.
+    """Apply legacy-parity post-processing after a Rust feed-page parse.
+
+    Shared by both query_items and read_all_items: read_all_items is served through
+    the same query-page machinery (its rows come back in a query-shaped page), so the
+    "query" in this name refers to that page shape, not to a SQL query specifically.
 
     Does the same finishing work the legacy path already does, so a Rust-served page
     is indistinguishable from a legacy one: it updates the session token, rewrites
     the index-metrics and query-advice headers into their readable form, drops the
     internal diagnostics header, fills the caller's response headers, and fires the
-    response hook.
+    response hook. For read_all_items (a native read-feed) the index-metrics and
+    query-advice headers are simply absent, so those rewrite branches are no-ops.
     """
     last_response_headers = cast(CaseInsensitiveDict, client_connection.last_response_headers)
     if internal_headers_capture is not None:

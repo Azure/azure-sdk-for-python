@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The binding's front counter for the nine migrated operations:
+//! The binding's front counter for the ten migrated operations:
 //! create / upsert / replace / delete / read / patch / query_items /
-//! read_feed_ranges / feed_range_from_partition_key -- each in a synchronous and an async version (18 functions
+//! read_all_items / read_feed_ranges / feed_range_from_partition_key -- each in a synchronous and an async version (20 functions
 //! in all).
 //!
 //! Where this fits in the layering (same direction as a normal call):
@@ -63,7 +63,8 @@ use crate::wire::{
     extract_read_feed_ranges_force_refresh, extract_required_item_id,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
-    run_read_feed_ranges_operation, run_read_feed_ranges_operation_async, OpModifiers,
+    run_read_all_items_operation, run_read_all_items_operation_async, run_read_feed_ranges_operation,
+    run_read_feed_ranges_operation_async, OpModifiers,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
@@ -77,6 +78,7 @@ type CommonInputs = (String, String, OpModifiers);
 type ItemInputs = (String, String, OpModifiers, String);
 type ItemBodyInputs = (String, String, OpModifiers, String, Vec<u8>);
 type QueryInputs = (String, String, OpModifiers, Vec<u8>);
+type ReadAllInputs = (String, String, OpModifiers);
 type ReadFeedRangesInputs = (String, bool);
 type FeedRangeFromPartitionKeyInputs = (String, String);
 
@@ -140,6 +142,12 @@ fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     Ok((container_link, partition_key_header, modifiers, body_bytes))
+}
+
+/// Common fields for read-all feed operations (container link, partition-key
+/// targeting header, and per-request modifiers).
+fn extract_read_all_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadAllInputs> {
+    extract_common_prepared_inputs(prepared)
 }
 
 /// Fields for `read_feed_ranges` (container link + force-refresh flag).
@@ -347,6 +355,26 @@ pub(crate) fn query_items<'py>(
         modifiers,
         body_bytes,
         "query_items",
+    )
+}
+
+/// read_all_items: feed operation that maps directly to the driver's read-feed
+/// constructors (`read_all_items` for a specific partition key when provided,
+/// `read_all_items_cross_partition` for full-container reads).
+#[pyfunction]
+pub(crate) fn read_all_items<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (container_link, partition_key_header, modifiers) = extract_read_all_inputs(prepared)?;
+    run_read_all_items_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        "read_all_items",
     )
 }
 
@@ -589,6 +617,25 @@ pub(crate) fn query_items_async<'py>(
         modifiers,
         body_bytes,
         "query_items",
+    )
+}
+
+/// Async twin of `read_all_items`: identical inputs/driver work; returns a Python
+/// awaitable instead of a ready tuple.
+#[pyfunction]
+pub(crate) fn read_all_items_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) = extract_read_all_inputs(prepared)?;
+    run_read_all_items_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        "read_all_items",
     )
 }
 

@@ -34,6 +34,7 @@ from azure.cosmos._backend.base import (
     BackendResponse,
     OP_FEED_RANGE_FROM_PARTITION_KEY,
     OP_QUERY_ITEMS,
+    OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
     PreparedClientConfig,
     PreparedRequest,
@@ -316,6 +317,33 @@ def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
     assert resp.body == b'{"Documents":[{"id":"x"}]}'
 
 
+def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
+    """A read_all_items prepared request routes to the binding's read_all_items entry point."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_all_items.return_value = (
+        200,
+        0,
+        {"x-ms-continuation": "ct-read-all"},
+        b'{"Documents":[{"id":"x"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_READ_ALL_ITEMS,
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header="[]",
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.read_all_items.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert resp.body == b'{"Documents":[{"id":"x"}]}'
+
+
 def test_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
     """A read_feed_ranges prepared request routes to binding read_feed_ranges."""
     fake_module = MagicMock()
@@ -582,6 +610,32 @@ def test_async_rust_backend_dispatches_query_items_to_binding(monkeypatch):
         )
         resp = await backend.execute(prepared)
         fake_module.query_items_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert resp.body == b'{"Documents":[{"id":"x"}]}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
+    """Async read_all_items prepared requests route to read_all_items_async."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_all_items_async = AsyncMock(
+        return_value=(200, 0, {"x-ms-continuation": "ct-read-all-async"}, b'{"Documents":[{"id":"x"}]}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_READ_ALL_ITEMS,
+            container_link="dbs/d/colls/c",
+            body_bytes=b"",
+            partition_key_header="[]",
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.read_all_items_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 200
         assert resp.body == b'{"Documents":[{"id":"x"}]}'
 

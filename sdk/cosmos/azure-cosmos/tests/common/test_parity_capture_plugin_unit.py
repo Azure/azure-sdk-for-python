@@ -57,6 +57,7 @@ class PluginRegistryTests(unittest.TestCase):
             "replace_item",
             "patch_item",
             "query_items",
+            "read_all_items",
             "read_feed_ranges",
             "feed_range_from_partition_key",
         ):
@@ -92,6 +93,19 @@ class PluginRegistryTests(unittest.TestCase):
         self.assertFalse(inspect.iscoroutinefunction(original))
         try:
             self.plugin._install_patches("read_feed_ranges")  # noqa: SLF001
+            patched = getattr(cls, method_name)
+            self.assertFalse(inspect.iscoroutinefunction(patched))
+        finally:
+            self.plugin._revert_patches()  # noqa: SLF001
+
+    def test_read_all_items_aio_patch_preserves_non_awaitable_signature(self):
+        """The aio read_all_items target is sync-shaped and must stay non-coroutine after patching."""
+        module, class_name, method_name = self.plugin._aio_read_all_items_target()  # noqa: SLF001
+        cls = getattr(module, class_name)
+        original = getattr(cls, method_name)
+        self.assertFalse(inspect.iscoroutinefunction(original))
+        try:
+            self.plugin._install_patches("read_all_items")  # noqa: SLF001
             patched = getattr(cls, method_name)
             self.assertFalse(inspect.iscoroutinefunction(patched))
         finally:

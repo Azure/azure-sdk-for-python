@@ -51,6 +51,7 @@ OP_UPSERT_ITEM = "upsert_item"
 OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
 OP_QUERY_ITEMS = "query_items"
+OP_READ_ALL_ITEMS = "read_all_items"
 OP_READ_FEED_RANGES = "read_feed_ranges"
 OP_FEED_RANGE_FROM_PARTITION_KEY = "feed_range_from_partition_key"
 
@@ -65,6 +66,7 @@ OP_TO_BINDING_METHOD = {
     OP_READ_ITEM: "read_item",
     OP_PATCH_ITEM: "patch_item",
     OP_QUERY_ITEMS: "query_items",
+    OP_READ_ALL_ITEMS: "read_all_items",
     OP_READ_FEED_RANGES: "read_feed_ranges",
     OP_FEED_RANGE_FROM_PARTITION_KEY: "feed_range_from_partition_key",
 }

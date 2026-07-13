@@ -311,15 +311,15 @@ pub(crate) fn run_item_operation_async<'py>(
 // ---------------------------------------------------------------------------
 // Query page execution
 //
-// This is the engine that lets one page of query_items (and whole-container
-// read_all_items) be fetched by the Rust driver instead of by the Python HTTP
-// path. The rest of wire.rs handles single-document operations (create / read /
-// replace / delete / patch by id); the code below is the only part that can run
-// a query. The flow is: the Python wrapper hands us a PreparedRequest, we work
-// out what to search, ask the driver for one page, and turn the driver's reply
-// back into the exact shape the Python query parser expects. Without this code
-// the query_items / read_all_items fast paths in the Python client would have
-// nothing to call, and every query page would stay on the Python HTTP path.
+// This is the engine that lets feed-style operations be fetched by the Rust
+// driver instead of by the Python HTTP path:
+//   * query_items (one SQL query page)
+//   * read_all_items (native read-feed, no synthetic SQL)
+// The rest of wire.rs handles single-document operations (create / read /
+// replace / delete / patch by id). The flow is: the Python wrapper hands us a
+// PreparedRequest, we work out scope (single logical partition vs full
+// container), ask the driver for one page, and turn the driver's reply back
+// into the exact shape the Python feed parser expects.
 // ---------------------------------------------------------------------------
 
 /// The scope of the query, worked out from `PreparedRequest.partition_key_header`.
@@ -451,6 +451,82 @@ pub(crate) fn run_query_operation_async<'py>(
         query_target,
         modifiers,
         body_bytes,
+    ));
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}
+
+/// Entry point the binding calls to run one read_all_items feed page and wait for it.
+/// The partition-key header controls scope:
+///   * `[]` => full-container read (`read_all_items_cross_partition`)
+///   * non-empty array => logical-partition read (`read_all_items`)
+///
+/// NOTE: as of today the Python binding only dispatches here for the non-empty
+/// (partition-targeted) scope. Whole-container read_all_items is served through the
+/// query path on the binding side, because the driver does not yet support
+/// cross-partition read-feed fan-out, so the `[]` arm here is currently unreached
+/// in production and kept for when that support lands.
+pub(crate) fn run_read_all_items_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    modifiers: OpModifiers,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let query_target = parse_query_target_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
+        runtime_ctx.tokio_rt.block_on(run_read_all_items_future(
+            driver,
+            database_name,
+            container_name,
+            query_target,
+            modifiers,
+        ))
+    });
+
+    tuple_from_feed_result(py, response_result)
+}
+
+/// Async sibling of `run_read_all_items_operation`.
+pub(crate) fn run_read_all_items_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    modifiers: OpModifiers,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let query_target = parse_query_target_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let join = runtime_ctx.tokio_rt.spawn(run_read_all_items_future(
+        driver,
+        database_name,
+        container_name,
+        query_target,
+        modifiers,
     ));
     let abort_guard = AbortOnDrop(join.abort_handle());
 
@@ -691,6 +767,45 @@ async fn run_query_future(
         QueryTarget::CrossPartition => FeedRange::full(),
     };
     let mut op = CosmosOperation::query_items(container, Some(feed_range)).with_body(body_bytes);
+
+    if let Some(activity) = modifiers.activity_header.as_ref() {
+        op = op.with_activity_id(ActivityId::from(activity.clone()));
+    }
+    if let Some(session) = modifiers.session_header.as_ref() {
+        op = op.with_session_token(SessionToken::from(session.clone()));
+    }
+
+    let options = build_operation_options(
+        None,
+        modifiers.excluded_regions_value,
+        modifiers.end_to_end_timeout,
+        modifiers.custom_headers,
+    );
+    driver.execute_operation(op, options).await
+}
+
+/// Driver work for `read_all_items`: resolve the container and run a read-feed
+/// operation either in one logical partition (when a partition-key header was
+/// provided) or across the full container (`[]`).
+async fn run_read_all_items_future(
+    driver: Arc<CosmosDriver>,
+    database_name: String,
+    container_name: String,
+    query_target: QueryTarget,
+    modifiers: OpModifiers,
+) -> Result<Option<CosmosResponse>, CosmosError> {
+    let container = driver
+        .resolve_container(&database_name, &container_name)
+        .await?;
+    let mut op = match query_target {
+        // `read_all_items` today only ever produces a full-container (`[]`) target:
+        // its public Python API takes no partition_key, so `parse_query_target_header`
+        // always yields `CrossPartition` here. The `Partition` arm is shared query
+        // scaffolding kept so this stays a total match and so a future
+        // partition-scoped read_all API drops in without touching this dispatch.
+        QueryTarget::Partition(partition_key) => CosmosOperation::read_all_items(container, partition_key),
+        QueryTarget::CrossPartition => CosmosOperation::read_all_items_cross_partition(container),
+    };
 
     if let Some(activity) = modifiers.activity_header.as_ref() {
         op = op.with_activity_id(ActivityId::from(activity.clone()));

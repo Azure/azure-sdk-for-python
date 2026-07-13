@@ -71,10 +71,12 @@ from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._helpers._response_parse import parse_backend_response
 from ._query_rust_routing import (
+    build_read_all_items_prepared_request,
     build_query_items_prepared_request,
     can_use_rust_backend_for_query_page,
     can_use_rust_backend_for_read_all_items_page,
     finalize_rust_query_page_response,
+    _resolve_partition_key_header_for_feed_dispatch,
 )
 from ._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper import ReadItemsHelperSync
@@ -3297,12 +3299,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers = self.default_headers.copy()
         # Copy to make sure that default_headers won't be changed.
         if query is None:
-            # Rust path for read_all_items: serve this page by turning the whole-container
-            # read into a "SELECT * FROM root r" query on the rust engine. If it does not
-            # qualify, this returns None and we fall through to the Python read-feed path
-            # below, which returns the same rows and headers. This fork is migration
-            # scaffolding, removed once read_all_items is fully served by rust; the Python
-            # path is permanent.
+            # Rust path for read_all_items: try to fetch this page through the shared
+            # Rust driver instead of the Python HTTP read path below. A read_all_items
+            # call is always whole-container (the public method takes no partition key),
+            # and the driver cannot fan a plain container-wide read-feed across every
+            # partition, so the Rust attempt serves it by running "Select * from root r"
+            # and fanning out like a cross-partition query. If the request does not
+            # qualify (e.g. change feed, a specific partition range, hedging), this
+            # returns None and we fall through to the unchanged Python read-feed path
+            # below, which returns the same rows and headers.
             rust_page = self.__TryReadAllItemsPageWithRustBackend(
                 path=path,
                 resource_type=resource_type,
@@ -3355,6 +3360,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.last_response_headers = get_response_headers
             if internal_headers_capture is not None:
                 _capture_internal_headers(get_response_headers)
+            self._UpdateSessionIfRequired(headers, result, get_response_headers)
             if response_headers is not None:
                 response_headers.clear()
                 response_headers.update(get_response_headers)
@@ -3869,7 +3875,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         resource_type: str,
         partition_key_range_id: Optional[str],
     ) -> bool:
-        """Return True when one read_all_items page can safely route through Rust as a synthetic query."""
+        """Return True when one read_all_items page can safely route through Rust read-feed."""
         return can_use_rust_backend_for_read_all_items_page(
             backend=getattr(self, "_backend", None),
             options=options,
@@ -3892,11 +3898,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         internal_headers_capture: Optional[dict[str, Any]],
         kwargs: Mapping[str, Any],
     ) -> Optional[Tuple[dict[str, Any], CaseInsensitiveDict]]:
-        """Run one read_all_items page on rust as a "SELECT * FROM root r" query.
+        """Run one read_all_items page on rust.
 
-        Builds that query request and hands it to __TryQueryPageWithRustBackend, so
-        read_all_items and query_items share one rust path. Migration scaffolding, like
-        the query check above.
+        Cross-partition scope (`partition_key_header == "[]"`) is served through
+        the existing rust query-page path (`SELECT * FROM root r`) because the
+        current Rust driver planner rejects non-query feed-range fan-out for
+        ReadFeed operations. Partition-targeted scope stays on native read-feed.
+        If the request does not qualify, returns None and the legacy read-feed
+        path executes unchanged.
         """
         if not self.__CanUseRustBackendForReadAllItemsPage(
             options=options,
@@ -3907,62 +3916,131 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ):
             return None
 
-        options_for_rust = dict(options)
-        options_for_rust.setdefault("enableCrossPartitionQuery", True)
-        options_for_rust["partitionKey"] = _Empty()
-
-        initial_headers = self.default_headers.copy()
-        if self._query_compatibility_mode in (
-            CosmosClientConnection._QueryCompatibilityMode.Default,
-            CosmosClientConnection._QueryCompatibilityMode.Query,
-        ):
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
-        elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
-        else:
-            raise SystemError("Unexpected query compatibility mode.")
+        backend = getattr(self, "_backend", None)
+        if backend is None:
+            return None
 
         req_headers = base.GetHeaders(
             self,
-            initial_headers,
-            "post",
+            self.default_headers,
+            "get",
             path,
             resource_id,
             resource_type,
-            documents._OperationType.SqlQuery,
-            options_for_rust,
+            documents._OperationType.ReadFeed,
+            options,
             partition_key_range_id,
         )
-        request_params = RequestObject(
-            resource_type,
-            documents._OperationType.SqlQuery,
-            req_headers,
-            options_for_rust.get("partitionKey", None),
+        # read_all_items has no partition_key parameter on the public API, so in
+        # practice every real call resolves to the whole-container ("[]") scope and
+        # takes the cross-partition query branch below. Decide the scope here, before
+        # doing any read-feed-only work: the query branch rebuilds its own headers and
+        # resolves its own session token, so assembling read-feed headers or resolving
+        # a read-feed session token first would be thrown away on the common path.
+        partition_key_header = _resolve_partition_key_header_for_feed_dispatch(
+            options=options,
+            req_headers=req_headers,
         )
-        request_params.set_excluded_location_from_options(options_for_rust)
-        request_params.set_availability_strategy(options_for_rust, self.availability_strategy)
-        request_params.availability_strategy_executor = self.availability_strategy_executor
-        req_headers[http_constants.HttpHeaders.IsQuery] = "true"
-        req_headers[http_constants.HttpHeaders.PartitionKey] = "[]"
+        if partition_key_header == "[]":
+            options_for_rust_query = dict(options)
+            options_for_rust_query.setdefault("enableCrossPartitionQuery", True)
+
+            query_initial_headers = self.default_headers.copy()
+            if self._query_compatibility_mode in (
+                CosmosClientConnection._QueryCompatibilityMode.Default,
+                CosmosClientConnection._QueryCompatibilityMode.Query,
+            ):
+                query_initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
+            elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
+                query_initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
+            else:
+                raise SystemError("Unexpected query compatibility mode.")
+
+            query_req_headers = base.GetHeaders(
+                self,
+                query_initial_headers,
+                "post",
+                path,
+                resource_id,
+                resource_type,
+                documents._OperationType.SqlQuery,
+                options_for_rust_query,
+                partition_key_range_id,
+            )
+            query_request_params = RequestObject(
+                resource_type,
+                documents._OperationType.SqlQuery,
+                query_req_headers,
+                options_for_rust_query.get("partitionKey", None),
+            )
+            query_request_params.set_excluded_location_from_options(options_for_rust_query)
+            query_request_params.set_availability_strategy(options_for_rust_query, self.availability_strategy)
+            query_request_params.availability_strategy_executor = self.availability_strategy_executor
+            query_req_headers[http_constants.HttpHeaders.IsQuery] = "true"
+            base.set_session_token_header(
+                self,
+                query_req_headers,
+                path,
+                query_request_params,
+                options_for_rust_query,
+                partition_key_range_id,
+            )
+            read_all_query_payload = self.__CheckAndUnifyQueryFormat("Select * from root r")
+            return self.__TryQueryPageWithRustBackend(
+                path=path,
+                query_payload=read_all_query_payload,
+                options=options_for_rust_query,
+                req_headers=query_req_headers,
+                response_hook=response_hook,
+                response_headers=response_headers,
+                internal_headers_capture=internal_headers_capture,
+            )
+
+        # Partition-targeted scope: native read-feed. This branch is currently
+        # unreachable through the public read_all_items API (which never sets a
+        # partition key, so the scope is always "[]" above); it is exercised only
+        # when a PartitionKey header is injected directly, and is kept as the path a
+        # future partition-scoped read API would use once the driver supports
+        # cross-partition read-feed fan-out.
+        # The request object below exists only so session-token resolution can reuse
+        # the legacy helper contract; the Rust fast path does not execute through the
+        # legacy request pipeline.
+        session_request = RequestObject(
+            resource_type,
+            documents._OperationType.ReadFeed,
+            req_headers,
+            options.get("partitionKey", None),
+        )
         base.set_session_token_header(
             self,
             req_headers,
             path,
-            request_params,
-            options_for_rust,
+            session_request,
+            options,
             partition_key_range_id,
         )
-
-        read_all_query_payload = self.__CheckAndUnifyQueryFormat("Select * from root r")
-        return self.__TryQueryPageWithRustBackend(
+        prepared = build_read_all_items_prepared_request(
             path=path,
-            query_payload=read_all_query_payload,
-            options=options_for_rust,
+            options=options,
             req_headers=req_headers,
+        )
+        backend_response = backend.execute(prepared)
+        if backend_response is None:
+            return None
+        parsed = parse_backend_response(
+            backend_response,
+            client_connection=self,
+            response_hook=None,
+        )
+        last_response_headers = finalize_rust_query_page_response(
+            client_connection=self,
+            req_headers=req_headers,
+            parsed=cast(dict[str, Any], parsed),
+            internal_headers_capture=internal_headers_capture,
             response_hook=response_hook,
             response_headers=response_headers,
-            internal_headers_capture=internal_headers_capture,
         )
+        return cast(dict[str, Any], parsed), last_response_headers
 
     def __TryQueryPageWithRustBackend(
         self,

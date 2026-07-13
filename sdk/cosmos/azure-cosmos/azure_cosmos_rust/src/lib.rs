@@ -102,6 +102,13 @@
 //!         (`{"Documents":[...]}`) so the Python query iterator can consume it
 //!         with the same shape as the legacy path.
 //!
+//!   * `read_all_items(handle, prepared) -> (status, sub_status,
+//!                                           headers, body, diagnostics)`
+//!         Executes native read-feed on the driver (no synthetic SQL rewrite).
+//!         Scope is selected from `PreparedRequest.partition_key_header`:
+//!         `[]` for full-container (`read_all_items_cross_partition`) or a
+//!         non-empty array for one logical partition (`read_all_items`).
+//!
 //!   * `read_feed_ranges(handle, prepared) -> (status, sub_status,
 //!                                             headers, body, diagnostics)`
 //!         Enumerates the container's partition-key ranges (routing map view).
@@ -151,6 +158,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_item);
     add_pyfn!(m, documents::patch_item);
     add_pyfn!(m, documents::query_items);
+    add_pyfn!(m, documents::read_all_items);
     add_pyfn!(m, documents::read_feed_ranges);
     add_pyfn!(m, documents::feed_range_from_partition_key);
     // Async siblings: each returns a Python awaitable that completes on the
@@ -162,6 +170,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_item_async);
     add_pyfn!(m, documents::patch_item_async);
     add_pyfn!(m, documents::query_items_async);
+    add_pyfn!(m, documents::read_all_items_async);
     add_pyfn!(m, documents::read_feed_ranges_async);
     add_pyfn!(m, documents::feed_range_from_partition_key_async);
     // Concrete backend provenance: a counter incremented inside the binding on

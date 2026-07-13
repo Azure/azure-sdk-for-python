@@ -311,6 +311,21 @@ def _aio_query_items_target() -> Tuple[Any, str, str]:
 _register_op("query_items", sync=_sync_query_items_target, aio=_aio_query_items_target)
 
 
+# read_all_items --------------------------------------------------------------
+
+def _sync_read_all_items_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_all_items"
+
+
+def _aio_read_all_items_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_all_items"
+
+
+_register_op("read_all_items", sync=_sync_read_all_items_target, aio=_aio_read_all_items_target)
+
+
 # read_feed_ranges -------------------------------------------------------------
 
 def _sync_read_feed_ranges_target() -> Tuple[Any, str, str]:
