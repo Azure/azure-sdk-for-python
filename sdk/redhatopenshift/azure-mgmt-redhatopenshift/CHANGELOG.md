@@ -5,46 +5,19 @@
 ### Features Added
 
   - Client `AzureRedHatOpenShiftClient` added method `send_request`
-  - Model `OpenShiftCluster` added property `properties`
-  - Model `OpenShiftClusterUpdate` added property `properties`
-  - Model `OpenShiftVersion` added property `properties`
-  - Model `PlatformWorkloadIdentityRoleSet` added property `properties`
   - Added model `CloudError`
-  - Added model `OpenShiftClusterProperties`
-  - Added model `OpenShiftVersionProperties`
-  - Added model `PlatformWorkloadIdentityRoleSetProperties`
 
 ### Breaking Changes
 
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `apiserver_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `cluster_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `console_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `ingress_profiles`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `master_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `network_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `platform_workload_identity_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `provisioning_state`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `service_principal_profile`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `worker_profiles`
-  - Model `OpenShiftCluster` deleted or renamed its instance variable `worker_profiles_status`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `apiserver_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `cluster_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `console_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `ingress_profiles`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `master_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `network_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `platform_workload_identity_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `provisioning_state`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `service_principal_profile`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `worker_profiles`
-  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `worker_profiles_status`
-  - Model `OpenShiftVersion` deleted or renamed its instance variable `version`
-  - Model `PlatformWorkloadIdentityRoleSet` deleted or renamed its instance variable `open_shift_version`
-  - Model `PlatformWorkloadIdentityRoleSet` deleted or renamed its instance variable `platform_workload_identity_roles`
-  - Deleted or renamed model `OpenShiftClusterList`
-  - Deleted or renamed model `OpenShiftVersionList`
-  - Deleted or renamed model `OperationList`
-  - Deleted or renamed model `PlatformWorkloadIdentityRoleSetList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `OpenShiftCluster` moved instance variable `apiserver_profile`, `cluster_profile`, `console_profile`, `ingress_profiles`, `master_profile`, `network_profile`, `platform_workload_identity_profile`, `provisioning_state`, `service_principal_profile`, `worker_profiles` and `worker_profiles_status` under property `properties` whose type is `OpenShiftClusterProperties`
+  - Model `OpenShiftClusterUpdate` moved instance variable `apiserver_profile`, `cluster_profile`, `console_profile`, `ingress_profiles`, `master_profile`, `network_profile`, `platform_workload_identity_profile`, `provisioning_state`, `service_principal_profile`, `worker_profiles` and `worker_profiles_status` under property `properties` whose type is `OpenShiftClusterProperties`
+  - Model `OpenShiftVersion` moved instance variable `version` under property `properties` whose type is `OpenShiftVersionProperties`
+  - Model `PlatformWorkloadIdentityRoleSet` moved instance variable `open_shift_version` and `platform_workload_identity_roles` under property `properties` whose type is `PlatformWorkloadIdentityRoleSetProperties`
+
+### Other Changes
+
+  - Deleted model `OpenShiftClusterList`/`OpenShiftVersionList`/`OperationList`/`PlatformWorkloadIdentityRoleSetList` which actually were not used by SDK users
 
 ## 4.0.0b1 (2026-05-26)
 
