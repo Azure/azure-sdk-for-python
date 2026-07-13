@@ -188,6 +188,11 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
         assert blob.metadata == {"color": "blue", "size": "large"}
         assert blob.tags == {"env": "prod"}
 
+    def _assert_blob_is_soft_deleted(self, blob: BlobProperties):
+        assert blob.deleted
+        assert blob.deleted_time is not None
+        assert blob.remaining_retention_days is not None
+
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_arrow_list_no_blobs(self, **kwargs):
@@ -436,6 +441,34 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceNotFoundError) as exc:
             [blob async for blob in container.list_blobs(response_format="arrow")]
         assert exc.value.error_code == "ContainerNotFound"
+
+    @pytest.mark.skip(
+        reason="Requires a dedicated storage account with blob soft delete enabled, "
+        "which is not available in the current test environment."
+    )
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_deleted(self, **kwargs):
+        # Soft delete uses a dedicated storage account (soft delete enabled).
+        storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        storage_account_key = kwargs.pop("soft_delete_storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        await blob_client.upload_blob(TEST_DATA, overwrite=True)
+        await blob_client.delete_blob()
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["deleted"])]
+
+        assert len(blobs_list) == 1
+        assert blobs_list[0].name == "blob1"
+        # Deleted / DeletedTime / RemainingRetentionDays must deserialize from Arrow.
+        self._assert_blob_is_soft_deleted(blobs_list[0])
+
+        # Without include=deleted, soft-deleted blobs are not listed.
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+        assert len(blobs_list) == 0
 
     @BlobPreparer()
     @recorded_by_proxy_async
