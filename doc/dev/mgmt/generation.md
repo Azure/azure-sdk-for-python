@@ -179,7 +179,7 @@ If you're doing basic testing and want to minimal set of parameters:
 
 And that's it! You should now have Python code ready to test. Note that this generation is for testing only and should not be sent to a customer or published to PyPI.
 
-This command generate code only. If you want to generate a [wheel](https://pythonwheels.com/) file to share this code, add the `--basic-setup-py` option to generate a basic `setup.py` file and call `python setup.py bdist_wheel`.
+This command generate code only. If you want to generate a [wheel](https://pythonwheels.com/) file to share this code, add the `--basic-setup-py` option to generate a basic `setup.py` file and call `python -m build` (requires `pip install build`).
 
 #### Examples
 

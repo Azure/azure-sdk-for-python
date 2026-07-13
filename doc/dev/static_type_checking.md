@@ -120,7 +120,7 @@ given the expressiveness of Python as a language. So, in practice, what should y
       pytyped = ["py.typed"]
       ```
       For legacy packages still using `setup.py`, set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` instead.
-      Note that the key should be the namespace of where the `py.typed` file is found.
+      Note that in the `setup.py` case, the key should be the namespace of where the `py.typed` file is found (e.g. `"azure.core"`).
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
    for your library so focusing typing on high density/important areas of the code helps in detecting bugs.
