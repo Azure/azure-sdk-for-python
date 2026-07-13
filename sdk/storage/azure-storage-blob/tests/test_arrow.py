@@ -313,7 +313,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_arrow_list_blobs_versions(self, **kwargs):
+    def test_arrow_list_blobs_include_versions(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -325,11 +325,9 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         container = self.bsc.get_container_client(self.container_name)
         blobs_list = list(container.list_blobs(response_format="arrow", include=["versions"]))
 
-        assert len(blobs_list) == 2
-        assert all(blob.version_id for blob in blobs_list)
-        # The original version is not current; exactly one entry is the current version.
-        assert any(blob.is_current_version for blob in blobs_list)
-        assert any(blob.version_id == create_resp["version_id"] for blob in blobs_list)
+        assert len(blobs_list) == 1
+        assert not blobs_list[0].is_current_version
+        assert blobs_list[0].version_id == create_resp["version_id"]
 
     @BlobPreparer()
     @recorded_by_proxy
