@@ -111,8 +111,8 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
-        # # TODO: Uncomment configuration changes once testing is completed
-        # # Get the configuration manager
+        # TODO: Uncomment configuration changes once testing is completed
+        # Get the configuration manager
         # from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
         # self._configuration_manager = get_configuration_manager()
 

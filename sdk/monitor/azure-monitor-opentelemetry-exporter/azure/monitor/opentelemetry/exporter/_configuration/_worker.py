@@ -118,7 +118,8 @@ class _ConfigurationWorker:
         SDK instances start up simultaneously after service outages or deployments.
 
         Error Handling:
-            - All exceptions are caught and logged as warnings
+            - All exceptions are caught and logged at debug level (OneSettings config fetching is
+              internal, so failures are never surfaced to users)
             - Errors do not stop the worker from continuing its refresh cycle
             - The worker maintains operation even if individual requests fail
 

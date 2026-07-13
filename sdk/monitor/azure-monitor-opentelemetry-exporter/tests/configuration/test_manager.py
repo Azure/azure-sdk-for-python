@@ -133,21 +133,31 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_class.assert_called_once()
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
-    def test_shutdown_clears_state_module_global(self, mock_worker_class):
-        """Test that shutdown() resets both singleton mechanisms so no stale instance is returned."""
+    def test_shutdown_is_soft_reset_and_reusable(self, mock_worker_class):
+        """Test that shutdown() is a soft reset: the singleton instance stays reusable.
+
+        Matching the QuickpulseManager convention, shutdown() stops the worker and clears transient
+        state but leaves the singleton instance intact so a later initialize() can restart it.
+        """
         # get_configuration_manager caches the instance in the _state module global
         manager = get_configuration_manager()
         manager.initialize()
         self.assertIs(_state._configuration_manager, manager)
+        self.assertTrue(manager._initialized)
 
-        # Shut down: both the metaclass entry and the module global must be cleared
+        # Shut down: worker stopped and transient state cleared, but instance left intact
         manager.shutdown()
-        self.assertIsNone(_state._configuration_manager)
+        self.assertFalse(manager._initialized)
+        self.assertIsNone(manager._configuration_worker)
+        self.assertEqual(manager._callbacks, [])
+        # The singleton instance is NOT cleared - it stays reusable
+        self.assertIs(_state._configuration_manager, manager)
 
-        # A subsequent lookup must return a genuinely fresh instance, not the stale shut-down one
-        new_manager = get_configuration_manager()
-        self.assertIsNotNone(new_manager)
-        self.assertIsNot(new_manager, manager)
+        # A subsequent lookup returns the same instance, which can be re-initialized
+        same_manager = get_configuration_manager()
+        self.assertIs(same_manager, manager)
+        same_manager.initialize()
+        self.assertTrue(same_manager._initialized)
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_register_callback_before_init_is_stored(self, mock_worker_class):

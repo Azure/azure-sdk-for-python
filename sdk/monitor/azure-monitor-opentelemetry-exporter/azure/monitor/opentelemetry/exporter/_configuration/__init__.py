@@ -17,7 +17,6 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import _Configur
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
-
 # Set up logger
 logger = logging.getLogger(__name__)
 
@@ -105,12 +104,18 @@ class _ConfigurationManager(metaclass=Singleton):
 
         This method implements the change detection mechanism per the OneSettings spec:
         - Polls CHANGE endpoint (e2) with cached ETag via if-none-match header.
-          - If 304 Not Modified: no changes, update refresh interval only.
+          - If 304 Not Modified: no settings fetched; the refresh interval (and echoed ETag)
+            are updated from the response headers.
           - If 200 (new ETag or no cached ETag): fetch from CONFIG endpoint (e1) for settings.
+            If the e1 fetch fails, the new ETag is dropped so the change is re-attempted on the
+            next poll rather than being silently marked as applied.
 
         When transient errors are encountered (timeouts, network exceptions, or retryable
-        HTTP status codes) from the CHANGE endpoint, the method doubles the current refresh
-        interval (capped at 24 hours) and returns immediately.
+        HTTP status codes) from the CHANGE endpoint, the method applies progressive exponential
+        backoff from a fixed base (3600s, then 7200s, 14400s, ... capped at 24 hours), tracked
+        via a consecutive-failure counter that resets on the next non-transient response, and
+        returns immediately. Non-retryable HTTP errors keep the cached configuration, do not
+        advance the ETag, and slow-poll at the max interval (24 hours).
 
         :param query_dict: Optional query parameters to include in the OneSettings request.
         :type query_dict: Optional[Dict[str, str]]
@@ -140,7 +145,7 @@ class _ConfigurationManager(metaclass=Singleton):
                 # Schedule (per spec): 1st failure -> 3600s, then 7200s, 14400s, ... up to 86400s.
                 self._backoff_attempts += 1
                 backoff_interval = min(
-                    _ONE_SETTINGS_BACKOFF_BASE_SECONDS * (2 ** (self._backoff_attempts - 1)),
+                    _ONE_SETTINGS_BACKOFF_BASE_SECONDS * int(2 ** (self._backoff_attempts - 1)),
                     _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
                 )
 
@@ -216,20 +221,18 @@ class _ConfigurationManager(metaclass=Singleton):
             return self._current_state.settings_cache.copy()  # type: ignore
 
     def shutdown(self) -> None:
-        """Shutdown the configuration worker."""
+        """Shutdown the configuration worker.
+
+        This is a soft reset (matching the QuickpulseManager convention): the worker is stopped and
+        transient state is cleared, but the singleton instance is left intact and reusable so a later
+        initialize() can restart polling. The cached configuration (_current_state) is intentionally
+        preserved across shutdown so the next initialize() resumes from the cached ETag.
+        """
         if self._configuration_worker:
             self._configuration_worker.shutdown()
             self._configuration_worker = None
         # Worker thread is now joined, so no callback notifications are in flight and no other thread
-        # is registering callbacks, so we can clear this state directly.
+        # is registering callbacks, so we can clear this state directly. Callbacks are cleared so a
+        # subsequent initialize()/re-registration does not accumulate duplicates.
         self._initialized = False
         self._callbacks.clear()
-        # Clear the singleton instance from the metaclass
-        if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
-            del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access
-        # Also reset the module-level cache in _state so get_configuration_manager() does not return
-        # this stale, shut-down instance on the next call. Both singleton mechanisms (the Singleton
-        # metaclass and the _state module global) must be cleared together to stay consistent.
-        from azure.monitor.opentelemetry.exporter._configuration import _state
-
-        _state._configuration_manager = None  # pylint: disable=protected-access
