@@ -1,5 +1,398 @@
 # Release History
 
+## 14.0.0 (2026-07-13)
+
+### Features Added
+
+  - Client `CdnManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `CdnManagementClient` added method `send_request`
+  - Model `AFDDomain` added property `properties`
+  - Model `AFDDomainHttpsParameters` added property `cipher_suite_set_type`
+  - Model `AFDDomainHttpsParameters` added property `customized_cipher_suite_set`
+  - Model `AFDEndpoint` added property `properties`
+  - Model `AFDEndpointUpdateParameters` added property `properties`
+  - Model `AFDOrigin` added property `properties`
+  - Model `AFDOriginGroup` added property `properties`
+  - Model `AFDOriginGroupProperties` added property `authentication`
+  - Model `AFDOriginGroupUpdatePropertiesParameters` added property `authentication`
+  - Enum `AfdMinimumTlsVersion` added member `TLS13`
+  - Model `CanMigrateResult` added property `properties`
+  - Model `CdnWebApplicationFirewallPolicy` added property `properties`
+  - Model `CustomDomain` added property `properties`
+  - Model `DeepCreatedCustomDomain` added property `properties`
+  - Model `DeepCreatedOrigin` added property `properties`
+  - Model `DeepCreatedOriginGroup` added property `properties`
+  - Model `EdgeNode` added property `properties`
+  - Model `Endpoint` added property `properties`
+  - Model `EndpointUpdateParameters` added property `properties`
+  - Model `ManagedRuleSetDefinition` added property `properties`
+  - Model `MigrateResult` added property `properties`
+  - Model `Operation` added property `operation_properties`
+  - Model `Origin` added property `properties`
+  - Model `OriginGroup` added property `properties`
+  - Model `Profile` added property `properties`
+  - Model `ProfileUpdateParameters` added property `properties`
+  - Model `Route` added property `properties`
+  - Model `Rule` added property `properties`
+  - Model `RuleSet` added property `properties`
+  - Model `RuleSetProperties` added property `batch_mode`
+  - Model `RuleSetProperties` added property `rules`
+  - Model `Secret` added property `properties`
+  - Model `SecurityPolicy` added property `properties`
+  - Added model `AFDDomainHttpsCustomizedCipherSuiteSet`
+  - Added enum `AfdCipherSuiteSetType`
+  - Added enum `AfdCustomizedCipherSuiteForTls12`
+  - Added enum `AfdCustomizedCipherSuiteForTls13`
+  - Added model `BatchRuleProperties`
+  - Added model `CanMigrateProperties`
+  - Added model `CdnMigrationToAfdParameters`
+  - Added model `CdnWebApplicationFirewallPolicyProperties`
+  - Added model `CertificateSourceParameters`
+  - Added enum `CertificateSourceParametersType`
+  - Added enum `CreatedByType`
+  - Added model `CustomDomainProperties`
+  - Added model `CustomDomainPropertiesParameters`
+  - Added model `DeepCreatedCustomDomainProperties`
+  - Added model `DeepCreatedOriginGroupProperties`
+  - Added model `DeepCreatedOriginProperties`
+  - Added model `DeliveryRuleActionParameters`
+  - Added enum `DeliveryRuleActionParametersType`
+  - Added model `DeliveryRuleConditionParameters`
+  - Added enum `DeliveryRuleConditionParametersType`
+  - Added model `EdgeNodeProperties`
+  - Added model `ManagedRuleSetDefinitionProperties`
+  - Added model `MigrateResultProperties`
+  - Added model `MigrationEndpointMapping`
+  - Added model `OperationProperties`
+  - Added model `OriginAuthenticationProperties`
+  - Added enum `OriginAuthenticationType`
+  - Added model `ProfileProperties`
+  - Added model `ProfilePropertiesUpdateParameters`
+  - Added model `SecurityPolicyUpdateProperties`
+  - Model `ProfilesOperations` added method `begin_cdn_can_migrate_to_afd`
+  - Model `ProfilesOperations` added method `begin_cdn_migrate_to_afd`
+  - Model `ProfilesOperations` added method `begin_migration_abort`
+  - Model `RuleSetsOperations` added method `begin_create`
+
+### Breaking Changes
+
+  - Model `AFDDomain` deleted or renamed its instance variable `azure_dns_zone`
+  - Model `AFDDomain` deleted or renamed its instance variable `deployment_status`
+  - Model `AFDDomain` deleted or renamed its instance variable `domain_validation_state`
+  - Model `AFDDomain` deleted or renamed its instance variable `extended_properties`
+  - Model `AFDDomain` deleted or renamed its instance variable `host_name`
+  - Model `AFDDomain` deleted or renamed its instance variable `pre_validated_custom_domain_resource_id`
+  - Model `AFDDomain` deleted or renamed its instance variable `profile_name`
+  - Model `AFDDomain` deleted or renamed its instance variable `provisioning_state`
+  - Model `AFDDomain` deleted or renamed its instance variable `tls_settings`
+  - Model `AFDDomain` deleted or renamed its instance variable `validation_properties`
+  - Model `AFDDomainUpdateParameters` deleted or renamed its instance variable `azure_dns_zone`
+  - Model `AFDDomainUpdateParameters` deleted or renamed its instance variable `pre_validated_custom_domain_resource_id`
+  - Model `AFDDomainUpdateParameters` deleted or renamed its instance variable `profile_name`
+  - Model `AFDDomainUpdateParameters` deleted or renamed its instance variable `tls_settings`
+  - Model `AFDEndpoint` deleted or renamed its instance variable `auto_generated_domain_name_label_scope`
+  - Model `AFDEndpoint` deleted or renamed its instance variable `deployment_status`
+  - Model `AFDEndpoint` deleted or renamed its instance variable `enabled_state`
+  - Model `AFDEndpoint` deleted or renamed its instance variable `host_name`
+  - Model `AFDEndpoint` deleted or renamed its instance variable `profile_name`
+  - Model `AFDEndpoint` deleted or renamed its instance variable `provisioning_state`
+  - Model `AFDEndpointUpdateParameters` deleted or renamed its instance variable `enabled_state`
+  - Model `AFDEndpointUpdateParameters` deleted or renamed its instance variable `profile_name`
+  - Model `AFDOrigin` deleted or renamed its instance variable `azure_origin`
+  - Model `AFDOrigin` deleted or renamed its instance variable `deployment_status`
+  - Model `AFDOrigin` deleted or renamed its instance variable `enabled_state`
+  - Model `AFDOrigin` deleted or renamed its instance variable `enforce_certificate_name_check`
+  - Model `AFDOrigin` deleted or renamed its instance variable `host_name`
+  - Model `AFDOrigin` deleted or renamed its instance variable `http_port`
+  - Model `AFDOrigin` deleted or renamed its instance variable `https_port`
+  - Model `AFDOrigin` deleted or renamed its instance variable `origin_group_name`
+  - Model `AFDOrigin` deleted or renamed its instance variable `origin_host_header`
+  - Model `AFDOrigin` deleted or renamed its instance variable `priority`
+  - Model `AFDOrigin` deleted or renamed its instance variable `provisioning_state`
+  - Model `AFDOrigin` deleted or renamed its instance variable `shared_private_link_resource`
+  - Model `AFDOrigin` deleted or renamed its instance variable `weight`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `deployment_status`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `health_probe_settings`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `load_balancing_settings`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `profile_name`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `session_affinity_state`
+  - Model `AFDOriginGroup` deleted or renamed its instance variable `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes`
+  - Model `AFDOriginGroupUpdateParameters` deleted or renamed its instance variable `health_probe_settings`
+  - Model `AFDOriginGroupUpdateParameters` deleted or renamed its instance variable `load_balancing_settings`
+  - Model `AFDOriginGroupUpdateParameters` deleted or renamed its instance variable `profile_name`
+  - Model `AFDOriginGroupUpdateParameters` deleted or renamed its instance variable `session_affinity_state`
+  - Model `AFDOriginGroupUpdateParameters` deleted or renamed its instance variable `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `azure_origin`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `enabled_state`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `enforce_certificate_name_check`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `host_name`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `http_port`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `https_port`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `origin_group_name`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `origin_host_header`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `priority`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `shared_private_link_resource`
+  - Model `AFDOriginUpdateParameters` deleted or renamed its instance variable `weight`
+  - Model `CanMigrateResult` deleted or renamed its instance variable `can_migrate`
+  - Model `CanMigrateResult` deleted or renamed its instance variable `default_sku`
+  - Model `CanMigrateResult` deleted or renamed its instance variable `errors`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `custom_rules`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `endpoint_links`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `extended_properties`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `managed_rules`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `policy_settings`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `rate_limit_rules`
+  - Model `CdnWebApplicationFirewallPolicy` deleted or renamed its instance variable `resource_state`
+  - Model `CustomDomain` deleted or renamed its instance variable `custom_https_parameters`
+  - Model `CustomDomain` deleted or renamed its instance variable `custom_https_provisioning_state`
+  - Model `CustomDomain` deleted or renamed its instance variable `custom_https_provisioning_substate`
+  - Model `CustomDomain` deleted or renamed its instance variable `host_name`
+  - Model `CustomDomain` deleted or renamed its instance variable `provisioning_state`
+  - Model `CustomDomain` deleted or renamed its instance variable `resource_state`
+  - Model `CustomDomain` deleted or renamed its instance variable `validation_data`
+  - Model `CustomDomainParameters` deleted or renamed its instance variable `host_name`
+  - Model `DeepCreatedCustomDomain` deleted or renamed its instance variable `host_name`
+  - Model `DeepCreatedCustomDomain` deleted or renamed its instance variable `validation_data`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `enabled`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `host_name`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `http_port`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `https_port`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `origin_host_header`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `priority`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `private_endpoint_status`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `private_link_alias`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `private_link_approval_message`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `private_link_location`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `private_link_resource_id`
+  - Model `DeepCreatedOrigin` deleted or renamed its instance variable `weight`
+  - Model `DeepCreatedOriginGroup` deleted or renamed its instance variable `health_probe_settings`
+  - Model `DeepCreatedOriginGroup` deleted or renamed its instance variable `origins`
+  - Model `DeepCreatedOriginGroup` deleted or renamed its instance variable `response_based_origin_error_detection_settings`
+  - Model `DeepCreatedOriginGroup` deleted or renamed its instance variable `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes`
+  - Model `EdgeNode` deleted or renamed its instance variable `ip_address_groups`
+  - Model `Endpoint` deleted or renamed its instance variable `content_types_to_compress`
+  - Model `Endpoint` deleted or renamed its instance variable `custom_domains`
+  - Model `Endpoint` deleted or renamed its instance variable `default_origin_group`
+  - Model `Endpoint` deleted or renamed its instance variable `delivery_policy`
+  - Model `Endpoint` deleted or renamed its instance variable `geo_filters`
+  - Model `Endpoint` deleted or renamed its instance variable `host_name`
+  - Model `Endpoint` deleted or renamed its instance variable `is_compression_enabled`
+  - Model `Endpoint` deleted or renamed its instance variable `is_http_allowed`
+  - Model `Endpoint` deleted or renamed its instance variable `is_https_allowed`
+  - Model `Endpoint` deleted or renamed its instance variable `optimization_type`
+  - Model `Endpoint` deleted or renamed its instance variable `origin_groups`
+  - Model `Endpoint` deleted or renamed its instance variable `origin_host_header`
+  - Model `Endpoint` deleted or renamed its instance variable `origin_path`
+  - Model `Endpoint` deleted or renamed its instance variable `origins`
+  - Model `Endpoint` deleted or renamed its instance variable `probe_path`
+  - Model `Endpoint` deleted or renamed its instance variable `provisioning_state`
+  - Model `Endpoint` deleted or renamed its instance variable `query_string_caching_behavior`
+  - Model `Endpoint` deleted or renamed its instance variable `resource_state`
+  - Model `Endpoint` deleted or renamed its instance variable `url_signing_keys`
+  - Model `Endpoint` deleted or renamed its instance variable `web_application_firewall_policy_link`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `content_types_to_compress`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `default_origin_group`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `delivery_policy`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `geo_filters`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `is_compression_enabled`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `is_http_allowed`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `is_https_allowed`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `optimization_type`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `origin_host_header`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `origin_path`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `probe_path`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `query_string_caching_behavior`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `url_signing_keys`
+  - Model `EndpointUpdateParameters` deleted or renamed its instance variable `web_application_firewall_policy_link`
+  - Model `ManagedRuleSetDefinition` deleted or renamed its instance variable `provisioning_state`
+  - Model `ManagedRuleSetDefinition` deleted or renamed its instance variable `rule_groups`
+  - Model `ManagedRuleSetDefinition` deleted or renamed its instance variable `rule_set_type`
+  - Model `ManagedRuleSetDefinition` deleted or renamed its instance variable `rule_set_version`
+  - Model `MigrateResult` deleted or renamed its instance variable `migrated_profile_resource_id`
+  - Model `Operation` deleted or renamed its instance variable `service_specification`
+  - Model `Origin` deleted or renamed its instance variable `enabled`
+  - Model `Origin` deleted or renamed its instance variable `host_name`
+  - Model `Origin` deleted or renamed its instance variable `http_port`
+  - Model `Origin` deleted or renamed its instance variable `https_port`
+  - Model `Origin` deleted or renamed its instance variable `origin_host_header`
+  - Model `Origin` deleted or renamed its instance variable `priority`
+  - Model `Origin` deleted or renamed its instance variable `private_endpoint_status`
+  - Model `Origin` deleted or renamed its instance variable `private_link_alias`
+  - Model `Origin` deleted or renamed its instance variable `private_link_approval_message`
+  - Model `Origin` deleted or renamed its instance variable `private_link_location`
+  - Model `Origin` deleted or renamed its instance variable `private_link_resource_id`
+  - Model `Origin` deleted or renamed its instance variable `provisioning_state`
+  - Model `Origin` deleted or renamed its instance variable `resource_state`
+  - Model `Origin` deleted or renamed its instance variable `weight`
+  - Model `OriginGroup` deleted or renamed its instance variable `health_probe_settings`
+  - Model `OriginGroup` deleted or renamed its instance variable `origins`
+  - Model `OriginGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `OriginGroup` deleted or renamed its instance variable `resource_state`
+  - Model `OriginGroup` deleted or renamed its instance variable `response_based_origin_error_detection_settings`
+  - Model `OriginGroup` deleted or renamed its instance variable `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes`
+  - Model `OriginGroupUpdateParameters` deleted or renamed its instance variable `health_probe_settings`
+  - Model `OriginGroupUpdateParameters` deleted or renamed its instance variable `origins`
+  - Model `OriginGroupUpdateParameters` deleted or renamed its instance variable `response_based_origin_error_detection_settings`
+  - Model `OriginGroupUpdateParameters` deleted or renamed its instance variable `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `enabled`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `host_name`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `http_port`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `https_port`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `origin_host_header`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `priority`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `private_link_alias`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `private_link_approval_message`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `private_link_location`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `private_link_resource_id`
+  - Model `OriginUpdateParameters` deleted or renamed its instance variable `weight`
+  - Model `Profile` deleted or renamed its instance variable `extended_properties`
+  - Model `Profile` deleted or renamed its instance variable `front_door_id`
+  - Model `Profile` deleted or renamed its instance variable `log_scrubbing`
+  - Model `Profile` deleted or renamed its instance variable `origin_response_timeout_seconds`
+  - Model `Profile` deleted or renamed its instance variable `provisioning_state`
+  - Model `Profile` deleted or renamed its instance variable `resource_state`
+  - Model `ProfileUpdateParameters` deleted or renamed its instance variable `log_scrubbing`
+  - Model `ProfileUpdateParameters` deleted or renamed its instance variable `origin_response_timeout_seconds`
+  - Model `Route` deleted or renamed its instance variable `cache_configuration`
+  - Model `Route` deleted or renamed its instance variable `custom_domains`
+  - Model `Route` deleted or renamed its instance variable `deployment_status`
+  - Model `Route` deleted or renamed its instance variable `enabled_state`
+  - Model `Route` deleted or renamed its instance variable `endpoint_name`
+  - Model `Route` deleted or renamed its instance variable `forwarding_protocol`
+  - Model `Route` deleted or renamed its instance variable `https_redirect`
+  - Model `Route` deleted or renamed its instance variable `link_to_default_domain`
+  - Model `Route` deleted or renamed its instance variable `origin_group`
+  - Model `Route` deleted or renamed its instance variable `origin_path`
+  - Model `Route` deleted or renamed its instance variable `patterns_to_match`
+  - Model `Route` deleted or renamed its instance variable `provisioning_state`
+  - Model `Route` deleted or renamed its instance variable `rule_sets`
+  - Model `Route` deleted or renamed its instance variable `supported_protocols`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `cache_configuration`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `custom_domains`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `enabled_state`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `endpoint_name`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `forwarding_protocol`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `https_redirect`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `link_to_default_domain`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `origin_group`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `origin_path`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `patterns_to_match`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `rule_sets`
+  - Model `RouteUpdateParameters` deleted or renamed its instance variable `supported_protocols`
+  - Model `Rule` deleted or renamed its instance variable `actions`
+  - Model `Rule` deleted or renamed its instance variable `conditions`
+  - Model `Rule` deleted or renamed its instance variable `deployment_status`
+  - Model `Rule` deleted or renamed its instance variable `match_processing_behavior`
+  - Model `Rule` deleted or renamed its instance variable `order`
+  - Model `Rule` deleted or renamed its instance variable `provisioning_state`
+  - Model `Rule` deleted or renamed its instance variable `rule_set_name`
+  - Model `RuleSet` deleted or renamed its instance variable `deployment_status`
+  - Model `RuleSet` deleted or renamed its instance variable `profile_name`
+  - Model `RuleSet` deleted or renamed its instance variable `provisioning_state`
+  - Model `RuleUpdateParameters` deleted or renamed its instance variable `actions`
+  - Model `RuleUpdateParameters` deleted or renamed its instance variable `conditions`
+  - Model `RuleUpdateParameters` deleted or renamed its instance variable `match_processing_behavior`
+  - Model `RuleUpdateParameters` deleted or renamed its instance variable `order`
+  - Model `RuleUpdateParameters` deleted or renamed its instance variable `rule_set_name`
+  - Model `Secret` deleted or renamed its instance variable `deployment_status`
+  - Model `Secret` deleted or renamed its instance variable `parameters`
+  - Model `Secret` deleted or renamed its instance variable `profile_name`
+  - Model `Secret` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityPolicy` deleted or renamed its instance variable `deployment_status`
+  - Model `SecurityPolicy` deleted or renamed its instance variable `parameters`
+  - Model `SecurityPolicy` deleted or renamed its instance variable `profile_name`
+  - Model `SecurityPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityPolicyUpdateParameters` deleted or renamed its instance variable `parameters`
+  - Deleted or renamed model `AFDDomainListResult`
+  - Deleted or renamed model `AFDEndpointListResult`
+  - Deleted or renamed model `AFDOriginGroupListResult`
+  - Deleted or renamed model `AFDOriginListResult`
+  - Deleted or renamed model `AfdErrorResponse`
+  - Deleted or renamed model `AzureFirstPartyManagedCertificate`
+  - Deleted or renamed model `CacheExpirationActionParametersTypeName`
+  - Deleted or renamed model `CacheKeyQueryStringActionParametersTypeName`
+  - Deleted or renamed model `CdnCertificateSourceParametersTypeName`
+  - Deleted or renamed model `CdnWebApplicationFirewallPolicyList`
+  - Deleted or renamed model `Certificate`
+  - Deleted or renamed model `ClientPortMatchConditionParametersTypeName`
+  - Deleted or renamed model `CookiesMatchConditionParametersTypeName`
+  - Deleted or renamed model `CustomDomainListResult`
+  - Deleted or renamed model `CustomerCertificate`
+  - Deleted or renamed model `EdgenodeResult`
+  - Deleted or renamed model `EndpointListResult`
+  - Deleted or renamed model `HeaderActionParametersTypeName`
+  - Deleted or renamed model `HostNameMatchConditionParametersTypeName`
+  - Deleted or renamed model `HttpVersionMatchConditionParametersTypeName`
+  - Deleted or renamed model `IdentityType`
+  - Deleted or renamed model `IsDeviceMatchConditionParametersTypeName`
+  - Deleted or renamed model `KeyVaultCertificateSourceParametersTypeName`
+  - Deleted or renamed model `ManagedCertificate`
+  - Deleted or renamed model `ManagedRuleSetDefinitionList`
+  - Deleted or renamed model `OperationsListResult`
+  - Deleted or renamed model `OriginGroupListResult`
+  - Deleted or renamed model `OriginGroupOverrideActionParametersTypeName`
+  - Deleted or renamed model `OriginListResult`
+  - Deleted or renamed model `PostArgsMatchConditionParametersTypeName`
+  - Deleted or renamed model `ProfileListResult`
+  - Deleted or renamed model `QueryStringMatchConditionParametersTypeName`
+  - Deleted or renamed model `RemoteAddressMatchConditionParametersTypeName`
+  - Deleted or renamed model `RequestBodyMatchConditionParametersTypeName`
+  - Deleted or renamed model `RequestHeaderMatchConditionParametersTypeName`
+  - Deleted or renamed model `RequestMethodMatchConditionParametersTypeName`
+  - Deleted or renamed model `RequestSchemeMatchConditionParametersTypeName`
+  - Deleted or renamed model `RequestUriMatchConditionParametersTypeName`
+  - Deleted or renamed model `ResourceUsageListResult`
+  - Deleted or renamed model `RouteConfigurationOverrideActionParametersTypeName`
+  - Deleted or renamed model `RouteListResult`
+  - Deleted or renamed model `RuleListResult`
+  - Deleted or renamed model `RuleSetListResult`
+  - Deleted or renamed model `SecretListResult`
+  - Deleted or renamed model `SecurityPolicyListResult`
+  - Deleted or renamed model `ServerPortMatchConditionParametersTypeName`
+  - Deleted or renamed model `SocketAddrMatchConditionParametersTypeName`
+  - Deleted or renamed model `SslProtocolMatchConditionParametersTypeName`
+  - Deleted or renamed model `UrlFileExtensionMatchConditionParametersTypeName`
+  - Deleted or renamed model `UrlFileNameMatchConditionParametersTypeName`
+  - Deleted or renamed model `UrlPathMatchConditionParametersTypeName`
+  - Deleted or renamed model `UrlRedirectActionParametersTypeName`
+  - Deleted or renamed model `UrlRewriteActionParametersTypeName`
+  - Deleted or renamed model `UrlSigningActionParametersTypeName`
+  - Deleted or renamed model `UsagesListResult`
+  - Deleted or renamed model `ValidationToken`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `continents` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `country_or_regions` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `custom_domains` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `date_time_begin` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `date_time_end` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `granularity` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `group_by` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `metrics` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `protocols` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `custom_domains` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `date_time_begin` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `date_time_end` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `max_ranking` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `metrics` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `rankings` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `actions` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `date_time_begin` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `date_time_end` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `granularity` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `group_by` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `metrics` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `rule_types` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `actions` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `date_time_begin` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `date_time_end` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `max_ranking` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `metrics` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `rankings` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `rule_types` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `RuleSetsOperations.create`
+  - Deleted or renamed model `CdnManagementClientOperationsMixin`
+
 ## 14.0.0b1 (2026-05-22)
 
 ### Features Added
