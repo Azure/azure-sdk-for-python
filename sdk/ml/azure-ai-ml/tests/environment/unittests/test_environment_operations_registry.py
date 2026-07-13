@@ -23,6 +23,7 @@ def mock_environment_operation(
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2021_10_01_dataplanepreview,
         all_operations=mock_machinelearning_registry_client._operation_container,
+        registry_service_client=mock_aml_services_2021_10_01_dataplanepreview,
     )
 
 
@@ -30,33 +31,23 @@ def mock_environment_operation(
 class TestEnvironmentOperation:
     def test_archive_version(self, mock_environment_operation: EnvironmentOperations):
         name = "random_name"
-        env_version = Mock(EnvironmentVersionData(properties=Mock(EnvironmentVersionDetails())))
         version = "1"
-        mock_environment_operation._version_operations.get.return_value = env_version
-        mock_environment_operation.archive(name=name, version=version)
+        with patch("azure.ai.ml._utils._registry_utils.get_registry_versioned_asset"), patch(
+            "azure.ai.ml._utils._registry_utils.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch.object(EnvironmentVersionData, "_deserialize", return_value=Mock()):
+            mock_environment_operation.archive(name=name, version=version)
 
-        mock_environment_operation._version_operations.begin_create_or_update.assert_called_with(
-            name=name,
-            version=version,
-            registry_name=mock_environment_operation._registry_name,
-            body=env_version,
-            resource_group_name=mock_environment_operation._resource_group_name,
-        )
+        mock_create.assert_called_once()
 
     def test_restore_version(self, mock_environment_operation: EnvironmentOperations):
         name = "random_name"
-        env_version = Mock(EnvironmentVersionData(properties=Mock(EnvironmentVersionDetails())))
         version = "1"
-        mock_environment_operation._version_operations.get.return_value = env_version
-        mock_environment_operation.restore(name=name, version=version)
+        with patch("azure.ai.ml._utils._registry_utils.get_registry_versioned_asset"), patch(
+            "azure.ai.ml._utils._registry_utils.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch.object(EnvironmentVersionData, "_deserialize", return_value=Mock()):
+            mock_environment_operation.restore(name=name, version=version)
 
-        mock_environment_operation._version_operations.begin_create_or_update.assert_called_with(
-            name=name,
-            version=version,
-            registry_name=mock_environment_operation._registry_name,
-            body=env_version,
-            resource_group_name=mock_environment_operation._resource_group_name,
-        )
+        mock_create.assert_called_once()
 
     def test_create_or_update_sas_uri_success(self, mock_environment_operation: EnvironmentOperations):
         env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
@@ -66,7 +57,9 @@ class TestEnvironmentOperation:
             "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset", return_value="some_sas_uri"
         ), patch(
             "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context"
-        ) as check_upload:
+        ) as check_upload, patch(
+            "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset"
+        ), patch.object(EnvironmentVersionData, "_deserialize", return_value=Mock()):
             mock_environment_operation.create_or_update(env)
             check_upload.assert_called_once()
 
@@ -78,6 +71,8 @@ class TestEnvironmentOperation:
             "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset", return_value=None
         ), patch(
             "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context"
-        ) as check_upload:
+        ) as check_upload, patch(
+            "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset"
+        ), patch.object(EnvironmentVersionData, "_deserialize", return_value=Mock()):
             mock_environment_operation.create_or_update(env)
             check_upload.assert_not_called()

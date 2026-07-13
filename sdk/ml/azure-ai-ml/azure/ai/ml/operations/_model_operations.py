@@ -633,7 +633,9 @@ class ModelOperations(_ScopeDependentOperations):
                         workspace_name=self._workspace_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                         list_view_type=list_view_type,
-                        stage=stage,
+                        # The arm_ml_service ModelVersions.list has no typed ``stage`` param; send it as a
+                        # query param (byte-identical to the legacy client) instead of leaking it to the transport.
+                        **({"params": {"stage": stage}} if stage else {}),
                         **self._scope_kwargs,
                     )
                 ),
