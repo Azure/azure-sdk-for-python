@@ -75,7 +75,7 @@ class TestPipelineComponentBatchDeployment:
     def test_from_rest_object(self) -> None:
 
         with open(TestPipelineComponentBatchDeployment.HELLO_BATCH_DEPLOYMENT_REST, "r") as file:
-            pipeline_component_rest = RestBatchDeployment.from_dict(json.load(file))
+            pipeline_component_rest = RestBatchDeployment._deserialize(json.load(file), [])
             pipeline_component_rest.properties.additional_properties = {
                 "deploymentConfiguration": {
                     "componentId": {"assetId": "azureml:hello_batch@latest"},
