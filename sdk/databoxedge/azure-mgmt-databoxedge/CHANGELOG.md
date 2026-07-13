@@ -10,59 +10,23 @@
   - Client `DataBoxEdgeManagementClient` added operation group `device_capacity_info`
   - Client `DataBoxEdgeManagementClient` added operation group `diagnostic_settings`
   - Client `DataBoxEdgeManagementClient` added operation group `support_packages`
-  - Model `Alert` added property `properties`
-  - Model `ArcAddon` added property `properties`
-  - Model `BandwidthSchedule` added property `properties`
-  - Model `CloudEdgeManagementRole` added property `properties`
-  - Model `Container` added property `properties`
-  - Model `DataBoxEdgeDevice` added property `properties`
-  - Model `DataBoxEdgeDeviceExtendedInfo` added property `properties`
   - Model `DataBoxEdgeDeviceExtendedInfo` added property `system_data`
-  - Model `DataBoxEdgeDevicePatch` added property `properties`
-  - Model `EdgeProfileSubscription` added property `properties`
-  - Model `FileEventTrigger` added property `properties`
-  - Model `IoTAddon` added property `properties`
-  - Model `IoTRole` added property `properties`
-  - Model `Job` added property `properties`
   - Model `Job` added property `system_data`
-  - Model `KubernetesRole` added property `properties`
   - Model `LoadBalancerConfig` added property `ip_range`
-  - Model `MECRole` added property `properties`
-  - Model `MonitoringMetricConfiguration` added property `properties`
-  - Model `NetworkSettings` added property `properties`
-  - Model `Node` added property `properties`
-  - Model `Operation` added property `properties`
   - Model `Order` added property `kind`
-  - Model `Order` added property `properties`
-  - Model `PeriodicTimerEventTrigger` added property `properties`
-  - Model `SecuritySettings` added property `properties`
-  - Model `Share` added property `properties`
   - Enum `SkuName` added member `EDGE_MR_TCP`
   - Enum `SkuName` added member `EP2_128_GPU1_MX1_W`
   - Enum `SkuName` added member `EP2_256_GPU2_MX1`
   - Enum `SkuName` added member `EP2_64_MX1_W`
-  - Model `StorageAccount` added property `properties`
-  - Model `StorageAccountCredential` added property `properties`
   - Model `UpdateDetails` added property `friendly_version_number`
   - Model `UpdateDetails` added property `installation_impact`
-  - Model `UpdateSummary` added property `properties`
-  - Model `User` added property `properties`
   - Added enum `AccessLevel`
-  - Added model `AlertProperties`
-  - Added model `ArcAddonProperties`
-  - Added model `BandwidthScheduleProperties`
-  - Added model `CloudEdgeManagementRoleProperties`
   - Added model `CloudError`
   - Added model `ClusterCapacityViewData`
   - Added model `ClusterGpuCapacity`
   - Added model `ClusterMemoryCapacity`
   - Added model `ClusterStorageViewData`
   - Added enum `ClusterWitnessType`
-  - Added model `ContainerProperties`
-  - Added model `DCAccessCodeProperties`
-  - Added model `DataBoxEdgeDeviceExtendedInfoProperties`
-  - Added model `DataBoxEdgeDeviceProperties`
-  - Added model `DataBoxEdgeDevicePropertiesPatch`
   - Added model `DataResidency`
   - Added enum `DataResidencyType`
   - Added model `DeviceCapacityInfo`
@@ -72,241 +36,68 @@
   - Added model `DiagnosticProactiveLogCollectionSettings`
   - Added model `DiagnosticRemoteSupportSettings`
   - Added model `DiagnosticRemoteSupportSettingsProperties`
-  - Added model `FileTriggerProperties`
   - Added model `HostCapacity`
   - Added enum `InstallationImpact`
-  - Added model `IoTAddonProperties`
-  - Added model `IoTRoleProperties`
-  - Added model `JobProperties`
-  - Added model `KubernetesRoleProperties`
-  - Added model `MECRoleProperties`
-  - Added model `MonitoringMetricConfigurationProperties`
-  - Added model `NetworkSettingsProperties`
-  - Added model `NodeProperties`
   - Added model `NumaNodeData`
-  - Added model `OperationProperties`
-  - Added model `OrderProperties`
-  - Added model `PeriodicTimerProperties`
   - Added enum `ProactiveDiagnosticsConsent`
   - Added model `ProactiveLogCollectionSettingsProperties`
   - Added model `ProxyResource`
-  - Added model `RawCertificateData`
   - Added enum `RemoteApplicationType`
   - Added model `RemoteSupportSettings`
   - Added model `Resource`
-  - Added model `SecuritySettingsProperties`
-  - Added model `ShareProperties`
-  - Added model `StorageAccountCredentialProperties`
-  - Added model `StorageAccountProperties`
-  - Added model `SubscriptionProperties`
   - Added model `SupportPackageRequestProperties`
   - Added model `TrackedResource`
   - Added model `TriggerSupportPackageRequest`
-  - Added model `UpdateSummaryProperties`
-  - Added model `UserProperties`
   - Added model `VmMemory`
   - Added model `VmPlacementRequestResult`
-  - Model `DevicesOperations` added method `create_or_update`
-  - Model `UsersOperations` added parameter `filter` in method `list_by_data_box_edge_device`
-  - Added model `DeviceCapacityCheckOperations`
-  - Added model `DeviceCapacityInfoOperations`
-  - Added model `DiagnosticSettingsOperations`
-  - Added model `SupportPackagesOperations`
+  - Operation group `DevicesOperations` added method `create_or_update`
+  - Added operation group `DeviceCapacityCheckOperations`
+  - Added operation group `DeviceCapacityInfoOperations`
+  - Added operation group `DiagnosticSettingsOperations`
+  - Added operation group `SupportPackagesOperations`
 
 ### Breaking Changes
 
-  - Model `Alert` deleted or renamed its instance variable `alert_type`
-  - Model `Alert` deleted or renamed its instance variable `appeared_at_date_time`
-  - Model `Alert` deleted or renamed its instance variable `detailed_information`
-  - Model `Alert` deleted or renamed its instance variable `error_details`
-  - Model `Alert` deleted or renamed its instance variable `recommendation`
-  - Model `Alert` deleted or renamed its instance variable `severity`
-  - Model `Alert` deleted or renamed its instance variable `title`
-  - Model `ArcAddon` deleted or renamed its instance variable `host_platform`
-  - Model `ArcAddon` deleted or renamed its instance variable `host_platform_type`
-  - Model `ArcAddon` deleted or renamed its instance variable `provisioning_state`
-  - Model `ArcAddon` deleted or renamed its instance variable `resource_group_name`
-  - Model `ArcAddon` deleted or renamed its instance variable `resource_location`
-  - Model `ArcAddon` deleted or renamed its instance variable `resource_name`
-  - Model `ArcAddon` deleted or renamed its instance variable `subscription_id`
-  - Model `ArcAddon` deleted or renamed its instance variable `version`
-  - Model `BandwidthSchedule` deleted or renamed its instance variable `days`
-  - Model `BandwidthSchedule` deleted or renamed its instance variable `rate_in_mbps`
-  - Model `BandwidthSchedule` deleted or renamed its instance variable `start`
-  - Model `BandwidthSchedule` deleted or renamed its instance variable `stop`
-  - Model `CloudEdgeManagementRole` deleted or renamed its instance variable `edge_profile`
-  - Model `CloudEdgeManagementRole` deleted or renamed its instance variable `local_management_status`
-  - Model `CloudEdgeManagementRole` deleted or renamed its instance variable `role_status`
-  - Model `Container` deleted or renamed its instance variable `container_status`
-  - Model `Container` deleted or renamed its instance variable `created_date_time`
-  - Model `Container` deleted or renamed its instance variable `data_format`
-  - Model `Container` deleted or renamed its instance variable `refresh_details`
-  - Model `DCAccessCode` deleted or renamed its instance variable `auth_code`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `configured_role_types`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `culture`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `data_box_edge_device_status`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `description`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `device_hcs_version`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `device_local_capacity`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `device_model`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `device_software_version`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `device_type`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `edge_profile`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `friendly_name`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `model_description`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `node_count`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `resource_move_details`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `serial_number`
-  - Model `DataBoxEdgeDevice` deleted or renamed its instance variable `time_zone`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `channel_integrity_key_name`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `channel_integrity_key_version`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `client_secret_store_id`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `client_secret_store_url`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `device_secrets`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `encryption_key`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `encryption_key_thumbprint`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `key_vault_sync_status`
-  - Model `DataBoxEdgeDeviceExtendedInfo` deleted or renamed its instance variable `resource_key`
-  - Model `DataBoxEdgeDevicePatch` deleted or renamed its instance variable `edge_profile`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `location_placement_id`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `quota_id`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `registered_features`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `serialized_details`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `tenant_id`
-  - Model `FileEventTrigger` deleted or renamed its instance variable `custom_context_tag`
-  - Model `FileEventTrigger` deleted or renamed its instance variable `sink_info`
-  - Model `FileEventTrigger` deleted or renamed its instance variable `source_info`
-  - Model `IoTAddon` deleted or renamed its instance variable `host_platform`
-  - Model `IoTAddon` deleted or renamed its instance variable `host_platform_type`
-  - Model `IoTAddon` deleted or renamed its instance variable `io_t_device_details`
-  - Model `IoTAddon` deleted or renamed its instance variable `io_t_edge_device_details`
-  - Model `IoTAddon` deleted or renamed its instance variable `provisioning_state`
-  - Model `IoTAddon` deleted or renamed its instance variable `version`
-  - Model `IoTRole` deleted or renamed its instance variable `compute_resource`
-  - Model `IoTRole` deleted or renamed its instance variable `host_platform`
-  - Model `IoTRole` deleted or renamed its instance variable `host_platform_type`
-  - Model `IoTRole` deleted or renamed its instance variable `io_t_device_details`
-  - Model `IoTRole` deleted or renamed its instance variable `io_t_edge_agent_info`
-  - Model `IoTRole` deleted or renamed its instance variable `io_t_edge_device_details`
-  - Model `IoTRole` deleted or renamed its instance variable `role_status`
-  - Model `IoTRole` deleted or renamed its instance variable `share_mappings`
-  - Model `Job` deleted or renamed its instance variable `current_stage`
-  - Model `Job` deleted or renamed its instance variable `download_progress`
-  - Model `Job` deleted or renamed its instance variable `error_manifest_file`
-  - Model `Job` deleted or renamed its instance variable `folder`
-  - Model `Job` deleted or renamed its instance variable `install_progress`
-  - Model `Job` deleted or renamed its instance variable `job_type`
-  - Model `Job` deleted or renamed its instance variable `refreshed_entity_id`
-  - Model `Job` deleted or renamed its instance variable `total_refresh_errors`
-  - Model `KubernetesRole` deleted or renamed its instance variable `host_platform`
-  - Model `KubernetesRole` deleted or renamed its instance variable `host_platform_type`
-  - Model `KubernetesRole` deleted or renamed its instance variable `kubernetes_cluster_info`
-  - Model `KubernetesRole` deleted or renamed its instance variable `kubernetes_role_resources`
-  - Model `KubernetesRole` deleted or renamed its instance variable `provisioning_state`
-  - Model `KubernetesRole` deleted or renamed its instance variable `role_status`
-  - Model `MECRole` deleted or renamed its instance variable `connection_string`
-  - Model `MECRole` deleted or renamed its instance variable `controller_endpoint`
-  - Model `MECRole` deleted or renamed its instance variable `resource_unique_id`
-  - Model `MECRole` deleted or renamed its instance variable `role_status`
-  - Model `MonitoringMetricConfiguration` deleted or renamed its instance variable `metric_configurations`
-  - Model `NetworkSettings` deleted or renamed its instance variable `network_adapters`
-  - Model `Node` deleted or renamed its instance variable `node_chassis_serial_number`
-  - Model `Node` deleted or renamed its instance variable `node_display_name`
-  - Model `Node` deleted or renamed its instance variable `node_friendly_software_version`
-  - Model `Node` deleted or renamed its instance variable `node_hcs_version`
-  - Model `Node` deleted or renamed its instance variable `node_instance_id`
-  - Model `Node` deleted or renamed its instance variable `node_serial_number`
-  - Model `Node` deleted or renamed its instance variable `node_status`
-  - Model `Operation` deleted or renamed its instance variable `service_specification`
-  - Model `Order` deleted or renamed its instance variable `contact_information`
-  - Model `Order` deleted or renamed its instance variable `current_status`
-  - Model `Order` deleted or renamed its instance variable `delivery_tracking_info`
-  - Model `Order` deleted or renamed its instance variable `order_history`
-  - Model `Order` deleted or renamed its instance variable `return_tracking_info`
-  - Model `Order` deleted or renamed its instance variable `serial_number`
-  - Model `Order` deleted or renamed its instance variable `shipment_type`
-  - Model `Order` deleted or renamed its instance variable `shipping_address`
-  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `custom_context_tag`
-  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `sink_info`
-  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `source_info`
-  - Model `SecuritySettings` deleted or renamed its instance variable `device_admin_password`
-  - Model `Share` deleted or renamed its instance variable `access_protocol`
-  - Model `Share` deleted or renamed its instance variable `azure_container_info`
-  - Model `Share` deleted or renamed its instance variable `client_access_rights`
-  - Model `Share` deleted or renamed its instance variable `data_policy`
-  - Model `Share` deleted or renamed its instance variable `description`
-  - Model `Share` deleted or renamed its instance variable `monitoring_status`
-  - Model `Share` deleted or renamed its instance variable `refresh_details`
-  - Model `Share` deleted or renamed its instance variable `share_mappings`
-  - Model `Share` deleted or renamed its instance variable `share_status`
-  - Model `Share` deleted or renamed its instance variable `user_access_rights`
-  - Model `StorageAccount` deleted or renamed its instance variable `blob_endpoint`
-  - Model `StorageAccount` deleted or renamed its instance variable `container_count`
-  - Model `StorageAccount` deleted or renamed its instance variable `data_policy`
-  - Model `StorageAccount` deleted or renamed its instance variable `description`
-  - Model `StorageAccount` deleted or renamed its instance variable `storage_account_credential_id`
-  - Model `StorageAccount` deleted or renamed its instance variable `storage_account_status`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `account_key`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `account_type`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `alias`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `blob_domain_name`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `connection_string`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `ssl_status`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `storage_account_id`
-  - Model `StorageAccountCredential` deleted or renamed its instance variable `user_name`
-  - Model `UpdateSummary` deleted or renamed its instance variable `device_last_scanned_date_time`
-  - Model `UpdateSummary` deleted or renamed its instance variable `device_version_number`
-  - Model `UpdateSummary` deleted or renamed its instance variable `friendly_device_version_name`
-  - Model `UpdateSummary` deleted or renamed its instance variable `in_progress_download_job_id`
-  - Model `UpdateSummary` deleted or renamed its instance variable `in_progress_download_job_started_date_time`
-  - Model `UpdateSummary` deleted or renamed its instance variable `in_progress_install_job_id`
-  - Model `UpdateSummary` deleted or renamed its instance variable `in_progress_install_job_started_date_time`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_completed_download_job_date_time`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_completed_download_job_id`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_completed_install_job_date_time`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_completed_install_job_id`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_completed_scan_job_date_time`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_download_job_status`
-  - Model `UpdateSummary` deleted or renamed its instance variable `last_install_job_status`
-  - Model `UpdateSummary` deleted or renamed its instance variable `ongoing_update_operation`
-  - Model `UpdateSummary` deleted or renamed its instance variable `reboot_behavior`
-  - Model `UpdateSummary` deleted or renamed its instance variable `total_number_of_updates_available`
-  - Model `UpdateSummary` deleted or renamed its instance variable `total_number_of_updates_pending_download`
-  - Model `UpdateSummary` deleted or renamed its instance variable `total_number_of_updates_pending_install`
-  - Model `UpdateSummary` deleted or renamed its instance variable `total_time_in_minutes`
-  - Model `UpdateSummary` deleted or renamed its instance variable `total_update_size_in_bytes`
-  - Model `UpdateSummary` deleted or renamed its instance variable `update_titles`
-  - Model `UpdateSummary` deleted or renamed its instance variable `updates`
-  - Model `UploadCertificateRequest` deleted or renamed its instance variable `authentication_type`
-  - Model `UploadCertificateRequest` deleted or renamed its instance variable `certificate`
-  - Model `User` deleted or renamed its instance variable `encrypted_password`
-  - Model `User` deleted or renamed its instance variable `share_access_rights`
-  - Model `User` deleted or renamed its instance variable `user_type`
-  - Deleted or renamed model `AddonList`
-  - Deleted or renamed model `AlertList`
-  - Deleted or renamed model `BandwidthSchedulesList`
-  - Deleted or renamed model `ContainerList`
-  - Deleted or renamed model `DataBoxEdgeDeviceList`
-  - Deleted or renamed model `DataBoxEdgeMoveRequest`
-  - Deleted or renamed model `DataBoxEdgeSkuList`
-  - Deleted or renamed model `MonitoringMetricConfigurationList`
-  - Deleted or renamed model `NodeList`
-  - Deleted or renamed model `OperationsList`
-  - Deleted or renamed model `OrderList`
-  - Deleted or renamed model `ResourceTypeSku`
-  - Deleted or renamed model `RoleList`
-  - Deleted or renamed model `ShareList`
-  - Deleted or renamed model `SkuInformation`
-  - Deleted or renamed model `SkuInformationList`
-  - Deleted or renamed model `StorageAccountCredentialList`
-  - Deleted or renamed model `StorageAccountList`
-  - Deleted or renamed model `TriggerList`
-  - Deleted or renamed model `UserList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Alert` moved instance variables `alert_type`, `appeared_at_date_time`, `detailed_information`, `error_details`, `recommendation`, `severity` and `title` under property `properties` whose type is `AlertProperties`
+  - Model `ArcAddon` moved instance variables `host_platform`, `host_platform_type`, `provisioning_state`, `resource_group_name`, `resource_location`, `resource_name`, `subscription_id` and `version` under property `properties` whose type is `ArcAddonProperties`
+  - Model `BandwidthSchedule` moved instance variables `days`, `rate_in_mbps`, `start` and `stop` under property `properties` whose type is `BandwidthScheduleProperties`
+  - Model `CloudEdgeManagementRole` moved instance variables `edge_profile`, `local_management_status` and `role_status` under property `properties` whose type is `CloudEdgeManagementRoleProperties`
+  - Model `Container` moved instance variables `container_status`, `created_date_time`, `data_format` and `refresh_details` under property `properties` whose type is `ContainerProperties`
+  - Model `DCAccessCode` moved instance variable `auth_code` under property `properties` whose type is `DCAccessCodeProperties`
+  - Model `DataBoxEdgeDevice` moved instance variables `configured_role_types`, `culture`, `data_box_edge_device_status`, `description`, `device_hcs_version`, `device_local_capacity`, `device_model`, `device_software_version`, `device_type`, `edge_profile`, `friendly_name`, `model_description`, `node_count`, `resource_move_details`, `serial_number` and `time_zone` under property `properties` whose type is `DataBoxEdgeDeviceProperties`
+  - Model `DataBoxEdgeDeviceExtendedInfo` moved instance variables `channel_integrity_key_name`, `channel_integrity_key_version`, `client_secret_store_id`, `client_secret_store_url`, `device_secrets`, `encryption_key`, `encryption_key_thumbprint`, `key_vault_sync_status` and `resource_key` under property `properties` whose type is `DataBoxEdgeDeviceExtendedInfoProperties`
+  - Model `DataBoxEdgeDevicePatch` moved instance variable `edge_profile` under property `properties` whose type is `DataBoxEdgeDevicePropertiesPatch`
+  - Model `EdgeProfileSubscription` moved instance variables `location_placement_id`, `quota_id`, `registered_features`, `serialized_details` and `tenant_id` under property `properties` whose type is `SubscriptionProperties`
+  - Model `FileEventTrigger` moved instance variables `custom_context_tag`, `sink_info` and `source_info` under property `properties` whose type is `FileTriggerProperties`
+  - Model `IoTAddon` moved instance variables `host_platform`, `host_platform_type`, `io_t_device_details`, `io_t_edge_device_details`, `provisioning_state` and `version` under property `properties` whose type is `IoTAddonProperties`
+  - Model `IoTRole` moved instance variables `compute_resource`, `host_platform`, `host_platform_type`, `io_t_device_details`, `io_t_edge_agent_info`, `io_t_edge_device_details`, `role_status` and `share_mappings` under property `properties` whose type is `IoTRoleProperties`
+  - Model `Job` moved instance variables `current_stage`, `download_progress`, `error_manifest_file`, `folder`, `install_progress`, `job_type`, `refreshed_entity_id` and `total_refresh_errors` under property `properties` whose type is `JobProperties`
+  - Model `KubernetesRole` moved instance variables `host_platform`, `host_platform_type`, `kubernetes_cluster_info`, `kubernetes_role_resources`, `provisioning_state` and `role_status` under property `properties` whose type is `KubernetesRoleProperties`
+  - Model `MECRole` moved instance variables `connection_string`, `controller_endpoint`, `resource_unique_id` and `role_status` under property `properties` whose type is `MECRoleProperties`
+  - Model `MonitoringMetricConfiguration` moved instance variable `metric_configurations` under property `properties` whose type is `MonitoringMetricConfigurationProperties`
+  - Model `NetworkSettings` moved instance variable `network_adapters` under property `properties` whose type is `NetworkSettingsProperties`
+  - Model `Node` moved instance variables `node_chassis_serial_number`, `node_display_name`, `node_friendly_software_version`, `node_hcs_version`, `node_instance_id`, `node_serial_number` and `node_status` under property `properties` whose type is `NodeProperties`
+  - Model `Operation` moved instance variable `service_specification` under property `properties` whose type is `OperationProperties`
+  - Model `Order` moved instance variables `contact_information`, `current_status`, `delivery_tracking_info`, `order_history`, `return_tracking_info`, `serial_number`, `shipment_type` and `shipping_address` under property `properties` whose type is `OrderProperties`
+  - Model `PeriodicTimerEventTrigger` moved instance variables `custom_context_tag`, `sink_info` and `source_info` under property `properties` whose type is `PeriodicTimerProperties`
+  - Model `SecuritySettings` moved instance variable `device_admin_password` under property `properties` whose type is `SecuritySettingsProperties`
+  - Model `Share` moved instance variables `access_protocol`, `azure_container_info`, `client_access_rights`, `data_policy`, `description`, `monitoring_status`, `refresh_details`, `share_mappings`, `share_status` and `user_access_rights` under property `properties` whose type is `ShareProperties`
+  - Model `StorageAccount` moved instance variables `blob_endpoint`, `container_count`, `data_policy`, `description`, `storage_account_credential_id` and `storage_account_status` under property `properties` whose type is `StorageAccountProperties`
+  - Model `StorageAccountCredential` moved instance variables `account_key`, `account_type`, `alias`, `blob_domain_name`, `connection_string`, `ssl_status`, `storage_account_id` and `user_name` under property `properties` whose type is `StorageAccountCredentialProperties`
+  - Model `UpdateSummary` moved instance variables `device_last_scanned_date_time`, `device_version_number`, `friendly_device_version_name`, `in_progress_download_job_id`, `in_progress_download_job_started_date_time`, `in_progress_install_job_id`, `in_progress_install_job_started_date_time`, `last_completed_download_job_date_time`, `last_completed_download_job_id`, `last_completed_install_job_date_time`, `last_completed_install_job_id`, `last_completed_scan_job_date_time`, `last_download_job_status`, `last_install_job_status`, `ongoing_update_operation`, `reboot_behavior`, `total_number_of_updates_available`, `total_number_of_updates_pending_download`, `total_number_of_updates_pending_install`, `total_time_in_minutes`, `total_update_size_in_bytes`, `update_titles` and `updates` under property `properties` whose type is `UpdateSummaryProperties`
+  - Model `UploadCertificateRequest` moved instance variables `authentication_type` and `certificate` under property `properties` whose type is `RawCertificateData`
+  - Model `User` moved instance variables `encrypted_password`, `share_access_rights` and `user_type` under property `properties` whose type is `UserProperties`
   - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed method `DevicesOperations.begin_create_or_update`
-  - Method `UsersOperations.list_by_data_box_edge_device` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
-  - Method `UsersOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'expand', 'resource_group_name', 'kwargs']` to `['self', 'device_name', 'filter', 'resource_group_name', 'kwargs']`
+  - Method `UsersOperations.list_by_data_box_edge_device` renamed its parameter `expand` to `filter`
+
+### Other Changes
+
+  - Deleted model `AddonList`/`AlertList`/`BandwidthSchedulesList`/`ContainerList`/`DataBoxEdgeDeviceList`/`DataBoxEdgeSkuList`/`MonitoringMetricConfigurationList`/`NodeList`/`OperationsList`/`OrderList`/`RoleList`/`ShareList`/`SkuInformationList`/`StorageAccountCredentialList`/`StorageAccountList`/`TriggerList`/`UserList` which actually were not used by SDK users
+  - Deleted model `DataBoxEdgeMoveRequest`/`ResourceTypeSku`/`SkuInformation` which actually were not used by SDK users
 
 ## 3.0.0b2 (2026-05-26)
 
