@@ -9,13 +9,6 @@ from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
 from azure.core import MatchConditions
 
 from ._parser import _datetime_to_str, _get_file_permission
-from ._generated.models import (
-    SourceModifiedAccessConditions,
-    LeaseAccessConditions,
-    SourceLeaseAccessConditions,
-    DestinationLeaseAccessConditions,
-    CopyFileSmbInfo,
-)
 
 if TYPE_CHECKING:
     from ._lease import ShareLeaseClient
@@ -82,50 +75,63 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
+def get_source_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     if_match, if_none_match = _get_match_headers(kwargs, "source_match_condition", "source_etag")
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop("source_if_modified_since", None),
-        source_if_unmodified_since=kwargs.pop("source_if_unmodified_since", None),
-        source_if_match=if_match or kwargs.pop("source_if_match", None),
-        source_if_none_match=if_none_match or kwargs.pop("source_if_none_match", None),
-    )
+    return {
+        "source_if_modified_since": kwargs.pop("source_if_modified_since", None),
+        "source_if_unmodified_since": kwargs.pop("source_if_unmodified_since", None),
+        "source_if_match": if_match or kwargs.pop("source_if_match", None),
+        "source_if_none_match": if_none_match or kwargs.pop("source_if_none_match", None),
+    }
 
 
-def get_access_conditions(
-    lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]],
-) -> Optional[LeaseAccessConditions]:
+def get_lease_id(lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]) -> Optional[str]:
+    """Extract lease_id from a lease client or string. Returns the lease_id string or None.
+
+    :param lease: A lease client or string lease ID.
+    :type lease: ~azure.storage.fileshare.ShareLeaseClient or str or None
+    :returns: The lease ID or None.
+    :rtype: str or None
+    """
     if lease is None:
         return None
     if hasattr(lease, "id"):
-        lease_id = lease.id
-    else:
-        lease_id = lease
-    return LeaseAccessConditions(lease_id=lease_id)
+        return lease.id
+    return lease
 
 
-def get_source_access_conditions(
+def get_source_lease_id(
     lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]],
-) -> Optional[SourceLeaseAccessConditions]:
+) -> Optional[str]:
+    """Extract source_lease_id from a lease client or string. Returns the lease_id string or None.
+
+    :param lease: A lease client or string lease ID.
+    :type lease: ~azure.storage.fileshare.ShareLeaseClient or str or None
+    :returns: The lease ID or None.
+    :rtype: str or None
+    """
     if lease is None:
         return None
     if hasattr(lease, "id"):
-        lease_id = lease.id
-    else:
-        lease_id = lease
-    return SourceLeaseAccessConditions(source_lease_id=lease_id)
+        return lease.id
+    return lease
 
 
-def get_dest_access_conditions(
+def get_dest_lease_id(
     lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]],
-) -> Optional[DestinationLeaseAccessConditions]:
+) -> Optional[str]:
+    """Extract destination_lease_id from a lease client or string. Returns the lease_id string or None.
+
+    :param lease: A lease client or string lease ID.
+    :type lease: ~azure.storage.fileshare.ShareLeaseClient or str or None
+    :returns: The lease ID or None.
+    :rtype: str or None
+    """
     if lease is None:
         return None
     if hasattr(lease, "id"):
-        lease_id = lease.id
-    else:
-        lease_id = lease
-    return DestinationLeaseAccessConditions(destination_lease_id=lease_id)
+        return lease.id
+    return lease
 
 
 def get_smb_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
@@ -156,15 +162,13 @@ def get_smb_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "file_permission": file_permission,
         "file_permission_key": file_permission_key,
-        "copy_file_smb_info": CopyFileSmbInfo(
-            file_permission_copy_mode=file_permission_copy_mode,
-            ignore_read_only=ignore_read_only,
-            file_attributes=file_attributes,
-            file_creation_time=_datetime_to_str(file_creation_time),
-            file_last_write_time=_datetime_to_str(file_last_write_time),
-            file_change_time=_datetime_to_str(file_change_time),
-            set_archive_attribute=set_archive_attribute,
-        ),
+        "file_permission_copy_mode": file_permission_copy_mode,
+        "ignore_read_only": ignore_read_only,
+        "file_attributes": file_attributes,
+        "file_creation_time": _datetime_to_str(file_creation_time),
+        "file_last_write_time": _datetime_to_str(file_last_write_time),
+        "file_change_time": _datetime_to_str(file_change_time),
+        "set_archive_attribute": set_archive_attribute,
     }
 
 
@@ -181,12 +185,10 @@ def get_rename_smb_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "file_permission": file_permission,
         "file_permission_key": file_permission_key,
-        "copy_file_smb_info": CopyFileSmbInfo(
-            file_attributes=file_attributes,
-            file_creation_time=_datetime_to_str(file_creation_time),
-            file_last_write_time=_datetime_to_str(file_last_write_time),
-            file_change_time=_datetime_to_str(file_change_time),
-        ),
+        "file_attributes": file_attributes,
+        "file_creation_time": _datetime_to_str(file_creation_time),
+        "file_last_write_time": _datetime_to_str(file_last_write_time),
+        "file_change_time": _datetime_to_str(file_change_time),
     }
 
 

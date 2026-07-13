@@ -13,14 +13,41 @@ parameters:
   PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
 
 stages:
-  - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
+  # Release stages are compiled for:
+  #   * internal manual runs (existing behavior), and
+  #   * internal post-merge CI on 'main' (auto-release). For auto-release, only the packages changed by a
+  #     merged PR carrying the 'auto-release' label are released; each Release_* stage is gated at runtime
+  #     on the ReleaseArtifact_<safeName> output produced by the shared AutoReleasePrepare stage below.
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
+
+    # Auto-release preparation runs only for post-merge CI on 'main'. The shared (eng/common) stage resolves
+    # the merged PR from Build.SourceVersion, requires the 'auto-release' label, maps the PR's changed files
+    # to releasable packages via this repo's package detection, and emits ReleaseArtifact_<safeName> outputs.
+    # It fails closed: any error or missing/unlabeled PR leaves every artifact marked 'false'. Python has no
+    # Signing stage, so DependsOn is overridden to the Build stage.
+    - ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+      - template: /eng/common/pipelines/templates/stages/archetype-auto-release-prepare.yml
+        parameters:
+          DependsOn:
+            - ${{ parameters.DependsOn }}
+          Artifacts: ${{ parameters.Artifacts }}
+          Condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+
     - ${{ each artifact in parameters.Artifacts }}:
       - stage: 'Release_${{artifact.safename}}'
         displayName: 'Release: ${{artifact.name}}'
-        dependsOn: ${{parameters.DependsOn}}
+        dependsOn:
+          - ${{ parameters.DependsOn }}
+          - ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+            - AutoReleasePrepare
         variables:
           - template: /eng/pipelines/templates/variables/image.yml
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+        # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
+        # Manual runs: every declared artifact remains eligible (existing behavior).
+        ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+          condition: and(succeeded(), eq(dependencies.AutoReleasePrepare.outputs['ResolveAutoReleasePackages.resolve.ReleaseArtifact_${{ artifact.safename }}'], 'true'), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+        ${{ else }}:
+          condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
         jobs:
           - job: TagRepository
             displayName: "Create release tag"

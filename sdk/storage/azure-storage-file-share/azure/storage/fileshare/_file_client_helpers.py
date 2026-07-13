@@ -7,7 +7,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import quote, unquote, urlparse
 
-from ._serialize import get_access_conditions, get_source_conditions
+from ._serialize import get_lease_id, get_source_conditions
 from ._shared.base_client import parse_query
 from ._shared.response_handlers import return_response_headers
 
@@ -75,8 +75,9 @@ def _upload_range_from_url_options(
     destination_range = f"bytes={offset}-{end_range}"
     source_range = f"bytes={source_offset}-{source_offset + length - 1}"
     source_authorization = kwargs.pop("source_authorization", None)
-    source_mod_conditions = get_source_conditions(kwargs)
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    # Drain the source-condition kwargs so they aren't forwarded to the service via options.update(kwargs) below.
+    get_source_conditions(kwargs)
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     file_last_write_mode = kwargs.pop("file_last_write_mode", None)
 
     options = {
@@ -85,9 +86,12 @@ def _upload_range_from_url_options(
         "content_length": 0,
         "source_range": source_range,
         "range": destination_range,
+        "file_range_write_from_url": "update",
         "file_last_written_mode": file_last_write_mode,
-        "source_modified_access_conditions": source_mod_conditions,
-        "lease_access_conditions": access_conditions,
+        "source_content_crc64": kwargs.pop("source_content_crc64", None),
+        "source_if_match_crc64": kwargs.pop("source_if_match_crc64", None),
+        "source_if_none_match_crc64": kwargs.pop("source_if_none_match_crc64", None),
+        "lease_id": lease_id,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
@@ -97,13 +101,12 @@ def _upload_range_from_url_options(
 
 
 def _get_ranges_options(
-    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_sharesnapshot: Optional[Union[str, Dict[str, Any]]] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
 
     content_range = None
     if offset:
@@ -114,8 +117,7 @@ def _get_ranges_options(
             content_range = f"bytes={offset}-"
 
     options = {
-        "sharesnapshot": snapshot,
-        "lease_access_conditions": access_conditions,
+        "lease_id": lease_id,
         "timeout": kwargs.pop("timeout", None),
         "range": content_range,
     }

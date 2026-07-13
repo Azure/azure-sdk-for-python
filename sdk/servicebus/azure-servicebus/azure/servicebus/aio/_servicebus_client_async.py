@@ -21,7 +21,6 @@ from ._base_handler_async import (
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common._configuration import Configuration
-from .._common.auto_lock_renewer import AutoLockRenewer
 from .._common.utils import generate_dead_letter_entity_name, strip_protocol_from_uri
 from .._common.constants import (
     ServiceBusSubQueue,
@@ -32,6 +31,7 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from ._async_auto_lock_renewer import AutoLockRenewer
 
 NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 
@@ -352,7 +352,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
-        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
         **kwargs: Any,
     ) -> ServiceBusReceiver:
@@ -539,7 +539,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
-        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
         client_identifier: Optional[str] = None,
         socket_timeout: Optional[float] = None,

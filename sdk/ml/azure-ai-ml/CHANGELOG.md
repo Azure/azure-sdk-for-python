@@ -8,6 +8,7 @@
 - Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.
 - Fixed `DeploymentTemplate.creation_context` always being `None` when retrieved via `get()` or `list()`. The created/modified timestamps and identity returned by the service (as `createdTime` / `modifiedTime` / `createdBy`) are now populated on `creation_context`, making `DeploymentTemplate` consistent with `Model` and `Environment`.
 - Fixed `deployment_templates.list(name=...)` raising `AttributeError: 'str' object has no attribute 'request_timeout'`. In the list response, `requestSettings` / `livenessProbe` / `readinessProbe` arrive as stringified dicts nested under `properties`; these are now parsed before conversion, giving `list()` parity with `models.list()` / `environments.list()`.
+- Fixed `deployment_templates.get(name)` failing with a 404 (`DeploymentTemplate {name}:latest not found`) when no version was supplied, because the literal string `"latest"` was sent as the version. The latest version is now resolved client-side (the service exposes no `latest` label and no server-side ordering), and `get()` accepts a `label` keyword (`label="latest"` resolves to the latest version) mirroring `models.get()`. `delete(name)` resolves the latest version the same way.
 
 ### Other Changes
 
