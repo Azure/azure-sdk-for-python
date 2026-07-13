@@ -20,8 +20,6 @@ from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_DATA = b"abc123"
-# A fixed blob layout used by the prefix / start_from / end_before listing tests,
-# matching the set used by the equivalent .NET Arrow tests.
 LISTING_BLOB_NAMES = ["foo", "bar", "baz", "foo/foo", "foo/bar", "baz/foo", "baz/foo/bar", "baz/bar/foo"]
 # ------------------------------------------------------------------------------
 
