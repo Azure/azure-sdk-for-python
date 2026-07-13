@@ -14,6 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged, PageIterator
 
 from ._deserialize import (
+    deserialize_ors_policies,
     get_blob_properties_from_generated_code,
     load_many_xml_nodes,
     load_xml_int,
@@ -197,6 +198,12 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 tags_val = _get("Tags", _get("BlobTags"))
                 if isinstance(tags_val, dict):
                     blob.tags = tags_val
+
+                # Object replication metadata is returned as its own map-typed column for
+                # block blobs when an object replication policy has been evaluated.
+                or_metadata_val = _get("OrMetadata")
+                if isinstance(or_metadata_val, dict) and or_metadata_val:
+                    blob.object_replication_source_properties = deserialize_ors_policies(or_metadata_val)
                 blob_items.append(blob)
 
     return next_marker, blob_items

@@ -255,6 +255,25 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_arrow_list_blobs_encoded_name(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        # U+FFFF is a valid blob name character but invalid in XML, so the XML path percent-encodes
+        # it. Arrow is binary and needs no such encoding; the name must round-trip verbatim.
+        blob_name = "dir1/dir2/file\uffff.blob"
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(TEST_DATA, overwrite=True)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+
+        self.verify_blobs(blobs_list, [blob_name])
+        assert blobs_list[0].name == blob_name
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_arrow_list_blobs_paging(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
