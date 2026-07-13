@@ -265,6 +265,9 @@ class TestStorageUtils:
         ), patch(
             "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset",
             return_value="mocksasuri",
+        ), patch(
+            "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset",
+            return_value={"properties": {}},
         ):
             mock_environment_operation.create_or_update(environment)
             mock_thing.assert_called_once_with(
