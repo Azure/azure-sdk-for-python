@@ -12,8 +12,6 @@
   - Client `ContainerInstanceManagementClient` added operation group `sandbox_groups`
   - Model `AzureFileVolume` added property `storage_account_key_reference`
   - Model `AzureFileVolume` added property `user_assigned_identity_client_id`
-  - Model `Container` added property `properties`
-  - Model `ContainerGroup` added property `properties`
   - Model `ContainerGroup` added property `system_data`
   - Model `ContainerGroupProperties` added property `container_group_profile`
   - Model `ContainerGroupProperties` added property `identity_acls`
@@ -21,10 +19,8 @@
   - Model `ContainerGroupProperties` added property `secret_references`
   - Model `ContainerGroupProperties` added property `standby_pool_profile`
   - Enum `ContainerGroupSku` added member `NOT_SPECIFIED`
-  - Model `DeploymentExtensionSpec` added property `properties`
   - Model `EnvironmentVariable` added property `secure_value_reference`
   - Model `ImageRegistryCredential` added property `password_reference`
-  - Model `InitContainerDefinition` added property `properties`
   - Model `Volume` added property `secret_reference`
   - Added model `ApiEntityReference`
   - Added model `ApplicationGateway`
@@ -39,9 +35,7 @@
   - Added model `ContainerGroupProfileProperties`
   - Added model `ContainerGroupProfileReferenceDefinition`
   - Added model `ContainerGroupProfileStub`
-  - Added model `ContainerProperties`
   - Added enum `CreatedByType`
-  - Added model `DeploymentExtensionSpecProperties`
   - Added model `ElasticProfile`
   - Added model `ElasticProfileContainerGroupNamingPolicy`
   - Added model `ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy`
@@ -53,7 +47,6 @@
   - Added model `IdentityAccessControl`
   - Added enum `IdentityAccessLevel`
   - Added model `IdentityAcls`
-  - Added model `InitContainerPropertiesDefinition`
   - Added model `LoadBalancer`
   - Added model `LoadBalancerBackendAddressPool`
   - Added model `ManagedServiceIdentity`
@@ -86,58 +79,25 @@
   - Added model `UpdateProfile`
   - Added model `UpdateProfileRollingUpdateProfile`
   - Added model `UserAssignedIdentity`
-  - Added model `CGProfileOperations`
-  - Added model `CGProfilesOperations`
-  - Added model `NGroupsOperations`
-  - Added model `SandboxGroupsOperations`
+  - Added operation group `CGProfileOperations`
+  - Added operation group `CGProfilesOperations`
+  - Added operation group `NGroupsOperations`
+  - Added operation group `SandboxGroupsOperations`
 
 ### Breaking Changes
 
-  - Model `Container` deleted or renamed its instance variable `command`
-  - Model `Container` deleted or renamed its instance variable `environment_variables`
-  - Model `Container` deleted or renamed its instance variable `image`
-  - Model `Container` deleted or renamed its instance variable `instance_view`
-  - Model `Container` deleted or renamed its instance variable `liveness_probe`
-  - Model `Container` deleted or renamed its instance variable `ports`
-  - Model `Container` deleted or renamed its instance variable `readiness_probe`
-  - Model `Container` deleted or renamed its instance variable `resources`
-  - Model `Container` deleted or renamed its instance variable `security_context`
-  - Model `Container` deleted or renamed its instance variable `volume_mounts`
-  - Model `ContainerGroup` deleted or renamed its instance variable `confidential_compute_properties`
-  - Model `ContainerGroup` deleted or renamed its instance variable `containers`
-  - Model `ContainerGroup` deleted or renamed its instance variable `diagnostics`
-  - Model `ContainerGroup` deleted or renamed its instance variable `dns_config`
-  - Model `ContainerGroup` deleted or renamed its instance variable `encryption_properties`
-  - Model `ContainerGroup` deleted or renamed its instance variable `extensions`
-  - Model `ContainerGroup` deleted or renamed its instance variable `image_registry_credentials`
-  - Model `ContainerGroup` deleted or renamed its instance variable `init_containers`
-  - Model `ContainerGroup` deleted or renamed its instance variable `instance_view`
-  - Model `ContainerGroup` deleted or renamed its instance variable `ip_address`
-  - Model `ContainerGroup` deleted or renamed its instance variable `os_type`
-  - Model `ContainerGroup` deleted or renamed its instance variable `priority`
-  - Model `ContainerGroup` deleted or renamed its instance variable `provisioning_state`
-  - Model `ContainerGroup` deleted or renamed its instance variable `restart_policy`
-  - Model `ContainerGroup` deleted or renamed its instance variable `sku`
-  - Model `ContainerGroup` deleted or renamed its instance variable `subnet_ids`
-  - Model `ContainerGroup` deleted or renamed its instance variable `volumes`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Container` moved instance variable `command`, `environment_variables`, `image`, `instance_view`, `liveness_probe`, `ports`, `readiness_probe`, `resources`, `security_context` and `volume_mounts` under property `properties` whose type is `ContainerProperties`
+  - Model `ContainerGroup` moved instance variable `confidential_compute_properties`, `containers`, `diagnostics`, `dns_config`, `encryption_properties`, `extensions`, `image_registry_credentials`, `init_containers`, `instance_view`, `ip_address`, `os_type`, `priority`, `provisioning_state`, `restart_policy`, `sku`, `subnet_ids` and `volumes` under property `properties` whose type is `ContainerGroupProperties`
   - Model `ContainerGroupProperties` deleted or renamed its instance variable `identity`
-  - Model `DeploymentExtensionSpec` deleted or renamed its instance variable `extension_type`
-  - Model `DeploymentExtensionSpec` deleted or renamed its instance variable `protected_settings`
-  - Model `DeploymentExtensionSpec` deleted or renamed its instance variable `settings`
-  - Model `DeploymentExtensionSpec` deleted or renamed its instance variable `version`
-  - Model `InitContainerDefinition` deleted or renamed its instance variable `command`
-  - Model `InitContainerDefinition` deleted or renamed its instance variable `environment_variables`
-  - Model `InitContainerDefinition` deleted or renamed its instance variable `image`
-  - Model `InitContainerDefinition` deleted or renamed its instance variable `instance_view`
-  - Model `InitContainerDefinition` deleted or renamed its instance variable `security_context`
-  - Model `InitContainerDefinition` deleted or renamed its instance variable `volume_mounts`
-  - Deleted or renamed model `CachedImagesListResult`
-  - Deleted or renamed model `CapabilitiesListResult`
-  - Deleted or renamed model `ContainerGroupListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `UsageListResult`
-  - Method `ContainersOperations.list_logs` changed its parameter `tail` from `positional_or_keyword` to `keyword_only`
-  - Method `ContainersOperations.list_logs` changed its parameter `timestamps` from `positional_or_keyword` to `keyword_only`
+  - Model `DeploymentExtensionSpec` moved instance variable `extension_type`, `protected_settings`, `settings` and `version` under property `properties` whose type is `DeploymentExtensionSpecProperties`
+  - Model `InitContainerDefinition` moved instance variable `command`, `environment_variables`, `image`, `instance_view`, `security_context` and `volume_mounts` under property `properties` whose type is `InitContainerPropertiesDefinition`
+  - Method `ContainersOperations.list_logs` changed its parameter `tail`/`timestamps` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `CachedImagesListResult`/`CapabilitiesListResult`/`ContainerGroupListResult`/`OperationListResult`/`UsageListResult` which actually were not used by SDK users
 
 ## 10.2.0b2 (2026-06-01)
 
