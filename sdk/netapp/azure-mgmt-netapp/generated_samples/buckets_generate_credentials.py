@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/Buckets_GenerateCredentials.json
+# x-ms-original-file: 2026-04-15-preview/Buckets_GenerateCredentials.json
 if __name__ == "__main__":
     main()

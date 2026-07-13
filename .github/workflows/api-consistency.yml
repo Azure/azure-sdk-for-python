@@ -53,6 +53,7 @@ jobs:
           API_MD_CHANGED_FILE: .artifacts/changed_package_dirs.txt
           API_MD_PACKAGES_FILE: .artifacts/affected_package_dirs.txt
           API_MD_MISMATCHES_FILE: .artifacts/mismatched_api_files.txt
+          API_MD_MISMATCH_DETAILS_FILE: .artifacts/mismatched_api_details.txt
           API_MD_MISSING_FILE: .artifacts/missing_api_files.txt
         with:
           script: |

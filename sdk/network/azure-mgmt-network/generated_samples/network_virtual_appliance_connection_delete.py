@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-05-01/NetworkVirtualApplianceConnectionDelete.json
+# x-ms-original-file: 2025-07-01/NetworkVirtualApplianceConnectionDelete.json
 if __name__ == "__main__":
     main()

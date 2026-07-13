@@ -64,5 +64,6 @@
         "azure.mgmt.kubernetesconfiguration.fluxconfigurations.aio.operations.FluxConfigurationsOperations.list": "Microsoft.KubernetesConfiguration.FluxConfigurations.list",
         "azure.mgmt.kubernetesconfiguration.fluxconfigurations.operations.FluxConfigOperationStatusOperations.get": "Microsoft.KubernetesConfiguration.FluxConfigurations.fluxConfigOperationStatusGet",
         "azure.mgmt.kubernetesconfiguration.fluxconfigurations.aio.operations.FluxConfigOperationStatusOperations.get": "Microsoft.KubernetesConfiguration.FluxConfigurations.fluxConfigOperationStatusGet"
-    }
+    },
+    "CrossLanguageVersion": "a3a24f43226e"
 }

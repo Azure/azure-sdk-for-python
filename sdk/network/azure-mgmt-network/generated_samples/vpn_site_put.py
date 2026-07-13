@@ -61,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VpnSitePut.json
+# x-ms-original-file: 2025-07-01/VpnSitePut.json
 if __name__ == "__main__":
     main()

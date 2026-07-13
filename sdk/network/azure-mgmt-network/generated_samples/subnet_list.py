@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/SubnetList.json
+# x-ms-original-file: 2025-07-01/SubnetList.json
 if __name__ == "__main__":
     main()

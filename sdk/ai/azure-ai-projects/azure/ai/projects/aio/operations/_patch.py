@@ -17,10 +17,10 @@ from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ._patch_rle_async import AsyncRLEEnvironment, RLEnvironmentsOperations
-from ._patch_sessions_async import BetaAgentsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ...operations._patch_rle import RLEError
 from ._operations import (
+    BetaAgentsOperations,
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
@@ -30,7 +30,6 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaToolboxesOperations,
 )
 
 
@@ -62,8 +61,6 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
-    toolboxes: BetaToolboxesOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaToolboxesOperations` operations"""
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
@@ -103,7 +100,6 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaToolboxesOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",

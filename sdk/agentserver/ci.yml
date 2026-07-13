@@ -44,7 +44,5 @@ extends:
         safeName: azureaiagentserverinvocations
       - name: azure-ai-agentserver-responses
         safeName: azureaiagentserverresponses
-      - name: azure-ai-agentserver-ghcopilot
-        safeName: azureaiagentserverghcopilot
       - name: azure-ai-agentserver-optimization
         safeName: azureaiagentserveroptimization

@@ -301,6 +301,7 @@
     "ivars",
     "jwks",
     "kashifkhan",
+    "liftr",
     "keybak",
     "kube",
     "kubeconfig",
@@ -1664,18 +1665,6 @@
       ]
     },
     {
-      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
-      "words": [
-        "wday",
-        "mday",
-        "unflattened",
-        "deseralize",
-        "astimezone",
-        "ctxt",
-        "Nify"
-      ]
-    },
-    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -2160,6 +2149,10 @@
     {
       "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
       "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
+      "filename": ".github/**",
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
     },
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",

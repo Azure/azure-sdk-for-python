@@ -354,7 +354,7 @@ stages:
                   PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                   CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
                   AuthToken: ''
-
+                  
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
               parameters:
