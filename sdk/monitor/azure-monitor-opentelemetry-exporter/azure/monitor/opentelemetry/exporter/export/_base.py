@@ -600,8 +600,7 @@ class BaseExporter:
                 result = ExportResult.FAILED_RETRYABLE
             except ServiceResponseError as response_error:
                 # The request was sent but the client failed to receive a response
-                # (e.g. read timeout). It is unknown whether the server processed
-                # the request, so treat as retryable to avoid data loss.
+                # (e.g. read timeout).
                 logger.warning("Retrying due to server response error: %s.", response_error.message)
 
                 # Track retry items in customer sdkstats for client-side exceptions
