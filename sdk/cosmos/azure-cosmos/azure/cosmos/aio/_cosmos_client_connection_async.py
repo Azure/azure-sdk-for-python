@@ -25,6 +25,7 @@
 """
 import logging
 import os
+import threading
 from urllib.parse import urlparse
 import uuid
 from typing import Callable, Any, Dict, Iterable, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
@@ -180,6 +181,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
+
+        # Mirror serving configuration (for per-request routing)
+        self._mirror_config = kwargs.pop('mirror_config', None)
+        if self._mirror_config is not None:
+            self._mirror_config = dict(self._mirror_config)
+        self._mirror_driver_client = None
+        self._mirror_driver_lock = threading.Lock()
+        self._mirror_driver_closed = False
+
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -284,6 +294,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Routing map provider
         self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
+
+    @property
+    def mirror_config(self):
+        """Fabric mirror configuration for per-request query routing.
+
+        :rtype: Optional[dict[str, Any]]
+        """
+        return self._mirror_config
 
     @property
     def _container_properties_cache(self) -> dict[str, dict[str, Any]]:

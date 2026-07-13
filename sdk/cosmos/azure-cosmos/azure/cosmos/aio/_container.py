@@ -47,6 +47,7 @@ from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..exceptions import CosmosHttpResponseError
+from .._mirror_integration import execute_mirrored_query_with_cache
 from ..offer import ThroughputProperties
 from ..partition_key import (_get_partition_key_from_partition_key_definition, PartitionKeyType,
                              _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
@@ -538,6 +539,59 @@ class ContainerProxy:
             options= query_options,
             **kwargs)
 
+    def _execute_mirror_query(self, kwargs: dict) -> CosmosAsyncItemPaged:
+        """Execute a query against the Fabric mirror warehouse.
+
+        :param dict kwargs: The keyword arguments from query_items.
+        :returns: A CosmosAsyncItemPaged with the mirror query results.
+        :rtype: CosmosAsyncItemPaged
+        """
+        query_str = kwargs.pop("query", None)
+        parameters = kwargs.pop("parameters", None)
+        response_hook = kwargs.pop("response_hook", None)
+
+        if not query_str:
+            raise ValueError("query is required when use_mirror_serving=True")
+
+        if not self.client_connection.mirror_config:
+            raise ValueError(
+                "use_mirror_serving=True requires mirror_config to be provided "
+                "in CosmosClient constructor. "
+                "Note: Fabric mirroring is only supported with CosmosDB Fabric native accounts."
+            )
+
+        if kwargs:
+            unsupported_options = ", ".join(sorted(kwargs))
+            raise ValueError(
+                f"Mirror serving does not support these query options: {unsupported_options}."
+            )
+
+        mirror_config_with_table = dict(self.client_connection.mirror_config)
+        if "table_override" not in mirror_config_with_table and "fabric_table" not in mirror_config_with_table:
+            mirror_config_with_table["fabric_table"] = self.id
+
+        async def get_next(continuation_token: Optional[str]) -> list[dict[str, Any]]:
+            if continuation_token is not None:
+                raise ValueError("Mirror serving does not support continuation tokens.")
+            results = await asyncio.to_thread(
+                execute_mirrored_query_with_cache,
+                connection=self.client_connection,
+                query=query_str,
+                parameters=parameters,
+                mirror_config=mirror_config_with_table,
+            )
+            if response_hook:
+                response_hook({}, results)
+            return results
+
+        async def extract_data(results: list[dict[str, Any]]) -> tuple[None, list[dict[str, Any]]]:
+            return None, results
+
+        return CosmosAsyncItemPaged(
+            get_next=get_next,
+            extract_data=extract_data,
+        )
+
     @overload
     def query_items(
             self,
@@ -559,6 +613,7 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+            use_mirror_serving: Optional[bool] = None,
             **kwargs: Any
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
@@ -656,6 +711,7 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+            use_mirror_serving: Optional[bool] = None,
             **kwargs: Any
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
@@ -749,6 +805,7 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+            use_mirror_serving: Optional[bool] = None,
             **kwargs: Any
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
@@ -885,6 +942,9 @@ class ContainerProxy:
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
+        :keyword bool use_mirror_serving: **provisional** If True, route this query to the Fabric mirror warehouse
+            instead of Cosmos DB. Requires mirror_config to be set on CosmosClient. Default is False.
+            Fabric mirroring is only supported with CosmosDB Fabric native accounts.
         :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
@@ -905,6 +965,12 @@ class ContainerProxy:
         """
         original_positional_arg_names = ["query"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
+
+        # Check if mirror serving is requested — early return before feed_options computation
+        use_mirror_serving = kwargs.pop("use_mirror_serving", False)
+        if use_mirror_serving:
+            return self._execute_mirror_query(kwargs)
+
         feed_options = _build_options(kwargs)
 
         # Update 'feed_options' from 'kwargs'

@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index_definition` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
+* Added optional Fabric Mirror query routing via `use_mirror_serving` parameter in `query_items()`. When enabled with `mirror_config` on `CosmosClient`, queries can be routed to a Fabric warehouse. See [PR 45864](https://github.com/Azure/azure-sdk-for-python/pull/45864).
 
 #### Breaking Changes
 

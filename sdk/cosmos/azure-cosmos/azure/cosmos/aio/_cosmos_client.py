@@ -22,6 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 
@@ -39,6 +40,7 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from .._base import build_options as _build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
+from .._mirror_integration import close_mirror_driver
 from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
@@ -192,6 +194,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
+    :keyword dict[str, Any] mirror_config: **provisional** Fabric mirror configuration for per-request query routing.
+        When provided, individual queries can use ``use_mirror_serving=True`` to route through Fabric mirror.
+        Fabric mirroring is only supported with CosmosDB Fabric native accounts.
+        Required keys: server (Fabric SQL endpoint), database (database name).
+        Optional keys: credential, fabric_table, fabric_schema.
+        Requires azure-cosmos-fabric-mapper package: ``pip install azure-cosmos-fabric-mapper[sql]``
 
     .. admonition:: Example:
 
@@ -241,9 +249,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return await self.client_connection.pipeline_client.__aexit__(*args)
         finally:
             try:
-                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
-            except Exception:  # pylint: disable=broad-except
-                pass
+                await asyncio.to_thread(close_mirror_driver, self.client_connection)
+            finally:
+                try:
+                    self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+                except Exception:  # pylint: disable=broad-except
+                    pass
 
     async def close(self) -> None:
         """Close this instance of CosmosClient."""
