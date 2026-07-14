@@ -379,12 +379,6 @@ class ModelOperations(_ScopeDependentOperations):
 
         if label:
             resolved_model = _resolve_label_to_asset(self, name, label)
-            # Registry label resolution goes through the version LIST endpoint (top=1), whose items
-            # omit deployment-template references (default_deployment_template /
-            # allowed_deployment_templates). Re-fetch the resolved version through the GET endpoint so
-            # the label path hydrates those references identically to the explicit version= path.
-            # Deployment-template references are a registry-model concept, so this only applies to the
-            # registry scope; the workspace path is left unchanged. See bug 5423568.
             if self._registry_name and resolved_model.version is not None:
                 return Model._from_rest_object(self._get(name, resolved_model.version))
             return resolved_model
