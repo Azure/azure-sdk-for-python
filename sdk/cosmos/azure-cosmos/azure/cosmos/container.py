@@ -40,6 +40,7 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
+from ._global_secondary_index import _normalize_gsi_container_properties
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -208,6 +209,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
+        _normalize_gsi_container_properties(container)
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
                                                                _build_properties_cache(container, self.container_link))

@@ -21,7 +21,40 @@
 
 """Global Secondary Index (GSI) container definition."""
 
-from typing import Optional
+from typing import Any, Mapping, Optional, TypeVar
+
+# Wire key used by the service for the GSI/materialized-view definition.
+_MATERIALIZED_VIEW_DEFINITION_KEY = "materializedViewDefinition"
+# Public-facing key the SDK surfaces for a GSI definition.
+_GLOBAL_SECONDARY_INDEX_DEFINITION_KEY = "globalSecondaryIndexDefinition"
+
+_PropertiesT = TypeVar("_PropertiesT", bound=Optional[Mapping[str, Any]])
+
+
+def _normalize_gsi_container_properties(properties: _PropertiesT) -> _PropertiesT:
+    """Surface ``globalSecondaryIndexDefinition`` from container properties.
+
+    Some service versions return the GSI definition under the legacy
+    ``materializedViewDefinition`` key. Alias it to
+    ``globalSecondaryIndexDefinition`` so callers get a stable field name
+    regardless of the backend contract version. The mutation is done in place
+    when possible and the same object is returned for convenience.
+
+    :param properties: The container properties returned by the service.
+    :type properties: Mapping[str, Any] or None
+    :returns: The container properties with ``globalSecondaryIndexDefinition`` populated.
+    :rtype: Mapping[str, Any] or None
+    """
+    if (properties is not None
+            and _MATERIALIZED_VIEW_DEFINITION_KEY in properties
+            and _GLOBAL_SECONDARY_INDEX_DEFINITION_KEY not in properties):
+        try:
+            properties[_GLOBAL_SECONDARY_INDEX_DEFINITION_KEY] = (  # type: ignore[index]
+                properties[_MATERIALIZED_VIEW_DEFINITION_KEY])
+        except TypeError:
+            # Read-only mapping; nothing to normalize in place.
+            pass
+    return properties
 
 
 class GlobalSecondaryIndexDefinition:
