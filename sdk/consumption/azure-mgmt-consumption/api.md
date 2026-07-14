@@ -831,7 +831,7 @@ namespace azure.mgmt.consumption.models
 
 
     class azure.mgmt.consumption.models.CreditSummary(ProxyResource):
-        e_tag: Optional[str]
+        etag: Optional[str]
         id: str
         name: str
         properties: Optional[CreditSummaryProperties]
@@ -845,7 +845,7 @@ namespace azure.mgmt.consumption.models
         def __init__(
                 self, 
                 *, 
-                e_tag: Optional[str] = ..., 
+                etag: Optional[str] = ..., 
                 properties: Optional[CreditSummaryProperties] = ..., 
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...

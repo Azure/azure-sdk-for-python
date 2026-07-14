@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Consumption": "2024-08-01"
   },
-  "commit": "965041b72edd6a89003243f98e36c74ffbfc33c9",
+  "commit": "f518b20a475b455d615c8b986b45151bdb1e2584",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/consumption/resource-manager/Microsoft.Consumption/Consumption",
   "emitterVersion": "0.63.2",
