@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,line-too-long,too-many-statements
+# pylint: disable=protected-access,docstring-missing-return,docstring-missing-param,docstring-missing-rtype,line-too-long,too-many-statements,reimported,too-many-branches
 
 import re
 from contextlib import contextmanager

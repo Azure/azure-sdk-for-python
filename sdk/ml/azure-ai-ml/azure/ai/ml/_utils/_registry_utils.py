@@ -2,6 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# This module replicates the generated arm_ml_service client's LRO/paging machinery against the registry
+# data-plane (MFE) endpoint, so it intentionally reaches into client internals (``_config``/``_client``/
+# ``_serialize``) and uses long, descriptive helper names.
+# pylint: disable=protected-access,docstring-missing-type,docstring-missing-param,name-too-long
+
+import json
 import logging
 from typing import Optional, Tuple
 
@@ -19,8 +25,6 @@ from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest
 from azure.mgmt.core.polling.arm_polling import ARMPolling
-
-import json
 
 module_logger = logging.getLogger(__name__)
 

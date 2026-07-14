@@ -77,7 +77,7 @@ class CommandJobLimits(JobLimits):
             if is_data_binding_expression(timeout_value):
                 return cls(timeout=timeout_value)
             # if response timeout is a normal iso date string
-            obj = RestCommandJobLimits._deserialize(obj, [])
+            obj = RestCommandJobLimits._deserialize(obj, [])  # pylint: disable=protected-access
         return cls(timeout=from_iso_duration_format(obj.timeout))
 
 

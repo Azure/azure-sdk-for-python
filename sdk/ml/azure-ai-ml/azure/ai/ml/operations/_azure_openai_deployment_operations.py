@@ -37,6 +37,7 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._workspace_connections_operations = connections_operations
 
+    # pylint: disable-next=unused-argument
     def list(self, connection_name: str, **kwargs: Any) -> Iterable[AzureOpenAIDeployment]:
         """List Azure OpenAI deployments of the workspace.
 

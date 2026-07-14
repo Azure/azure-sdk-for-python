@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from contextlib import contextmanager
-from typing import Any, Generator, Iterable, Optional, Union, cast
+from typing import Any, Generator, Iterable, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 

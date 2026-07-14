@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access, too-many-instance-attributes, too-many-statements, too-many-lines
+# pylint: disable=protected-access, too-many-instance-attributes, too-many-statements, too-many-lines, reimported
 import json
 import os.path
 from os import PathLike

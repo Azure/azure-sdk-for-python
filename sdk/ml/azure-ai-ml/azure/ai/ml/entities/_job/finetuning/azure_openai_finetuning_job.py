@@ -12,9 +12,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
     JobOutput as RestJobOutput,
-    JobResourceConfiguration as RestJobResourceConfiguration,
     MLFlowModelJobInput,
-    QueueSettings as RestQueueSettings,
     UriFileJobInput,
 )
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

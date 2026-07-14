@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,redefined-builtin
+# pylint: disable=protected-access,redefined-builtin,reimported
 
 from abc import ABC
 from typing import Any, Dict, List, Optional, Type, Union

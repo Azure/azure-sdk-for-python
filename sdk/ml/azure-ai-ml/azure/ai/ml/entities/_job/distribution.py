@@ -228,7 +228,7 @@ class RayDistribution(DistributionConfiguration):
             wire["headNodeAdditionalArgs"] = self.head_node_additional_args
         if self.worker_node_additional_args is not None:
             wire["workerNodeAdditionalArgs"] = self.worker_node_additional_args
-        return RestDistributionConfiguration._deserialize(wire, [])
+        return RestDistributionConfiguration._deserialize(wire, [])  # pylint: disable=protected-access
 
 
 DISTRIBUTION_TYPE_MAP = {

@@ -9,7 +9,7 @@ import time
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List, Optional, Union, cast
+from typing import Any, Dict, Generator, Iterable, List, Optional, cast
 from urllib.parse import quote
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError

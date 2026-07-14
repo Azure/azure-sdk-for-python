@@ -5,6 +5,7 @@
 # pylint: disable=try-except-raise
 
 import logging
+from typing import Any
 
 
 from azure.ai.ml.entities import BatchDeployment, OnlineDeployment, Deployment

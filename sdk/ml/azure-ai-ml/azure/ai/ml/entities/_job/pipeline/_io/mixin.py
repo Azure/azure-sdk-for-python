@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# The imports below the module-level helper are intentionally deferred to break a circular import.
+# pylint: disable=wrong-import-position
+
 import copy
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
@@ -25,6 +28,7 @@ def _rest_io_to_snake_dict(rest_io: Any) -> Dict:
     keys back so downstream name/version handling still finds them.
 
     :param rest_io: A msrest or arm_ml_service rest input/output model.
+    :type rest_io: Any
     :return: The snake_case dict view.
     :rtype: Dict
     """

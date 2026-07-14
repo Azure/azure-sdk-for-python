@@ -903,6 +903,12 @@ def _get_latest(
     :type registry_name: Optional[str]
     :param order_by: Specifies how to order the results. Defaults to :attr:`OrderString.CREATED_AT_DESC`
     :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC]
+    :param registry_service_client: The registry data-plane service client (registry scenario only).
+    :type registry_service_client: Any
+    :param asset_plural: The plural asset segment used in the registry URL (registry scenario only).
+    :type asset_plural: str
+    :param arm_cls: The arm model class used to deserialize the registry response (registry scenario only).
+    :type arm_cls: Any
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
