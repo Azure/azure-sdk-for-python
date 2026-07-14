@@ -38,7 +38,7 @@ from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
 from ._cosmos_responses import CosmosDict
-from ._global_secondary_index import GlobalSecondaryIndexDefinition
+from ._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
 
 __all__ = ("DatabaseProxy",)
 
@@ -467,6 +467,7 @@ class DatabaseProxy(object):
         result = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
+        _normalize_gsi_container_properties(result)
 
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
@@ -1191,6 +1192,7 @@ class DatabaseProxy(object):
 
         container_properties = self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs)
+        _normalize_gsi_container_properties(container_properties)
 
         if not return_properties:
             return ContainerProxy(
