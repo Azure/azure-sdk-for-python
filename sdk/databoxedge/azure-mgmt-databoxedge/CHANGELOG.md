@@ -91,7 +91,7 @@
   - Model `User` moved instance variables `encrypted_password`, `share_access_rights` and `user_type` under property `properties` whose type is `UserProperties`
   - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `DevicesOperations.begin_create_or_update`
+  - Renamed method `DevicesOperations.begin_create_or_update` to `create_or_update`
   - Method `UsersOperations.list_by_data_box_edge_device` renamed its parameter `expand` to `filter`
 
 ### Other Changes
