@@ -70,26 +70,22 @@
   - Model `Secret` moved instance variable `deployment_status`, `parameters`, `profile_name` and `provisioning_state` under property `properties` whose type is `SecretProperties`
   - Model `SecurityPolicy` moved instance variable `deployment_status`, `parameters`, `profile_name` and `provisioning_state` under property `properties` whose type is `SecurityPolicyProperties`
   - Model `SecurityPolicyUpdateParameters` moved instance variable `parameters` under property `properties` whose type is `SecurityPolicyUpdateProperties`
-  - Deleted or renamed model `AfdErrorResponse`
-  - Deleted or renamed model `AzureFirstPartyManagedCertificate`
   - Combined enum `CacheExpirationActionParametersTypeName`/`CacheKeyQueryStringActionParametersTypeName`/`HeaderActionParametersTypeName`/`OriginGroupOverrideActionParametersTypeName`/`RouteConfigurationOverrideActionParametersTypeName`/`UrlRedirectActionParametersTypeName`/`UrlRewriteActionParametersTypeName`/`UrlSigningActionParametersTypeName` to `DeliveryRuleActionParametersType`
   - Combined enum `CdnCertificateSourceParametersTypeName`/`KeyVaultCertificateSourceParametersTypeName` to `CertificateSourceParametersType`
-  - Deleted or renamed model `Certificate`
   - Combined enum `ClientPortMatchConditionParametersTypeName`/`CookiesMatchConditionParametersTypeName`/`HostNameMatchConditionParametersTypeName`/`HttpVersionMatchConditionParametersTypeName`/`IsDeviceMatchConditionParametersTypeName`/`PostArgsMatchConditionParametersTypeName`/`QueryStringMatchConditionParametersTypeName`/`RemoteAddressMatchConditionParametersTypeName`/`RequestBodyMatchConditionParametersTypeName`/`RequestHeaderMatchConditionParametersTypeName`/`RequestMethodMatchConditionParametersTypeName`/`RequestSchemeMatchConditionParametersTypeName`/`RequestUriMatchConditionParametersTypeName`/`ServerPortMatchConditionParametersTypeName`/`SocketAddrMatchConditionParametersTypeName`/`SslProtocolMatchConditionParametersTypeName`/`UrlFileExtensionMatchConditionParametersTypeName`/`UrlFileNameMatchConditionParametersTypeName`/`UrlPathMatchConditionParametersTypeName` to `DeliveryRuleConditionParametersType`
-  - Deleted or renamed model `CustomerCertificate`
-  - Deleted or renamed enum `IdentityType`
-  - Deleted or renamed model `ManagedCertificate`
-  - Deleted or renamed model `ValidationToken`
   - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `continents`/`country_or_regions`/`custom_domains`/`date_time_begin`/`date_time_end`/`granularity`/`group_by`/`metrics`/`protocols` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `custom_domains`/`date_time_begin`/`date_time_end`/`max_ranking`/`metrics`/`rankings` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `actions`/`date_time_begin`/`date_time_end`/`granularity`/`group_by`/`metrics`/`rule_types` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `actions`/`date_time_begin`/`date_time_end`/`max_ranking`/`metrics`/`rankings`/`rule_types` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `RuleSetsOperations.create`
-  - Deleted or renamed operation group `CdnManagementClientOperationsMixin`
+  - Operation group `RuleSetsOperations` renamed method `create` to `begin_create`
+  - Renamed operation group `CdnManagementClientOperationsMixin` to `_CdnManagementClientOperationsMixin`
+  - Deleted model `AfdErrorResponse` and you could use `ErrorResponse` instead if needed
 
 ### Other Changes
 
   - Deleted model `AFDDomainListResult`/`AFDEndpointListResult`/`AFDOriginGroupListResult`/`AFDOriginListResult`/`CdnWebApplicationFirewallPolicyList`/`CustomDomainListResult`/`EdgenodeResult`/`EndpointListResult`/`ManagedRuleSetDefinitionList`/`OperationsListResult`/`OriginGroupListResult`/`OriginListResult`/`ProfileListResult`/`ResourceUsageListResult`/`RouteListResult`/`RuleListResult`/`RuleSetListResult`/`SecretListResult`/`SecurityPolicyListResult`/`UsagesListResult` which actually were not used by SDK users
+  - Deleted model `AzureFirstPartyManagedCertificate`/`Certificate`/`CustomerCertificate`/`ManagedCertificate`/`ValidationToken`/`CdnManagementClientOperationsMixin` which actually were not used by SDK users
+  - Deleted enum `IdentityType` which actually were not used by SDK users
 
 ## 14.0.0b1 (2026-05-22)
 
