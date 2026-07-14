@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.SerialConsole": "2024-07-01"
   },
-  "commit": "965041b72edd6a89003243f98e36c74ffbfc33c9",
+  "commit": "897ce46ff9564661d1fb2787d365ccfbbacb2e67",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/serialconsole/resource-manager/Microsoft.SerialConsole/SerialConsole",
   "emitterVersion": "0.63.2",
