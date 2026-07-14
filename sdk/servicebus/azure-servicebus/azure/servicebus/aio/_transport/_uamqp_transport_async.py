@@ -249,7 +249,7 @@ try:
             await handler.message_handler.reset_link_credit_async(link_credit)
 
         @staticmethod
-        async def drain_receive_link_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
+        async def drain_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
             """
             No-op for uamqp: drain-on-close is only implemented for the pyamqp
             transport (the default). uamqp is deprecated.

@@ -246,7 +246,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def drain_receive_link_and_release_messages_async(handler):
+    async def drain_and_release_messages_async(handler):
         """
         Drain the receive link and release buffered/in-flight messages on close.
         :param ~uamqp.ReceiveClientAsync

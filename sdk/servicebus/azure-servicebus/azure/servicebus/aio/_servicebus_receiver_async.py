@@ -535,7 +535,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             # Drain the link and release buffered/in-flight messages so they are not
             # left locked at the broker until lock expiry (delaying redelivery,
             # inflating delivery count).
-            await self._amqp_transport.drain_receive_link_and_release_messages_async(self._handler)
+            await self._amqp_transport.drain_and_release_messages_async(self._handler)
         await super(ServiceBusReceiver, self)._close_handler()
 
     @property

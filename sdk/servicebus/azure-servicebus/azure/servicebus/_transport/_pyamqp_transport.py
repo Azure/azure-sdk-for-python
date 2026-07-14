@@ -804,7 +804,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
 
     @staticmethod
-    def drain_receive_link_and_release_messages(handler: "ReceiveClient") -> None:
+    def drain_and_release_messages(handler: "ReceiveClient") -> None:
         """
         Drain the receive link and release buffered/in-flight messages on close, so
         they are not left locked at the broker until lock expiry. Intended for
@@ -816,10 +816,10 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         link = handler._link
         if link is None or link._is_closed:
             return  # cannot drain or settle through a closed/absent link
-        try:
-            if link.current_link_credit > 0:
-                # Outstanding credit: stop the broker and pump in-flight transfers
-                # into the buffer before releasing them below.
+        if link.current_link_credit > 0:
+            # Drain in-flight transfers into the buffer. Own try so a drain
+            # failure still falls through to the release below.
+            try:
                 outstanding = link.current_link_credit
                 link.flow(link_credit=0, drain=True)
                 deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
@@ -841,14 +841,17 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
                             break
                     else:
                         idle_cycles = 0
-            # Always release buffered deliveries (incl. the credit==0 prefetch case) so
-            # they are not left locked until lock expiry.
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Draining the receive link on close failed.", exc_info=True)
+        # Release buffered deliveries (incl. credit==0 prefetch) so they are not
+        # left locked until lock expiry.
+        try:
             while not handler._received_messages.empty():
                 frame, _ = handler._received_messages.get_nowait()
                 handler.settle_messages(frame[1], frame[2], "released")
                 handler._received_messages.task_done()
         except Exception:  # pylint: disable=broad-except
-            pass  # a faulted/detached link must not block close
+            _LOGGER.debug("Releasing buffered messages on close failed.", exc_info=True)
 
     @staticmethod
     def settle_message_via_receiver_link(

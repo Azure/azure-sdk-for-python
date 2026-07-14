@@ -18,7 +18,7 @@ delivery count).
 The fix lives in the Service Bus transport layer (keeping the vendored ``_pyamqp``
 package untouched):
 
-  * ``PyamqpTransport.drain_receive_link_and_release_messages`` (and the async
+  * ``PyamqpTransport.drain_and_release_messages`` (and the async
     twin) drains the link -- ``flow(link_credit=0, drain=True)`` + pumping the
     connection until quiescent, bounded by a timeout -- then releases every
     buffered message with the ``released`` disposition.
@@ -79,7 +79,7 @@ def _handler(*, is_closed=False, credit=5, buffer=None, connection=None, is_asyn
 class TestPyamqpTransportDrain:
     def test_drain_sent_and_buffer_released(self):
         h = _handler(credit=5, buffer=_buffer_with((10, b"tag-10"), (11, b"tag-11")))
-        PyamqpTransport.drain_receive_link_and_release_messages(h)
+        PyamqpTransport.drain_and_release_messages(h)
 
         h._link.flow.assert_called_once_with(link_credit=0, drain=True)
         assert h._connection.listen.call_count >= 1
@@ -101,7 +101,7 @@ class TestPyamqpTransportDrain:
         connection.listen = MagicMock(side_effect=_listen)
         h = _handler(credit=3, buffer=buffer, connection=connection)
 
-        PyamqpTransport.drain_receive_link_and_release_messages(h)
+        PyamqpTransport.drain_and_release_messages(h)
 
         h._link.flow.assert_called_once_with(link_credit=0, drain=True)
         h.settle_messages.assert_called_once_with(99, b"tag-99", "released")
@@ -110,35 +110,36 @@ class TestPyamqpTransportDrain:
         # A prefetch receiver can hit zero credit with deliveries still buffered:
         # skip the drain flow, but the buffered messages must still be released.
         h = _handler(credit=0, buffer=_buffer_with((10, b"tag-10")))
-        PyamqpTransport.drain_receive_link_and_release_messages(h)
+        PyamqpTransport.drain_and_release_messages(h)
         h._link.flow.assert_not_called()
         h.settle_messages.assert_called_once_with(10, b"tag-10", "released")
         assert h._received_messages.empty()
 
     def test_no_credit_empty_buffer_is_noop(self):
         h = _handler(credit=0)
-        PyamqpTransport.drain_receive_link_and_release_messages(h)
+        PyamqpTransport.drain_and_release_messages(h)
         h._link.flow.assert_not_called()
         h.settle_messages.assert_not_called()
 
     def test_skipped_when_link_closed(self):
         h = _handler(credit=5, is_closed=True, buffer=_buffer_with((10, b"tag-10")))
-        PyamqpTransport.drain_receive_link_and_release_messages(h)
+        PyamqpTransport.drain_and_release_messages(h)
         h._link.flow.assert_not_called()
         h.settle_messages.assert_not_called()  # cannot settle through a closed link
 
     def test_skipped_when_link_none(self):
         h = _handler(credit=5)
         h._link = None
-        PyamqpTransport.drain_receive_link_and_release_messages(h)  # must not raise
+        PyamqpTransport.drain_and_release_messages(h)  # must not raise
         h.settle_messages.assert_not_called()
 
-    def test_failure_does_not_raise(self):
+    def test_drain_failure_still_releases_buffer(self):
+        # Drain failure must not skip the release (separate try blocks).
         h = _handler(credit=5, buffer=_buffer_with((10, b"tag-10")))
         h._link.flow.side_effect = ValueError("link faulted")
-        PyamqpTransport.drain_receive_link_and_release_messages(h)  # must not raise
-        # drain aborted before releasing; no exception escapes
-        h.settle_messages.assert_not_called()
+        PyamqpTransport.drain_and_release_messages(h)  # must not raise
+        h.settle_messages.assert_called_once_with(10, b"tag-10", "released")
+        assert h._received_messages.empty()
 
     def test_bounded_by_deadline_even_with_blocking_listen(self):
         # A large socket_timeout must not let a single blocking read overrun the cap:
@@ -157,7 +158,7 @@ class TestPyamqpTransportDrain:
 
         start = time.time()
         with patch("azure.servicebus._transport._pyamqp_transport.RECEIVE_LINK_DRAIN_TIMEOUT", 0.1):
-            PyamqpTransport.drain_receive_link_and_release_messages(h)
+            PyamqpTransport.drain_and_release_messages(h)
         elapsed = time.time() - start
 
         assert h._connection.listen.call_count >= 1
@@ -168,7 +169,7 @@ class TestPyamqpTransportDrainAsync:
     @pytest.mark.asyncio
     async def test_drain_sent_and_buffer_released(self):
         h = _handler(credit=5, buffer=_buffer_with((20, b"tag-20"), (21, b"tag-21")), is_async=True)
-        await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)
 
         h._link.flow.assert_awaited_once_with(link_credit=0, drain=True)
         assert h._connection.listen.await_count >= 1
@@ -191,7 +192,7 @@ class TestPyamqpTransportDrainAsync:
         connection.listen = AsyncMock(side_effect=_listen)
         h = _handler(credit=3, buffer=buffer, connection=connection, is_async=True)
 
-        await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)
 
         h._link.flow.assert_awaited_once_with(link_credit=0, drain=True)
         h.settle_messages_async.assert_awaited_once_with(88, b"tag-88", "released")
@@ -199,17 +200,18 @@ class TestPyamqpTransportDrainAsync:
     @pytest.mark.asyncio
     async def test_no_credit_skips_drain_but_releases_buffer(self):
         h = _handler(credit=0, buffer=_buffer_with((20, b"tag-20")), is_async=True)
-        await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)
         h._link.flow.assert_not_called()
         h.settle_messages_async.assert_awaited_once_with(20, b"tag-20", "released")
         assert h._received_messages.empty()
 
     @pytest.mark.asyncio
-    async def test_failure_does_not_raise(self):
+    async def test_drain_failure_still_releases_buffer(self):
         h = _handler(credit=5, buffer=_buffer_with((20, b"tag-20")), is_async=True)
         h._link.flow.side_effect = ValueError("link faulted")
-        await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)  # must not raise
-        h.settle_messages_async.assert_not_called()
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)  # must not raise
+        h.settle_messages_async.assert_awaited_once_with(20, b"tag-20", "released")
+        assert h._received_messages.empty()
 
     @pytest.mark.asyncio
     async def test_bounded_by_deadline_even_with_blocking_listen(self):
@@ -229,7 +231,7 @@ class TestPyamqpTransportDrainAsync:
 
         start = time.time()
         with patch("azure.servicebus.aio._transport._pyamqp_transport_async.RECEIVE_LINK_DRAIN_TIMEOUT", 0.1):
-            await PyamqpTransportAsync.drain_receive_link_and_release_messages_async(h)
+            await PyamqpTransportAsync.drain_and_release_messages_async(h)
         elapsed = time.time() - start
 
         assert h._connection.listen.await_count >= 1
@@ -247,7 +249,7 @@ def _sync_receiver(mode, session):
     r._receive_mode = mode
     r._session = session
     r._amqp_transport = MagicMock(name="transport")
-    r._amqp_transport.drain_receive_link_and_release_messages = MagicMock(name="drain")
+    r._amqp_transport.drain_and_release_messages = MagicMock(name="drain")
     return r
 
 
@@ -258,7 +260,7 @@ def _async_receiver(mode, session):
     r._receive_mode = mode
     r._session = session
     r._amqp_transport = MagicMock(name="transport")
-    r._amqp_transport.drain_receive_link_and_release_messages_async = AsyncMock(name="drain")
+    r._amqp_transport.drain_and_release_messages_async = AsyncMock(name="drain")
     return r
 
 
@@ -267,37 +269,37 @@ class TestReceiverCloseGating:
         r = _sync_receiver(ServiceBusReceiveMode.PEEK_LOCK, session=None)
         with patch.object(BaseHandler, "_close_handler"):
             r._close_handler()
-        r._amqp_transport.drain_receive_link_and_release_messages.assert_called_once_with(r._handler)
+        r._amqp_transport.drain_and_release_messages.assert_called_once_with(r._handler)
 
     def test_receive_and_delete_does_not_drain(self):
         r = _sync_receiver(ServiceBusReceiveMode.RECEIVE_AND_DELETE, session=None)
         with patch.object(BaseHandler, "_close_handler"):
             r._close_handler()
-        r._amqp_transport.drain_receive_link_and_release_messages.assert_not_called()
+        r._amqp_transport.drain_and_release_messages.assert_not_called()
 
     def test_session_receiver_does_not_drain(self):
         r = _sync_receiver(ServiceBusReceiveMode.PEEK_LOCK, session=MagicMock(name="session"))
         with patch.object(BaseHandler, "_close_handler"):
             r._close_handler()
-        r._amqp_transport.drain_receive_link_and_release_messages.assert_not_called()
+        r._amqp_transport.drain_and_release_messages.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_peek_lock_non_session_drains_async(self):
         r = _async_receiver(ServiceBusReceiveMode.PEEK_LOCK, session=None)
         with patch.object(BaseHandlerAsync, "_close_handler", new=AsyncMock()):
             await r._close_handler()
-        r._amqp_transport.drain_receive_link_and_release_messages_async.assert_awaited_once_with(r._handler)
+        r._amqp_transport.drain_and_release_messages_async.assert_awaited_once_with(r._handler)
 
     @pytest.mark.asyncio
     async def test_receive_and_delete_does_not_drain_async(self):
         r = _async_receiver(ServiceBusReceiveMode.RECEIVE_AND_DELETE, session=None)
         with patch.object(BaseHandlerAsync, "_close_handler", new=AsyncMock()):
             await r._close_handler()
-        r._amqp_transport.drain_receive_link_and_release_messages_async.assert_not_called()
+        r._amqp_transport.drain_and_release_messages_async.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_session_receiver_does_not_drain_async(self):
         r = _async_receiver(ServiceBusReceiveMode.PEEK_LOCK, session=MagicMock(name="session"))
         with patch.object(BaseHandlerAsync, "_close_handler", new=AsyncMock()):
             await r._close_handler()
-        r._amqp_transport.drain_receive_link_and_release_messages_async.assert_not_called()
+        r._amqp_transport.drain_and_release_messages_async.assert_not_called()

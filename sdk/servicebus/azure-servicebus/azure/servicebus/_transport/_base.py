@@ -304,7 +304,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def drain_receive_link_and_release_messages(handler):
+    def drain_and_release_messages(handler):
         """
         Drain the receive link and release buffered/in-flight messages on close.
         :param ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient handler: The handler.
