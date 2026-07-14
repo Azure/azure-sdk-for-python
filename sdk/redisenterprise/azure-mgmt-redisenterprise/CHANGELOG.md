@@ -1,5 +1,21 @@
 # Release History
 
+## 4.0.0b3 (2026-07-14)
+
+### Features Added
+
+  - Model `AccessPolicyAssignmentProperties` added property `access_string`
+  - Model `AccessPolicyAssignmentProperties` added property `provisioning_error`
+  - Added model `AccessPolicyAssignmentProvisioningError`
+  - Model `MigrationsOperations` added method `begin_cancel`
+  - Model `MigrationsOperations` added method `begin_start`
+  - Model `MigrationsOperations` added method `list`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `RedisEnterpriseManagementClient.migration`
+  - Deleted or renamed model `MigrationOperations`
+
 ## 4.0.0b2 (2026-06-12)
 
 ### Features Added
