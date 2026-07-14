@@ -5,11 +5,16 @@
 
 import pytest
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common._validators import (
     MessageRole,
     ContentType,
     ConversationValidator,
+    GroundednessConversationValidator,
     ToolDefinitionsValidator,
     ToolCallsValidator,
     TaskNavigationEfficiencyValidator,
@@ -122,7 +127,10 @@ class TestConversationValidator:
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
             validator.validate_eval_input(
-                {"query": [{"role": "user", "content": ""}], "response": [_assistant_message()]}
+                {
+                    "query": [{"role": "user", "content": ""}],
+                    "response": [_assistant_message()],
+                }
             )
 
     def test_content_list_item_missing_type_raises(self):
@@ -182,7 +190,10 @@ class TestConversationValidator:
             "tool_call_id": "call_1",
             "content": [{"type": "tool_result", "tool_result": "done"}],
         }
-        eval_input = {"query": [_user_message(), tool_msg], "response": [_assistant_message()]}
+        eval_input = {
+            "query": [_user_message(), tool_msg],
+            "response": [_assistant_message()],
+        }
         assert validator.validate_eval_input(eval_input) is True
 
     def test_tool_message_content_not_list_raises(self):
@@ -351,7 +362,10 @@ class TestTaskNavigationEfficiencyValidator:
 
     def test_valid_list_ground_truth(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
-        eval_input = {"response": self._response(), "ground_truth": ["search", "summarize"]}
+        eval_input = {
+            "response": self._response(),
+            "ground_truth": ["search", "summarize"],
+        }
         assert validator.validate_eval_input(eval_input) is True
 
     def test_valid_tuple_ground_truth(self):
@@ -400,7 +414,11 @@ class TestTaskNavigationEfficiencyValidator:
     def test_alias_does_not_overwrite_empty_string_canonical(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
         # Canonical present but falsy ("") is still not None, so alias must not overwrite it.
-        eval_input = {"response": "", "actions": self._response(), "ground_truth": ["search"]}
+        eval_input = {
+            "response": "",
+            "actions": self._response(),
+            "ground_truth": ["search"],
+        }
         with pytest.raises(EvaluationException):
             validator.validate_eval_input(eval_input)
 
@@ -488,7 +506,10 @@ class TestTaskNavigationEfficiencyValidator:
 
     def test_ground_truth_tuple_params_not_dict_raises(self):
         validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
-        eval_input = {"response": self._response(), "ground_truth": (["search"], {"search": "bad"})}
+        eval_input = {
+            "response": self._response(),
+            "ground_truth": (["search"], {"search": "bad"}),
+        }
         with pytest.raises(EvaluationException):
             validator.validate_eval_input(eval_input)
 
@@ -546,7 +567,9 @@ class TestMessagesOrQueryResponseInputValidator:
 
     def test_enforce_tool_definitions_required(self):
         validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, optional_tool_definitions=False, enforce_tool_definitions=True
+            error_target=TARGET,
+            optional_tool_definitions=False,
+            enforce_tool_definitions=True,
         )
         with pytest.raises(EvaluationException):
             validator.validate_eval_input({"messages": self._messages()})
@@ -558,4 +581,150 @@ class TestMessagesOrQueryResponseInputValidator:
     def test_query_response_fallback_no_enforce_tool_definitions(self):
         validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, enforce_tool_definitions=False)
         eval_input = {"query": [_user_message()], "response": [_assistant_message()]}
+        assert validator.validate_eval_input(eval_input) is True
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 restricted-tool enablement
+# ---------------------------------------------------------------------------
+# After Phase 2, the shared ``ConversationValidator.UNSUPPORTED_TOOLS`` no
+# longer rejects ``azure_ai_search``, ``azure_fabric``, or
+# ``sharepoint_grounding``. ``ToolDefinitionsValidator`` and
+# ``ToolCallsValidator`` inherit that narrowed default, so TCS and TOU
+# accept those tool calls.
+#
+# ``GroundednessConversationValidator`` keeps the wider list -- Groundedness
+# still rejects those three tools pending a context-extractor helper that
+# can derive a grounding ``context`` from structured ``tool_result`` payloads.
+
+NEWLY_ENABLED_TOOLS = [
+    "azure_ai_search",
+    "azure_fabric",
+    "sharepoint_grounding",
+]
+
+STILL_UNSUPPORTED_TOOLS = [
+    "bing_grounding",
+    "bing_custom_search",
+    "browser_automation",
+    "code_interpreter_call",
+    "computer_call",
+    "openapi_call",
+    "web_search",
+]
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolsListConversationValidator:
+    """The shared default list (used by TCS, TOU, and everything except Groundedness)."""
+
+    def test_newly_enabled_tools_are_not_in_unsupported_list(self):
+        for tool_name in NEWLY_ENABLED_TOOLS:
+            assert tool_name not in ConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_still_unsupported_tools_remain_in_list(self):
+        for tool_name in STILL_UNSUPPORTED_TOOLS:
+            assert tool_name in ConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_unsupported_list_exact_match(self):
+        # Defensive: keep the list explicit so future additions surface here.
+        assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(STILL_UNSUPPORTED_TOOLS)
+
+    def test_tool_definitions_validator_inherits_same_list(self):
+        # TCS / TOU use ``ToolDefinitionsValidator``; it must not silently
+        # diverge from the shared default.
+        assert ToolDefinitionsValidator.UNSUPPORTED_TOOLS is ConversationValidator.UNSUPPORTED_TOOLS
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolsListGroundednessValidator:
+    """Groundedness keeps the wider list via its dedicated subclass."""
+
+    def test_full_unsupported_list_contains_newly_enabled_tools(self):
+        for tool_name in NEWLY_ENABLED_TOOLS:
+            assert tool_name in GroundednessConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_full_unsupported_list_contains_still_unsupported_tools(self):
+        for tool_name in STILL_UNSUPPORTED_TOOLS:
+            assert tool_name in GroundednessConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_full_unsupported_list_exact_match(self):
+        assert set(GroundednessConversationValidator.UNSUPPORTED_TOOLS) == set(
+            NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS
+        )
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    def test_groundedness_validator_still_rejects_newly_enabled_tools(self, tool_name):
+        validator = GroundednessConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        with pytest.raises(EvaluationException) as exc_info:
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
+        assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
+
+
+@pytest.mark.unittest
+class TestConversationValidatorAcceptsNewlyEnabledTools:
+    """The shared validator path (TCS / TOU and anything else inheriting it)."""
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    def test_validate_eval_input_accepts_tool(self, tool_name):
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        eval_input = {"query": [_user_message()], "response": [assistant]}
+        assert validator.validate_eval_input(eval_input) is True
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    def test_tool_definitions_validator_accepts_tool(self, tool_name):
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        eval_input = {"query": [_user_message()], "response": [assistant]}
+        assert validator.validate_eval_input(eval_input) is True
+
+
+@pytest.mark.unittest
+class TestConversationValidatorRejectsStillUnsupportedTools:
+    """The narrowing must not lift restrictions on the remaining tools."""
+
+    @pytest.mark.parametrize("tool_name", STILL_UNSUPPORTED_TOOLS)
+    def test_validate_eval_input_rejects_tool(self, tool_name):
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        with pytest.raises(EvaluationException) as exc_info:
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
+        assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolCheckOptOut:
+    """TCA / TIA construct their validators with check_for_unsupported_tools=False.
+
+    Regression guard: with the flag off, no tool name (newly enabled OR still
+    restricted) may trigger an UNSUPPORTED_TOOLS rejection. A future flip of
+    that constructor argument to ``True`` must surface in code review, not as
+    a silent customer-facing 400.
+    """
+
+    @pytest.mark.parametrize(
+        "tool_name",
+        NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS,
+    )
+    def test_opt_out_skips_unsupported_tool_check(self, tool_name):
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=False)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        eval_input = {"query": [_user_message()], "response": [assistant]}
         assert validator.validate_eval_input(eval_input) is True

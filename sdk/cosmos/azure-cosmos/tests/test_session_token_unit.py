@@ -321,6 +321,152 @@ class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
         self.assertEqual(result, token.session_token)
 
 
+class TestGetSessionTokenWithoutPartitionKeyVersion(unittest.TestCase):
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "abc123=="
+    PK_RANGE_ID = "0"
+    PK_VALUE = "some-pk-value"
+    RAW_TOKEN = "1#100"
+
+    class _CapturingRoutingMapProvider:
+        """Records the ranges argument passed to get_overlapping_ranges so tests
+        can assert that get_session_token computed the correct effective partition
+        key. Returns a single fixed partition range."""
+
+        def __init__(self, pk_range_id):
+            self._pk_range_id = pk_range_id
+            self.captured_ranges = None
+
+        def get_overlapping_ranges(self, collection_link, ranges, options):
+            del collection_link, options
+            self.captured_ranges = list(ranges)
+            return [{
+                "id": self._pk_range_id,
+                "minInclusive": "",
+                "maxExclusive": "FF",
+                "parents": [],
+            }]
+
+    class _TokenWrap:
+        """Mimics what ``SessionContainer.rid_to_session_token`` stores per
+        partition: an object exposing ``.session_token`` as the string form."""
+
+        def __init__(self, vector_session_token):
+            self.session_token = vector_session_token.session_token
+
+    def _build_container_with_seeded_token(self):
+        container = _session.SessionContainer()
+        container.collection_name_to_rid[self.COLLECTION_LINK] = self.COLLECTION_RID
+        container.rid_to_session_token[self.COLLECTION_RID] = {
+            self.PK_RANGE_ID: self._TokenWrap(VectorSessionToken.create(self.RAW_TOKEN)),
+        }
+        return container
+
+    def _build_cache(self, partition_key_definition):
+        return {
+            self.COLLECTION_LINK: {
+                "_rid": self.COLLECTION_RID,
+                "partitionKey": partition_key_definition,
+            },
+        }
+
+    def test_partitionkey_definition_without_version_returns_token(self):
+        """Service responses without a 'version' key must not silently nuke the token."""
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash"})  # no 'version'
+
+        token = container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=self._CapturingRoutingMapProvider(self.PK_RANGE_ID),
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertEqual(
+            token, "{0}:{1}".format(self.PK_RANGE_ID, self.RAW_TOKEN),
+            "Expected a non-empty session token when partitionKey lacks 'version'."
+        )
+
+    def test_partitionkey_definition_with_version_returns_same_token(self):
+        """When 'version' IS present, behavior must be unchanged."""
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash", "version": 2})
+
+        token = container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=self._CapturingRoutingMapProvider(self.PK_RANGE_ID),
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertEqual(
+            token, "{0}:{1}".format(self.PK_RANGE_ID, self.RAW_TOKEN),
+            "Expected an unchanged session token when partitionKey includes 'version'."
+        )
+
+    def test_missing_version_produces_v1_hash_epk_not_raw_binary(self):
+        """Missing 'version' must default to V1 hashing (matching the SDK's
+        _get_partition_key_from_partition_key_definition convention). If
+        version resolves to None, PartitionKey.__init__ stores None
+        (kwargs.get('version', V2) returns None when the key is present) and
+        _get_hashed_partition_key_string matches neither V1 nor V2 — the EPK
+        becomes the raw-binary encoding and targets the wrong physical
+        partition on multi-partition Hash containers."""
+        from azure.cosmos.partition_key import PartitionKey
+        expected_epk = PartitionKey(
+            path=["/pk"], kind="Hash", version=1
+        )._get_epk_range_for_partition_key(pk_value=self.PK_VALUE)
+
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash"})  # no 'version'
+        capturing = self._CapturingRoutingMapProvider(self.PK_RANGE_ID)
+
+        container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=capturing,
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertIsNotNone(
+            capturing.captured_ranges,
+            "get_overlapping_ranges was never called by get_session_token.",
+        )
+        self.assertEqual(len(capturing.captured_ranges), 1)
+        actual_epk = capturing.captured_ranges[0]
+        self.assertEqual(
+            actual_epk.min, expected_epk.min,
+            "Missing 'version' must default to V1 hashing. If the actual EPK "
+            "differs from the expected V1 hash, the fix regressed to "
+            "version=None and produced the raw-binary encoding instead.",
+        )
+        self.assertEqual(actual_epk.max, expected_epk.max)
+
+    def test_v1_and_v2_produce_different_effective_partition_keys(self):
+        """Sanity check: V1 and V2 hashing produce distinct EPKs for the same
+        pk_value. If this ever regresses to equal, the V1-EPK assertion in
+        test_missing_version_produces_v1_hash_epk_not_raw_binary becomes vacuous."""
+        from azure.cosmos.partition_key import PartitionKey
+        v1_epk = PartitionKey(
+            path=["/pk"], kind="Hash", version=1
+        )._get_epk_range_for_partition_key(pk_value=self.PK_VALUE)
+        v2_epk = PartitionKey(
+            path=["/pk"], kind="Hash", version=2
+        )._get_epk_range_for_partition_key(pk_value=self.PK_VALUE)
+        self.assertNotEqual(
+            v1_epk.min, v2_epk.min,
+            "V1 and V2 must produce distinct EPKs — if identical, the "
+            "'version' parameter no longer influences hashing.",
+        )
+
+
 # Unit tests for set_session_token_header. When a request targets a single
 # partition, the helper must send only that partition's token, not a
 # comma-joined token covering every cached partition.

@@ -355,11 +355,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 raise EvaluationException(
                     message="Mismatched number of user and assistant messages.",
                     internal_message=("Mismatched number of user and assistant messages."),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.CONVERSATION,
                 )
             if len(assistant_messages) > 1:
                 raise EvaluationException(
                     message="Conversation can have only one assistant message.",
                     internal_message=("Conversation can have only one assistant message."),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.CONVERSATION,
                 )
             eval_conv_inputs = []
             for user_msg, assist_msg in zip(user_messages, assistant_messages):
@@ -555,7 +561,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     "Tool call must be a dictionary.",
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
-                    category=ErrorCategory.UNKNOWN,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
             if tool_call.get("type") != "tool_call":
                 raise EvaluationException(
@@ -563,6 +570,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             if "name" not in tool_call:
@@ -571,6 +579,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.MISSING_FIELD,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             tool_name = str(tool_call["name"]).strip()
@@ -593,6 +602,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             internal_message=str(tool_call),
                             target=ErrorTarget.EVALUATE,
                             category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
                         )
 
             tool_name_param_pairs.append((tool_name, parameters))
@@ -639,6 +649,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                                     internal_message=str(threshold_value),
                                     target=ErrorTarget.EVALUATE,
                                     category=ErrorCategory.INVALID_VALUE,
+                                    blame=ErrorBlame.USER_ERROR,
                                 )
 
                             if not contains_threshold_key:

@@ -301,6 +301,7 @@
     "ivars",
     "jwks",
     "kashifkhan",
+    "liftr",
     "keybak",
     "kube",
     "kubeconfig",
@@ -1661,18 +1662,6 @@
         "Inki",
         "NGZZN",
         "Igog",
-      ]
-    },
-    {
-      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
-      "words": [
-        "wday",
-        "mday",
-        "unflattened",
-        "deseralize",
-        "astimezone",
-        "ctxt",
-        "Nify"
       ]
     },
     {

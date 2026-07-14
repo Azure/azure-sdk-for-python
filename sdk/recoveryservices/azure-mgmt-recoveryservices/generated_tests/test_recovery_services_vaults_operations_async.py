@@ -51,6 +51,7 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                     "properties": {
                         "backupStorageVersion": "str",
                         "bcdrSecurityLevel": "str",
+                        "costManagementSettings": {"granularityLevel": "str"},
                         "encryption": {
                             "infrastructureEncryption": "str",
                             "kekIdentity": {"useSystemAssignedIdentity": bool, "userAssignedIdentity": "str"},
@@ -104,7 +105,10 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "secureScore": "str",
                         "securitySettings": {
-                            "immutabilitySettings": {"state": "str"},
+                            "immutabilitySettings": {
+                                "configuration": {"durationInDays": 0, "type": "str"},
+                                "state": "str",
+                            },
                             "multiUserAuthorization": "str",
                             "softDeleteSettings": {
                                 "enhancedSecurityState": "str",
@@ -167,6 +171,7 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                     "properties": {
                         "backupStorageVersion": "str",
                         "bcdrSecurityLevel": "str",
+                        "costManagementSettings": {"granularityLevel": "str"},
                         "encryption": {
                             "infrastructureEncryption": "str",
                             "kekIdentity": {"useSystemAssignedIdentity": bool, "userAssignedIdentity": "str"},
@@ -220,7 +225,10 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "secureScore": "str",
                         "securitySettings": {
-                            "immutabilitySettings": {"state": "str"},
+                            "immutabilitySettings": {
+                                "configuration": {"durationInDays": 0, "type": "str"},
+                                "state": "str",
+                            },
                             "multiUserAuthorization": "str",
                             "softDeleteSettings": {
                                 "enhancedSecurityState": "str",
