@@ -23,9 +23,6 @@
   - Model `SerialConsoleStatus` moved instance variable `disabled` under property `properties` whose type is `SerialConsoleStatusProperties`
   - Model `SerialPort` moved instance variable `state` under property `properties` whose type is `SerialPortProperties`
   - Deleted or renamed method `SerialPortsOperations.delete`
-
-### Other Changes
-
   - Method `MicrosoftSerialConsoleClient.disable_console` changed return type from `Union[DisableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `DisableSerialConsoleResult`
   - Method `MicrosoftSerialConsoleClient.enable_console` changed return type from `Union[EnableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `EnableSerialConsoleResult`
   - Method `MicrosoftSerialConsoleClient.get_console_status` changed return type from `Union[SerialConsoleStatus, GetSerialConsoleSubscriptionNotFound]` to `SerialConsoleStatus`
