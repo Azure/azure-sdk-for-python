@@ -60,13 +60,13 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
             global_secondary_index_definition=gsi_definition
         )
 
-        # Read back the container properties and verify GSI definition is present
+        # Read back the container properties and verify the canonical service response.
         properties = gsi_container.read()
-        self.assertIn("globalSecondaryIndexDefinition", properties)
-        gsi_props = properties["globalSecondaryIndexDefinition"]
+        self.assertIn("materializedViewDefinition", properties)
+        gsi_props = properties["materializedViewDefinition"]
         self.assertEqual(gsi_props["sourceCollectionId"], source_container.id)
         self.assertEqual(gsi_props["definition"], "SELECT c.id, c.email, c.name FROM c")
-        self.assertIn("status", gsi_props)
+        self.assertIn("sourceCollectionRid", gsi_props)
 
         # Clean up - delete GSI container first, then source
         self.test_db.delete_container(gsi_container.id)
@@ -93,7 +93,8 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
 
         # Verify
         properties = gsi_container.read()
-        self.assertIn("globalSecondaryIndexDefinition", properties)
+        self.assertIn("materializedViewDefinition", properties)
+        self.assertIn("sourceCollectionRid", properties["materializedViewDefinition"])
 
         # Clean up
         self.test_db.delete_container(gsi_container.id)
