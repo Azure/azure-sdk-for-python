@@ -256,60 +256,56 @@ chain identity for later turns.
 
 ---
 
-## §5 — Reserved framework metadata namespace
+## §5 — Recovery control state lives on the task **input**
 
-The framework persists its own control state alongside the handler's
-`metadata` checkpoint store. The two are isolated by namespace prefix:
+> **Spec 039 (R1) update.** The responses layer previously mirrored three
+> control values (`response_id`, `background`, `disposition`) into a reserved
+> framework metadata namespace (`_responses`). That mirror has been **removed**.
+> All three are sourced from the durable **task input** (§5.2) — the single
+> source of truth, persisted at task `.start()` (strictly before the body's
+> first entry) and read on every recovered entry. This matches the .NET port
+> (`Azure.AI.AgentServer.Core`), which never wrote such a namespace, and removes
+> the drift risk of parallel mode-flag metadata (cf. §5.3's re-derivation rule).
 
-- The default namespace and any developer-named namespace MUST NOT
-  start with `_`.
-- The framework reserves namespaces starting with `_`. The responses
-  layer specifically uses **`_responses`**.
+The framework no longer persists any control state in the handler's `metadata`
+checkpoint store. The handler-facing `metadata` API still MUST raise
+`ValueError` if a developer attempts to set, get, or open a namespace whose name
+starts with `_` — this is a **defensive guard** so handlers cannot invent
+framework-reserved namespaces, retained even though the framework itself no
+longer creates one.
 
-The handler-facing `metadata` API MUST raise `ValueError` if a
-developer attempts to set, get, or open a namespace whose name starts
-with `_`. Framework code (the orchestrator) reaches `_responses` via
-the underlying task primitive directly, bypassing the handler-facing
-wrapper.
+### §5.1 — Where the three control values come from
 
-### §5.1 — Keys in `_responses`
-
-| Key | Value | Written by | Read by |
-|---|---|---|---|
-| `response_id` | The chain's response id stamp (informational; useful for operator triage) | First entry of the task body | Operators (logs / dumps) |
-| `background` | The original `background` request flag at first entry | First entry of the task body | Recovery dispatch (secondary signal; `disposition` is primary) |
-| `disposition` | `"re-invoke"` (Row 1) or `"mark-failed"` (Rows 2, 3) | First entry of the task body, flushed resiliently before any subsequent await | Recovery dispatch (§7) |
-
-A port MAY add additional reserved keys under `_responses` provided
-they do not collide with the three above and are documented as
-framework-internal.
+| Value | Source (from the task input) | Read by |
+|---|---|---|
+| `response_id` | `ResilientResponseInput.response_id` | Logs / operator triage |
+| `background` | `bool(request.background)` — re-derived from the persisted `request` (§5.3) | Recovery dispatch (foreground → mark failed) |
+| `disposition` | `ResilientResponseInput.disposition` (`"re-invoke"` Row 1 / `"mark-failed"` Rows 2, 3) | Recovery dispatch (§7) |
 
 > **Note — no `last_sequence_number` key.** Earlier drafts reserved a
-> `_responses.last_sequence_number` metadata watermark for streaming
-> reconnection bookkeeping. The implementation does **not** maintain it:
-> the highest persisted sequence number is derived directly from the
-> resilient **stream event store's cursor** (`last_cursor()`), which is the
-> single source of truth — a separate metadata watermark could diverge
-> from the events actually persisted. See §9.1.
+> `last_sequence_number` metadata watermark for streaming reconnection
+> bookkeeping. The implementation does **not** maintain it: the highest
+> persisted sequence number is derived directly from the resilient **stream
+> event store's cursor** (`last_cursor()`), which is the single source of truth
+> — a separate metadata watermark could diverge from the events actually
+> persisted. See §9.1.
 
-### §5.2 — Persistence ordering rule
+### §5.2 — Persistence ordering rule (satisfied by the input)
 
-The `disposition` key MUST be flushed resiliently before the task body
-performs any await that could be interrupted by a crash. Without this
-ordering, a recovered task with no `disposition` defaults to
-`re-invoke` and skips the `mark-failed` branch — losing the
-recovery-marker semantics for Rows 2/3.
-
-The same rule applies to any future key that affects recovery
-dispatch.
+`disposition` MUST be durable before the task body performs any await that could
+be interrupted by a crash — otherwise a recovered task with no disposition would
+default to `re-invoke` and skip the `mark-failed` branch (losing recovery-marker
+semantics for Rows 2/3). The **task input satisfies this by construction**: it is
+persisted atomically at task `.start()`, i.e. *before the handler body runs at
+all* — strictly earlier than any first-entry write could be. The same holds for
+any future control value that affects recovery dispatch: carry it on the input.
 
 ### §5.3 — Resilient-task input boundary (the recovery payload)
 
-Separate from the `_responses` metadata namespace (which carries control
-*flags*), the framework persists the **request-scoped state needed to rebuild
-the handler's execution context on cross-process recovery** as the resilient
-task's **input**. This is a single typed object — the only value that crosses
-the crash boundary as task input:
+The framework persists the **request-scoped state needed to rebuild the
+handler's execution context on cross-process recovery** as the resilient task's
+**input**. This is a single typed object — the only value that crosses the crash
+boundary as task input, and (per R1) the source of truth for recovery routing:
 
 | Field | Why it is persisted |
 |---|---|
@@ -318,7 +314,7 @@ the crash boundary as task input:
 | `user_id_key`, `call_id` | Platform identity (protocol `2.0.0`, from `x-agent-user-id` / `x-agent-foundry-call-id`); the platform context is derived from these in exactly one place. `call_id` is captured on the create request and replayed on every outbound storage call for the response's whole lifetime (including cross-process recovery); `user_id_key` is the per-user partition and is never forwarded to storage. |
 | `agent_reference`, `agent_session_id` | Gateway-injected / resolved values that are not functions of the request body. `agent_reference` is normalized to a plain serializable mapping. |
 | `response_id` | The stable response id (identity). |
-| `disposition` | Carried here solely to seed the first-entry `_responses.disposition` stamp (§5.1); the runtime routing source of truth is the metadata namespace thereafter. |
+| `disposition` | The recovery-routing marker (`re-invoke` / `mark-failed`); read directly on every recovered entry (§7) — the single source of truth (R1). |
 
 Everything else the recovered handler needs is **re-derived** from the
 persisted `request` — these are pure functions of the request, identical to
@@ -351,8 +347,8 @@ ALWAYS runs inside the resilient task body, for every `store=true`
 row. The"bookkeeping pattern" (where the handler ran
 outside the body for Rows 2/3 and a separate task waited for a
 completion signal) has been deleted. Recovery behaviour is selected
-by the `disposition` written into framework metadata on the first
-entry: `re-invoke` means the recovery scanner re-fires the handler;
+by the `disposition` carried on the durable task **input** (§5):
+`re-invoke` means the recovery scanner re-fires the handler;
 `mark-failed` means the recovery scanner persists `failed` and
 returns without re-invoking.
 
@@ -463,7 +459,7 @@ also get distinct task_ids when they should.
 > (§ Recovered entry, Per-row contracts). This section is the design detail.
 
 The recovered entry of any resilient task body inspects the
-`_responses.disposition` key and routes:
+`disposition` carried on the durable task **input** (§5) and routes:
 
 ### §7.1 — `disposition == "re-invoke"` (Row 1)
 
@@ -1197,8 +1193,8 @@ extend a non-steerable chain).
 HTTP   ──► POST /v1/responses { stream: true, store, background } ────────┐
                                                                           │
        framework: task_fn.start(task_id, input=params)                    │
-       framework: stamp _responses.disposition="re-invoke" in metadata    │
-                  (flushed before any await)                      │
+       framework: input.disposition="re-invoke" persisted at .start()     │
+                  (durable before the body runs)                          │
        framework: schedule task body; handler invoked                     │
        handler:   emit response.created (seq=1)                           │
        framework: persist response envelope → response store              │
@@ -1213,7 +1209,7 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
        (next lifetime — recovery scanner re-fires task)
        primitive: task lease expired → re-fire task body
        framework: task body entered with context.is_recovery=True
-       framework: read _responses.disposition → "re-invoke"
+       framework: read input.disposition → "re-invoke"
        framework: assign flat fields on response context (is_recovery=True, is_steered_turn=False, pending_input_count=0, conversation_chain_metadata=<rehydrated>)
        framework: reconstruct ResponseExecution, ResponseContext from serialized params
        framework: re-invoke handler with flat-field assignment on context
@@ -1256,7 +1252,7 @@ HTTP   ──► POST /v1/responses { stream: false, store, background } ──�
        (next lifetime — recovery scanner re-fires the task)
        primitive: task lease expired → re-fire task body
        framework: task body entered with context.is_recovery=True
-       framework: read _responses.disposition → "mark-failed"
+       framework: read input.disposition → "mark-failed"
        framework: lookup response in store: status="in_progress"
        framework: persist failed terminal:
                   { status: "failed",
@@ -1298,14 +1294,15 @@ The chain id MUST be derived per §4.1. `task_id` MUST be derived per
 SHA-256 truncated). `context.conversation_chain_id` MUST expose the
 chain id to handlers per §4.3.
 
-### C-NS — Reserved namespace
+### C-NS — Reserved namespace (defensive guard)
 
 The handler-facing metadata API MUST reject keys and namespace names
-starting with `_` per §5. The framework's `_responses` namespace MUST
-hold at least `response_id`, `background`, and `disposition` per §5.1.
-The `disposition` write at first
-entry MUST be flushed before any subsequent interruptible
-await per §5.2.
+starting with `_` per §5 — a defensive guard so handlers cannot invent
+framework-reserved namespaces. The framework itself no longer creates a
+`_responses` namespace (Spec 039 R1); `response_id` / `background` /
+`disposition` are sourced from the durable task **input** (§5.1–§5.3),
+which is persisted at `.start()` (before the body's first interruptible
+await), satisfying the ordering rule by construction.
 
 ### C-PERPETUAL — Perpetual task
 
@@ -1319,11 +1316,11 @@ without explicit `exit_for_recovery`, the body persists the
 
 ### C-DISPOSITION — Recovery dispatch
 
-On recovered entry, the task body MUST read `_responses.disposition`
-and route per §7. For `re-invoke`, the handler is re-invoked with
-`is_recovery=True`. For `mark-failed`, the handler is NOT re-invoked;
-a `server_error` terminal is persisted unless the response is
-already terminal (§7.2 idempotency check).
+On recovered entry, the task body MUST read `disposition` from the
+durable task input (§5) and route per §7. For `re-invoke`, the handler
+is re-invoked with `is_recovery=True`. For `mark-failed`, the handler is
+NOT re-invoked; a `server_error` terminal is persisted unless the
+response is already terminal (§7.2 idempotency check).
 
 ### C-SERVER-ERROR — `server_error` payload
 
@@ -1458,15 +1455,14 @@ T=0   POST /v1/responses { input: "Hi", store: true, background: true }
 T=1   primitive: task_store.create({
         id: "rchain_AB12...",
         status: "in_progress",
-        payload: { input: <serialized>, _responses: {} },
+        payload: { input: <serialized ResilientResponseInput> },
         ...
       })
 
 T=2   task body entered (fresh)
       primitive: _framework.last_input_id = resp_1 (precondition stamp)
-      framework: _responses.disposition = "re-invoke", FLUSH
-      framework: _responses.response_id = resp_1
-      framework: _responses.background = true
+      (disposition="re-invoke" / response_id=resp_1 / background=true are
+       already on payload.input — persisted at T=1, no separate stamp)
       handler:   emit response.created
       framework: response_store.create({
                    id: resp_1, status: "in_progress", ...
@@ -1485,7 +1481,7 @@ T=5   process restarts; lease scanner sees "rchain_AB12..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
-      framework: read _responses.disposition → "re-invoke"
+      framework: read input.disposition → "re-invoke"
       framework: assign flat fields on response context
                  (is_recovery=True,
                   is_steered_turn=False,
@@ -1564,9 +1560,9 @@ Owned by the underlying task primitive. Holds:
 - `task_id` (the §4.2 derivation)
 - `status` (one of `queued`, `in_progress`, `suspended`, `completed`,
   `cancelled`, `failed`)
-- `payload.input` (current turn's serialized input — cleared at
-  suspend per the core spec's data-retention rule)
-- `payload._responses` (the framework-reserved namespace from §5)
+- `payload.input` (current turn's serialized input + recovery boundary —
+  carries `disposition` / `response_id`; cleared at suspend per the core
+  spec's data-retention rule)
 - `payload.steering` (the primitive's steering-queue state — owned by
   the core spec)
 - `payload._framework.last_input_id` (the input-precondition primitive's

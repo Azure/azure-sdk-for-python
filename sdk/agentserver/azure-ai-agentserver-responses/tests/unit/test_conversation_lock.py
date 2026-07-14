@@ -20,8 +20,6 @@ from azure.ai.agentserver.core.tasks import TaskConflictError
 
 from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
     ResilientResponseOrchestrator,
-    _RESPONSES_NS,
-    _RESP_BACKGROUND,
     _is_recovered_entry,
 )
 
@@ -176,9 +174,9 @@ class TestNonBackgroundRecovery:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx._cancellation_signal = asyncio.Event()
         ctx.task_id = "non-bg-task-1"
-        # Mark as non-background in the responses framework namespace.
+        # (Spec 039 R1) background=False is sourced from the request on the
+        # durable task input — no framework metadata namespace.
         ctx.metadata = _FakeTaskMetadata()
-        ctx.metadata(_RESPONSES_NS)[_RESP_BACKGROUND] = False
         ctx.input = {
             "response_id": "resp_nonbg",
             "request": {"input": "hi", "store": True, "background": False},

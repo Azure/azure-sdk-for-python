@@ -33,7 +33,7 @@ from azure.ai.agentserver.core.tasks import (
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
-from ._dispatch import DISPOSITION_MARK_FAILED, DISPOSITION_REINVOKE
+from ._dispatch import DISPOSITION_MARK_FAILED
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
@@ -46,9 +46,6 @@ if TYPE_CHECKING:
     from ._resilient_input import ResilientResponseInput, RuntimeRefs
 
 logger = logging.getLogger("azure.ai.agentserver.responses.agentserver")
-
-# Framework-internal metadata namespace (spec 015 FR-005)
-_RESPONSES_NS = "_responses"
 
 
 def _server_error_message(shutdown_reason: str) -> str:
@@ -357,38 +354,23 @@ def _reconstruct_from_params(
     return record, context
 
 
-_RESP_RESPONSE_ID = "response_id"
-_RESP_BACKGROUND = "background"
 # (Spec 014 FR-003 / FR-004 — Phase 4) Per-task disposition tells the recovery
 # scanner what to do on the next-lifetime recovered entry:
 #   - "re-invoke": re-run the handler (Row 1: resilient_background+bg+store).
 #   - "mark-failed": persist a server_error terminal to the response store and
 #     complete the task without re-invoking (Rows 2, 3: bg+store with
 #     resilient_background=False, and fg+store).
-_RESP_DISPOSITION = "disposition"
+# (Spec 039 R1) The disposition, background flag, and response_id are sourced
+# directly from the durable task INPUT (``ResilientResponseInput``, persisted at
+# task ``.start()`` — strictly before the body runs), which is the single source
+# of truth (matching the .NET port). The former ``_responses`` framework
+# metadata namespace that mirrored these three values has been removed.
 
 
 # (Spec 024 Phase 2) `_BOOKKEEPING_EVENTS` module-level registry deleted —
 # the bookkeeping pattern is gone. Handlers run inside the task body for
 # all rows (Row 1 + Row 2 + Row 3); see SOT §6.4 unified handler-execution
 # model.
-
-
-def _read_disposition(responses_ns: Any) -> str:
-    """Read the task disposition from the ``_responses`` framework namespace.
-
-    Defaults to ``DISPOSITION_REINVOKE`` for backward compatibility with
-    Phase 3 (Row 1) tasks created before this metadata key existed.
-
-    :param responses_ns: The ``_responses`` namespace (a TaskMetadata
-        namespace facade or a plain dict).
-    :returns: One of ``DISPOSITION_REINVOKE`` or ``DISPOSITION_MARK_FAILED``.
-    :rtype: str
-    """
-    raw = responses_ns.get(_RESP_DISPOSITION) if responses_ns else None
-    if raw in (DISPOSITION_REINVOKE, DISPOSITION_MARK_FAILED):
-        return raw
-    return DISPOSITION_REINVOKE
 
 
 def _is_recovered_entry(task_entry_mode: str) -> bool:
@@ -578,27 +560,28 @@ class ResilientResponseOrchestrator:
 
     async def _handle_recovery_disposition(
         self,
-        responses_ns: Any,
         *,
-        disposition_stamp: str,
+        disposition: str,
         is_recovery: bool,
         response_id: str,
         params: dict[str, Any],
         background: bool,
     ) -> bool:
-        """Stamp framework metadata + dispatch the mark-failed recovery branch.
+        """Dispatch the mark-failed recovery branch from the durable task input.
 
-        (Spec 033 §3.2 extract) On first entry stamps ``_responses.background`` and
-        ``_responses.disposition`` (flushed resiliently so a crash before the next
-        await preserves the routing). On a recovered entry with a ``mark-failed``
+        (Spec 033 §3.2 extract; Spec 039 R1) The ``disposition`` and
+        ``background`` flag are sourced from the durable task **input**
+        (``ResilientResponseInput``), which is persisted at task ``.start()`` —
+        strictly before the body's first entry — so no framework metadata mirror
+        or explicit flush is needed (the input is the single source of truth,
+        matching the .NET port). On a recovered entry with a ``mark-failed``
         disposition (Rows 2/3), persists the ``server_error`` terminal to the
         store **without re-invoking the handler** and signals the caller to
         return.
 
-        :param responses_ns: The ``_responses`` framework metadata namespace.
-        :type responses_ns: Any
-        :keyword disposition_stamp: The disposition to seed on first entry.
-        :paramtype disposition_stamp: str
+        :keyword disposition: The task disposition from the input
+            (``re-invoke`` / ``mark-failed``).
+        :paramtype disposition: str
         :keyword is_recovery: Whether this is a recovered re-entry.
         :paramtype is_recovery: bool
         :keyword response_id: The response id.
@@ -610,34 +593,20 @@ class ResilientResponseOrchestrator:
         :returns: True if the caller should return (mark-failed handled).
         :rtype: bool
         """
-        # Store background flag on first entry for recovery decisions.
-        if _RESP_BACKGROUND not in responses_ns:
-            responses_ns[_RESP_BACKGROUND] = background
-        # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry, flushed
-        # resiliently BEFORE the body could be killed — otherwise a recovered task
-        # defaults to ``re-invoke`` and skips the mark-failed branch.
-        if _RESP_DISPOSITION not in responses_ns:
-            responses_ns[_RESP_DISPOSITION] = disposition_stamp
-            try:
-                await responses_ns.flush()
-            except (AttributeError, Exception):  # noqa: BLE001
-                pass  # best-effort — backend may not support explicit flush
-        disposition = _read_disposition(responses_ns)
-
         # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition. mark-failed:
         # the handler does NOT re-run; persist a server_error terminal and complete
         # the task. Covers Rows 2 (bg+store, resilient_background=False) and 3 (fg+store).
         if is_recovery and disposition == DISPOSITION_MARK_FAILED:
             logger.info(
-                "Bookkeeping task recovered (response_id=%s, disposition=mark-failed) — marking failed",
+                "Resilient task recovered (response_id=%s, disposition=mark-failed) — marking failed",
                 response_id,
             )
             await self._persist_crash_failed(response_id, params)
             return True
 
-        # Backward-compat: pre-disposition non-background recovery — mark
-        # foreground responses failed on recovery without re-invoking.
-        if is_recovery and not responses_ns.get(_RESP_BACKGROUND, True):
+        # Non-background recovery — mark foreground responses failed on recovery
+        # without re-invoking (no live HTTP connection to stream to).
+        if is_recovery and not background:
             logger.info(
                 "Non-background task recovered (response_id=%s) — marking failed",
                 response_id,
@@ -675,7 +644,9 @@ class ResilientResponseOrchestrator:
         context.pending_input_count = ctx.pending_input_count
         # Swap in the handler-facing metadata facade backed by the task
         # primitive's metadata wrapper (rejects ``_``-prefixed keys so handlers
-        # cannot collide with the framework-reserved ``_responses`` namespace).
+        # cannot invent framework-reserved namespaces — kept as a defensive
+        # guard even though the framework no longer creates a ``_responses``
+        # namespace itself, per Spec 039 R1).
         from .._resilience_context import (  # pylint: disable=import-outside-toplevel
             _DeveloperMetadataFacade,
         )
@@ -959,19 +930,11 @@ class ResilientResponseOrchestrator:
         _agent_reference = resilient.agent_reference
         _agent_session_id = resilient.agent_session_id
 
-        # The _responses namespace holds all framework-internal state for
-        # this conversation (response_id, background, disposition, etc.).
-        # Per spec 015 FR-005, this namespace is reserved (the `_` prefix
-        # indicates framework-only). The handler-facing
-        # ``conversation_chain_metadata`` facade rejects access to it; framework
-        # code (this orchestrator) uses the underlying
-        # ``TaskContext.metadata`` directly which has no such restriction.
-        responses_ns = ctx.metadata(_RESPONSES_NS)
-
-        # Track response_id in framework metadata
+        # (Spec 039 R1) The response_id / disposition / background flag come from
+        # the durable task input (``resilient`` / ``request``) — the single
+        # source of truth, persisted at task ``.start()`` before the body runs.
+        # No framework metadata namespace is created (matches the .NET port).
         response_id = resilient.response_id
-        if responses_ns.get(_RESP_RESPONSE_ID) is None:
-            responses_ns[_RESP_RESPONSE_ID] = response_id
 
         # (Spec 033 §3.1) Process-local refs live in a typed ``RuntimeRefs``
         # cache, never in the serialized input. Build a small key→ref map so the
@@ -995,8 +958,7 @@ class ResilientResponseOrchestrator:
             return value
 
         if await self._handle_recovery_disposition(
-            responses_ns,
-            disposition_stamp=resilient.disposition,
+            disposition=resilient.disposition,
             is_recovery=is_recovery,
             response_id=response_id,
             params=params,
@@ -1126,9 +1088,9 @@ class ResilientResponseOrchestrator:
         resilient_input = ResilientResponseInput(
             request=ctx.parsed,
             response_id=ctx.response_id,
-            # Disposition rides the input solely to seed the first-entry
-            # ``_responses`` metadata stamp; the runtime routing SOT is the
-            # metadata namespace thereafter (survives cross-process recovery).
+            # (Spec 039 R1) Disposition rides the durable input, which is the
+            # single source of truth for recovery routing (persisted at
+            # ``.start()`` and read on every recovered entry — matching .NET).
             disposition=disposition,
             agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
