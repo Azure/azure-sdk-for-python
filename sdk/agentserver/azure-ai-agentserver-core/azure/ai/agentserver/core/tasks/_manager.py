@@ -121,18 +121,20 @@ _TURN_STARTED_AT_KEY: str = "turn_started_at"
 
 
 def _utc_now_iso() -> str:
-    """Return current UTC time as an ISO-8601 string with Z suffix.
+    """Return current UTC time as an ISO-8601 string with a ``+00:00`` offset.
 
-    Persisted turn-start timestamps use this format.
-    Z suffix matches `datetime.fromisoformat`'s expectations from
-    Python 3.11+ (older Pythons need the `+00:00` form).
+    Matches every other persisted task-record timestamp (``created_at`` /
+    ``updated_at`` / ``started_at`` / ``lease.*``, all produced via
+    ``datetime.isoformat()``) and the .NET port. ``datetime.fromisoformat``
+    accepts this form on all supported Pythons; the read path
+    (``_parse_turn_started_at``) additionally tolerates legacy ``…Z`` records.
 
-    :return: An ISO-8601 UTC timestamp ending in ``Z``.
+    :return: An ISO-8601 UTC timestamp ending in ``+00:00``.
     :rtype: str
     """
     from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
 
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f") + "Z"
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _parse_turn_started_at(value: Any) -> float | None:
