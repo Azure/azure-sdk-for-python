@@ -209,7 +209,7 @@ async def test_state_store_sample_flow() -> None:
     created = await store.create_item("step-1", {"done": False, "attempt": 1}, tags={"kind": "checkpoint"})
     assert created.etag == '"0x8DA"'
 
-    item = await store.get("step-1")
+    item = await store.get_item("step-1")
     assert item is not None
     assert item.value["attempt"] == 1
 
@@ -220,12 +220,12 @@ async def test_state_store_sample_flow() -> None:
     assert updated_store.tags is not None
     assert updated_store.tags["env"] == "dev"
 
-    stale_item = await store.get("step-1")
+    stale_item = await store.get_item("step-1")
     assert stale_item is not None
-    await store.set("step-1", {"done": True, "attempt": 2}, tags={"kind": "checkpoint"})
+    await store.set_item("step-1", {"done": True, "attempt": 2}, tags={"kind": "checkpoint"})
 
     with pytest.raises(FoundryStoragePreconditionError) as exc:
-        await store.set("step-1", {"done": True, "attempt": 3}, if_match=stale_item.etag)
+        await store.set_item("step-1", {"done": True, "attempt": 3}, if_match=stale_item.etag)
     assert exc.value.current_etag == '"0x8DB"'
 
     await store.create_item("step-2", {"done": False, "attempt": 1}, tags={"kind": "checkpoint"})
@@ -239,7 +239,7 @@ async def test_state_store_sample_flow() -> None:
     assert [entry.key for entry in second_page.keys] == ["step-2"]
     assert second_page.has_more is False
 
-    deleted_item = await store.delete("audit-1")
+    deleted_item = await store.delete_item("audit-1")
     assert deleted_item.deleted is True
 
     deleted_store = await store.delete()

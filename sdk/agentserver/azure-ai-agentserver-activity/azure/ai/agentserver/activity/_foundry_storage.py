@@ -253,7 +253,7 @@ class FoundryStorage(AsyncStorageBase):
         """
         _ = kwargs
         store = await self._get_store(key, ensure_exists=False)
-        item = await store.get(key)
+        item = await store.get_item(key)
         if item is None or target_cls is None:
             return None, None
         return key, target_cls.from_json_to_store_item(item.value)
@@ -269,7 +269,7 @@ class FoundryStorage(AsyncStorageBase):
         :rtype: None
         """
         store = await self._get_store(key, ensure_exists=True)
-        await store.set(key, value.store_item_to_json())
+        await store.set_item(key, value.store_item_to_json())
 
     async def _delete_item(self, key: str) -> None:
         """Delete one item. Missing keys (or stores) are ignored.
@@ -281,6 +281,6 @@ class FoundryStorage(AsyncStorageBase):
         """
         store = await self._get_store(key, ensure_exists=False)
         try:
-            await store.delete(key)
+            await store.delete_item(key)
         except FoundryStorageNotFoundError:
             pass

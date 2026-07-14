@@ -22,22 +22,22 @@ and type-checker support. Import them from
 
 | Returned by | Model |
 |---|---|
-| `get_or_create()`, `get()` (no `key`), `update()` | `StateStore` |
-| `delete()` (no `key`) | `DeletedStateStore` |
-| `create_item()`, `set()` | `StateStoreItemMetadata` |
-| `get(key)` | `StateStoreItem` |
-| `delete(key)` | `DeletedStateStoreItem` |
+| `get_or_create()`, `get()`, `update()` | `StateStore` |
+| `delete()` | `DeletedStateStore` |
+| `create_item()`, `set_item()` | `StateStoreItemMetadata` |
+| `get_item(key)` | `StateStoreItem` |
+| `delete_item(key)` | `DeletedStateStoreItem` |
 | `list_keys()` | `KeyPage` (of `StateStoreKey`) |
 
 Item values (`StateStoreItem.value`) are your own application JSON. Pass a
-plain `dict` when writing and read one back on `get()`; the SDK stores and
+plain `dict` when writing and read one back on `get_item()`; the SDK stores and
 returns the value as-is.
 
 ```python
 from azure.ai.agentserver.core.storage import StateStore, StateStoreItem
 
 store_info: StateStore | None = await store.get()
-item: StateStoreItem | None = await store.get("step-1")
+item: StateStoreItem | None = await store.get_item("step-1")
 ```
 
 ## Getting Started
@@ -56,9 +56,9 @@ store = await FoundryStateStore.get_or_create(
     description="Checkpoint store for thread abc",
 )
 async with store:
-    await store.set("step-1", {"done": False})
+    await store.set_item("step-1", {"done": False})
 
-    item: StateStoreItem | None = await store.get("step-1")
+    item: StateStoreItem | None = await store.get_item("step-1")
     assert item is not None
     print(item.value)  # {"done": False}
     print(item.etag)
@@ -96,8 +96,8 @@ store = await FoundryStateStore.get_or_create(
 print(store.name)
 ```
 
-`get()` and `delete()` are overloaded on whether you pass a `key`: with no
-`key` they act on the bound store itself; with a `key` they act on one item.
+Store-level operations (`get()`, `update()`, `delete()`) act on the bound
+store itself; the explicit `*_item` methods act on individual items within it.
 
 ```python
 info: StateStore | None = await store.get()          # the store's metadata, or None if absent
@@ -119,7 +119,7 @@ assert deleted.deleted is True
   creation.
 - `update()` only changes `description` and `tags`.
 - `user_isolation` and `item_ttl_seconds` are fixed at create time.
-- `delete()` with no `key` cascades to every item under that store name.
+- `delete()` cascades to every item under that store name.
 
 ## User Isolation
 
@@ -136,9 +136,8 @@ store = await FoundryStateStore.get_or_create("user-prefs/defaults", user_isolat
 - For hosted agents, the platform mints an opaque per-request call ID that the
   SDK forwards on every storage call; the service derives the end user from it.
   There is nothing to wire up.
-- Store-management calls (`get_or_create`, `get()` with no key, `update()`,
-  `delete()` with no key) stay store-scoped and are shared across every user of
-  the store.
+- Store-management calls (`get_or_create`, `get()`, `update()`, `delete()`)
+  stay store-scoped and are shared across every user of the store.
 
 ## Values, Tags, and TTL
 
@@ -183,7 +182,7 @@ Use `create_item()` when duplicate keys should fail with `409`.
 ### Create-or-replace
 
 ```python
-updated = await store.set(
+updated = await store.set_item(
     "step-1",
     {"done": True},
     tags={"kind": "checkpoint"},
@@ -191,23 +190,23 @@ updated = await store.set(
 print(updated.etag)
 ```
 
-`set()` creates the item, or replaces it if the key already exists.
+`set_item()` creates the item, or replaces it if the key already exists.
 
 ### Fetch one item
 
 ```python
-item: StateStoreItem | None = await store.get("step-1")
+item: StateStoreItem | None = await store.get_item("step-1")
 if item is not None:
     print(item.id, item.key, item.value, item.tags, item.etag)
 ```
 
-`get(key)` returns `None` when the item is missing; `get()` with no `key`
-returns the store's metadata instead (or `None` if the store is absent).
+`get_item(key)` returns `None` when the item is missing; `get()` fetches the
+store's metadata instead (or `None` if the store is absent).
 
 ### Delete one item
 
 ```python
-deleted = await store.delete("step-1")
+deleted = await store.delete_item("step-1")
 assert deleted.deleted is True
 ```
 
@@ -220,11 +219,11 @@ Use `if_match` when you want a guarded update or delete:
 ```python
 from azure.ai.agentserver.core.storage import FoundryStoragePreconditionError
 
-item = await store.get("counter")
+item = await store.get_item("counter")
 assert item is not None
 
 try:
-    await store.set("counter", {"value": item.value["value"] + 1}, if_match=item.etag)
+    await store.set_item("counter", {"value": item.value["value"] + 1}, if_match=item.etag)
 except FoundryStoragePreconditionError as err:
     print("Current etag:", err.current_etag)
 ```
@@ -233,7 +232,7 @@ If you want a strict update that only succeeds when the item already exists, use
 `require_exists=True`:
 
 ```python
-await store.set("counter", {"value": 2}, require_exists=True)
+await store.set_item("counter", {"value": 2}, require_exists=True)
 ```
 
 ## Listing Keys
@@ -282,7 +281,7 @@ from azure.ai.agentserver.core.storage import (
 )
 
 try:
-    await store.set("step-1", {"done": True}, if_match='"stale"')
+    await store.set_item("step-1", {"done": True}, if_match='"stale"')
 except FoundryStoragePreconditionError as err:
     print(err.current_etag)
 except FoundryStorageError as err:
@@ -304,13 +303,13 @@ is rejected with `400 Bad Request` (`error.param` names the offending field).
 | `description` | <= 1024 chars. Free-form. | Mutable via `update()` |
 | `tags` | <= 16 entries. Key: 1-64 chars, `[a-zA-Z0-9_.-]`. Value: <= 256 chars. Replaced wholesale. | Mutable via `update()` |
 
-**Item (`create_item`, `set`):**
+**Item (`create_item`, `set_item`):**
 
 | Field | Constraints | Mutability |
 |-------|-------------|------------|
 | `key` | 1-128 chars. Unicode; may contain `/`. Unique within the store. | Immutable |
-| `value` | Opaque JSON object, <= 1 MB serialized inline. | Mutable via `set()` (replace) |
-| `tags` | <= 16 entries, same shape as store tags. | Mutable via `set()` (replace) |
+| `value` | Opaque JSON object, <= 1 MB serialized inline. | Mutable via `set_item()` (replace) |
+| `tags` | <= 16 entries, same shape as store tags. | Mutable via `set_item()` (replace) |
 
 Items carry no TTL of their own -- expiry is inherited from the store's
 `item_ttl_seconds`.

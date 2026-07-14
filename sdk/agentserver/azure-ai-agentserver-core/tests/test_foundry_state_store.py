@@ -343,7 +343,7 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
         name="checkpoints",
     )
 
-    result = await store.get("step/1")
+    result = await store.get_item("step/1")
 
     request = _sent_request(store)
     assert request.method == "GET"
@@ -359,7 +359,7 @@ async def test_get_with_key_returns_state_item_with_value_and_metadata() -> None
 @pytest.mark.asyncio
 async def test_get_with_key_returns_none_when_item_is_absent() -> None:
     store = _make_store(_make_response(404, {"error": {"message": "not found"}}), name="checkpoints")
-    assert await store.get("missing") is None
+    assert await store.get_item("missing") is None
 
 
 # ---------------------------------------------------------------------------
@@ -423,7 +423,7 @@ async def test_delete_with_key_returns_deleted_item_marker() -> None:
         name="checkpoints",
     )
 
-    result = await store.delete("step/1", if_match='"0x8DD"')
+    result = await store.delete_item("step/1", if_match='"0x8DD"')
 
     request = _sent_request(store)
     assert request.method == "DELETE"
@@ -487,7 +487,7 @@ async def test_set_puts_value_and_if_match_header() -> None:
         name="checkpoints",
     )
 
-    result = await store.set("step/1", {"done": True}, tags={"kind": "checkpoint"}, if_match='"0x8DC"')
+    result = await store.set_item("step/1", {"done": True}, tags={"kind": "checkpoint"}, if_match='"0x8DC"')
 
     request = _sent_request(store)
     assert request.method == "PUT"
@@ -516,7 +516,7 @@ async def test_set_require_exists_uses_wildcard_if_match() -> None:
         name="checkpoints",
     )
 
-    await store.set("step/1", {"done": True}, require_exists=True)
+    await store.set_item("step/1", {"done": True}, require_exists=True)
 
     request = _sent_request(store)
     assert request.headers["If-Match"] == "*"

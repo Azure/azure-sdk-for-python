@@ -38,7 +38,7 @@ async def create_and_get_item(store: FoundryStateStore) -> None:
     )
     print(f"created step-1 with etag={created.etag}")
 
-    item = await store.get("step-1")
+    item = await store.get_item("step-1")
     assert item is not None
     print(f"get step-1 -> value={item.value!r}, tags={item.tags}, etag={item.etag}")
 
@@ -54,13 +54,13 @@ async def update_metadata(store: FoundryStateStore) -> None:
 
 async def optimistic_concurrency(store: FoundryStateStore) -> None:
     """Guard a read-modify-write with if_match and handle the conflict."""
-    item = await store.get("step-1")
+    item = await store.get_item("step-1")
     assert item is not None
 
-    await store.set("step-1", {"done": True, "attempt": 2}, tags={"kind": "checkpoint"})
+    await store.set_item("step-1", {"done": True, "attempt": 2}, tags={"kind": "checkpoint"})
 
     try:
-        await store.set(
+        await store.set_item(
             "step-1",
             {"done": True, "attempt": 3},
             tags={"kind": "checkpoint"},
@@ -85,7 +85,7 @@ async def list_with_tags(store: FoundryStateStore) -> None:
 
 async def delete_item_and_store(store: FoundryStateStore) -> None:
     """Delete one item, then cascade-delete the whole store."""
-    deleted_item = await store.delete("audit-1")
+    deleted_item = await store.delete_item("audit-1")
     print(f"deleted item -> key={deleted_item.key}, deleted={deleted_item.deleted}")
 
     deleted_store = await store.delete()

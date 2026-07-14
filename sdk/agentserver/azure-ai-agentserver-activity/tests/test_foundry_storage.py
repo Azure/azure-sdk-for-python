@@ -28,9 +28,9 @@ class _TestStoreItem:
 
 def _fake_store() -> MagicMock:
     store = MagicMock()
-    store.get = AsyncMock(return_value=None)
-    store.set = AsyncMock()
-    store.delete = AsyncMock()
+    store.get_item = AsyncMock(return_value=None)
+    store.set_item = AsyncMock()
+    store.delete_item = AsyncMock()
     store.aclose = AsyncMock()
     return store
 
@@ -64,7 +64,7 @@ async def test_read_missing_key_does_not_create_a_store(monkeypatch: pytest.Monk
 @pytest.mark.asyncio
 async def test_read_deserializes_existing_item(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
-    store.get = AsyncMock(
+    store.get_item = AsyncMock(
         return_value=StateStoreItem(
             {
                 "id": "i1",
@@ -83,14 +83,14 @@ async def test_read_deserializes_existing_item(monkeypatch: pytest.MonkeyPatch) 
     result = await storage.read(["k"], target_cls=_TestStoreItem)
 
     assert result["k"].value == {"count": 3}
-    store.get.assert_awaited_once_with("k")
+    store.get_item.assert_awaited_once_with("k")
 
 
 @pytest.mark.asyncio
 async def test_read_treats_missing_item_as_none(monkeypatch: pytest.MonkeyPatch) -> None:
-    """FoundryStateStore.get() already returns None for a missing store/item."""
+    """FoundryStateStore.get_item() already returns None for a missing store/item."""
     store = _fake_store()
-    store.get = AsyncMock(return_value=None)
+    store.get_item = AsyncMock(return_value=None)
     _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 
@@ -108,7 +108,7 @@ async def test_write_creates_the_store_then_sets_the_item(monkeypatch: pytest.Mo
     await storage.write({"k": _TestStoreItem({"turn": 4})})
 
     mock_cls.get_or_create.assert_awaited_once()
-    store.set.assert_awaited_once_with("k", {"turn": 4})
+    store.set_item.assert_awaited_once_with("k", {"turn": 4})
 
 
 @pytest.mark.asyncio
@@ -121,19 +121,19 @@ async def test_write_only_ensures_the_store_exists_once(monkeypatch: pytest.Monk
     await storage.write({"k": _TestStoreItem({"turn": 2})})
 
     mock_cls.get_or_create.assert_awaited_once()
-    assert store.set.await_count == 2
+    assert store.set_item.await_count == 2
 
 
 @pytest.mark.asyncio
 async def test_delete_forwards_the_key_and_ignores_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
-    store.delete = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
+    store.delete_item = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
     _patch_stores(monkeypatch, {"k": store})
     storage = FoundryStorage()
 
     await storage.delete(["k"])  # must not raise
 
-    store.delete.assert_awaited_once_with("k")
+    store.delete_item.assert_awaited_once_with("k")
 
 
 @pytest.mark.asyncio

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import base64
 from collections.abc import Mapping
-from typing import Any, overload
+from typing import Any
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.rest import HttpRequest
@@ -64,11 +64,12 @@ class FoundryStateStore(FoundryStorageClient):
     lifecycle step before reading or writing items::
 
         store = await FoundryStateStore.get_or_create("checkpoints/thread-abc")
-        await store.set("step-1", {"done": False})
+        await store.set_item("step-1", {"done": False})
 
-    ``get`` and ``delete`` are overloaded on whether *key* is supplied: with no
-    *key* they act on the store itself (its descriptor, or the whole store
-    cascade-deleted); with a *key* they act on one item within it.
+    Store-level operations (:meth:`get`, :meth:`update`, :meth:`delete`) act on
+    the bound store itself. The explicit ``*_item`` methods
+    (:meth:`create_item`, :meth:`get_item`, :meth:`set_item`,
+    :meth:`delete_item`, :meth:`list_keys`) act on individual items within it.
     """
 
     def __init__(
@@ -295,7 +296,7 @@ class FoundryStateStore(FoundryStorageClient):
         response = await self._send_storage_request(self._request("POST", f"{self._store_path()}/items", content=body))
         return deserialize_state_item_metadata(response.text())
 
-    async def set(
+    async def set_item(
         self,
         key: str,
         value: JSONObject,
@@ -319,55 +320,50 @@ class FoundryStateStore(FoundryStorageClient):
         )
         return deserialize_state_item_metadata(response.text())
 
-    @overload
-    async def get(self, key: None = None) -> StateStore | None: ...
-    @overload
-    async def get(self, key: str) -> StateStoreItem | None: ...
-    async def get(self, key: str | None = None) -> StateStoreItem | StateStore | None:
-        """Fetch the bound store's own descriptor, or one item by key.
+    async def get(self) -> StateStore | None:
+        """Fetch the bound store's own descriptor.
 
-        :param key: The item key to fetch, or ``None`` (the default) to fetch
-            the bound store's own descriptor instead.
-        :type key: str or None
-        :return: The store descriptor (``key=None``) or the item (``key=<key>``),
-            or ``None`` if it does not exist.
-        :rtype: ~azure.ai.agentserver.core.storage.StateStore or
-            ~azure.ai.agentserver.core.storage.StateStoreItem or None
+        :return: The store descriptor, or ``None`` if the store does not exist.
+        :rtype: ~azure.ai.agentserver.core.storage.StateStore or None
         """
-        if key is None:
-            try:
-                return await self._fetch_properties()
-            except FoundryStorageNotFoundError:
-                return None
+        try:
+            return await self._fetch_properties()
+        except FoundryStorageNotFoundError:
+            return None
+
+    async def get_item(self, key: str) -> StateStoreItem | None:
+        """Fetch one item by key.
+
+        :param key: The item key to fetch.
+        :type key: str
+        :return: The item, or ``None`` if it does not exist.
+        :rtype: ~azure.ai.agentserver.core.storage.StateStoreItem or None
+        """
         try:
             response = await self._send_storage_request(self._request("GET", self._item_path(key)))
         except FoundryStorageNotFoundError:
             return None
         return deserialize_state_item(response.text())
 
-    @overload
-    async def delete(self, key: None = None, *, if_match: str | None = None) -> DeletedStateStore: ...
-    @overload
-    async def delete(self, key: str, *, if_match: str | None = None) -> DeletedStateStoreItem: ...
-    async def delete(
-        self, key: str | None = None, *, if_match: str | None = None
-    ) -> DeletedStateStoreItem | DeletedStateStore:
-        """Delete the bound store (cascades to every item), or one item by key.
+    async def delete(self) -> DeletedStateStore:
+        """Delete the bound store, cascading to every item under it.
 
-        :param key: The item key to delete, or ``None`` (the default) to
-            delete the bound store itself, cascading to every item under it.
-        :type key: str or None
-        :keyword if_match: Optional concurrency token. Only meaningful for a
-            single-item delete (``key`` supplied); ignored for a store delete.
-        :paramtype if_match: str or None
-        :return: The deleted-store marker (``key=None``) or the deleted-item
-            marker (``key=<key>``).
-        :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStore or
-            ~azure.ai.agentserver.core.storage.DeletedStateStoreItem
+        :return: The deleted-store marker.
+        :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStore
         """
-        if key is None:
-            response = await self._send_storage_request(self._request("DELETE", self._store_path()))
-            return deserialize_deleted_state_store(response.text())
+        response = await self._send_storage_request(self._request("DELETE", self._store_path()))
+        return deserialize_deleted_state_store(response.text())
+
+    async def delete_item(self, key: str, *, if_match: str | None = None) -> DeletedStateStoreItem:
+        """Delete one item by key.
+
+        :param key: The item key to delete.
+        :type key: str
+        :keyword if_match: Optional concurrency token.
+        :paramtype if_match: str or None
+        :return: The deleted-item marker.
+        :rtype: ~azure.ai.agentserver.core.storage.DeletedStateStoreItem
+        """
         response = await self._send_storage_request(self._request("DELETE", self._item_path(key), if_match=if_match))
         return deserialize_deleted_state_item(response.text())
 

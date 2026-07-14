@@ -141,8 +141,8 @@ from azure.ai.agentserver.core.storage import FoundryStateStore
 # get_or_create() resolves (or creates, on first use) the store in one call.
 store = await FoundryStateStore.get_or_create("checkpoints/thread-abc", user_isolation=True)
 async with store:
-    await store.set("step-1", {"done": False})
-    item = await store.get("step-1")
+    await store.set_item("step-1", {"done": False})
+    item = await store.get_item("step-1")
     print(item.value)  # {"done": False}
 ```
 
