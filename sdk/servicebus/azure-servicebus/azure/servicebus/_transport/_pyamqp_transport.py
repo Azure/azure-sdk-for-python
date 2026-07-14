@@ -11,6 +11,7 @@ import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
 import logging
+import queue
 
 from .._pyamqp import (
     utils,
@@ -844,14 +845,18 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.debug("Draining the receive link on close failed.", exc_info=True)
         # Release buffered deliveries (incl. credit==0 prefetch) so they are not
-        # left locked until lock expiry.
-        try:
-            while not handler._received_messages.empty():
+        # left locked until lock expiry. Per-message try so one bad tag doesn't
+        # strand the rest; get_nowait handles the empty()/get race.
+        while True:
+            try:
                 frame, _ = handler._received_messages.get_nowait()
+            except queue.Empty:
+                break
+            try:
                 handler.settle_messages(frame[1], frame[2], "released")
                 handler._received_messages.task_done()
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.debug("Releasing buffered messages on close failed.", exc_info=True)
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Releasing a buffered message on close failed.", exc_info=True)
 
     @staticmethod
     def settle_message_via_receiver_link(

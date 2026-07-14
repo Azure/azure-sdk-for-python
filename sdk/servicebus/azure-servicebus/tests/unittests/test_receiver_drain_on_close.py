@@ -23,7 +23,10 @@ package untouched):
     connection until quiescent, bounded by a timeout -- then releases every
     buffered message with the ``released`` disposition.
   * ``ServiceBusReceiver._close_handler`` calls it, gated to non-session
-    PEEK_LOCK receivers (parity with the .NET SDK).
+    PEEK_LOCK receivers. The non-session gate matches the .NET SDK (whose
+    ``AmqpReceiver.CloseAsync`` drains when ``!isSessionReceiver && LinkCredit > 0``);
+    the PEEK_LOCK gate is a Python-specific refinement -- a pre-settled
+    RECEIVE_AND_DELETE delivery cannot be ``released``-settled.
 
 These tests exercise the transport method directly and the receiver gating, with
 no network.
@@ -236,6 +239,27 @@ class TestPyamqpTransportDrainAsync:
 
         assert h._connection.listen.await_count >= 1
         assert elapsed < 2.0  # bounded by the cap, not the 5s socket timeout
+
+    @pytest.mark.asyncio
+    async def test_no_credit_empty_buffer_is_noop(self):
+        h = _handler(credit=0, is_async=True)
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)
+        h._link.flow.assert_not_called()
+        h.settle_messages_async.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_skipped_when_link_closed(self):
+        h = _handler(credit=5, is_closed=True, buffer=_buffer_with((20, b"tag-20")), is_async=True)
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)
+        h._link.flow.assert_not_called()
+        h.settle_messages_async.assert_not_called()  # cannot settle through a closed link
+
+    @pytest.mark.asyncio
+    async def test_skipped_when_link_none(self):
+        h = _handler(credit=5, is_async=True)
+        h._link = None
+        await PyamqpTransportAsync.drain_and_release_messages_async(h)  # must not raise
+        h.settle_messages_async.assert_not_called()
 
 
 # --------------------------------------------------------------------------- #

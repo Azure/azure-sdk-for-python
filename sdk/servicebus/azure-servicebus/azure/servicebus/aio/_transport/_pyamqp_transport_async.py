@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator,
 import time
 import math
 import random
+import logging
+import queue
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
@@ -42,7 +44,7 @@ from ..._common.constants import (
     OPERATION_TIMEOUT,
     NEXT_AVAILABLE_SESSION,
 )
-from ..._transport._pyamqp_transport import PyamqpTransport, RECEIVE_LINK_DRAIN_TIMEOUT, _LOGGER
+from ..._transport._pyamqp_transport import PyamqpTransport, RECEIVE_LINK_DRAIN_TIMEOUT
 from ...exceptions import (
     OperationTimeoutError,
     ServiceBusConnectionError,
@@ -57,6 +59,9 @@ if TYPE_CHECKING:
     from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
     from ..._pyamqp.aio._client_async import AMQPClientAsync
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
@@ -343,14 +348,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.debug("Draining the receive link on close failed.", exc_info=True)
         # Release buffered deliveries (incl. credit==0 prefetch) so they are not
-        # left locked until lock expiry.
-        try:
-            while not handler._received_messages.empty():
+        # left locked until lock expiry. Per-message try so one bad tag doesn't
+        # strand the rest; get_nowait handles the empty()/get race.
+        while True:
+            try:
                 frame, _ = handler._received_messages.get_nowait()
+            except queue.Empty:
+                break
+            try:
                 await handler.settle_messages_async(frame[1], frame[2], "released")
                 handler._received_messages.task_done()
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.debug("Releasing buffered messages on close failed.", exc_info=True)
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Releasing a buffered message on close failed.", exc_info=True)
 
     @staticmethod
     async def settle_message_via_receiver_link_async(

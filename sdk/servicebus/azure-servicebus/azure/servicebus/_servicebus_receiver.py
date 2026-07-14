@@ -545,7 +545,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         ):
             # Drain the link and release buffered/in-flight messages so they are not
             # left locked at the broker until lock expiry (delaying redelivery,
-            # inflating delivery count).
+            # inflating delivery count). Non-session gate matches .NET; the PEEK_LOCK
+            # gate is Python-specific (a pre-settled RECEIVE_AND_DELETE delivery
+            # cannot be released-settled).
             self._amqp_transport.drain_and_release_messages(self._handler)
         super(ServiceBusReceiver, self)._close_handler()
 
