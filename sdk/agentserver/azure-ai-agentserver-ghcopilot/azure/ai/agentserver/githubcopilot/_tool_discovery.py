@@ -20,7 +20,7 @@ import pathlib
 import sys
 from typing import Any, List, Tuple
 
-import yaml  # type: ignore[import-untyped]
+import yaml
 
 from copilot.tools import Tool
 

@@ -12,7 +12,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -21,9 +20,6 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = []
-
-[project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
@@ -42,11 +38,9 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
 breaking = false
-pylint = false
 pyright = false
 verifytypes = false
 latestdependency = false
 verify_keywords = false
 mindependency = false
 whl_no_aio = false
-type_check_samples = false
