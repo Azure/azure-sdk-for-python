@@ -4,8 +4,7 @@
 
 ### Other Changes
 
-  - First stable (GA) release of the Azure Data Boundaries Management client library.
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - First GA
 
 ## 1.0.0b2 (2026-05-21)
 
