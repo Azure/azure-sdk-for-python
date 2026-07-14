@@ -80,7 +80,7 @@ implements).
 | **Recovered entry** | A handler invocation triggered by the resilient-task recovery scanner, after a previous lifetime's task body did not reach a terminal state. |
 | **Steered turn** | A turn whose input arrived while a previous turn for the same chain was still in progress; the steered turn was queued and is now being delivered. |
 | **Acceptance hook** | Optional developer-provided callback that produces the initial `status="queued"` response object the HTTP caller of a steered turn sees synchronously, before the handler runs. |
-| **Disposition** | Per-task framework metadata key telling the recovery scanner what to do on a recovered entry: `re-invoke` or `mark-failed`. |
+| **Disposition** | Per-task field on the durable task **input** telling the recovery scanner what to do on a recovered entry: `re-invoke` or `mark-failed`. |
 | **Resumption response** | Handler-built `ResponseObject` reflecting the safe-to-resume-from state; carried as the `response` payload of the recovery `response.in_progress` event. |
 | **Reset event** | The second-or-later `response.in_progress` event in a stream — clients MUST treat it as a snapshot reset of the local response view. |
 | **Response store** | The persistent store of `ResponseObject` envelopes; written at `response.created` and at terminal events. |
@@ -390,8 +390,8 @@ needed; each task is one-shot.
 Same shape as §6.1: the handler runs inside the resilient task body.
 The only differences are:
 
-1. **Disposition is `mark-failed`** — written to framework metadata on
-   first entry, so recovery does NOT re-invoke the handler.
+1. **Disposition is `mark-failed`** — carried on the durable task
+   **input** (persisted at `.start()`), so recovery does NOT re-invoke the handler.
 2. **HTTP request coupling** — for Row 3 (foreground), the HTTP
    request awaits the task body's terminal via the framework's
    `TaskRun.result()` API. For Row 2 (background, non-resilient
