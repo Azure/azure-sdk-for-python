@@ -677,6 +677,64 @@ pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
     })
 }
 
+/// Entry point the binding calls to run one container's offer/throughput read and
+/// wait for it (sync). Offers are an account-level, non-partitioned resource, so --
+/// unlike `run_query_operation` -- there is no container to resolve and no partition
+/// to target: it builds `CosmosOperation::query_offers` against the account carrying
+/// the same offer query JSON the legacy path sends, and returns the page in the
+/// `{"Offers":[...]}` envelope the Python offer parser reads.
+pub(crate) fn run_read_offer_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    modifiers: OpModifiers,
+    body_bytes: Vec<u8>,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
+        runtime_ctx
+            .tokio_rt
+            .block_on(run_read_offer_future(driver, modifiers, body_bytes))
+    });
+
+    tuple_from_offer_feed_result(py, response_result)
+}
+
+/// Async sibling of `run_read_offer_operation`.
+pub(crate) fn run_read_offer_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    modifiers: OpModifiers,
+    body_bytes: Vec<u8>,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(handle)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let join = runtime_ctx
+        .tokio_rt
+        .spawn(run_read_offer_future(driver, modifiers, body_bytes));
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_offer_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}
+
 /// Look up the cached driver for a client handle, or raise if `init_client`
 /// has not run yet (or the client was already closed).
 fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
@@ -819,6 +877,47 @@ async fn run_read_all_items_future(
         modifiers.excluded_regions_value,
         modifiers.end_to_end_timeout,
         modifiers.custom_headers,
+    );
+    driver.execute_operation(op, options).await
+}
+
+/// Driver work for an offer/throughput read. Offers live at the account level and
+/// are not partitioned, so this resolves no container and targets no partition: it
+/// builds `query_offers` against the account, attaches the offer query JSON from the
+/// request body, and -- because `query_offers` (unlike `query_items`) does not set
+/// them itself -- adds the query `Content-Type` and `x-ms-documentdb-isquery`
+/// markers the service needs to treat the body as a query. The container-recreate
+/// guard header (`x-ms-cosmos-intended-collection-rid`) the wrapper attached rides
+/// through the custom-header passthrough untouched. `entry(...).or_insert_with` is
+/// used so a caller-supplied value for either marker is never overwritten.
+async fn run_read_offer_future(
+    driver: Arc<CosmosDriver>,
+    modifiers: OpModifiers,
+    body_bytes: Vec<u8>,
+) -> Result<Option<CosmosResponse>, CosmosError> {
+    let account = driver.account().clone();
+    let mut op = CosmosOperation::query_offers(account).with_body(body_bytes);
+
+    if let Some(activity) = modifiers.activity_header.as_ref() {
+        op = op.with_activity_id(ActivityId::from(activity.clone()));
+    }
+    if let Some(session) = modifiers.session_header.as_ref() {
+        op = op.with_session_token(SessionToken::from(session.clone()));
+    }
+
+    let mut custom_headers = modifiers.custom_headers;
+    custom_headers
+        .entry(HeaderName::from_static("content-type"))
+        .or_insert_with(|| HeaderValue::from("application/query+json".to_string()));
+    custom_headers
+        .entry(HeaderName::from_static("x-ms-documentdb-isquery"))
+        .or_insert_with(|| HeaderValue::from("true".to_string()));
+
+    let options = build_operation_options(
+        None,
+        modifiers.excluded_regions_value,
+        modifiers.end_to_end_timeout,
+        custom_headers,
     );
     driver.execute_operation(op, options).await
 }
@@ -1452,6 +1551,92 @@ fn query_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
         ResponseBody::Items(items) => {
             let mut out = Vec::with_capacity(16 + items.iter().map(|i| i.len()).sum::<usize>());
             out.extend_from_slice(br#"{"Documents":["#);
+            for (index, item) in items.iter().enumerate() {
+                if index > 0 {
+                    out.push(b',');
+                }
+                out.extend_from_slice(item.as_ref());
+            }
+            out.extend_from_slice(b"]}");
+            Ok(out)
+        }
+    }
+}
+
+/// Offer-feed variant of `tuple_from_feed_result`: an offer/throughput query page
+/// becomes a success reply whose body is the `{"Offers":[...]}` envelope the Python
+/// offer parser reads; `None` (no offers) becomes an empty `{"Offers":[]}` page; an
+/// error carrying a real service response (e.g. a 400) becomes the same tuple shape
+/// so the parser raises the right Cosmos error, while a pure transport failure
+/// becomes a Rust error.
+fn tuple_from_offer_feed_result<'py>(
+    py: Python<'py>,
+    response_result: Result<Option<CosmosResponse>, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match response_result {
+        Ok(Some(response)) => backend_response_tuple_from_offer_feed_success(py, response),
+        Ok(None) => {
+            let response_headers = PyDict::new_bound(py);
+            backend_response_tuple(py, 200, 0, response_headers, br#"{"Offers":[]}"#, None)
+        }
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(DriverTransportError::new_err(format!(
+                    "driver execute_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+/// Offer version of `backend_response_tuple_from_feed_success`: identical status /
+/// diagnostics / header handling, but the body rows are wrapped in the
+/// `{"Offers":[...]}` envelope instead of `{"Documents":[...]}`.
+fn backend_response_tuple_from_offer_feed_success<'py>(
+    py: Python<'py>,
+    response: azure_data_cosmos_driver::models::CosmosResponse,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let status = response.status();
+    let status_code = u16::from(status.status_code()) as i64;
+    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+    let diag = response.diagnostics();
+    BINDING_ATTEMPT_COUNT.fetch_add(diag.request_count() as u64, Ordering::Relaxed);
+    let retries = diag
+        .requests()
+        .iter()
+        .filter(|req| req.execution_context().as_str() != "initial")
+        .count() as u64;
+    BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
+    let diagnostics = diag.to_string();
+    let response_headers = PyDict::new_bound(py);
+    write_response_headers(&response_headers, response.headers())?;
+    let body_vec = offer_response_body_to_vec(response.into_body())?;
+    backend_response_tuple(
+        py,
+        status_code,
+        sub_status,
+        response_headers,
+        &body_vec,
+        Some(diagnostics.as_str()),
+    )
+}
+
+/// Response side: wrap the driver's offer rows in the `{"Offers":[...]}` envelope the
+/// Python parser expects (same key the REST service returns). The query text went OUT
+/// in `run_read_offer_future`; here we shape the rows on the way back. No rows becomes
+/// `{"Offers":[]}`; a raw pre-built body (`Bytes`) passes through unchanged.
+fn offer_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
+    match body {
+        ResponseBody::NoPayload => Ok(br#"{"Offers":[]}"#.to_vec()),
+        ResponseBody::Bytes(b) => Ok(b.to_vec()),
+        ResponseBody::Items(items) => {
+            // Envelope overhead: `{"Offers":[` (11 bytes) + `]}` (2 bytes) = 13.
+            let mut out = Vec::with_capacity(13 + items.iter().map(|i| i.len()).sum::<usize>());
+            out.extend_from_slice(br#"{"Offers":["#);
             for (index, item) in items.iter().enumerate() {
                 if index > 0 {
                     out.push(b',');

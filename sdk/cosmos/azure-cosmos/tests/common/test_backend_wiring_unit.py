@@ -36,6 +36,7 @@ from azure.cosmos._backend.base import (
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
+    OP_READ_OFFER,
     PreparedClientConfig,
     PreparedRequest,
 )
@@ -344,6 +345,33 @@ def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
     assert resp.body == b'{"Documents":[{"id":"x"}]}'
 
 
+def test_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
+    """A read_offer prepared request routes to the binding's read_offer entry point."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_offer.return_value = (
+        200,
+        0,
+        {"x-ms-continuation": "ct-read-offer"},
+        b'{"Offers":[{"id":"offer-1","resource":"dbs/d/colls/c"}]}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op=OP_READ_OFFER,
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"query":"SELECT * FROM root r WHERE r.resource=@link","parameters":[]}',
+        partition_key_header="[]",
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.read_offer.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 200
+    assert b'"Offers"' in resp.body
+
+
 def test_rust_backend_dispatches_read_feed_ranges_to_binding(monkeypatch):
     """A read_feed_ranges prepared request routes to binding read_feed_ranges."""
     fake_module = MagicMock()
@@ -638,6 +666,32 @@ def test_async_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
         fake_module.read_all_items_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 200
         assert resp.body == b'{"Documents":[{"id":"x"}]}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
+    """Async read_offer prepared requests route to read_offer_async."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_offer_async = AsyncMock(
+        return_value=(200, 0, {"x-ms-continuation": "ct-read-offer-async"}, b'{"Offers":[{"id":"offer-1"}]}')
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op=OP_READ_OFFER,
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"query":"SELECT * FROM root r WHERE r.resource=@link","parameters":[]}',
+            partition_key_header="[]",
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.read_offer_async.assert_awaited_once_with("handle-1", prepared)
+        assert resp.status_code == 200
+        assert b'"Offers"' in resp.body
 
     asyncio.run(_run())
 

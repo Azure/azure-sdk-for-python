@@ -121,6 +121,14 @@
 //!         Computes the feed-range envelope for one partition key and returns body
 //!         shape `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
 //!
+//!   * `read_offer(handle, prepared) -> (status, sub_status,
+//!                                       headers, body, diagnostics)`
+//!         Reads a container's provisioned throughput by querying the account's
+//!         `/offers` feed (an account-level, non-partitioned resource). The request
+//!         body carries the same offer query JSON the legacy path sends; the binding
+//!         adds the query `Content-Type`/`x-ms-documentdb-isquery` markers that
+//!         `query_offers` requires. Returns body shape `{"Offers":[...]}`.
+//!
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
 //! is lifted to the typed `OperationOptions::content_response_on_write`
@@ -161,6 +169,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_all_items);
     add_pyfn!(m, documents::read_feed_ranges);
     add_pyfn!(m, documents::feed_range_from_partition_key);
+    add_pyfn!(m, documents::read_offer);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
     add_pyfn!(m, documents::create_item_async);
@@ -173,6 +182,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_all_items_async);
     add_pyfn!(m, documents::read_feed_ranges_async);
     add_pyfn!(m, documents::feed_range_from_partition_key_async);
+    add_pyfn!(m, documents::read_offer_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.

@@ -64,7 +64,8 @@ use crate::wire::{
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
     run_read_all_items_operation, run_read_all_items_operation_async, run_read_feed_ranges_operation,
-    run_read_feed_ranges_operation_async, OpModifiers,
+    run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
+    OpModifiers,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
@@ -416,6 +417,24 @@ pub(crate) fn feed_range_from_partition_key<'py>(
     )
 }
 
+/// read_offer: read a container's provisioned throughput by querying the account's
+/// `/offers` feed. Offers are an account-level, non-partitioned resource, so the
+/// container link and partition-key header on the PreparedRequest are unused here;
+/// the offer query JSON (the same filter the legacy path sends) rides in the body
+/// and the matching offer records come back in the `{"Offers":[...]}` envelope.
+/// Without it, get_throughput could not run on the rust driver and would stay on
+/// the core-python path.
+#[pyfunction]
+pub(crate) fn read_offer<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (_container_link, _partition_key_header, modifiers, body_bytes) =
+        extract_query_inputs(prepared)?;
+    run_read_offer_operation(py, handle, modifiers, body_bytes, "read_offer")
+}
+
 // ---------------------------------------------------------------------------
 // Async entry points
 // ---------------------------------------------------------------------------
@@ -672,4 +691,16 @@ pub(crate) fn feed_range_from_partition_key_async<'py>(
         &partition_key_header,
         "feed_range_from_partition_key",
     )
+}
+
+/// Async twin of `read_offer`.
+#[pyfunction]
+pub(crate) fn read_offer_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (_container_link, _partition_key_header, modifiers, body_bytes) =
+        extract_query_inputs(prepared)?;
+    run_read_offer_operation_async(py, handle, modifiers, body_bytes, "read_offer")
 }

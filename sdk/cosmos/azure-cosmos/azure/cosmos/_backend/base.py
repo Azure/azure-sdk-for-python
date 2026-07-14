@@ -54,6 +54,7 @@ OP_QUERY_ITEMS = "query_items"
 OP_READ_ALL_ITEMS = "read_all_items"
 OP_READ_FEED_RANGES = "read_feed_ranges"
 OP_FEED_RANGE_FROM_PARTITION_KEY = "feed_range_from_partition_key"
+OP_READ_OFFER = "read_offer"
 
 
 # ``PreparedRequest.op`` -> binding function name. Shared by the sync and
@@ -69,6 +70,7 @@ OP_TO_BINDING_METHOD = {
     OP_READ_ALL_ITEMS: "read_all_items",
     OP_READ_FEED_RANGES: "read_feed_ranges",
     OP_FEED_RANGE_FROM_PARTITION_KEY: "feed_range_from_partition_key",
+    OP_READ_OFFER: "read_offer",  # throughput read (get_throughput) -> Rust read_offer entry point
 }
 
 

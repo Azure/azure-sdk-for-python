@@ -58,6 +58,10 @@ from .._feed_ranges_rust_routing import (
     try_feed_range_from_partition_key_with_rust_backend_async,
     try_read_feed_ranges_with_rust_backend_async,
 )
+from .._offer_rust_routing import (
+    can_use_rust_backend_for_read_offer,
+    try_read_offer_with_rust_backend_async,
+)
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -1739,9 +1743,33 @@ class ContainerProxy:
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
+        container_rid = properties["_rid"]
+        options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
+
+        # Read throughput on Rust when the client is Rust-backed with no extra kwargs;
+        # otherwise fall through to legacy QueryOffers. Both return the same offer records,
+        # so the caller sees the identical ThroughputProperties either way.
+        backend = getattr(self.client_connection, "_backend", None)
+        rust_offers: Optional[list[dict[str, Any]]] = None
+        if backend is not None:
+            rust_kwargs: Dict[str, Any] = dict(kwargs)
+            rust_options = _build_options(rust_kwargs)
+            rust_options[Constants.ContainerRID] = container_rid
+            # _build_options lifts timeout into options; keep the legacy kwargs shape mirrored.
+            rust_kwargs.pop("timeout", None)
+            if can_use_rust_backend_for_read_offer(backend=backend, options=rust_options, kwargs=rust_kwargs):
+                rust_offers = await try_read_offer_with_rust_backend_async(
+                    client_connection=self.client_connection,
+                    container_link=self.container_link,
+                    offer_query=query_spec,
+                    options=rust_options,
+                )
+
+        if rust_offers is not None:
+            throughput_properties = rust_offers
+        else:
+            throughput_properties = [throughput async for throughput in
+                                     self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
