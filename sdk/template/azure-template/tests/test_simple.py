@@ -22,7 +22,6 @@ class TestDataPlane(AzureRecordedTestCase):
 # `AzureMgmtRecordedTestCase` inherits from `AzureRecordedTestCase` and also includes a `create_mgmt_client` method.
 # This class should only be used by management-plane libraries in most cases. `azure-mgmt-*` libraries have their own
 # reference material for testing: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md.
-# test comment
 class TestMgmtPlane(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         pass
