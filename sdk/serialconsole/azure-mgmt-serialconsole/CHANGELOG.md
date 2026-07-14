@@ -4,27 +4,24 @@
 
 ### Features Added
 
+  - Client `MicrosoftSerialConsoleClient` added parameter `cloud_setting` in method `__init__`
   - Client `MicrosoftSerialConsoleClient` added method `send_request`
   - Model `ProxyResource` added property `system_data`
   - Model `Resource` added property `system_data`
-  - Model `SerialPort` added property `properties`
   - Model `SerialPort` added property `system_data`
   - Added model `CloudError`
   - Added enum `CreatedByType`
-  - Added model `DisableSerialConsoleResultProperties`
-  - Added model `EnableSerialConsoleResultProperties`
-  - Added model `SerialConsoleStatusProperties`
   - Added enum `SerialPortConnectionState`
-  - Added model `SerialPortProperties`
   - Added model `SystemData`
 
 ### Breaking Changes
 
-  - Model `DisableSerialConsoleResult` deleted or renamed its instance variable `disabled`
-  - Model `EnableSerialConsoleResult` deleted or renamed its instance variable `disabled`
-  - Method `SerialConsoleOperations.__init__` changed from accepting keyword arguments to not accepting them
-  - Model `SerialConsoleStatus` deleted or renamed its instance variable `disabled`
-  - Model `SerialPort` deleted or renamed its instance variable `state`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `DisableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `DisableSerialConsoleResultProperties`
+  - Model `EnableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `EnableSerialConsoleResultProperties`
+  - Renamed operation group `MicrosoftSerialConsoleClientOperationsMixin` to `_MicrosoftSerialConsoleClientOperationsMixin`
+  - Model `SerialConsoleStatus` moved instance variable `disabled` under property `properties` whose type is `SerialConsoleStatusProperties`
+  - Model `SerialPort` moved instance variable `state` under property `properties` whose type is `SerialPortProperties`
   - Deleted or renamed method `SerialPortsOperations.delete`
   - Method `MicrosoftSerialConsoleClient.disable_console` changed return type from `Union[DisableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `DisableSerialConsoleResult`
   - Method `MicrosoftSerialConsoleClient.enable_console` changed return type from `Union[EnableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `EnableSerialConsoleResult`
