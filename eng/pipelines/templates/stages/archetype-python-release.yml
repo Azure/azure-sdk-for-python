@@ -14,28 +14,61 @@ parameters:
 
 stages:
   # TEMPORARY VALIDATION TOGGLE (remove before GA):
-  # Queue the pipeline manually with variable ForceAutoReleasePrepare=true to compile and run ONLY the
-  # shared AutoReleasePrepare stage. No Release_* or Integration stages are compiled in this mode, so the
-  # run CANNOT publish anything. Use it to validate auto-release wiring on a branch (PR resolution, Python
-  # package detection, azure-sdk-tools install + feed auth, and the emitted output variables). On a branch
-  # whose HEAD commit is not a merged 'auto-release'-labeled PR to main, the shared script fails closed
-  # (AutoReleaseLabelPresent=false) — which still validates the machinery and the feed-auth fix.
+  # Queue the pipeline manually with variable ForceAutoReleasePrepare=true to compile and run ONLY this
+  # validation stage. No Release_* or Integration stages are compiled in this mode, so the run CANNOT
+  # publish anything. It runs the SAME shared resolution script the real prepare stage uses, so it
+  # validates auto-release wiring on a branch (PR resolution, Python package detection, azure-sdk-tools
+  # install + feed auth, emitted output variables) using this branch's code.
+  #
+  # Which commit is evaluated is decoupled from the branch you run: set the queue-time variable
+  # AutoReleaseValidationCommitSha to a merged 'auto-release'-labeled PR's merge commit to exercise the
+  # positive path (packages resolved). If unset, it defaults to this run's HEAD commit (Build.SourceVersion),
+  # which is normally not a merged labeled PR -> the script fails closed (still validates the machinery).
   - ${{ if eq(variables['ForceAutoReleasePrepare'], 'true') }}:
-    - template: /eng/common/pipelines/templates/stages/archetype-auto-release-prepare.yml
-      parameters:
-        DependsOn: []
-        Artifacts: ${{ parameters.Artifacts }}
-        Condition: succeeded()
-        PreSteps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '3.12'
-          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
-            parameters:
-              DevFeedName: ${{ parameters.DevFeedName }}
-              EnableTwineAuth: false
-              EnablePipAuth: true
-              EnableUvAuth: true
+    - stage: AutoReleasePrepareValidation
+      displayName: 'Auto-release prepare (validation only)'
+      dependsOn: []
+      variables:
+        - template: /eng/pipelines/templates/variables/globals.yml
+        - template: /eng/pipelines/templates/variables/image.yml
+        - name: ResolvedAutoReleaseCommitSha
+          value: $[ coalesce(variables['AutoReleaseValidationCommitSha'], variables['Build.SourceVersion']) ]
+      jobs:
+        - job: ResolveAutoReleasePackages
+          displayName: Resolve releasable packages (validation)
+          pool:
+            name: $(LINUXPOOL)
+            image: $(LINUXVMIMAGE)
+            os: linux
+          steps:
+            - checkout: self
+              fetchDepth: 1
+
+            - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
+            - task: UsePythonVersion@0
+              inputs:
+                versionSpec: '3.12'
+
+            - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+              parameters:
+                DevFeedName: ${{ parameters.DevFeedName }}
+                EnableTwineAuth: false
+                EnablePipAuth: true
+                EnableUvAuth: true
+
+            - task: PowerShell@2
+              name: resolve
+              displayName: Determine releasable packages
+              env:
+                AUTORELEASE_ARTIFACTS: ${{ convertToJson(parameters.Artifacts) }}
+                GH_TOKEN: $(GH_TOKEN)
+              inputs:
+                pwsh: true
+                filePath: $(System.DefaultWorkingDirectory)/eng/common/scripts/Resolve-AutoReleasePackages.ps1
+                arguments: >
+                  -CommitSha "$(ResolvedAutoReleaseCommitSha)"
+                  -RepoId "$(Build.Repository.Name)"
 
   # Release stages are compiled for:
   #   * internal manual runs (existing behavior), and
