@@ -14,17 +14,19 @@ parameters:
 
 stages:
   # TEMPORARY VALIDATION TOGGLE (remove before GA):
-  # Queue the pipeline manually with variable ForceAutoReleasePrepare=true to compile and run ONLY this
+  # Run the pipeline from a branch whose name contains 'autorelease-validate' to compile and run ONLY this
   # validation stage. No Release_* or Integration stages are compiled in this mode, so the run CANNOT
-  # publish anything. It runs the SAME shared resolution script the real prepare stage uses, so it
-  # validates auto-release wiring on a branch (PR resolution, Python package detection, azure-sdk-tools
-  # install + feed auth, emitted output variables) using this branch's code.
+  # publish anything. Stage inclusion is gated on the branch name because that is a COMPILE-TIME value:
+  # queue-time variables are NOT visible to ${{ }} template expressions, so a queue-time flag can never
+  # add or remove a stage. It runs the SAME shared resolution script the real prepare stage uses, so it
+  # validates auto-release wiring (PR resolution, Python package detection, azure-sdk-tools install + feed
+  # auth, emitted output variables) using this branch's code.
   #
-  # Which commit is evaluated is decoupled from the branch you run: set the queue-time variable
-  # AutoReleaseValidationCommitSha to a merged 'auto-release'-labeled PR's merge commit to exercise the
-  # positive path (packages resolved). If unset, it defaults to this run's HEAD commit (Build.SourceVersion),
-  # which is normally not a merged labeled PR -> the script fails closed (still validates the machinery).
-  - ${{ if eq(variables['ForceAutoReleasePrepare'], 'true') }}:
+  # Which commit is evaluated is decoupled from the branch: set the queue-time variable
+  # AutoReleaseValidationCommitSha (read in a RUNTIME expression, so queue-time values DO apply) to a merged
+  # 'auto-release'-labeled PR's merge commit to exercise the positive path. If unset, it defaults to this
+  # run's HEAD commit (Build.SourceVersion), which is normally not a merged labeled PR -> fails closed.
+  - ${{ if contains(variables['Build.SourceBranch'], 'autorelease-validate') }}:
     - stage: AutoReleasePrepareValidation
       displayName: 'Auto-release prepare (validation only)'
       dependsOn: []
@@ -75,8 +77,8 @@ stages:
   #   * internal post-merge CI on 'main' (auto-release). For auto-release, only the packages changed by a
   #     merged PR carrying the 'auto-release' label are released; each Release_* stage is gated at runtime
   #     on the ReleaseArtifact_<safeName> output produced by the shared AutoReleasePrepare stage below.
-  # The ForceAutoReleasePrepare exclusion ensures a validation run (above) never compiles publishable stages.
-  - ${{ if and(ne(variables['ForceAutoReleasePrepare'], 'true'), eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
+  # The 'autorelease-validate' branch exclusion ensures a validation run (above) never compiles publishable stages.
+  - ${{ if and(not(contains(variables['Build.SourceBranch'], 'autorelease-validate')), eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
 
     # Auto-release preparation runs only for post-merge CI on 'main'. The shared (eng/common) stage resolves
     # the merged PR from Build.SourceVersion, requires the 'auto-release' label, maps the PR's changed files
@@ -460,7 +462,7 @@ stages:
                 Artifact: ${{ artifact }}
                 DevFeedName: ${{ parameters.DevFeedName }}
 
-  - ${{ if and(ne(variables['ForceAutoReleasePrepare'], 'true'), eq(variables['System.TeamProject'], 'internal')) }}:
+  - ${{ if and(not(contains(variables['Build.SourceBranch'], 'autorelease-validate')), eq(variables['System.TeamProject'], 'internal')) }}:
     - stage: Integration
       dependsOn: ${{parameters.DependsOn}}
       condition: succeededOrFailed('${{parameters.DependsOn}}')
