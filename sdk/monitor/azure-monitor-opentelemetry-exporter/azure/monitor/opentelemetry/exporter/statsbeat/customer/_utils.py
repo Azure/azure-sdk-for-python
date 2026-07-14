@@ -5,7 +5,7 @@ from typing import Optional, List, Tuple, Union, Any
 
 # mypy: disable-error-code="import-untyped"
 from requests import ReadTimeout, Timeout  # pylint: disable=networking-import-outside-azure-core-transport
-from azure.core.exceptions import ServiceRequestTimeoutError, ServiceResponseTimeoutError
+from azure.core.exceptions import ServiceRequestTimeoutError, ServiceResponseTimeoutError, ServiceResponseError, ServiceRequestError
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST,
     RetryCode,
@@ -101,6 +101,8 @@ def _determine_client_retry_code(
         Timeout,
     )
     network_exception_types = (
+        ServiceRequestError,
+        ServiceResponseError,
         ConnectionError,
         OSError,
     )
