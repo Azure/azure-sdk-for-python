@@ -113,6 +113,7 @@ class BaseExporter:
 
         # TODO: Uncomment configuration changes once testing is completed
         # Get the configuration manager
+        # from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
         # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
@@ -195,6 +196,9 @@ class BaseExporter:
             **kwargs,
         )
         # TODO: Uncomment configuration changes once testing is completed
+        # from azure.monitor.opentelemetry.exporter._utils import _get_os, _get_rp, _get_attach_type
+        # from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+
         # if self._configuration_manager:
         #     self._configuration_manager.initialize(
         #         os=_get_os(),
