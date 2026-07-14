@@ -40,7 +40,7 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
-from .._global_secondary_index import GlobalSecondaryIndexDefinition
+from .._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
 
 
 __all__ = ("DatabaseProxy",)
@@ -478,6 +478,7 @@ class DatabaseProxy(object):
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
+        _normalize_gsi_container_properties(data)
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data), data
@@ -1140,6 +1141,7 @@ class DatabaseProxy(object):
         container_properties = await self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs
         )
+        _normalize_gsi_container_properties(container_properties)
 
         if not return_properties:
             return ContainerProxy(

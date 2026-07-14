@@ -54,15 +54,22 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
             source_container_id=source_container.id,
             definition="SELECT c.id, c.email, c.name FROM c"
         )
-        gsi_container = self.test_db.create_container(
+        gsi_container, create_properties = self.test_db.create_container(
             id="gsi-container-" + str(uuid.uuid4())[:8],
             partition_key=PartitionKey(path="/id"),
-            global_secondary_index_definition=gsi_definition
+            global_secondary_index_definition=gsi_definition,
+            return_properties=True
         )
+
+        # The create response must surface the public "globalSecondaryIndexDefinition"
+        # key and must never expose the legacy "materializedViewDefinition" wire key.
+        self.assertIn("globalSecondaryIndexDefinition", create_properties)
+        self.assertNotIn("materializedViewDefinition", create_properties)
 
         # Read back the container properties and verify GSI definition is present
         properties = gsi_container.read()
         self.assertIn("globalSecondaryIndexDefinition", properties)
+        self.assertNotIn("materializedViewDefinition", properties)
         gsi_props = properties["globalSecondaryIndexDefinition"]
         self.assertEqual(gsi_props["sourceCollectionId"], source_container.id)
         self.assertEqual(gsi_props["definition"], "SELECT c.id, c.email, c.name FROM c")

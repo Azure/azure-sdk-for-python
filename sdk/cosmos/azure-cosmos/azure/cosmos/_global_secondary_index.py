@@ -35,25 +35,27 @@ def _normalize_gsi_container_properties(properties: _PropertiesT) -> _Properties
     """Surface ``globalSecondaryIndexDefinition`` from container properties.
 
     Some service versions return the GSI definition under the legacy
-    ``materializedViewDefinition`` key. Alias it to
-    ``globalSecondaryIndexDefinition`` so callers get a stable field name
-    regardless of the backend contract version. The mutation is done in place
-    when possible and the same object is returned for convenience.
+    ``materializedViewDefinition`` key. Promote it to
+    ``globalSecondaryIndexDefinition`` and drop the legacy key so the public
+    contract never exposes ``materializedViewDefinition``, regardless of the
+    backend contract version. The mutation is done in place when possible and
+    the same object is returned for convenience.
 
     :param properties: The container properties returned by the service.
     :type properties: Mapping[str, Any] or None
     :returns: The container properties with ``globalSecondaryIndexDefinition`` populated.
     :rtype: Mapping[str, Any] or None
     """
-    if (properties is not None
-            and _MATERIALIZED_VIEW_DEFINITION_KEY in properties
-            and _GLOBAL_SECONDARY_INDEX_DEFINITION_KEY not in properties):
-        try:
+    if properties is None or _MATERIALIZED_VIEW_DEFINITION_KEY not in properties:
+        return properties
+    try:
+        if _GLOBAL_SECONDARY_INDEX_DEFINITION_KEY not in properties:
             properties[_GLOBAL_SECONDARY_INDEX_DEFINITION_KEY] = (  # type: ignore[index]
                 properties[_MATERIALIZED_VIEW_DEFINITION_KEY])
-        except TypeError:
-            # Read-only mapping; nothing to normalize in place.
-            pass
+        del properties[_MATERIALIZED_VIEW_DEFINITION_KEY]  # type: ignore[attr-defined]
+    except TypeError:
+        # Read-only mapping; nothing to normalize in place.
+        pass
     return properties
 
 
