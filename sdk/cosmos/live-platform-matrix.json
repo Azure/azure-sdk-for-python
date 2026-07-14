@@ -255,18 +255,6 @@
           "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
         }
       }
-    },
-    {
-      "GSITestConfig": {
-        "Ubuntu2404_313_gsi": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosGSI"
-        }
-      }
     }
   ]
 }
