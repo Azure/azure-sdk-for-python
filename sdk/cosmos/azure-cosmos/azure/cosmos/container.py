@@ -471,7 +471,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -508,8 +508,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosItemPaged
         """
         ...
 
@@ -525,7 +525,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -558,8 +558,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosItemPaged
         """
         ...
 
@@ -573,7 +573,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -595,8 +595,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosItemPaged
         """
         ...
 
@@ -611,7 +611,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified,
 
@@ -643,8 +643,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosItemPaged
         """
         ...
 
@@ -653,7 +653,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *args: Any,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -692,8 +692,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :param Any args: args
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :returns: A pageable of items (dicts) exposing get_response_headers() for the latest page's headers.
+        :rtype: CosmosItemPaged
         """
 
         # pylint: disable=too-many-statements

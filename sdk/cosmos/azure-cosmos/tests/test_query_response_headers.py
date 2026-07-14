@@ -957,6 +957,49 @@ class TestQueryResponseHeaders(unittest.TestCase):
         finally:
             self._delete_container_for_test(container_id)
 
+    def test_change_feed_returns_cosmos_item_paged_with_etag(self):
+        """query_items_change_feed must return the public CosmosItemPaged type and expose the
+        change feed continuation token (etag) through the thread-safe get_response_headers() API."""
+        container_id = "test_headers_cf_etag_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(5):
+                created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
+
+            change_feed = created_collection.query_items_change_feed(start_time="Beginning")
+
+            # The returned pageable must be the public CosmosItemPaged type
+            self.assertIsInstance(change_feed, CosmosItemPaged)
+
+            items = list(change_feed)
+            self.assertEqual(len(items), 5)
+
+            # Continuation token (etag) is available via the public thread-safe API
+            headers = change_feed.get_response_headers()
+            self.assertIsInstance(headers, CaseInsensitiveDict)
+            self.assertIn("etag", headers)
+            self.assertTrue(headers["etag"])
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_change_feed_response_headers_empty(self):
+        """query_items_change_feed must still surface the continuation token (etag) via
+        get_response_headers() even when there are no changes to return."""
+        container_id = "test_headers_cf_empty_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            # start_time="Now" with no writes -> empty change feed
+            change_feed = created_collection.query_items_change_feed(start_time="Now")
+            self.assertIsInstance(change_feed, CosmosItemPaged)
+            items = list(change_feed)
+            self.assertEqual(len(items), 0)
+
+            # Continuation token should still be captured to allow resuming later
+            headers = change_feed.get_response_headers()
+            self.assertIn("etag", headers)
+        finally:
+            self._delete_container_for_test(container_id)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -20,7 +20,7 @@
 # SOFTWARE.
 
 from ._version import VERSION
-from ._cosmos_responses import CosmosDict, CosmosList
+from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
@@ -68,6 +68,7 @@ __all__ = (
     "ThroughputProperties",
     "CosmosDict",
     "CosmosList",
+    "CosmosItemPaged",
     "GlobalSecondaryIndexDefinition"
 )
 __version__ = VERSION

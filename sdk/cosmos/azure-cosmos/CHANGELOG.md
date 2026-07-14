@@ -3,6 +3,7 @@
 ### 4.16.2 (Unreleased)
 
 #### Features Added
+* `query_items_change_feed()` now returns a `CosmosItemPaged` (sync) / `CosmosAsyncItemPaged` (async), matching `query_items()`. This exposes the thread-safe public `get_response_headers()` API, allowing users to read the change feed continuation token (`etag`) from the latest page's response headers instead of relying on the non-thread-safe internal `client_connection.last_response_headers`. The `CosmosItemPaged` and `CosmosAsyncItemPaged` return types are now exported from `azure.cosmos` and `azure.cosmos.aio` respectively, alongside the existing `CosmosDict` and `CosmosList` response wrappers. See [PR 47947](https://github.com/Azure/azure-sdk-for-python/pull/47947).
 * Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index_definition` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
 
 #### Breaking Changes

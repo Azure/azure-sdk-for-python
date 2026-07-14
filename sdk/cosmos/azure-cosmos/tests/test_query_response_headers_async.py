@@ -917,6 +917,49 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(cid)
 
+    async def test_change_feed_returns_cosmos_item_paged_with_etag_async(self):
+        """query_items_change_feed must return the public CosmosAsyncItemPaged type and expose the
+        change feed continuation token (etag) through the thread-safe get_response_headers() API."""
+        cid = "test_headers_cf_etag_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            for i in range(5):
+                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
+
+            change_feed = created_collection.query_items_change_feed(start_time="Beginning")
+
+            # The returned pageable must be the public CosmosAsyncItemPaged type
+            self.assertIsInstance(change_feed, CosmosAsyncItemPaged)
+
+            items = [item async for item in change_feed]
+            self.assertEqual(len(items), 5)
+
+            # Continuation token (etag) is available via the public thread-safe API
+            headers = change_feed.get_response_headers()
+            self.assertIsInstance(headers, CaseInsensitiveDict)
+            self.assertIn("etag", headers)
+            self.assertTrue(headers["etag"])
+        finally:
+            await self._delete_container_for_test(cid)
+
+    async def test_change_feed_response_headers_empty_async(self):
+        """query_items_change_feed must still surface the continuation token (etag) via
+        get_response_headers() even when there are no changes to return."""
+        cid = "test_headers_cf_empty_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            # start_time="Now" with no writes -> empty change feed
+            change_feed = created_collection.query_items_change_feed(start_time="Now")
+            self.assertIsInstance(change_feed, CosmosAsyncItemPaged)
+            items = [item async for item in change_feed]
+            self.assertEqual(len(items), 0)
+
+            # Continuation token should still be captured to allow resuming later
+            headers = change_feed.get_response_headers()
+            self.assertIn("etag", headers)
+        finally:
+            await self._delete_container_for_test(cid)
+
 
 if __name__ == "__main__":
     unittest.main()
