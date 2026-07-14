@@ -46,17 +46,17 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         # Create source container
         source_container = self.test_db.create_container(
             id="source-container-" + str(uuid.uuid4())[:8],
-            partition_key=PartitionKey(path="/customerId")
+            partition_key=PartitionKey(path="/id")
         )
 
         # Create GSI container using GlobalSecondaryIndexDefinition
         gsi_definition = GlobalSecondaryIndexDefinition(
             source_container_id=source_container.id,
-            definition="SELECT c.customerId, c.email, c.name FROM c"
+            definition="SELECT c.id, c.email, c.name FROM c"
         )
         gsi_container = self.test_db.create_container(
             id="gsi-container-" + str(uuid.uuid4())[:8],
-            partition_key=PartitionKey(path="/customerId"),
+            partition_key=PartitionKey(path="/id"),
             global_secondary_index_definition=gsi_definition
         )
 
@@ -65,7 +65,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         self.assertIn("globalSecondaryIndexDefinition", properties)
         gsi_props = properties["globalSecondaryIndexDefinition"]
         self.assertEqual(gsi_props["sourceCollectionId"], source_container.id)
-        self.assertEqual(gsi_props["definition"], "SELECT c.customerId, c.email, c.name FROM c")
+        self.assertEqual(gsi_props["definition"], "SELECT c.id, c.email, c.name FROM c")
         self.assertIn("status", gsi_props)
 
         # Clean up - delete GSI container first, then source
@@ -77,17 +77,17 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         # Create source container
         source_container = self.test_db.create_container(
             id="source-dict-" + str(uuid.uuid4())[:8],
-            partition_key=PartitionKey(path="/customerId")
+            partition_key=PartitionKey(path="/id")
         )
 
         # Create GSI container using a dict
         gsi_dict = {
             "sourceCollectionId": source_container.id,
-            "definition": "SELECT c.customerId, c.category FROM c"
+            "definition": "SELECT c.id, c.category FROM c"
         }
         gsi_container = self.test_db.create_container(
             id="gsi-dict-" + str(uuid.uuid4())[:8],
-            partition_key=PartitionKey(path="/customerId"),
+            partition_key=PartitionKey(path="/id"),
             global_secondary_index_definition=gsi_dict
         )
 
@@ -104,19 +104,19 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         # Create source container
         source_container = self.test_db.create_container(
             id="source-notexist-" + str(uuid.uuid4())[:8],
-            partition_key=PartitionKey(path="/customerId")
+            partition_key=PartitionKey(path="/id")
         )
 
         gsi_definition = GlobalSecondaryIndexDefinition(
             source_container_id=source_container.id,
-            definition="SELECT c.customerId, c.timestamp FROM c"
+            definition="SELECT c.id, c.timestamp FROM c"
         )
         container_id = "gsi-notexist-" + str(uuid.uuid4())[:8]
 
         # First call creates
         gsi_container = self.test_db.create_container_if_not_exists(
             id=container_id,
-            partition_key=PartitionKey(path="/customerId"),
+            partition_key=PartitionKey(path="/id"),
             global_secondary_index_definition=gsi_definition
         )
         self.assertEqual(gsi_container.id, container_id)
@@ -124,7 +124,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         # Second call returns existing
         gsi_container_again = self.test_db.create_container_if_not_exists(
             id=container_id,
-            partition_key=PartitionKey(path="/customerId"),
+            partition_key=PartitionKey(path="/id"),
             global_secondary_index_definition=gsi_definition
         )
         self.assertEqual(gsi_container_again.id, container_id)
