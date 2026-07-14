@@ -10,6 +10,7 @@ import logging
 import os
 import uuid
 import warnings
+from collections.abc import MutableMapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import suppress
 from multiprocessing import cpu_count
@@ -965,6 +966,32 @@ def _get_latest(
     return latest
 
 
+def _archive_restore_body(resource: Any, drop_stage: bool) -> Any:
+    """Prune an arm asset model in place so its archive/restore PUT body is byte-identical to the legacy client.
+
+    The wire recordings were captured with the legacy msrest client, which omitted ``None``-valued properties and, for
+    versioned assets, dropped ``stage`` (the old code set ``properties.stage = None``). The hybrid ``SdkJSONEncoder``
+    instead emits untyped ``None`` keys as explicit ``null`` and retains the untyped ``stage`` key. This removes those
+    keys from the model's ``properties`` mapping in place (``is_archived`` must already be set) so serialization matches
+    the original request body. The same model object is returned so callers keep passing one ``body`` reference.
+
+    :param resource: The arm hybrid version/container model (with ``is_archived`` already set).
+    :type resource: Any
+    :param drop_stage: When ``True`` (version assets) the ``stage`` property is removed to match the legacy behavior of
+        setting it to ``None``; containers have no ``stage`` and pass ``False``.
+    :type drop_stage: bool
+    :return: The same ``resource`` with its properties pruned.
+    :rtype: Any
+    """
+    props = getattr(resource, "properties", None)
+    if isinstance(props, MutableMapping):
+        for key in [k for k, v in list(props.items()) if v is None]:
+            del props[key]
+        if drop_stage and "stage" in props:
+            del props["stage"]
+    return resource
+
+
 def _archive_or_restore(
     asset_operations: Union[
         "DataOperations",
@@ -1023,7 +1050,6 @@ def _archive_or_restore(
                 [],
             )
             version_resource.properties.is_archived = is_archived
-            version_resource.properties.stage = None
             begin_create_or_update_registry_versioned_asset(
                 registry_service_client,
                 asset_plural,
@@ -1031,7 +1057,7 @@ def _archive_or_restore(
                 version,
                 resource_group_name,
                 registry_name,
-                version_resource,
+                _archive_restore_body(version_resource, drop_stage=True),
             )
         else:
             version_resource = version_operation.get(
@@ -1041,13 +1067,12 @@ def _archive_or_restore(
                 workspace_name=workspace_name,
             )
             version_resource.properties.is_archived = is_archived
-            version_resource.properties.stage = None
             version_operation.create_or_update(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                body=version_resource,
+                body=_archive_restore_body(version_resource, drop_stage=True),
             )
     else:
         if registry_name:
@@ -1069,7 +1094,7 @@ def _archive_or_restore(
                 name,
                 resource_group_name,
                 registry_name,
-                container_resource,
+                _archive_restore_body(container_resource, drop_stage=False),
             )
         else:
             container_resource = container_operation.get(
@@ -1082,7 +1107,7 @@ def _archive_or_restore(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                body=container_resource,
+                body=_archive_restore_body(container_resource, drop_stage=False),
             )
 
 
