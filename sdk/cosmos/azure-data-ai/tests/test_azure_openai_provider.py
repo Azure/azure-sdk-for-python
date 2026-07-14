@@ -43,7 +43,7 @@ import pytest
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 
-from azure.cosmos.ai import AzureOpenAIEmbeddingProvider
+from azure.data.ai import AzureOpenAIEmbeddingProvider
 
 
 ENDPOINT = "https://example.com/"
@@ -88,7 +88,7 @@ def _fake_response(vectors, total_tokens=42):
 @pytest.fixture
 def mock_aoai():
     """Patches AzureOpenAI inside the provider module."""
-    with patch("azure.cosmos.ai._azure_openai_provider.AzureOpenAI") as cls:
+    with patch("azure.data.ai._azure_openai_provider.AzureOpenAI") as cls:
         instance = MagicMock(name="AzureOpenAIInstance")
         cls.return_value = instance
         instance.embeddings.create.return_value = _fake_response([[0.1, 0.2], [0.3, 0.4]])

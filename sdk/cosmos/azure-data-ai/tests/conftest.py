@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Test fixtures for azure-cosmos-ai.
+"""Test fixtures for azure-data-ai.
 
 Until ``azure-cosmos`` 4.16.0b3 (PR #46902) is released, ``EmbeddingResult``
 isn't available from ``azure.cosmos`` in our checkout. Inject a minimal stub

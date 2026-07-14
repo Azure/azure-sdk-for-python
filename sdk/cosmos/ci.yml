@@ -31,7 +31,7 @@ extends:
     Artifacts:
     - name: azure-cosmos
       safeName: azurecosmos
-    - name: azure-cosmos-ai
-      safeName: azurecosmosai
+    - name: azure-data-ai
+      safeName: azuredataai
     - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb

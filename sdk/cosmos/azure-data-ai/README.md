@@ -1,6 +1,6 @@
 # Azure Cosmos DB AI extensions for Python
 
-`azure-cosmos-ai` is a companion package to [`azure-cosmos`](https://pypi.org/project/azure-cosmos/) that provides AI-related extensions for the Azure Cosmos DB SDK.
+`azure-data-ai` is a companion package to [`azure-cosmos`](https://pypi.org/project/azure-cosmos/) that provides AI-related extensions for the Azure Cosmos DB SDK.
 
 It ships the default Azure OpenAI implementation of the `EmbeddingProvider` Protocol introduced in `azure-cosmos` 4.16.0b3, used by the SDK to generate vector embeddings for `GenerateEmbeddings(...)` query expressions.
 
@@ -9,7 +9,7 @@ It ships the default Azure OpenAI implementation of the `EmbeddingProvider` Prot
 ### Install the package
 
 ```bash
-pip install azure-cosmos-ai
+pip install azure-data-ai
 ```
 
 ### Prerequisites
@@ -29,7 +29,7 @@ The provider stores **only the credential**. Endpoint, deployment name, and dime
 
 ```python
 from azure.cosmos import CosmosClient
-from azure.cosmos.ai import AzureOpenAIEmbeddingProvider
+from azure.data.ai import AzureOpenAIEmbeddingProvider
 
 provider = AzureOpenAIEmbeddingProvider(credential="<aoai-api-key>")
 
@@ -47,7 +47,7 @@ provider (for Azure OpenAI). One identity covers both services.
 
 ```python
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos.ai.aio import AzureOpenAIEmbeddingProvider
+from azure.data.ai.aio import AzureOpenAIEmbeddingProvider
 from azure.identity.aio import DefaultAzureCredential
 
 async with DefaultAzureCredential() as cred:

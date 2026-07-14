@@ -27,8 +27,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cosmos-ai"
-PACKAGE_PPRINT_NAME = "Cosmos AI"
+PACKAGE_NAME = "azure-data-ai"
+PACKAGE_PPRINT_NAME = "Data AI"
 
 # a-b-c => a/b/c
 PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
@@ -51,7 +51,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 exclude_packages = [
     "tests",
     "azure",
-    "azure.cosmos",
+    "azure.data",
 ]
 
 setup(
@@ -86,7 +86,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     package_data={
-        "azure.cosmos.ai": ["py.typed"],
+        "azure.data.ai": ["py.typed"],
     },
     python_requires=">=3.9",
     install_requires=[
