@@ -109,6 +109,11 @@
   - Method `ReservationsSummariesOperations.list_by_reservation_order` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
   - Method `UsageDetailsOperations.list` changed its parameter `expand`/`metric`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `BudgetsListResult`/`Events`/`Lots`/`MarketplacesListResult`/`ModernReservationTransactionsListResult`/`OperationListResult`/`ReservationDetailsListResult`/`ReservationSummariesListResult`/`ReservationTransactionsListResult`/`UsageDetailsListResult` which actually were not used by SDK users
+  - Deleted model `DownloadProperties`/`LegacyReservationTransaction`/`ReservationRecommendationsListResult`/`ReservationTransactionResource`/`ResourceAttributes` which actually were not used by SDK users
   - Method `BudgetsOperations.list` changed return type from `Iterable[BudgetsListResult]` to `ItemPaged[Budget]`
   - Method `EventsOperations.list_by_billing_account` changed return type from `Iterable[Events]` to `ItemPaged[EventSummary]`
   - Method `EventsOperations.list_by_billing_profile` changed return type from `Iterable[Events]` to `ItemPaged[EventSummary]`
@@ -129,11 +134,6 @@
   - Method `UsageDetailsOperations.list` changed return type from `Iterable[UsageDetailsListResult]` to `ItemPaged[UsageDetail]`
   - Method `BudgetsOperations.create_or_update` re-ordered its parameters from `['self', 'budget_name', 'cls', 'parameters', 'scope', 'kwargs']` to `['self', 'budget_name', 'content_type', 'parameters', 'scope', 'kwargs']`
   - Method `ReservationRecommendationDetailsOperations.get` re-ordered its parameters from `['self', 'cls', 'look_back_period', 'product', 'region', 'resource_scope', 'scope', 'term', 'kwargs']` to `['self', 'filter', 'look_back_period', 'product', 'region', 'resource_scope', 'scope', 'term', 'kwargs']`
-
-### Other Changes
-
-  - Deleted model `BudgetsListResult`/`Events`/`Lots`/`MarketplacesListResult`/`ModernReservationTransactionsListResult`/`OperationListResult`/`ReservationDetailsListResult`/`ReservationSummariesListResult`/`ReservationTransactionsListResult`/`UsageDetailsListResult` which actually were not used by SDK users
-  - Deleted model `DownloadProperties`/`LegacyReservationTransaction`/`ReservationRecommendationsListResult`/`ReservationTransactionResource`/`ResourceAttributes` which actually were not used by SDK users
 
 ## 11.0.0b2 (2026-05-25)
 
