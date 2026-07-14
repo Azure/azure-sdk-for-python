@@ -55,7 +55,7 @@ class TestRealtimeServiceTurnDetection(AzureRecordedTestCase):
             ),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_turn_detection_long_tts_vad_duration(
         self, test_data_dir: Path, model: str, server_sd_conf: dict, api_version: str, **kwargs
     ):
@@ -101,7 +101,7 @@ class TestRealtimeServiceTurnDetection(AzureRecordedTestCase):
             pytest.param("gpt-4o", {"languages": ["en", "es"]}, id="cascaded-realtime"),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_turn_detection_multilingual(
         self, test_data_dir: Path, model: str, semantic_vad_params: dict, api_version: str, **kwargs
     ):
@@ -149,7 +149,7 @@ class TestRealtimeServiceTurnDetection(AzureRecordedTestCase):
             ),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_eou(
         self,
         test_data_dir: Path,
@@ -185,7 +185,7 @@ class TestRealtimeServiceTurnDetection(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o", "phi4-mm-realtime", "phi4-mini"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_wo_turn_detection(
         self,
         test_data_dir: Path,

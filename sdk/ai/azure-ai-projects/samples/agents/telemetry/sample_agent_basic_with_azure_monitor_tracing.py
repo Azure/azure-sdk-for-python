@@ -22,14 +22,16 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
-    4) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    5) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -41,6 +43,7 @@ from azure.ai.projects.models import PromptAgentDefinition
 load_dotenv()
 
 agent = None
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 with (
     DefaultAzureCredential() as credential,
@@ -54,28 +57,24 @@ with (
     scenario = os.path.basename(__file__)
 
     with tracer.start_as_current_span(scenario):
-        with project_client.get_openai_client() as openai_client:
-            agent_definition = PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions="You are a helpful assistant that answers general questions",
-            )
-
-            agent = project_client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+        with (
+            create_version_with_endpoint(
+                project_client=project_client,
+                agent_name=agent_name,
+                definition=PromptAgentDefinition(
+                    model=os.environ["FOUNDRY_MODEL_NAME"],
+                    instructions="You are a helpful assistant that answers general questions",
+                ),
+            ),
+            project_client.get_openai_client(agent_name=agent_name) as openai_client,
+        ):
             conversation = openai_client.conversations.create()
             print(f"Created conversation with initial user message (id: {conversation.id})")
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the size of France in square miles?",
             )
             print(f"Response output: {response.output_text}")
 
             openai_client.conversations.delete(conversation_id=conversation.id)
-            print("Conversation deleted")
-
-    if agent:
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")

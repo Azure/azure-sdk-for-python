@@ -23,15 +23,17 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) A2A_PROJECT_CONNECTION_ID - The A2A project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) A2A_ENDPOINT - (Optional) If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
+    5) A2A_ENDPOINT - (Optional) If the connection is missing target i.e. if it is of "Custom keys" type, we need to set the A2A
        endpoint on the tool.
-    5) A2A_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    6) A2A_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -42,30 +44,29 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+tool = A2APreviewTool(
+    project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
+)
+# If the connection is missing target, we need to set the A2A endpoint URL.
+if os.environ.get("A2A_ENDPOINT"):
+    tool.base_url = os.environ["A2A_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-
-    tool = A2APreviewTool(
-        project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
-    )
-    # If the connection is missing target, we need to set the A2A endpoint URL.
-    if os.environ.get("A2A_ENDPOINT"):
-        tool.base_url = os.environ["A2A_ENDPOINT"]
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant.",
             tools=[tool],
         ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     user_input = os.environ.get("A2A_USER_INPUT") or input(
         "Enter your question (e.g., 'What can the secondary agent do?'): \n"
     )
@@ -74,7 +75,6 @@ with (
         stream=True,
         tool_choice="required",
         input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:
@@ -97,7 +97,3 @@ with (
         elif event.type == "response.completed":
             print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")

@@ -15,6 +15,8 @@
 - Simplify OneSettings change detection to use ETag-based mechanism instead of change version tracking to reflect spec update
 - Change OneSettings log messages from warning to debug level to reduce noise for users with firewalls
   ([#47949](https://github.com/Azure/azure-sdk-for-python/pull/47949))
+- Harden OneSettings configuration manager and worker: handle non-retryable HTTP errors by slow-polling instead of retrying, fix worker holding its lock across network I/O, make shutdown a soft reset that leaves the singleton reusable, and make callback registration thread-safe and initialization-independent
+  ([#48027](https://github.com/Azure/azure-sdk-for-python/pull/48027))
 
 ## 1.0.0b55 (2026-07-01)
 

@@ -33,6 +33,7 @@ USAGE:
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under
        the "Name" column in the "Models + endpoints" tab in your Microsoft
        Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
@@ -51,6 +52,7 @@ from azure.ai.projects.models import (
     ToolboxSearchPreviewToolboxTool,
     ToolboxSkillReference,
 )
+from util import create_version_with_endpoint
 
 load_dotenv()
 
@@ -58,13 +60,13 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 SKILL_NAME = "shipping-cost-skill"
 TOOLBOX_NAME = "toolbox_with_skill"
-AGENT_NAME = "SkillToolboxAgent"
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
 
     try:
@@ -110,8 +112,9 @@ with (
         require_approval="never",
     )
 
-    agent = project_client.agents.create_version(
-        agent_name=AGENT_NAME,
+    with create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions=(
@@ -124,29 +127,27 @@ with (
             temperature=0,
             tools=[toolbox_mcp_tool],
         ),
-    )
-    print(f"Agent created (id={agent.id}, name={agent.name}, version={agent.version})")
+    ) as agent:
 
-    user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
-    print(f"User: {user_input}")
-    response = openai_client.responses.create(
-        input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-    )
+        user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
+        print(f"User: {user_input}")
+        response = openai_client.responses.create(
+            input=user_input,
+        )
 
-    for item in response.output:
-        if item.type == "mcp_list_tools":
-            print(f"mcp_list_tools server_label={item.server_label} tools={[t.name for t in (item.tools or [])]}")
-        elif item.type == "mcp_call":
-            print(f"mcp_call server_label={item.server_label} name={item.name} error={item.error}")
-            if getattr(item, "output", None):
-                print(f"  output: {item.output}")
-        elif item.type == "mcp_approval_request":
-            print(f"mcp_approval_request server_label={item.server_label} name={item.name}")
-        else:
-            print(f"output item type={item.type}")
+        for item in response.output:
+            if item.type == "mcp_list_tools":
+                print(f"mcp_list_tools server_label={item.server_label} tools={[t.name for t in (item.tools or [])]}")
+            elif item.type == "mcp_call":
+                print(f"mcp_call server_label={item.server_label} name={item.name} error={item.error}")
+                if getattr(item, "output", None):
+                    print(f"  output: {item.output}")
+            elif item.type == "mcp_approval_request":
+                print(f"mcp_approval_request server_label={item.server_label} name={item.name}")
+            else:
+                print(f"output item type={item.type}")
 
-    print(f"Response: {response.output_text}")
+        print(f"Response: {response.output_text}")
 
     project_client.toolboxes.delete(TOOLBOX_NAME)
     print("Toolbox deleted")

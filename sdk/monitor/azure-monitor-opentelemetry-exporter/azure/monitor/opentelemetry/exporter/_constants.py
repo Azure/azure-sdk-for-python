@@ -114,6 +114,8 @@ _ONE_SETTINGS_FEATURE_LIVE_METRICS = "FEATURE_LIVE_METRICS"
 _ONE_SETTINGS_FEATURE_SDK_STATS = "FEATURE_SDK_STATS"
 # Maximum refresh interval cap (24 hours in seconds)
 _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS = 24 * 60 * 60  # 86,400 seconds
+# Base delay for exponential backoff on transient change-detection errors (1 hour in seconds)
+_ONE_SETTINGS_BACKOFF_BASE_SECONDS = 3600
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
