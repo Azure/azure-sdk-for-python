@@ -4,6 +4,10 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Return type of get_access_policies is now the publicly exposed AccessPolicy model. Previously we were leaking the internal generated AccessPolicy model without exposing it in the api.
+
+
 ## 12.17.0 (2026-06-08)
 
 ### Features Added
