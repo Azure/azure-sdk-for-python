@@ -8,6 +8,7 @@
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
+from unittest import mock
 
 import pytest
 import requests
@@ -16,6 +17,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
+from test_content_validation import _deterministic_urandom
 from test_helpers import _build_base_file_share_headers, _create_file_share_oauth, NonSeekableStream, ProgressTracker
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -1780,7 +1782,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        blob.upload_blob(data, validate_content=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(data, validate_content=True)
 
         # Assert
 

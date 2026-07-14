@@ -8,6 +8,7 @@
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
+from unittest import mock
 
 import aiohttp
 import pytest
@@ -16,6 +17,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
+from test_content_validation import _deterministic_urandom
 from test_helpers_async import (
     NonSeekableStream,
     ProgressTracker,
@@ -1923,7 +1925,8 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        await blob.upload_blob(data, validate_content=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(data, validate_content=True)
 
         # Assert
 
