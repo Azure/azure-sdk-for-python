@@ -13,6 +13,10 @@
 - Fixed a bug where sending a batched or multi-message payload with `uamqp_transport=True` raised `TypeError: 'BatchMessage' object is not subscriptable` (and a masked `AttributeError` on the list path) when the first message carried a `message_id`, `session_id`, or `partition_key`. The batch envelope properties are now set through the transport-appropriate code path. (regression from [#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
 - Fixed a bug where the async receiver factory methods on `azure.servicebus.aio.ServiceBusClient` (`get_queue_receiver`, `get_subscription_receiver`) and the async `ServiceBusReceiver` annotated the `auto_lock_renewer` keyword with the synchronous `AutoLockRenewer`, causing static type checkers to reject the documented `azure.servicebus.aio.AutoLockRenewer` usage. The annotation now references the async `AutoLockRenewer`, matching the docstrings and runtime behavior. ([#47948](https://github.com/Azure/azure-sdk-for-python/issues/47948))
 
+### Other Changes
+
+- When using the async `AmqpOverWebsocket` transport, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
+
 ## 7.14.3 (2025-11-11)
 
 ### Bugs Fixed
