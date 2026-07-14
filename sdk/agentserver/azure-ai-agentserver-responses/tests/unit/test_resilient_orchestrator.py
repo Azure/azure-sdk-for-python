@@ -22,10 +22,12 @@ class _FakeTaskMetadata(dict):
     """Test fixture mimicking the TaskMetadata callable+dict-like shape.
 
     Real TaskMetadata is callable for named namespaces; plain dicts are
-    not. The orchestrator now uses ``ctx.metadata(_RESPONSES_NS)`` to
-    reach the framework namespace, so unit-test fixtures must provide
-    something that responds to ``__call__`` (returning an isolated
-    sub-store) as well as ``__getitem__/__setitem__/get/in``.
+    not. Handlers may reach developer metadata namespaces via
+    ``ctx.metadata(name)``, so unit-test fixtures provide something that
+    responds to ``__call__`` (returning an isolated sub-store) as well as
+    ``__getitem__/__setitem__/get/in``. (Spec 039 R1: the framework itself
+    no longer creates a ``_responses`` namespace — recovery routing reads
+    the durable task input instead.)
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -642,6 +644,91 @@ class TestMalformedInputFailsClosed:
         mock_run_bg.assert_not_called()
         orch._persist_crash_failed.assert_awaited_once()
         assert orch._persist_crash_failed.call_args[0][0] == "resp_malformed"
+
+
+class TestRecoveryDispositionFromInput:
+    """Spec 039 R1 — recovery routing (disposition + background) is sourced from
+    the durable task INPUT, not a ``_responses`` framework metadata namespace.
+    ``_handle_recovery_disposition`` takes the values as args (from
+    ``ResilientResponseInput`` / the request) and never touches ``ctx.metadata``.
+    """
+
+    def _orch(self) -> ResilientResponseOrchestrator:
+        orch = ResilientResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=MagicMock(steerable_conversations=False, default_fetch_history_count=100),
+        )
+        orch._persist_crash_failed = AsyncMock()  # type: ignore[method-assign]
+        return orch
+
+    @pytest.mark.asyncio
+    async def test_mark_failed_recovery_dispatches_from_input_disposition(self) -> None:
+        orch = self._orch()
+        handled = await orch._handle_recovery_disposition(
+            disposition="mark-failed",
+            is_recovery=True,
+            response_id="resp_mf",
+            params={"response_id": "resp_mf"},
+            background=True,
+        )
+        assert handled is True
+        orch._persist_crash_failed.assert_awaited_once()
+        assert orch._persist_crash_failed.call_args[0][0] == "resp_mf"
+
+    @pytest.mark.asyncio
+    async def test_reinvoke_recovery_does_not_mark_failed(self) -> None:
+        orch = self._orch()
+        handled = await orch._handle_recovery_disposition(
+            disposition="re-invoke",
+            is_recovery=True,
+            response_id="resp_ri",
+            params={"response_id": "resp_ri"},
+            background=True,
+        )
+        assert handled is False
+        orch._persist_crash_failed.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_non_background_recovery_marks_failed_from_request_flag(self) -> None:
+        """A recovered foreground (background=False) response is marked failed
+        without re-invoking — driven purely by the request-derived flag."""
+        orch = self._orch()
+        handled = await orch._handle_recovery_disposition(
+            disposition="re-invoke",
+            is_recovery=True,
+            response_id="resp_fg",
+            params={"response_id": "resp_fg"},
+            background=False,
+        )
+        assert handled is True
+        orch._persist_crash_failed.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_fresh_entry_never_marks_failed(self) -> None:
+        orch = self._orch()
+        for disposition in ("re-invoke", "mark-failed"):
+            orch._persist_crash_failed.reset_mock()
+            handled = await orch._handle_recovery_disposition(
+                disposition=disposition,
+                is_recovery=False,
+                response_id="resp_fresh",
+                params={"response_id": "resp_fresh"},
+                background=True,
+            )
+            assert handled is False
+            orch._persist_crash_failed.assert_not_awaited()
+
+    def test_no_responses_namespace_symbols_remain(self) -> None:
+        """The ``_responses`` framework namespace and its mirror helpers are
+        fully removed (single source of truth = task input)."""
+        import azure.ai.agentserver.responses.hosting._resilient_orchestrator as mod
+
+        assert not hasattr(mod, "_RESPONSES_NS")
+        assert not hasattr(mod, "_RESP_DISPOSITION")
+        assert not hasattr(mod, "_RESP_BACKGROUND")
+        assert not hasattr(mod, "_RESP_RESPONSE_ID")
+        assert not hasattr(mod, "_read_disposition")
 
 
 class TestPersistCrashFailedRecovery:

@@ -343,7 +343,7 @@ client replay) plus the snapshot at each of the points above.
   written and forgotten will still be visible on a clean recovery — but
   the fence for at-most-once side-effect patterns is your explicit
   `flush()`.
-- Keys and namespace names **starting with `_` are rejected** (raise `ValueError`). Those prefixes are reserved for framework-internal namespaces (e.g. `_responses` for the responses orchestrator) — pick your own prefix-free names.
+- Keys and namespace names **starting with `_` are rejected** (raise `ValueError`). Those prefixes are reserved for framework-internal use — pick your own prefix-free names.
 - Metadata survives crashes — use it for small watermarks (session IDs, checkpoint references, "side effect issued" flags).
 - Keep values JSON-serializable (strings, numbers, lists, dicts).
 - **DO NOT** store conversation history, LLM outputs, or any bulk data in metadata. Use the upstream framework's own storage (session JSONL, checkpoint DB, etc.) for that.

@@ -10,8 +10,8 @@ re-implementing the ``"re-invoke" if … else "mark-failed"`` rule.
 
 from __future__ import annotations
 
-# The two resilient-recovery dispositions stamped into the ``_responses``
-# framework metadata namespace and read by the recovery scanner.
+# The two resilient-recovery dispositions carried on the durable task input
+# (``ResilientResponseInput.disposition``) and read by the recovery scanner.
 DISPOSITION_REINVOKE = "re-invoke"
 DISPOSITION_MARK_FAILED = "mark-failed"
 

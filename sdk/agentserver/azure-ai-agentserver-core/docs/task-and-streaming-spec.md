@@ -794,7 +794,9 @@ The budget is **per-turn** and **wall-clock**:
   honor the new turn's budget.
 
 The framework MUST persist `payload["turn_started_at"]` (ISO-8601
-UTC) at every turn-start boundary: fresh entry, suspended -> in_progress
+UTC, `+00:00` offset form — consistent with all other task-record
+timestamps and the .NET port; readers also accept a legacy `Z` suffix)
+at every turn-start boundary: fresh entry, suspended -> in_progress
 resume, steering drain re-entry. It is NOT re-stamped on crash
 recovery — that is precisely what allows the watchdog to honor the
 original budget across crashes.
@@ -4226,7 +4228,7 @@ metadata namespaces are populated, framework state slots are set.
       "active_input":      null
     },
 
-    "turn_started_at": "2026-06-09T03:50:00.000Z",
+    "turn_started_at": "2026-06-09T03:50:00.000000+00:00",
     "retry_attempt":   0,
     "last_input_id":   "msg_abc123"
   },
