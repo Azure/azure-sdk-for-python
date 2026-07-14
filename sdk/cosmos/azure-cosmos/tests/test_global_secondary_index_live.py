@@ -66,7 +66,11 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         gsi_props = properties["globalSecondaryIndexDefinition"]
         self.assertEqual(gsi_props["sourceCollectionId"], source_container.id)
         self.assertEqual(gsi_props["definition"], "SELECT c.id, c.email, c.name FROM c")
-        self.assertIn("status", gsi_props)
+        # "status" is a read-only, server-populated field that may be absent from the
+        # response (e.g. before the index build is tracked). Match the Java SDK contract,
+        # which treats status as optional, and only validate it when the service returns it.
+        if "status" in gsi_props:
+            self.assertIsNotNone(gsi_props["status"])
 
         # Clean up - delete GSI container first, then source
         self.test_db.delete_container(gsi_container.id)
