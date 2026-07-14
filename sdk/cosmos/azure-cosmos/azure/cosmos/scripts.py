@@ -30,7 +30,7 @@ from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
-from ._constants import _Constants as Constants
+from ._constants import _Constants
 from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key, PartitionKeyType
 
 # pylint: disable=protected-access
@@ -65,11 +65,11 @@ class ScriptsProxy:
         return script_or_id["_self"]
 
     def _ensure_container_rid(self, options: dict[str, Any]) -> None:
-        if Constants.ContainerRID in options:
+        if _Constants.ContainerRID in options:
             return
         if self.container_link not in self.client_connection._container_properties_cache:
             self.client_connection._refresh_container_properties_cache(self.container_link)
-        options[Constants.ContainerRID] = self.client_connection._container_properties_cache[
+        options[_Constants.ContainerRID] = self.client_connection._container_properties_cache[
             self.container_link
         ]["_rid"]
 

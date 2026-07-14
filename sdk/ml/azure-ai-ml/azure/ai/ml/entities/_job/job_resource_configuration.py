@@ -6,10 +6,8 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Union, cast
 
+from azure.ai.ml._restclient.arm_ml_service.models import JobResourceConfiguration as RestJobResourceConfiguration202501
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._restclient.v2025_01_01_preview.models import (
-    JobResourceConfiguration as RestJobResourceConfiguration202501,
-)
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -165,10 +163,13 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> Union[RestJobResourceConfiguration, RestJobResourceConfiguration202501]:
         if self.docker_args and isinstance(self.docker_args, list):
+            # NOTE: max_instance_count is intentionally NOT set here. The 2025-01-01-preview wire
+            # contract (mfe.json) has no maxInstanceCount on JobResourceConfiguration/ResourceConfiguration,
+            # and the old v2025 autorest model silently ignored it too, so omitting it keeps the wire
+            # output identical. It remains supported on the v2023_04 path below, whose swagger declares it.
             return RestJobResourceConfiguration202501(
                 instance_count=self.instance_count,
                 instance_type=self.instance_type,
-                max_instance_count=self.max_instance_count,
                 properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
                 docker_args_list=self.docker_args,
                 shm_size=self.shm_size,
@@ -192,12 +193,25 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         if isinstance(obj, dict):
             return cls(**obj)
         return JobResourceConfiguration(
-            locations=obj.locations if hasattr(obj, "locations") else None,
+            # ``locations`` is on the v2023_04 msrest model but not the shared arm_ml_service model
+            # (2025-01 path). It is still carried on the wire via dict assignment, so fall back to dict
+            # access for hybrid models that keep it in their backing store but do not expose an attribute.
+            locations=(
+                obj.locations if hasattr(obj, "locations") else (obj.get("locations") if hasattr(obj, "get") else None)
+            ),
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
+            # The v2023_04 msrest model exposes max_instance_count as an attribute; the shared
+            # arm_ml_service model (2025-01 path) has no such field and its wire payload never
+            # carries maxInstanceCount, so this resolves to None there — matching the old behavior.
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
             properties=obj.properties,
-            docker_args=obj.docker_args_list if hasattr(obj, "docker_args_list") else obj.docker_args,
+            # The shared arm_ml_service model declares BOTH ``docker_args`` (string) and
+            # ``docker_args_list`` (list) fields; only one is populated per the wire. Prefer whichever is
+            # set so the value survives the round-trip regardless of which form was submitted.
+            docker_args=(
+                getattr(obj, "docker_args_list", None) if getattr(obj, "docker_args_list", None) else obj.docker_args
+            ),
             shm_size=obj.shm_size,
             deserialize_properties=True,
         )

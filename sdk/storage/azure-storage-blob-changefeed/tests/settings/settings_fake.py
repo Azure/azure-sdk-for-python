@@ -7,7 +7,7 @@
 STORAGE_ACCOUNT_NAME = "fakename"
 STORAGE_ACCOUNT_KEY = "fakekey"
 
-ACCOUNT_URL_SUFFIX = 'core.windows.net'
+ACCOUNT_URL_SUFFIX = "core.windows.net"
 RUN_IN_LIVE = "False"
 SKIP_LIVE_RECORDING = "True"
 

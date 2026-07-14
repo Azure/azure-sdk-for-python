@@ -112,24 +112,24 @@ class _RuntimeState:
             self._deleted_response_ids.add(response_id)
 
     @staticmethod
-    def check_chat_isolation(stored_key: str | None, request_chat_key: str | None) -> bool:
-        """Check whether the request chat key matches the creation-time key.
+    def check_user_isolation(stored_key: str | None, request_user_id_key: str | None) -> bool:
+        """Check whether the request user ID matches the creation-time key.
 
         Returns ``True`` if the request is allowed, ``False`` if it should be
-        rejected as not-found to prevent cross-chat information leakage.
+        rejected as not-found to prevent cross-user information leakage.
 
         No enforcement when the response was created without a key (backward compat).
 
-        :param stored_key: The chat isolation key stored at creation time, or ``None``.
+        :param stored_key: The user ID key stored at creation time, or ``None``.
         :type stored_key: str | None
-        :param request_chat_key: The chat key from the incoming request, or ``None``.
-        :type request_chat_key: str | None
+        :param request_user_id_key: The user ID key from the incoming request, or ``None``.
+        :type request_user_id_key: str | None
         :return: ``True`` if allowed, ``False`` if isolation mismatch.
         :rtype: bool
         """
         if stored_key is None:
             return True  # No enforcement when created without a key
-        return stored_key == request_chat_key
+        return stored_key == request_user_id_key
 
     async def get_input_items(self, response_id: str) -> list[OutputItem]:
         """Retrieve the full input item chain for a response, including ancestors.

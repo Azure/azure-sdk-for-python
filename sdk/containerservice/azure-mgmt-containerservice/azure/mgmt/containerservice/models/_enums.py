@@ -152,6 +152,18 @@ class BackendPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend>`_."""
 
 
+class BastionSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of the managed Azure Bastion. The default is 'Standard'. See
+    `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more information about
+    the differences between Azure Bastion SKUs.
+    """
+
+    STANDARD = "Standard"
+    """Use the standard SKU of Azure Bastion."""
+    PREMIUM = "Premium"
+    """Use the premium SKU of Azure Bastion."""
+
+
 class ClusterServiceLoadBalancerHealthProbeMode(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -1106,6 +1118,17 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     manipulate Azure resources."""
     NONE = "None"
     """Do not use a managed identity for the Managed Cluster, service principal will be used instead."""
+
+
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource type."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
 
 
 class ResourceSkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

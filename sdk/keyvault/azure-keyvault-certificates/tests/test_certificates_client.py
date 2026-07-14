@@ -28,6 +28,7 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
+    PlatformManaged,
     WellKnownIssuerNames,
 )
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
@@ -220,6 +221,32 @@ class TestCertificateClient(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
+    def test_create_certificate_with_platform_managed(self, client, **kwargs):
+        # PlatformManaged is only available on the 2026-03-01-preview API and is for
+        # Azure Key Vault internal usage. Verifies the SDK sends the request shape the
+        # service accepts and round-trips the policy back. We intentionally do not wait
+        # for completion: OneCert backend issuance is asynchronous service behavior, not
+        # SDK behavior, and the issuer registration is not always available in test
+        # environments.
+        cert_name = self.get_resource_name("platformManagedCert")
+        policy = CertificatePolicy(
+            platform_managed=PlatformManaged(
+                certificate_usage="PublicTLSServerAuth",
+                metadata={"sans": {"dns_names": ["sanitized.example.invalid"]}},
+            ),
+        )
+
+        client.begin_create_certificate(certificate_name=cert_name, policy=policy)
+
+        returned_policy = client.get_certificate_policy(certificate_name=cert_name)
+        assert returned_policy is not None
+        assert returned_policy.platform_managed is not None
+        assert returned_policy.platform_managed.certificate_usage == "PublicTLSServerAuth"
+        assert "sans" in returned_policy.platform_managed.metadata
 
     @pytest.mark.parametrize("api_version", all_api_versions)
     @CertificatesClientPreparer()

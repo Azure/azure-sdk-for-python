@@ -26,13 +26,15 @@ USAGE:
     3) AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO - Required. The name of the model deployment for audio to use for evaluation, recommend to use "gpt-4o-audio-preview"
 """
 
-import os
 import base64
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+import os
 import time
 from pprint import pprint
+
+from dotenv import load_dotenv
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
@@ -40,8 +42,6 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     InputMessagesTemplateTemplateEvalItem,
 )
 from openai.types.responses import EasyInputMessageParam, ResponseInputAudioParam
-from openai.types.eval_create_params import DataSourceConfigCustom
-from dotenv import load_dotenv
 
 load_dotenv()
 file_path = os.path.abspath(__file__)
@@ -53,7 +53,13 @@ model_deployment_name_for_audio = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR
 
 
 def audio_to_base64(audio_path: str) -> str:
-    """Read an audio file and return its base64-encoded content."""
+    """Read an audio file and return its base64-encoded content.
+
+    :param audio_path: Absolute path to the input audio file.
+    :type audio_path: str
+    :return: Base64-encoded audio data.
+    :rtype: str
+    """
     with open(audio_path, "rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
 
@@ -188,7 +194,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in {"completed", "failed"}:
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")

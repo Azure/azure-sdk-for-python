@@ -202,6 +202,11 @@ test:
     - azure.mgmt.computefleet.aio.operations
     - azure.mgmt.computefleet.models
     - azure.mgmt.computefleet.operations
+    - azure.mgmt.computelimit
+    - azure.mgmt.computelimit.aio
+    - azure.mgmt.computelimit.aio.operations
+    - azure.mgmt.computelimit.models
+    - azure.mgmt.computelimit.operations
     - azure.mgmt.computeschedule
     - azure.mgmt.computeschedule.aio
     - azure.mgmt.computeschedule.aio.operations
@@ -347,6 +352,11 @@ test:
     - azure.mgmt.devtestlabs.operations
     - azure.mgmt.digitaltwins
     - azure.mgmt.digitaltwins.aio
+    - azure.mgmt.disconnectedoperations
+    - azure.mgmt.disconnectedoperations.aio
+    - azure.mgmt.disconnectedoperations.aio.operations
+    - azure.mgmt.disconnectedoperations.models
+    - azure.mgmt.disconnectedoperations.operations
     - azure.mgmt.dns
     - azure.mgmt.dns.aio
     - azure.mgmt.dns.aio.operations
@@ -478,6 +488,11 @@ test:
     - azure.mgmt.informaticadatamanagement.aio.operations
     - azure.mgmt.informaticadatamanagement.models
     - azure.mgmt.informaticadatamanagement.operations
+    - azure.mgmt.iotcentral
+    - azure.mgmt.iotcentral.aio
+    - azure.mgmt.iotcentral.aio.operations
+    - azure.mgmt.iotcentral.models
+    - azure.mgmt.iotcentral.operations
     - azure.mgmt.iotfirmwaredefense
     - azure.mgmt.iotfirmwaredefense.aio
     - azure.mgmt.iotfirmwaredefense.aio.operations
@@ -504,6 +519,11 @@ test:
     - azure.mgmt.keyvault.aio
     - azure.mgmt.kubernetesconfiguration
     - azure.mgmt.kubernetesconfiguration.aio
+    - azure.mgmt.kubernetesconfiguration.extensions
+    - azure.mgmt.kubernetesconfiguration.extensions.aio
+    - azure.mgmt.kubernetesconfiguration.extensions.aio.operations
+    - azure.mgmt.kubernetesconfiguration.extensions.models
+    - azure.mgmt.kubernetesconfiguration.extensions.operations
     - azure.mgmt.kubernetesconfiguration.v2023_05_01
     - azure.mgmt.kubernetesconfiguration.v2023_05_01.aio
     - azure.mgmt.kubernetesconfiguration.v2023_05_01.aio.operations
@@ -674,6 +694,11 @@ test:
     - azure.mgmt.peering.aio.operations
     - azure.mgmt.peering.models
     - azure.mgmt.peering.operations
+    - azure.mgmt.planetarycomputer
+    - azure.mgmt.planetarycomputer.aio
+    - azure.mgmt.planetarycomputer.aio.operations
+    - azure.mgmt.planetarycomputer.models
+    - azure.mgmt.planetarycomputer.operations
     - azure.mgmt.playwright
     - azure.mgmt.playwright.aio
     - azure.mgmt.playwright.aio.operations
@@ -1061,4 +1086,5 @@ about:
 
 extra:
   recipe-maintainers:
-    - xiangyan99
+    - jennypng
+    - kashifkhan-msft

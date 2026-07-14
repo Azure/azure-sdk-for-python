@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
+import datetime
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Union, TYPE_CHECKING, Optional, Any, Dict, Callable
 from typing_extensions import Literal
@@ -201,7 +202,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
-        keep_alive_interval: int,
+        keep_alive_interval: Optional[int],
         client_name: str,
         link_properties: Optional[Dict[str, Any]],
         properties: Optional[Dict[str, Any]],
@@ -249,7 +250,11 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source: str, offset: int, selector: bytes) -> Union["uamqp_Source", "pyamqp_Source"]:
+    def create_source(
+        source: str,
+        offset: Optional[Union[int, str, datetime.datetime]],
+        selector: bytes,
+    ) -> Union["uamqp_Source", "pyamqp_Source"]:
         """
         Creates and returns the Source.
 

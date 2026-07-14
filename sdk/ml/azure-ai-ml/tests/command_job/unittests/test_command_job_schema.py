@@ -96,7 +96,10 @@ class TestCommandJob:
             internal_representation: CommandJob = CommandJob(**schema.load(cfg))
         source = internal_representation._to_rest_object()
         assert source.properties.inputs["test1"].uri == target["inputs"]["test1"]["path"]
-        assert source.properties.environment_variables == target["environment_variables"]
+        # environment_variables is Dict[str, str] on the REST contract; the shared client coerces
+        # all values to strings, so compare against the stringified expected values.
+        expected_env_vars = {k: str(v) for k, v in target["environment_variables"].items()}
+        assert source.properties.environment_variables == expected_env_vars
 
     def test_deserialize_inputs_dataset_short_form(self):
         test_path = "./tests/test_configs/command_job/command_job_inputs_dataset_short_form_test.yml"

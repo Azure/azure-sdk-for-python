@@ -1,11 +1,10 @@
 {
-  "commit": "b770b86265d5dc3a26b16c5d30a736e6bbba04de",
+  "apiVersion": "2025-01-15-preview",
+  "apiVersions": {
+    "Microsoft.HDInsight": "2025-01-15-preview"
+  },
+  "commit": "ecd420c9534d0dab69be38027c1723031504b081",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/hdinsight/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\azure-sdk-for-python\\sdk --tag=package-2021-06 --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/hdinsight/resource-manager/readme.md"
+  "typespec_src": "specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsight",
+  "emitterVersion": "0.62.1"
 }

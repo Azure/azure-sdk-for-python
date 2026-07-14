@@ -1,5 +1,74 @@
 # Release History
 
+## 1.1.0b6 (2026-05-28)
+
+### Features Added
+
+  - Client `PolicyInsightsClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PolicyInsightsClient` added method `send_request`
+  - Model `PolicyMetadata` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `FieldRestriction` renamed its instance variable `values` to `values_property`
+  - Model `PendingField` renamed its instance variable `values` to `values_property`
+  - Model `PolicyMetadata` moved instance variable `metadata_id`, `category`, `title`, `owner`, `additional_content_url`, `metadata`, `description` and `requirements` under property `properties` whose type is `PolicyMetadataProperties`
+  - Model `SlimPolicyMetadata` moved instance variable `metadata_id`, `category`, `title`, `owner`, `additional_content_url` and `metadata` under property `properties` whose type is `PolicyMetadataSlimProperties`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply`/`expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
+  - Method `AttestationsOperations.list_for_resource` replaced parameter `query_options` with `top`/`filter`
+  - Method `AttestationsOperations.list_for_resource_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `AttestationsOperations.list_for_subscription` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyEventsOperations.list_query_results_for_management_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_policy_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_policy_set_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_resource` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`expand`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_resource_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_resource_group_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_subscription` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_subscription_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyMetadataOperations.list` replaced parameter `query_options` with `top`
+  - Method `PolicyStatesOperations.list_query_results_for_management_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_policy_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_policy_set_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_resource` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`expand`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_resource_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_subscription` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.summarize_for_management_group` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_policy_definition` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_policy_set_definition` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_resource` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_resource_group` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_resource_group_level_policy_assignment` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_subscription` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_subscription_level_policy_assignment` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_management_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_subscription` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_deployments_at_management_group` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_deployments_at_resource` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_deployments_at_resource_group` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_deployments_at_subscription` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_for_management_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_for_resource` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_for_resource_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_for_subscription` replaced parameter `query_options` with `top`/`filter`
+
+### Other Changes
+
+  - Deleted model `ErrorDefinitionAutoGenerated`/`ErrorDefinitionAutoGenerated2`/`ErrorResponseAutoGenerated`/`ErrorResponseAutoGenerated2`/`PolicyEventsQueryResults`/`PolicyMetadataCollection`/`PolicyStatesQueryResults`/`PolicyTrackedResourcesQueryResults`/`QueryOptions` which actually were not used by SDK users
+
 ## 1.0.1 (2026-05-19)
 
 ### Other Changes

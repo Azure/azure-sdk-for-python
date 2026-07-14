@@ -370,6 +370,13 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                     "transitEncryption": {"type": "str"},
                                 },
                             },
+                            "bastionProfile": {
+                                "bastionId": "str",
+                                "enabled": bool,
+                                "publicIpAddressId": "str",
+                                "scaleUnits": 0,
+                                "sku": "str",
+                            },
                             "dnsServiceIP": "str",
                             "ipFamilies": ["str"],
                             "kubeProxyConfig": {

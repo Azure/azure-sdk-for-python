@@ -39,7 +39,6 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    # [START tool_declaration]
     # Create vector store for file search
     vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
     print(f"Vector store created (id: {vector_store.id})")
@@ -53,7 +52,6 @@ with (
     print(f"File uploaded to vector store (id: {file.id})")
 
     tool = FileSearchTool(vector_store_ids=[vector_store.id])
-    # [END tool_declaration]
 
     # Create agent with file search tool
     agent = project_client.agents.create_version(

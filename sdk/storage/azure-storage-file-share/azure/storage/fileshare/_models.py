@@ -6,10 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import (
-    Any, Callable, Dict, List, Literal, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, TYPE_CHECKING
 from urllib.parse import unquote
 from typing_extensions import Self
 
@@ -17,6 +14,7 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
+from ._generated.models._patch import _BackCompatMixin
 from ._generated._utils.serialization import Deserializer
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -28,9 +26,11 @@ from ._generated.models import ShareNfsSettingsEncryptionInTransit as GeneratedN
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
 from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
+from ._generated.models import SignedIdentifier as GeneratedSignedIdentifier
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._shared.models import DictMixin, get_enum_value
+from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 if TYPE_CHECKING:
@@ -40,11 +40,11 @@ if TYPE_CHECKING:
 
 def _wrap_item(item):
     if isinstance(item, DirectoryItem):
-        return {'name': item.name, 'is_directory': True}
-    return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
+        return {"name": item.name, "is_directory": True}
+    return {"name": item.name, "size": item.properties.content_length, "is_directory": False}
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -63,6 +63,16 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"maximum": 365, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
@@ -78,8 +88,14 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             days=generated.days,
         )
 
+    def _to_generated(self):
+        return GeneratedRetentionPolicy(
+            enabled=self.enabled,
+            days=self.days,
+        )
 
-class Metrics(GeneratedMetrics):
+
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for files.
 
@@ -95,7 +111,7 @@ class Metrics(GeneratedMetrics):
         Determines how long the associated data should persist.
     """
 
-    version: str = '1.0'
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the File service."""
@@ -104,11 +120,23 @@ class Metrics(GeneratedMetrics):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
+    _validation = {
+        "version": {"required": True},
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')  # type: ignore [assignment]
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")  # type: ignore [assignment]
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -118,11 +146,28 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            ),
+        )
+
+    @staticmethod
+    def _to_generated(metrics: Optional["Metrics"]) -> Optional[GeneratedMetrics]:
+        if metrics is None:
+            return None
+        return GeneratedMetrics(
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
+            retention_policy=(
+                metrics.retention_policy._to_generated()  # pylint: disable=protected-access
+                if metrics.retention_policy
+                else None
+            ),
         )
 
 
-class CorsRule(GeneratedCorsRule):
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -167,12 +212,28 @@ class CorsRule(GeneratedCorsRule):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
+
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -203,7 +264,7 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
-class SmbMultichannel(GeneratedSmbMultichannel):
+class SmbMultichannel(_BackCompatMixin):
     """Settings for Multichannel.
 
     :keyword bool enabled: If SMB Multichannel is enabled.
@@ -212,11 +273,25 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+    }
+    _xml_map = {"name": "Multichannel"}
+
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.enabled = enabled
 
+    def _to_generated(self):
+        return GeneratedSmbMultichannel(enabled=self.enabled)
 
-class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(enabled=generated.enabled)
+
+
+class SmbEncryptionInTransit(_BackCompatMixin):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -225,11 +300,24 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
+    def _to_generated(self):
+        return GeneratedSmbEncryptionInTransit(required=self.required)
 
-class ShareSmbSettings(GeneratedShareSmbSettings):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(required=generated.required)
+
+
+class ShareSmbSettings(_BackCompatMixin):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
@@ -241,7 +329,13 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(
+    _attribute_map = {
+        "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "SmbEncryptionInTransit"},
+    }
+    _xml_map = {"name": "SMB"}
+
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
@@ -253,8 +347,31 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
         if self.multichannel is None and self.encryption_in_transit is None:
             raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
 
+    def _to_generated(self):
+        return GeneratedShareSmbSettings(
+            multichannel=(
+                self.multichannel._to_generated() if self.multichannel else None  # pylint: disable=protected-access
+            ),
+            encryption_in_transit=(
+                self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+                if self.encryption_in_transit
+                else None
+            ),
+        )
 
-class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            multichannel=SmbMultichannel._from_generated(generated.multichannel),  # pylint: disable=protected-access
+            encryption_in_transit=SmbEncryptionInTransit._from_generated(  # pylint: disable=protected-access
+                generated.encryption_in_transit
+            ),
+        )
+
+
+class NfsEncryptionInTransit(_BackCompatMixin):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -263,11 +380,24 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
+    def _to_generated(self):
+        return GeneratedNfsEncryptionInTransit(required=self.required)
 
-class ShareNfsSettings(GeneratedShareNfsSettings):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(required=generated.required)
+
+
+class ShareNfsSettings(_BackCompatMixin):
     """Settings for the NFS protocol.
 
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
@@ -276,11 +406,37 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+    _attribute_map = {
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
+    }
+    _xml_map = {"name": "NFS"}
+
+    def __init__(
+        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         self.encryption_in_transit = encryption_in_transit
 
+    def _to_generated(self):
+        return GeneratedShareNfsSettings(
+            encryption_in_transit=(
+                self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+                if self.encryption_in_transit
+                else None
+            ),
+        )
 
-class ShareProtocolSettings(GeneratedShareProtocolSettings):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            encryption_in_transit=NfsEncryptionInTransit._from_generated(  # pylint: disable=protected-access
+                generated.encryption_in_transit
+            ),
+        )
+
+
+class ShareProtocolSettings(_BackCompatMixin):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
     Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
@@ -294,12 +450,14 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    def __init__(
-        self,
-        *,
-        smb: Optional[ShareSmbSettings] = None,
-        nfs: Optional[ShareNfsSettings] = None,
-        **kwargs: Any
+    _attribute_map = {
+        "smb": {"key": "SMB", "type": "ShareSmbSettings"},
+        "nfs": {"key": "NFS", "type": "ShareNfsSettings"},
+    }
+    _xml_map = {"name": "ProtocolSettings"}
+
+    def __init__(  # pylint: disable=unused-argument
+        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
     ) -> None:
         self.smb = smb
         self.nfs = nfs
@@ -308,7 +466,21 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     @classmethod
     def _from_generated(cls, generated):
-        return cls(smb=generated.smb, nfs=generated.nfs)
+        if not generated:
+            return None
+        return cls(
+            smb=ShareSmbSettings._from_generated(generated.smb),  # pylint: disable=protected-access
+            nfs=ShareNfsSettings._from_generated(generated.nfs),  # pylint: disable=protected-access
+        )
+
+    @staticmethod
+    def _to_generated(settings: Optional["ShareProtocolSettings"]) -> Optional[GeneratedShareProtocolSettings]:
+        if settings is None:
+            return None
+        return GeneratedShareProtocolSettings(
+            smb=settings.smb._to_generated() if settings.smb else None,  # pylint: disable=protected-access
+            nfs=settings.nfs._to_generated() if settings.nfs else None,  # pylint: disable=protected-access
+        )
 
 
 class ShareSasPermissions:
@@ -346,22 +518,20 @@ class ShareSasPermissions:
     """The create permission for share SAS."""
 
     def __init__(
-        self, read: bool = False,
-        write: bool = False,
-        delete: bool = False,
-        list: bool = False,
-        create: bool = False
+        self, read: bool = False, write: bool = False, delete: bool = False, list: bool = False, create: bool = False
     ) -> None:
         self.read = read
         self.create = create
         self.write = write
         self.delete = delete
         self.list = list
-        self._str = (('r' if self.read else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('l' if self.list else ''))
+        self._str = (
+            ("r" if self.read else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("l" if self.list else "")
+        )
 
     def __str__(self) -> str:
         return self._str
@@ -379,18 +549,18 @@ class ShareSasPermissions:
         :return: A ShareSasPermissions object
         :rtype: ~azure.storage.fileshare.ShareSasPermissions
         """
-        p_read = 'r' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_list = 'l' in permission
+        p_read = "r" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_list = "l" in permission
 
         parsed = cls(p_read, p_write, p_delete, p_list, p_create)
 
         return parsed
 
 
-class AccessPolicy(GenAccessPolicy):
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
@@ -442,14 +612,72 @@ class AccessPolicy(GenAccessPolicy):
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
+
     def __init__(
-        self, permission: Optional[Union[ShareSasPermissions, str]] = None,
+        self,
+        permission: Optional[Union[ShareSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
-        start: Optional[Union["datetime", str]] = None
+        start: Optional[Union["datetime", str]] = None,
     ) -> None:
         self.start = start
         self.expiry = expiry
         self.permission = permission
+
+    def _to_generated(self) -> GenAccessPolicy:
+        permission = self.permission
+        if isinstance(permission, ShareSasPermissions):
+            permission = str(permission)
+        return GenAccessPolicy(
+            start=serialize_iso(self.start),
+            expiry=serialize_iso(self.expiry),
+            permission=permission,
+        )
+
+    @classmethod
+    def _from_generated(cls, generated: Optional[GenAccessPolicy]) -> Optional["AccessPolicy"]:
+        if generated is None:
+            return None
+        return cls(
+            permission=generated.permission,
+            expiry=generated.expiry,
+            start=generated.start,
+        )
+
+
+class SignedIdentifier(DictMixin):
+    """Signed identifier representing a stored access policy associated with a share.
+
+    :param str id:
+        A unique id.
+    :param access_policy:
+        The access policy associated with the id.
+    :type access_policy: ~azure.storage.fileshare.AccessPolicy
+    """
+
+    id: str
+    """A unique id."""
+    access_policy: Optional[AccessPolicy]
+    """The access policy associated with the id."""
+
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        access_policy: Optional[AccessPolicy] = None,
+    ) -> None:
+        self.id = id
+        self.access_policy = access_policy
+
+    @classmethod
+    def _from_generated(cls, generated: GeneratedSignedIdentifier) -> "SignedIdentifier":
+        return cls(
+            id=generated.id,
+            access_policy=AccessPolicy._from_generated(generated.access_policy),  # pylint: disable=protected-access
+        )
 
 
 class LeaseProperties(DictMixin):
@@ -463,9 +691,9 @@ class LeaseProperties(DictMixin):
     """When a file or share is leased, specifies whether the lease is of infinite or fixed duration."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
-        self.state = get_enum_value(kwargs.get('x-ms-lease-state'))
-        self.duration = get_enum_value(kwargs.get('x-ms-lease-duration'))
+        self.status = get_enum_value(kwargs.get("x-ms-lease-status"))
+        self.state = get_enum_value(kwargs.get("x-ms-lease-state"))
+        self.duration = get_enum_value(kwargs.get("x-ms-lease-duration"))
 
     @classmethod
     def _from_generated(cls, generated):
@@ -516,7 +744,8 @@ class ContentSettings(DictMixin):
     """The content md5 specified for the file."""
 
     def __init__(
-        self, content_type: Optional[str] = None,
+        self,
+        content_type: Optional[str] = None,
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_disposition: Optional[str] = None,
@@ -524,12 +753,12 @@ class ContentSettings(DictMixin):
         content_md5: Optional[bytearray] = None,
         **kwargs: Any
     ) -> None:
-        self.content_type = content_type or kwargs.get('Content-Type')
-        self.content_encoding = content_encoding or kwargs.get('Content-Encoding')
-        self.content_language = content_language or kwargs.get('Content-Language')
-        self.content_md5 = content_md5 or kwargs.get('Content-MD5')
-        self.content_disposition = content_disposition or kwargs.get('Content-Disposition')
-        self.cache_control = cache_control or kwargs.get('Cache-Control')
+        self.content_type = content_type or kwargs.get("Content-Type")
+        self.content_encoding = content_encoding or kwargs.get("Content-Encoding")
+        self.content_language = content_language or kwargs.get("Content-Language")
+        self.content_md5 = content_md5 or kwargs.get("Content-MD5")
+        self.content_disposition = content_disposition or kwargs.get("Content-Disposition")
+        self.cache_control = cache_control or kwargs.get("Cache-Control")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -604,39 +833,40 @@ class ShareProperties(DictMixin):
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
-        self.quota = kwargs.get('x-ms-share-quota')  # type: ignore [assignment]
-        self.access_tier = kwargs.get('x-ms-access-tier')  # type: ignore [assignment]
-        self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
+        self.quota = kwargs.get("x-ms-share-quota")  # type: ignore [assignment]
+        self.access_tier = kwargs.get("x-ms-access-tier")  # type: ignore [assignment]
+        self.next_allowed_quota_downgrade_time = kwargs.get("x-ms-share-next-allowed-quota-downgrade-time")
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.snapshot = None
         self.deleted = None
         self.deleted_time = None
         self.version = None
         self.remaining_retention_days = None
-        self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
-        self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
-        self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
-        self.provisioned_bandwidth = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
+        self.provisioned_egress_mbps = kwargs.get("x-ms-share-provisioned-egress-mbps")
+        self.provisioned_ingress_mbps = kwargs.get("x-ms-share-provisioned-ingress-mbps")
+        self.provisioned_iops = kwargs.get("x-ms-share-provisioned-iops")
+        self.provisioned_bandwidth = kwargs.get("x-ms-share-provisioned-bandwidth-mibps")
         self.lease = LeaseProperties(**kwargs)
         enabled_protocols = kwargs.get("x-ms-enabled-protocols", None)
         if enabled_protocols is not None:
-            self.protocols = [protocol.strip() for protocol in enabled_protocols.split(',')]
+            self.protocols = [protocol.strip() for protocol in enabled_protocols.split(",")]
         else:
             self.protocols = None
-        self.root_squash = kwargs.get('x-ms-root-squash', None)
-        self.enable_snapshot_virtual_directory_access = \
-            kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
-        self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
-        self.paid_bursting_bandwidth_mibps = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
-        self.paid_bursting_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
-        self.included_burst_iops = kwargs.get('x-ms-share-included-burst-iops')
-        self.max_burst_credits_for_iops = kwargs.get('x-ms-share-max-burst-credits-for-iops')
-        self.next_provisioned_iops_downgrade = (  # pylint: disable=name-too-long
-            kwargs.get('x-ms-share-next-allowed-provisioned-iops-downgrade-time'))
-        self.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
-            kwargs.get('x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time'))
+        self.root_squash = kwargs.get("x-ms-root-squash", None)
+        self.enable_snapshot_virtual_directory_access = kwargs.get("x-ms-enable-snapshot-virtual-directory-access")
+        self.paid_bursting_enabled = kwargs.get("x-ms-share-paid-bursting-enabled")
+        self.paid_bursting_bandwidth_mibps = kwargs.get("x-ms-share-paid-bursting-max-bandwidth-mibps")
+        self.paid_bursting_iops = kwargs.get("x-ms-share-paid-bursting-max-iops")
+        self.included_burst_iops = kwargs.get("x-ms-share-included-burst-iops")
+        self.max_burst_credits_for_iops = kwargs.get("x-ms-share-max-burst-credits-for-iops")
+        self.next_provisioned_iops_downgrade = kwargs.get(  # pylint: disable=name-too-long
+            "x-ms-share-next-allowed-provisioned-iops-downgrade-time"
+        )
+        self.next_provisioned_bandwidth_downgrade = kwargs.get(  # pylint: disable=name-too-long
+            "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"
+        )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -658,8 +888,11 @@ class ShareProperties(DictMixin):
         props.provisioned_iops = generated.properties.provisioned_iops
         props.provisioned_bandwidth = generated.properties.provisioned_bandwidth_mi_bps
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
-            if generated.properties.enabled_protocols else None
+        props.protocols = (
+            [protocol.strip() for protocol in generated.properties.enabled_protocols.split(",")]
+            if generated.properties.enabled_protocols
+            else None
+        )
         props.root_squash = generated.properties.root_squash
         props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
         props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
@@ -668,9 +901,11 @@ class ShareProperties(DictMixin):
         props.included_burst_iops = generated.properties.included_burst_iops
         props.max_burst_credits_for_iops = generated.properties.max_burst_credits_for_iops
         props.next_provisioned_iops_downgrade = (  # pylint: disable=name-too-long
-            generated.properties.next_allowed_provisioned_iops_downgrade_time)
+            generated.properties.next_allowed_provisioned_iops_downgrade_time
+        )
         props.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
-            generated.properties.next_allowed_provisioned_bandwidth_downgrade_time)
+            generated.properties.next_allowed_provisioned_bandwidth_downgrade_time
+        )
         return props
 
 
@@ -699,15 +934,14 @@ class SharePropertiesPaged(PageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(SharePropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -724,7 +958,8 @@ class SharePropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 prefix=self.prefix,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -734,7 +969,9 @@ class SharePropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
+        self.current_page = [
+            ShareProperties._from_generated(i) for i in self._response.share_items  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, self.current_page
 
 
@@ -775,20 +1012,20 @@ class Handle(DictMixin):
     """Time when the session that previously opened the handle was last been reconnected. (UTC)"""
     last_reconnect_time: Optional["datetime"]
     """Time handle that was last connected to. (UTC)"""
-    access_rights: List[Literal['Read', 'Write', 'Delete']]
+    access_rights: List[Literal["Read", "Write", "Delete"]]
     """Access rights of the handle."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.client_name = kwargs.get('client_name')  # type: ignore [assignment]
-        self.id = kwargs.get('handle_id')  # type: ignore [assignment]
-        self.path = kwargs.get('path')  # type: ignore [assignment]
-        self.file_id = kwargs.get('file_id')  # type: ignore [assignment]
-        self.parent_id = kwargs.get('parent_id')  # type: ignore [assignment]
-        self.session_id = kwargs.get('session_id')  # type: ignore [assignment]
-        self.client_ip = kwargs.get('client_ip')  # type: ignore [assignment]
-        self.open_time = kwargs.get('open_time')  # type: ignore [assignment]
-        self.last_reconnect_time = kwargs.get('last_reconnect_time')
-        self.access_rights = kwargs.get('access_right_list')  # type: ignore [assignment]
+        self.client_name = kwargs.get("client_name")  # type: ignore [assignment]
+        self.id = kwargs.get("handle_id")  # type: ignore [assignment]
+        self.path = kwargs.get("path")  # type: ignore [assignment]
+        self.file_id = kwargs.get("file_id")  # type: ignore [assignment]
+        self.parent_id = kwargs.get("parent_id")  # type: ignore [assignment]
+        self.session_id = kwargs.get("session_id")  # type: ignore [assignment]
+        self.client_ip = kwargs.get("client_ip")  # type: ignore [assignment]
+        self.open_time = kwargs.get("open_time")  # type: ignore [assignment]
+        self.last_reconnect_time = kwargs.get("last_reconnect_time")
+        self.access_rights = kwargs.get("access_right_list")  # type: ignore [assignment]
 
     @classmethod
     def _from_generated(cls, generated):
@@ -825,14 +1062,10 @@ class HandlesPaged(PageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
-        results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        self, command: Callable, results_per_page: Optional[int] = None, continuation_token: Optional[str] = None
     ) -> None:
         super(HandlesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.marker = None
@@ -846,13 +1079,16 @@ class HandlesPaged(PageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
-        self.current_page = [Handle._from_generated(h) for h in self._response.handle_list]  # pylint: disable=protected-access
+        self.current_page = [
+            Handle._from_generated(h) for h in self._response.handle_list  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, self.current_page
 
 
@@ -884,7 +1120,8 @@ class NTFSAttributes:
     """Enable/disable 'NoScrubData' attribute for DIRECTORY."""
 
     def __init__(
-        self, read_only: bool = False,
+        self,
+        read_only: bool = False,
         hidden: bool = False,
         system: bool = False,
         none: bool = False,
@@ -893,7 +1130,7 @@ class NTFSAttributes:
         temporary: bool = False,
         offline: bool = False,
         not_content_indexed: bool = False,
-        no_scrub_data: bool = False
+        no_scrub_data: bool = False,
     ) -> None:
         self.read_only = read_only
         self.hidden = hidden
@@ -905,20 +1142,22 @@ class NTFSAttributes:
         self.offline = offline
         self.not_content_indexed = not_content_indexed
         self.no_scrub_data = no_scrub_data
-        self._str = (('ReadOnly|' if self.read_only else '') +
-                               ('Hidden|' if self.hidden else '') +
-                               ('System|' if self.system else '') +
-                               ('None|' if self.none else '') +
-                               ('Directory|' if self.directory else '') +
-                               ('Archive|' if self.archive else '') +
-                               ('Temporary|' if self.temporary else '') +
-                               ('Offline|' if self.offline else '') +
-                               ('NotContentIndexed|' if self.not_content_indexed else '') +
-                               ('NoScrubData|' if self.no_scrub_data else ''))
+        self._str = (
+            ("ReadOnly|" if self.read_only else "")
+            + ("Hidden|" if self.hidden else "")
+            + ("System|" if self.system else "")
+            + ("None|" if self.none else "")
+            + ("Directory|" if self.directory else "")
+            + ("Archive|" if self.archive else "")
+            + ("Temporary|" if self.temporary else "")
+            + ("Offline|" if self.offline else "")
+            + ("NotContentIndexed|" if self.not_content_indexed else "")
+            + ("NoScrubData|" if self.no_scrub_data else "")
+        )
 
     def __str__(self):
         concatenated_params = self._str
-        return concatenated_params.strip('|')
+        return concatenated_params.strip("|")
 
     @classmethod
     def from_string(cls, string: str) -> Self:
@@ -942,8 +1181,9 @@ class NTFSAttributes:
         not_content_indexed = "NotContentIndexed" in string
         no_scrub_data = "NoScrubData" in string
 
-        parsed = cls(read_only, hidden, system, none, directory, archive, temporary, offline, not_content_indexed,
-                     no_scrub_data)
+        parsed = cls(
+            read_only, hidden, system, none, directory, archive, temporary, offline, not_content_indexed, no_scrub_data
+        )
         parsed._str = string
         return parsed
 
@@ -985,31 +1225,40 @@ class DirectoryProperties(DictMixin):
     """NFS only. The owning group of the directory."""
     file_mode: Optional[str] = None
     """NFS only. The file mode of the directory."""
-    nfs_file_type: Optional[Literal['Directory']] = None
+    nfs_file_type: Optional[Literal["Directory"]] = None
     """NFS only. The type of the directory."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
-        self.change_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-change-time')) if (
-                kwargs.get('x-ms-file-change-time') is not None) else None
-        self.creation_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-creation-time')) if (
-                kwargs.get('x-ms-file-creation-time') is not None) else None
-        self.last_write_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-last-write-time')) if (
-                kwargs.get('x-ms-file-last-write-time') is not None) else None
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
+        self.server_encrypted = kwargs.get("x-ms-server-encrypted")  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
+        self.change_time = (
+            Deserializer.deserialize_iso(kwargs.get("x-ms-file-change-time"))
+            if (kwargs.get("x-ms-file-change-time") is not None)
+            else None
+        )
+        self.creation_time = (
+            Deserializer.deserialize_iso(kwargs.get("x-ms-file-creation-time"))
+            if (kwargs.get("x-ms-file-creation-time") is not None)
+            else None
+        )
+        self.last_write_time = (
+            Deserializer.deserialize_iso(kwargs.get("x-ms-file-last-write-time"))
+            if (kwargs.get("x-ms-file-last-write-time") is not None)
+            else None
+        )
         self.last_access_time = None
-        self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
-        self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
-        self.file_id = kwargs.get('x-ms-file-id')  # type: ignore [assignment]
-        self.parent_id = kwargs.get('x-ms-file-parent-id')  # type: ignore [assignment]
+        self.file_attributes = kwargs.get("x-ms-file-attributes")  # type: ignore [assignment]
+        self.permission_key = kwargs.get("x-ms-file-permission-key")  # type: ignore [assignment]
+        self.file_id = kwargs.get("x-ms-file-id")  # type: ignore [assignment]
+        self.parent_id = kwargs.get("x-ms-file-parent-id")  # type: ignore [assignment]
         self.is_directory = True
-        self.owner = kwargs.get('x-ms-owner')
-        self.group = kwargs.get('x-ms-group')
-        self.file_mode = kwargs.get('x-ms-mode')
-        self.nfs_file_type = kwargs.get('x-ms-file-file-type')
+        self.owner = kwargs.get("x-ms-owner")
+        self.group = kwargs.get("x-ms-group")
+        self.file_mode = kwargs.get("x-ms-mode")
+        self.nfs_file_type = kwargs.get("x-ms-file-file-type")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1057,15 +1306,14 @@ class DirectoryPropertiesPaged(PageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(DirectoryPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -1082,7 +1330,8 @@ class DirectoryPropertiesPaged(PageIterator):
                 prefix=self.prefix,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1091,8 +1340,14 @@ class DirectoryPropertiesPaged(PageIterator):
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
-        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items]) # pylint: disable = protected-access
+        self.current_page = [
+            DirectoryProperties._from_generated(i)  # pylint: disable = protected-access
+            for i in self._response.segment.directory_items
+        ]
+        self.current_page.extend(
+            FileProperties._from_generated(i)  # pylint: disable = protected-access
+            for i in self._response.segment.file_items
+        )
         return self._response.next_marker or None, self.current_page
 
 
@@ -1143,14 +1398,14 @@ class CopyProperties(DictMixin):
         failed copy attempt."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get('x-ms-copy-id')  # type: ignore [assignment]
-        self.source = kwargs.get('x-ms-copy-source')
-        self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
-        self.progress = kwargs.get('x-ms-copy-progress')
-        self.completion_time = kwargs.get('x-ms-copy-completion_time')
-        self.status_description = kwargs.get('x-ms-copy-status-description')
-        self.incremental_copy = kwargs.get('x-ms-incremental-copy')
-        self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
+        self.id = kwargs.get("x-ms-copy-id")  # type: ignore [assignment]
+        self.source = kwargs.get("x-ms-copy-source")
+        self.status = get_enum_value(kwargs.get("x-ms-copy-status"))
+        self.progress = kwargs.get("x-ms-copy-progress")
+        self.completion_time = kwargs.get("x-ms-copy-completion_time")
+        self.status_description = kwargs.get("x-ms-copy-status-description")
+        self.incremental_copy = kwargs.get("x-ms-incremental-copy")
+        self.destination_snapshot = kwargs.get("x-ms-copy-destination-snapshot")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1226,42 +1481,51 @@ class FileProperties(DictMixin):
     """NFS only. The file mode of the file."""
     link_count: Optional[int] = None
     """NFS only. The number of hard links of the file."""
-    nfs_file_type: Optional[Literal['Regular']] = None
+    nfs_file_type: Optional[Literal["Regular"]] = None
     """NFS only. The type of the file."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')  # type: ignore [assignment]
+        self.name = kwargs.get("name")  # type: ignore [assignment]
         self.path = None
         self.share = None
         self.snapshot = None
-        self.content_length = kwargs.get('Content-Length')  # type: ignore [assignment]
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
-        self.file_type = kwargs.get('x-ms-type')  # type: ignore [assignment]
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
-        self.size = kwargs.get('Content-Length')  # type: ignore [assignment]
-        self.content_range = kwargs.get('Content-Range')
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
+        self.content_length = kwargs.get("Content-Length")  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
+        self.file_type = kwargs.get("x-ms-type")  # type: ignore [assignment]
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
+        self.size = kwargs.get("Content-Length")  # type: ignore [assignment]
+        self.content_range = kwargs.get("Content-Range")
+        self.server_encrypted = kwargs.get("x-ms-server-encrypted")  # type: ignore [assignment]
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
-        self.change_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-change-time')) if (
-            kwargs.get('x-ms-file-change-time') is not None) else None
-        self.creation_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-creation-time')) if (
-            kwargs.get('x-ms-file-creation-time') is not None) else None
-        self.last_write_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-last-write-time')) if (
-            kwargs.get('x-ms-file-last-write-time') is not None) else None
+        self.change_time = (
+            Deserializer.deserialize_iso(kwargs.get("x-ms-file-change-time"))
+            if (kwargs.get("x-ms-file-change-time") is not None)
+            else None
+        )
+        self.creation_time = (
+            Deserializer.deserialize_iso(kwargs.get("x-ms-file-creation-time"))
+            if (kwargs.get("x-ms-file-creation-time") is not None)
+            else None
+        )
+        self.last_write_time = (
+            Deserializer.deserialize_iso(kwargs.get("x-ms-file-last-write-time"))
+            if (kwargs.get("x-ms-file-last-write-time") is not None)
+            else None
+        )
         self.last_access_time = None
-        self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
-        self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
-        self.file_id = kwargs.get('x-ms-file-id')  # type: ignore [assignment]
-        self.parent_id = kwargs.get('x-ms-file-parent-id')
+        self.file_attributes = kwargs.get("x-ms-file-attributes")  # type: ignore [assignment]
+        self.permission_key = kwargs.get("x-ms-file-permission-key")  # type: ignore [assignment]
+        self.file_id = kwargs.get("x-ms-file-id")  # type: ignore [assignment]
+        self.parent_id = kwargs.get("x-ms-file-parent-id")
         self.is_directory = False
-        self.owner = kwargs.get('x-ms-owner')
-        self.group = kwargs.get('x-ms-group')
-        self.file_mode = kwargs.get('x-ms-mode')
-        self.link_count = kwargs.get('x-ms-link-count')
-        self.nfs_file_type = kwargs.get('x-ms-file-file-type')
+        self.owner = kwargs.get("x-ms-owner")
+        self.group = kwargs.get("x-ms-group")
+        self.file_mode = kwargs.get("x-ms-mode")
+        self.link_count = kwargs.get("x-ms-link-count")
+        self.nfs_file_type = kwargs.get("x-ms-file-file-type")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1282,6 +1546,7 @@ class FileProperties(DictMixin):
 
 class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabled protocols on the share"""
+
     SMB = "SMB"
     NFS = "NFS"
 
@@ -1311,20 +1576,17 @@ class FileSasPermissions:
     delete: bool = False
     """Delete the file."""
 
-    def __init__(
-        self, read: bool = False,
-        create: bool = False,
-        write: bool = False,
-        delete: bool = False
-    ) -> None:
+    def __init__(self, read: bool = False, create: bool = False, write: bool = False, delete: bool = False) -> None:
         self.read = read
         self.create = create
         self.write = write
         self.delete = delete
-        self._str = (('r' if self.read else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else ''))
+        self._str = (
+            ("r" if self.read else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+        )
 
     def __str__(self):
         return self._str
@@ -1342,10 +1604,10 @@ class FileSasPermissions:
         :return: A FileSasPermissions object
         :rtype: ~azure.storage.fileshare.FileSasPermissions
         """
-        p_read = 'r' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
+        p_read = "r" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
 
         parsed = cls(p_read, p_create, p_write, p_delete)
 
@@ -1354,8 +1616,8 @@ class FileSasPermissions:
 
 def service_properties_deserialize(generated: GeneratedStorageServiceProperties) -> Dict[str, Any]:
     return {
-        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
-        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # type: ignore [union-attr] # pylint: disable=protected-access
-        'protocol': ShareProtocolSettings._from_generated(generated.protocol),  # pylint: disable=protected-access
+        "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        "cors": [CorsRule._from_generated(cors) for cors in generated.cors],  # type: ignore [union-attr] # pylint: disable=protected-access
+        "protocol": ShareProtocolSettings._from_generated(generated.protocol),  # pylint: disable=protected-access
     }

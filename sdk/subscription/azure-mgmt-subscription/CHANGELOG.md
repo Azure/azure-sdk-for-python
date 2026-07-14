@@ -1,5 +1,57 @@
 # Release History
 
+## 3.2.0b2 (2026-05-28)
+
+### Features Added
+
+  - Client `SubscriptionClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SubscriptionClient` added method `send_request`
+  - Client `SubscriptionClient` added operation group `subscription_operation`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Added enum `ActionType`
+  - Added enum `ChangeDirectoryOperationStatus`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `SubscriptionCreationResult`
+  - Added model `TargetDirectoryRequest`
+  - Added model `TargetDirectoryRequestProperties`
+  - Added model `TargetDirectoryResult`
+  - Added model `TargetDirectoryResultProperties`
+  - Operation group `SubscriptionsOperations` added method `accept_target_directory`
+  - Operation group `SubscriptionsOperations` added method `delete_target_directory`
+  - Operation group `SubscriptionsOperations` added method `get_target_directory`
+  - Operation group `SubscriptionsOperations` added method `list_target_directory`
+  - Operation group `SubscriptionsOperations` added method `put_target_directory`
+  - Operation group `SubscriptionsOperations` added method `target_directory_status`
+  - Added operation group `SubscriptionOperationOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed client operation group `SubscriptionClient.tenants`
+  - Model `ErrorResponse` deleted or renamed its instance variable `code`
+  - Model `ErrorResponse` deleted or renamed its instance variable `message`
+  - Deleted or renamed model `ErrorResponseBody`
+  - Deleted or renamed model `Location`
+  - Deleted or renamed model `SpendingLimit`
+  - Deleted or renamed model `Subscription`
+  - Deleted or renamed model `SubscriptionPolicies`
+  - Deleted or renamed model `SubscriptionState`
+  - Deleted or renamed model `TenantIdDescription`
+  - Deleted or renamed method `SubscriptionsOperations.get`
+  - Deleted or renamed method `SubscriptionsOperations.list`
+  - Deleted or renamed method `SubscriptionsOperations.list_locations`
+  - Deleted or renamed operation group `TenantsOperations`
+
+### Other Changes
+
+  - Deleted model `GetTenantPolicyListResponse` which actually was not used by SDK users
+  - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `ItemPaged[_models.SubscriptionAliasResponse]`
+
 ## 3.2.0b1 (2022-12-27)
 
 ### Features Added

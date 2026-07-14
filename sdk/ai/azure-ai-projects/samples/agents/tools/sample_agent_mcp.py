@@ -39,13 +39,11 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    # [START tool_declaration]
     mcp_tool = MCPTool(
         server_label="api-specs",
         server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
         require_approval="always",
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

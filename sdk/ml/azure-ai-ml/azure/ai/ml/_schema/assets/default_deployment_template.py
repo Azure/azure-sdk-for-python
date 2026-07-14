@@ -27,13 +27,38 @@ class DefaultDeploymentTemplateSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        """Create DefaultDeploymentTemplate instance from loaded data.
+        """Create DeploymentTemplateReference instance from loaded data.
 
         :param data: The deserialized data.
         :type data: dict
-        :return: DefaultDeploymentTemplate instance.
-        :rtype: ~azure.ai.ml.entities.DefaultDeploymentTemplate
+        :return: DeploymentTemplateReference instance.
+        :rtype: ~azure.ai.ml.entities._assets.default_deployment_template.DeploymentTemplateReference
         """
-        from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+        from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
-        return DefaultDeploymentTemplate(**data)
+        return DeploymentTemplateReference(**data)
+
+
+@experimental
+class DeploymentTemplateReferenceSchema(metaclass=PatchedSchemaMeta):
+    """Schema for referencing a deployment template by asset ID."""
+
+    asset_id = fields.Str(
+        metadata={
+            "description": "The asset ID of the deployment template. "
+            "Format: azureml://registries/{registry_name}/deploymenttemplates/{template_name}/versions/{version}"
+        }
+    )
+
+    @post_load
+    def make(self, data, **kwargs):
+        """Create DeploymentTemplateReference instance from loaded data.
+
+        :param data: The deserialized data.
+        :type data: dict
+        :return: DeploymentTemplateReference instance.
+        :rtype: ~azure.ai.ml.entities._assets.default_deployment_template.DeploymentTemplateReference
+        """
+        from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
+
+        return DeploymentTemplateReference(**data)

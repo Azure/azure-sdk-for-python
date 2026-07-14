@@ -39,6 +39,7 @@ def main():
                 "accessKeysAuthentication": "Enabled",
                 "clientProtocol": "Encrypted",
                 "evictionPolicy": "AllKeysLRU",
+                "notifyKeyspaceEvents": "KEA",
                 "persistence": {"rdbEnabled": True, "rdbFrequency": "12h"},
             }
         },
@@ -46,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseDatabasesUpdate.json
+# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseDatabasesUpdate.json
 if __name__ == "__main__":
     main()

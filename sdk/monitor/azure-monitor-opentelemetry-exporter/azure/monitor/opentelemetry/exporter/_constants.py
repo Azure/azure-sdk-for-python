@@ -38,6 +38,7 @@ _FUNCTIONS_WORKER_RUNTIME = "FUNCTIONS_WORKER_RUNTIME"
 _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY = "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY"
 _AKS_ARM_NAMESPACE_ID = "AKS_ARM_NAMESPACE_ID"
 _KUBERNETES_SERVICE_HOST = "KUBERNETES_SERVICE_HOST"
+_APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE = "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE"
 
 # Network
 
@@ -46,6 +47,17 @@ _INVALID_STATUS_CODES = (400,)  # Invalid Instrumentation Key/data
 _REDIRECT_STATUS_CODES = (
     307,  # Temporary redirect
     308,  # Permanent redirect
+)
+
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
+    ".livediagnostics.monitor.azure.com",
+    ".monitor.azure.com",
+    ".services.visualstudio.com",
+    ".applicationinsights.azure.com",
+    ".monitor.azure.us",
+    ".applicationinsights.azure.us",
+    ".monitor.azure.cn",
+    ".applicationinsights.azure.cn",
 )
 
 _RETRYABLE_STATUS_CODES = (
@@ -87,7 +99,6 @@ _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
 _ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
-_ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
 _ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
@@ -340,6 +351,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry-instrumentation-tornado",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.httpx",
     "opentelemetry.instrumentation.wsgi",
 )
 

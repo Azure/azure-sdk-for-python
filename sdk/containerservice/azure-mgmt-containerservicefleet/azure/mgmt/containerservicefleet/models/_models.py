@@ -419,6 +419,25 @@ class AutoUpgradeProfileStatus(_Model):
     """The target Kubernetes version or node image versions of the last trigger."""
 
 
+class CiliumProperties(_Model):
+    """The Cilium specific properties of the member cluster.
+
+    :ivar id: Cilium requires each cluster to be assigned a unique numeric cluster id from 1 - 255.
+     The id is managed by Fleet and cannot be set by the user. Required.
+    :vartype id: int
+    :ivar name: Cilium requires each cluster to be assigned a unique human-readable name. The name
+     is managed by Fleet, based on the Fleet Member name, and cannot be set by the user. Required.
+    :vartype name: str
+    """
+
+    id: int = rest_field(visibility=["read"])
+    """Cilium requires each cluster to be assigned a unique numeric cluster id from 1 - 255. The id is
+     managed by Fleet and cannot be set by the user. Required."""
+    name: str = rest_field(visibility=["read"])
+    """Cilium requires each cluster to be assigned a unique human-readable name. The name is managed
+     by Fleet, based on the Fleet Member name, and cannot be set by the user. Required."""
+
+
 class ClusterAffinity(_Model):
     """ClusterAffinity contains cluster affinity scheduling rules for the selected resources.
 
@@ -456,6 +475,154 @@ class ClusterAffinity(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ClusterMeshProfile(ProxyResource):
+    """A cluster mesh profile stores the general information about the mesh.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservicefleet.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfileProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ClusterMeshProfileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    __flattened_items = ["provisioning_state", "member_selector", "status"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ClusterMeshProfileProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ClusterMeshProfileProperties(_Model):
+    """A cluster mesh profile stores the general information about the mesh.
+
+    :ivar provisioning_state: The provisioning state of the cluster mesh profile. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservicefleet.models.ClusterMeshProfileProvisioningState
+    :ivar member_selector: Select the members of the mesh.
+
+     * Only key/value pairs with the `=` operator are accepted in the label selector.
+     * If empty or not specified, no Fleet members will be selected to join the mesh.
+    :vartype member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
+    :ivar status: The cluster mesh profile status.
+    :vartype status: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfileStatus
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ClusterMeshProfileProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the cluster mesh profile. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    member_selector: Optional["_models.MemberSelector"] = rest_field(
+        name="memberSelector", visibility=["read", "create"]
+    )
+    """Select the members of the mesh.
+ 
+      * Only key/value pairs with the `=` operator are accepted in the label selector.
+      * If empty or not specified, no Fleet members will be selected to join the mesh."""
+    status: Optional["_models.ClusterMeshProfileStatus"] = rest_field(visibility=["read"])
+    """The cluster mesh profile status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        member_selector: Optional["_models.MemberSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterMeshProfileStatus(_Model):
+    """Status of the cluster mesh.
+
+    :ivar state: The state of the cluster mesh. Required. Known values are: "NotConnected",
+     "Applying", "Connected", "Degraded", and "Failed".
+    :vartype state: str or ~azure.mgmt.containerservicefleet.models.ClusterMeshState
+    :ivar last_applied_member_selector: The last applied MemberSelector for the cluster mesh
+     profile.
+    :vartype last_applied_member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
+    :ivar last_operation_id: The last operation ID for the cluster mesh profile.
+    :vartype last_operation_id: str
+    :ivar last_operation_error: The last operation error of the cluster mesh profile.
+    :vartype last_operation_error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
+    """
+
+    state: Union[str, "_models.ClusterMeshState"] = rest_field(visibility=["read"])
+    """The state of the cluster mesh. Required. Known values are: \"NotConnected\", \"Applying\",
+     \"Connected\", \"Degraded\", and \"Failed\"."""
+    last_applied_member_selector: Optional["_models.MemberSelector"] = rest_field(
+        name="lastAppliedMemberSelector", visibility=["read"]
+    )
+    """The last applied MemberSelector for the cluster mesh profile."""
+    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
+    """The last operation ID for the cluster mesh profile."""
+    last_operation_error: Optional["_models.ErrorDetail"] = rest_field(name="lastOperationError", visibility=["read"])
+    """The last operation error of the cluster mesh profile."""
 
 
 class ClusterResourcePlacementSpec(_Model):
@@ -1084,7 +1251,7 @@ class FleetMember(ProxyResource):
      requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
      14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
 
-    __flattened_items = ["cluster_resource_id", "group", "provisioning_state", "labels", "status"]
+    __flattened_items = ["cluster_resource_id", "group", "provisioning_state", "labels", "status", "mesh_properties"]
 
     @overload
     def __init__(
@@ -1140,6 +1307,8 @@ class FleetMemberProperties(_Model):
     :vartype labels: dict[str, str]
     :ivar status: Status information of the last operation for fleet member.
     :vartype status: ~azure.mgmt.containerservicefleet.models.FleetMemberStatus
+    :ivar mesh_properties: The Mesh Member Properties associated with this Fleet Member.
+    :vartype mesh_properties: ~azure.mgmt.containerservicefleet.models.MeshProperties
     """
 
     cluster_resource_id: str = rest_field(name="clusterResourceId", visibility=["read", "create"])
@@ -1158,6 +1327,8 @@ class FleetMemberProperties(_Model):
     """The labels for the fleet member."""
     status: Optional["_models.FleetMemberStatus"] = rest_field(visibility=["read"])
     """Status information of the last operation for fleet member."""
+    mesh_properties: Optional["_models.MeshProperties"] = rest_field(name="meshProperties", visibility=["read"])
+    """The Mesh Member Properties associated with this Fleet Member."""
 
     @overload
     def __init__(
@@ -2018,6 +2189,35 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MemberSelector(_Model):
+    """Select members of a fleet.
+
+    :ivar by_label: Kubernetes-style label selector for selecting Fleet members, e.g.
+     ``env=production``. Required.
+    :vartype by_label: str
+    """
+
+    by_label: str = rest_field(name="byLabel", visibility=["read", "create"])
+    """Kubernetes-style label selector for selecting Fleet members, e.g. ``env=production``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        by_label: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MemberUpdateStatus(_Model):
     """The status of a member update operation.
 
@@ -2043,6 +2243,54 @@ class MemberUpdateStatus(_Model):
     """The operation resource id of the latest attempt to perform the operation."""
     message: Optional[str] = rest_field(visibility=["read"])
     """The status message after processing the member update operation."""
+
+
+class MeshMemberStatus(_Model):
+    """Status of the mesh member.
+
+    :ivar state: The mesh member state. Required. Known values are: "Connecting", "Connected",
+     "Disconnecting", and "Failed".
+    :vartype state: str or ~azure.mgmt.containerservicefleet.models.MeshMemberState
+    :ivar last_updated_at: When the status was last updated.
+    :vartype last_updated_at: ~datetime.datetime
+    :ivar last_operation_id: The last operation ID that affected the mesh properties of the fleet
+     member.
+    :vartype last_operation_id: str
+    :ivar error: The error affecting this member.
+    :vartype error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
+    """
+
+    state: Union[str, "_models.MeshMemberState"] = rest_field(visibility=["read"])
+    """The mesh member state. Required. Known values are: \"Connecting\", \"Connected\",
+     \"Disconnecting\", and \"Failed\"."""
+    last_updated_at: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedAt", visibility=["read"], format="rfc3339"
+    )
+    """When the status was last updated."""
+    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
+    """The last operation ID that affected the mesh properties of the fleet member."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
+    """The error affecting this member."""
+
+
+class MeshProperties(_Model):
+    """The Mesh Member data for a Fleet Member resource.
+
+    :ivar cilium_properties: The Cilium cluster properties. Required.
+    :vartype cilium_properties: ~azure.mgmt.containerservicefleet.models.CiliumProperties
+    :ivar status: The status of the mesh member. Required.
+    :vartype status: ~azure.mgmt.containerservicefleet.models.MeshMemberStatus
+    :ivar cluster_mesh_profile_resource_id: Resource id of the cluster mesh profile associated with
+     this mesh member. Required.
+    :vartype cluster_mesh_profile_resource_id: str
+    """
+
+    cilium_properties: "_models.CiliumProperties" = rest_field(name="ciliumProperties", visibility=["read"])
+    """The Cilium cluster properties. Required."""
+    status: "_models.MeshMemberStatus" = rest_field(visibility=["read"])
+    """The status of the mesh member. Required."""
+    cluster_mesh_profile_resource_id: str = rest_field(name="clusterMeshProfileResourceId", visibility=["read"])
+    """Resource id of the cluster mesh profile associated with this mesh member. Required."""
 
 
 class NetworkPolicy(_Model):

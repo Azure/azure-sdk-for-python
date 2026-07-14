@@ -37,9 +37,7 @@ class TestSearchClientIndexDocumentsAsync(AzureRecordedTestCase):
 
         async with hotel_index(self, endpoint, index_name) as (search_client, _):
             batch = IndexDocumentsBatch()
-            batch.add_upload_actions(
-                [build_hotel_document("1000", rating=5), build_hotel_document("1001", rating=4)]
-            )
+            batch.add_upload_actions([build_hotel_document("1000", rating=5), build_hotel_document("1001", rating=4)])
             batch.add_delete_actions([{"HotelId": "2"}])
             batch.add_merge_actions([{"HotelId": "3", "Rating": 1}])
 

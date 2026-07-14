@@ -8,18 +8,17 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Error(_model_base.Model):
+class Error(_Model):
     """Azure App Configuration error object.
 
     :ivar type: The type of the error.
@@ -34,15 +33,15 @@ class Error(_model_base.Model):
     :vartype status: int
     """
 
-    type: Optional[str] = rest_field()
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the error."""
-    title: Optional[str] = rest_field()
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A brief summary of the error."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the parameter that resulted in the error."""
-    detail: Optional[str] = rest_field()
+    detail: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A detailed description of the error."""
-    status: Optional[int] = rest_field()
+    status: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The HTTP status code that the error maps to."""
 
     @overload
@@ -67,12 +66,9 @@ class Error(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Key(_model_base.Model):
+class Key(_Model):
     """Keys serve as identifiers for key-values and are used to store and retrieve corresponding
     values.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: The name of the key. Required.
     :vartype name: str
@@ -82,11 +78,8 @@ class Key(_model_base.Model):
     """The name of the key. Required."""
 
 
-class KeyValue(_model_base.Model):
+class KeyValue(_Model):
     """A key-value pair representing application settings.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar key: The key of the key-value. Required.
     :vartype key: str
@@ -100,6 +93,8 @@ class KeyValue(_model_base.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar tags: The tags of the key-value.
     :vartype tags: dict[str, str]
+    :ivar description: The description of the key-value.
+    :vartype description: str
     :ivar locked: Indicates whether the key-value is locked.
     :vartype locked: bool
     :ivar etag: A value representing the current state of the resource.
@@ -108,19 +103,23 @@ class KeyValue(_model_base.Model):
 
     key: str = rest_field(visibility=["read"])
     """The key of the key-value. Required."""
-    label: Optional[str] = rest_field()
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The label the key-value belongs to."""
-    content_type: Optional[str] = rest_field()
+    content_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content type of the value stored within the key-value."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the key-value."""
-    last_modified: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    last_modified: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """A date representing the last time the key-value was modified."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The tags of the key-value."""
-    locked: Optional[bool] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the key-value."""
+    locked: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the key-value is locked."""
-    etag: Optional[str] = rest_field()
+    etag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value representing the current state of the resource."""
 
     @overload
@@ -131,7 +130,8 @@ class KeyValue(_model_base.Model):
         content_type: Optional[str] = None,
         value: Optional[str] = None,
         last_modified: Optional[datetime.datetime] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        description: Optional[str] = None,
         locked: Optional[bool] = None,
         etag: Optional[str] = None,
     ) -> None: ...
@@ -147,10 +147,10 @@ class KeyValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyValueFilter(_model_base.Model):
+class KeyValueFilter(_Model):
     """Enables filtering of key-values. Syntax reference:
-    https://aka.ms/azconfig/docs/restapisnapshots.
-
+    `https://aka.ms/azconfig/docs/restapisnapshots
+    <https://aka.ms/azconfig/docs/restapisnapshots>`_.
 
     :ivar key: Filters key-values by their key field. Required.
     :vartype key: str
@@ -160,11 +160,11 @@ class KeyValueFilter(_model_base.Model):
     :vartype tags: list[str]
     """
 
-    key: str = rest_field()
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filters key-values by their key field. Required."""
-    label: Optional[str] = rest_field()
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filters key-values by their label field."""
-    tags: Optional[List[str]] = rest_field()
+    tags: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filters key-values by their tags field."""
 
     @overload
@@ -173,7 +173,7 @@ class KeyValueFilter(_model_base.Model):
         *,
         key: str,
         label: Optional[str] = None,
-        tags: Optional[List[str]] = None,
+        tags: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -187,14 +187,14 @@ class KeyValueFilter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Label(_model_base.Model):
+class Label(_Model):
     """Labels are used to group key-values.
 
     :ivar name: The name of the label.
     :vartype name: str
     """
 
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the label."""
 
     @overload
@@ -215,28 +215,28 @@ class Label(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetails(_model_base.Model):
+class OperationDetails(_Model):
     """Details of a long running operation.
-
 
     :ivar id: The unique id of the operation. Required.
     :vartype id: str
     :ivar status: The current status of the operation. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.appconfiguration.models.OperationState
-    :ivar error: An error, available when the status is ``Failed``\\ , describing why the operation
+    :ivar error: An error, available when the status is ``Failed``, describing why the operation
      failed.
     :vartype error: ~azure.core.ODataV4Format
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique id of the operation. Required."""
-    status: Union[str, "_models.OperationState"] = rest_field()
+    status: Union[str, "_models.OperationState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The current status of the operation. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    error: Optional[ODataV4Format] = rest_field()
-    """An error, available when the status is ``Failed``\ , describing why the operation
-     failed."""
+    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An error, available when the status is ``Failed``, describing why the operation failed."""
 
     @overload
     def __init__(
@@ -258,11 +258,8 @@ class OperationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(_model_base.Model):
+class Snapshot(_Model):
     """A snapshot is a named, immutable subset of an App Configuration store's key-values.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: The name of the snapshot. Required.
     :vartype name: str
@@ -271,22 +268,19 @@ class Snapshot(_model_base.Model):
     :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
     :ivar filters: A list of filters used to filter the key-values included in the snapshot.
      Required.
-    :vartype filters: list[~azure.appconfiguration.models.KeyValueFilter]
+    :vartype filters: list[~azure.appconfiguration._generated.models.KeyValueFilter]
     :ivar composition_type: The composition type describes how the key-values within the snapshot
-     are
-     composed. The 'key' composition type ensures there are no two key-values
-     containing the same key. The 'key_label' composition type ensures there are no
-     two key-values containing the same key and label. Known values are: "key" and "key_label".
+     are composed. The 'key' composition type ensures there are no two key-values containing the
+     same key. The 'key_label' composition type ensures there are no two key-values containing the
+     same key and label. Known values are: "key" and "key_label".
     :vartype composition_type: str or ~azure.appconfiguration.models.SnapshotComposition
     :ivar created: The time that the snapshot was created.
     :vartype created: ~datetime.datetime
     :ivar expires: The time that the snapshot will expire.
     :vartype expires: ~datetime.datetime
     :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
-     archived
-     state before expiring. This property is only writable during the creation of a
-     snapshot. If not specified, the default lifetime of key-value revisions will be
-     used.
+     archived state before expiring. This property is only writable during the creation of a
+     snapshot. If not specified, the default lifetime of key-value revisions will be used.
     :vartype retention_period: int
     :ivar size: The size in bytes of the snapshot.
     :vartype size: int
@@ -294,6 +288,8 @@ class Snapshot(_model_base.Model):
     :vartype items_count: int
     :ivar tags: The tags of the snapshot.
     :vartype tags: dict[str, str]
+    :ivar description: The description of the snapshot.
+    :vartype description: str
     :ivar etag: A value representing the current state of the snapshot.
     :vartype etag: str
     """
@@ -303,28 +299,31 @@ class Snapshot(_model_base.Model):
     status: Optional[Union[str, "_models.SnapshotStatus"]] = rest_field(visibility=["read"])
     """The current status of the snapshot. Known values are: \"provisioning\", \"ready\",
      \"archived\", and \"failed\"."""
-    filters: List["_models.KeyValueFilter"] = rest_field()
+    filters: list["_models.KeyValueFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of filters used to filter the key-values included in the snapshot. Required."""
-    composition_type: Optional[Union[str, "_models.SnapshotComposition"]] = rest_field()
-    """The composition type describes how the key-values within the snapshot are
-     composed. The 'key' composition type ensures there are no two key-values
-     containing the same key. The 'key_label' composition type ensures there are no
-     two key-values containing the same key and label. Known values are: \"key\" and \"key_label\"."""
+    composition_type: Optional[Union[str, "_models.SnapshotComposition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The composition type describes how the key-values within the snapshot are composed. The 'key'
+     composition type ensures there are no two key-values containing the same key. The 'key_label'
+     composition type ensures there are no two key-values containing the same key and label. Known
+     values are: \"key\" and \"key_label\"."""
     created: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
     """The time that the snapshot was created."""
     expires: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
     """The time that the snapshot will expire."""
-    retention_period: Optional[int] = rest_field()
-    """The amount of time, in seconds, that a snapshot will remain in the archived
-     state before expiring. This property is only writable during the creation of a
-     snapshot. If not specified, the default lifetime of key-value revisions will be
-     used."""
+    retention_period: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The amount of time, in seconds, that a snapshot will remain in the archived state before
+     expiring. This property is only writable during the creation of a snapshot. If not specified,
+     the default lifetime of key-value revisions will be used."""
     size: Optional[int] = rest_field(visibility=["read"])
     """The size in bytes of the snapshot."""
     items_count: Optional[int] = rest_field(visibility=["read"])
     """The amount of key-values in the snapshot."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The tags of the snapshot."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the snapshot."""
     etag: Optional[str] = rest_field(visibility=["read"])
     """A value representing the current state of the snapshot."""
 
@@ -332,10 +331,11 @@ class Snapshot(_model_base.Model):
     def __init__(
         self,
         *,
-        filters: List["_models.KeyValueFilter"],
+        filters: list["_models.KeyValueFilter"],
         composition_type: Optional[Union[str, "_models.SnapshotComposition"]] = None,
         retention_period: Optional[int] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -349,7 +349,7 @@ class Snapshot(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotUpdateParameters(_model_base.Model):
+class SnapshotUpdateParameters(_Model):
     """Parameters used to update a snapshot.
 
     :ivar status: The desired status of the snapshot. Known values are: "provisioning", "ready",
@@ -357,7 +357,9 @@ class SnapshotUpdateParameters(_model_base.Model):
     :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
     """
 
-    status: Optional[Union[str, "_models.SnapshotStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.SnapshotStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired status of the snapshot. Known values are: \"provisioning\", \"ready\",
      \"archived\", and \"failed\"."""
 

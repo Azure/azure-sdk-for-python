@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.core.exceptions import HttpResponseError
 from azure.ai.projects.models import WorkflowAgentDefinition
-from azure.ai.projects.operations._patch_agents import _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
+from azure.ai.projects.models._patch import _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
 
 # Minimal workflow YAML — the service rejects the request before validating the
 # definition, so the content only needs to be a non-empty string.

@@ -724,6 +724,9 @@ class CertificatePolicy(_Model):
     :vartype issuer_parameters: ~azure.keyvault.certificates._generated.models.IssuerParameters
     :ivar attributes: The certificate attributes.
     :vartype attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
+    :ivar platform_managed: Configuration that enables the platform to manage the certificate on
+     behalf of the user. This feature is currently intended for internal use only.
+    :vartype platform_managed: ~azure.keyvault.certificates._generated.models.PlatformManaged
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -752,6 +755,11 @@ class CertificatePolicy(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate attributes."""
+    platform_managed: Optional["_models.PlatformManaged"] = rest_field(
+        name="platformManaged", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration that enables the platform to manage the certificate on behalf of the user. This
+     feature is currently intended for internal use only."""
 
     @overload
     def __init__(
@@ -763,6 +771,7 @@ class CertificatePolicy(_Model):
         lifetime_actions: Optional[list["_models.LifetimeAction"]] = None,
         issuer_parameters: Optional["_models.IssuerParameters"] = None,
         attributes: Optional["_models.CertificateAttributes"] = None,
+        platform_managed: Optional["_models.PlatformManaged"] = None,
     ) -> None: ...
 
     @overload
@@ -1398,6 +1407,44 @@ class OrganizationDetails(_Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         admin_details: Optional[list["_models.AdministratorDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformManaged(_Model):
+    """Properties of the platform managed certificate. This feature is currently intended for internal
+    use only.
+
+    :ivar certificate_usage: The intended usage of the certificate. Required.
+    :vartype certificate_usage: str
+    :ivar metadata: JSON-formatted platform managed metadata. The schema is intentionally undefined
+     as this feature is currently intended for internal use only.
+    :vartype metadata: dict[str, any]
+    """
+
+    certificate_usage: str = rest_field(
+        name="certificateUsage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The intended usage of the certificate. Required."""
+    metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """JSON-formatted platform managed metadata. The schema is intentionally undefined as this feature
+     is currently intended for internal use only."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        certificate_usage: str,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload

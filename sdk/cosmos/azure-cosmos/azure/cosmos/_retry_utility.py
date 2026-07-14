@@ -334,6 +334,14 @@ def _has_read_retryable_headers(request_headers):
         return True
     return False
 
+def _is_read_retryable_request(request, request_params: Optional[RequestObject] = None):
+    if request and _has_read_retryable_headers(request.headers):
+        return True
+    if request_params and _OperationType.IsReadOnlyOperation(request_params.operation_type):
+        # Fallback for flows where operation headers are absent but request metadata is available.
+        return True
+    return False
+
 def _has_database_account_header(request_headers):
     if request_headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.DatabaseAccount:
         return True
@@ -354,13 +362,17 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and (_has_read_retryable_headers(request.headers) or (args and (is_write_retryable(args[0], client) or
-                            client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0])))):
+    request_params = args[0] if args else None
+    if request and (_is_read_retryable_request(request, request_params) or (request_params is not None and (
+            is_write_retryable(request_params, client) or
+            client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)))):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
         if not retry_policy.ShouldRetry():
-            if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
+            if (request_params is not None
+                    and request_params.should_clear_session_token_on_session_read_failure
+                    and client.session):
                 client.session.clear_session_token(client.last_response_headers)
             raise exception
     else:
@@ -444,7 +456,7 @@ class ConnectionRetryPolicy(RetryPolicy):
             except ServiceResponseError as err:
                 retry_error = err
                 # Only read operations can be safely retried with ServiceResponseError
-                if (not _has_read_retryable_headers(request.http_request.headers) or
+                if (not _is_read_retryable_request(request.http_request, request_params) or
                         _has_database_account_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
@@ -466,7 +478,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 if (_has_database_account_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
-                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
+                if _is_read_retryable_request(request.http_request, request_params) and retry_settings['read'] > 0:
                     _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:

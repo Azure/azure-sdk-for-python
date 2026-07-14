@@ -33,11 +33,11 @@ def main():
     response = client.clusters.begin_continue_update_version(
         resource_group_name="resourceGroupName",
         cluster_name="clusterName",
-        cluster_continue_update_version_parameters={"machineGroupTargetingMode": "AlphaByRack"},
+        cluster_continue_update_version_parameters={"machineGroupTargetingMode": "AlphaByRack", "safeguardMode": "All"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/Clusters_ContinueUpdateVersion.json
+# x-ms-original-file: 2026-05-01-preview/Clusters_ContinueUpdateVersion.json
 if __name__ == "__main__":
     main()

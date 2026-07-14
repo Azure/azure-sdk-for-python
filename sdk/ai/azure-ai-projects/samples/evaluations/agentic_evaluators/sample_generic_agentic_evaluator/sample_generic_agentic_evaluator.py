@@ -37,7 +37,7 @@ def _get_evaluator_initialization_parameters(evaluator_name: str) -> dict[str, s
     if evaluator_name == "task_navigation_efficiency":
         return {"matching_mode": "exact_match"}  #  Can be "exact_match", "in_order_match", or "any_order_match"
     model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
-    return {"deployment_name": model_deployment_name}
+    return {"model": model_deployment_name}
 
 
 def _get_evaluation_contents() -> list[SourceFileContentContent]:

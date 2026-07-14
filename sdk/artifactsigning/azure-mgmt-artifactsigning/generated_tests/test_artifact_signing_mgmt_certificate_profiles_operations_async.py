@@ -69,6 +69,7 @@ class TestArtifactSigningMgmtCertificateProfilesOperationsAsync(AzureMgmtRecorde
                         "includePostalCode": bool,
                         "includeState": bool,
                         "includeStreetAddress": bool,
+                        "programType": "str",
                         "provisioningState": "str",
                         "status": "str",
                     },
@@ -115,17 +116,21 @@ class TestArtifactSigningMgmtCertificateProfilesOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_certificate_profiles_revoke_certificate(self, resource_group):
-        response = await self.client.certificate_profiles.revoke_certificate(
+    async def test_certificate_profiles_revoke_certificates(self, resource_group):
+        response = await self.client.certificate_profiles.revoke_certificates(
             resource_group_name=resource_group.name,
             account_name="str",
             profile_name="str",
             body={
-                "effectiveAt": "2020-02-20 00:00:00",
-                "reason": "str",
-                "serialNumber": "str",
-                "thumbprint": "str",
-                "remarks": "str",
+                "revokeCertificates": [
+                    {
+                        "effectiveAt": "2020-02-20 00:00:00",
+                        "reason": "str",
+                        "serialNumber": "str",
+                        "thumbprint": "str",
+                        "remarks": "str",
+                    }
+                ]
             },
         )
 

@@ -1,14 +1,67 @@
 # Release History
 
-## 1.0.0b53 (Unreleased)
+## 1.0.0b56 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Propagate main agent attribute to child spans
+  ([#47950](https://github.com/Azure/azure-sdk-for-python/pull/47950))
 
 ### Other Changes
+
+- Simplify OneSettings change detection to use ETag-based mechanism instead of change version tracking to reflect spec update
+- Change OneSettings log messages from warning to debug level to reduce noise for users with firewalls
+  ([#47949](https://github.com/Azure/azure-sdk-for-python/pull/47949))
+
+## 1.0.0b55 (2026-07-01)
+
+### Bugs Fixed
+- Align GenAI main-agent span processor with upstream OpenTelemetry SDK (>= 1.43)
+  immutable `BoundedAttributes` on span end, fixing a `TypeError` when writing
+  `microsoft.gen_ai.main_agent.*` attributes in `on_end`
+  ([#47796](https://github.com/Azure/azure-sdk-for-python/pull/47796))
+
+## 1.0.0b54 (2026-06-30)
+
+### Features Added
+- Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
+  observations to built-in statsbeat metrics
+  ([#47363](https://github.com/Azure/azure-sdk-for-python/pull/47363))
+- Implement RFC Retry-After header parsing for 429 responses per [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/822)
+  ([#47601](https://github.com/Azure/azure-sdk-for-python/pull/47601))
+
+### Breaking Changes
+- Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
+  (`compute_type` -> `computeType`, `telemetry_type` -> `telemetryType`, `telemetry_success` -> `telemetrySuccess`,
+  `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
+  ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
+
+
+## 1.0.0b53 (2026-06-08)
+
+### Features Added
+- Read for global feature sdkstats bitmap and add a 15 second delay timer
+  ([#47031](https://github.com/Azure/azure-sdk-for-python/pull/47031))
+- Use `APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE` environment variable in `_is_attach_enabled` to
+  reliably detect successful auto-instrumentation attach, with fallback to legacy path-based detection
+  ([#46955](https://github.com/Azure/azure-sdk-for-python/pull/46955))
+- Safeguard URL redirection issues
+  ([#47265](https://github.com/Azure/azure-sdk-for-python/pull/47265))
+- Add client-side token-bucket rate limiter for telemetry export
+  ([#46999](https://github.com/Azure/azure-sdk-for-python/pull/46999))
+
+### Bugs Fixed
+- Validate QuickPulse redirect targets against trusted Azure domains
+  ([#46966](https://github.com/Azure/azure-sdk-for-python/pull/46966))
+- Fix retry amplification storm in Azure Monitor OpenTelemetry exporter
+  ([#47002](https://github.com/Azure/azure-sdk-for-python/pull/47002))
+
+### Other Changes
+- Track live metrics disabling in feature SDKstats
+  ([#47297](https://github.com/Azure/azure-sdk-for-python/pull/47297))
 
 ## 1.0.0b52 (2026-05-12)
 

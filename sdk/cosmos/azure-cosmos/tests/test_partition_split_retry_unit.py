@@ -17,6 +17,20 @@ from azure.cosmos import exceptions
 from azure.cosmos import _retry_utility
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._routing import routing_range
+from azure.cosmos._routing.feed_range_continuation import (
+    _FIELD_BACKEND_CONTINUATION,
+    _FIELD_COLLECTION_RID,
+    _FIELD_CONTINUATIONS,
+    _FIELD_FEEDRANGE_HASH,
+    _FIELD_QUERY_HASH,
+    _FIELD_VERSION,
+    _TOKEN_VERSION,
+    _decode_token,
+    _encode_token,
+    _hash_feed_range,
+    _hash_query_spec,
+)
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 # tracemalloc is not available in PyPy, so we import conditionally
@@ -27,9 +41,6 @@ except ImportError:
     HAS_TRACEMALLOC = False
 
 
-# =================================
-# Shared Test Helpers
-# =================================
 
 class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
@@ -68,6 +79,7 @@ class MockClient:
     def __init__(self):
         self._global_endpoint_manager = MockGlobalEndpointManager()
         self._routing_map_provider = MockRoutingMapProvider()
+        self.last_response_headers = {}
         self.refresh_routing_map_provider_call_count = 0
         self.last_refresh_collection_link = None
         self.last_refresh_previous_map = None
@@ -99,15 +111,107 @@ def raise_410_partition_split_error(*args, **kwargs):
     raise create_410_partition_split_error()
 
 
-# ==========================
-# Test Class
-# ==========================
 
 @pytest.mark.cosmosEmulator
 class TestPartitionSplitRetryUnit(unittest.TestCase):
     """
     Sync unit tests for 410 partition split retry logic.
     """
+
+    @staticmethod
+    def _create_minimal_connection() -> CosmosClientConnection:
+        client = CosmosClientConnection.__new__(CosmosClientConnection)
+        client.default_headers = {}
+        client.last_response_headers = {}
+        client._UpdateSessionIfRequired = lambda *args, **kwargs: None
+        client.availability_strategy = None
+        client.availability_strategy_executor = None
+        client.availability_strategy_max_concurrency = None
+        return client
+
+    def test_queryfeed_internal_capture_uses_options_dict(self):
+        """QueryFeed should honor _internal_response_headers_capture from options."""
+        client = self._create_minimal_connection()
+        captured_headers = {"stale": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token", "x-ms-request-charge": "1.0"}
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(
+                    client,
+                    '_CosmosClientConnection__Get',
+                    return_value=({"Documents": [{"id": "doc1"}]}, expected_headers),
+                ):
+                    docs, response_headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={"_internal_response_headers_capture": captured_headers},
+                    )
+
+        self.assertEqual(docs, [{"id": "doc1"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(captured_headers, expected_headers)
+
+    def test_queryfeed_internal_capture_falls_back_to_kwargs(self):
+        """QueryFeed should still support kwargs-based internal capture for compatibility."""
+        client = self._create_minimal_connection()
+        kwargs_capture = {"stale": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token-kwargs", "x-ms-request-charge": "1.0"}
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(
+                    client,
+                    '_CosmosClientConnection__Get',
+                    return_value=({"Documents": [{"id": "doc2"}]}, expected_headers),
+                ):
+                    docs, response_headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={},
+                        _internal_response_headers_capture=kwargs_capture,
+                    )
+
+        self.assertEqual(docs, [{"id": "doc2"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(kwargs_capture, expected_headers)
+
+    def test_queryfeed_internal_capture_both_present_populates_one(self):
+        """When both options- and kwargs-based capture dicts are present
+        (a configuration that does not occur in production — the two
+        upstream paths are mutually exclusive by design), QueryFeed must
+        populate exactly one of the two capture dicts with the response
+        headers. Precedence is intentionally unspecified.
+        """
+        client = self._create_minimal_connection()
+        options_capture: dict = {}
+        kwargs_capture: dict = {}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token-both", "x-ms-request-charge": "1.0"}
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(
+                    client,
+                    '_CosmosClientConnection__Get',
+                    return_value=({"Documents": [{"id": "doc3"}]}, expected_headers),
+                ):
+                    docs, response_headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={"_internal_response_headers_capture": options_capture},
+                        _internal_response_headers_capture=kwargs_capture,
+                    )
+
+        self.assertEqual(docs, [{"id": "doc3"}])
+        self.assertEqual(response_headers, expected_headers)
+        populated = [d for d in (options_capture, kwargs_capture) if d == expected_headers]
+        self.assertEqual(
+            len(populated), 1,
+            f"expected exactly one capture dict populated; got options={options_capture!r}, kwargs={kwargs_capture!r}",
+        )
 
     def test_execution_context_state_reset_on_partition_split(self):
         """
@@ -160,6 +264,37 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert result == [{"id": "1"}], \
             "Should return documents after state reset"
 
+    def test_execution_context_reattaches_internal_capture_each_loop_iteration(self):
+        """`_fetch_items_helper_no_retries` must reattach capture dict every iteration.
+
+        `__QueryFeed` pops `_internal_response_headers_capture` from options, so
+        the execution-context loop must set it back before each fetch call.
+        This test drives the empty-page-with-continuation path (two iterations)
+        and asserts both iterations receive the same capture dict object.
+        """
+        mock_client = MockClient()
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _opts: ([], {}))
+
+        seen_capture_presence = []
+        fetch_call_count = [0]
+
+        def mock_fetch_function(options):
+            fetch_call_count[0] += 1
+            capture = options.pop("_internal_response_headers_capture", None)
+            seen_capture_presence.append(capture is context._internal_response_headers_capture)
+            if fetch_call_count[0] == 1:
+                # Force a second loop iteration (empty page + continuation).
+                return ([], {HttpHeaders.Continuation: "token-for-second-iteration"})
+            return ([{"id": "doc-final"}], {})
+
+        result = context._fetch_items_helper_no_retries(mock_fetch_function)
+
+        assert fetch_call_count[0] == 2, "Expected two fetch iterations"
+        assert seen_capture_presence == [True, True], (
+            "Capture dict must be attached on every iteration, not just the first"
+        )
+        assert result == [{"id": "doc-final"}]
+
     @patch('azure.cosmos._retry_utility.Execute')
     def test_retry_with_410_resets_state_and_succeeds(self, mock_execute):
         """
@@ -187,6 +322,221 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert mock_client.refresh_routing_map_provider_call_count == 1, \
             "refresh_routing_map_provider should be called once on 410"
         assert result == expected_docs, "Should return expected documents after retry"
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_uses_checkpoint_continuation_from_internal_capture(self, mock_execute):
+        """410 retry should resume from checkpoint continuation stamped by __QueryFeed."""
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _options: (expected_docs, {}))
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-token"
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context._fetch_function = mock_fetch_function
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2
+        assert seen_continuations == ["checkpoint-token"]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_uses_queryfeed_captured_checkpoint_end_to_end(self, mock_execute):
+        """End-to-end: QueryFeed stamps capture dict, 410 occurs, retry resumes from checkpoint token."""
+        mock_client = MockClient()
+        query_client = self._create_minimal_connection()
+        query_client._query_compatibility_mode = query_client._QueryCompatibilityMode.Default
+
+        context = None
+        seen_continuations = []
+        execute_call_count = [0]
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            continuation = req_headers.get(HttpHeaders.Continuation)
+            if continuation:
+                return ({"Documents": [{"id": "resumed"}]}, {})
+            return ({"Documents": [{"id": "checkpoint-page"}]}, {HttpHeaders.Continuation: "checkpoint-token"})
+
+        def execute_side_effect(_client, _global_endpoint_manager, callback, **kwargs):
+            execute_call_count[0] += 1
+            if execute_call_count[0] == 1:
+                callback()
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            docs, headers = query_client.QueryFeed(
+                path="/dbs/db/colls/c1/docs",
+                collection_id="rid-c1",
+                query="SELECT * FROM c",
+                options=options,
+            )
+            return docs, headers
+
+        def mock_get_headers(*args, **kwargs):
+            options = args[7] if len(args) > 7 else kwargs.get("options", {})
+            headers = {}
+            if options and options.get("continuation") is not None:
+                headers[HttpHeaders.Continuation] = options.get("continuation")
+            return headers
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, fetch_function)
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', side_effect=mock_get_headers):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(query_client, '_CosmosClientConnection__Post', side_effect=post_side_effect):
+                    result = context._fetch_items_helper_with_retries(fetch_function)
+
+        assert execute_call_count[0] == 2
+        assert seen_continuations == [None, "checkpoint-token"]
+        assert result == [{"id": "resumed"}]
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_ignores_stale_shared_client_headers(self, mock_execute):
+        """Retry resumes from request-local captured headers, not shared client headers."""
+        mock_client = MockClient()
+        mock_client.last_response_headers = {HttpHeaders.Continuation: "stale-global-token"}
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _options: (expected_docs, {}))
+
+        def execute_side_effect(_client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "fresh-checkpoint"
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context._fetch_function = mock_fetch_function
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2
+        assert seen_continuations == ["fresh-checkpoint"]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_without_checkpoint_continuation_retries_from_none(self, mock_execute):
+        """If no checkpoint header is stamped, continuation should remain None on retry."""
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                context._internal_response_headers_capture.clear()
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2
+        assert seen_continuations == [None]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_multiple_410_uses_latest_checkpoint_continuation(self, mock_execute):
+        """Across repeated 410 retries, execution should resume using the latest checkpoint token."""
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-token-1"
+                raise create_410_partition_split_error()
+            if call_count[0] == 2:
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-token-2"
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 3
+        assert seen_continuations == ["checkpoint-token-2"]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_mid_pagination_split_retries_from_checkpoint_without_duplicates(self, mock_execute):
+        """Simulate page2 split and verify retry resumes from checkpoint token, not from page1."""
+        mock_client = MockClient()
+
+        docs_page_1 = [{"id": "1"}, {"id": "2"}, {"id": "3"}, {"id": "4"}, {"id": "5"}]
+        docs_page_2 = [{"id": "6"}, {"id": "7"}, {"id": "8"}, {"id": "9"}, {"id": "10"}]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        fetch_calls = []
+
+        def mock_fetch_function(options):
+            continuation = options.get("continuation")
+            fetch_calls.append(continuation)
+
+            if continuation is None:
+                return (docs_page_1, {HttpHeaders.Continuation: "token-after-page-1"})
+
+            if continuation == "token-after-page-1":
+                # Simulate __QueryFeed writing a checkpoint before re-raising split error.
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-after-split"
+                raise create_410_partition_split_error()
+
+            if continuation == "checkpoint-after-split":
+                return (docs_page_2, {})
+
+            self.fail(f"Unexpected continuation seen by fetch: {continuation}")
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+
+        first_result = context._fetch_items_helper_with_retries(mock_fetch_function)
+        self.assertListEqual(first_result, docs_page_1)
+
+        second_result = context._fetch_items_helper_with_retries(mock_fetch_function)
+        self.assertListEqual(second_result, docs_page_2)
+
+        # Validate the second page did not replay page-1 items and resumed from checkpoint.
+        self.assertEqual(fetch_calls, [None, "token-after-page-1", "checkpoint-after-split"])
 
     @patch('azure.cosmos._retry_utility.Execute')
     def test_pk_range_query_skips_410_retry_to_prevent_recursion(self, mock_execute):
@@ -278,11 +628,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         - Memory growth is minimal (no recursive accumulation)
         - No infinite recursion (max depth = 0 for PK range queries)
         """
-        # tracemalloc.start() begins tracing memory allocations to detect leaks
         tracemalloc.start()
-        # gc.collect() forces garbage collection to get accurate baseline memory measurement
         gc.collect()
-        # take_snapshot() captures current memory state for comparison after test
         snapshot_before = tracemalloc.take_snapshot()
         start_time = time.time()
 
@@ -300,31 +647,17 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             context._fetch_items_helper_with_retries(mock_fetch_function)
 
         elapsed_time = time.time() - start_time
-        # gc.collect() before snapshot ensures we measure actual leaks, not pending garbage
         gc.collect()
         snapshot_after = tracemalloc.take_snapshot()
-        # compare_to() shows memory difference between snapshots to identify growth
         top_stats = snapshot_after.compare_to(snapshot_before, 'lineno')
         memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
         peak_memory = tracemalloc.get_traced_memory()[1]
-        # tracemalloc.stop() ends memory tracing and frees tracing overhead
         tracemalloc.stop()
 
         # Collect metrics
         execute_calls = mock_execute.call_count
         refresh_calls = mock_client.refresh_routing_map_provider_call_count
 
-        # Print metrics
-        print(f"\n{'=' * 60}")
-        print("MEMORY METRICS - Partition Split Memory Verification")
-        print(f"{'=' * 60}")
-        print(f"Metrics:")
-        print(f"  - Execute calls:   {execute_calls} (bounded)")
-        print(f"  - Refresh calls:   {refresh_calls}")
-        print(f"  - Elapsed time:    {elapsed_time:.2f}s")
-        print(f"  - Memory growth:   {memory_growth / 1024:.2f} KB")
-        print(f"  - Peak memory:     {peak_memory / 1024:.2f} KB")
-        print(f"{'=' * 60}")
 
         assert execute_calls == 4, \
             f"Execute calls should be bounded to 4, got {execute_calls}"
@@ -349,10 +682,6 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         pk_execute_calls = mock_execute.call_count
         pk_refresh_calls = mock_client.refresh_routing_map_provider_call_count
 
-        print(f"\nPK Range Query:")
-        print(f"  - Execute calls:   {pk_execute_calls} (no retry)")
-        print(f"  - Refresh calls:   {pk_refresh_calls} (no recursion)")
-        print(f"{'=' * 60}\n")
 
         assert pk_execute_calls == 1, \
             f"PK range query should have 1 execute call, got {pk_execute_calls}"
@@ -400,6 +729,46 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             "Should pass collection_link for targeted refresh"
         assert mock_client.last_refresh_previous_map == fake_routing_map, \
             "Should pass previous routing map for targeted refresh"
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_targeted_refresh_normalizes_resource_link_for_cache_lookup(self, mock_execute):
+        """
+        Test that previous-routing-map lookup normalizes resource links before
+        cache lookup so slash-variant links still use incremental refresh.
+        """
+        mock_client = MockClient()
+        fake_routing_map = {"etag": "fake-etag", "ranges": ["range1"]}
+        mock_client._routing_map_provider._collection_routing_map_by_item[
+            "dbs/testdb/colls/testcoll"
+        ] = fake_routing_map
+
+        expected_docs = [{"id": "success"}]
+        call_count = [0]
+
+        def execute_side_effect(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise create_410_partition_split_error()
+            return expected_docs
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            return (expected_docs, {})
+
+        resource_link = "/dbs/testdb/colls/testcoll/"
+        context = _DefaultQueryExecutionContext(
+            mock_client, {}, mock_fetch_function, resource_link=resource_link
+        )
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2, "Should have retried once after 410"
+        assert mock_client.refresh_routing_map_provider_call_count == 1
+        assert mock_client.last_refresh_collection_link == resource_link, \
+            "Should pass collection_link for targeted refresh"
+        assert mock_client.last_refresh_previous_map == fake_routing_map, \
+            "Should normalize slash-variant resource link for cache lookup"
         assert result == expected_docs
 
     @patch('azure.cosmos._retry_utility.Execute')
@@ -776,6 +1145,475 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             feed_options,
         )
         gone_policy.pop_refresh_context.assert_called_once()
+
+    def test_queryfeed_populates_capture_dict_from_options(self):
+        """`__QueryFeed` must read the capture dict from `options` and
+        populate it from the underlying response headers.
+
+        This is the producer-side counterpart to the checkpoint tests
+        above: it does not inject into the capture dict, it asserts that
+        `__QueryFeed` itself does the population. Catches the
+        `options`-vs-`kwargs` extraction regression.
+        """
+        # Build the connection without running __init__; only the attributes
+        # used by the no-query (read-feed) branch of __QueryFeed are needed.
+        conn = object.__new__(CosmosClientConnection)
+        conn.default_headers = {}
+        conn.last_response_headers = {}
+        conn.availability_strategy = None
+        conn.availability_strategy_executor = None
+        conn._global_endpoint_manager = MockGlobalEndpointManager()
+        conn._routing_map_provider = MockRoutingMapProvider()
+        conn.session = None
+        conn.connection_policy = MagicMock()
+
+        capture_dict = {}
+        options = {
+            "_internal_response_headers_capture": capture_dict,
+        }
+
+        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-queryfeed"}
+
+        request_obj_mock = MagicMock(
+            set_excluded_location_from_options=MagicMock(),
+            set_availability_strategy=MagicMock(),
+            headers={},
+        )
+
+        # Patch the heavy collaborators so the no-query branch can run without a real pipeline.
+        with patch(
+                 "azure.cosmos._cosmos_client_connection.base.GetHeaders",
+                 return_value={},
+             ), \
+             patch(
+                 "azure.cosmos._cosmos_client_connection.base.set_session_token_header"
+             ), \
+             patch(
+                 "azure.cosmos._cosmos_client_connection.RequestObject",
+                 return_value=request_obj_mock,
+             ), \
+             patch.object(
+                 CosmosClientConnection,
+                 "_CosmosClientConnection__Get",
+                 return_value=(
+                     {"Documents": [{"id": "1"}], "_count": 1},
+                     canned_headers,
+                 ),
+             ) as mock_get:
+
+            # Invoke the name-mangled private method directly.
+            result, headers = conn._CosmosClientConnection__QueryFeed(
+                "/dbs/db/colls/c/docs",
+                "docs",
+                "rid1",
+                lambda r: r["Documents"],
+                lambda _c, b: b,
+                None,                # query=None -> read-feed branch -> __Get
+                options,
+                None,                # partition_key_range_id
+            )
+
+            assert mock_get.called, "expected __Get to be invoked on the no-query path"
+
+        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-queryfeed", (
+            f"capture dict was not populated by __QueryFeed; got {capture_dict!r}. "
+            "This indicates __QueryFeed is not reading "
+            "'_internal_response_headers_capture' from options."
+        )
+
+        # The marker key must have been removed from options so it never
+        # leaks downstream into header construction or RequestObject.
+        assert "_internal_response_headers_capture" not in options, (
+            "__QueryFeed should pop the capture marker out of options"
+        )
+
+        # Sanity check on the result tuple shape.
+        assert result == [{"id": "1"}]
+        assert headers is canned_headers
+
+    def test_queryfeed_full_pk_no_overlap_fallback_preserves_partition_key_header(self):
+        """Full-PK no-overlap fallback must retain legacy PartitionKey header on __Post."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges.return_value = []
+
+        seen_partition_key_headers = []
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_partition_key_headers.append(req_headers.get(HttpHeaders.PartitionKey))
+            return {"Documents": [{"id": "doc-1"}]}, {}
+
+        container_properties = {"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+        options = {"partitionKey": ["mypk"]}
+
+        with patch(
+            "azure.cosmos._cosmos_client_connection.base.GetHeaders",
+            return_value={HttpHeaders.PartitionKey: '["mypk"]'},
+        ):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, _headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options=options,
+                        container_properties=container_properties,
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_partition_key_headers == ['["mypk"]'], (
+            "When full-PK routing finds no overlaps and falls back to __Post, "
+            "the legacy PartitionKey header must be preserved."
+        )
+
+    def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy(self):
+        """Legacy inbound continuation is honored when feed_range currently maps to one partition."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        single_overlap = [{"id": "0", "minInclusive": "00", "maxExclusive": "FF"}]
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            _ = ranges
+            return single_overlap
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        seen_request_continuations = []
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            return {"Documents": [{"id": "doc-1"}]}, {HttpHeaders.Continuation: "legacy-next-token"}
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options={"continuation": "legacy-inbound-token"},
+                        feed_range={
+                            "Range": {
+                                "min": "00",
+                                "max": "FF",
+                                "isMinInclusive": True,
+                                "isMaxInclusive": False,
+                            }
+                        },
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_request_continuations == ["legacy-inbound-token"]
+        assert headers.get(HttpHeaders.Continuation) == "legacy-next-token"
+
+    def test_queryfeed_feed_range_legacy_inbound_multi_partition_restarts_and_emits_v1(self):
+        """Legacy inbound continuation is ignored when scope is multi-partition; outbound becomes v=1."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        child_left = {"id": "0", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "1", "minInclusive": "7F", "maxExclusive": "FF"}
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        seen_request_continuations = []
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            return {"Documents": [{"id": "doc-1"}]}, {HttpHeaders.Continuation: "child-legacy-token"}
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options={"continuation": "legacy-inbound-token"},
+                        feed_range={
+                            "Range": {
+                                "min": "00",
+                                "max": "FF",
+                                "isMinInclusive": True,
+                                "isMaxInclusive": False,
+                            }
+                        },
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_request_continuations == [None]
+        outbound = headers.get(HttpHeaders.Continuation)
+        decoded = _decode_token(outbound)
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+
+    def test_queryfeed_feed_range_routing_lookup_failure_stamps_checkpoint(self):
+        """A failure inside the mid-page routing-map lookup must stamp a resumable
+        checkpoint into ``last_response_headers[Continuation]`` before re-raising,
+        not just failures from the backend POST.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        single_overlap = [{"id": "0", "minInclusive": "00", "maxExclusive": "FF"}]
+        routing_call_count = {"n": 0}
+
+        def overlap_side_effect(_rid, _ranges, _opts):
+            routing_call_count["n"] += 1
+            # First call (legacy bridge classification) succeeds; the mid-page
+            # iteration call fails so we exercise the widened try block.
+            if routing_call_count["n"] >= 2:
+                raise RuntimeError("routing-map-down")
+            return single_overlap
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post") as post_mock:
+                    with pytest.raises(RuntimeError, match="routing-map-down"):
+                        client.QueryFeed(
+                            path="/dbs/db/colls/c1/docs",
+                            collection_id="rid-c1",
+                            query="SELECT * FROM c",
+                            options={"continuation": "legacy-inbound-token"},
+                            feed_range={
+                                "Range": {
+                                    "min": "00",
+                                    "max": "FF",
+                                    "isMinInclusive": True,
+                                    "isMaxInclusive": False,
+                                }
+                            },
+                        )
+                    post_mock.assert_not_called()
+
+        # Checkpoint must be present so the caller can resume on retry.
+        # Single-partition scope => legacy-format checkpoint (the original inbound token).
+        continuation = client.last_response_headers.get(HttpHeaders.Continuation)
+        assert continuation == "legacy-inbound-token"
+
+    def test_queryfeed_mid_page_split_post_failure_stamps_structured_checkpoint(self):
+        """A mid-page backend failure after split re-resolution must checkpoint as v=1.
+
+        Start with a bridged legacy inbound token on a scope that initially maps to
+        one partition, then simulate a split before the backend POST. The checkpoint
+        written during exception handling must preserve both child sub-ranges.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        parent = {"id": "0", "minInclusive": "00", "maxExclusive": "FF"}
+        child_left = {"id": "1", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "2", "minInclusive": "7F", "maxExclusive": "FF"}
+        full_range_lookups = {"count": 0}
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                full_range_lookups["count"] += 1
+                if full_range_lookups["count"] == 1:
+                    # Initial bridge classification: single partition.
+                    return [parent]
+                # After split: multi-partition for loop/checkpoint classification.
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        def post_side_effect(_path, _request_params, _query, _req_headers, **_kwargs):
+            raise RuntimeError("backend-down-after-split")
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    with pytest.raises(RuntimeError, match="backend-down-after-split"):
+                        client.QueryFeed(
+                            path="/dbs/db/colls/c1/docs",
+                            collection_id="rid-c1",
+                            query="SELECT * FROM c",
+                            options={"continuation": "legacy-inbound-token"},
+                            feed_range={
+                                "Range": {
+                                    "min": "00",
+                                    "max": "FF",
+                                    "isMinInclusive": True,
+                                    "isMaxInclusive": False,
+                                }
+                            },
+                        )
+
+        checkpoint = client.last_response_headers.get(HttpHeaders.Continuation)
+        decoded = _decode_token(checkpoint)
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+        assert len(decoded["c"]) == 2
+
+    def test_queryfeed_v1_inbound_token_explodes_head_on_resume(self):
+        """Resume with a structured continuation token whose head range now spans
+        two partitions. The loop must send one request per child across two
+        pages and forward the parent's backend continuation to each child so
+        results are not replayed from the start.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        child_left = {"id": "1", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "2", "minInclusive": "7F", "maxExclusive": "FF"}
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        feed_range_dict = {
+            "Range": {
+                "min": "00",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        full_range = routing_range.Range(
+            range_min="00",
+            range_max="FF",
+            isMinInclusive=True,
+            isMaxInclusive=False,
+        )
+        query_text = "SELECT * FROM c"
+        # Build a structured continuation token whose single entry covers the
+        # full range and carries a backend continuation that must be forwarded
+        # to both children once the head is split.
+        inbound_token_payload = {
+            "v": 1,
+            _FIELD_COLLECTION_RID: "rid-c1",
+            _FIELD_QUERY_HASH: _hash_query_spec(query_text),
+            _FIELD_FEEDRANGE_HASH: _hash_feed_range(full_range),
+            _FIELD_CONTINUATIONS: [
+                {
+                    "min": "00",
+                    "max": "FF",
+                    "isMinInclusive": True,
+                    "isMaxInclusive": False,
+                    _FIELD_BACKEND_CONTINUATION: "parent-bc",
+                }
+            ],
+        }
+        inbound_token = _encode_token(inbound_token_payload)
+
+        seen_request_continuations = []
+        seen_pkr_ids = []
+        post_call_count = {"n": 0}
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            post_call_count["n"] += 1
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            seen_pkr_ids.append(req_headers.get(HttpHeaders.PartitionKeyRangeID))
+            # Each child returns one document and signals "drained" by
+            # returning a None continuation so the next call targets the
+            # next child.
+            return (
+                {"Documents": [{"id": f"doc-{post_call_count['n']}"}]},
+                {HttpHeaders.Continuation: None},
+            )
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    # First page: should send a request to the left child with
+                    # the original backend continuation.
+                    docs_p1, headers_p1 = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=query_text,
+                        options={"continuation": inbound_token},
+                        feed_range=feed_range_dict,
+                    )
+
+                    outbound_p1 = headers_p1.get(HttpHeaders.Continuation)
+                    decoded_p1 = _decode_token(outbound_p1)
+                    assert decoded_p1 is not None, (
+                        "Page 1 outbound continuation must be a structured "
+                        f"token after the head is split; got {outbound_p1!r}"
+                    )
+                    assert decoded_p1[_FIELD_VERSION] == _TOKEN_VERSION
+                    assert len(decoded_p1[_FIELD_CONTINUATIONS]) == 1, (
+                        "After draining the left child, only the right child "
+                        "should remain in the outbound token; got "
+                        f"{decoded_p1[_FIELD_CONTINUATIONS]!r}"
+                    )
+                    surviving = decoded_p1[_FIELD_CONTINUATIONS][0]
+                    assert surviving["min"] == "7F" and surviving["max"] == "FF", (
+                        "The remaining entry must be the right child's range; "
+                        f"got {surviving!r}"
+                    )
+                    assert surviving.get(_FIELD_BACKEND_CONTINUATION) == "parent-bc", (
+                        "The remaining child must carry the parent's backend "
+                        f"continuation forward; got bc={surviving.get(_FIELD_BACKEND_CONTINUATION)!r}"
+                    )
+
+                    # Second page: should send a request to the right child
+                    # with the same backend continuation.
+                    docs_p2, headers_p2 = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=query_text,
+                        options={"continuation": outbound_p1},
+                        feed_range=feed_range_dict,
+                    )
+
+        assert post_call_count["n"] == 2, (
+            "Expected exactly one request per child across the two pages; "
+            f"got {post_call_count['n']} request(s)"
+        )
+        assert seen_request_continuations == ["parent-bc", "parent-bc"], (
+            "Each child must receive the parent's backend continuation; "
+            f"got {seen_request_continuations!r}"
+        )
+        assert seen_pkr_ids == [child_left["id"], child_right["id"]], (
+            "Expected one request per child range id in left-to-right order; "
+            f"got {seen_pkr_ids!r}"
+        )
+        assert docs_p1 == [{"id": "doc-1"}], (
+            f"Page 1 should return only the left child's document; got {docs_p1!r}"
+        )
+        assert docs_p2 == [{"id": "doc-2"}], (
+            f"Page 2 should return only the right child's document; got {docs_p2!r}"
+        )
+        outbound_p2 = headers_p2.get(HttpHeaders.Continuation)
+        assert outbound_p2 in (None, "", b""), (
+            "Expected an empty outbound continuation after both children are "
+            f"drained; got {outbound_p2!r}"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

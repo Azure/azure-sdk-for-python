@@ -34,9 +34,9 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClientOperationsMixin)
      ~azure.core.credentials_async.AsyncTokenCredential
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01".
-     Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

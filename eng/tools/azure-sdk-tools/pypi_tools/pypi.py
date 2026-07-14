@@ -129,6 +129,37 @@ class PyPIClient:
         stable_releases = [version for version in versions if not version.is_prerelease]
         return (versions[-1], stable_releases[-1])
 
+    def get_latest_download_uri(self, package_name, allow_prerelease=False):
+        """Return ``(version_str, sdist_download_uri)`` for the latest version.
+
+        Works against both backends:
+
+        * **AzDO Artifacts** — discovers the latest version via the Feed REST API
+          and resolves the sdist URL on ``pkgs.dev.azure.com``. The PEP 503 Simple
+          index is intentionally avoided because it only serves stale, locally
+          cached versions.
+        * **PyPI** — reads the JSON API and returns the latest version's sdist URL.
+        """
+        if self._backend == "azdo":
+            return self._azdo.get_latest_download_uri(package_name, allow_prerelease=allow_prerelease)
+
+        versions = self.get_ordered_versions(package_name)
+        if not versions:
+            return None, None
+
+        if allow_prerelease:
+            latest_version = str(versions[-1])
+        else:
+            stable = [version for version in versions if not version.is_prerelease]
+            latest_version = str(stable[-1] if stable else versions[-1])
+
+        data = self.project(package_name)
+        files = data.get("releases", {}).get(latest_version) or []
+        sdist = next((f for f in files if f.get("packagetype") == "sdist"), None)
+        if sdist:
+            return latest_version, sdist["url"]
+        return latest_version, None
+
 
 def retrieve_versions_from_pypi(package_name: str) -> List[str]:
     """

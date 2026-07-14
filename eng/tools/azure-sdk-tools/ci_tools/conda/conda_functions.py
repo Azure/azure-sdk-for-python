@@ -292,7 +292,7 @@ def create_combined_sdist(
             [
                 os.path.join(config_assembled_folder, a)
                 for a in os.listdir(config_assembled_folder)
-                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name.replace("-", "_") in a
+                if os.path.isfile(os.path.join(config_assembled_folder, a)) and tolerant_match(conda_build.name, a)
             ]
         )
     )
@@ -519,14 +519,31 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
             f.write(meta_yml_content)
 
 
+def run_conda_command(command: List[str], cwd: str) -> None:
+    """Run a conda command, surfacing stdout/stderr when the command fails."""
+    print(f"Running: {' '.join(command)}")
+    result = subprocess.run(command, cwd=cwd, capture_output=True, text=True)
+
+    if result.stdout:
+        print(result.stdout)
+
+    if result.returncode != 0:
+        print(f"Command '{' '.join(command)}' failed with exit code {result.returncode}.")
+        if result.stderr:
+            print("----- stderr -----")
+            print(result.stderr)
+            print("------------------")
+        raise subprocess.CalledProcessError(result.returncode, command, output=result.stdout, stderr=result.stderr)
+
+
 def prep_and_create_environment(environment_dir: str) -> None:
     environment_dir = prep_directory(environment_dir)
 
     with open(os.path.join(environment_dir, "environment.yml"), "w", encoding="utf-8") as f:
         f.write(CONDA_ENV_FILE)
 
-    subprocess.run(["conda", "env", "create", "--prefix", environment_dir], cwd=environment_dir, check=True)
-    subprocess.run(
+    run_conda_command(["conda", "env", "create", "--prefix", environment_dir], cwd=environment_dir)
+    run_conda_command(
         [
             "conda",
             "install",
@@ -540,9 +557,8 @@ def prep_and_create_environment(environment_dir: str) -> None:
             "typing_extensions",
         ],
         cwd=environment_dir,
-        check=True,
     )
-    subprocess.run(["conda", "run", "--prefix", environment_dir, "conda", "list"], cwd=environment_dir, check=True)
+    run_conda_command(["conda", "run", "--prefix", environment_dir, "conda", "list"], cwd=environment_dir)
 
 
 def copy_channel_files(coalescing_channel_dir: str, additional_channel_dir: str) -> None:

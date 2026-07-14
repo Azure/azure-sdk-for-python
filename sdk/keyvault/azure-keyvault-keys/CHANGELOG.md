@@ -1,6 +1,38 @@
 # Release History
 
-## 4.11.1 (2026-05-18)
+## 4.12.0b3 (2026-07-08)
+
+### Features Added
+
+- Added `secure_wrap_key` and `secure_unwrap_key` methods for wrap/unwrap operations on keys [#47591](https://github.com/Azure/azure-sdk-for-python/pull/47591).
+- Added the `KeySecureWrapAlgorithm` enum, listing the algorithms supported by the secure wrap/unwrap operations.
+- Added the `SecureWrapResult` and `SecureUnwrapResult` model classes wrapping the results of `secure_wrap_key` and `secure_unwrap_key`, respectively.
+
+### Bugs Fixed
+
+- Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
+
+## 4.12.0b2 (2026-05-29)
+
+### Features Added
+
+- Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
+  for registering a Key Vault key whose material is held in an external HSM [#47200](https://github.com/Azure/azure-sdk-for-python/pull/47200).
+- Added the `KeyProperties.external_key` read-only property.
+
+## 4.12.0b1 (2026-05-26)
+
+### Features Added
+
+- Added support for service API version `2026-01-01-preview` [#47116](https://github.com/Azure/azure-sdk-for-python/pull/47116).
+- Added `KeyProperties.key_size` read-only property.
+
+### Other Changes
+
+- Key Vault API version `2026-01-01-preview` is now the default.
+- Python 3.9 is no longer supported. Please use Python version 3.10 or later.
+
+## 4.11.1 (2026-05-19)
 
 ### Features Added
 

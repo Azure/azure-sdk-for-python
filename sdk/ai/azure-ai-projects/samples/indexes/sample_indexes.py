@@ -45,7 +45,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START indexes_sample]
     print(f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:")
     index = project_client.indexes.create_or_update(
         name=index_name,
@@ -68,4 +67,3 @@ with (
 
     print(f"Delete Index `{index_name}` version `{index_version}`:")
     project_client.indexes.delete(name=index_name, version=index_version)
-    # [END indexes_sample]

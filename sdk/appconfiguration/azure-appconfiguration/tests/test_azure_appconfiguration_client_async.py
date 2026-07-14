@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -1098,9 +1099,6 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         await self.set_up(appconfiguration_endpoint_string)
 
-        result = await self.convert_to_list(self.client.list_snapshots(status=["ready"]))
-        initial_snapshots = len(result)
-
         variables = kwargs.pop("variables", {})
         dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
 
@@ -1120,8 +1118,13 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         created_snapshot2 = await response2.result()
         assert created_snapshot2.status == "ready"
 
-        result = await self.convert_to_list(self.client.list_snapshots(status=["ready"]))
-        assert len(result) == initial_snapshots + 2
+        # Verify both newly created snapshots appear in the "ready" listing. Asserting on the
+        # absolute count is unreliable in live mode where other test runs may leave snapshots
+        # behind, so we only require the snapshots we just created to be present.
+        ready_snapshots = await self.convert_to_list(self.client.list_snapshots(status=["ready"]))
+        ready_names = {s.name for s in ready_snapshots}
+        assert snapshot_name1 in ready_names
+        assert snapshot_name2 in ready_names
 
         await self.tear_down()
         return variables

@@ -87,9 +87,14 @@ class AppConfigTestCase(AzureRecordedTestCase):
             assert key1.enabled == key2.enabled
             if key1.filters and key2.filters:
                 assert len(key1.filters) == len(key2.filters)
+            # On FeatureFlagConfigurationSetting, `description` represents the
+            # feature-flag JSON description, not the KV-level description.
             assert key1.description == key2.description
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.secret_id == key2.secret_id
+            assert key1.description == key2.description
+        else:
+            assert key1.description == key2.description
 
     def _assert_snapshots(self, snapshot: ConfigurationSnapshot, expected_snapshot: ConfigurationSnapshot):
         assert snapshot.composition_type == expected_snapshot.composition_type
@@ -106,3 +111,4 @@ class AppConfigTestCase(AzureRecordedTestCase):
         assert snapshot.size == expected_snapshot.size
         assert snapshot.status == expected_snapshot.status
         assert snapshot.tags == expected_snapshot.tags
+        assert snapshot.description == expected_snapshot.description

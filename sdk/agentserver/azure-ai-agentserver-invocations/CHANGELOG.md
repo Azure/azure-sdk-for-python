@@ -1,6 +1,22 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b6 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
+
+### Breaking Changes
+
+- Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`.
+
+## 1.0.0b5 (2026-06-12)
+
+### Bugs Fixed
+
+- Fixed exception tracing for streaming responses so errors raised while iterating streaming results are captured correctly and invocation/session logging context is reset after streaming completes.
+
+## 1.0.0b4 (2026-05-21)
 
 ### Features Added
 

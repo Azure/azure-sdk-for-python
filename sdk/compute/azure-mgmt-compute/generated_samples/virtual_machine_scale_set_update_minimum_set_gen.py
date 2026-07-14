@@ -76,7 +76,11 @@ def main():
                 },
                 "scaleInPolicy": {"forceDeletion": bool, "prioritizeUnhealthyVMs": bool, "rules": ["str"]},
                 "singlePlacementGroup": bool,
-                "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
+                "skuProfile": {
+                    "allocationStrategy": "str",
+                    "automaticSkuMigrationPolicy": {"enabled": bool},
+                    "vmSizes": [{"name": "str", "rank": 0}],
+                },
                 "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
                 "upgradePolicy": {
                     "automaticOSUpgradePolicy": {
@@ -125,9 +129,11 @@ def main():
                         "extensionsTimeBudget": "str",
                     },
                     "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
+                    "interconnectBlockProfile": {"interconnectBlock": {"id": "str"}},
                     "licenseType": "str",
                     "networkProfile": {
                         "healthProbe": {"id": "str"},
+                        "interconnectGroupProfile": {"interconnectGroup": {"id": "str"}, "subgroups": [{"id": "str"}]},
                         "networkApiVersion": "str",
                         "networkInterfaceConfigurations": [
                             {
@@ -301,6 +307,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

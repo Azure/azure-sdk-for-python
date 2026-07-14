@@ -214,7 +214,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         results_per_page: Optional[int] = None,
         start_from: Optional[str] = None,
         timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[str]: ...
     @distributed_trace
     def walk_blobs(
@@ -247,7 +247,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         overwrite: Optional[bool] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -289,7 +289,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -310,7 +310,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -332,7 +332,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,

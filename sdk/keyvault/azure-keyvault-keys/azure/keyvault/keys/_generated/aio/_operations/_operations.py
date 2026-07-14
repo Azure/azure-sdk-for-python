@@ -51,6 +51,8 @@ from ..._operations._operations import (
     build_key_vault_release_request,
     build_key_vault_restore_key_request,
     build_key_vault_rotate_key_request,
+    build_key_vault_secure_unwrap_key_request,
+    build_key_vault_secure_wrap_key_request,
     build_key_vault_sign_request,
     build_key_vault_unwrap_key_request,
     build_key_vault_update_key_request,
@@ -878,7 +880,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -976,7 +981,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -2257,6 +2265,428 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
+    async def secure_wrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: _models.SecureKeyWrapOperationParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Creates a new 256 bit AES key within the trusted execution environment and wraps this key using
+        a specified key.
+
+        The SECURE WRAP operation creates a new 256 bit AES key within the trusted execution
+        environment(TEE) and encrypts the same with a key encryption key that has previously been
+        stored in an Azure Key Vault. The WRAP operation is only strictly necessary for symmetric keys
+        stored in Azure Key Vault since protection with an asymmetric key can be performed using the
+        public portion of the key. This operation is supported for asymmetric keys as a convenience for
+        callers that have a key-reference but do not have access to the public key material. This
+        operation requires the keys/wrapKey permission.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for wrap operation. Required.
+        :type parameters: ~azure.keyvault.keys._generated.models.SecureKeyWrapOperationParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def secure_wrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Creates a new 256 bit AES key within the trusted execution environment and wraps this key using
+        a specified key.
+
+        The SECURE WRAP operation creates a new 256 bit AES key within the trusted execution
+        environment(TEE) and encrypts the same with a key encryption key that has previously been
+        stored in an Azure Key Vault. The WRAP operation is only strictly necessary for symmetric keys
+        stored in Azure Key Vault since protection with an asymmetric key can be performed using the
+        public portion of the key. This operation is supported for asymmetric keys as a convenience for
+        callers that have a key-reference but do not have access to the public key material. This
+        operation requires the keys/wrapKey permission.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for wrap operation. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def secure_wrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Creates a new 256 bit AES key within the trusted execution environment and wraps this key using
+        a specified key.
+
+        The SECURE WRAP operation creates a new 256 bit AES key within the trusted execution
+        environment(TEE) and encrypts the same with a key encryption key that has previously been
+        stored in an Azure Key Vault. The WRAP operation is only strictly necessary for symmetric keys
+        stored in Azure Key Vault since protection with an asymmetric key can be performed using the
+        public portion of the key. This operation is supported for asymmetric keys as a convenience for
+        callers that have a key-reference but do not have access to the public key material. This
+        operation requires the keys/wrapKey permission.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for wrap operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["key_name", "key_version", "content_type", "accept", "api_version"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def secure_wrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: Union[_models.SecureKeyWrapOperationParameters, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Creates a new 256 bit AES key within the trusted execution environment and wraps this key using
+        a specified key.
+
+        The SECURE WRAP operation creates a new 256 bit AES key within the trusted execution
+        environment(TEE) and encrypts the same with a key encryption key that has previously been
+        stored in an Azure Key Vault. The WRAP operation is only strictly necessary for symmetric keys
+        stored in Azure Key Vault since protection with an asymmetric key can be performed using the
+        public portion of the key. This operation is supported for asymmetric keys as a convenience for
+        callers that have a key-reference but do not have access to the public key material. This
+        operation requires the keys/wrapKey permission.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for wrap operation. Is one of the following types:
+         SecureKeyWrapOperationParameters, JSON, IO[bytes] Required.
+        :type parameters: ~azure.keyvault.keys._generated.models.SecureKeyWrapOperationParameters or
+         JSON or IO[bytes]
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SecureKeyOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_secure_wrap_key_request(
+            key_name=key_name,
+            key_version=key_version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SecureKeyOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def secure_unwrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: _models.SecureKeyUnWrapOperationParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Securely unwraps a previously wrapped symmetric key using a specified key, ensuring TEE
+        attestation via Microsoft Azure Attestation (MAA) before unwrapping.
+
+        The SECURE UNWRAP operation supports decryption of a symmetric key using the target key
+        encryption key. This operation is the reverse of the SECURE WRAP operation. The SECURE UNWRAP
+        operation applies to asymmetric and symmetric keys stored in Azure Key Vault since it uses the
+        private portion of the key. This operation requires the keys/unwrapKey permission. The SECURE
+        UNWRAP operation ensures that MAA (Microsoft Azure Attestation Service) is used to attest the
+        TEE (Trusted Execution Environment) before the key is unwrapped.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for unwrap operation. Required.
+        :type parameters: ~azure.keyvault.keys._generated.models.SecureKeyUnWrapOperationParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def secure_unwrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Securely unwraps a previously wrapped symmetric key using a specified key, ensuring TEE
+        attestation via Microsoft Azure Attestation (MAA) before unwrapping.
+
+        The SECURE UNWRAP operation supports decryption of a symmetric key using the target key
+        encryption key. This operation is the reverse of the SECURE WRAP operation. The SECURE UNWRAP
+        operation applies to asymmetric and symmetric keys stored in Azure Key Vault since it uses the
+        private portion of the key. This operation requires the keys/unwrapKey permission. The SECURE
+        UNWRAP operation ensures that MAA (Microsoft Azure Attestation Service) is used to attest the
+        TEE (Trusted Execution Environment) before the key is unwrapped.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for unwrap operation. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def secure_unwrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Securely unwraps a previously wrapped symmetric key using a specified key, ensuring TEE
+        attestation via Microsoft Azure Attestation (MAA) before unwrapping.
+
+        The SECURE UNWRAP operation supports decryption of a symmetric key using the target key
+        encryption key. This operation is the reverse of the SECURE WRAP operation. The SECURE UNWRAP
+        operation applies to asymmetric and symmetric keys stored in Azure Key Vault since it uses the
+        private portion of the key. This operation requires the keys/unwrapKey permission. The SECURE
+        UNWRAP operation ensures that MAA (Microsoft Azure Attestation Service) is used to attest the
+        TEE (Trusted Execution Environment) before the key is unwrapped.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for unwrap operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["key_name", "key_version", "content_type", "accept", "api_version"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def secure_unwrap_key(
+        self,
+        key_name: str,
+        key_version: str,
+        parameters: Union[_models.SecureKeyUnWrapOperationParameters, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SecureKeyOperationResult:
+        """Securely unwraps a previously wrapped symmetric key using a specified key, ensuring TEE
+        attestation via Microsoft Azure Attestation (MAA) before unwrapping.
+
+        The SECURE UNWRAP operation supports decryption of a symmetric key using the target key
+        encryption key. This operation is the reverse of the SECURE WRAP operation. The SECURE UNWRAP
+        operation applies to asymmetric and symmetric keys stored in Azure Key Vault since it uses the
+        private portion of the key. This operation requires the keys/unwrapKey permission. The SECURE
+        UNWRAP operation ensures that MAA (Microsoft Azure Attestation Service) is used to attest the
+        TEE (Trusted Execution Environment) before the key is unwrapped.
+
+        :param key_name: The name of the key. Required.
+        :type key_name: str
+        :param key_version: The version of the key. Required.
+        :type key_version: str
+        :param parameters: The parameters for unwrap operation. Is one of the following types:
+         SecureKeyUnWrapOperationParameters, JSON, IO[bytes] Required.
+        :type parameters: ~azure.keyvault.keys._generated.models.SecureKeyUnWrapOperationParameters or
+         JSON or IO[bytes]
+        :return: SecureKeyOperationResult. The SecureKeyOperationResult is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.SecureKeyOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SecureKeyOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_secure_unwrap_key_request(
+            key_name=key_name,
+            key_version=key_version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SecureKeyOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
     async def unwrap_key(
         self,
         key_name: str,
@@ -2688,7 +3118,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -3295,7 +3728,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="7.6-preview.2",
         params_added_on={"7.6-preview.2": ["key_name", "key_version", "accept", "api_version"]},
-        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01"],
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
     )
     async def get_key_attestation(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
         """Gets the public part of a stored key along with its attestation blob.

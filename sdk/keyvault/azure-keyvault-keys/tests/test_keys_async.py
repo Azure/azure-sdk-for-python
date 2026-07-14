@@ -17,6 +17,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
     ApiVersion,
+    ExternalKey,
     JsonWebKey,
     KeyProperties,
     KeyReleasePolicy,
@@ -35,10 +36,10 @@ from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_pol
 from devtools_testutils.aio import recorded_by_proxy_async
 from _keys_test_case import KeysTestCase
 
-
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
+default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_7_4_plus = get_decorator(is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
@@ -97,6 +98,16 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
         return created_key
 
+    async def _create_oct_key(self, client, key_name, **kwargs):
+        hsm = kwargs.get("hardware_protected") or False
+        size = kwargs.get("size") or 256
+        if self.is_live:
+            await asyncio.sleep(2)  # to avoid throttling by the service
+        created_key = await client.create_oct_key(key_name, **kwargs)
+        kty = "oct-HSM"
+        self._validate_oct_key_bundle(created_key, client.vault_url, key_name, kty, size)
+        return created_key
+
     def _validate_ec_key_bundle(self, key_curve, key_attributes, vault, key_name, kty):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
@@ -116,6 +127,19 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
         assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
+        assert (
+            key_attributes.properties.created_on and key_attributes.properties.updated_on
+        ), "Missing required date attributes."
+
+    def _validate_oct_key_bundle(self, key_attributes, vault, key_name, kty, size):
+        prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
+        key = key_attributes.key
+        kid = key_attributes.id
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
+        assert (
+            key_attributes.properties.key_size == size
+        ), f"key_size should be {size}, but is {key_attributes.properties.key_size}"
         assert (
             key_attributes.properties.created_on and key_attributes.properties.updated_on
         ), "Missing required date attributes."
@@ -805,6 +829,39 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
+    async def test_create_external_key(self, client, **kwargs):
+        """Register an external HSM key and verify the external_key reference round-trips."""
+        external_id = kwargs.pop("ekm_external_id")
+        if not external_id:
+            pytest.skip(
+                "No external key ID provided. This test requires an EKM-connected HSM and an existing external key."
+            )
+
+        key_name = self.get_resource_name("ext-key")
+        external_key = ExternalKey(id=external_id)
+
+        created = await client.create_external_key(key_name, external_key=external_key)
+        assert created is not None
+        assert created.name == key_name
+        assert created.properties.external_key is not None
+        assert created.properties.external_key.id == external_id
+        assert created.key_type is not None
+
+        # Verify the external_key reference is also returned by a subsequent get_key.
+        fetched = await client.get_key(key_name)
+        assert fetched.properties.external_key is not None
+        assert fetched.properties.external_key.id == external_id
+        assert fetched.key_type is not None
+
+        # Delete the external key registration.
+        deleted_key = await client.delete_key(key_name)
+        assert deleted_key is not None
+        assert deleted_key.name == key_name
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_get_key_attestation(self, client, **kwargs):
         # create a key
         key_name = self.get_resource_name("key-name")
@@ -834,6 +891,26 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         original = await client.get_key_attestation(key_name, key.properties.version)
         original_attestation = original.properties.attestation
         assert original_attestation.version == attestation.version
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", default_version)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_key_size(self, client, is_hsm, **kwargs):
+        """The key_size property is returned for oct keys created with 2026-01-01-preview"""
+        # EC keys should return None for key_size
+        ec_key_name = self.get_resource_name("ec-key-size")
+        ec_key = await self._create_ec_key(client, ec_key_name, hardware_protected=True)
+        assert ec_key.properties.key_size is None
+
+        # oct-HSM keys should return the correct key_size
+        oct_key_name = self.get_resource_name("oct-key-256")
+        oct_key = await self._create_oct_key(client, oct_key_name, size=256, hardware_protected=True)
+        assert oct_key.properties.key_size == 256
+
+        # key_size is also available when fetching an existing oct-HSM key
+        fetched = await client.get_key(oct_key_name)
+        assert fetched.properties.key_size == 256
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)

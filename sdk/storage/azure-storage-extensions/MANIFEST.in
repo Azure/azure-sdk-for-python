@@ -1,0 +1,1 @@
+recursive-include azure *.h *.c *.pyi py.typed

@@ -10,6 +10,7 @@ async code path that can trigger a partition key range fetch.
 
 import unittest
 from typing import Optional, Mapping, Any, Dict
+from unittest.mock import patch
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.aio.routing_map_provider import (
     PartitionKeyRangeCache,
@@ -17,6 +18,7 @@ from azure.cosmos._routing.aio.routing_map_provider import (
 )
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos import _base, http_constants
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 # =====================================================================
@@ -293,11 +295,10 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
             "returning a delta instead of the complete set of ranges"
         )
 
-    async def test_full_load_with_incomplete_ranges_returns_none_async(self):
-        """When a full load (no previous routing map) returns ranges with gaps,
-        CompleteRoutingMap returns None. The method must return None immediately
-        without retrying — there is no incremental state to fall back from, and
-        repeating the identical request would produce the same result."""
+    async def test_full_load_with_incomplete_ranges_surfaces_503_async(self):
+        """When a full load (no previous routing map) repeatedly returns gapped
+        ranges, the retry budget should be exhausted and _fetch_routing_map
+        should surface a retryable HTTP 503."""
 
         class IncompleteRangesClient:
             async def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):
@@ -314,16 +315,18 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         client = IncompleteRangesClient()
         cache = PartitionKeyRangeCache(client)
 
-        result = await cache._fetch_routing_map(
-            COLLECTION_LINK,
-            _base.GetResourceIdOrFullNameFromLink(COLLECTION_LINK),
-            None,  # full load (no previous map)
-            {},
-        )
-        assert result is None, (
-            "Full load with incomplete ranges must return None "
-            "instead of retrying infinitely"
-        )
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch('azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep', new=_no_sleep):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await cache._fetch_routing_map(
+                    COLLECTION_LINK,
+                    _base.GetResourceIdOrFullNameFromLink(COLLECTION_LINK),
+                    None,  # full load (no previous map)
+                    {},
+                )
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
     async def test_incremental_fallback_to_full_load_succeeds_async(self):
         """When an incremental (change-feed) update fails because a returned

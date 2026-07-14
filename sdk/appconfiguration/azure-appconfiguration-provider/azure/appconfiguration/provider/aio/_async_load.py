@@ -68,6 +68,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
     isn't provided a credential will need to be in each set for each.
     :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword int secret_refresh_interval: The interval in seconds at which to refresh resolved Key Vault secrets.
+    Only applies when Key Vault references are being resolved. If not specified, secrets are not periodically
+    refreshed. Minimum value is 1 second.
     :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
     after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
     not supported).
@@ -139,6 +142,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
     isn't provided a credential will need to be in each set for each.
     :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword int secret_refresh_interval: The interval in seconds at which to refresh resolved Key Vault secrets.
+    Only applies when Key Vault references are being resolved. If not specified, secrets are not periodically
+    refreshed. Minimum value is 1 second.
     :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
     after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
     not supported).

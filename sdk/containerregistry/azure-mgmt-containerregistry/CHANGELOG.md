@@ -1,5 +1,20 @@
 # Release History
 
+## 15.1.0b2 (2026-07-03)
+
+### Features Added
+
+  - Model `CacheRuleProperties` added property `additional_authentication_properties`
+  - Model `CacheRuleUpdateProperties` added property `additional_authentication_properties`
+  - Model `NetworkRuleSet` added property `virtual_network_rules`
+  - Model `RegistryProperties` added property `writable_cache_repos`
+  - Model `RegistryPropertiesUpdateParameters` added property `writable_cache_repos`
+  - Added model `AdditionalAuthenticationProperties`
+  - Added enum `AdditionalAuthenticationType`
+  - Added model `GarAuthenticationProperties`
+  - Added model `VirtualNetworkRule`
+  - Added enum `WritableCacheRepos`
+
 ## 15.1.0b1 (2026-03-20)
 
 ### Features Added

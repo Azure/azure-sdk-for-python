@@ -20,11 +20,11 @@ CV_TYPE_PARSED = Optional[Union[bool, Literal["crc64", "crc64-sm", "md5"]]]
 
 def _verify_extensions(module: str) -> None:
     try:
-        import azure.storage.extensions  # pylint: disable=unused-import
+        import azure.storage.extensions.checksums  # pylint: disable=unused-import
     except ImportError as exc:
         raise ValueError(
-            f"The use of {module} requires the azure-storage-extensions package to be installed. "
-            f"Please install this package and try again."
+            f"The use of {module} requires the extra [ext-checksums] to be installed. "
+            f"Please install this extra and try again."
         ) from exc
 
 
@@ -100,13 +100,13 @@ def calculate_content_md5(data: Union[bytes, IO[bytes]]) -> bytes:
 
 def calculate_crc64(data: bytes, initial_crc: int) -> int:
     # Locally import to avoid error if not installed.
-    from azure.storage.extensions import crc64
+    from azure.storage.extensions import checksums
 
-    return cast(int, crc64.compute(data, initial_crc))
+    return checksums.crc64.compute(data, initial_crc)
 
 
 def calculate_crc64_bytes(data: bytes) -> bytes:
     # Locally import to avoid error if not installed.
-    from azure.storage.extensions import crc64
+    from azure.storage.extensions import checksums
 
-    return cast(bytes, crc64.compute(data, 0).to_bytes(CRC64_LENGTH, "little"))
+    return checksums.crc64.compute(data, 0).to_bytes(CRC64_LENGTH, "little")

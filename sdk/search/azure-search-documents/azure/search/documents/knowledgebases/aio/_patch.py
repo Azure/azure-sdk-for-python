@@ -26,10 +26,11 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
      ~azure.core.credentials_async.AsyncTokenCredential
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
-    :paramtype api_version: str
+    :keyword api_version: The API version to use for this operation. Known values are
+     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+     ``ApiVersion.V2026_05_01_PREVIEW``. Note that overriding this default value may
+     result in unsupported behavior.
+    :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
      audience will be assumed.

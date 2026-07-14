@@ -11,8 +11,12 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     AzureOpenAiFineTuning as RestAzureOpenAIFineTuning,
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
+    MLFlowModelJobInput,
+    UriFileJobInput,
 )
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
@@ -75,6 +79,37 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :type hyperparameters: AzureOpenAiHyperParameters
         """
         self._hyperparameters = hyperparameters
+
+    def _resolve_inputs(self, rest_job: "RestAzureOpenAIFineTuning") -> None:
+        """Resolve SDK ``Input`` entities to v2024-01-01-preview msrest job-input types.
+
+        The Azure OpenAI path keeps its own (v2024-01-01-preview) msrest envelope, so its nested
+        inputs must be msrest of the SAME api version for the whole tree to serialize consistently.
+        This overrides the shared ``FineTuningVertical._resolve_inputs``, which emits arm_ml_service
+        types needed only by the custom-model path (whose envelope is the shared arm hybrid client).
+
+        :param rest_job: The Azure OpenAI fine-tuning vertical rest object.
+        :type rest_job: RestAzureOpenAIFineTuning
+        """
+        if isinstance(rest_job.training_data, Input):
+            rest_job.training_data = UriFileJobInput(uri=rest_job.training_data.path)
+        if isinstance(rest_job.validation_data, Input):
+            rest_job.validation_data = UriFileJobInput(uri=rest_job.validation_data.path)
+        if isinstance(rest_job.model, Input):
+            rest_job.model = MLFlowModelJobInput(uri=rest_job.model.path)
+
+    def _restore_inputs(self) -> None:
+        """Restore v2024-01-01-preview msrest job-inputs back to SDK ``Input`` entities.
+
+        Mirrors :meth:`_resolve_inputs` for the read path; overrides the shared arm-typed
+        ``FineTuningVertical._restore_inputs`` so round-tripping an Azure OpenAI job is symmetric.
+        """
+        if isinstance(self.training_data, UriFileJobInput):
+            self.training_data = Input(type=AssetTypes.URI_FILE, path=self.training_data.uri)
+        if isinstance(self.validation_data, UriFileJobInput):
+            self.validation_data = Input(type=AssetTypes.URI_FILE, path=self.validation_data.uri)
+        if isinstance(self.model, MLFlowModelJobInput):
+            self.model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.model.uri)
 
     def _to_rest_object(self) -> "RestFineTuningJob":
         """Convert CustomFineTuningVertical object to a RestFineTuningJob object.

@@ -77,7 +77,10 @@ with (
     data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="responses")
     testing_criteria = [
         TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator", name="violence_detection", evaluator_name="builtin.violence"
+            type="azure_ai_evaluator",
+            name="violence_detection",
+            evaluator_name="builtin.violence",
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         )
     ]
     eval_object = openai_client.evals.create(

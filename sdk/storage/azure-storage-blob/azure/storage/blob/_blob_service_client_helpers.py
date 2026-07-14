@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 
 def _parse_url(account_url: str) -> Tuple["ParseResult", Any]:
     try:
-        if not account_url.lower().startswith('http'):
+        if not account_url.lower().startswith("http"):
             account_url = "https://" + account_url
     except AttributeError as exc:
         raise ValueError("Account URL must be a string.") from exc
-    parsed_url = urlparse(account_url.rstrip('/'))
+    parsed_url = urlparse(account_url.rstrip("/"))
     if not parsed_url.netloc:
         raise ValueError(f"Invalid URL: {account_url}")
 

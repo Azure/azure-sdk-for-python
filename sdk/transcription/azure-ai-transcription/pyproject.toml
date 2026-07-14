@@ -17,7 +17,7 @@ authors = [
 description = "Microsoft Corporation Azure AI Transcription Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -62,4 +62,7 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
-is_stable = true
+is_stable = false
+
+[tool.azure-sdk-conda]
+in_bundle = false

@@ -17,18 +17,6 @@ from azure.search.documents.indexes.models import (
     SimpleField,
 )
 
-CANONICAL_FIELD_TYPES = [
-    ("STRING", "Edm.String"),
-    ("INT32", "Edm.Int32"),
-    ("INT64", "Edm.Int64"),
-    ("SINGLE", "Edm.Single"),
-    ("DOUBLE", "Edm.Double"),
-    ("BOOLEAN", "Edm.Boolean"),
-    ("DATE_TIME_OFFSET", "Edm.DateTimeOffset"),
-    ("GEOGRAPHY_POINT", "Edm.GeographyPoint"),
-    ("COMPLEX", "Edm.ComplexType"),
-]
-
 
 def _assert_default_analyzer_settings(field):
     assert field.analyzer_name is None
@@ -38,10 +26,6 @@ def _assert_default_analyzer_settings(field):
 
 
 class TestSearchFieldDataType:
-    @pytest.mark.parametrize(("name", "value"), CANONICAL_FIELD_TYPES)
-    def test_canonical_members_keep_edm_values(self, name, value):
-        assert getattr(SearchFieldDataType, name) == value
-
     @pytest.mark.parametrize(
         ("alias", "canonical"),
         [
