@@ -26,6 +26,7 @@ from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -207,6 +208,16 @@ class Data(Artifact):
         data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
+        # ``autoDeleteSetting`` was dropped from the arm_ml_service (2025-12) model, so it is an
+        # untyped wire key on the hybrid model rather than a typed attribute; read it directly.
+        raw_auto_delete = (
+            data_rest_object_details.get("autoDeleteSetting") if hasattr(data_rest_object_details, "get") else None
+        )
+        if raw_auto_delete is None:
+            raw_auto_delete = getattr(data_rest_object_details, "auto_delete_setting", None)
+        auto_delete_setting = (
+            AutoDeleteSetting._from_rest_object(raw_auto_delete) if raw_auto_delete is not None else None
+        )
         data = Data(
             id=data_rest_object.id,
             name=arm_id_object.asset_name,
@@ -219,7 +230,7 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
-            auto_delete_setting=getattr(data_rest_object_details, "auto_delete_setting", None),
+            auto_delete_setting=auto_delete_setting,
         )
         return data
 
