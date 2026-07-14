@@ -49,7 +49,7 @@ class AzureOpenAIDeploymentOperations(_ScopeDependentOperations):
         connection = self._workspace_connections_operations.get(connection_name)
 
         def _from_rest_add_connection_name(obj: Any) -> AzureOpenAIDeployment:
-            from_rest_deployment = AzureOpenAIDeployment._from_rest_object(obj)
+            from_rest_deployment = AzureOpenAIDeployment._from_rest_object(obj)  # type: ignore[attr-defined]
             from_rest_deployment.connection_name = connection_name
             from_rest_deployment.target_url = connection.target
             return from_rest_deployment

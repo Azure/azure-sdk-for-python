@@ -350,12 +350,12 @@ class ModelPackage(Resource):
             code_id = (
                 self.inferencing_server.code_configuration.code
                 if isinstance(self.inferencing_server.code_configuration.code, str)
-                else self.inferencing_server.code_configuration.code.id
+                else self.inferencing_server.code_configuration.code.id  # type: ignore[union-attr]
             )
             code = {"codeId": code_id}
             if self.inferencing_server.code_configuration.scoring_script is not None:
                 code["scoringScript"] = self.inferencing_server.code_configuration.scoring_script
-            self.inferencing_server.code_configuration = code
+            self.inferencing_server.code_configuration = code  # type: ignore[assignment]
 
         package_request: Dict[str, Any] = {}
         if self.target_environment_id is not None:

@@ -95,7 +95,9 @@ class ImportDataSchedule(Schedule):
         return cls(
             trigger=TriggerBase._from_rest_object(obj.properties.trigger),
             import_data=(
-                DataImport._from_rest_object(data_import_definition) if data_import_definition is not None else None
+                DataImport._from_rest_object(data_import_definition)  # type: ignore[arg-type]
+                if data_import_definition is not None
+                else None
             ),
             name=obj.name,
             display_name=obj.properties.display_name,

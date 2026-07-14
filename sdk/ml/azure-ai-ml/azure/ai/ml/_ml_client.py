@@ -588,7 +588,7 @@ class MLClient:
             self._operation_config,
             (self._service_client_registry_arm if registry_name else self._service_client_04_2023),
             self._datastores,
-            registry_service_client=getattr(self, "_service_client_registry_arm", None),
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),  # type: ignore[arg-type]
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
@@ -671,7 +671,7 @@ class MLClient:
             (self._service_client_registry_arm if registry_name else self._service_client_01_2024_preview_arm),
             self._operation_container,
             self._preflight,
-            registry_service_client=getattr(self, "_service_client_registry_arm", None),
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),  # type: ignore[arg-type]
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)

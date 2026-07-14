@@ -130,8 +130,8 @@ class DataImport(Data):
             data_type = AssetTypes.URI_FOLDER
 
         data_import = cls(
-            name=data_rest_object.get("assetName"),
-            path=data_rest_object.get("dataUri"),
+            name=data_rest_object.get("assetName"),  # type: ignore[arg-type]
+            path=data_rest_object.get("dataUri"),  # type: ignore[arg-type]
             source=source,
             description=data_rest_object.get("description"),
             tags=data_rest_object.get("tags"),

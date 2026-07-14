@@ -40,7 +40,8 @@ class BaseEnvironment:
     def _from_rest_object(cls, rest_obj: Any) -> "BaseEnvironment":
         if isinstance(rest_obj, dict):
             return BaseEnvironment(
-                type=rest_obj.get("baseEnvironmentSourceType"), resource_id=rest_obj.get("resourceId")
+                type=rest_obj.get("baseEnvironmentSourceType"),  # type: ignore[arg-type]
+                resource_id=rest_obj.get("resourceId"),
             )
         return BaseEnvironment(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
 

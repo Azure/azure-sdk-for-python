@@ -432,7 +432,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             )
 
     @classmethod
-    def _get_search_space_from_str(cls, search_space_str: Optional[str]) -> Optional[List]:
+    def _get_search_space_from_str(cls, search_space_str: Optional[List]) -> Optional[List]:
         if search_space_str is not None:
             return [NlpSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
         return None

@@ -790,13 +790,13 @@ class ModelOperations(_ScopeDependentOperations):
                     package_request.inferencing_server.code_configuration.code,
                     AzureMLResourceType.CODE,
                 ):
-                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
-                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
+                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):  # type: ignore[union-attr]
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
+                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],  # type: ignore[index]
                             azureml_type=AzureMLResourceType.CODE,
                         )
                     else:
-                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
                             Code(
                                 base_path=package_request._base_path,
                                 path=package_request.inferencing_server.code_configuration.code,
@@ -807,21 +807,21 @@ class ModelOperations(_ScopeDependentOperations):
                     package_request.inferencing_server.code_configuration, "code"
                 ):
                     package_request.inferencing_server.code_configuration.code = (
-                        "azureml:/" + package_request.inferencing_server.code_configuration.code
+                        "azureml:/" + package_request.inferencing_server.code_configuration.code  # type: ignore[operator]
                     )
 
             if package_request.base_environment_source and hasattr(
                 package_request.base_environment_source, "resource_id"
             ):
-                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):
-                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
+                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):  # type: ignore[union-attr]
+                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
                         package_request.base_environment_source.resource_id,
                         azureml_type=AzureMLResourceType.ENVIRONMENT,
                     )
 
                 package_request.base_environment_source.resource_id = (
-                    "azureml:/" + package_request.base_environment_source.resource_id
-                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)
+                    "azureml:/" + package_request.base_environment_source.resource_id  # type: ignore[operator]
+                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
                     else package_request.base_environment_source.resource_id
                 )
 
@@ -842,13 +842,13 @@ class ModelOperations(_ScopeDependentOperations):
                 package_request.target_environment_id = (
                     package_request.target_environment_id + f"/versions/{package_request.environment_version}"
                 )
-            package_request = package_request._to_rest_object()
+            package_request = package_request._to_rest_object()  # type: ignore[assignment]
 
         if self._registry_reference:
-            package_request["targetEnvironmentId"] = (
+            package_request["targetEnvironmentId"] = (  # type: ignore[index]
                 f"azureml://locations/{self._operation_scope._workspace_location}"
                 f"/workspaces/{self._operation_scope._workspace_id}/environments/"
-                f"{package_request.get('targetEnvironmentId')}"
+                f"{package_request.get('targetEnvironmentId')}"  # type: ignore[attr-defined]
             )
         if self._registry_name or self._registry_reference:
             # Byte-identical to the legacy v2021_10 registry ``begin_package`` (same MFE endpoint + api-version + wire body).
@@ -880,7 +880,7 @@ class ModelOperations(_ScopeDependentOperations):
             environment_id = package_out.additional_properties["targetEnvironmentId"]
 
         pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
-        parsed_id: Any = re.search(pattern, environment_id)
+        parsed_id: Any = re.search(pattern, environment_id)  # type: ignore[arg-type]
 
         if parsed_id:
             environment_name = parsed_id.group(3)

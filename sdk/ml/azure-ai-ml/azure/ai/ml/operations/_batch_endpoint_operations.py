@@ -445,7 +445,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         token = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {token}"
 
-        jobs = []
+        jobs: list[BatchJob] = []
         next_link: Optional[str] = list_url
         while next_link:
             response = self._requests_pipeline.get(next_link, headers=headers)

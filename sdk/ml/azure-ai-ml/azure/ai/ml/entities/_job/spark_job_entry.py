@@ -53,11 +53,11 @@ class SparkJobEntry(RestTranslatableMixin):
             entry_type = obj.get("spark_job_entry_type") or obj.get("sparkJobEntryType")
             if entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
                 return SparkJobEntry(
-                    entry=obj.get("file", None),
+                    entry=obj.get("file", None),  # type: ignore[arg-type]
                     type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY,
                 )
             return SparkJobEntry(
-                entry=obj.get("class_name", None),
+                entry=obj.get("class_name", None),  # type: ignore[arg-type]
                 type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY,
             )
         if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
