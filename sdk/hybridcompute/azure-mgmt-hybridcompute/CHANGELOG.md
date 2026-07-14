@@ -12,19 +12,11 @@
   - Added model `ManagedServiceIdentity`
   - Added enum `ManagedServiceIdentityType`
   - Added model `UserAssignedIdentity`
-  - Model `GatewayProperties` added property `gatewayBypass`
-  - Model `GatewayProperties` added property `gateway_bypass`
-  - Model `GatewayUpdateProperties` added property `gatewayBypass`
-  - Model `GatewayUpdateProperties` added property `gateway_bypass`
-  - Model `MachineProperties` added property `status_reason`
-  - Added model `ManagedServiceIdentity`
-  - Added model `UserAssignedIdentity`
 
 ### Breaking Changes
 
   - Deleted or renamed model `Identity`
   - Deleted or renamed model `ResourceIdentityType`
-  - Deleted or renamed model `Identity`
 
 ## 9.1.0b3 (2026-06-03)
 
