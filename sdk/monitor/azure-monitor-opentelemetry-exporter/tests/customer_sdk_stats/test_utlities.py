@@ -7,7 +7,13 @@ from unittest import mock
 from datetime import datetime
 
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
-from azure.core.exceptions import ServiceRequestTimeoutError, HttpResponseError, ServiceResponseTimeoutError, ServiceResponseError, ServiceRequestError
+from azure.core.exceptions import (
+    ServiceRequestTimeoutError,
+    HttpResponseError,
+    ServiceResponseTimeoutError,
+    ServiceResponseError,
+    ServiceRequestError,
+)
 
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
