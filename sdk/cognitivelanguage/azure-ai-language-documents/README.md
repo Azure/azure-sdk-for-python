@@ -167,7 +167,6 @@ def sample_submit_job() -> None:
                     }
                 ],
             },
-            polling=False,
         )
 
         print(f"Initial poller status: {poller.status()}")
@@ -230,7 +229,6 @@ def sample_get_job_state() -> None:
                 ],
             },
             raw_response_hook=raw_response_hook,
-            polling=False,
         )
 
         parsed = urlparse(operation_location["value"])
@@ -299,7 +297,6 @@ def sample_cancel_job() -> None:
                 ],
             },
             raw_response_hook=raw_response_hook,
-            polling=False,
         )
 
         parsed = urlparse(operation_location["value"])
@@ -368,7 +365,6 @@ async def sample_submit_job() -> None:
                     }
                 ],
             },
-            polling=False,
         )
 
         print(f"Initial poller status: {poller.status()}")
