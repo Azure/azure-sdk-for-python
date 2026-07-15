@@ -238,10 +238,17 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         # ``ModelVersionDetails`` had NO ``stage`` field, so models WITH deployment templates dropped ``stage`` on the
         # wire; that quirk is preserved by omitting ``stage`` when a deployment template is present.
         has_deployment_template = bool(self.default_deployment_template or self.allowed_deployment_templates)
+        # The legacy v2021_10 ``ModelVersionDetails`` typed tags/properties as ``{str}``; msrest coerced every value to
+        # a string on the wire (e.g. YAML ``abc: 123`` -> ``"123"``). The arm hybrid model keeps the native type, so
+        # coerce here to stay byte-identical.
+        tags = {k: str(v) for k, v in self.tags.items() if v is not None} if self.tags else self.tags
+        properties = (
+            {k: str(v) for k, v in self.properties.items() if v is not None} if self.properties else self.properties
+        )
         model_version = ModelVersionProperties(
             description=self.description,
-            tags=self.tags,
-            properties=self.properties,
+            tags=tags,
+            properties=properties,
             flavors=(
                 {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
             ),  # flatten OrderedDict to dict

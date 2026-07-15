@@ -95,6 +95,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         compare_bodies=True,
         excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
         ignored_query_parameters="api-version",
+        ignore_query_ordering=True,
     )
 
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
