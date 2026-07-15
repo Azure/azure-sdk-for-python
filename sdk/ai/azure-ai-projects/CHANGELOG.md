@@ -85,11 +85,11 @@ all derived from `ToolboxTool`, have been defined.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * Added Reinforcement Learning Environments (RLE) support:
-  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLSandbox`, `CreateRLEnvironmentRequest`, `UpdateRLEnvironmentRequest`, `CreateRLSandboxRequest`, `RLStepResult`, `RLEnvironmentState`, `HealthResponse`, `GetMetadataResponse`, `SchemaResponse`, and the `RLSandboxStatus` enum.
-  * New root-client operation groups: `rl_environments`, `rle_sandboxes`, and `rl_environment_runtime`.
-  * New `project_client.rl_environments.create_runtime(environment_id, ...)` factory that returns a gym-style `RLEEnvironment` / `AsyncRLEEnvironment` context manager. The runtime helper leases, polls, runs, and releases sandboxes entirely through the project client — using the project endpoint, pipeline, and credential like any other integration.
-  * The runtime helper verifies sandbox health before every runtime call (`reset`, `step`, `state`, `metadata`, `schema`) by probing the environment `health` endpoint; an unhealthy sandbox surfaces as `HttpResponseError`.
-  * The `RLEEnvironment` / `AsyncRLEEnvironment` runtime helpers now return the generated `RLStepResult`, `RLEnvironmentState`, `HealthResponse`, `GetMetadataResponse`, and `SchemaResponse` models.
+  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLESandbox`, `CreateRLEnvironmentRequest`, `CreateRLESandboxRequest`, `RLEResetRequest`, `RLEStepRequest`, `RLEStepResult`, `RLEnvironmentState`, `ListRLEnvironmentsResponse`, `ListRLESandboxesResponse`, and the `RLESandboxStatus` and `RLEnvironmentDiskImageConversionStatus` enums.
+  * New unified root-client operation group `project_client.rle` (`RLEOperations`) covering the environment operations (`create_environment`, `list_environments`, `get_environment`, `get_environment_version`, `delete_environment_version`, `list_rl_environment_versions`) and the sandbox read operations (`list_sandboxes`, `get_sandbox`). These methods supply the required preview feature opt-in automatically, and `create_environment` accepts either a `CreateRLEnvironmentRequest` body or `acr_image_path`/`name` keyword fields. Sandbox lifecycle and per-episode runtime operations (lease/reset/step/state/health/metadata/schema/release) are driven through the `RLESandboxSession` returned by `create_session`.
+  * New `project_client.rle.create_session(environment_id, ...)` factory that returns a gym-style `RLESandboxSession` / `AsyncRLESandboxSession` context manager. The session leases, polls, runs, and releases sandboxes entirely through the project client — using the project endpoint, pipeline, and credential like any other integration.
+  * The session verifies sandbox health before every runtime call (`reset`, `step`, `state`, `metadata`, `schema`) by probing the sandbox `health` endpoint; an unhealthy sandbox surfaces as `HttpResponseError`.
+  * The `RLESandboxSession` / `AsyncRLESandboxSession` sessions return the generated `RLEStepResult` and `RLEnvironmentState` models; `health`, `metadata`, and `schema` return the raw JSON payload as a dictionary.
 
 
 ### Breaking Changes

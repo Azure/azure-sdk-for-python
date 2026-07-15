@@ -45,6 +45,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
     """AGENTS_OPTIMIZATION_V2_PREVIEW."""
+    RL_ENVIRONMENT_V1_PREVIEW = "RLEnvironment=V1Preview"
+    """RL_ENVIRONMENT_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1203,16 +1205,30 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 # RLE (reinforcement learning) enums grafted from generated code
 
 
-class RLSandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+# RLE (reinforcement learning) grafted from generated code
+
+class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the asynchronous ACR image to disk image conversion. Serialized as its string name."""
+
+    NOT_REQUESTED = "NotRequested"
+    """Disk image conversion has not been requested for this environment yet."""
+    PENDING = "Pending"
+    """Disk image conversion is in progress."""
+    READY = "Ready"
+    """Disk image conversion completed successfully and the disk image is ready for use."""
+    FAILED = "Failed"
+    """Disk image conversion failed. See ``diskImageConversionError`` for details."""
+
+class RLESandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Lifecycle status of an RLE sandbox."""
 
     CREATING = "Creating"
-    """RLSandbox is being provisioned."""
+    """RLESandbox is being provisioned."""
     RUNNING = "Running"
-    """RLSandbox is ready to accept runtime requests at ``url``."""
+    """RLESandbox is ready to accept runtime requests at ``url``."""
     STOPPED = "Stopped"
-    """RLSandbox is stopped but retained and may be resumed."""
+    """RLESandbox is stopped but retained and may be resumed."""
     RELEASED = "Released"
-    """RLSandbox has been released and can no longer be used."""
+    """RLESandbox has been released and can no longer be used."""
     FAILED = "Failed"
-    """RLSandbox entered a terminal failure state. See ``error`` for details."""
+    """RLESandbox entered a terminal failure state. See ``error`` for details."""

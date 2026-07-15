@@ -16,7 +16,7 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
-from ._patch_rle_async import RLEnvironmentsOperations
+from ._patch_rle_async import RLEOperations, AsyncRLESandboxSession
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
     BetaAgentsOperations,
@@ -101,7 +101,8 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
-    "RLEnvironmentsOperations",
+    "RLEOperations",
+    "AsyncRLESandboxSession",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

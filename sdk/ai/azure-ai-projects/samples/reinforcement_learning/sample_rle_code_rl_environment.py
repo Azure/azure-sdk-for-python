@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to drive a hosted RLE Code RL environment
-    using `project_client.rl_environments.create_runtime(...)`. It leases a sandbox from the
+    using `project_client.rle.create_session(...)`. It leases a sandbox from the
     environment, then calls reset, step, and state. It submits one incorrect program and one correct
     program to show how the reward and verdict come back from env.step({"code": ...}).
 
@@ -61,11 +61,12 @@ def main() -> int:
     if not args.env_id:
         parser.error("provide --env-id or set RLE_ENV_ID")
 
-    with DefaultAzureCredential() as credential, AIProjectClient(
-        endpoint=args.endpoint, credential=credential
-    ) as project_client:
-        with project_client.rl_environments.create_runtime(args.env_id) as env:
-            reset_result = env.reset(seed=args.seed)
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=args.endpoint, credential=credential) as project_client,
+    ):
+        with project_client.rle.create_session(args.env_id) as session:
+            reset_result = session.reset(seed=args.seed)
             observation = reset_result.observation or {}
             problem = observation.get("problem", "")
 
@@ -74,14 +75,14 @@ def main() -> int:
             print(f"problem (head): {problem.splitlines()[0][:72] if problem else '(none)'}\n")
 
             for index, code in enumerate(_ATTEMPTS, start=1):
-                step_result = env.step({"code": code})
+                step_result = session.step({"code": code})
                 step_observation = step_result.observation or {}
                 print(f"== check_solution turn {index} ==")
                 print(f"  submitted: {code.splitlines()[-1]}")
                 print(f"  passed:    {step_observation.get('passed')}")
                 print(f"  reward:    {step_result.reward}")
 
-            state = env.state()
+            state = session.state()
             print(f"\nstate: episode_id={state.episode_id} step_count={state.step_count}")
 
     return 0

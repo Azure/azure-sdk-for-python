@@ -24,9 +24,7 @@ from .operations import (
     DeploymentsOperations,
     EvaluationRulesOperations,
     IndexesOperations,
-    RLEnvironmentsOperations,
-    RLESandboxesOperations,
-    RLEnvironmentRuntimeOperations,
+    RLEOperations,
     ToolboxesOperations,
 )
 
@@ -114,11 +112,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.rl_environments = RLEnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.rle_sandboxes = RLESandboxesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.rl_environment_runtime = RLEnvironmentRuntimeOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.rle = RLEOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
