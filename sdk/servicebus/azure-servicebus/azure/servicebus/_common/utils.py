@@ -246,14 +246,28 @@ def transform_outbound_messages(
 
 
 def strip_protocol_from_uri(uri: str) -> str:
-    """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN.
+    """Reduces a URI to the bare host by removing the protocol (e.g. http:// or
+    sb://), any port (e.g. :443) and any path (e.g. a trailing /), such as for a FQDN.
+
+    Azure returns the namespace endpoint as ``https://<ns>.servicebus.windows.net:443/``;
+    the resulting host is used both as the AMQP connection host and as the token
+    audience, so port and path must be removed.
+
     :param str uri: The URI to modify.
-    :return: The URI without the protocol.
+    :return: The bare host portion of the URI.
     :rtype: str
     """
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
-        return uri[left_slash_pos + 2 :]
+        uri = uri[left_slash_pos + 2 :]
+    # Remove any path (trailing slash and everything after it).
+    slash_pos = uri.find("/")
+    if slash_pos != -1:
+        uri = uri[:slash_pos]
+    # Remove any port.
+    colon_pos = uri.find(":")
+    if colon_pos != -1:
+        uri = uri[:colon_pos]
     return uri
 
 
