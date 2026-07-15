@@ -121,7 +121,7 @@ class LargeHeadersOperations:
     async def begin_two6_k(
         self, resource_group_name: str, large_header_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.CancelResult]:
-        """A long-running resource action.
+        """two6_k.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

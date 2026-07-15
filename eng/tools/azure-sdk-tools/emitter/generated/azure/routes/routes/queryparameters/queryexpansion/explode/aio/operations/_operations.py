@@ -21,10 +21,12 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ...... import models as _models5
 from ......_utils.serialization import Deserializer, Serializer
 from ......aio._configuration import RoutesClientConfiguration
 from ...operations._operations import (
     build_query_parameters_query_expansion_explode_array_request,
+    build_query_parameters_query_expansion_explode_model_request,
     build_query_parameters_query_expansion_explode_primitive_request,
     build_query_parameters_query_expansion_explode_record_request,
 )
@@ -168,6 +170,53 @@ class QueryParametersQueryExpansionExplodeOperations:  # pylint: disable=name-to
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_query_parameters_query_expansion_explode_record_request(
+            param=param,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def model(self, *, param: _models5.ExpandParameters, **kwargs: Any) -> None:
+        """model.
+
+        :keyword param: Required.
+        :paramtype param: ~routes.models.ExpandParameters
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_query_parameters_query_expansion_explode_model_request(
             param=param,
             headers=_headers,
             params=_params,
