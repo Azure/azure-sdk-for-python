@@ -1002,7 +1002,7 @@ class TestUtils(unittest.TestCase):
         clear=True,
     )
     def test_get_rp_name_app_service(self):
-        self.assertEqual(_utils._get_rp_name(), "appsvc")
+        self.assertEqual(_utils._get_rp_name(), "appsvc")  # cspell:disable-line
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
