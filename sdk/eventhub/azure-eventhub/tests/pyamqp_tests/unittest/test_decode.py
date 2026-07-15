@@ -1,3 +1,4 @@
+import pathlib
 import pytest
 from azure.eventhub._pyamqp._decode import (
     _decode_decimal128,
@@ -101,6 +102,66 @@ def _list0_frame(code):
     return memoryview(bytes([0x00, 0x53, code, 0x45]))
 
 
+def _list32_frame(code, count, encoded_fields, payload=b""):
+    # Build a described performative frame using a list32 (0xd0) body, whose size
+    # and count are 4-byte big-endian. decode_frame ignores the size field and
+    # reads the count from data[8:12], so only the count must be accurate.
+    size = (len(encoded_fields) + 4).to_bytes(4, "big")
+    header = bytes([0x00, 0x53, code, 0xD0]) + size + count.to_bytes(4, "big")
+    return memoryview(header + encoded_fields + payload)
+
+
+# Begin/Attach/Disposition/Detach are namedtuples with no field defaults, so a
+# short positional unpack raised TypeError before the decoder padded to the full
+# field count. Only Open was covered above; exercise the rest of the no-default
+# performatives directly.
+@pytest.mark.parametrize(
+    "frame_cls",
+    [
+        performatives.AttachFrame,
+        performatives.BeginFrame,
+        performatives.DispositionFrame,
+        performatives.DetachFrame,
+    ],
+)
+def test_short_no_default_performative_is_padded(frame_cls):
+    full_field_count = _PERFORMATIVE_FIELD_COUNT[frame_cls._code]
+    # A single null field on the wire, the rest omitted.
+    frame = _list8_frame(frame_cls._code, 1, bytes([0x40]))
+    frame_type, fields = decode_frame(frame)
+    assert frame_type == frame_cls._code
+    assert len(fields) == full_field_count
+    assert fields[-1] is None
+    # Namedtuple construction must not raise on the omitted (now padded) fields.
+    frame_cls(*fields)
+
+
+# The list32 (0xd0) body path is only taken for large frames and is otherwise
+# unexercised; confirm a short performative encoded as list32 pads identically to
+# the list8 case.
+def test_short_list32_is_padded_to_full_field_count():
+    frame = _list32_frame(performatives.OpenFrame._code, 1, bytes([0xA1, 0x01, 0x78]))
+    frame_type, fields = decode_frame(frame)
+    assert frame_type == performatives.OpenFrame._code
+    assert len(fields) == 10
+    open_frame = performatives.OpenFrame(*fields)
+    assert open_frame.container_id == b"x"
+    assert fields[9] is None
+
+
+# SASLInit/SASLOutcome have required (no-default) fields, so a short SASL frame
+# crashed pre-fix. They are in the field-count map and must pad too.
+@pytest.mark.parametrize("frame_cls", [performatives.SASLInit, performatives.SASLOutcome])
+def test_short_sasl_frame_is_padded(frame_cls):
+    full_field_count = _PERFORMATIVE_FIELD_COUNT[frame_cls._code]
+    frame = _list8_frame(frame_cls._code, 1, bytes([0x40]))
+    frame_type, fields = decode_frame(frame)
+    assert frame_type == frame_cls._code
+    assert len(fields) == full_field_count
+    assert fields[-1] is None
+    frame_cls(*fields)
+
+
 # A performative with every field omitted may arrive as a list0 (0x45) body,
 # which has no count byte. The decoder must treat it as zero fields and pad up
 # to the full field count instead of indexing past the end of the buffer.
@@ -133,3 +194,34 @@ def test_performative_field_count_matches_spec(frame_cls, expected_count):
     # The padding target is the number of wire fields defined for each
     # performative (the trailing transfer payload slot is excluded).
     assert _PERFORMATIVE_FIELD_COUNT[frame_cls._code] == expected_count
+
+
+# The _pyamqp engine is vendored identically into azure-eventhub and
+# azure-servicebus; a fix (like the padding above) must be applied to both
+# copies. Guard against the two copies silently drifting apart. The packages
+# ship separately, so skip when the sibling source is not present rather than
+# fail on a package-isolated checkout.
+_PYAMQP_COPIES = (
+    "sdk/eventhub/azure-eventhub/azure/eventhub/_pyamqp",
+    "sdk/servicebus/azure-servicebus/azure/servicebus/_pyamqp",
+)
+
+
+def _repo_root():
+    for parent in pathlib.Path(__file__).resolve().parents:
+        if (parent / "sdk").is_dir():
+            return parent
+    return None
+
+
+@pytest.mark.parametrize("filename", ["_decode.py", "_encode.py", "performatives.py"])
+def test_pyamqp_copies_are_byte_identical(filename):
+    root = _repo_root()
+    assert root is not None, "could not locate the repo root (no ancestor contains sdk/)"
+    eventhub_copy = root / _PYAMQP_COPIES[0] / filename
+    servicebus_copy = root / _PYAMQP_COPIES[1] / filename
+    if not (eventhub_copy.exists() and servicebus_copy.exists()):
+        pytest.skip("both _pyamqp copies are not present in this checkout")
+    assert (
+        eventhub_copy.read_bytes() == servicebus_copy.read_bytes()
+    ), f"{filename} has drifted between the eventhub and servicebus _pyamqp copies; apply to both."
