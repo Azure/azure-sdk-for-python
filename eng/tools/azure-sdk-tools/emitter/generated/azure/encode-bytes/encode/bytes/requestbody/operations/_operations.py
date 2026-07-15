@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import json
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -37,12 +37,13 @@ _SERIALIZER.client_side_validation = False
 def build_request_body_default_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = "/encode/bytes/body/request/default"
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
@@ -50,12 +51,13 @@ def build_request_body_default_request(**kwargs: Any) -> HttpRequest:
 def build_request_body_octet_stream_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     # Construct URL
     _url = "/encode/bytes/body/request/octet-stream"
 
     # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
@@ -63,12 +65,13 @@ def build_request_body_octet_stream_request(**kwargs: Any) -> HttpRequest:
 def build_request_body_custom_content_type_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     # Construct URL
     _url = "/encode/bytes/body/request/custom-content-type"
 
     # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
@@ -116,12 +119,42 @@ class RequestBodyOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def default(self, value: bytes, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @overload
+    def default(self, value: bytes, *, content_type: str = "application/octet-stream", **kwargs: Any) -> None:
         """default.
 
         :param value: Required.
         :type value: bytes
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def default(self, value: IO[bytes], *, content_type: str = "application/octet-stream", **kwargs: Any) -> None:
+        """default.
+
+        :param value: Required.
+        :type value: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def default(  # pylint: disable=inconsistent-return-statements
+        self, value: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """default.
+
+        :param value: Is either a bytes type or a IO[bytes] type. Required.
+        :type value: bytes or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -137,9 +170,10 @@ class RequestBodyOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = value
 
         _request = build_request_body_default_request(
@@ -167,12 +201,42 @@ class RequestBodyOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace
-    def octet_stream(self, value: bytes, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @overload
+    def octet_stream(self, value: bytes, *, content_type: str = "application/octet-stream", **kwargs: Any) -> None:
         """octet_stream.
 
         :param value: Required.
         :type value: bytes
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def octet_stream(self, value: IO[bytes], *, content_type: str = "application/octet-stream", **kwargs: Any) -> None:
+        """octet_stream.
+
+        :param value: Required.
+        :type value: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def octet_stream(  # pylint: disable=inconsistent-return-statements
+        self, value: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """octet_stream.
+
+        :param value: Is either a bytes type or a IO[bytes] type. Required.
+        :type value: bytes or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -188,9 +252,10 @@ class RequestBodyOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = value
 
         _request = build_request_body_octet_stream_request(
@@ -218,14 +283,42 @@ class RequestBodyOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace
-    def custom_content_type(  # pylint: disable=inconsistent-return-statements
-        self, value: bytes, **kwargs: Any
-    ) -> None:
+    @overload
+    def custom_content_type(self, value: bytes, *, content_type: str = "image/png", **kwargs: Any) -> None:
         """custom_content_type.
 
         :param value: Required.
         :type value: bytes
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "image/png".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def custom_content_type(self, value: IO[bytes], *, content_type: str = "image/png", **kwargs: Any) -> None:
+        """custom_content_type.
+
+        :param value: Required.
+        :type value: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "image/png".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def custom_content_type(  # pylint: disable=inconsistent-return-statements
+        self, value: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """custom_content_type.
+
+        :param value: Is either a bytes type or a IO[bytes] type. Required.
+        :type value: bytes or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -241,9 +334,10 @@ class RequestBodyOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "image/png"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "image/png"
         _content = value
 
         _request = build_request_body_custom_content_type_request(

@@ -18,7 +18,6 @@ class TestBytesRequestBodyOperations(BytesClientTestBase):
         client = self.create_client(endpoint=bytes_endpoint)
         response = client.request_body.default(
             value=bytes("bytes", encoding="utf-8"),
-            content_type="str",
         )
 
         # please add some check logic here by yourself
@@ -30,7 +29,6 @@ class TestBytesRequestBodyOperations(BytesClientTestBase):
         client = self.create_client(endpoint=bytes_endpoint)
         response = client.request_body.octet_stream(
             value=bytes("bytes", encoding="utf-8"),
-            content_type="str",
         )
 
         # please add some check logic here by yourself
@@ -42,7 +40,6 @@ class TestBytesRequestBodyOperations(BytesClientTestBase):
         client = self.create_client(endpoint=bytes_endpoint)
         response = client.request_body.custom_content_type(
             value=bytes("bytes", encoding="utf-8"),
-            content_type="str",
         )
 
         # please add some check logic here by yourself
