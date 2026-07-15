@@ -52,6 +52,10 @@ MAGENTA='\033[35m'
 BLUE='\033[34m'
 RESET='\033[0m'
 
+# PY-9: UTC ISO-8601 timestamps (match the server log clock) so client actions
+# can be correlated with crash → restart → reclaim → recover in the server log.
+_now_iso() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+
 # ── Session state ─────────────────────────────────────────────────────────────
 
 load_session() {
@@ -593,6 +597,15 @@ Three-terminal workflow:
               ./demo-client.sh steer "fusion energy"         # mid-run pivot
 EOF
 }
+
+_CMD="${1:-help}"
+_START_EPOCH=$(date +%s)
+echo -e "${CYAN}▶ command '${_CMD}' triggered @ $(_now_iso)${RESET}" >&2
+_end_banner() {
+    local rc=$?
+    echo -e "${CYAN}⏹ '${_CMD}' ended @ $(_now_iso) (elapsed $(( $(date +%s) - _START_EPOCH ))s, exit ${rc})${RESET}" >&2
+}
+trap _end_banner EXIT
 
 case "${1:-}" in
     start)   shift; cmd_start "${1:-}" ;;
