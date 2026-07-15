@@ -1,19 +1,27 @@
 """LangGraph conversation agent with resilient task lifecycle and steering.
 
 Wraps a LangGraph ``StateGraph`` in a steerable resilient task.
-Demonstrates the **checkpoint-and-fork** cancel pattern:
+Demonstrates the **checkpoint-and-fork** pattern for both steering and
+crash recovery:
 
-1. Pre-entry check  — short-circuit if cancel is pre-set
-2. Inter-node check — ``_invoke_cancellable`` checks between graph nodes
-3. Fork-on-steer    — roll back to the last stable checkpoint and fork
-   with the new message
+1. Pre-entry check      — short-circuit if cancel is pre-set
+2. Inter-node check     — ``_invoke_cancellable`` checks between graph nodes
+3. Fork-on-steer/recover — a steer (``is_steered_turn``) or crash
+   (``entry_mode == "recovered"``) rolls back to the last stable checkpoint
+   and re-runs this turn from there with the turn's message; the durable output
+   is this function's return value, so the re-run is idempotent
+4. Resume-at-interrupt  — ``Command(resume=...)`` is used ONLY when the graph is
+   genuinely parked at the ``wait_for_user`` interrupt (the normal next turn)
 
 LangGraph owns the conversation flow; the resilient task owns crash
-resilience and steering orchestration.
+resilience and steering orchestration. This mirrors the correctness learnings
+from the responses LangGraph sample: never resume a crash-drifted graph from its
+latest tip, and never mis-attribute a turn's input as the next turn's resume value.
 """
 
 import asyncio
 import logging
+import os
 import sqlite3
 import typing
 from pathlib import Path
@@ -35,7 +43,11 @@ except ImportError:  # allows running the app as a script from inside this direc
 
 logger = logging.getLogger(__name__)
 
-_DATA_DIR = Path.home() / ".agentserver-sessions"
+# Co-locate all durable state (LangGraph checkpoints + invocation snapshots) with
+# the deployment's state root when one is configured, so it lives together and
+# survives a crash/restart; fall back to a per-user dir for local runs.
+_STATE_ROOT = os.environ.get("AGENTSERVER_STATE_ROOT")
+_DATA_DIR = Path(_STATE_ROOT) / "langgraph-invocations" if _STATE_ROOT else Path.home() / ".agentserver-sessions"
 
 # Invocation result store — written inside the resilient task so it survives crashes
 invocation_store = FileStore(_DATA_DIR / "invocations")
@@ -62,8 +74,9 @@ class ConversationState(TypedDict):
 # ---------------------------------------------------------------------------
 
 # Simulated step delay — distributed across nodes so inter-node
-# cancellation (via ``graph.stream()``) can bail out quickly.
-_STEP_DELAY = 2  # seconds per processing node
+# cancellation (via ``graph.stream()``) can bail out quickly. Overridable via
+# ``LANGGRAPH_STEP_DELAY_SEC`` so tests (and impatient demos) can run it fast.
+_STEP_DELAY = float(os.environ.get("LANGGRAPH_STEP_DELAY_SEC", "2"))  # seconds per processing node
 
 
 def analyze_input(state: ConversationState) -> dict[str, Any]:
@@ -107,7 +120,7 @@ def refine_response(state: ConversationState) -> dict[str, Any]:
     import time  # pylint: disable=import-outside-toplevel
 
     _ = state  # Would inspect the generated reply in a real implementation
-    time.sleep(_STEP_DELAY // 2 or 1)
+    time.sleep(_STEP_DELAY / 2)
     return {}  # No state change — refinement is an internal step
 
 
@@ -240,9 +253,13 @@ def _fork_from_checkpoint(
 
     Returns ``True`` if the fork was created.
     """
-    # Load the target checkpoint to get its full config (includes checkpoint_ns)
+    # Load the target checkpoint to get its full config. The sqlite checkpointer
+    # requires ``checkpoint_ns`` on the config it writes through; a bare
+    # ``{"thread_id", "checkpoint_id"}`` (which is all the resilient task carries)
+    # omits it, so seed the default namespace explicitly before resolving state.
     target_config = {
         "configurable": {
+            "checkpoint_ns": "",
             **config["configurable"],
             "checkpoint_id": target_checkpoint_id,
         }
@@ -308,10 +325,29 @@ async def _finalize_invocation(
 
 
 @multi_turn_task(name="langgraph_session", steerable=True)
-async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
-    """Run one LangGraph conversation turn with steering support.
+async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any] | None:
+    """Run one LangGraph conversation turn with steering + crash recovery.
 
     Input schema: ``{"session_id": str, "message": str, "invocation_id": str}``
+
+    LangGraph integration (applying the responses-sample learnings):
+
+    - **Steering and crash recovery both re-run this turn from the last STABLE
+      checkpoint.** A steer (``is_steered_turn``) or a crash
+      (``entry_mode == "recovered"``) can leave the graph drifted mid-turn.
+      Rather than resuming from the graph's latest (possibly half-executed) tip
+      — which would mis-attribute this turn's input or lose work — we fork from
+      the checkpoint recorded after the last COMPLETED turn and re-inject this
+      turn's message, re-deriving a clean, deterministic result. The durable
+      output is this function's return value, so re-running is idempotent.
+    - **``Command(resume=...)`` is used ONLY when the graph is genuinely parked
+      at the ``wait_for_user`` interrupt** (the normal next-turn path) — never to
+      "resume" a graph that a crash left pending a non-interrupt node (that would
+      inject this turn's message as if it were the next turn's input).
+    - A first-turn crash (no stable checkpoint yet) resumes the pending node in
+      place (the message was already applied before the crash), so it is neither
+      duplicated nor lost.
+    - Cancellation is checked between nodes (``_invoke_cancellable``).
     """
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
@@ -323,66 +359,43 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 
     thread_config: dict[str, Any] = {"configurable": {"thread_id": session_id}}
 
-    if ctx.entry_mode == "recovered":
-        logger.warning("Recovered stale task for session %s", session_id)
-
-    # ── Fork-on-steer: rollback to stable checkpoint ────────────────
-    # If the previous invocation was cancelled mid-flight, the graph may
-    # have drifted past the stable checkpoint.  Fork from the stable
-    # checkpoint with the new message so the graph processes it cleanly.
-    stable_cp = ctx.metadata.get("stable_checkpoint_id")
-    if stable_cp:
-        state = await asyncio.to_thread(_graph.get_state, thread_config)
-        if state and state.values.get("messages"):
-            current_cp = state.config["configurable"].get("checkpoint_id")
-            if current_cp and current_cp != stable_cp:
-                forked = await asyncio.to_thread(
-                    _fork_from_checkpoint,
-                    _graph,
-                    thread_config,
-                    stable_cp,
-                    message,
-                )
-                if forked:
-                    logger.info(
-                        "Forked session %s from stable checkpoint %s",
-                        session_id,
-                        stable_cp,
-                    )
-                    completed = await asyncio.to_thread(
-                        _invoke_cancellable,
-                        _graph,
-                        None,
-                        thread_config,
-                        ctx.cancel,
-                    )
-
-                    if not completed or ctx.cancel.is_set():
-                        invocation_store.save(
-                            invocation_id,
-                            {"status": "cancelled", "reason": "steered"},
-                        )
-                        await stream.close()
-                        return None
-                    await stream.close()
-                    return await _finalize_invocation(ctx, thread_config, invocation_id)
-
-    # ── Phase 1: Pre-entry cancel ───────────────────────────────────
+    # ── Pre-entry cancel (steering supersede / client cancel) ───────
     if ctx.cancel.is_set():
         invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
         await stream.close()
         return None
-    # ── Phase 2: Invoke graph with inter-node cancellation ──────────
-    state = await asyncio.to_thread(_graph.get_state, thread_config)
 
-    if state.next:
+    # ── Resolve how this turn runs ──────────────────────────────────
+    recovered = ctx.entry_mode == "recovered"
+    stable_cp = ctx.metadata.get("stable_checkpoint_id")
+    state = await asyncio.to_thread(_graph.get_state, thread_config)
+    parked_at_interrupt = bool(state.next) and "wait_for_user" in state.next
+
+    graph_input: Any
+    if (ctx.is_steered_turn or recovered) and stable_cp:
+        # Steer or crash recovery: discard any drift past the last completed turn
+        # and re-run THIS turn cleanly by forking from the stable checkpoint.
+        if recovered:
+            logger.info(
+                "Recovered session %s — re-running turn from stable checkpoint %s",
+                session_id,
+                stable_cp,
+            )
+        forked = await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, message)
+        graph_input = None if forked else {"messages": [HumanMessage(content=message)], "is_complete": False}
+    elif recovered:
+        # First-turn crash (no stable checkpoint yet): resume the pending node in
+        # place — this turn's message was already applied before the crash, so
+        # re-injecting it would duplicate it.
+        graph_input = None
+    elif parked_at_interrupt:
+        # Normal next turn — satisfy the wait_for_user interrupt with the message.
         graph_input = Command(resume=message)
     else:
-        graph_input = {
-            "messages": [HumanMessage(content=message)],
-            "is_complete": False,
-        }
+        # Fresh first turn.
+        graph_input = {"messages": [HumanMessage(content=message)], "is_complete": False}
 
+    # ── Run the graph with inter-node cancellation ──────────────────
     loop = asyncio.get_event_loop()
 
     def _on_node(chunk: dict) -> None:
@@ -410,11 +423,12 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         _on_node,
     )
 
-    # ── Phase 3: Post-completion cancel check ───────────────────────
+    # ── Post-run cancel check ───────────────────────────────────────
     if not completed or ctx.cancel.is_set():
         invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
         await stream.close()
         return None
-    # Normal completion
+
+    # ── Normal completion ───────────────────────────────────────────
     await stream.close()
     return await _finalize_invocation(ctx, thread_config, invocation_id)
