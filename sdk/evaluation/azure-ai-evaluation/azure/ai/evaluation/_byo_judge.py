@@ -1,36 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Prototype: use admin-connected (BYO) models as judge / grader models.
+"""Use admin-connected (BYO) models as LLM-as-a-judge evaluator models.
 
 Admin-connected models (Foundry "ModelGateway" / "API Management" connections, referenced
 as ``"connection-name/deployment-name"``) are only invokable through the Foundry project
 **Responses API** — the platform resolves the connection and handles every auth type
-(API key / managed identity / OAuth), ``deploymentInPath``, api-version and custom headers.
+(API key / managed identity / OAuth2), ``deploymentInPath``, api-version and custom headers.
 
-LLM-as-judge evaluators in this library call ``client.chat.completions.create(...)``. This
-module provides a small OpenAI-compatible **shim** that routes those calls to the project
-Responses API for a BYO model, so judge/grader code can use admin-connected connections
-**without any change to its calling code**.
+Prompty-based judge evaluators (coherence, relevance, fluency, groundedness, etc.) call
+``client.chat.completions.create(...)``. This module provides a small OpenAI-compatible async
+**shim** that routes those calls to the project Responses API for a BYO model, so evaluator
+code can use admin-connected connections **without any change to its calling code**.
 """
 import time
 from typing import Any, Dict, List, Optional
-
-from typing_extensions import TypedDict
-
-from azure.core.credentials import TokenCredential
-
-
-class BYOProjectModelConfiguration(TypedDict, total=False):
-    """Model configuration for an admin-connected (BYO) judge model.
-
-    :keyword byo_model: The admin-connected model reference, ``"connection-name/deployment-name"``.
-    :keyword project_endpoint: The Foundry project endpoint,
-        e.g. ``https://<account>.services.ai.azure.com/api/projects/<project>``.
-    """
-
-    byo_model: str
-    project_endpoint: str
 
 
 def _to_responses_input(messages: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
@@ -61,6 +45,20 @@ def _map_params(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return mapped
 
 
+class _Usage:
+    """chat.completions-shaped usage view over a Responses API usage object.
+
+    The Responses API reports ``input_tokens`` / ``output_tokens`` / ``total_tokens``; judge/grader
+    code (and the prompty response formatter) expects ``prompt_tokens`` / ``completion_tokens`` /
+    ``total_tokens``. This adapts the former to the latter.
+    """
+
+    def __init__(self, response_usage: Any) -> None:
+        self.prompt_tokens = getattr(response_usage, "input_tokens", 0) or 0
+        self.completion_tokens = getattr(response_usage, "output_tokens", 0) or 0
+        self.total_tokens = getattr(response_usage, "total_tokens", 0) or 0
+
+
 class _ChatMessage:
     def __init__(self, content: str) -> None:
         self.role = "assistant"
@@ -81,54 +79,62 @@ class _ChatCompletion:
     def __init__(self, response: Any) -> None:
         self.id = getattr(response, "id", None)
         self.model = getattr(response, "model", None)
-        self.usage = getattr(response, "usage", None)
+        _usage = getattr(response, "usage", None)
+        self.usage = _Usage(_usage) if _usage is not None else None
         self.object = "chat.completion"
         self.created = int(time.time())
         self.choices = [_Choice(getattr(response, "output_text", "") or "")]
 
 
-class _ChatCompletions:
-    def __init__(self, owner: "ByoProjectResponsesClient") -> None:
+class _AsyncChatCompletions:
+    def __init__(self, owner: "AsyncByoProjectResponsesClient") -> None:
         self._owner = owner
 
-    def create(self, *, model: Optional[str] = None, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> _ChatCompletion:
+    async def create(
+        self, *, model: Optional[str] = None, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any
+    ) -> _ChatCompletion:
         # ``model`` from the caller is ignored — the BYO model is fixed by the shim's config.
-        response = self._owner._responses_create(messages=messages, **kwargs)
+        response = await self._owner._responses_create(messages=messages, **kwargs)
         return _ChatCompletion(response)
 
 
-class _Chat:
-    def __init__(self, owner: "ByoProjectResponsesClient") -> None:
-        self.completions = _ChatCompletions(owner)
+class _AsyncChat:
+    def __init__(self, owner: "AsyncByoProjectResponsesClient") -> None:
+        self.completions = _AsyncChatCompletions(owner)
 
 
-class ByoProjectResponsesClient:
-    """OpenAI-compatible shim that routes ``chat.completions.create()`` to the Foundry
-    project Responses API for an admin-connected (BYO) model.
+class AsyncByoProjectResponsesClient:
+    """Async OpenAI-compatible shim that routes ``chat.completions.create()`` to the Foundry project
+    Responses API for an admin-connected (BYO) model.
 
-    Judge/grader code that calls ``client.chat.completions.create(model=..., messages=...)``
-    works unchanged; the request is served by the platform, which resolves the connection.
-    A ``responses`` passthrough is also exposed for callers that use the Responses API directly.
+    Used by the prompty judge path (LLM-as-a-judge evaluators such as coherence, relevance, fluency,
+    groundedness, etc.), whose async runner calls ``client.with_options(...).chat.completions.create(...)``.
+    Those calls are served by the platform, which resolves the connection and every auth type
+    (API key / managed identity / OAuth2), so evaluator code is unchanged.
     """
 
-    def __init__(self, byo_model: str, project_endpoint: str, credential: TokenCredential) -> None:
+    def __init__(self, byo_model: str, project_endpoint: str, credential: Any) -> None:
         self._byo_model = byo_model
         self._project_endpoint = project_endpoint
         self._credential = credential
         self._client: Any = None
-        self.chat = _Chat(self)
+        self.chat = _AsyncChat(self)
+
+    def with_options(self, **_kwargs: Any) -> "AsyncByoProjectResponsesClient":
+        # The prompty runner drives its own retry/timeout loop, so there is nothing to reconfigure here.
+        return self
 
     def _openai(self) -> Any:
         if self._client is None:
-            from azure.ai.projects import AIProjectClient
+            from azure.ai.projects.aio import AIProjectClient
 
             self._client = AIProjectClient(
                 endpoint=self._project_endpoint, credential=self._credential
             ).get_openai_client()
         return self._client
 
-    def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
-        return self._openai().responses.create(
+    async def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
+        return await self._openai().responses.create(
             model=self._byo_model,
             input=_to_responses_input(messages),
             **_map_params(kwargs),
@@ -142,16 +148,3 @@ class ByoProjectResponsesClient:
 def is_byo_model_config(model_config: Dict[str, Any]) -> bool:
     """Return True if the model configuration references an admin-connected (BYO) model."""
     return bool(model_config) and bool(model_config.get("byo_model"))
-
-
-def build_byo_judge_client(model_config: Dict[str, Any], credential: TokenCredential) -> ByoProjectResponsesClient:
-    """Build a chat.completions-compatible client for an admin-connected (BYO) judge model."""
-    if not model_config.get("byo_model") or not model_config.get("project_endpoint"):
-        raise ValueError("BYOProjectModelConfiguration requires both 'byo_model' and 'project_endpoint'.")
-    if credential is None:
-        raise ValueError("A TokenCredential is required to call the project Responses API for BYO judge models.")
-    return ByoProjectResponsesClient(
-        byo_model=model_config["byo_model"],
-        project_endpoint=model_config["project_endpoint"],
-        credential=credential,
-    )

@@ -1,17 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Unit tests for the admin-connected (BYO) judge-model prototype."""
-from unittest.mock import MagicMock, patch
+"""Unit tests for admin-connected (BYO) judge-model support in the prompty judge path."""
+import asyncio
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from azure.ai.evaluation._byo_judge import (
-    ByoProjectResponsesClient,
-    build_byo_judge_client,
+    AsyncByoProjectResponsesClient,
     is_byo_model_config,
     _to_responses_input,
     _map_params,
+    _Usage,
 )
 
 
@@ -34,78 +35,85 @@ class TestByoJudgeHelpers:
         }
 
 
-class TestByoJudgeClient:
-    @patch("azure.ai.projects.AIProjectClient")
-    def test_chat_completions_routes_to_responses(self, mock_aipc):
+class TestUsageAdapter:
+    def test_responses_usage_mapped_to_chat_shape(self):
+        usage = _Usage(MagicMock(input_tokens=5, output_tokens=7, total_tokens=12))
+        assert (usage.prompt_tokens, usage.completion_tokens, usage.total_tokens) == (5, 7, 12)
+
+    def test_missing_fields_default_to_zero(self):
+        usage = _Usage(object())
+        assert (usage.prompt_tokens, usage.completion_tokens, usage.total_tokens) == (0, 0, 0)
+
+
+class TestAsyncByoProjectResponsesClient:
+    """The prompty judge path (coherence/relevance/fluency/... LLM-as-a-judge evaluators)."""
+
+    @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_async_chat_completions_routes_to_responses(self, mock_aipc):
         resp = MagicMock()
-        resp.output_text = "judge says 5"
-        resp.usage = MagicMock()
-        resp.id = "resp_1"
+        resp.output_text = "coherent: 5"
+        resp.usage = MagicMock(input_tokens=12, output_tokens=3, total_tokens=15)
+        resp.id = "resp_2"
         resp.model = "my-conn/gpt-4o"
         oai = MagicMock()
-        oai.responses.create.return_value = resp
+        oai.responses.create = AsyncMock(return_value=resp)
         mock_aipc.return_value.get_openai_client.return_value = oai
 
-        client = build_byo_judge_client(
-            {"byo_model": "my-conn/gpt-4o", "project_endpoint": "https://acct.services.ai.azure.com/api/projects/p1"},
+        client = AsyncByoProjectResponsesClient(
+            byo_model="my-conn/gpt-4o",
+            project_endpoint="https://acct.services.ai.azure.com/api/projects/p1",
             credential=MagicMock(),
         )
-        # Judge/grader code calls chat.completions.create unchanged.
-        result = client.chat.completions.create(
-            model="ignored",
-            messages=[{"role": "user", "content": "score this 1-5"}],
-            temperature=0.0,
-            max_tokens=10,
+        # The prompty runner calls with_options(...).chat.completions.create(...).
+        result = asyncio.run(
+            client.with_options(timeout=30).chat.completions.create(
+                model="ignored",
+                messages=[{"role": "user", "content": "rate coherence"}],
+                temperature=0.0,
+                max_tokens=800,
+            )
         )
 
-        # chat.completions-shaped result over the Responses output.
-        assert result.choices[0].message.content == "judge says 5"
+        # chat.completions-shaped result the prompty response formatter expects.
+        assert result.choices[0].message.content == "coherent: 5"
         assert result.choices[0].message.role == "assistant"
+        assert result.choices[0].finish_reason == "stop"
+        assert result.usage.prompt_tokens == 12
+        assert result.usage.completion_tokens == 3
+        assert result.usage.total_tokens == 15
+        assert result.model == "my-conn/gpt-4o"
 
-        # Underlying call is responses.create with the BYO model + mapped input/params.
+        # Underlying call is the project Responses API with the BYO model + mapped input/params.
         mock_aipc.assert_called_once()
         _, pkwargs = mock_aipc.call_args
         assert pkwargs["endpoint"] == "https://acct.services.ai.azure.com/api/projects/p1"
         _, rkwargs = oai.responses.create.call_args
         assert rkwargs["model"] == "my-conn/gpt-4o"
-        assert rkwargs["input"] == [{"type": "message", "role": "user", "content": "score this 1-5"}]
+        assert rkwargs["input"] == [{"type": "message", "role": "user", "content": "rate coherence"}]
         assert rkwargs["temperature"] == 0.0
-        assert rkwargs["max_output_tokens"] == 10
+        assert rkwargs["max_output_tokens"] == 800
 
-    def test_build_requires_project_endpoint(self):
-        with pytest.raises(ValueError):
-            build_byo_judge_client({"byo_model": "c/d"}, credential=MagicMock())
-
-    def test_build_requires_credential(self):
-        with pytest.raises(ValueError):
-            build_byo_judge_client({"byo_model": "c/d", "project_endpoint": "https://x"}, credential=None)
-
-
-class TestAzureOpenAIGraderByo:
-    @patch("azure.ai.projects.AIProjectClient")
-    def test_grader_get_client_returns_shim_for_byo(self, _mock_aipc):
-        from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
-
-        grader = AzureOpenAIGrader(
-            model_config={
-                "byo_model": "my-conn/gpt-4o",
-                "project_endpoint": "https://acct.services.ai.azure.com/api/projects/p1",
-            },
-            grader_config={},
-            credential=MagicMock(),
+    def test_with_options_returns_self(self):
+        client = AsyncByoProjectResponsesClient(
+            "c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock()
         )
-        assert isinstance(grader.get_client(), ByoProjectResponsesClient)
+        assert client.with_options(timeout=5) is client
 
-    def test_grader_byo_requires_credential(self):
-        from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
+
+class TestValidateModelConfigByo:
+    def test_byo_config_passes_through_validation(self):
+        from azure.ai.evaluation._common.utils import validate_model_config
+
+        cfg = {
+            "byo_model": "my-conn/gpt-4o",
+            "project_endpoint": "https://acct.services.ai.azure.com/api/projects/p1",
+        }
+        # BYO configs intentionally omit azure_endpoint/azure_deployment and must not be rejected.
+        assert validate_model_config(cfg) is cfg
+
+    def test_non_byo_invalid_config_still_raises(self):
+        from azure.ai.evaluation._common.utils import validate_model_config
         from azure.ai.evaluation._exceptions import EvaluationException
 
         with pytest.raises(EvaluationException):
-            AzureOpenAIGrader(
-                model_config={
-                    "byo_model": "my-conn/gpt-4o",
-                    "project_endpoint": "https://acct.services.ai.azure.com/api/projects/p1",
-                },
-                grader_config={},
-                credential=None,
-            )
+            validate_model_config({"not": "a valid model config"})

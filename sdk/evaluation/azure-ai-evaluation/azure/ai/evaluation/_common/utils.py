@@ -310,6 +310,13 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
 
 
 def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
+    # Admin-connected (BYO) judge models are referenced as "connection/deployment" and served via the
+    # Foundry project Responses API. Their config intentionally omits azure_endpoint/azure_deployment,
+    # so bypass the AzureOpenAI/OpenAI TypedDict validation and let the prompty layer route them.
+    from azure.ai.evaluation._byo_judge import is_byo_model_config
+
+    if is_byo_model_config(config):
+        return cast(AzureOpenAIModelConfiguration, config)
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:

@@ -61,27 +61,6 @@ class AzureOpenAIGrader:
 
     def _validate_model_config(self) -> None:
         """Validate the model configuration that this grader wrapper is using."""
-        # Prototype: admin-connected (BYO) judge models are served via the project Responses
-        # API and require a credential + project endpoint (no api_key / azure_endpoint).
-        from azure.ai.evaluation._byo_judge import is_byo_model_config
-
-        if is_byo_model_config(self._model_config):
-            if not self._credential:
-                raise EvaluationException(
-                    message=f"{type(self).__name__}: BYO (admin-connected) judge models require a credential.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.AOAI_GRADER,
-                )
-            if not self._model_config.get("project_endpoint"):
-                raise EvaluationException(
-                    message=f"{type(self).__name__}: BYO judge model_config requires 'project_endpoint'.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.AOAI_GRADER,
-                )
-            return
-
         msg = None
         if self._is_azure_model_config(self._model_config):
             if not any(auth for auth in (self._model_config.get("api_key"), self._credential)):
@@ -125,15 +104,6 @@ class AzureOpenAIGrader:
         """
         default_headers = {"User-Agent": UserAgentSingleton().value}
         model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration] = self._model_config
-
-        # Prototype: admin-connected (BYO) judge model referenced as "connection/deployment".
-        # Route judge calls through the Foundry project Responses API via a
-        # chat.completions-compatible shim, so the platform resolves the connection.
-        from azure.ai.evaluation._byo_judge import is_byo_model_config, build_byo_judge_client
-
-        if is_byo_model_config(model_config):
-            return build_byo_judge_client(model_config, self._credential)
-
         api_key: Optional[str] = model_config.get("api_key")
 
         if self._is_azure_model_config(model_config):
