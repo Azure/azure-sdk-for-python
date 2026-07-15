@@ -65,7 +65,6 @@ async def sample_submit_job() -> None:
                     }
                 ],
             },
-            polling=False,
         )
 
         print(f"Initial poller status: {poller.status()}")

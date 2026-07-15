@@ -72,7 +72,6 @@ def sample_get_job_state() -> None:
                 ],
             },
             raw_response_hook=raw_response_hook,
-            polling=False,
         )
 
         parsed = urlparse(operation_location["value"])

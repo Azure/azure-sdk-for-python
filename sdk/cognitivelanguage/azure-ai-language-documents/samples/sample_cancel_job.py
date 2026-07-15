@@ -72,7 +72,6 @@ def sample_cancel_job() -> None:
                 ],
             },
             raw_response_hook=raw_response_hook,
-            polling=False,
         )
 
         parsed = urlparse(operation_location["value"])
