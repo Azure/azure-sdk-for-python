@@ -531,6 +531,14 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         deserializer: Optional[Callable[[bytes], Any]] = None,
     ) -> None:
         super().__init__()
+        if (serializer is None) != (deserializer is None):
+            # C-STR-FBR-3 — a custom serializer and deserializer must be supplied
+            # both-or-neither; a half-configured pair would silently default the
+            # missing side to JSON and corrupt round-trips. Fail fast.
+            raise ValueError(
+                "FileBackedReplayEventStream: 'serializer' and 'deserializer' must be "
+                "supplied both-or-neither (C-STR-FBR-3)"
+            )
         self._path = Path(path)
         self._cursor_fn = cursor_fn
         self._ttl_seconds = ttl_seconds
@@ -617,6 +625,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             lines = [l for l in lines if l]
         had_terminal = False
         records: list[dict] = []
+        last_idx = len(lines) - 1
         for idx, line in enumerate(lines):
             try:
                 rec = self._deserialize_record(line)
@@ -628,26 +637,20 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                     f"FileBackedReplayEventStream: malformed record at " f"line {idx} of {self._path}"
                 ) from exc
             if rec.get(_TERMINAL_MARKER):
-                if had_terminal:
-                    # Multiple terminals or terminal-not-at-EOF — malformed.
-                    self._cleanup_locks()
-                    logger.error("FileBackedReplayEventStream: terminal marker not at end-of-file in %s", self._path)
-                    raise RuntimeError(
-                        f"FileBackedReplayEventStream: terminal marker not " f"at end-of-file in {self._path}"
+                # C-STR-FBR-6 — only a terminal sentinel that is the FINAL record
+                # closes the stream. A non-final terminal sentinel (e.g. an
+                # earlier lifetime closed, then more events were appended, or a
+                # duplicate marker) is IGNORED; loading continues.
+                if idx == last_idx:
+                    had_terminal = True
+                else:
+                    logger.debug(
+                        "FileBackedReplayEventStream: ignoring non-final terminal marker "
+                        "at line %d of %s (C-STR-FBR-6)",
+                        idx,
+                        self._path,
                     )
-                had_terminal = True
-                # Spec 037 #2 — the terminal record carries no ``emit_time`` and
-                # is validated for shape only; skip the emit_time requirement.
                 continue
-            if had_terminal:
-                # Records after terminal marker — malformed.
-                self._cleanup_locks()
-                logger.error(
-                    "FileBackedReplayEventStream: record at line %d of %s follows terminal marker", idx, self._path
-                )
-                raise RuntimeError(
-                    f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} follows terminal marker"
-                )
             if "emit_time" not in rec:
                 self._cleanup_locks()
                 logger.error(
