@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""E2E tests for resilient samples (17-22).
+"""E2E tests for the resilient responses samples (19-22) + generic upstream-wrap patterns.
 
 These tests verify that the sample handler patterns:
 - Emit response.created as the FIRST event
@@ -9,9 +9,10 @@ These tests verify that the sample handler patterns:
 - Handle cancellation correctly (skip completed on shutdown)
 - Never return None or exit without events
 
-Note: Samples 17 (Claude) and 18 (Copilot) require external SDKs.
-We test the same handler PATTERN inline (simulated upstream) to verify
-the event protocol is correct.
+Note: the shipped numbered samples are 19-22. The Claude-style and Copilot-style
+"wrap a stateful upstream SDK" patterns are not shipped as numbered samples (they
+require external SDKs); we test the same handler PATTERN inline (simulated
+upstream) to verify the event protocol is correct.
 """
 
 from __future__ import annotations
@@ -57,12 +58,12 @@ def _collect_sse(response) -> list[dict[str, Any]]:
 
 
 # ---------------------------------------------------------------------------
-# Sample 17: Resilient Claude (tests the handler pattern, no real Anthropic SDK)
+# Resilient Claude-style upstream pattern (wrap a stateful upstream SDK; no real Anthropic SDK)
 # ---------------------------------------------------------------------------
 
 
-def _make_sample17_app() -> TestClient:
-    """Reproduces sample_17 pattern with a simulated upstream (no real Claude SDK)."""
+def _make_claude_style_app() -> TestClient:
+    """A resilient Claude-style upstream-wrap pattern with a simulated upstream (no real Claude SDK)."""
     options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
@@ -104,16 +105,16 @@ def _make_sample17_app() -> TestClient:
     return TestClient(app)
 
 
-class TestSample17ResilientClaude:
+class TestResilientClaudeStylePattern:
     def test_streaming_emits_created_first(self) -> None:
-        client = _make_sample17_app()
+        client = _make_claude_style_app()
         payload = {"model": "claude", "input": "Hello!", "stream": True, "store": True, "background": True}
         with client.stream("POST", "/responses", json=payload) as resp:
             events = _collect_sse(resp)
         assert events[0]["type"] == "response.created"
 
     def test_streaming_emits_completed(self) -> None:
-        client = _make_sample17_app()
+        client = _make_claude_style_app()
         payload = {"model": "claude", "input": "Hello!", "stream": True, "store": True, "background": True}
         with client.stream("POST", "/responses", json=payload) as resp:
             events = _collect_sse(resp)
@@ -121,7 +122,7 @@ class TestSample17ResilientClaude:
         assert "response.completed" in types
 
     def test_produces_output_text(self) -> None:
-        client = _make_sample17_app()
+        client = _make_claude_style_app()
         payload = {"model": "claude", "input": "world", "stream": True, "store": True, "background": True}
         with client.stream("POST", "/responses", json=payload) as resp:
             events = _collect_sse(resp)

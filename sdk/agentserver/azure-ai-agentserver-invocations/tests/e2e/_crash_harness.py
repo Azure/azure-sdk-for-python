@@ -18,7 +18,7 @@ Usage in a test:
     @pytest.mark.asyncio
     async def test_recovery(tmp_path: Path) -> None:
         harness = CrashHarness(
-            sample_module="azure_ai_agentserver_responses_samples.sample_18_resilient_copilot",
+            sample_module="my_pkg.resilient_langgraph.app",
             tmp_path=tmp_path,
         )
         await harness.start()
@@ -51,7 +51,7 @@ class CrashHarness:
     """Spawn-and-kill harness for cross-process recovery testing.
 
     :param sample_module: Importable module name (e.g.
-        ``"my_pkg.sample_18_resilient_copilot"``) or a Python file path. The
+        ``"my_pkg.resilient_langgraph.app"``) or a Python file path. The
         subprocess runs ``python -m <module>`` if given a module name, or
         ``python <path>`` if given a file path.
     :type sample_module: str | ~types.ModuleType | ~pathlib.Path

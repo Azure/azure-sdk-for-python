@@ -11,13 +11,13 @@ e2e scenarios under ``@pytest.mark.live`` markers.
 
 What this gate enforces:
 
-1. The four canonical resilient invocation samples (``resilient_copilot``,
-   ``resilient_langgraph``, ``resilient_multiturn``, ``resilient_research``)
+1. The three canonical resilient invocation samples
+   (``resilient_langgraph``, ``resilient_multiturn``, ``resilient_research``)
    each exist and ship the minimum files
    (``agent.py`` + ``app.py`` + ``README.md`` + ``requirements.txt``).
 
-2. The dropped ``resilient_claude`` sample no longer exists (/
-   SC-004).
+2. The dropped ``resilient_claude`` and ``resilient_copilot`` samples no
+   longer exist (/ SC-004).
 
 3. No sample's source references retired names that were removed in
    Phase 3-6 of  (``ctx.run_attempt``, ``ctx.generation``,
@@ -25,19 +25,12 @@ What this gate enforces:
    ``TaskSuspended``, ``max_pending``, ``lease_duration_seconds``,
    ``_framework[``, ``_framework.``).
 
-4. ``resilient_copilot/agent.py`` reflects the 5 implementation-gap
-   fixes called out: ``streaming=True`` is wired,
-   ``AssistantMessageDeltaData`` and ``SessionIdleData`` are emitted,
-   upstream-history dedup is referenced, and recovery replay is
-   handled (``ctx.entry_mode == "recovered"``).
-
-5. ``resilient-agent-demo`` is left structurally intact (the user
+4. ``resilient-agent-demo`` is left structurally intact (the user
    explicitly asked we not delete or rewrite that demo).
 """
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import pytest
@@ -49,13 +42,12 @@ import pytest
 _SAMPLES_DIR = Path(__file__).resolve().parent.parent / "samples"
 
 _REQUIRED_RESILIENT_SAMPLES: tuple[str, ...] = (
-    "resilient_copilot",
     "resilient_langgraph",
     "resilient_multiturn",
     "resilient_research",
 )
 
-_DROPPED_SAMPLES: tuple[str, ...] = ("resilient_claude",)
+_DROPPED_SAMPLES: tuple[str, ...] = ("resilient_claude", "resilient_copilot")
 
 _REQUIRED_FILES_PER_SAMPLE: tuple[str, ...] = (
     "agent.py",
@@ -159,45 +151,13 @@ def test_sample_has_no_retired_name_references(sample_name: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 4. resilient_copilot 5-gap fix evidence
+# 4. (intentionally removed — resilient_copilot sample deleted in Spec 041)
 # ---------------------------------------------------------------------------
-
-
-def test_resilient_copilot_closes_the_five_implementation_gaps() -> None:
-    """: ``resilient_copilot/agent.py`` reflects the 5 implementation gaps."""
-
-    agent = _sample_path("resilient_copilot") / "agent.py"
-    if not agent.exists():
-        pytest.fail(f"resilient_copilot/agent.py missing at {agent}")
-    text = agent.read_text(encoding="utf-8")
-
-    # Gap 1: streaming=True wired into the SDK call (allows mid-stream cancel).
-    assert "streaming=True" in text or "stream=True" in text, (
-        " gap 1: resilient_copilot must wire streaming=True (or stream=True) "
-        "on the underlying Copilot SDK call so mid-stream cancel works."
-    )
-
-    # Gap 2 + 3: emit AssistantMessageDeltaData + SessionIdleData event types.
-    assert "AssistantMessageDeltaData" in text, (
-        " gap 2: resilient_copilot must emit AssistantMessageDeltaData events "
-        "to invocations consumers as the assistant message streams."
-    )
-    assert "SessionIdleData" in text, (
-        " gap 3: resilient_copilot must emit SessionIdleData (turn-complete) " "events to invocations consumers."
-    )
-
-    # Gap 4: upstream-history dedup — sample must guard against double-send on resume.
-    assert re.search(r"dedup|already_sent|_sent_messages", text), (
-        " gap 4: resilient_copilot must include upstream-history dedup "
-        "(e.g. tracking already-sent message IDs) so resume does not double-send."
-    )
-
-    # Gap 5: recovery replay — handler MUST branch on entry_mode == 'recovered'
-    # to replay any chunks the previous lifetime already wrote to upstream.
-    assert 'ctx.entry_mode == "recovered"' in text or 'entry_mode == "recovered"' in text, (
-        " gap 5: resilient_copilot must branch on ctx.entry_mode == "
-        "'recovered' to drive recovery replay of already-streamed chunks."
-    )
+#
+# The earlier ``test_resilient_copilot_closes_the_five_implementation_gaps``
+# assertion lived here while the ``resilient_copilot`` sample shipped. That
+# sample was deleted (Spec 041 A0) — the Copilot streaming primitive is already
+# exercised elsewhere — so the copilot-specific structural guard is gone.
 
 
 # ---------------------------------------------------------------------------

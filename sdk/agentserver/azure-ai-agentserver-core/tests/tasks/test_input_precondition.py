@@ -52,6 +52,18 @@ async def _long_running_steerable(ctx: TaskContext[dict]) -> dict:
     return {"final": "ok"}
 
 
+@multi_turn_task(name="us2-mt-echo-input-id", steerable=True)
+async def _mt_echo_input_id(ctx: TaskContext[dict]) -> dict:
+    """Multi-turn task that surfaces the input_id assigned to this turn."""
+    return {"input_id": ctx.input_id}
+
+
+@task(name="us2-oneshot-echo-input-id")
+async def _oneshot_echo_input_id(ctx: TaskContext[dict]) -> dict:
+    """One-shot task that surfaces its input_id (defaults to task_id)."""
+    return {"input_id": ctx.input_id}
+
+
 # ---------------------------------------------------------------------------
 # Manager setup helpers
 # ---------------------------------------------------------------------------
@@ -207,16 +219,22 @@ async def test_input_id_only_advances_chain_head_unconditionally(tmp_path: Path)
 
 
 @pytest.mark.asyncio
-async def test_legacy_callers_unaffected(tmp_path: Path) -> None:
-    """No input_id, no if_last_input_id: framework slot is not seeded."""
+async def test_omitted_input_id_autogenerates_per_turn(tmp_path: Path) -> None:
+    """Multi-turn identity rule: an omitted ``input_id`` is auto-generated per
+    turn (a unique ``input-<guid>``, not the fixed ``task_id``) and seeded into
+    the framework's ``last_input_id`` slot — advancing the chain head."""
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         run = await _fast_completing.start(task_id="t-legacy", input={"x": 1})
         await run.result()
         info = await manager.provider.get("t-legacy")
         assert info is not None
-        # Legacy path doesn't seed the slot at all.
-        assert "last_input_id" not in info.payload
+        # Auto-generated per-turn id is seeded (was previously absent — the
+        # source used to default it to task_id; Spec 041 PY-3 aligns it to the
+        # spec + docs + .NET port).
+        seeded = info.payload.get("last_input_id")
+        assert isinstance(seeded, str) and seeded.startswith("input-"), info.payload
+        assert seeded != "t-legacy"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -302,3 +320,68 @@ async def test_precondition_check_source_signature() -> None:
     assert "_check_input_precondition" in src
     #   framing annotation present.
     assert " " in src
+
+
+# ---------------------------------------------------------------------------
+# Spec 041 PY-3 — per-turn input_id auto-generation for multi-turn
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_multiturn_input_id_surfaced_on_context(tmp_path: Path) -> None:
+    """An omitted multi-turn input_id is auto-generated AND surfaced on
+    ``ctx.input_id`` (not left as ``task_id``)."""
+    manager, mgr_mod = await _setup_manager(tmp_path)
+    try:
+        run = await _mt_echo_input_id.start(task_id="t-echo", input={"x": 1})
+        result = await run.result()
+        assert isinstance(result["input_id"], str)
+        assert result["input_id"].startswith("input-")
+        assert result["input_id"] != "t-echo"
+    finally:
+        await _teardown_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+async def test_multiturn_input_id_unique_per_turn(tmp_path: Path) -> None:
+    """Two turns on the same chain with omitted input_id get DISTINCT ids, and
+    each advances the persisted chain head (``last_input_id``)."""
+    manager, mgr_mod = await _setup_manager(tmp_path)
+    try:
+        r1 = await _mt_echo_input_id.start(task_id="t-turns", input={"turn": 1})
+        id1 = (await r1.result())["input_id"]
+        head1 = (await manager.provider.get("t-turns")).payload.get("last_input_id")
+
+        r2 = await _mt_echo_input_id.start(task_id="t-turns", input={"turn": 2})
+        id2 = (await r2.result())["input_id"]
+        head2 = (await manager.provider.get("t-turns")).payload.get("last_input_id")
+
+        assert id1 != id2, (id1, id2)
+        assert head1 == id1 and head2 == id2, (head1, id1, head2, id2)
+    finally:
+        await _teardown_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+async def test_multiturn_supplied_input_id_preserved(tmp_path: Path) -> None:
+    """A caller-supplied multi-turn input_id is used verbatim (not overwritten)."""
+    manager, mgr_mod = await _setup_manager(tmp_path)
+    try:
+        run = await _mt_echo_input_id.start(task_id="t-supplied", input={"x": 1}, input_id="msg-A")
+        result = await run.result()
+        assert result["input_id"] == "msg-A"
+    finally:
+        await _teardown_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+async def test_oneshot_input_id_defaults_to_task_id(tmp_path: Path) -> None:
+    """One-shot behavior is UNCHANGED: an omitted input_id defaults to task_id
+    (the 1:1 invariant) — auto-generation is multi-turn only."""
+    manager, mgr_mod = await _setup_manager(tmp_path)
+    try:
+        run = await _oneshot_echo_input_id.start(task_id="t-oneshot", input={"x": 1})
+        result = await run.result()
+        assert result["input_id"] == "t-oneshot"
+    finally:
+        await _teardown_manager(manager, mgr_mod)
