@@ -452,6 +452,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             if key in base_dict:
                 rest_obj[key] = base_dict.get(key)
 
+        # Resolve any embedded data-binding objects (PipelineInput/NodeInput/PipelineExpression) in arbitrary
+        # user-set attributes to their binding strings. The legacy msrest encoder tolerated raw objects here, but
+        # the shared arm_ml_service ``SdkJSONEncoder`` raises on them (e.g. ``node.unknown_field = pipeline_input``).
+        from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
+
+        arbitrary_attrs = {key: get_rest_dict_for_node_attrs(value) for key, value in self._get_attrs().items()}
+
         rest_obj.update(
             dict(  # pylint: disable=use-dict-literal
                 name=self.name,
@@ -464,7 +471,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                 properties=self.properties,
                 _source=self._source,
                 # add all arbitrary attributes to support setting unknown attributes
-                **self._get_attrs(),
+                **arbitrary_attrs,
             )
         )
         # only add comment in REST object when it is set
