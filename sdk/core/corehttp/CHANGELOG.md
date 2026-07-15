@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Added JSONL streaming support via the `corehttp.streaming` module, including the `Stream`/`AsyncStream` iterators and `JSONLDecoder`/`AsyncJSONLDecoder`. [#38806](https://github.com/Azure/azure-sdk-for-python/issues/38806)
 - Introduced the keyword argument `additional_allowed_query_params` to `DistributedHttpTracingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes. [#46657](https://github.com/Azure/azure-sdk-for-python/pull/46657)
 
 ### Breaking Changes

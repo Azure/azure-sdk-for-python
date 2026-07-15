@@ -1,5 +1,11 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Features Added
+
+- Added JSONL streaming support via the `azure.core.streaming` module, including the `Stream`/`AsyncStream` iterators and `JSONLDecoder`/`AsyncJSONLDecoder`. #38806
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
