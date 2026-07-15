@@ -56,7 +56,6 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 )
 
 from ._config import get_hosted_agent_env
-from ._version import VERSION
 from ._constants import (
     MAX_ID_LENGTH,
     VALID_ID_PATTERN,
@@ -389,9 +388,7 @@ class ActivityAgentServerHost(AgentServerHost):
 
         mode = "custom-handler" if request_handler is not None else "m365"
         logger.info(
-            "ActivityAgentServerHost initialized | DEPLOY_MARKER=activity-sdk-2026-07-14 "
-            "| sdk_version=%s | mode=%s | digital_worker=%s",
-            VERSION,
+            "ActivityAgentServerHost initialized | mode=%s | digital_worker=%s",
             mode,
             self._digital_worker,
         )
