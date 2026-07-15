@@ -52,6 +52,7 @@ class SanitizedValues:
     ACCOUNT_NAME = "sanitized-account-name"
     PROJECT_NAME = "sanitized-project-name"
     COMPONENT_NAME = "sanitized-component-name"
+    AGENT_NAME = "sanitized-agent-name"
     AGENTS_API_VERSION = "sanitized-api-version"
     API_KEY = "sanitized-api-key"
     MODEL_DEPLOYMENT_NAME = "sanitized-model-deployment-name"
@@ -65,6 +66,7 @@ def sanitized_values():
         "project_name": f"{SanitizedValues.PROJECT_NAME}",
         "account_name": f"{SanitizedValues.ACCOUNT_NAME}",
         "component_name": f"{SanitizedValues.COMPONENT_NAME}",
+        "agent_name": f"{SanitizedValues.AGENT_NAME}",
         "agents_api_version": f"{SanitizedValues.AGENTS_API_VERSION}",
         "api_key": f"{SanitizedValues.API_KEY}",
         "model_deployment_name": f"{SanitizedValues.MODEL_DEPLOYMENT_NAME}",
@@ -258,6 +260,24 @@ def add_sanitizers(test_proxy, sanitized_values):
         add_body_string_sanitizer(
             target=model_deployment_name,
             value=sanitized_values["model_deployment_name"],
+        )
+
+    agent_names = {
+        value
+        for value in (
+            os.environ.get("FOUNDRY_AGENT_NAME"),
+            os.environ.get("foundry_agent_name"),
+        )
+        if value and value != sanitized_values["agent_name"]
+    }
+    for agent_name in agent_names:
+        add_general_regex_sanitizer(
+            regex=re.escape(agent_name),
+            value=sanitized_values["agent_name"],
+        )
+        add_body_string_sanitizer(
+            target=agent_name,
+            value=sanitized_values["agent_name"],
         )
 
     # Deterministic fallback sanitization for model deployment names returned by

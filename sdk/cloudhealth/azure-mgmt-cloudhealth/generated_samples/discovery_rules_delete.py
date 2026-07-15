@@ -31,12 +31,12 @@ def main():
     )
 
     client.discovery_rules.begin_delete(
-        resource_group_name="my-resource-group",
-        health_model_name="my-health-model",
-        discovery_rule_name="my-discovery-rule",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        discovery_rule_name="discover-web-apps",
     ).result()
 
 
-# x-ms-original-file: 2026-01-01-preview/DiscoveryRules_Delete.json
+# x-ms-original-file: 2026-05-01-preview/DiscoveryRules_Delete.json
 if __name__ == "__main__":
     main()

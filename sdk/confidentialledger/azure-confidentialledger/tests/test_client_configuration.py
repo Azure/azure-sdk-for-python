@@ -4,12 +4,14 @@
 # ------------------------------------
 """Unit tests for ConfidentialLedgerClient configuration."""
 
+import os
+import tempfile
+
 import pytest
 from unittest.mock import patch, MagicMock
 from azure.core.pipeline import policies
 
-# Import the generated client directly to test its policy configuration
-from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
+from azure.confidentialledger._redirect_caching_policy import RedirectCachingPolicy
 
 
 class TestClientConfiguration:
@@ -22,77 +24,98 @@ class TestClientConfiguration:
         on service-managed redirects, which is required for correct authentication
         behavior within the trusted Confidential Ledger endpoint.
         """
-        # Mock the PipelineClient to capture the policies passed to it
-        with patch("azure.confidentialledger._client.PipelineClient") as mock_pipeline_client:
+        with (
+            patch("azure.confidentialledger._client.PipelineClient") as mock_pipeline_client,
+            patch(
+                "azure.confidentialledger._patch.ConfidentialLedgerCertificateClient"
+            ) as mock_cert_client,
+        ):
             mock_pipeline_client.return_value = MagicMock()
+            mock_cert_client.return_value.get_ledger_identity.return_value = {
+                "ledgerTlsCertificate": "fake-cert"
+            }
 
-            # Create the generated client directly - this will trigger policy creation
-            # The generated client only requires ledger_endpoint
-            client = GeneratedClient(
-                ledger_endpoint="https://test-ledger.confidentialledger.azure.com"
-            )
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".pem", delete=False) as f:
+                f.write("fake-cert")
+                cert_path = f.name
 
-            # Get the policies argument passed to PipelineClient
-            call_args = mock_pipeline_client.call_args
-            policies_arg = call_args.kwargs.get("policies") or call_args[1].get("policies")
+            try:
+                from azure.confidentialledger._patch import (
+                    ConfidentialLedgerClient,
+                    ConfidentialLedgerCertificateCredential,
+                )
 
-            # Find the SensitiveHeaderCleanupPolicy in the policies list
-            sensitive_header_policy = None
-            for policy in policies_arg:
-                if isinstance(policy, policies.SensitiveHeaderCleanupPolicy):
-                    sensitive_header_policy = policy
-                    break
+                cred = ConfidentialLedgerCertificateCredential(cert_path)
+                client = ConfidentialLedgerClient(
+                    "https://test-ledger.confidentialledger.azure.com",
+                    cred,
+                    ledger_certificate_path=cert_path,
+                )
 
-            # Assert the policy exists and has disable_redirect_cleanup=True
-            assert sensitive_header_policy is not None, (
-                "SensitiveHeaderCleanupPolicy should be present in the client's policies"
-            )
-            assert sensitive_header_policy._disable_redirect_cleanup is True, (
-                "SensitiveHeaderCleanupPolicy should have disable_redirect_cleanup=True "
-                "to preserve authentication headers on Confidential Ledger redirects"
-            )
+                call_args = mock_pipeline_client.call_args
+                policies_arg = call_args.kwargs.get("policies") or call_args[1].get("policies")
 
-            client.close()
+                sensitive_header_policy = None
+                for policy in policies_arg:
+                    if isinstance(policy, policies.SensitiveHeaderCleanupPolicy):
+                        sensitive_header_policy = policy
+                        break
 
-    def test_sensitive_header_cleanup_policy_is_in_correct_position(self):
-        """Test that SensitiveHeaderCleanupPolicy is positioned after authentication_policy.
+                assert (
+                    sensitive_header_policy is not None
+                ), "SensitiveHeaderCleanupPolicy should be present in the client's policies"
+                assert sensitive_header_policy._disable_redirect_cleanup is True, (
+                    "SensitiveHeaderCleanupPolicy should have disable_redirect_cleanup=True "
+                    "to preserve authentication headers on Confidential Ledger redirects"
+                )
 
-        The policy should be placed after the authentication policy so that it can
-        properly handle the redirect cleanup for authentication headers.
-        """
-        with patch("azure.confidentialledger._client.PipelineClient") as mock_pipeline_client:
+                client.close()
+            finally:
+                os.unlink(cert_path)
+
+    def test_redirect_caching_policy_is_used(self):
+        """Test that RedirectCachingPolicy is used as the redirect policy."""
+        with (
+            patch("azure.confidentialledger._client.PipelineClient") as mock_pipeline_client,
+            patch(
+                "azure.confidentialledger._patch.ConfidentialLedgerCertificateClient"
+            ) as mock_cert_client,
+        ):
             mock_pipeline_client.return_value = MagicMock()
+            mock_cert_client.return_value.get_ledger_identity.return_value = {
+                "ledgerTlsCertificate": "fake-cert"
+            }
 
-            client = GeneratedClient(
-                ledger_endpoint="https://test-ledger.confidentialledger.azure.com"
-            )
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".pem", delete=False) as f:
+                f.write("fake-cert")
+                cert_path = f.name
 
-            # Get the policies argument passed to PipelineClient
-            call_args = mock_pipeline_client.call_args
-            policies_arg = call_args.kwargs.get("policies") or call_args[1].get("policies")
+            try:
+                from azure.confidentialledger._patch import (
+                    ConfidentialLedgerClient,
+                    ConfidentialLedgerCertificateCredential,
+                )
 
-            # Filter out None values
-            non_none_policies = [p for p in policies_arg if p is not None]
+                cred = ConfidentialLedgerCertificateCredential(cert_path)
+                client = ConfidentialLedgerClient(
+                    "https://test-ledger.confidentialledger.azure.com",
+                    cred,
+                    ledger_certificate_path=cert_path,
+                )
 
-            # Find positions of key policies
-            sensitive_header_idx = None
-            distributed_tracing_idx = None
+                call_args = mock_pipeline_client.call_args
+                policies_arg = call_args.kwargs.get("policies") or call_args[1].get("policies")
 
-            for idx, policy in enumerate(non_none_policies):
-                if isinstance(policy, policies.SensitiveHeaderCleanupPolicy):
-                    sensitive_header_idx = idx
-                elif isinstance(policy, policies.DistributedTracingPolicy):
-                    distributed_tracing_idx = idx
+                redirect_policy = None
+                for policy in policies_arg:
+                    if isinstance(policy, RedirectCachingPolicy):
+                        redirect_policy = policy
+                        break
 
-            # SensitiveHeaderCleanupPolicy should come after DistributedTracingPolicy
-            assert sensitive_header_idx is not None, (
-                "SensitiveHeaderCleanupPolicy should be present in the policies"
-            )
-            assert distributed_tracing_idx is not None, (
-                "DistributedTracingPolicy should be present in the policies"
-            )
-            assert sensitive_header_idx > distributed_tracing_idx, (
-                "SensitiveHeaderCleanupPolicy should be positioned after DistributedTracingPolicy"
-            )
+                assert redirect_policy is not None, (
+                    "RedirectCachingPolicy should be used as the redirect policy"
+                )
 
-            client.close()
+                client.close()
+            finally:
+                os.unlink(cert_path)

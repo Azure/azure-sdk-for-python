@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b7 (Unreleased)
+## 2.0.0b8 (Unreleased)
 
 ### Features Added
 
@@ -8,13 +8,6 @@
 
 - Added a **resilient task primitive** for building long-running agents that survive container restarts, out-of-memory kills, and redeployments. Decorate an async function with `@task` (one-shot) or `@multi_turn_task` (multi-turn conversations); the framework persists task state to a task store and automatically recovers and re-invokes in-flight work after a crash. Available from `azure.ai.agentserver.core.tasks`, with `TaskContext`, `TaskRun`, configurable retries (`RetryPolicy`), cancellation, steering, and a typed exception set (`TaskFailed`, `TaskCancelled`, `TaskConflictError`, `TaskManagerNotInitialized`, and others). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md).
 - Added an **event streaming** API (`azure.ai.agentserver.core.streaming`) for publishing incremental task output to one or more subscribers, with in-memory and file-backed buffering and live or replay delivery. This makes it straightforward to serve Server-Sent Events (SSE) responses that a client can disconnect from and resume. See the [Streaming Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md).
-- Container protocol version `2.0.0` support: added the platform identity header constants `x-agent-user-id` (`USER_ID`) — the global, cross-agent per-user partition key — and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) — the opaque per-request call identifier — to the `_platform_headers` module.
-- Added `FOUNDRY_AGENT_ID` environment variable support exposing the agent's stable GUID via `AgentConfig.agent_guid` and the `resolve_agent_guid()` helper.
-- Added a request-scoped platform context: `FoundryAgentRequestContext`, `get_request_context()`, `set_request_context()`, and `reset_request_context()`. Protocol packages bind the inbound per-request call ID and user ID so that handler code (and the SDK HTTP pipeline) can read them. `FoundryAgentRequestContext.platform_headers()` builds the headers to forward on outbound Foundry 1P calls — the per-request call ID only; `x-agent-user-id` is **not** forwarded (it is not accepted/trusted by 1P services and is used only for container-side state partitioning).
-
-### Breaking Changes
-
-- Replaced the `x-agent-user-isolation-key` / `x-agent-chat-isolation-key` header constants (`USER_ISOLATION_KEY` / `CHAT_ISOLATION_KEY`) with `x-agent-user-id` (`USER_ID`) and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) per container protocol version `2.0.0`.
 
 ### Other Changes
 
@@ -28,6 +21,18 @@
 - Added `azure-core` as a dependency, and a `hosted` optional-dependencies extra (pulling in `azure-identity`) for hosted-agent deployments.
 - `resolve_graceful_shutdown_timeout()` now honors the `AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS` environment variable, letting operators shorten shutdown so task checkpoints can flush before long-running requests finish.
 - Added diagnostic logging (logger `azure.ai.agentserver.streaming`) to the event-streaming subsystem covering stream creation/deletion, crash-recovery rehydration of file-backed streams, and corruption/lock-contention failures, to aid debugging in production.
+
+## 2.0.0b7 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: added the platform identity header constants `x-agent-user-id` (`USER_ID`) — the global, cross-agent per-user partition key — and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) — the opaque per-request call identifier — to the `_platform_headers` module.
+- Added `FOUNDRY_AGENT_ID` environment variable support exposing the agent's stable GUID via `AgentConfig.agent_guid` and the `resolve_agent_guid()` helper.
+- Added a request-scoped platform context: `FoundryAgentRequestContext`, `get_request_context()`, `set_request_context()`, and `reset_request_context()`. Protocol packages bind the inbound per-request call ID and user ID so that handler code (and the SDK HTTP pipeline) can read them. `FoundryAgentRequestContext.platform_headers()` builds the headers to forward on outbound Foundry 1P calls — the per-request call ID only; `x-agent-user-id` is **not** forwarded (it is not accepted/trusted by 1P services and is used only for container-side state partitioning).
+
+### Breaking Changes
+
+- Replaced the `x-agent-user-isolation-key` / `x-agent-chat-isolation-key` header constants (`USER_ISOLATION_KEY` / `CHAT_ISOLATION_KEY`) with `x-agent-user-id` (`USER_ID`) and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) per container protocol version `2.0.0`.
 
 ## 2.0.0b6 (2026-06-12)
 
