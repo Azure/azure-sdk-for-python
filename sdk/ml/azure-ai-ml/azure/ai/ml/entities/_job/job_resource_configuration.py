@@ -206,7 +206,9 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
                 "dockerArgs": "docker_args",
                 "shmSize": "shm_size",
             }
-            normalized = {camel_to_snake.get(key, key): value for key, value in obj.items()}
+            normalized: Dict[str, Any] = {
+                camel_to_snake.get(str(key), str(key)): value for key, value in obj.items()
+            }
             return cls(**normalized)
         return JobResourceConfiguration(
             # ``locations`` is on the v2023_04 msrest model but not the shared arm_ml_service model
