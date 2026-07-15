@@ -1,14 +1,6 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
-
-### Features Added
-
-- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
-
-### Breaking Changes
-
-- Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`.
+## 1.0.0b7 (Unreleased)
 
 ### Samples
 
@@ -20,7 +12,17 @@
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b7` (the release that introduces the resilient-task primitive).
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
+
+## 1.0.0b6 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
+
+### Breaking Changes
+
+- Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`.
 
 ## 1.0.0b5 (2026-06-12)
 

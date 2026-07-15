@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b7",
+    "azure-ai-agentserver-core>=2.0.0b8",
 ]
 
 [dependency-groups]
@@ -68,7 +68,7 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core>=2.0.0b7 is not yet on PyPI
+# azure-ai-agentserver-core>=2.0.0b8 is not yet on PyPI
 mindependency = false
 pylint = true
 type_check_samples = false
