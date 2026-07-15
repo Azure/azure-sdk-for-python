@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,9 +33,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_cloud_hsm_cluster_backup_status_get_request,
     build_cloud_hsm_cluster_private_endpoint_connections_create_request,
@@ -61,13 +62,24 @@ from ...operations._operations import (
     build_dedicated_hsm_list_outbound_network_dependencies_endpoints_request,
     build_dedicated_hsm_update_request,
     build_operations_list_request,
+    build_payment_hsm_cluster_private_endpoint_connections_create_request,
+    build_payment_hsm_cluster_private_endpoint_connections_delete_request,
+    build_payment_hsm_cluster_private_endpoint_connections_get_request,
+    build_payment_hsm_cluster_private_endpoint_connections_list_by_payment_hsm_cluster_request,
+    build_payment_hsm_cluster_private_link_resources_list_by_payment_hsm_cluster_request,
+    build_payment_hsm_clusters_create_or_update_request,
+    build_payment_hsm_clusters_delete_request,
+    build_payment_hsm_clusters_get_request,
+    build_payment_hsm_clusters_list_by_resource_group_request,
+    build_payment_hsm_clusters_list_by_subscription_request,
+    build_payment_hsm_clusters_update_request,
     build_private_endpoint_connections_list_by_cloud_hsm_cluster_request,
 )
 from .._configuration import HardwareSecurityModulesMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class Operations:
@@ -137,7 +149,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -150,7 +165,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -166,7 +184,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -235,6 +256,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -249,11 +271,14 @@ class CloudHsmClustersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CloudHsmCluster, response.json())
 
@@ -266,7 +291,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        body: Union[_models.CloudHsmCluster, JSON, IO[bytes]],
+        body: Union[_models.CloudHsmCluster, _types.CloudHsmCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -305,6 +330,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -318,7 +344,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -328,7 +357,7 @@ class CloudHsmClustersOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -370,7 +399,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        body: JSON,
+        body: _types.CloudHsmCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -384,7 +413,7 @@ class CloudHsmClustersOperations:
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
         :param body: Parameters to create Cloud HSM Cluster. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.hardwaresecuritymodules.types.CloudHsmCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -430,7 +459,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        body: Union[_models.CloudHsmCluster, JSON, IO[bytes]],
+        body: Union[_models.CloudHsmCluster, _types.CloudHsmCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudHsmCluster]:
         """Create or Update a Cloud HSM Cluster in the specified subscription.
@@ -441,9 +470,10 @@ class CloudHsmClustersOperations:
         :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
-        :param body: Parameters to create Cloud HSM Cluster. Is one of the following types:
-         CloudHsmCluster, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.hardwaresecuritymodules.models.CloudHsmCluster or JSON or IO[bytes]
+        :param body: Parameters to create Cloud HSM Cluster. Is either a CloudHsmCluster type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.models.CloudHsmCluster or
+         ~azure.mgmt.hardwaresecuritymodules.types.CloudHsmCluster or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudHsmCluster. The CloudHsmCluster is
          compatible with MutableMapping
         :rtype:
@@ -506,7 +536,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        body: Union[_models.CloudHsmClusterPatchParameters, JSON, IO[bytes]],
+        body: Union[_models.CloudHsmClusterPatchParameters, _types.CloudHsmClusterPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -545,6 +575,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -558,7 +589,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -566,7 +600,7 @@ class CloudHsmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -608,7 +642,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        body: JSON,
+        body: _types.CloudHsmClusterPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -622,7 +656,7 @@ class CloudHsmClustersOperations:
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
         :param body: Parameters to create Cloud HSM Cluster. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.hardwaresecuritymodules.types.CloudHsmClusterPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -668,7 +702,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        body: Union[_models.CloudHsmClusterPatchParameters, JSON, IO[bytes]],
+        body: Union[_models.CloudHsmClusterPatchParameters, _types.CloudHsmClusterPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudHsmCluster]:
         """Update a Cloud HSM Cluster in the specified subscription.
@@ -679,10 +713,10 @@ class CloudHsmClustersOperations:
         :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
-        :param body: Parameters to create Cloud HSM Cluster. Is one of the following types:
-         CloudHsmClusterPatchParameters, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.hardwaresecuritymodules.models.CloudHsmClusterPatchParameters or JSON
-         or IO[bytes]
+        :param body: Parameters to create Cloud HSM Cluster. Is either a CloudHsmClusterPatchParameters
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.models.CloudHsmClusterPatchParameters or
+         ~azure.mgmt.hardwaresecuritymodules.types.CloudHsmClusterPatchParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudHsmCluster. The CloudHsmCluster is
          compatible with MutableMapping
         :rtype:
@@ -770,6 +804,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -783,7 +818,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -791,7 +829,7 @@ class CloudHsmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -918,7 +956,10 @@ class CloudHsmClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -931,7 +972,10 @@ class CloudHsmClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudHsmCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudHsmCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -947,7 +991,10 @@ class CloudHsmClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1010,7 +1057,10 @@ class CloudHsmClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1023,7 +1073,10 @@ class CloudHsmClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudHsmCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudHsmCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1039,7 +1092,10 @@ class CloudHsmClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1050,7 +1106,9 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        backup_request_properties: Optional[Union[_models.BackupRequestProperties, JSON, IO[bytes]]] = None,
+        backup_request_properties: Optional[
+            Union[_models.BackupRequestProperties, _types.BackupRequestProperties, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1065,9 +1123,10 @@ class CloudHsmClustersOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if backup_request_properties else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if backup_request_properties else None
         _content = None
         if isinstance(backup_request_properties, (IOBase, bytes)):
             _content = backup_request_properties
@@ -1092,6 +1151,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1105,7 +1165,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1120,7 +1183,7 @@ class CloudHsmClustersOperations:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1164,7 +1227,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        backup_request_properties: Optional[JSON] = None,
+        backup_request_properties: Optional[_types.BackupRequestProperties] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1179,7 +1242,8 @@ class CloudHsmClustersOperations:
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
         :param backup_request_properties: Backup Operation Required properties. Default value is None.
-        :type backup_request_properties: JSON
+        :type backup_request_properties:
+         ~azure.mgmt.hardwaresecuritymodules.types.BackupRequestProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1226,7 +1290,9 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        backup_request_properties: Optional[Union[_models.BackupRequestProperties, JSON, IO[bytes]]] = None,
+        backup_request_properties: Optional[
+            Union[_models.BackupRequestProperties, _types.BackupRequestProperties, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupResult]:
         """Pre Backup operation to validate whether the customer can perform a backup on the Cloud HSM
@@ -1238,10 +1304,11 @@ class CloudHsmClustersOperations:
         :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
-        :param backup_request_properties: Backup Operation Required properties. Is one of the following
-         types: BackupRequestProperties, JSON, IO[bytes] Default value is None.
+        :param backup_request_properties: Backup Operation Required properties. Is either a
+         BackupRequestProperties type or a IO[bytes] type. Default value is None.
         :type backup_request_properties:
-         ~azure.mgmt.hardwaresecuritymodules.models.BackupRequestProperties or JSON or IO[bytes]
+         ~azure.mgmt.hardwaresecuritymodules.models.BackupRequestProperties or
+         ~azure.mgmt.hardwaresecuritymodules.types.BackupRequestProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupResult. The BackupResult is
          compatible with MutableMapping
         :rtype:
@@ -1252,6 +1319,7 @@ class CloudHsmClustersOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if backup_request_properties else None
         cls: ClsType[_models.BackupResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1312,7 +1380,9 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        backup_request_properties: Optional[Union[_models.BackupRequestProperties, JSON, IO[bytes]]] = None,
+        backup_request_properties: Optional[
+            Union[_models.BackupRequestProperties, _types.BackupRequestProperties, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1327,9 +1397,10 @@ class CloudHsmClustersOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if backup_request_properties else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if backup_request_properties else None
         _content = None
         if isinstance(backup_request_properties, (IOBase, bytes)):
             _content = backup_request_properties
@@ -1354,6 +1425,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1367,7 +1439,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1382,7 +1457,7 @@ class CloudHsmClustersOperations:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1425,7 +1500,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        backup_request_properties: Optional[JSON] = None,
+        backup_request_properties: Optional[_types.BackupRequestProperties] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1439,7 +1514,8 @@ class CloudHsmClustersOperations:
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
         :param backup_request_properties: Azure storage Resource Uri. Default value is None.
-        :type backup_request_properties: JSON
+        :type backup_request_properties:
+         ~azure.mgmt.hardwaresecuritymodules.types.BackupRequestProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1485,7 +1561,9 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        backup_request_properties: Optional[Union[_models.BackupRequestProperties, JSON, IO[bytes]]] = None,
+        backup_request_properties: Optional[
+            Union[_models.BackupRequestProperties, _types.BackupRequestProperties, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupResult]:
         """Create a backup of the Cloud HSM Cluster in the specified subscription.
@@ -1496,10 +1574,11 @@ class CloudHsmClustersOperations:
         :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
-        :param backup_request_properties: Azure storage Resource Uri. Is one of the following types:
-         BackupRequestProperties, JSON, IO[bytes] Default value is None.
+        :param backup_request_properties: Azure storage Resource Uri. Is either a
+         BackupRequestProperties type or a IO[bytes] type. Default value is None.
         :type backup_request_properties:
-         ~azure.mgmt.hardwaresecuritymodules.models.BackupRequestProperties or JSON or IO[bytes]
+         ~azure.mgmt.hardwaresecuritymodules.models.BackupRequestProperties or
+         ~azure.mgmt.hardwaresecuritymodules.types.BackupRequestProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupResult. The BackupResult is
          compatible with MutableMapping
         :rtype:
@@ -1510,6 +1589,7 @@ class CloudHsmClustersOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if backup_request_properties else None
         cls: ClsType[_models.BackupResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1570,7 +1650,9 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        restore_request_properties: Optional[Union[_models.RestoreRequestProperties, JSON, IO[bytes]]] = None,
+        restore_request_properties: Optional[
+            Union[_models.RestoreRequestProperties, _types.RestoreRequestProperties, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1585,9 +1667,10 @@ class CloudHsmClustersOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if restore_request_properties else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if restore_request_properties else None
         _content = None
         if isinstance(restore_request_properties, (IOBase, bytes)):
             _content = restore_request_properties
@@ -1612,6 +1695,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1625,7 +1709,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1640,7 +1727,7 @@ class CloudHsmClustersOperations:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1684,7 +1771,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        restore_request_properties: Optional[JSON] = None,
+        restore_request_properties: Optional[_types.RestoreRequestProperties] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1699,7 +1786,8 @@ class CloudHsmClustersOperations:
         :type cloud_hsm_cluster_name: str
         :param restore_request_properties: Optional Parameters to validate prior performing a restore
          operation. Default value is None.
-        :type restore_request_properties: JSON
+        :type restore_request_properties:
+         ~azure.mgmt.hardwaresecuritymodules.types.RestoreRequestProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1746,7 +1834,9 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        restore_request_properties: Optional[Union[_models.RestoreRequestProperties, JSON, IO[bytes]]] = None,
+        restore_request_properties: Optional[
+            Union[_models.RestoreRequestProperties, _types.RestoreRequestProperties, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RestoreResult]:
         """Queued validating pre restore operation.
@@ -1758,10 +1848,11 @@ class CloudHsmClustersOperations:
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
         :param restore_request_properties: Optional Parameters to validate prior performing a restore
-         operation. Is one of the following types: RestoreRequestProperties, JSON, IO[bytes] Default
-         value is None.
+         operation. Is either a RestoreRequestProperties type or a IO[bytes] type. Default value is
+         None.
         :type restore_request_properties:
-         ~azure.mgmt.hardwaresecuritymodules.models.RestoreRequestProperties or JSON or IO[bytes]
+         ~azure.mgmt.hardwaresecuritymodules.models.RestoreRequestProperties or
+         ~azure.mgmt.hardwaresecuritymodules.types.RestoreRequestProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RestoreResult. The RestoreResult is
          compatible with MutableMapping
         :rtype:
@@ -1772,6 +1863,7 @@ class CloudHsmClustersOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if restore_request_properties else None
         cls: ClsType[_models.RestoreResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1832,7 +1924,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        restore_request_properties: Union[_models.RestoreRequestProperties, JSON, IO[bytes]],
+        restore_request_properties: Union[_models.RestoreRequestProperties, _types.RestoreRequestProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1871,6 +1963,7 @@ class CloudHsmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1884,7 +1977,10 @@ class CloudHsmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1899,7 +1995,7 @@ class CloudHsmClustersOperations:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1942,7 +2038,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        restore_request_properties: JSON,
+        restore_request_properties: _types.RestoreRequestProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1956,7 +2052,8 @@ class CloudHsmClustersOperations:
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
         :param restore_request_properties: Restore Operation Required properties. Required.
-        :type restore_request_properties: JSON
+        :type restore_request_properties:
+         ~azure.mgmt.hardwaresecuritymodules.types.RestoreRequestProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2002,7 +2099,7 @@ class CloudHsmClustersOperations:
         self,
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
-        restore_request_properties: Union[_models.RestoreRequestProperties, JSON, IO[bytes]],
+        restore_request_properties: Union[_models.RestoreRequestProperties, _types.RestoreRequestProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RestoreResult]:
         """Restores all key materials of a specified Cloud HSM Cluster.
@@ -2013,10 +2110,11 @@ class CloudHsmClustersOperations:
         :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
          group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
         :type cloud_hsm_cluster_name: str
-        :param restore_request_properties: Restore Operation Required properties. Is one of the
-         following types: RestoreRequestProperties, JSON, IO[bytes] Required.
+        :param restore_request_properties: Restore Operation Required properties. Is either a
+         RestoreRequestProperties type or a IO[bytes] type. Required.
         :type restore_request_properties:
-         ~azure.mgmt.hardwaresecuritymodules.models.RestoreRequestProperties or JSON or IO[bytes]
+         ~azure.mgmt.hardwaresecuritymodules.models.RestoreRequestProperties or
+         ~azure.mgmt.hardwaresecuritymodules.types.RestoreRequestProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RestoreResult. The RestoreResult is
          compatible with MutableMapping
         :rtype:
@@ -2163,7 +2261,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2176,7 +2277,10 @@ class PrivateEndpointConnectionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateEndpointConnection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2192,7 +2296,1631 @@ class PrivateEndpointConnectionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class PaymentHsmClustersOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.hardwaresecuritymodules.aio.HardwareSecurityModulesMgmtClient`'s
+        :attr:`payment_hsm_clusters` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: HardwareSecurityModulesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, **kwargs: Any
+    ) -> _models.PaymentHsmCluster:
+        """Gets the specified Payment HSM Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :return: PaymentHsmCluster. The PaymentHsmCluster is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PaymentHsmCluster] = kwargs.pop("cls", None)
+
+        _request = build_payment_hsm_clusters_get_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PaymentHsmCluster, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: Union[_models.PaymentHsmCluster, _types.PaymentHsmCluster, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_payment_hsm_clusters_create_or_update_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: _models.PaymentHsmCluster,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Create or Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: _types.PaymentHsmCluster,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Create or Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.types.PaymentHsmCluster
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Create or Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: Union[_models.PaymentHsmCluster, _types.PaymentHsmCluster, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Create or Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Is either a PaymentHsmCluster type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster or
+         ~azure.mgmt.hardwaresecuritymodules.types.PaymentHsmCluster or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PaymentHsmCluster] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                payment_hsm_cluster_name=payment_hsm_cluster_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.PaymentHsmCluster, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PaymentHsmCluster].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PaymentHsmCluster](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: Union[_models.PaymentHsmClusterPatchParameters, _types.PaymentHsmClusterPatchParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_payment_hsm_clusters_update_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: _models.PaymentHsmClusterPatchParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPatchParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: _types.PaymentHsmClusterPatchParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.types.PaymentHsmClusterPatchParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        body: Union[_models.PaymentHsmClusterPatchParameters, _types.PaymentHsmClusterPatchParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PaymentHsmCluster]:
+        """Update a Payment HSM Cluster in the specified subscription.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param body: Parameters to create Payment HSM Cluster. Is either a
+         PaymentHsmClusterPatchParameters type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPatchParameters or
+         ~azure.mgmt.hardwaresecuritymodules.types.PaymentHsmClusterPatchParameters or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns PaymentHsmCluster. The PaymentHsmCluster is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PaymentHsmCluster] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                payment_hsm_cluster_name=payment_hsm_cluster_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.PaymentHsmCluster, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PaymentHsmCluster].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PaymentHsmCluster](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "payment_hsm_cluster_name"]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_payment_hsm_clusters_delete_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "payment_hsm_cluster_name"]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the specified Payment HSM Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                payment_hsm_cluster_name=payment_hsm_cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "skiptoken", "accept"]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, *, skiptoken: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PaymentHsmCluster"]:
+        """The List operation gets information about the Payment HSM Clusters associated with the
+        subscription and within the specified resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :keyword skiptoken: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skiptoken: str
+        :return: An iterator like instance of PaymentHsmCluster
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PaymentHsmCluster]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_payment_hsm_clusters_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    skiptoken=skiptoken,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PaymentHsmCluster],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={"2025-12-01-preview": ["api_version", "subscription_id", "skiptoken", "accept"]},
+        api_versions_list=["2025-12-01-preview"],
+    )
+    def list_by_subscription(
+        self, *, skiptoken: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PaymentHsmCluster"]:
+        """The List operation gets information about the Payment HSM Clusters associated with the
+        subscription.
+
+        :keyword skiptoken: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skiptoken: str
+        :return: An iterator like instance of PaymentHsmCluster
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PaymentHsmCluster]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_payment_hsm_clusters_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    skiptoken=skiptoken,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PaymentHsmCluster],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class PaymentHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.hardwaresecuritymodules.aio.HardwareSecurityModulesMgmtClient`'s
+        :attr:`payment_hsm_cluster_private_endpoint_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: HardwareSecurityModulesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "pe_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, pe_connection_name: str, **kwargs: Any
+    ) -> _models.PaymentHsmClusterPrivateEndpointConnection:
+        """Gets the private endpoint connection for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param pe_connection_name: Name of the private endpoint connection associated with the Payment
+         HSM Cluster. Required.
+        :type pe_connection_name: str
+        :return: PaymentHsmClusterPrivateEndpointConnection. The
+         PaymentHsmClusterPrivateEndpointConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PaymentHsmClusterPrivateEndpointConnection] = kwargs.pop("cls", None)
+
+        _request = build_payment_hsm_cluster_private_endpoint_connections_get_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            pe_connection_name=pe_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PaymentHsmClusterPrivateEndpointConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        pe_connection_name: str,
+        properties: _models.PaymentHsmClusterPrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PaymentHsmClusterPrivateEndpointConnection:
+        """Creates or updates the private endpoint connection for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param pe_connection_name: Name of the private endpoint connection associated with the Payment
+         HSM Cluster. Required.
+        :type pe_connection_name: str
+        :param properties: Parameters of the PrivateEndpointConnection. Required.
+        :type properties:
+         ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PaymentHsmClusterPrivateEndpointConnection. The
+         PaymentHsmClusterPrivateEndpointConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        pe_connection_name: str,
+        properties: _types.PaymentHsmClusterPrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PaymentHsmClusterPrivateEndpointConnection:
+        """Creates or updates the private endpoint connection for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param pe_connection_name: Name of the private endpoint connection associated with the Payment
+         HSM Cluster. Required.
+        :type pe_connection_name: str
+        :param properties: Parameters of the PrivateEndpointConnection. Required.
+        :type properties:
+         ~azure.mgmt.hardwaresecuritymodules.types.PaymentHsmClusterPrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PaymentHsmClusterPrivateEndpointConnection. The
+         PaymentHsmClusterPrivateEndpointConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        pe_connection_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PaymentHsmClusterPrivateEndpointConnection:
+        """Creates or updates the private endpoint connection for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param pe_connection_name: Name of the private endpoint connection associated with the Payment
+         HSM Cluster. Required.
+        :type pe_connection_name: str
+        :param properties: Parameters of the PrivateEndpointConnection. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PaymentHsmClusterPrivateEndpointConnection. The
+         PaymentHsmClusterPrivateEndpointConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "pe_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def create(
+        self,
+        resource_group_name: str,
+        payment_hsm_cluster_name: str,
+        pe_connection_name: str,
+        properties: Union[
+            _models.PaymentHsmClusterPrivateEndpointConnection,
+            _types.PaymentHsmClusterPrivateEndpointConnection,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> _models.PaymentHsmClusterPrivateEndpointConnection:
+        """Creates or updates the private endpoint connection for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param pe_connection_name: Name of the private endpoint connection associated with the Payment
+         HSM Cluster. Required.
+        :type pe_connection_name: str
+        :param properties: Parameters of the PrivateEndpointConnection. Is either a
+         PaymentHsmClusterPrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties:
+         ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection or
+         ~azure.mgmt.hardwaresecuritymodules.types.PaymentHsmClusterPrivateEndpointConnection or
+         IO[bytes]
+        :return: PaymentHsmClusterPrivateEndpointConnection. The
+         PaymentHsmClusterPrivateEndpointConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PaymentHsmClusterPrivateEndpointConnection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_payment_hsm_cluster_private_endpoint_connections_create_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            pe_connection_name=pe_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PaymentHsmClusterPrivateEndpointConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "pe_connection_name",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, pe_connection_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_payment_hsm_cluster_private_endpoint_connections_delete_request(
+            resource_group_name=resource_group_name,
+            payment_hsm_cluster_name=payment_hsm_cluster_name,
+            pe_connection_name=pe_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "pe_connection_name",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, pe_connection_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the private endpoint connection for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :param pe_connection_name: Name of the private endpoint connection associated with the Payment
+         HSM Cluster. Required.
+        :type pe_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                payment_hsm_cluster_name=payment_hsm_cluster_name,
+                pe_connection_name=pe_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-12-01-preview",
+        params_added_on={
+            "2025-12-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "payment_hsm_cluster_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-12-01-preview"],
+    )
+    def list_by_payment_hsm_cluster(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PaymentHsmClusterPrivateEndpointConnection"]:
+        """The List operation gets information about the private endpoint connections associated with the
+        Payment HSM Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :return: An iterator like instance of PaymentHsmClusterPrivateEndpointConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hardwaresecuritymodules.models.PaymentHsmClusterPrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PaymentHsmClusterPrivateEndpointConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_payment_hsm_cluster_private_endpoint_connections_list_by_payment_hsm_cluster_request(
+                    resource_group_name=resource_group_name,
+                    payment_hsm_cluster_name=payment_hsm_cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PaymentHsmClusterPrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2278,7 +4006,10 @@ class CloudHsmClusterPrivateLinkResourcesOperations:  # pylint: disable=name-too
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2291,7 +4022,10 @@ class CloudHsmClusterPrivateLinkResourcesOperations:  # pylint: disable=name-too
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateLinkResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2307,7 +4041,10 @@ class CloudHsmClusterPrivateLinkResourcesOperations:  # pylint: disable=name-too
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2334,9 +4071,24 @@ class CloudHsmClusterBackupStatusOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    async def _get_initial(
+    @distributed_trace_async
+    async def get(
         self, resource_group_name: str, cloud_hsm_cluster_name: str, job_id: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> Optional[_models.BackupResult]:
+        """Gets the backup operation status of the specified Cloud HSM Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
+         group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
+        :type cloud_hsm_cluster_name: str
+        :param job_id: Identifier for the backup operation. Required.
+        :type job_id: str
+        :return: BackupResult or None. The BackupResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.BackupResult or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2348,7 +4100,7 @@ class CloudHsmClusterBackupStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.BackupResult]] = kwargs.pop("cls", None)
 
         _request = build_cloud_hsm_cluster_backup_status_get_request(
             resource_group_name=resource_group_name,
@@ -2364,7 +4116,8 @@ class CloudHsmClusterBackupStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = True
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2372,90 +4125,36 @@ class CloudHsmClusterBackupStatusOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
         if response.status_code == 200:
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize(_models.BackupResult, response.json())
 
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        deserialized = response.iter_bytes()
-
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_get(
-        self, resource_group_name: str, cloud_hsm_cluster_name: str, job_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Gets the backup operation status of the specified Cloud HSM Cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cloud_hsm_cluster_name: Required.
-        :type cloud_hsm_cluster_name: str
-        :param job_id: Identifier for the backup operation. Required.
-        :type job_id: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._get_initial(
-                resource_group_name=resource_group_name,
-                cloud_hsm_cluster_name=cloud_hsm_cluster_name,
-                job_id=job_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class CloudHsmClusterRestoreStatusOperations:
@@ -2477,9 +4176,24 @@ class CloudHsmClusterRestoreStatusOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    async def _get_initial(
+    @distributed_trace_async
+    async def get(
         self, resource_group_name: str, cloud_hsm_cluster_name: str, job_id: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> Optional[_models.RestoreResult]:
+        """Gets the restore operation status of the specified Cloud HSM Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cloud_hsm_cluster_name: The name of the Cloud HSM Cluster within the specified resource
+         group. Cloud HSM Cluster names must be between 3 and 23 characters in length. Required.
+        :type cloud_hsm_cluster_name: str
+        :param job_id: Identifier for the restore operation. Required.
+        :type job_id: str
+        :return: RestoreResult or None. The RestoreResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hardwaresecuritymodules.models.RestoreResult or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2491,7 +4205,7 @@ class CloudHsmClusterRestoreStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.RestoreResult]] = kwargs.pop("cls", None)
 
         _request = build_cloud_hsm_cluster_restore_status_get_request(
             resource_group_name=resource_group_name,
@@ -2507,7 +4221,8 @@ class CloudHsmClusterRestoreStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = True
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2515,90 +4230,36 @@ class CloudHsmClusterRestoreStatusOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
         if response.status_code == 200:
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize(_models.RestoreResult, response.json())
 
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
-        deserialized = response.iter_bytes()
-
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_get(
-        self, resource_group_name: str, cloud_hsm_cluster_name: str, job_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Gets the restore operation status of the specified Cloud HSM Cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cloud_hsm_cluster_name: Name of the Cloud HSM Cluster. Required.
-        :type cloud_hsm_cluster_name: str
-        :param job_id: Identifier for the restore operation. Required.
-        :type job_id: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._get_initial(
-                resource_group_name=resource_group_name,
-                cloud_hsm_cluster_name=cloud_hsm_cluster_name,
-                job_id=job_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
@@ -2667,6 +4328,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2681,11 +4343,14 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -2733,7 +4398,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
         pe_connection_name: str,
-        properties: JSON,
+        properties: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2750,7 +4415,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
          HSM Cluster. Required.
         :type pe_connection_name: str
         :param properties: Parameters of the PrivateEndpointConnection. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.hardwaresecuritymodules.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2799,7 +4464,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
         resource_group_name: str,
         cloud_hsm_cluster_name: str,
         pe_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Creates or updates the private endpoint connection for the Cloud Hsm Cluster.
@@ -2813,10 +4478,10 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
         :param pe_connection_name: Name of the private endpoint connection associated with the Cloud
          HSM Cluster. Required.
         :type pe_connection_name: str
-        :param properties: Parameters of the PrivateEndpointConnection. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.hardwaresecuritymodules.models.PrivateEndpointConnection or JSON
-         or IO[bytes]
+        :param properties: Parameters of the PrivateEndpointConnection. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.hardwaresecuritymodules.models.PrivateEndpointConnection or
+         ~azure.mgmt.hardwaresecuritymodules.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.hardwaresecuritymodules.models.PrivateEndpointConnection
@@ -2859,6 +4524,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2873,11 +4539,14 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -2916,6 +4585,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2929,7 +4599,10 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2937,7 +4610,7 @@ class CloudHsmClusterPrivateEndpointConnectionsOperations:  # pylint: disable=na
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3067,6 +4740,7 @@ class DedicatedHsmOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3081,11 +4755,14 @@ class DedicatedHsmOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+            error = _failsafe_deserialize(
+                _models.DedicatedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DedicatedHsm, response.json())
 
@@ -3098,7 +4775,7 @@ class DedicatedHsmOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: Union[_models.DedicatedHsm, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHsm, _types.DedicatedHsm, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3137,6 +4814,7 @@ class DedicatedHsmOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3150,7 +4828,10 @@ class DedicatedHsmOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+            error = _failsafe_deserialize(
+                _models.DedicatedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3160,7 +4841,7 @@ class DedicatedHsmOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3201,7 +4882,7 @@ class DedicatedHsmOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.DedicatedHsm,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3214,7 +4895,7 @@ class DedicatedHsmOperations:
         :param name: Name of the dedicated Hsm. Required.
         :type name: str
         :param parameters: Parameters to create or update the dedicated hsm. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.hardwaresecuritymodules.types.DedicatedHsm
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3259,7 +4940,7 @@ class DedicatedHsmOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: Union[_models.DedicatedHsm, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHsm, _types.DedicatedHsm, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DedicatedHsm]:
         """Create or Update a dedicated HSM in the specified subscription.
@@ -3269,9 +4950,10 @@ class DedicatedHsmOperations:
         :type resource_group_name: str
         :param name: Name of the dedicated Hsm. Required.
         :type name: str
-        :param parameters: Parameters to create or update the dedicated hsm. Is one of the following
-         types: DedicatedHsm, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.hardwaresecuritymodules.models.DedicatedHsm or JSON or IO[bytes]
+        :param parameters: Parameters to create or update the dedicated hsm. Is either a DedicatedHsm
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.hardwaresecuritymodules.models.DedicatedHsm or
+         ~azure.mgmt.hardwaresecuritymodules.types.DedicatedHsm or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DedicatedHsm. The DedicatedHsm is
          compatible with MutableMapping
         :rtype:
@@ -3334,7 +5016,7 @@ class DedicatedHsmOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: Union[_models.DedicatedHsmPatchParameters, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHsmPatchParameters, _types.DedicatedHsmPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3373,6 +5055,7 @@ class DedicatedHsmOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3386,7 +5069,10 @@ class DedicatedHsmOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+            error = _failsafe_deserialize(
+                _models.DedicatedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3394,7 +5080,7 @@ class DedicatedHsmOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3435,7 +5121,7 @@ class DedicatedHsmOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.DedicatedHsmPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3448,7 +5134,7 @@ class DedicatedHsmOperations:
         :param name: Name of the dedicated Hsm. Required.
         :type name: str
         :param parameters: Parameters to patch the dedicated HSM. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.hardwaresecuritymodules.types.DedicatedHsmPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3493,7 +5179,7 @@ class DedicatedHsmOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: Union[_models.DedicatedHsmPatchParameters, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHsmPatchParameters, _types.DedicatedHsmPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DedicatedHsm]:
         """Update a dedicated HSM in the specified subscription.
@@ -3503,10 +5189,10 @@ class DedicatedHsmOperations:
         :type resource_group_name: str
         :param name: Name of the dedicated Hsm. Required.
         :type name: str
-        :param parameters: Parameters to patch the dedicated HSM. Is one of the following types:
-         DedicatedHsmPatchParameters, JSON, IO[bytes] Required.
+        :param parameters: Parameters to patch the dedicated HSM. Is either a
+         DedicatedHsmPatchParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.hardwaresecuritymodules.models.DedicatedHsmPatchParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.hardwaresecuritymodules.types.DedicatedHsmPatchParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DedicatedHsm. The DedicatedHsm is
          compatible with MutableMapping
         :rtype:
@@ -3592,6 +5278,7 @@ class DedicatedHsmOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3605,7 +5292,10 @@ class DedicatedHsmOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+            error = _failsafe_deserialize(
+                _models.DedicatedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3613,7 +5303,7 @@ class DedicatedHsmOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3736,7 +5426,10 @@ class DedicatedHsmOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3749,7 +5442,10 @@ class DedicatedHsmOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DedicatedHsm], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DedicatedHsm],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3765,7 +5461,10 @@ class DedicatedHsmOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+                error = _failsafe_deserialize(
+                    _models.DedicatedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3826,7 +5525,10 @@ class DedicatedHsmOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3839,7 +5541,10 @@ class DedicatedHsmOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DedicatedHsm], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DedicatedHsm],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3855,7 +5560,10 @@ class DedicatedHsmOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+                error = _failsafe_deserialize(
+                    _models.DedicatedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3921,7 +5629,10 @@ class DedicatedHsmOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3934,7 +5645,10 @@ class DedicatedHsmOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OutboundEnvironmentEndpoint], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OutboundEnvironmentEndpoint],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3950,7 +5664,135 @@ class DedicatedHsmOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.DedicatedHsmError, response.json())
+                error = _failsafe_deserialize(
+                    _models.DedicatedHsmError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class PaymentHsmClusterPrivateLinkResourcesOperations:  # pylint: disable=name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.hardwaresecuritymodules.aio.HardwareSecurityModulesMgmtClient`'s
+        :attr:`payment_hsm_cluster_private_link_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: HardwareSecurityModulesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_by_payment_hsm_cluster(
+        self, resource_group_name: str, payment_hsm_cluster_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
+        """Gets the private link resources supported for the Payment Hsm Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param payment_hsm_cluster_name: The name of the Payment HSM Cluster within the specified
+         resource group. Payment HSM Cluster names must be between 3 and 23 characters in length.
+         Required.
+        :type payment_hsm_cluster_name: str
+        :return: An iterator like instance of PrivateLinkResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hardwaresecuritymodules.models.PrivateLinkResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_payment_hsm_cluster_private_link_resources_list_by_payment_hsm_cluster_request(
+                    resource_group_name=resource_group_name,
+                    payment_hsm_cluster_name=payment_hsm_cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

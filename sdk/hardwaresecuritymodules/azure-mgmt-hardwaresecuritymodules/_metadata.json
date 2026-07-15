@@ -1,7 +1,11 @@
 {
-  "apiVersion": "2025-03-31",
-  "commit": "292b2f01ed2c626f777fdb31ec0cd153db11c967",
+  "apiVersion": "2025-12-01-preview",
+  "apiVersions": {
+    "Microsoft.HardwareSecurityModules": "2025-12-01-preview"
+  },
+  "commit": "53d88509bce4c82f0e8d70fd6948eb1535859ed7",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/hardwaresecuritymodules/HardwareSecurityModules.Management",
-  "emitterVersion": "0.45.5"
+  "typespec_src": "specification/hardwaresecuritymodules/resource-manager/Microsoft.HardwareSecurityModules/HardwareSecurityModules",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }
