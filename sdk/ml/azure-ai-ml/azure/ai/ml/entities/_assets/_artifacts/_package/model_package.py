@@ -368,7 +368,7 @@ class ModelPackage(Resource):
             package_request["modelConfiguration"] = self.model_configuration._to_rest_object()
         if self.inputs:
             package_request["inputs"] = [model_input._to_rest_object() for model_input in self.inputs]
-        if self.tags is not None:
+        if self.tags:
             package_request["tags"] = self.tags
         if self.environment_variables is not None:
             package_request["environmentVariables"] = self.environment_variables

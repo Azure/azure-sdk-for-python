@@ -41,9 +41,15 @@ class ModelConfiguration:
 
     def _to_rest_object(self) -> Dict[str, Any]:
         # ``ModelConfiguration`` was dropped from the arm_ml_service (2025-12) model; build the
-        # 2023-04 wire body directly as a dict (JSON-direct).
+        # 2023-04 wire body directly as a dict (JSON-direct). The legacy msrest model omitted ``None``
+        # fields on the wire, so only include values that are set.
         self._validate()
-        return {"mode": self.mode, "mountPath": self.mount_path}
+        rest_obj: Dict[str, Any] = {}
+        if self.mode is not None:
+            rest_obj["mode"] = self.mode
+        if self.mount_path is not None:
+            rest_obj["mountPath"] = self.mount_path
+        return rest_obj
 
     def _validate(self) -> None:
         if self.mode is not None and self.mode.lower() not in ["copy", "download"]:
