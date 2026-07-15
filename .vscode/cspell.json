@@ -664,6 +664,13 @@
       ]
     },
     {
+      "filename": "sdk/core/azure-core/**",
+      "words": [
+        "BLEUCLOUD",
+        "sovcloud"
+      ]
+    },
+    {
       "filename": "sdk/identity/test-resources*",
       "words": [
         "kubelet",
