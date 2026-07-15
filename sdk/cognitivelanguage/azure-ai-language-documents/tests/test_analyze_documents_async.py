@@ -74,7 +74,6 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsAsyncClientTestBase):
                     ],
                 },
                 raw_response_hook=_raw_response_hook,
-                polling=False,
             )
 
             assert poller is not None
@@ -189,7 +188,6 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsAsyncClientTestBase):
                     ],
                 },
                 raw_response_hook=_raw_response_hook,
-                polling=False,
             )
 
             assert submit_poller is not None
