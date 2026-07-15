@@ -62,6 +62,11 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         if obj is None:
             return None
         if isinstance(obj, dict):
+            # Pipeline node rest objects are snake_case dicts (``job_tier``) while arm job responses use the
+            # camelCase wire key (``jobTier``). Normalize so ``RestQueueSettings._deserialize`` (which reads the
+            # camelCase wire key) picks up the value regardless of which form the caller passes.
+            if "job_tier" in obj and "jobTier" not in obj:
+                obj = {**obj, "jobTier": obj["job_tier"]}
             queue_settings = RestQueueSettings._deserialize(obj, [])  # pylint: disable=protected-access
             return cls._from_rest_object(queue_settings)
         job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
