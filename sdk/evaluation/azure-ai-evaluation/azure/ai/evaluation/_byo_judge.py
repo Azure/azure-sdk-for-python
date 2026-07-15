@@ -31,6 +31,41 @@ def _to_responses_input(messages: Optional[List[Dict[str, Any]]]) -> List[Dict[s
     return items
 
 
+def _map_response_format(response_format: Any) -> Optional[Dict[str, Any]]:
+    """Translate a chat-completions ``response_format`` into a Responses API ``text.format`` value.
+
+    The Responses API exposes the same JSON-output capability as chat.completions, but under
+    ``text.format`` instead of ``response_format``:
+
+    ================================================  ===========================================
+    chat.completions ``response_format``              Responses API ``text.format``
+    ================================================  ===========================================
+    ``{"type": "text"}``                              ``{"type": "text"}``
+    ``{"type": "json_object"}``                       ``{"type": "json_object"}``
+    ``{"type": "json_schema",``                       ``{"type": "json_schema", "name": ...,``
+    ``  "json_schema": {"name", "schema", ...}}``     ``  "schema": ..., "strict": ...}``
+    ================================================  ===========================================
+
+    Note the json_schema shape difference: chat.completions **nests** ``name``/``schema``/``strict``
+    under a ``json_schema`` key, whereas the Responses API **flattens** them directly under
+    ``format``. Returns ``None`` for anything unrecognized so the param is simply omitted.
+    """
+    if not isinstance(response_format, dict):
+        return None
+    rf_type = response_format.get("type")
+    if rf_type in ("text", "json_object"):
+        return {"type": rf_type}
+    if rf_type == "json_schema":
+        # chat.completions nests the schema spec under "json_schema"; the Responses API flattens it.
+        schema_spec = response_format.get("json_schema", response_format)
+        fmt: Dict[str, Any] = {"type": "json_schema"}
+        for key in ("name", "schema", "strict", "description"):
+            if key in schema_spec:
+                fmt[key] = schema_spec[key]
+        return fmt
+    return None
+
+
 def _map_params(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """Map a curated set of chat-completions sampling params to Responses API params."""
     mapped: Dict[str, Any] = {}
@@ -42,6 +77,10 @@ def _map_params(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         if key in kwargs:
             mapped["max_output_tokens"] = kwargs[key]
             break
+    if "response_format" in kwargs:
+        text_format = _map_response_format(kwargs["response_format"])
+        if text_format is not None:
+            mapped["text"] = {"format": text_format}
     return mapped
 
 

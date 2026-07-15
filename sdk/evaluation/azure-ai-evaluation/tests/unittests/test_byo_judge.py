@@ -12,6 +12,7 @@ from azure.ai.evaluation._byo_judge import (
     is_byo_model_config,
     _to_responses_input,
     _map_params,
+    _map_response_format,
     _Usage,
 )
 
@@ -33,6 +34,47 @@ class TestByoJudgeHelpers:
             "top_p": 0.9,
             "max_output_tokens": 50,
         }
+
+
+class TestResponseFormatMapping:
+    """chat.completions ``response_format`` -> Responses API ``text.format`` (JSON output parity)."""
+
+    def test_json_object_passthrough(self):
+        assert _map_response_format({"type": "json_object"}) == {"type": "json_object"}
+
+    def test_text_passthrough(self):
+        assert _map_response_format({"type": "text"}) == {"type": "text"}
+
+    def test_json_schema_is_flattened(self):
+        # chat.completions nests name/schema/strict under "json_schema"; Responses flattens them.
+        rf = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "coherence",
+                "schema": {"type": "object", "properties": {"score": {"type": "integer"}}},
+                "strict": True,
+            },
+        }
+        assert _map_response_format(rf) == {
+            "type": "json_schema",
+            "name": "coherence",
+            "schema": {"type": "object", "properties": {"score": {"type": "integer"}}},
+            "strict": True,
+        }
+
+    def test_unknown_or_non_dict_returns_none(self):
+        assert _map_response_format({"type": "weird"}) is None
+        assert _map_response_format(None) is None
+        assert _map_response_format("json_object") is None
+
+    def test_map_params_wires_response_format_into_text(self):
+        # The prompty runner passes response_format={"type": "json_object"}; it must reach text.format.
+        mapped = _map_params({"temperature": 0.0, "response_format": {"type": "json_object"}})
+        assert mapped["text"] == {"format": {"type": "json_object"}}
+        assert mapped["temperature"] == 0.0
+
+    def test_map_params_omits_text_for_unrecognized_response_format(self):
+        assert "text" not in _map_params({"response_format": {"type": "weird"}})
 
 
 class TestUsageAdapter:
