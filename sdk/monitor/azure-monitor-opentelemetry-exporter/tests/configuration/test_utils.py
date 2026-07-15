@@ -514,7 +514,7 @@ class TestMatchesCondition(unittest.TestCase):
     def test_rp_condition(self):
         """Test resource provider condition with exact match."""
         self.assertTrue(_matches_condition("rp", "fn"))
-        self.assertFalse(_matches_condition("rp", "appsvc"))
+        self.assertFalse(_matches_condition("rp", "appsvc"))  # cspell:ignore appsvc
 
     def test_region_condition(self):
         """Test region condition."""

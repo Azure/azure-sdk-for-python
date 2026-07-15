@@ -119,6 +119,7 @@ def _get_attach_type():
 
 # OneSettings
 
+# cspell:ignore appsvc
 # The OneSettings feature-flag schema expects full names for os/rp/attach (windows/linux/darwin,
 # appsvc/fn/aks, manual/integratedauto), unlike the short single-letter codes used for the statsbeat
 # SDK version prefix. These helpers are used only for the OneSettings _ConfigurationProfile.
