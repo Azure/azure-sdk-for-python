@@ -39,3 +39,6 @@ class AzureClouds(str, Enum):
 
     AZURE_US_GOVERNMENT = "AZURE_US_GOVERNMENT"
     """Azure US government cloud"""
+
+    AZURE_BLEUCLOUD = "AZURE_BLEUCLOUD"
+    """Bleu national partner cloud (France)"""

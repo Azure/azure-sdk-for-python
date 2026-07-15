@@ -1,5 +1,11 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Features Added
+
+- Added `AzureClouds.AZURE_BLEUCLOUD` for the Bleu national partner cloud (France). This cloud can now be selected via the `AZURE_SDK_CLOUD_CONF` environment variable or `settings.current.azure_cloud`.
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
