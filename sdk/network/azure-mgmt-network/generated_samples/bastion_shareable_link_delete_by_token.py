@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-05-01/BastionShareableLinkDeleteByToken.json
+# x-ms-original-file: 2025-07-01/BastionShareableLinkDeleteByToken.json
 if __name__ == "__main__":
     main()

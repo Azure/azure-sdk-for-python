@@ -27,27 +27,19 @@ from azure.cosmos._routing._routing_map_provider_common import (
 )
 from azure.cosmos._routing.routing_map_provider import (
     PartitionKeyRangeCache,
+    SmartRoutingMapProvider,
 )
+from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
-from azure.cosmos import http_constants
+from azure.cosmos import http_constants, _base
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 
-# =========================================================
-# Test-only tolerant shim for evaluate_drain_page
-# =========================================================
-# Production wires ``_internal_response_status_capture`` via ``_Request`` so
-# ``evaluate_drain_page`` always receives a concrete HTTP status. These unit
-# tests use lightweight MagicMock side_effects that bypass ``_Request`` and
-# therefore leave the sidecar at ``[None]``. Rather than retrofit every mock
-# to populate the sidecar, default an unknown status to ``304`` (Not Modified)
-# so the drain terminates after the first page -- which is exactly the
-# termination signal each existing mock relies on (data on the data path,
-# ``iter([])`` on the INM-match path).
-#
-# This shim is the *only* test-side concession to the strict status contract
-# introduced in commit a1e27a57bd; production code is unchanged.
+# Test-only shim: production wires status via the request pipeline so the drain
+# helper always sees a real HTTP status. The lightweight mocks in this file
+# bypass that pipeline, so an unknown status defaults to 304 (Not Modified) and
+# the drain terminates after the first mocked page. Production code is unchanged.
 # pylint: disable=wrong-import-position
 import azure.cosmos._routing._routing_map_provider_common as _drain_common  # noqa: E402
 import azure.cosmos._routing.routing_map_provider as _sync_provider_module  # noqa: E402
@@ -74,9 +66,6 @@ _sync_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
 _async_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
 
 
-# =========================================================
-# Helpers
-# =========================================================
 
 def _make_complete_routing_map(collection_id="coll1", etag='"etag-1"'):
     """Create a minimal but complete CollectionRoutingMap for testing."""
@@ -105,9 +94,6 @@ def _make_mock_client(ranges, response_etag='"etag-resp"', include_etag_header=T
     return client
 
 
-# =========================================================
-# Test Class
-# =========================================================
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProviderUnit(unittest.TestCase):
@@ -683,13 +669,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(result.change_feed_etag, '"etag-old"')
 
 
-    # ==========================================================================
-    # Helper-level retry-policy unit tests.
-    #
-    # These target only the pure helper that computes retry backoff / 503
-    # escalation (no cache object, no fetch loop). They check that backoff
-    # stays within the deterministic upper bound and that jitter is applied.
-    # ==========================================================================
+    # Helper-level retry-policy tests: target the pure helper that computes
+    # retry backoff and 503 escalation (no cache, no fetch loop). They check
+    # that backoff stays within the deterministic upper bound and jitters.
 
     def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
         """Each non-terminal attempt's backoff must lie in
@@ -842,14 +824,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             http_constants.StatusCodes.SERVICE_UNAVAILABLE,
         )
 
-    # ==========================================================================
-    # Provider retry-loop behavior tests (mocked integration path).
-    #
-    # These exercise the sync provider's fetch/retry loop with mocked
-    # ``/pkranges`` payloads: transient inconsistencies either recover on
-    # retry or surface as HTTP 503; ``ValueError("Ranges overlap")`` never
-    # leaks to callers.
-    # ==========================================================================
+    # Provider retry-loop tests: exercise the sync provider's fetch and retry
+    # loop with mocked /pkranges payloads. Inconsistent snapshots either recover
+    # on retry or surface as HTTP 503; overlap errors never leak to callers.
 
     def test_fetch_routing_map_recovers_after_transient_overlap(self):
         """An inconsistent ``/pkranges`` snapshot followed by a consistent
@@ -951,6 +928,11 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             "or as a silent empty-result return."
         )
         self.assertEqual(
+            ctx.exception.sub_status,
+            http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
+            "503 from a transient pkranges inconsistency must set sub_status to 21015.",
+        )
+        self.assertEqual(
             call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
             "Should have made exactly _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
         )
@@ -1044,6 +1026,11 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
                 cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
 
         self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertEqual(
+            ctx.exception.sub_status,
+            http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
+            "503 from a persistent gap must set sub_status to 21015.",
+        )
         self.assertEqual(
             call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
             "Should have made exactly _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
@@ -1141,6 +1128,11 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             "the shared budget is exhausted."
         )
         self.assertEqual(
+            ctx.exception.sub_status,
+            http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
+            "Sub-status must be 21015 whether the budget was exhausted by overlaps, gaps, or both.",
+        )
+        self.assertEqual(
             call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
             "Overlap and gap signals must share one retry budget; alternating "
             "between them must NOT extend the total number of attempts."
@@ -1190,6 +1182,11 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
                 )
 
         self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertEqual(
+            ctx.exception.sub_status,
+            http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
+            "503 from a forced refresh that exhausts the retry budget must set sub_status to 21015.",
+        )
 
         # Critical invariant: the previously-cached map must still be reachable
         # via the same key. A 503 from a forced refresh must never evict good
@@ -1205,6 +1202,201 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             '"etag-cached"',
             "Cached ETag must remain the pre-503 value (no partial overwrite)."
         )
+
+    # End-to-end tests that go through SmartRoutingMapProvider.get_overlapping_ranges
+    # to confirm overlap/gap errors from the cache never reach the caller as
+    # bare ValueError or AssertionError. They surface as 503 instead.
+
+    _OVERLAP_PAYLOAD = [
+        {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+        {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+        {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+        {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+        {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+    ]
+    _GAP_PAYLOAD = [
+        {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+        {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+    ]
+    _GOOD_PAYLOAD = [
+        {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+        {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90', 'parents': ['10']},
+        {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0', 'parents': ['10']},
+        {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+    ]
+
+    @staticmethod
+    def _make_sequenced_pk_ranges_client(response_sequence):
+        """Return a mock client that returns the next payload from
+        response_sequence on each fresh read, and an empty page when the
+        If-None-Match matches the last etag (acts like a 304 reply).
+        """
+        call_count = {'n': 0}
+        last_etag = {'v': None}
+        client = MagicMock()
+
+        def fake_read_pk_ranges(_collection_link, _options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                return iter([])
+            payload = (response_sequence[call_count['n']]
+                       if call_count['n'] < len(response_sequence)
+                       else response_sequence[-1])
+            call_count['n'] += 1
+            etag = '"etag-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        return client, call_count, last_etag
+
+    def _assert_is_routing_map_snapshot_503(self, exc):
+        """Assert ``exc`` is a CosmosHttpResponseError with status 503 and
+        sub_status 21015, and is not a ValueError or AssertionError."""
+        self.assertIsInstance(exc, CosmosHttpResponseError)
+        self.assertNotIsInstance(exc, AssertionError)
+        self.assertFalse(isinstance(exc, ValueError))
+        self.assertEqual(exc.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertEqual(
+            exc.sub_status,
+            http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
+        )
+
+    def test_smart_get_overlapping_ranges_no_bare_value_error_on_persistent_overlap(self):
+        """A persistent overlap response must raise 503 from
+        SmartRoutingMapProvider.get_overlapping_ranges, not a ValueError."""
+        client, call_count, _ = self._make_sequenced_pk_ranges_client(
+            [self._OVERLAP_PAYLOAD]
+        )
+        provider = SmartRoutingMapProvider(client)
+        full_range = routing_range.Range("", "FF", True, False)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                provider.get_overlapping_ranges("dbs/db1/colls/coll1", [full_range])
+
+        self._assert_is_routing_map_snapshot_503(ctx.exception)
+        self.assertEqual(call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
+
+    def test_smart_get_overlapping_ranges_no_bare_assertion_error_on_persistent_gap(self):
+        """A persistent gap response must raise 503 from
+        SmartRoutingMapProvider.get_overlapping_ranges, not an AssertionError."""
+        client, call_count, _ = self._make_sequenced_pk_ranges_client(
+            [self._GAP_PAYLOAD]
+        )
+        provider = SmartRoutingMapProvider(client)
+        full_range = routing_range.Range("", "FF", True, False)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                provider.get_overlapping_ranges("dbs/db1/colls/coll1", [full_range])
+
+        self._assert_is_routing_map_snapshot_503(ctx.exception)
+        self.assertEqual(call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
+
+    def test_smart_get_overlapping_ranges_recovers_after_transient_overlap(self):
+        """One bad overlap response followed by a good one must return the
+        expected ranges from get_overlapping_ranges."""
+        client, call_count, _ = self._make_sequenced_pk_ranges_client(
+            [self._OVERLAP_PAYLOAD, self._GOOD_PAYLOAD]
+        )
+        provider = SmartRoutingMapProvider(client)
+        full_range = routing_range.Range("", "FF", True, False)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            overlapping = provider.get_overlapping_ranges(
+                "dbs/db1/colls/coll1", [full_range]
+            )
+
+        self.assertEqual(call_count['n'], 2)
+        ids = [r['id'] for r in overlapping]
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    def test_smart_get_overlapping_ranges_recovers_after_transient_gap(self):
+        """One bad gap response followed by a good one must return the
+        expected ranges from get_overlapping_ranges."""
+        client, call_count, _ = self._make_sequenced_pk_ranges_client(
+            [self._GAP_PAYLOAD, self._GOOD_PAYLOAD]
+        )
+        provider = SmartRoutingMapProvider(client)
+        full_range = routing_range.Range("", "FF", True, False)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            overlapping = provider.get_overlapping_ranges(
+                "dbs/db1/colls/coll1", [full_range]
+            )
+
+        self.assertEqual(call_count['n'], 2)
+        ids = [r['id'] for r in overlapping]
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    def test_cache_etag_advances_to_good_response_after_overlap_recovery(self):
+        """After recovery, the cached ETag matches the good response, and a
+        second call returns the same cached object without re-fetching."""
+        client, call_count, _ = self._make_sequenced_pk_ranges_client(
+            [self._OVERLAP_PAYLOAD, self._GOOD_PAYLOAD]
+        )
+        cache = PartitionKeyRangeCache(client)
+        collection_link = "dbs/db1/colls/coll1"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            first = cache.get_routing_map(collection_link, feed_options={})
+
+        self.assertIsNotNone(first)
+        self.assertEqual(first.change_feed_etag, '"etag-2"')
+        self.assertEqual(call_count['n'], 2)
+
+        second = cache.get_routing_map(collection_link, feed_options={})
+        self.assertIs(second, first)
+        self.assertEqual(call_count['n'], 2)
+        self.assertIs(cache._collection_routing_map_by_item[collection_id], first)
+
+    def test_concurrent_callers_see_single_recovery_not_multiple_503s(self):
+        """With several threads calling at the same time, only one drives the
+        bad-then-good recovery and the others read the recovered map from cache."""
+        client, call_count, _ = self._make_sequenced_pk_ranges_client(
+            [self._OVERLAP_PAYLOAD, self._GOOD_PAYLOAD]
+        )
+        provider = SmartRoutingMapProvider(client)
+        full_range = routing_range.Range("", "FF", True, False)
+
+        n_workers = 5
+        barrier = threading.Barrier(n_workers, timeout=10)
+        results = [None] * n_workers
+        errors = []
+
+        def worker(idx):
+            try:
+                barrier.wait()
+                results[idx] = provider.get_overlapping_ranges(
+                    "dbs/db1/colls/coll1", [full_range]
+                )
+            except Exception as e:  # pylint: disable=broad-except
+                errors.append(e)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            threads = [threading.Thread(target=worker, args=(i,)) for i in range(n_workers)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join(timeout=15)
+
+        self.assertEqual(errors, [], f"Workers must not raise; got: {errors}")
+        self.assertEqual(call_count['n'], 2)
+        for i, r in enumerate(results):
+            self.assertIsNotNone(r, f"Worker {i} returned None.")
+        first_ids = [pkr['id'] for pkr in results[0]]
+        self.assertEqual(first_ids, ['L', '10/0', '10/1', 'R'])
+        for i in range(1, n_workers):
+            self.assertEqual([pkr['id'] for pkr in results[i]], first_ids)
 
 
 if __name__ == "__main__":

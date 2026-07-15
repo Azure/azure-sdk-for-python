@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -38,8 +38,10 @@ from .operations import (
     AzureFirewallsOperations,
     BastionHostsOperations,
     BgpServiceCommunitiesOperations,
+    CommitsOperations,
     ConfigurationPolicyGroupsOperations,
     ConnectionMonitorsOperations,
+    ConnectionPoliciesOperations,
     ConnectivityConfigurationsOperations,
     CustomIPPrefixesOperations,
     DdosCustomPoliciesOperations,
@@ -73,6 +75,7 @@ from .operations import (
     HubVirtualNetworkConnectionsOperations,
     InboundNatRulesOperations,
     InboundSecurityRuleOperations,
+    InterconnectGroupsOperations,
     IpAllocationsOperations,
     IpGroupsOperations,
     IpamPoolsOperations,
@@ -146,6 +149,7 @@ from .operations import (
     ServiceTagsOperations,
     StaticCidrsOperations,
     StaticMembersOperations,
+    SubgroupsOperations,
     SubnetsOperations,
     SubscriptionNetworkManagerConnectionsOperations,
     UsagesOperations,
@@ -181,6 +185,11 @@ from .operations import (
     WebCategoriesOperations,
     _NetworkManagementClientOperationsMixin,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -304,6 +313,8 @@ class NetworkManagementClient(
     :vartype routing_rules: azure.mgmt.network.operations.RoutingRulesOperations
     :ivar scope_connections: ScopeConnectionsOperations operations
     :vartype scope_connections: azure.mgmt.network.operations.ScopeConnectionsOperations
+    :ivar commits: CommitsOperations operations
+    :vartype commits: azure.mgmt.network.operations.CommitsOperations
     :ivar security_admin_configurations: SecurityAdminConfigurationsOperations operations
     :vartype security_admin_configurations:
      azure.mgmt.network.operations.SecurityAdminConfigurationsOperations
@@ -420,6 +431,8 @@ class NetworkManagementClient(
     :vartype express_route_gateways: azure.mgmt.network.operations.ExpressRouteGatewaysOperations
     :ivar hub_route_tables: HubRouteTablesOperations operations
     :vartype hub_route_tables: azure.mgmt.network.operations.HubRouteTablesOperations
+    :ivar connection_policies: ConnectionPoliciesOperations operations
+    :vartype connection_policies: azure.mgmt.network.operations.ConnectionPoliciesOperations
     :ivar web_application_firewall_policies: WebApplicationFirewallPoliciesOperations operations
     :vartype web_application_firewall_policies:
      azure.mgmt.network.operations.WebApplicationFirewallPoliciesOperations
@@ -428,6 +441,10 @@ class NetworkManagementClient(
      azure.mgmt.network.operations.VirtualNetworkAppliancesOperations
     :ivar service_gateways: ServiceGatewaysOperations operations
     :vartype service_gateways: azure.mgmt.network.operations.ServiceGatewaysOperations
+    :ivar interconnect_groups: InterconnectGroupsOperations operations
+    :vartype interconnect_groups: azure.mgmt.network.operations.InterconnectGroupsOperations
+    :ivar subgroups: SubgroupsOperations operations
+    :vartype subgroups: azure.mgmt.network.operations.SubgroupsOperations
     :ivar application_gateway_private_link_resources:
      ApplicationGatewayPrivateLinkResourcesOperations operations
     :vartype application_gateway_private_link_resources:
@@ -779,6 +796,7 @@ class NetworkManagementClient(
         self.scope_connections = ScopeConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.commits = CommitsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.security_admin_configurations = SecurityAdminConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -893,6 +911,9 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.hub_route_tables = HubRouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connection_policies = ConnectionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.web_application_firewall_policies = WebApplicationFirewallPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -902,6 +923,10 @@ class NetworkManagementClient(
         self.service_gateways = ServiceGatewaysOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.interconnect_groups = InterconnectGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.subgroups = SubgroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.application_gateway_private_link_resources = ApplicationGatewayPrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

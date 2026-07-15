@@ -4,8 +4,8 @@
 
 from typing import List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import IPRule as RestIPRule
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import NetworkAcls as RestNetworkAcls
+from azure.ai.ml._restclient.arm_ml_service.models import IPRule as RestIPRule
+from azure.ai.ml._restclient.arm_ml_service.models import NetworkAcls as RestNetworkAcls
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

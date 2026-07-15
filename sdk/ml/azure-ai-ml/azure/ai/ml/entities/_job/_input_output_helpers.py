@@ -62,6 +62,40 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 
+
+def to_hybrid_rest_model(value: Any, arm_base_cls: Any) -> Any:
+    """Convert a msrest rest model (or dict/list of them) into its arm_ml_service hybrid equivalent.
+
+    The shared job rest-conversion helpers (``to_rest_dataset_literal_inputs``,
+    ``to_rest_data_outputs``, ``DistributionConfiguration._to_rest_object``, etc.) emit msrest models
+    from per-version restclient packages. Job entities whose envelope is a shared arm_ml_service hybrid
+    model (command and fine-tuning jobs) submit the body through the hybrid ``SdkJSONEncoder``, which can
+    only serialize hybrid models. Round-trip each nested child through its wire dict
+    (msrest ``.serialize()`` -> ``arm_base_cls._deserialize(...)``); this is wire-identical and rebuilds
+    the full subtree as the correct discriminated arm subtype.
+
+    Remove once arm_ml_service is regenerated and these entities build fully-arm bodies.
+
+    :param value: A msrest rest model, a dict/list of them, an already-hybrid model, or None.
+    :type value: Any
+    :param arm_base_cls: The arm_ml_service base model class to deserialize into.
+    :type arm_base_cls: Any
+    :return: The hybrid-model equivalent (same shape as the input container).
+    :rtype: Any
+    """
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        return {key: to_hybrid_rest_model(item, arm_base_cls) for key, item in value.items()}
+    if isinstance(value, list):
+        return [to_hybrid_rest_model(item, arm_base_cls) for item in value]
+    # Already an arm_ml_service hybrid model (e.g. a partially-migrated child): leave as-is.
+    if hasattr(value, "_is_model"):
+        return value
+    # msrest model -> camelCase wire dict -> discriminated arm hybrid model.
+    return arm_base_cls._deserialize(value.serialize(), [])  # pylint: disable=protected-access
+
+
 INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
     InputDeliveryMode.READ_ONLY_MOUNT: InputOutputModes.RO_MOUNT,

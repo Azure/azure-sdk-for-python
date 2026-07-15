@@ -29,7 +29,10 @@ class TestBrowserSDKIntegration(unittest.TestCase):
             connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789012",
             browser_sdk_loader_config={
                 "enabled": True,
-                "connection_string": "InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/",
+                "connection_string": (
+                    "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+                    + "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+                ),
             },
         )
 
@@ -40,7 +43,8 @@ class TestBrowserSDKIntegration(unittest.TestCase):
         self.assertTrue(call_args.enabled)
         self.assertEqual(
             call_args.connection_string,
-            "InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/",
+            "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+            + "IngestionEndpoint=https://test.in.applicationinsights.azure.com/",
         )
 
     @patch("azure.monitor.opentelemetry._configure.setup_snippet_injection")
@@ -50,7 +54,10 @@ class TestBrowserSDKIntegration(unittest.TestCase):
 
         browser_config_dict = {
             "enabled": True,
-            "connection_string": "InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/",
+            "connection_string": (
+                "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+                + "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+            ),
         }
 
         # Configure with browser SDK config dict
@@ -142,7 +149,7 @@ class TestBrowserSDKIntegration(unittest.TestCase):
         self.assertIsNone(config.connection_string)
 
     @patch("azure.monitor.opentelemetry._configure._logger")
-    def test_invalid_browser_sdk_config_type(self, mock_logger):
+    def test_invalid_browser_sdk_config_type(self, mock_logger):  # pylint: disable=unused-argument
         """Test handling of invalid browser SDK config types."""
         from azure.monitor.opentelemetry._utils.configurations import _get_configurations
 
@@ -154,7 +161,7 @@ class TestBrowserSDKIntegration(unittest.TestCase):
             configurations = {BROWSER_SDK_LOADER_CONFIG_ARG: invalid_config}
             # The actual validation would happen in the setup function
             self.assertIn(BROWSER_SDK_LOADER_CONFIG_ARG, configurations)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             self.fail("Should handle invalid config types gracefully")
 
 

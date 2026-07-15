@@ -12,7 +12,6 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
-
 AZURE_LOCATION = "eastus"
 
 

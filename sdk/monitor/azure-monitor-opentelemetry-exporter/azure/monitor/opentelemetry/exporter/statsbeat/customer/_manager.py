@@ -82,7 +82,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             self._base_attributes: Optional[Dict[str, Any]] = {  # type: ignore
                 "language": self._language,
                 "version": VERSION,
-                "compute_type": get_compute_type(),
+                "computeType": get_compute_type(),
             }
         else:
             self._base_attributes = None
@@ -318,7 +318,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                 if count > 0:
                     # Create attributes by copying base and adding telemetry-specific data
                     attributes = self._base_attributes.copy()
-                    attributes["telemetry_type"] = telemetry_type
+                    attributes["telemetryType"] = telemetry_type
                     observations.append(Observation(count, attributes))
 
             # Reset counts after reading
@@ -340,11 +340,11 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                             if count > 0:
                                 # Create attributes by copying base and adding drop-specific data
                                 attributes = self._base_attributes.copy()
-                                attributes["drop.code"] = drop_code if isinstance(drop_code, int) else drop_code.value
-                                attributes["drop.reason"] = reason
-                                attributes["telemetry_type"] = telemetry_type
+                                attributes["dropCode"] = drop_code if isinstance(drop_code, int) else drop_code.value
+                                attributes["dropReason"] = reason
+                                attributes["telemetryType"] = telemetry_type
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
-                                    attributes["telemetry_success"] = success_tracker
+                                    attributes["telemetrySuccess"] = success_tracker
                                 observations.append(Observation(count, attributes))
 
             # Reset counts after reading
@@ -364,9 +364,9 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                         if count > 0:
                             # Create attributes by copying base and adding retry-specific data
                             attributes = self._base_attributes.copy()
-                            attributes["retry.code"] = retry_code if isinstance(retry_code, int) else retry_code.value
-                            attributes["retry.reason"] = reason
-                            attributes["telemetry_type"] = telemetry_type
+                            attributes["retryCode"] = retry_code if isinstance(retry_code, int) else retry_code.value
+                            attributes["retryReason"] = reason
+                            attributes["telemetryType"] = telemetry_type
                             observations.append(Observation(count, attributes))
 
             # Reset counts after reading

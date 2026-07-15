@@ -33,7 +33,7 @@ def create_package(prefolder, name):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = "azpysdk breaking . --changelog"
+    cmd = "azpysdk breaking . --changelog --use-apistub "
     if lastest_pypi_version:
         cmd += " --latest-pypi-version"
     try:
@@ -57,7 +57,10 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
 
     try:
         client = PyPIClient()
-        ordered_versions = client.get_ordered_versions(package_name)
+        # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
+        ordered_versions = [v for v in client.get_ordered_versions(package_name) if v.base_version != "0.0.0"]
+        if not ordered_versions:
+            return "", ""
         last_release = ordered_versions[-1]
         stable_releases = [x for x in ordered_versions if not x.is_prerelease]
         last_stable_version = str(stable_releases[-1] if stable_releases else "")
@@ -69,7 +72,7 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         # temporary logic to always get latest version from pypi for specific packages whose latest stable version
         # is not updated for a long time and has some issue in changelog generation.
         # This is a workaround before we have a better solution to determine the version for changelog generation.
-        sdks_with_changelog_issue = {"azure-mgmt-sql": "3.0.1"}
+        sdks_with_changelog_issue = {}
         if package_name in sdks_with_changelog_issue and (
             last_version == sdks_with_changelog_issue[package_name]
             or last_stable_version == sdks_with_changelog_issue[package_name]
@@ -84,10 +87,6 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_version = ""
-
-    # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
-    if last_version and Version(last_version).base_version == "0.0.0":
-        return "", ""
 
     return last_version, last_stable_version
 
@@ -233,7 +232,7 @@ class CheckFile:
                 toml_data = toml.load(fd)
             if "packaging" not in toml_data:
                 toml_data["packaging"] = {}
-            if title and not toml_data["packaging"].get("title"):
+            if title:
                 toml_data["packaging"]["title"] = title
             toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:

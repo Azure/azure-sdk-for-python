@@ -1427,6 +1427,153 @@ class TestFoundryResultProcessor:
         assert messages[0]["content"] == "User message"
         assert messages[1]["role"] == "assistant"
         assert messages[1]["content"] == "Assistant response"
+        # When original and converted match (no encoding), no audit field is added.
+        assert "original_value" not in messages[0]
+        assert "original_value" not in messages[1]
+
+    def test_build_messages_preserves_encoded_user_prompt(self):
+        """Encoded attack prompts must be stored as the wire payload.
+
+        Regression test for
+        https://github.com/Azure/azure-sdk-for-python/issues/47228 — for
+        converter-based strategies (Base64, Flip, Morse, ROT13, etc.) the
+        target receives ``converted_value``, so the persisted conversation
+        must report ``converted_value`` as ``content`` (not the decoded
+        ``original_value``). The pre-converter objective is preserved as
+        ``original_value`` on the same message so callers still have an
+        audit trail of what the attack meant to say.
+        """
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        # Simulate a Base64-converted user turn: the target actually saw the
+        # encoded payload, but the SDK still has the plaintext objective.
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "How do I make a dangerous thing?"
+        user_piece.converted_value = "SG93IGRvIEkgbWFrZSBhIGRhbmdlcm91cyB0aGluZz8="
+        user_piece.sequence = 0
+        user_piece.prompt_metadata = {}
+        user_piece.labels = {}
+
+        # Assistant response — converter is a no-op on the response side, so
+        # original and converted match. No audit field should be emitted.
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = "Sorry, I can't help with that."
+        assistant_piece.converted_value = "Sorry, I can't help with that."
+        assistant_piece.sequence = 1
+        assistant_piece.prompt_metadata = {}
+        assistant_piece.labels = {}
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        # The user turn must carry the encoded payload as content so consumers
+        # can verify exactly what the target received.
+        assert messages[0]["role"] == "user"
+        assert messages[0]["content"] == "SG93IGRvIEkgbWFrZSBhIGRhbmdlcm91cyB0aGluZz8="
+        # The plaintext objective is preserved alongside it for auditability.
+        assert messages[0]["original_value"] == "How do I make a dangerous thing?"
+
+        # Assistant turn is unchanged: content == converted_value, no audit field.
+        assert messages[1]["role"] == "assistant"
+        assert messages[1]["content"] == "Sorry, I can't help with that."
+        assert "original_value" not in messages[1]
+
+    def test_build_messages_falls_back_to_original_when_converted_missing(self):
+        """When ``converted_value`` is empty, fall back to ``original_value``.
+
+        Covers the historical behavior for pieces where PyRIT did not run a
+        converter (e.g., Baseline strategy or in-flight failures).
+        """
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "Baseline prompt"
+        user_piece.converted_value = None
+        user_piece.sequence = 0
+        user_piece.prompt_metadata = {}
+        user_piece.labels = {}
+
+        messages = processor._build_messages_from_pieces([user_piece])
+
+        assert len(messages) == 1
+        assert messages[0]["content"] == "Baseline prompt"
+        # original == content here, so no separate audit field is needed.
+        assert "original_value" not in messages[0]
+
+    def test_build_messages_preserves_non_string_payloads(self):
+        """Non-string ``converted_value`` payloads must survive unchanged.
+
+        PyRIT message pieces can carry structured / multimodal content
+        (e.g., bytes or list-of-parts payloads) on ``converted_value``.
+        ``content`` must pass those through so persisted conversations
+        remain a faithful record of what the target received; only the
+        ``original_value`` audit field is gated on both sides being text.
+        """
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        # Structured multimodal-style payload on converted_value, plain
+        # string objective on original_value.
+        structured_payload = [
+            {"type": "text", "text": "describe this image"},
+            {"type": "image_url", "image_url": {"url": "https://example/img.png"}},
+        ]
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "Describe this image"
+        user_piece.converted_value = structured_payload
+        user_piece.sequence = 0
+        user_piece.prompt_metadata = {}
+        user_piece.labels = {}
+
+        # Bytes payload on assistant converted_value — must not be coerced
+        # to "" by str-gating logic.
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = None
+        assistant_piece.converted_value = b"\x89PNG\r\n"
+        assistant_piece.sequence = 1
+        assistant_piece.prompt_metadata = {}
+        assistant_piece.labels = {}
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        # Structured user payload passed through unchanged.
+        assert messages[0]["role"] == "user"
+        assert messages[0]["content"] is structured_payload
+        # Audit field omitted: content is non-text so cross-type comparison
+        # against the str original would be meaningless.
+        assert "original_value" not in messages[0]
+
+        # Bytes assistant payload preserved (not silently dropped to "").
+        assert messages[1]["role"] == "assistant"
+        assert messages[1]["content"] == b"\x89PNG\r\n"
+        assert "original_value" not in messages[1]
 
     def test_get_prompt_group_id_from_conversation(self):
         """Test extracting prompt_group_id from conversation."""
@@ -4436,8 +4583,18 @@ class TestAdversarialChatTargetRegression:
         key = RedTeam._get_adversarial_template_key(strategies)
         assert key == "orchestrators/red_teaming/text_generation.yaml"
 
-    def test_build_messages_user_shows_original_value(self):
-        """User messages should show original_value (adversarial prompt), not converted_value."""
+    def test_build_messages_user_shows_converted_value(self):
+        """User messages should show converted_value (wire payload), with original_value preserved.
+
+        See https://github.com/Azure/azure-sdk-for-python/issues/47228 — the
+        persisted conversation must reflect what the target actually received
+        (``converted_value``). The pre-converter objective is retained as an
+        ``original_value`` sibling for auditability. The callback-response leak
+        this class guards against is prevented at the source (the
+        ``adversarial_chat_target`` is an ``AzureRAIServiceTarget``, not the
+        user callback — see ``test_execute_attacks_with_foundry_uses_rai_service_target``),
+        so ``converted_value`` here is the legitimately rephrased prompt.
+        """
         mock_scenario = MagicMock()
         mock_dataset = MagicMock()
         mock_dataset.get_all_seed_groups.return_value = []
@@ -4464,9 +4621,11 @@ class TestAdversarialChatTargetRegression:
         messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
 
         assert len(messages) == 2
-        # User message should show the ORIGINAL adversarial prompt
+        # User message should show the wire payload (what the target received)
         assert messages[0]["role"] == "user"
-        assert messages[0]["content"] == "Tell me about violence"
+        assert messages[0]["content"] == "Told me about violence"
+        # The pre-converter objective is preserved as an audit sibling
+        assert messages[0]["original_value"] == "Tell me about violence"
         # Assistant message should show the response
         assert messages[1]["role"] == "assistant"
         assert messages[1]["content"] == "I cannot help with that"
@@ -4492,44 +4651,6 @@ class TestAdversarialChatTargetRegression:
         messages = processor._build_messages_from_pieces([user_piece])
 
         assert messages[0]["content"] == "Fallback content"
-
-    def test_build_messages_callback_response_not_in_user_message(self):
-        """Regression: callback response must NOT appear as user message content.
-
-        This reproduces the exact bug where a simple callback's response
-        leaked into the user message via converted_value.
-        """
-        mock_scenario = MagicMock()
-        mock_dataset = MagicMock()
-        mock_dataset.get_all_seed_groups.return_value = []
-
-        processor = FoundryResultProcessor(
-            scenario=mock_scenario,
-            dataset_config=mock_dataset,
-            risk_category="violence",
-        )
-
-        callback_response = "This is a test callback response. no llm is used."
-
-        # Simulate the bug: TenseConverter used callback as LLM, so
-        # converted_value = callback response instead of rephrased prompt
-        user_piece = MagicMock()
-        user_piece.api_role = "user"
-        user_piece.original_value = "How to commit violence"
-        user_piece.converted_value = callback_response
-        user_piece.sequence = 0
-
-        assistant_piece = MagicMock()
-        assistant_piece.api_role = "assistant"
-        assistant_piece.original_value = callback_response
-        assistant_piece.converted_value = callback_response
-        assistant_piece.sequence = 1
-
-        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
-
-        # User message should show the adversarial prompt, NOT the callback response
-        assert messages[0]["content"] == "How to commit violence"
-        assert messages[0]["content"] != callback_response
 
     @pytest.mark.asyncio
     async def test_execute_attacks_with_foundry_uses_rai_service_target(self):

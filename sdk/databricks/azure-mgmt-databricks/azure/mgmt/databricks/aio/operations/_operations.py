@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -66,7 +66,6 @@ from .._configuration import AzureDatabricksManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -275,7 +274,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.Workspace, JSON, IO[bytes]],
+        parameters: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -379,7 +378,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: JSON,
+        parameters: _types.Workspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -392,7 +391,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param parameters: Parameters supplied to the create or update a workspace. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databricks.types.Workspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -435,7 +434,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.Workspace, JSON, IO[bytes]],
+        parameters: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Creates a new workspace.
@@ -445,9 +444,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
-        :param parameters: Parameters supplied to the create or update a workspace. Is one of the
-         following types: Workspace, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databricks.models.Workspace or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update a workspace. Is either a
+         Workspace type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databricks.models.Workspace or
+         ~azure.mgmt.databricks.types.Workspace or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.Workspace]
@@ -509,7 +509,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.WorkspaceUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.WorkspaceUpdate, _types.WorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -613,7 +613,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: JSON,
+        parameters: _types.WorkspaceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -626,7 +626,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param parameters: The update to the workspace. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databricks.types.WorkspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -669,7 +669,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.WorkspaceUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.WorkspaceUpdate, _types.WorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Updates a workspace.
@@ -679,9 +679,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
-        :param parameters: The update to the workspace. Is one of the following types: WorkspaceUpdate,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databricks.models.WorkspaceUpdate or JSON or IO[bytes]
+        :param parameters: The update to the workspace. Is either a WorkspaceUpdate type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.databricks.models.WorkspaceUpdate or
+         ~azure.mgmt.databricks.types.WorkspaceUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.Workspace]
@@ -1157,7 +1158,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1270,7 +1273,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: JSON,
+        private_endpoint_connection: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1288,7 +1291,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties.
          Required.
-        :type private_endpoint_connection: JSON
+        :type private_endpoint_connection: ~azure.mgmt.databricks.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1340,7 +1343,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update private endpoint connection status.
@@ -1355,9 +1360,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties. Is
-         one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+         either a PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type private_endpoint_connection: ~azure.mgmt.databricks.models.PrivateEndpointConnection or
-         JSON or IO[bytes]
+         ~azure.mgmt.databricks.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -1742,7 +1747,7 @@ class AccessConnectorsOperations:
         self,
         resource_group_name: str,
         connector_name: str,
-        parameters: Union[_models.AccessConnector, JSON, IO[bytes]],
+        parameters: Union[_models.AccessConnector, _types.AccessConnector, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1847,7 +1852,7 @@ class AccessConnectorsOperations:
         self,
         resource_group_name: str,
         connector_name: str,
-        parameters: JSON,
+        parameters: _types.AccessConnector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1861,7 +1866,7 @@ class AccessConnectorsOperations:
         :type connector_name: str
         :param parameters: Parameters supplied to the create or update an Azure Databricks Access
          Connector. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databricks.types.AccessConnector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1905,7 +1910,7 @@ class AccessConnectorsOperations:
         self,
         resource_group_name: str,
         connector_name: str,
-        parameters: Union[_models.AccessConnector, JSON, IO[bytes]],
+        parameters: Union[_models.AccessConnector, _types.AccessConnector, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AccessConnector]:
         """Creates or updates Azure Databricks Access Connector.
@@ -1916,8 +1921,9 @@ class AccessConnectorsOperations:
         :param connector_name: The name of the Azure Databricks Access Connector. Required.
         :type connector_name: str
         :param parameters: Parameters supplied to the create or update an Azure Databricks Access
-         Connector. Is one of the following types: AccessConnector, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databricks.models.AccessConnector or JSON or IO[bytes]
+         Connector. Is either a AccessConnector type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databricks.models.AccessConnector or
+         ~azure.mgmt.databricks.types.AccessConnector or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AccessConnector. The AccessConnector is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.AccessConnector]
@@ -1979,7 +1985,7 @@ class AccessConnectorsOperations:
         self,
         resource_group_name: str,
         connector_name: str,
-        parameters: Union[_models.AccessConnectorUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.AccessConnectorUpdate, _types.AccessConnectorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2083,7 +2089,7 @@ class AccessConnectorsOperations:
         self,
         resource_group_name: str,
         connector_name: str,
-        parameters: JSON,
+        parameters: _types.AccessConnectorUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2096,7 +2102,7 @@ class AccessConnectorsOperations:
         :param connector_name: The name of the Azure Databricks Access Connector. Required.
         :type connector_name: str
         :param parameters: The update to the Azure Databricks Access Connector. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databricks.types.AccessConnectorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2139,7 +2145,7 @@ class AccessConnectorsOperations:
         self,
         resource_group_name: str,
         connector_name: str,
-        parameters: Union[_models.AccessConnectorUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.AccessConnectorUpdate, _types.AccessConnectorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AccessConnector]:
         """Updates an Azure Databricks Access Connector.
@@ -2149,9 +2155,10 @@ class AccessConnectorsOperations:
         :type resource_group_name: str
         :param connector_name: The name of the Azure Databricks Access Connector. Required.
         :type connector_name: str
-        :param parameters: The update to the Azure Databricks Access Connector. Is one of the following
-         types: AccessConnectorUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databricks.models.AccessConnectorUpdate or JSON or IO[bytes]
+        :param parameters: The update to the Azure Databricks Access Connector. Is either a
+         AccessConnectorUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databricks.models.AccessConnectorUpdate or
+         ~azure.mgmt.databricks.types.AccessConnectorUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AccessConnector. The AccessConnector is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.AccessConnector]
@@ -2922,7 +2929,9 @@ class VNetPeeringOperations:
         resource_group_name: str,
         workspace_name: str,
         peering_name: str,
-        virtual_network_peering_parameters: Union[_models.VirtualNetworkPeering, JSON, IO[bytes]],
+        virtual_network_peering_parameters: Union[
+            _models.VirtualNetworkPeering, _types.VirtualNetworkPeering, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3032,7 +3041,7 @@ class VNetPeeringOperations:
         resource_group_name: str,
         workspace_name: str,
         peering_name: str,
-        virtual_network_peering_parameters: JSON,
+        virtual_network_peering_parameters: _types.VirtualNetworkPeering,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3048,7 +3057,7 @@ class VNetPeeringOperations:
         :type peering_name: str
         :param virtual_network_peering_parameters: Parameters supplied to the create workspace vNet
          Peering. Required.
-        :type virtual_network_peering_parameters: JSON
+        :type virtual_network_peering_parameters: ~azure.mgmt.databricks.types.VirtualNetworkPeering
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3096,7 +3105,9 @@ class VNetPeeringOperations:
         resource_group_name: str,
         workspace_name: str,
         peering_name: str,
-        virtual_network_peering_parameters: Union[_models.VirtualNetworkPeering, JSON, IO[bytes]],
+        virtual_network_peering_parameters: Union[
+            _models.VirtualNetworkPeering, _types.VirtualNetworkPeering, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkPeering]:
         """Creates vNet Peering for workspace.
@@ -3109,9 +3120,9 @@ class VNetPeeringOperations:
         :param peering_name: The name of the workspace vNet peering. Required.
         :type peering_name: str
         :param virtual_network_peering_parameters: Parameters supplied to the create workspace vNet
-         Peering. Is one of the following types: VirtualNetworkPeering, JSON, IO[bytes] Required.
+         Peering. Is either a VirtualNetworkPeering type or a IO[bytes] type. Required.
         :type virtual_network_peering_parameters: ~azure.mgmt.databricks.models.VirtualNetworkPeering
-         or JSON or IO[bytes]
+         or ~azure.mgmt.databricks.types.VirtualNetworkPeering or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkPeering. The
          VirtualNetworkPeering is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databricks.models.VirtualNetworkPeering]

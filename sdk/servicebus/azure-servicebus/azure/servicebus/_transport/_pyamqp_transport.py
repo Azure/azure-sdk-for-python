@@ -55,6 +55,7 @@ from .._common.constants import (
     SESSION_FILTER,
     SESSION_LOCKED_UNTIL,
     _X_OPT_ENQUEUED_TIME,
+    _X_OPT_PARTITION_KEY,
     _X_OPT_LOCKED_UNTIL,
     ERROR_CODE_SESSION_LOCK_LOST,
     ERROR_CODE_MESSAGE_LOCK_LOST,
@@ -540,6 +541,31 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         utils.add_batch(sb_message_batch._message, outgoing_sb_message._message)
 
     @staticmethod
+    def set_batch_envelope_properties(
+        batch_message: List,
+        message_id: Optional[str],
+        session_id: Optional[str],
+        partition_key: Optional[str],
+    ) -> None:
+        """
+        Populate the batch envelope's message_id/session_id properties and partition_key annotation
+        on the underlying pyamqp batch message.
+        :param list batch_message: The underlying pyamqp batch message.
+        :param str or None message_id: The message_id of the first message in the batch.
+        :param str or None session_id: The session_id of the first message in the batch.
+        :param str or None partition_key: The partition_key of the first message in the batch.
+        :rtype: None
+        """
+        if message_id or session_id:
+            # pyamqp Properties is a 13-field tuple: index 0 = message_id, index 10 = group_id (session_id).
+            properties = cast(List, [None] * 13)
+            properties[0] = message_id
+            properties[10] = session_id
+            utils.set_message_properties(batch_message, properties)
+        if partition_key:
+            utils.set_message_annotations(batch_message, {_X_OPT_PARTITION_KEY: partition_key})
+
+    @staticmethod
     def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
         """
         Creates and returns the Source.
@@ -840,15 +866,21 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :keyword ~azure.servicebus.ServiceBusReceiver receiver: Required.
         :keyword bool is_peeked_message: Optional. For peeked messages.
         :keyword bool is_deferred_message: Optional. For deferred messages.
+        :keyword uuid.UUID lock_token: Optional. Lock token, if it is given by the message receiver.
         :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
         :return: List of service bus received messages.
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
+        is_deferred_message = kwargs.get("is_deferred_message", False)
         parsed = []
         if message.value:
             for m in message.value[b"messages"]:
                 wrapped = decode_payload(memoryview(m[b"message"]))
-                parsed.append(message_type(wrapped, **kwargs))
+                if is_deferred_message and b"lock-token" in m:
+                    lock_token = m[b"lock-token"]
+                else:
+                    lock_token = kwargs.pop("lock_token", None)
+                parsed.append(message_type(wrapped, lock_token=lock_token, **kwargs))
         return parsed
 
     @staticmethod

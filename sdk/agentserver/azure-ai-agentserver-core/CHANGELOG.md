@@ -1,5 +1,24 @@
 # Release History
 
+## 2.0.0b7 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: added the platform identity header constants `x-agent-user-id` (`USER_ID`) — the global, cross-agent per-user partition key — and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) — the opaque per-request call identifier — to the `_platform_headers` module.
+- Added `FOUNDRY_AGENT_ID` environment variable support exposing the agent's stable GUID via `AgentConfig.agent_guid` and the `resolve_agent_guid()` helper.
+- Added a request-scoped platform context: `FoundryAgentRequestContext`, `get_request_context()`, `set_request_context()`, and `reset_request_context()`. Protocol packages bind the inbound per-request call ID and user ID so that handler code (and the SDK HTTP pipeline) can read them. `FoundryAgentRequestContext.platform_headers()` builds the headers to forward on outbound Foundry 1P calls — the per-request call ID only; `x-agent-user-id` is **not** forwarded (it is not accepted/trusted by 1P services and is used only for container-side state partitioning).
+
+### Breaking Changes
+
+- Replaced the `x-agent-user-isolation-key` / `x-agent-chat-isolation-key` header constants (`USER_ISOLATION_KEY` / `CHAT_ISOLATION_KEY`) with `x-agent-user-id` (`USER_ID`) and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) per container protocol version `2.0.0`.
+
+## 2.0.0b6 (2026-06-12)
+
+### Bugs Fixed
+
+- Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
+- Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
+
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed

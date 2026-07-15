@@ -21,13 +21,15 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) FABRIC_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    5) FABRIC_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -40,37 +42,34 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+tool = MicrosoftFabricPreviewTool(
+    fabric_dataagent_preview=FabricDataAgentToolParameters(
+        project_connections=[ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])]
+    )
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-    tool = MicrosoftFabricPreviewTool(
-        fabric_dataagent_preview=FabricDataAgentToolParameters(
-            project_connections=[
-                ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])
-            ]
-        )
-    )
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant.",
             tools=[tool],
         ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     user_input = os.environ.get("FABRIC_USER_INPUT") or input("Enter your question: \n")
 
     stream_response = openai_client.responses.create(
         tool_choice="required",
         stream=True,
         input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:
@@ -95,7 +94,3 @@ with (
         elif event.type == "response.completed":
             print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")

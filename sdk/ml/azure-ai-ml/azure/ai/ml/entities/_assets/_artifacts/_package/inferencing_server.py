@@ -6,15 +6,12 @@
 
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
-)
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomInferencingServer as RestCustomInferencingServer
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CustomInferencingServer as RestCustomInferencingServer
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     OnlineInferenceConfiguration as RestOnlineInferenceConfiguration,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Route as RestRoute
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonInferencingServer as RestTritonInferencingServer
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Route as RestRoute
+from azure.ai.ml._restclient.v2023_08_01_preview.models import TritonInferencingServer as RestTritonInferencingServer
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AzureMLBatchInferencingServer as RestAzureMLBatchInferencingServer,
 )

@@ -12,7 +12,6 @@ from unittest import mock
 import msrest
 from marshmallow.exceptions import ValidationError
 
-from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
 from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
@@ -552,14 +551,17 @@ def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, Res
 
     """
 
+    # Keys are the camel-case string values used by the legacy v2022_02_01_preview
+    # REST payloads (e.g. "Literal", "UriFile"). They are hard-coded so this
+    # mapping does not depend on the v2022 generated enum class.
     FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
-        JobInputType02.CUSTOM_MODEL: JobInputType10.CUSTOM_MODEL,
-        JobInputType02.LITERAL: JobInputType10.LITERAL,
-        JobInputType02.ML_FLOW_MODEL: JobInputType10.MLFLOW_MODEL,
-        JobInputType02.ML_TABLE: JobInputType10.MLTABLE,
-        JobInputType02.TRITON_MODEL: JobInputType10.TRITON_MODEL,
-        JobInputType02.URI_FILE: JobInputType10.URI_FILE,
-        JobInputType02.URI_FOLDER: JobInputType10.URI_FOLDER,
+        "CustomModel": JobInputType10.CUSTOM_MODEL,
+        "Literal": JobInputType10.LITERAL,
+        "MlFlowModel": JobInputType10.MLFLOW_MODEL,
+        "MlTable": JobInputType10.MLTABLE,
+        "TritonModel": JobInputType10.TRITON_MODEL,
+        "UriFile": JobInputType10.URI_FILE,
+        "UriFolder": JobInputType10.URI_FOLDER,
     }
     if (
         hasattr(input_output_value, "job_input_type")

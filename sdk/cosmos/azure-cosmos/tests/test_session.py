@@ -266,6 +266,156 @@ class TestSession(unittest.TestCase):
         finally:
             self.key_db.delete_container(test_container_ref)  # control-plane
 
+    # The three tests below check that a query targeted at a single partition
+    # sends only that partition's session token on every request, including
+    # each page and the partition_key entry point.
+
+    def test_feed_range_query_session_token_matches_partition_lsn(self):
+        # The token sent for a single feed-range query must be the per-partition
+        # token for that partition, not a comma-joined token across partitions.
+        test_container_ref = self.key_db.create_container(
+            "Container fr token value " + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        test_container = self.created_db.get_container_client(test_container_ref.id)
+        try:
+            for i in range(60):
+                test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
+            feed_ranges = list(test_container.read_feed_ranges())
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
+
+            captured = {"token": None}
+
+            def capture(request):
+                captured["token"] = request.http_request.headers.get(HttpHeaders.SessionToken)
+
+            list(test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=feed_ranges[0],
+                raw_request_hook=capture,
+            ))
+
+            wire_token = captured["token"]
+            self.assertIsNotNone(wire_token, "Expected a SessionToken header to be sent.")
+            self.assertNotIn(",", wire_token, f"Got compound token on the wire: {wire_token!r}")
+
+            # Token should be a single 'partitionRangeId:vector' pair.
+            self.assertIn(":", wire_token, f"Expected single-partition token shape: {wire_token!r}")
+            pk_range_id, _, vector_part = wire_token.partition(":")
+            self.assertNotEqual(
+                pk_range_id, "", f"Partition range id prefix should not be empty: {wire_token!r}"
+            )
+            self.assertTrue(vector_part, f"Vector portion should not be empty: {wire_token!r}")
+
+        finally:
+            self.key_db.delete_container(test_container_ref)
+
+    def test_feed_range_query_session_token_single_partition_across_pages(self):
+        # Every page of a paginated single-partition query must send a single
+        # partition token, not a compound one.
+        test_container_ref = self.key_db.create_container(
+            "Container fr pagination " + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        test_container = self.created_db.get_container_client(test_container_ref.id)
+        try:
+            # Build multi-partition session state first so this test can catch
+            # regressions that accidentally send a compound token.
+            for i in range(60):
+                test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
+            # Then concentrate items on one key so the query spans several
+            # pages within one target physical partition.
+            for i in range(20):
+                test_container.create_item({
+                    "id": str(uuid.uuid4()),
+                    "pk": "pinned_pk",
+                    "i": i,
+                })
+
+            feed_ranges = list(test_container.read_feed_ranges())
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
+
+            target_fr = test_container.feed_range_from_partition_key("pinned_pk")
+
+            captured_tokens = []
+
+            def capture(request):
+                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                if token:
+                    captured_tokens.append(token)
+
+            pager = test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=target_fr,
+                max_item_count=2,
+                raw_request_hook=capture,
+            ).by_page()
+            page_count = 0
+            for page in pager:
+                _ = list(page)
+                page_count += 1
+
+            self.assertGreaterEqual(page_count, 1)
+            self.assertGreater(len(captured_tokens), 0,
+                               "Expected at least one captured SessionToken header across pages.")
+            # Every page must carry a single-partition token, and all tokens
+            # must reference the same partition range id.
+            prefixes = set()
+            for token in captured_tokens:
+                self.assertNotIn(
+                    ",", token,
+                    f"Compound token leaked on a paginated request: {token!r}",
+                )
+                self.assertIn(":", token, f"Bad token shape on paginated request: {token!r}")
+                prefixes.add(token.split(":", 1)[0])
+            self.assertEqual(
+                len(prefixes), 1,
+                f"Single-partition query produced tokens for multiple partition range ids: {prefixes}",
+            )
+        finally:
+            self.key_db.delete_container(test_container_ref)
+
+    def test_query_with_partition_key_only_sends_single_partition_token(self):
+        # A query scoped by partition_key (not feed_range) must also send only
+        # the relevant partition's token.
+        test_container_ref = self.key_db.create_container(
+            "Container pk-only session " + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        test_container = self.created_db.get_container_client(test_container_ref.id)
+        try:
+            for i in range(60):
+                test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
+            captured_tokens = []
+
+            def capture(request):
+                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                if token:
+                    captured_tokens.append(token)
+
+            list(test_container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "pk_0001"}],
+                partition_key="pk_0001",
+                raw_request_hook=capture,
+            ))
+
+            self.assertGreater(len(captured_tokens), 0,
+                               "Expected at least one request with a SessionToken header.")
+            for token in captured_tokens:
+                self.assertNotIn(
+                    ",", token,
+                    f"partitionKey-only query leaked a compound token: {token!r}",
+                )
+        finally:
+            self.key_db.delete_container(test_container_ref)
+
     def test_session_token_with_space_in_container_name(self):
 
         # Session token should not be sent for control plane operations

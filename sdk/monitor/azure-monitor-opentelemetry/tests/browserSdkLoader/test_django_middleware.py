@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import unittest
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, Mock
 
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 
@@ -16,7 +16,10 @@ class TestDjangoMiddleware(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.get_response_mock = Mock()
-        self.connection_string = "InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+        self.connection_string = (
+            "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+            + "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+        )
 
     @patch("azure.monitor.opentelemetry._browser_sdk_loader.django_middleware.DJANGO_AVAILABLE", True)
     def test_middleware_initialization_django_available(self):
@@ -158,7 +161,7 @@ class TestDjangoMiddleware(unittest.TestCase):
         def mock_get(header, default=""):
             if header == "Content-Type":
                 return "text/html"
-            elif header == "Content-Encoding":
+            if header == "Content-Encoding":
                 return None
             return default
 
