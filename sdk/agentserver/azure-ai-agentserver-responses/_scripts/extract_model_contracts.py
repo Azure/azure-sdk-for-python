@@ -1,24 +1,14 @@
 #!/usr/bin/env python
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Finalize local OpenAI Responses TypedDict model generation."""
+"""Extract local OpenAI Responses model contracts from generated output."""
 
 from __future__ import annotations
 
-import argparse
 import re
 import shutil
 from pathlib import Path
 
-
-COPYRIGHT = "# Copyright (c) Microsoft Corporation.\n# Licensed under the MIT license.\n"
-
-STALE_USAGE_REFS = {
-    "OpenAI.OutputItemComputerToolCallOutputResource",
-    "OpenAI.OutputItemCustomToolCall",
-    "OpenAI.OutputItemCustomToolCallOutput",
-    "OpenAI.FunctionToolCallOutputResource",
-}
 
 ROOT_INIT_PREFIX = (
     "# coding=utf-8\n"
@@ -61,29 +51,9 @@ ENUM_FALLBACK_SUFFIX = (
 )
 
 
-def _write(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
-
-
 def _remove_pycache(root: Path) -> None:
     for pycache in root.rglob("__pycache__"):
         shutil.rmtree(pycache)
-
-
-def patch_client_tsp(client_tsp: Path) -> None:
-    """Remove usage decorators for stale upstream OpenAI symbols before compilation."""
-    lines = client_tsp.read_text(encoding="utf-8").splitlines()
-    patched = [
-        line
-        for line in lines
-        if not (
-            line.strip().startswith("@@usage(")
-            and any(stale_ref in line for stale_ref in STALE_USAGE_REFS)
-        )
-    ]
-    if len(patched) != len(lines):
-        client_tsp.write_text("\n".join(patched) + "\n", encoding="utf-8")
 
 
 def _find_emitted_models_root(emitter_output_root: Path) -> Path:
@@ -106,29 +76,6 @@ def _normalize_enum_value(value: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", value.upper())
 
 
-def _patch_literal_enum_references(types_py: Path) -> None:
-    text = types_py.read_text(encoding="utf-8")
-    enum_values: dict[str, dict[str, str]] = {}
-    for match in re.finditer(r"(?ms)^([A-Za-z][A-Za-z0-9_]*) = Literal\[(.*?)\]\n\"\"\"", text):
-        enum_name = match.group(1)
-        values = re.findall(r'"([^"]+)"', match.group(2))
-        if values:
-            enum_values[enum_name] = {_normalize_enum_value(value): value for value in values}
-
-    def replace(match: re.Match[str]) -> str:
-        enum_name, member_name = match.groups()
-        values = enum_values.get(enum_name)
-        if not values:
-            return match.group(0)
-        value = values.get(_normalize_enum_value(member_name))
-        return f'"{value}"' if value is not None else match.group(0)
-
-    types_py.write_text(
-        re.sub(r"\b([A-Z][A-Za-z0-9_]*)\.([A-Z][A-Z0-9_]*)\b", replace, text),
-        encoding="utf-8",
-    )
-
-
 def _strip_trailing_whitespace(path: Path) -> None:
     path.write_text(
         "\n".join(line.rstrip() for line in path.read_text(encoding="utf-8").splitlines()) + "\n",
@@ -148,13 +95,7 @@ def _literal_enum_values(types_py: Path) -> dict[str, dict[str, str]]:
 
 
 def _build_enum_fallback(types_py: Path) -> str:
-    enum_values = _literal_enum_values(types_py)
-    exact_values: dict[str, dict[str, str]] = {}
-    for enum_name, values in enum_values.items():
-        exact_values[enum_name] = {}
-        for member_key, value in values.items():
-            exact_values[enum_name][member_key] = value
-    return ENUM_FALLBACK_PREFIX + repr(exact_values) + ENUM_FALLBACK_SUFFIX
+    return ENUM_FALLBACK_PREFIX + repr(_literal_enum_values(types_py)) + ENUM_FALLBACK_SUFFIX
 
 
 def _build_root_init(types_py: Path) -> str:
@@ -180,7 +121,6 @@ def finalize(emitter_output_root: Path, generated_root: Path) -> None:
 
     for file_name in ("types.py", "_unions.py", "py.typed"):
         shutil.copy2(emitted_root / file_name, generated_root / file_name)
-    _patch_literal_enum_references(generated_root / "types.py")
     _strip_trailing_whitespace(generated_root / "types.py")
 
     models_root = generated_root / "models"
@@ -188,23 +128,19 @@ def finalize(emitter_output_root: Path, generated_root: Path) -> None:
     for file_name in ("__init__.py", "_patch.py"):
         shutil.copy2(emitted_root / "models" / file_name, models_root / file_name)
 
-    _write(generated_root / "__init__.py", _build_root_init(generated_root / "types.py"))
-    _write(generated_root / "_types.py", _build_root_init(generated_root / "types.py"))
-    _write(models_root / "_enums.py", _build_enum_fallback(generated_root / "types.py"))
+    (generated_root / "__init__.py").write_text(_build_root_init(generated_root / "types.py"), encoding="utf-8")
+    (models_root / "_enums.py").write_text(_build_enum_fallback(generated_root / "types.py"), encoding="utf-8")
     _remove_pycache(generated_root)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--client-tsp", type=Path)
-    parser.add_argument("--emitter-output-root", type=Path)
-    parser.add_argument("--generated-root", type=Path)
-    args = parser.parse_args()
+    import argparse
 
-    if args.client_tsp:
-        patch_client_tsp(args.client_tsp)
-    if args.emitter_output_root and args.generated_root:
-        finalize(args.emitter_output_root, args.generated_root)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--emitter-output-root", type=Path, required=True)
+    parser.add_argument("--generated-root", type=Path, required=True)
+    args = parser.parse_args()
+    finalize(args.emitter_output_root, args.generated_root)
 
 
 if __name__ == "__main__":

@@ -7,38 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import builtins
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
-
-from .models._enums import (
-    AnnotationType,
-    ApplyPatchFileOperationType,
-    ApplyPatchOperationParamType,
-    ComputerActionType,
-    ContainerNetworkPolicyParamType,
-    ContainerSkillType,
-    CustomToolParamFormatType,
-    FunctionAndCustomToolCallOutputType,
-    FunctionShellCallEnvironmentType,
-    FunctionShellCallItemParamEnvironmentType,
-    FunctionShellCallOutputOutcomeParamType,
-    FunctionShellCallOutputOutcomeType,
-    FunctionShellToolParamEnvironmentType,
-    ItemFieldType,
-    ItemType,
-    MemoryItemKind,
-    MessageContentType,
-    ModerationEntryType,
-    OpenApiAuthType,
-    OutputContentType,
-    OutputItemType,
-    OutputMessageContentType,
-    RealtimeMcpErrorType,
-    ResponseStreamEventType,
-    TextResponseFormatConfigurationType,
-    ToolChoiceParamType,
-    ToolType,
-)
 
 if TYPE_CHECKING:
     from . import _unions
@@ -632,6 +603,7 @@ ToolType = Literal[
     "bing_grounding",
     "capture_structured_outputs",
     "openapi",
+    "memory_search",
 ]
 """Type of ToolType."""
 
@@ -675,6 +647,9 @@ class A2APreviewTool(TypedDict, total=False):
 class A2AToolCall(TypedDict, total=False):
     """An A2A (Agent-to-Agent) tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -694,6 +669,8 @@ class A2AToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -716,6 +693,9 @@ class A2AToolCall(TypedDict, total=False):
 class A2AToolCallOutput(TypedDict, total=False):
     """The output of an A2A (Agent-to-Agent) tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -736,6 +716,8 @@ class A2AToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -777,6 +759,25 @@ class AdditionalToolsItemParam(TypedDict, total=False):
      value is \"developer\"."""
     tools: Required[list["Tool"]]
     """A list of additional tools made available at this item. Required."""
+
+
+class AgentId(TypedDict, total=False):
+    """AgentId.
+
+    :ivar type: Required. Default value is "agent_id".
+    :vartype type: Literal["agent_id"]
+    :ivar name: The name of the agent. Required.
+    :vartype name: str
+    :ivar version: The version identifier of the agent. Required.
+    :vartype version: str
+    """
+
+    type: Required[Literal["agent_id"]]
+    """Required. Default value is \"agent_id\"."""
+    name: Required[str]
+    """The name of the agent. Required."""
+    version: Required[str]
+    """The version identifier of the agent. Required."""
 
 
 class AgentReference(TypedDict, total=False):
@@ -1099,6 +1100,9 @@ class AzureAISearchTool(TypedDict, total=False):
 class AzureAISearchToolCall(TypedDict, total=False):
     """An Azure AI Search tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1116,6 +1120,8 @@ class AzureAISearchToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1136,6 +1142,9 @@ class AzureAISearchToolCall(TypedDict, total=False):
 class AzureAISearchToolCallOutput(TypedDict, total=False):
     """The output of an Azure AI Search tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1154,6 +1163,8 @@ class AzureAISearchToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1289,6 +1300,9 @@ class AzureFunctionTool(TypedDict, total=False):
 class AzureFunctionToolCall(TypedDict, total=False):
     """An Azure Function tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1308,6 +1322,8 @@ class AzureFunctionToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1330,6 +1346,9 @@ class AzureFunctionToolCall(TypedDict, total=False):
 class AzureFunctionToolCallOutput(TypedDict, total=False):
     """The output of an Azure Function tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1350,6 +1369,8 @@ class AzureFunctionToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1439,6 +1460,9 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
 class BingCustomSearchToolCall(TypedDict, total=False):
     """A Bing custom search tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1456,6 +1480,8 @@ class BingCustomSearchToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1476,6 +1502,9 @@ class BingCustomSearchToolCall(TypedDict, total=False):
 class BingCustomSearchToolCallOutput(TypedDict, total=False):
     """The output of a Bing custom search tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1494,6 +1523,8 @@ class BingCustomSearchToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1618,6 +1649,9 @@ class BingGroundingTool(TypedDict, total=False):
 class BingGroundingToolCall(TypedDict, total=False):
     """A Bing grounding tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1635,6 +1669,8 @@ class BingGroundingToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1655,6 +1691,9 @@ class BingGroundingToolCall(TypedDict, total=False):
 class BingGroundingToolCallOutput(TypedDict, total=False):
     """The output of a Bing grounding tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1673,6 +1712,8 @@ class BingGroundingToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1719,6 +1760,9 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
 class BrowserAutomationToolCall(TypedDict, total=False):
     """A browser automation tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1736,6 +1780,8 @@ class BrowserAutomationToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1756,6 +1802,9 @@ class BrowserAutomationToolCall(TypedDict, total=False):
 class BrowserAutomationToolCallOutput(TypedDict, total=False):
     """The output of a browser automation tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1774,6 +1823,8 @@ class BrowserAutomationToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -2397,6 +2448,21 @@ class CoordParam(TypedDict, total=False):
     """The y-coordinate. Required."""
 
 
+class CreatedBy(TypedDict, total=False):
+    """CreatedBy.
+
+    :ivar agent: The agent that created the item.
+    :vartype agent: "AgentId"
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
+    """
+
+    agent: "AgentId"
+    """The agent that created the item."""
+    response_id: str
+    """The response on which the item is created."""
+
+
 class CreateResponse(TypedDict, total=False):
     """CreateResponse.
 
@@ -2470,6 +2536,13 @@ class CreateResponse(TypedDict, total=False):
     :vartype context_management: list["ContextManagementParam"]
     :ivar max_output_tokens:
     :vartype max_output_tokens: int
+    :ivar agent: (Deprecated) Use agent_reference instead. The agent to use for generating the
+     response.
+    :vartype agent: "AgentReference"
+    :ivar agent_session_id: Optional session identifier for sandbox affinity. Currently only
+     relevant for hosted agents. When provided, the request is routed to the same sandbox. When
+     omitted, auto-derived from conversation_id/prev_response_id or a new UUID is generated.
+    :vartype agent_session_id: str
     :ivar agent_reference: The agent to use for generating the response.
     :vartype agent_reference: "AgentReference"
     :ivar structured_inputs: The structured inputs to the response that can participate in prompt
@@ -2528,6 +2601,12 @@ class CreateResponse(TypedDict, total=False):
     context_management: Optional[list["ContextManagementParam"]]
     """Context management configuration for this request."""
     max_output_tokens: Optional[int]
+    agent: "AgentReference"
+    """(Deprecated) Use agent_reference instead. The agent to use for generating the response."""
+    agent_session_id: str
+    """Optional session identifier for sandbox affinity. Currently only relevant for hosted agents.
+     When provided, the request is routed to the same sandbox. When omitted, auto-derived from
+     conversation_id/prev_response_id or a new UUID is generated."""
     agent_reference: "AgentReference"
     """The agent to use for generating the response."""
     structured_inputs: dict[str, Any]
@@ -2812,6 +2891,9 @@ class Error(TypedDict, total=False):
 class FabricDataAgentToolCall(TypedDict, total=False):
     """A Fabric data agent tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -2829,6 +2911,8 @@ class FabricDataAgentToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -2849,6 +2933,9 @@ class FabricDataAgentToolCall(TypedDict, total=False):
 class FabricDataAgentToolCallOutput(TypedDict, total=False):
     """The output of a Fabric data agent tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -2867,6 +2954,8 @@ class FabricDataAgentToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -5564,6 +5653,46 @@ class MemorySearchPreviewTool(TypedDict, total=False):
     """Time to wait before updating memories after inactivity (seconds). Default 300."""
 
 
+class MemorySearchTool(TypedDict, total=False):
+    """A tool for integrating memories into the agent.
+
+    :ivar type: The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH.
+    :vartype type: Literal["memory_search"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar memory_store_name: The name of the memory store to use. Required.
+    :vartype memory_store_name: str
+    :ivar scope: The namespace used to group and isolate memories, such as a user ID. Limits which
+     memories can be retrieved or updated. Use special variable ``{{$userId}}`` to scope memories to
+     the current signed-in user. Required.
+    :vartype scope: str
+    :ivar search_options: Options for searching the memory store.
+    :vartype search_options: "MemorySearchOptions"
+    :ivar update_delay: Time to wait before updating memories after inactivity (seconds). Default
+     300.
+    :vartype update_delay: int
+    """
+
+    type: Required[Literal["memory_search"]]
+    """The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
+    memory_store_name: Required[str]
+    """The name of the memory store to use. Required."""
+    scope: Required[str]
+    """The namespace used to group and isolate memories, such as a user ID. Limits which memories can
+     be retrieved or updated. Use special variable ``{{$userId}}`` to scope memories to the current
+     signed-in user. Required."""
+    search_options: "MemorySearchOptions"
+    """Options for searching the memory store."""
+    update_delay: int
+    """Time to wait before updating memories after inactivity (seconds). Default 300."""
+
+
 class MemorySearchToolCallItemParam(TypedDict, total=False):
     """MemorySearchToolCallItemParam.
 
@@ -5582,6 +5711,9 @@ class MemorySearchToolCallItemParam(TypedDict, total=False):
 class MemorySearchToolCallItemResource(TypedDict, total=False):
     """MemorySearchToolCallItemResource.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -5599,6 +5731,8 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -5911,6 +6045,9 @@ class NamespaceToolParam(TypedDict, total=False):
 class OAuthConsentRequestOutputItem(TypedDict, total=False):
     """Request from the service for the user to perform OAuth consent.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -5925,6 +6062,8 @@ class OAuthConsentRequestOutputItem(TypedDict, total=False):
     :vartype server_label: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6076,6 +6215,9 @@ class OpenApiTool(TypedDict, total=False):
 class OpenApiToolCall(TypedDict, total=False):
     """An OpenAPI tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6095,6 +6237,8 @@ class OpenApiToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6117,6 +6261,9 @@ class OpenApiToolCall(TypedDict, total=False):
 class OpenApiToolCallOutput(TypedDict, total=False):
     """The output of an OpenAPI tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6137,6 +6284,8 @@ class OpenApiToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6213,6 +6362,9 @@ class OutputContentRefusalContent(TypedDict, total=False):
 class OutputItemAdditionalTools(TypedDict, total=False):
     """OutputItemAdditionalTools.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6228,6 +6380,8 @@ class OutputItemAdditionalTools(TypedDict, total=False):
     :vartype tools: list["Tool"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6246,6 +6400,9 @@ class OutputItemAdditionalTools(TypedDict, total=False):
 class OutputItemApplyPatchToolCall(TypedDict, total=False):
     """Apply patch tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6264,6 +6421,8 @@ class OutputItemApplyPatchToolCall(TypedDict, total=False):
     :vartype operation: "ApplyPatchFileOperation"
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6285,6 +6444,9 @@ class OutputItemApplyPatchToolCall(TypedDict, total=False):
 class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
     """Apply patch tool call output.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6304,6 +6466,8 @@ class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
     :vartype output: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6324,6 +6488,9 @@ class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
 class OutputItemCodeInterpreterToolCall(TypedDict, total=False):
     """Code interpreter tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6346,6 +6513,8 @@ class OutputItemCodeInterpreterToolCall(TypedDict, total=False):
     :vartype outputs: list[Union["CodeInterpreterOutputLogs", "CodeInterpreterOutputImage"]]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6371,6 +6540,9 @@ class OutputItemCodeInterpreterToolCall(TypedDict, total=False):
 class OutputItemCompactionBody(TypedDict, total=False):
     """Compaction item.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6383,6 +6555,8 @@ class OutputItemCompactionBody(TypedDict, total=False):
     :vartype encrypted_content: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6398,6 +6572,9 @@ class OutputItemCompactionBody(TypedDict, total=False):
 class OutputItemComputerToolCall(TypedDict, total=False):
     """Computer tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6420,6 +6597,8 @@ class OutputItemComputerToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6443,6 +6622,9 @@ class OutputItemComputerToolCall(TypedDict, total=False):
 class OutputItemComputerToolCallOutput(TypedDict, total=False):
     """Computer tool call output.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6465,6 +6647,8 @@ class OutputItemComputerToolCallOutput(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6489,6 +6673,9 @@ class OutputItemComputerToolCallOutput(TypedDict, total=False):
 class OutputItemFileSearchToolCall(TypedDict, total=False):
     """File search tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6508,6 +6695,8 @@ class OutputItemFileSearchToolCall(TypedDict, total=False):
     :vartype results: list["FileSearchToolCallResults"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6528,6 +6717,9 @@ class OutputItemFileSearchToolCall(TypedDict, total=False):
 class OutputItemFunctionShellCall(TypedDict, total=False):
     """Shell tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6548,6 +6740,8 @@ class OutputItemFunctionShellCall(TypedDict, total=False):
     :vartype environment: "FunctionShellCallEnvironment"
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6570,6 +6764,9 @@ class OutputItemFunctionShellCall(TypedDict, total=False):
 class OutputItemFunctionShellCallOutput(TypedDict, total=False):
     """Shell call output.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6591,6 +6788,8 @@ class OutputItemFunctionShellCallOutput(TypedDict, total=False):
     :vartype max_output_length: int
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6613,6 +6812,9 @@ class OutputItemFunctionShellCallOutput(TypedDict, total=False):
 class OutputItemFunctionToolCall(TypedDict, total=False):
     """Function tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6636,6 +6838,8 @@ class OutputItemFunctionToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6661,6 +6865,9 @@ class OutputItemFunctionToolCall(TypedDict, total=False):
 class OutputItemFunctionToolCallOutput(TypedDict, total=False):
     """Function tool call output.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6683,6 +6890,8 @@ class OutputItemFunctionToolCallOutput(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6707,6 +6916,9 @@ class OutputItemFunctionToolCallOutput(TypedDict, total=False):
 class OutputItemImageGenToolCall(TypedDict, total=False):
     """Image generation call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6723,6 +6935,8 @@ class OutputItemImageGenToolCall(TypedDict, total=False):
     :vartype result: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6742,6 +6956,9 @@ class OutputItemImageGenToolCall(TypedDict, total=False):
 class OutputItemLocalShellToolCall(TypedDict, total=False):
     """Local shell call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6760,6 +6977,8 @@ class OutputItemLocalShellToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6780,6 +6999,9 @@ class OutputItemLocalShellToolCall(TypedDict, total=False):
 class OutputItemLocalShellToolCallOutput(TypedDict, total=False):
     """Local shell call output.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6796,6 +7018,8 @@ class OutputItemLocalShellToolCallOutput(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6815,6 +7039,9 @@ class OutputItemLocalShellToolCallOutput(TypedDict, total=False):
 class OutputItemMcpApprovalRequest(TypedDict, total=False):
     """MCP approval request.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6832,6 +7059,8 @@ class OutputItemMcpApprovalRequest(TypedDict, total=False):
     :vartype arguments: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6851,6 +7080,9 @@ class OutputItemMcpApprovalRequest(TypedDict, total=False):
 class OutputItemMcpApprovalResponseResource(TypedDict, total=False):
     """MCP approval response.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6868,6 +7100,8 @@ class OutputItemMcpApprovalResponseResource(TypedDict, total=False):
     :vartype reason: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6886,6 +7120,9 @@ class OutputItemMcpApprovalResponseResource(TypedDict, total=False):
 class OutputItemMcpListTools(TypedDict, total=False):
     """MCP list tools.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6902,6 +7139,8 @@ class OutputItemMcpListTools(TypedDict, total=False):
     :vartype error: "RealtimeMCPError"
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6920,6 +7159,9 @@ class OutputItemMcpListTools(TypedDict, total=False):
 class OutputItemMcpToolCall(TypedDict, total=False):
     """MCP tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6946,6 +7188,8 @@ class OutputItemMcpToolCall(TypedDict, total=False):
     :vartype approval_request_id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6972,6 +7216,9 @@ class OutputItemMcpToolCall(TypedDict, total=False):
 class OutputItemMessage(TypedDict, total=False):
     """Message.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6994,6 +7241,8 @@ class OutputItemMessage(TypedDict, total=False):
     :vartype phase: MessagePhase
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -7020,6 +7269,9 @@ class OutputItemMessage(TypedDict, total=False):
 class OutputItemOutputMessage(TypedDict, total=False):
     """Output message.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -7041,6 +7293,8 @@ class OutputItemOutputMessage(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -7064,6 +7318,9 @@ class OutputItemOutputMessage(TypedDict, total=False):
 class OutputItemReasoningItem(TypedDict, total=False):
     """Reasoning.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -7084,6 +7341,8 @@ class OutputItemReasoningItem(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -7200,6 +7459,9 @@ class OutputItemToolSearchOutput(TypedDict, total=False):
 class OutputItemWebSearchToolCall(TypedDict, total=False):
     """Web search tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -7220,6 +7482,8 @@ class OutputItemWebSearchToolCall(TypedDict, total=False):
      "WebSearchActionFind"]
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -8511,6 +8775,13 @@ class ResponseObject(TypedDict, total=False):
     :vartype conversation: "ConversationReference"
     :ivar max_output_tokens:
     :vartype max_output_tokens: int
+    :ivar agent: (Deprecated) Use agent_reference instead. The agent used for this response.
+    :vartype agent: "AgentId"
+    :ivar agent_session_id: The session identifier for this response. Currently only relevant for
+     hosted agents. Always returned for hosted agents — either the caller-provided value, the
+     auto-derived value, or an auto-generated UUID. Use for session-scoped operations and to
+     maintain sandbox affinity in follow-up calls.
+    :vartype agent_session_id: str
     :ivar agent_reference: The agent used for this response. Required.
     :vartype agent_reference: "AgentReference"
     """
@@ -8587,6 +8858,13 @@ class ResponseObject(TypedDict, total=False):
     """Whether to allow the model to run tool calls in parallel. Required."""
     conversation: Optional["ConversationReference"]
     max_output_tokens: Optional[int]
+    agent: "AgentId"
+    """(Deprecated) Use agent_reference instead. The agent used for this response."""
+    agent_session_id: str
+    """The session identifier for this response. Currently only relevant for hosted agents. Always
+     returned for hosted agents — either the caller-provided value, the auto-derived value, or an
+     auto-generated UUID. Use for session-scoped operations and to maintain sandbox affinity in
+     follow-up calls."""
     agent_reference: Required[Optional["AgentReference"]]
     """The agent used for this response. Required."""
 
@@ -9293,6 +9571,9 @@ class ScrollParam(TypedDict, total=False):
 class SharepointGroundingToolCall(TypedDict, total=False):
     """A SharePoint grounding tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -9310,6 +9591,8 @@ class SharepointGroundingToolCall(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -9330,6 +9613,9 @@ class SharepointGroundingToolCall(TypedDict, total=False):
 class SharepointGroundingToolCallOutput(TypedDict, total=False):
     """The output of a SharePoint grounding tool call.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -9348,6 +9634,8 @@ class SharepointGroundingToolCallOutput(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -9481,6 +9769,9 @@ class StructuredOutputDefinition(TypedDict, total=False):
 class StructuredOutputsOutputItem(TypedDict, total=False):
     """StructuredOutputsOutputItem.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -9493,6 +9784,8 @@ class StructuredOutputsOutputItem(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -9910,7 +10203,7 @@ class TypeParam(TypedDict, total=False):
     :vartype text: str
     """
 
-    type: Required[Literal["type"]]
+    type: Required[Literal["builtins.type"]]
     """Specifies the event type. For a type action, this property is always set to ``type``. Required.
      TYPE."""
     text: Required[str]
@@ -10199,6 +10492,9 @@ class WebSearchToolFilters(TypedDict, total=False):
 class WorkflowActionOutputItem(TypedDict, total=False):
     """WorkflowActionOutputItem.
 
+    :ivar created_by: The information about the creator of the item. Is either a CreatedBy type or
+     a str type.
+    :vartype created_by: Union["CreatedBy", str]
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -10221,6 +10517,8 @@ class WorkflowActionOutputItem(TypedDict, total=False):
     :vartype id: str
     """
 
+    created_by: Union["CreatedBy", str]
+    """The information about the creator of the item. Is either a CreatedBy type or a str type."""
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -10367,6 +10665,7 @@ Tool = Union[
     ImageGenTool,
     LocalShellToolParam,
     MCPTool,
+    MemorySearchTool,
     MemorySearchPreviewTool,
     NamespaceToolParam,
     OpenApiTool,
