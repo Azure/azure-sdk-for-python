@@ -45,6 +45,7 @@
   - [Upstream History Pattern](#upstream-history-pattern)
   - [Watermark Pattern](#watermark-pattern)
   - [Resumption Response Construction](#resumption-response-construction)
+  - [Composing an External Durable Engine (e.g. LangGraph)](#composing-an-external-durable-engine-eg-langgraph)
 - [Best Practices](#best-practices)
 - [Common Mistakes](#common-mistakes)
 
@@ -1721,6 +1722,111 @@ successful `stream.checkpoint()`**, and at the terminal event (the
 `response_id`). It does not keep a *running* snapshot between those points — so
 for any item whose commit status falls between persistence points, you are the
 source of truth for whether to keep it, via the watermarks above.
+
+### Composing an External Durable Engine (e.g. LangGraph)
+
+The patterns above assume *your handler* is the only thing tracking progress. But
+many agent frameworks — LangGraph, LlamaIndex workflows, custom state machines —
+bring **their own durable checkpointer**. Now you have **two independent durable
+stores**: the framework's response record (`persisted_response`, advanced by
+`stream.checkpoint()`) and the engine's checkpoint (its saver). Composing them
+correctly is the source of the subtlest recovery bugs, so this section is
+explicit about the trap and the fix.
+
+**The trap — dual-store divergence.** Two independent stores can never be written
+atomically. Suppose the engine streams a reply token-by-token inside one node and
+commits that node to *its* checkpoint. There is always a window between "the
+engine committed the node" and "your `stream.checkpoint()` captured the reply".
+If you crash in that window and, on recovery, resume the engine **from its own
+latest checkpoint**, the engine sees that node as already done and will **not**
+re-emit its tokens — yet `persisted_response` never captured the reply. Result: a
+`completed` response with a missing reply (or, if you naively re-feed the input, a
+duplicated turn). Resuming from the engine's latest tip is the bug.
+
+**The fix — make the framework checkpoint the single source of truth, and record
+the engine's resume point inside it.** Two rules:
+
+1. **Checkpoint 1:1 with the engine.** Every time the engine commits a step, take
+   a framework `stream.checkpoint()` too — and in the *same* checkpoint, store the
+   engine's checkpoint id for that step in `internal_metadata`. Because the reply
+   items and the resume pointer land in one atomic framework write, they can never
+   disagree: if `persisted_response` has the reply, its recorded pointer is
+   *after* the reply's node; if it doesn't, the pointer is *before* it.
+
+2. **On recovery, rewind the engine to the recorded pointer — never its latest
+   tip.** Resume from the checkpoint id you read back from
+   `persisted_response.internal_metadata`. The engine re-runs exactly the steps
+   after that point (re-streaming the reply *iff* it wasn't persisted) and forks
+   away any orphaned work its own store had raced ahead to. `persisted_response`
+   drives everything; the engine's store is subordinate.
+
+```python
+_GRAPH_CP_KEY = "graph_checkpoint_id"  # engine checkpoint id, kept in internal_metadata
+
+# Forward + recovery share ONE streaming loop; only the resume config differs.
+if context.is_recovery:
+    # Rewind to the checkpoint that MATCHES the persisted items (not the
+    # engine's latest tip), and resume with no new input — the input was already
+    # applied at/before that checkpoint.
+    graph_cp = (context.persisted_response.internal_metadata or {}).get(_GRAPH_CP_KEY)
+    run_config = {"configurable": {"thread_id": chain_id, "checkpoint_id": graph_cp}} if graph_cp else base_config
+    graph_input = None
+else:
+    run_config = base_config
+    graph_input = {"messages": [HumanMessage(user_input)]}
+
+async for mode, chunk in graph.astream(
+    graph_input, run_config, stream_mode=["custom", "checkpoints"], durability="sync"
+):
+    if mode == "custom":                     # a token from the streaming node
+        # Guard against re-emitting a reply that recovery already seeded.
+        if not reply_open and not _reply_already_persisted(stream):
+            message = stream.add_output_item_message(); yield message.emit_added()
+            text = message.add_text_content(); yield text.emit_added()
+            reply_open = True
+        if reply_open:
+            yield text.emit_delta(chunk["token"])
+    elif mode == "checkpoints":              # the engine just committed a step
+        if reply_open and not reply_closed:  # close the reply on its node's commit
+            yield text.emit_text_done(); yield text.emit_done(); yield message.emit_done()
+            reply_closed = True
+        checkpoint_id = chunk.get("config", {}).get("configurable", {}).get("checkpoint_id")
+        if checkpoint_id:
+            # Persist items + resume pointer atomically (1:1 with the engine).
+            stream.internal_metadata[_GRAPH_CP_KEY] = checkpoint_id
+            yield stream.checkpoint()
+```
+
+Why this closes the window: the framework checkpoint on step *N-1* (before the
+reply node) records the pre-reply engine checkpoint. If you crash any time during
+or after the reply node but before the *next* framework checkpoint,
+`persisted_response` still points at step *N-1* with no reply — so recovery
+rewinds to *N-1*, re-runs the reply node, and re-streams. If you crash after the
+post-reply framework checkpoint, the pointer is at step *N* and the reply is
+persisted — so recovery rewinds to *N* (past the reply) and re-emits the seeded
+item via the `in_progress` reset. Either way: exactly one reply, correct ids.
+
+Practical notes, learned the hard way:
+
+- **Get the engine's checkpoint id from its event stream, not by polling it
+  mid-run.** With LangGraph, `graph.astream(..., stream_mode=[..., "checkpoints"])`
+  yields the committed checkpoint id per step. Calling `graph.aget_state()`
+  *during* an active `astream` on a single-connection saver (e.g.
+  `AsyncSqliteSaver`) can return a stale/late id — do not rely on it for the
+  resume pointer.
+- **Resume with the engine's "no new input" signal** (LangGraph: `None`), never
+  by re-feeding the user input, on a recovered turn — the input is already baked
+  into the engine state at the rewind point. Re-feeding duplicates the turn.
+- **Use the engine's fully-durable mode** (LangGraph: `durability="sync"`) so
+  step commits are at node boundaries; a mid-step crash then cleanly re-runs the
+  whole step.
+- **`internal_metadata` is stripped on egress**, so the engine checkpoint id
+  never leaks to the client — it is purely your recovery bookkeeping.
+
+The end-to-end reference is `samples/sample_21_resilient_langgraph.py` (real-time
+token streaming + steering + crash recovery), with subprocess crash tests in
+`tests/e2e/test_sample_21_langgraph_e2e.py` that SIGKILL both *before* and *after*
+the reply is emitted to exercise both sides of the window.
 
 ### Recovery × Cancellation Composition
 

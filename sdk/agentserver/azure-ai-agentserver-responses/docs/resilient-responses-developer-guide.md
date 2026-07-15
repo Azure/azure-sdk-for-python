@@ -644,8 +644,13 @@ point; and clients supporting resilient streams treat any later
 
 2. **Prefer your upstream framework's own resume facility** when you have one.
    Copilot SDK has `create_session(session_id=...)` / `resume_session(...)`;
-   LangGraph has `SqliteSaver` checkpoints. Reconstructing upstream state from
-   your own metadata is usually more work and more fragile.
+   LangGraph has `AsyncSqliteSaver` checkpoints. Reconstructing upstream state from
+   your own metadata is usually more work and more fragile. **When the upstream
+   is a durable engine with its own checkpointer, follow the
+   [Composing an External Durable Engine](handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph)
+   pattern**: checkpoint 1:1 with the engine, store the engine's resume checkpoint
+   id in `internal_metadata`, and rewind to *that* point on recovery — resuming
+   from the engine's latest tip instead opens a reply-loss window.
 
 3. **Watermark non-idempotent side effects — when the upstream can't dedup them.**
    If a recovered attempt could repeat an observable side effect (sending a user
@@ -674,8 +679,13 @@ See the `samples/` directory for canonical resilient handler shapes:
 - `sample_20_resilient_steering.py` — Steering surface (`is_steered_turn` /
   `pending_input_count`) with **naive re-run** recovery; cancellation ×
   recovery composition.
-- `sample_21_resilient_langgraph.py` — **Composition** of LangGraph
-  `SqliteSaver` (graph-execution resume) with framework `stream.checkpoint()`
-  / `context.persisted_response` (client-visible items + ids).
+- `sample_21_resilient_langgraph.py` — **Real-time streaming** LangGraph agent
+  (tokens relayed as deltas the instant nodes produce them) that **composes an
+  external durable engine**: LangGraph's `AsyncSqliteSaver` (graph-execution
+  resume) with framework `stream.checkpoint()` / `context.persisted_response`
+  (client-visible items + ids). Checkpoints 1:1 with the graph and records the
+  graph checkpoint id in `internal_metadata`, so recovery rewinds the graph to
+  the point matching the persisted items — no dual-store divergence window. See
+  [Composing an External Durable Engine](handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph).
 - `sample_22_resilient_multiturn.py` — Multi-turn conversation with
   `resilient_background=True, steerable_conversations=False`.

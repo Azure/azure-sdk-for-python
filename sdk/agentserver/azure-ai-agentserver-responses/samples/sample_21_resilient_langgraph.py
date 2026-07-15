@@ -1,74 +1,72 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-r"""Sample 21 — Resilient LangGraph with SqliteSaver checkpointing.
+r"""Sample 21 — Real-time streaming LangGraph agent (resilient + steerable).
 
-Wraps a LangGraph ``StateGraph`` in a steerable resilient response handler.
-LangGraph's ``SqliteSaver`` checkpointer is the canonical example of an
-**upstream framework that owns resilience** — the SDK does the heavy
-lifting; the response handler is just the bridge.
+A fully-async LangGraph ``StateGraph`` wrapped in a resilient, steerable
+response handler that streams **in real time** — the ``generate_response``
+node emits its answer token-by-token (with delays between tokens) and each
+token is forwarded to the client as a ``response.output_text.delta`` the
+instant the node produces it. Node execution and token generation are
+consumed via ``graph.astream(...)``; nothing waits for the whole graph to
+finish before returning events.
 
-This sample implements the recovery contract by **composing two
-checkpointers**:
+Capabilities showcased (see ``docs/resilient-responses-developer-guide.md``
+and ``docs/handler-implementation-guide.md``):
 
-- LangGraph's ``SqliteSaver`` owns **graph-execution** resume, keyed by the
-  thread id = ``context.conversation_chain_id`` (the stable, per-conversation
-  chain id — same across turns and recovery attempts).
-- The **framework** owns the **client-visible response** (output items + their
-  ids): ``yield stream.checkpoint()`` after emitting the AI reply persists the
-  response snapshot. On a recovered entry the handler seeds the stream from
-  ``context.persisted_response`` — so an already-checkpointed reply is present
-  with its **original id** — and emits ``response.in_progress`` (the reset
-  point) to re-emit it verbatim. It never invents new ids.
-- The recovered attempt resumes ``graph.stream(None, ...)`` from the live
-  SqliteSaver checkpoint; already-completed nodes are not re-run. The reply is
-  emitted only if it is not already present in the persisted response, so it is
-  neither duplicated nor lost across any crash window.
-- Steering between turns forks the graph via ``graph.update_state(...)`` from a
-  ``stable_checkpoint_id`` watermark.
-
-Demonstrates:
-
-- Composing framework ``stream.checkpoint()`` / ``context.persisted_response``
-  with an upstream framework's own checkpointer (LangGraph ``SqliteSaver``).
-- Recovery that re-emits the SAME items with their ORIGINAL ids (no invented ids).
-- ``graph.stream()`` for inter-node cancellation.
-- Cancellation policy applied at pre-entry / mid-stream / post-stream.
-- Fork-on-steer for new turns that supersede a prior one.
+- **Real-time token streaming** — ``generate_response`` streams tokens via
+  LangGraph's custom stream writer; the handler relays each as a delta.
+- **Composed checkpointing (1:1)** — LangGraph's ``AsyncSqliteSaver`` owns
+  graph-execution resume; the framework owns the client-visible response (items
+  + ids). Every time LangGraph commits a node the handler also takes a framework
+  ``stream.checkpoint()``, recording the LangGraph checkpoint id in
+  ``internal_metadata`` — so the two stores stay in lockstep and
+  ``persisted_response`` is the single source of truth for recovery.
+- **Crash recovery** — a recovered entry seeds the stream from
+  ``context.persisted_response`` (re-emitting the SAME items with their ORIGINAL
+  ids) and rewinds the graph to the checkpoint id recorded in
+  ``internal_metadata`` (always consistent with the persisted items). Resuming
+  from there re-runs only the not-yet-persisted work, so the reply is produced
+  exactly once — never duplicated, never lost, no divergence window.
+- **Steering** — ``context.is_steered_turn`` / ``context.pending_input_count``;
+  a steered successor turn forks the graph from the last stable checkpoint.
+- **Cancellation** — inter-token cancellation plus pre-entry / mid-stream /
+  post-stream handling; shutdown (SIGTERM) defers to next-lifetime recovery.
 
 Requirements::
 
-    pip install langgraph langgraph-checkpoint-sqlite langchain-core
+    pip install langgraph langgraph-checkpoint-sqlite aiosqlite langchain-core
 
 Usage::
 
     python sample_21_resilient_langgraph.py
 
-    # Turn 1
+    # Turn 1 (watch tokens arrive one at a time)
     curl -N -X POST http://localhost:8088/responses \
         -H "Content-Type: application/json" \
         -d '{"model": "langgraph", "input": "Research quantum computing",
              "stream": true, "store": true, "background": true}'
 
-    # Steer (fork from stable checkpoint with new message)
+    # Steer (fork from stable checkpoint with a new message)
     curl -N -X POST http://localhost:8088/responses \
         -H "Content-Type: application/json" \
         -d '{"model": "langgraph", "input": "Focus on error correction",
              "stream": true, "store": true, "background": true,
              "previous_response_id": "<id>"}'
 
-    # Simulate mid-node shutdown
-    SIMULATE_SHUTDOWN_MS=2500 python sample_21_resilient_langgraph.py
+    # Crash / graceful-shutdown recovery: SIGKILL or SIGTERM the process
+    # mid-turn; the next lifetime recovers from persisted_response and resumes.
 """
 
 import asyncio
 import os
-import sqlite3
 import typing
 from pathlib import Path
 from typing import Any
 
+import aiosqlite
 from langchain_core.messages import AIMessage, HumanMessage
-from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 
@@ -81,7 +79,7 @@ from azure.ai.agentserver.responses import (
 )
 
 
-# ─── Graph State ────────────────────────────────────────────────────────────
+# ─── Graph state ────────────────────────────────────────────────────────────
 
 
 class ConversationState(typing.TypedDict):
@@ -91,9 +89,10 @@ class ConversationState(typing.TypedDict):
     is_complete: bool
 
 
-# ─── Graph Nodes ────────────────────────────────────────────────────────────
+# ─── Graph nodes ────────────────────────────────────────────────────────────
 
-_STEP_DELAY = 1.0  # Seconds per node — makes inter-node cancel observable
+_STEP_DELAY = 0.4  # Seconds per non-streaming node — makes progress observable.
+_TOKEN_DELAY = 0.08  # Seconds between streamed tokens — makes streaming visible.
 
 
 async def analyze_input(state: ConversationState) -> dict[str, Any]:
@@ -103,14 +102,25 @@ async def analyze_input(state: ConversationState) -> dict[str, Any]:
 
 
 async def generate_response(state: ConversationState) -> dict[str, Any]:
-    """Generate AI response (replace with real LLM call)."""
-    await asyncio.sleep(_STEP_DELAY)
-    messages = state["messages"]
-    user_msgs = [m for m in messages if isinstance(m, HumanMessage)]
+    """Generate the AI reply, streaming it token-by-token in real time.
+
+    Replace the simulated loop with a real streaming LLM call. Each token is
+    pushed through LangGraph's custom stream writer, so the handler can relay
+    it to the client the instant it is produced.
+    """
+    writer = get_stream_writer()
+    user_msgs = [m for m in state["messages"] if isinstance(m, HumanMessage)]
     turn = len(user_msgs)
     last = user_msgs[-1].content if user_msgs else ""
-    reply = f"Turn {turn}: Processing '{last}' with full context from {turn} turns."
-    return {"messages": [AIMessage(content=reply)]}
+    reply = f"Turn {turn}: answering '{last}' with full context from {turn} turn(s)."
+
+    accumulated = ""
+    for token in reply.split():
+        await asyncio.sleep(_TOKEN_DELAY)
+        piece = token + " "
+        accumulated += piece
+        writer({"token": piece})  # → surfaced as a "custom" astream chunk
+    return {"messages": [AIMessage(content=accumulated.strip())]}
 
 
 async def refine_response(state: ConversationState) -> dict[str, Any]:
@@ -120,7 +130,7 @@ async def refine_response(state: ConversationState) -> dict[str, Any]:
 
 
 def wait_for_user(state: ConversationState) -> dict[str, Any]:
-    """Pause graph — wait for next human message via interrupt."""
+    """Pause the graph — wait for the next human message via interrupt."""
     user_input: str = interrupt({"prompt": "Next message (or 'done'):"})
     if user_input.strip().lower() == "done":
         return {"is_complete": True}
@@ -128,27 +138,27 @@ def wait_for_user(state: ConversationState) -> dict[str, Any]:
 
 
 def _should_continue(state: ConversationState) -> str:
-    if state.get("is_complete", False):
-        return "end"
-    return "continue"
+    return "end" if state.get("is_complete", False) else "continue"
 
 
-# ─── Persistent Checkpointer ───────────────────────────────────────────────
+# ─── Persistent async checkpointer + graph (lazy — needs a running loop) ─────
 
-_DATA_DIR = Path.home() / ".agentserver-sessions" / "langgraph-responses"
+# Co-locate the LangGraph checkpoint DB with the deployment's state root when
+# one is configured (so all of this deployment's durable state lives together
+# and survives restarts); fall back to a per-user dir for local runs.
+_STATE_ROOT = os.environ.get("AGENTSERVER_STATE_ROOT")
+_DATA_DIR = (
+    Path(_STATE_ROOT) / "langgraph" if _STATE_ROOT else Path.home() / ".agentserver-sessions" / "langgraph-responses"
+)
 _DATA_DIR.mkdir(parents=True, exist_ok=True)
 _DB_PATH = _DATA_DIR / "checkpoints.db"
 
-_conn = sqlite3.connect(str(_DB_PATH), check_same_thread=False)
-_checkpointer = SqliteSaver(_conn)
-_checkpointer.setup()
+_graph: Any = None
+_graph_lock = asyncio.Lock()
 
 
-# ─── Build Graph ────────────────────────────────────────────────────────────
-
-
-def _build_graph() -> Any:
-    """Multi-node graph: analyze → generate → refine → wait_for_user (loop)."""
+def _build_graph(checkpointer: Any) -> Any:
+    """analyze → generate → refine → wait_for_user (loop)."""
     builder = StateGraph(ConversationState)
     builder.add_node("analyze_input", analyze_input)
     builder.add_node("generate_response", generate_response)
@@ -160,13 +170,27 @@ def _build_graph() -> Any:
     builder.add_edge("generate_response", "refine_response")
     builder.add_edge("refine_response", "wait_for_user")
     builder.add_conditional_edges("wait_for_user", _should_continue, {"continue": "analyze_input", "end": END})
-    return builder.compile(checkpointer=_checkpointer)
+    return builder.compile(checkpointer=checkpointer)
 
 
-_graph = _build_graph()
+async def _get_graph() -> Any:
+    """Build the graph + ``AsyncSqliteSaver`` once, lazily (both need a loop).
+
+    A file-backed SqliteSaver is used so LangGraph's graph-execution state
+    survives a process crash/restart (the resilience contract's premise).
+    """
+    global _graph  # pylint: disable=global-statement
+    if _graph is None:
+        async with _graph_lock:
+            if _graph is None:
+                conn = await aiosqlite.connect(str(_DB_PATH))
+                saver = AsyncSqliteSaver(conn)
+                await saver.setup()
+                _graph = _build_graph(saver)
+    return _graph
 
 
-# ─── Server ─────────────────────────────────────────────────────────────────
+# ─── Server ───────────────────────────────────────────────────────────────
 
 options = ResponsesServerOptions(
     resilient_background=True,
@@ -174,46 +198,33 @@ options = ResponsesServerOptions(
 )
 app = ResponsesAgentServerHost(options=options)
 
-_SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
+# Metadata key: the LangGraph checkpoint id whose completed work matches the
+# response items persisted so far. Recorded in ``internal_metadata`` (persisted
+# atomically WITH the items on every ``stream.checkpoint()``, stripped on
+# egress), so recovery can rewind the graph to exactly that point — closing the
+# dual-store divergence window. See the "composing an external durable engine"
+# section of docs/handler-implementation-guide.md.
+_GRAPH_CP_KEY = "graph_checkpoint_id"
 
 
-def _invoke_cancellable(
-    graph: Any,
-    graph_input: Any,
-    config: dict[str, Any],
-    cancel_event: asyncio.Event,
-) -> tuple[bool, list[str]]:
-    """Stream graph node-by-node with inter-node cancellation.
+def _reply_already_persisted(stream: ResponseEventStream) -> bool:
+    """True if a reply ``message`` item is already present in the response.
 
-    Returns (completed, node_names_executed). LangGraph pseudo-events
-    (``__end__``, ``__interrupt__``, …) are filtered out — only real node
-    names count as executed nodes (so a resume that re-yields ``__interrupt__``
-    does not surface as spurious node progress). ``durability="sync"`` ensures
-    each node's checkpoint is durable before the update is observed, matching
-    this sample's contract that SqliteSaver owns graph-execution resume.
+    On a recovered entry the stream is seeded from ``context.persisted_response``;
+    a reply persisted before the crash is already present (with its ORIGINAL id)
+    and re-emitted via the ``in_progress`` reset — so it must not be produced
+    again. It also becomes True the moment this attempt closes a fresh reply item.
     """
-    nodes_executed: list[str] = []
-    for chunk in graph.stream(graph_input, config, stream_mode="updates", durability="sync"):
-        for node_name in chunk:
-            if not node_name.startswith("__"):
-                nodes_executed.append(node_name)
-        if cancel_event.is_set():
-            return False, nodes_executed
-    return True, nodes_executed
+    return any(getattr(item, "type", None) == "message" for item in stream.response.output)
 
 
-def _fork_from_checkpoint(
-    graph: Any,
-    config: dict[str, Any],
-    target_checkpoint_id: str,
-    new_message: str,
-) -> bool:
-    """Fork graph state from a stable checkpoint with a new message."""
-    target_config = {"configurable": {**config["configurable"], "checkpoint_id": target_checkpoint_id}}
-    target = graph.get_state(target_config)
+async def _fork_from_checkpoint(graph: Any, config: dict[str, Any], checkpoint_id: str, new_message: str) -> bool:
+    """Fork graph state from a stable checkpoint with a new (steered) message."""
+    target_config = {"configurable": {**config["configurable"], "checkpoint_id": checkpoint_id}}
+    target = await graph.aget_state(target_config)
     if not target or not target.config:
         return False
-    graph.update_state(
+    await graph.aupdate_state(
         target.config,
         values={"messages": [HumanMessage(content=new_message)]},
         as_node="wait_for_user",
@@ -221,19 +232,12 @@ def _fork_from_checkpoint(
     return True
 
 
-def _reply_already_persisted(resp_stream: ResponseEventStream) -> bool:
-    """True if a reply ``message`` item is already present in the response.
-
-    On a recovered entry the stream is seeded from
-    ``context.persisted_response``, so any reply that was checkpointed before
-    the crash is already in ``resp_stream.response.output`` (with its ORIGINAL
-    id). We must NOT re-emit it (that would duplicate it with a fresh id). This
-    is the robust recovery guard: decide by "is the reply already represented
-    in the persisted response?" — NOT by "did generate_response run this
-    attempt?" (which would lose a reply that LangGraph committed but the
-    framework had not yet checkpointed).
-    """
-    return any(getattr(item, "type", None) == "message" for item in resp_stream.response.output)
+def _record_stable(context: ResponseContext, state: Any) -> None:
+    """Record the current graph checkpoint as the stable fork point for steering."""
+    cfg = getattr(state, "config", None) or {}
+    checkpoint_id = cfg.get("configurable", {}).get("checkpoint_id")
+    if checkpoint_id:
+        context.conversation_chain_metadata["stable_checkpoint_id"] = checkpoint_id
 
 
 @app.response_handler
@@ -242,171 +246,138 @@ async def handler(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """LangGraph with SqliteSaver checkpoints + framework checkpoints.
+    """Real-time streaming LangGraph handler with resilience + steering.
 
-    Composition of two checkpointers:
-    - **LangGraph SqliteSaver** owns graph-execution resume (keyed by the
-      thread id = ``context.conversation_chain_id``).
-    - **The framework** owns the client-visible response (output items + their
-      ids): ``stream.checkpoint()`` persists the response snapshot, and on a
-      recovered entry ``context.persisted_response`` re-emits the SAME items
-      with their ORIGINAL ids (never invents new ids).
+    Forward and recovery share ONE streaming loop; they differ only in where the
+    graph resumes from. Recovery rewinds the graph to the checkpoint recorded in
+    ``persisted_response.internal_metadata`` (always consistent with the persisted
+    items), so ``persisted_response`` is the single source of truth and there is
+    no window in which the reply can be lost or duplicated.
     """
-    input_text = await context.get_input_text()
+    graph = await _get_graph()
+    chain_id = context.conversation_chain_id
+    thread_config: dict[str, Any] = {"configurable": {"thread_id": chain_id}}
 
-    # Stable chain id — same value across every turn of this conversation and
-    # across all recovery attempts; the intended upstream thread/session id.
-    thread_id = context.conversation_chain_id
-    thread_config: dict[str, Any] = {"configurable": {"thread_id": thread_id}}
-
-    # ── Recovery branch ─────────────────────────────────────────────
-    # On recovered entry, seed the stream from the last framework checkpoint
-    # (``context.persisted_response``). Any output item checkpointed before the
-    # crash is already in ``resp_stream.response.output`` with its ORIGINAL id;
-    # the ``response.in_progress`` emitted below re-emits those items and IS the
-    # client-visible reset point. LangGraph's SqliteSaver independently resumes
-    # graph execution from its own checkpoint below.
+    # Seed from the last framework checkpoint so already-emitted items keep their
+    # ORIGINAL ids; the in_progress below re-emits them (the reset point).
     if context.is_recovery and context.persisted_response is not None:
-        resp_stream = ResponseEventStream(
-            response_id=context.response_id,
-            response=context.persisted_response,
-        )
+        stream = ResponseEventStream(response_id=context.response_id, response=context.persisted_response)
     else:
-        resp_stream = ResponseEventStream(response_id=context.response_id, request=request)
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
 
-    yield resp_stream.emit_created()
+    yield stream.emit_created()
 
-    # ── Phase 1: Pre-entry cancel / shutdown ───────────────────────
-    # Still inject the message into graph state so next turn has context.
-    # Only emit completed for steering. Others (client-cancel, shutdown):
-    # just return.
-    if cancellation_signal.is_set() or context.shutdown.is_set():
+    # Shutdown and cancellation are mutually exclusive. Shutdown → defer to the
+    # next lifetime. Cancellation with a queued steering input → this superseded
+    # turn winds down cleanly (the STEERED SUCCESSOR turn — is_steered_turn — is
+    # the one that forks the graph and runs the new message, not this turn).
+    if context.shutdown.is_set():
+        await context.exit_for_recovery()
+    if cancellation_signal.is_set():
+        if context.pending_input_count > 0:
+            yield stream.emit_in_progress()
+            yield stream.emit_completed()
+        return
+
+    yield stream.emit_in_progress()
+
+    # ── Resolve where the graph runs from ───────────────────────────
+    if context.is_recovery:
+        # Rewind to the checkpoint that matches the persisted items and resume
+        # with None: the turn's input was already applied at/before that
+        # checkpoint, so nodes after it (incl. the token-streaming node, if its
+        # reply was not yet persisted) re-run — re-streaming the reply exactly
+        # when needed and nothing more.
+        graph_cp = (context.persisted_response.internal_metadata or {}).get(_GRAPH_CP_KEY)
+        run_config = {"configurable": {"thread_id": chain_id, "checkpoint_id": graph_cp}} if graph_cp else thread_config
+        graph_input: Any = None
+    else:
+        input_text = await context.get_input_text()
         stable_cp = context.conversation_chain_metadata.get("stable_checkpoint_id")
-        if stable_cp:
-            await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
-        if cancellation_signal.is_set() and context.pending_input_count > 0:
-            yield resp_stream.emit_completed()
-        return
+        state = await graph.aget_state(thread_config)
+        run_config = thread_config
+        parked_at_interrupt = "wait_for_user" in (state.next or ())
+        if stable_cp and context.is_steered_turn:
+            # Fresh steered successor: fork from the last stable checkpoint with
+            # the new message, then resume (input=None).
+            forked = await _fork_from_checkpoint(graph, thread_config, stable_cp, input_text)
+            graph_input = None if forked else {"messages": [HumanMessage(content=input_text)], "is_complete": False}
+        elif parked_at_interrupt:
+            # Cleanly paused at the wait_for_user interrupt — the next turn of the
+            # conversation; satisfy the interrupt with the new message.
+            graph_input = Command(resume=input_text)
+        elif stable_cp:
+            # Graph left mid-turn (e.g. a prior turn was cancelled before its
+            # interrupt) — do NOT Command(resume) a non-interrupt node; fork a
+            # clean turn from the last stable checkpoint instead.
+            forked = await _fork_from_checkpoint(graph, thread_config, stable_cp, input_text)
+            graph_input = None if forked else {"messages": [HumanMessage(content=input_text)], "is_complete": False}
+        else:
+            graph_input = {"messages": [HumanMessage(content=input_text)], "is_complete": False}
 
-    yield resp_stream.emit_in_progress()
+    # ── One real-time streaming loop (forward AND recovery) ─────────
+    # ``custom`` chunks carry tokens (relayed instantly). ``checkpoints`` chunks
+    # mark each LangGraph node commit — mirror every one with a framework
+    # checkpoint, recording the graph checkpoint id in internal_metadata so the
+    # two stores stay in lockstep (1:1). The reply item is closed on the first
+    # checkpoint after its tokens (i.e. the streaming node's own commit).
+    message: Any = None
+    text: Any = None
+    reply_open = False
+    reply_closed = False
+    saw_generate_commit = False
+    interrupted = False
+    async for mode, chunk in graph.astream(
+        graph_input, run_config, stream_mode=["updates", "custom", "checkpoints"], durability="sync"
+    ):
+        if mode == "custom" and "token" in chunk:
+            if not reply_open and not _reply_already_persisted(stream):
+                message = stream.add_output_item_message()
+                yield message.emit_added()
+                text = message.add_text_content()
+                yield text.emit_added()
+                reply_open = True
+            if reply_open:
+                yield text.emit_delta(chunk["token"])
+        elif mode == "updates" and "generate_response" in chunk:
+            # The token-streaming node has committed — its next checkpoint chunk
+            # is the point at which the reply is durable.
+            saw_generate_commit = True
+        elif mode == "checkpoints":
+            checkpoint_id = chunk.get("config", {}).get("configurable", {}).get("checkpoint_id")
+            if reply_open and not reply_closed and saw_generate_commit:
+                yield text.emit_text_done()
+                yield text.emit_done()
+                yield message.emit_done()
+                reply_closed = True
+            if checkpoint_id:
+                # Persist the items + the resume pointer atomically (1:1 mirror
+                # of the LangGraph checkpoint that just committed).
+                stream.internal_metadata[_GRAPH_CP_KEY] = checkpoint_id
+                yield stream.checkpoint()
+        if cancellation_signal.is_set() or context.shutdown.is_set():
+            interrupted = True
+            break
 
-    # Shutdown simulation
-    shutdown_timer: asyncio.Task | None = None
-    if _SIMULATE_SHUTDOWN_MS > 0:
-        shutdown_timer = asyncio.create_task(_simulate_shutdown(context))
+    # Close a still-open reply item (interrupted mid-stream) so the persisted
+    # event stream stays well-formed.
+    if reply_open and not reply_closed:
+        yield text.emit_text_done()
+        yield text.emit_done()
+        yield message.emit_done()
 
-    # ── Fork-on-steer (fresh-entry only) ────────────────────────────
-    # If this turn is the *successor* of a steered turn AND there is a
-    # stable checkpoint to fork from, branch the graph to that point
-    # with the new message. Skip on a recovered entry — we never want to
-    # re-fork on recovery; the SqliteSaver state IS the source of truth.
-    stable_cp = context.conversation_chain_metadata.get("stable_checkpoint_id")
-    if not context.is_recovery and stable_cp and context.is_steered_turn:
-        forked = await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
-        if forked:
-            completed, nodes = await asyncio.to_thread(
-                _invoke_cancellable, _graph, None, thread_config, cancellation_signal
-            )
-            # Emit node progress as function call outputs
-            for node in nodes:
-                fn_call = resp_stream.add_output_item_function_call(name=node, call_id=f"node_{node}", arguments="{}")
-                yield fn_call.emit_added()
-                yield fn_call.emit_done()
-
-            if not completed or cancellation_signal.is_set():
-                if shutdown_timer and not shutdown_timer.done():
-                    shutdown_timer.cancel()
-                # Shutdown: return without terminal → re-entered on restart.
-                if context.shutdown.is_set():
-                    return
-                yield resp_stream.emit_completed()
-                return
-
-            # Save new stable checkpoint
-            state = await asyncio.to_thread(_graph.get_state, thread_config)
-            context.conversation_chain_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
-            # Emit the AI reply (fresh — fork-on-steer never runs on recovery).
-            for event in _build_reply_events(resp_stream, state):
-                yield event
-            # Framework checkpoint: persist the response snapshot (reply item +
-            # its id) so a crash before the terminal re-emits it verbatim.
-            yield resp_stream.checkpoint()
-            if shutdown_timer and not shutdown_timer.done():
-                shutdown_timer.cancel()
-            yield resp_stream.emit_completed()
-            return
-
-    # ── Phase 2: Normal invocation (graph.stream with inter-node cancel) ─
-    state = await asyncio.to_thread(_graph.get_state, thread_config)
-
-    if state.next:
-        graph_input = Command(resume=input_text)
-    else:
-        graph_input = {"messages": [HumanMessage(content=input_text)], "is_complete": False}
-
-    completed, nodes = await asyncio.to_thread(
-        _invoke_cancellable, _graph, graph_input, thread_config, cancellation_signal
-    )
-
-    for node in nodes:
-        fn_call = resp_stream.add_output_item_function_call(name=node, call_id=f"node_{node}", arguments="{}")
-        yield fn_call.emit_added()
-        yield fn_call.emit_done()
-
-    if shutdown_timer and not shutdown_timer.done():
-        shutdown_timer.cancel()
-
-    # ── Phase 3: Post-completion handling ───────────────────────────
-    if not completed or cancellation_signal.is_set():
-        # Shutdown: return without terminal → re-entered on restart.
+    # ── Post-stream cancel / shutdown ───────────────────────────────
+    if interrupted:
         if context.shutdown.is_set():
-            return
-        yield resp_stream.emit_completed()
+            # Shutdown mid-stream → defer to next-lifetime recovery.
+            await context.exit_for_recovery()
+        # Client cancel / steering → finish the turn with partial output.
+        yield stream.emit_completed()
         return
 
-    # Save stable checkpoint reference (for fork-on-steer)
-    state = await asyncio.to_thread(_graph.get_state, thread_config)
-    context.conversation_chain_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
-
-    # Emit this turn's reply only if it isn't already in the persisted
-    # response. On a recovered entry where the reply was checkpointed before
-    # the crash, it is already seeded (with its original id) and re-emitted via
-    # the in_progress reset — re-emitting here would duplicate it with a fresh
-    # id. If the reply is NOT yet persisted (crash before the framework
-    # checkpoint), we emit it from the current graph state — which is durable
-    # via SqliteSaver — so the reply is never lost.
-    if not _reply_already_persisted(resp_stream):
-        for event in _build_reply_events(resp_stream, state):
-            yield event
-        # Framework checkpoint: persist the response snapshot (reply item + its
-        # id) so recovery re-emits it verbatim rather than inventing a new id.
-        yield resp_stream.checkpoint()
-    yield resp_stream.emit_completed()
-
-
-def _build_reply_events(resp_stream: ResponseEventStream, state: Any) -> list[Any]:
-    """Build response events for the latest AI message from graph state."""
-    messages = state.values.get("messages", [])
-    ai_messages = [m for m in messages if isinstance(m, AIMessage)]
-    if not ai_messages:
-        return []
-    reply = ai_messages[-1].content
-    message = resp_stream.add_output_item_message()
-    text = message.add_text_content()
-    return [
-        message.emit_added(),
-        text.emit_added(),
-        text.emit_delta(reply),
-        text.emit_text_done(),
-        text.emit_done(),
-        message.emit_done(),
-    ]
-
-
-async def _simulate_shutdown(context: ResponseContext) -> None:
-    """Fire SHUTTING_DOWN after a delay (local testing only)."""
-    await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    context.shutdown.set()
+    # ── Turn complete — record the stable fork point for steering ────
+    _record_stable(context, await graph.aget_state(thread_config))
+    yield stream.emit_completed()
 
 
 def main() -> None:
