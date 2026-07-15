@@ -37,14 +37,20 @@ set -uo pipefail
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-# Point at your own hosted deployment. After `azd ai agent run`, the
-# endpoint is printed in the deploy output (…/agents/<name>/endpoint/protocols),
-# or read it from your azd env (AGENT_*_RESPONSES_ENDPOINT). Override via
-# the ENDPOINT env var instead of editing this default.
-ENDPOINT="${ENDPOINT:-https://<account>.services.ai.azure.com/api/projects/<project>/agents/resilient-responses-agent-demo/endpoint/protocols}"
-API_VERSION="${API_VERSION:-v1}"
+# Endpoint resolution (see _require_endpoint / _azd_responses_endpoint): an
+# explicitly-exported NON-placeholder ENDPOINT wins; otherwise it is
+# auto-discovered from the azd environment (the same source `azd up` reads/
+# writes), so no manual export is needed. A mis-run command refuses to fire at a
+# placeholder rather than silently no-op'ing at a bogus host.
+ENDPOINT="${ENDPOINT:-}"
+API_VERSION="${API_VERSION:-}"
 MODEL="${MODEL:-gpt-4.1-mini}"
 SESSION_FILE=".demo-session"
+# Live in-flight response id, published mid-stream so a command in ANOTHER
+# terminal (steer/cancel/stream) can target the run that is currently streaming.
+ACTIVE_ID_FILE=".demo-session.active"
+_ENDPOINT_PLACEHOLDER_RE='<account>|<project>'
+_ENDPOINT_DEFAULT="https://<account>.services.ai.azure.com/api/projects/<project>/agents/resilient-responses-agent-demo/endpoint/protocols/openai"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 
@@ -56,12 +62,74 @@ RED='\033[31m'
 CYAN='\033[36m'
 RESET='\033[0m'
 
+# ── Timestamps (PY-9) ─────────────────────────────────────────────────────────
+# UTC ISO-8601 to match the server log clock (azd ai agent monitor), so client
+# actions can be lined up against crash → restart → reclaim → recover timestamps.
+_now_iso() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+
+# ── Endpoint discovery + guard (PY-8) ─────────────────────────────────────────
+# Resolve the responses PROTOCOL-BASE endpoint (the client appends /responses…)
+# from the azd environment — the authoritative source `azd up` reads/writes —
+# so the demo works with no manual export. Sets globals ENDPOINT / API_VERSION.
+_azd_responses_endpoint() {
+    local raw="" env_name=""
+    # 1. Preferred: azd env get-values (default-environment values).
+    if command -v azd >/dev/null 2>&1; then
+        raw=$(azd env get-values 2>/dev/null \
+            | grep -E '^AGENT_[A-Z0-9_]*_RESPONSES_ENDPOINT=' | head -1 \
+            | sed -E 's/^[^=]+=//; s/^"//; s/"$//')
+    fi
+    # 2. Fallback: parse ./.azure/<defaultEnvironment>/.env directly.
+    if [[ -z "$raw" && -f ./.azure/config.json ]]; then
+        env_name=$(python3 -c "import json;print(json.load(open('./.azure/config.json')).get('defaultEnvironment',''))" 2>/dev/null)
+        if [[ -n "$env_name" && -f "./.azure/$env_name/.env" ]]; then
+            raw=$(grep -E '^AGENT_[A-Z0-9_]*_RESPONSES_ENDPOINT=' "./.azure/$env_name/.env" | head -1 \
+                | sed -E 's/^[^=]+=//; s/^"//; s/"$//')
+        fi
+    fi
+    [[ -z "$raw" ]] && return 1
+    # raw = https://…/endpoint/protocols/openai/responses?api-version=v1
+    if [[ "$raw" == *"api-version="* ]]; then
+        local ver="${raw##*api-version=}"; ver="${ver%%&*}"
+        [[ -z "${API_VERSION:-}" ]] && API_VERSION="$ver"
+    fi
+    local base="${raw%%\?*}"    # drop query string
+    base="${base%/responses}"   # drop trailing /responses → protocol base
+    ENDPOINT="$base"
+    return 0
+}
+
+# Every network command routes through ensure_token → _require_endpoint, so a
+# command can never be silently fired at an unresolved placeholder host.
+_require_endpoint() {
+    # An explicitly-exported real ENDPOINT wins; otherwise auto-discover.
+    if [[ -z "${ENDPOINT:-}" || "$ENDPOINT" =~ $_ENDPOINT_PLACEHOLDER_RE ]]; then
+        _azd_responses_endpoint || true
+    fi
+    API_VERSION="${API_VERSION:-v1}"
+    if [[ -z "${ENDPOINT:-}" || "$ENDPOINT" =~ $_ENDPOINT_PLACEHOLDER_RE ]]; then
+        ENDPOINT="${ENDPOINT:-$_ENDPOINT_DEFAULT}"
+        echo -e "${RED}ENDPOINT is unresolved (placeholder): ${ENDPOINT}${RESET}" >&2
+        echo -e "${DIM}Run this from the demo directory (with ./.azure present) so it auto-resolves${RESET}" >&2
+        echo -e "${DIM}from your azd env, or export a real ENDPOINT, e.g.:${RESET}" >&2
+        echo -e "${DIM}  export ENDPOINT=https://<acct>.services.ai.azure.com/api/projects/<proj>/agents/resilient-responses-agent-demo/endpoint/protocols/openai${RESET}" >&2
+        exit 1
+    fi
+}
+
 # ── Session state ─────────────────────────────────────────────────────────────
 
 load_session() {
     if [[ -f "$SESSION_FILE" ]]; then
         # shellcheck disable=SC1090
         source "$SESSION_FILE"
+    fi
+    # PY-7: if no RESPONSE_ID is persisted yet (a `start` is still streaming in
+    # another terminal and only writes RESPONSE_ID to the session file when its
+    # stream ends), fall back to the live id published mid-stream so cross-terminal
+    # commands (steer / cancel / stream) can target the in-flight run.
+    if [[ -z "${RESPONSE_ID:-}" && -f "$ACTIVE_ID_FILE" ]]; then
+        RESPONSE_ID="$(cat "$ACTIVE_ID_FILE" 2>/dev/null || echo "")"
     fi
 }
 
@@ -88,6 +156,7 @@ mint_session_id() {
 }
 
 ensure_token() {
+    _require_endpoint
     if [[ "${LOCAL_NOAUTH:-0}" == "1" ]]; then
         TOKEN="local-noauth"
         return
@@ -144,8 +213,14 @@ stream_sse() {
     # renderer prints the last sequence number AND the discovered response
     # id (if the stream came from POST /responses) to sidecar files we read
     # back into LAST_SEQUENCE_NUMBER / RESPONSE_ID.
-    local seq_file=".demo-session.lastseq"
-    local id_file=".demo-session.rid"
+    #
+    # PY-7: sidecars are PID-PRIVATE ($$) so a concurrent invocation in another
+    # terminal (e.g. `crash` while `start` streams) can't rm/clobber the
+    # streaming command's files. The captured id is ALSO published to the shared
+    # ACTIVE_ID_FILE the instant it is seen, so cross-terminal commands can find
+    # the in-flight run before this stream ends.
+    local seq_file=".demo-session.lastseq.$$"
+    local id_file=".demo-session.rid.$$"
     rm -f "$seq_file" "$id_file"
 
     STREAM_RESULT="ok"
@@ -153,11 +228,12 @@ stream_sse() {
     if [[ "$method" == "POST" ]]; then
         curl_args+=(-X POST -H "Content-Type: application/json" --data "$post_body")
     fi
-    curl -sS -N "${curl_args[@]}" "$url" 2>/dev/null | python3 -u -c "
+    curl -sS -N "${curl_args[@]}" "$url" 2>/dev/null | ACTIVE_ID_FILE="$ACTIVE_ID_FILE" python3 -u -c "
 import json, sys, os, signal
 
 SEQ_FILE = '$seq_file'
 ID_FILE = '$id_file'
+ACTIVE_FILE = os.environ.get('ACTIVE_ID_FILE', '')
 
 def _save_seq(n):
     try:
@@ -167,11 +243,22 @@ def _save_seq(n):
         pass
 
 def _save_id(rid):
-    try:
-        with open(ID_FILE, 'w') as f:
-            f.write(str(rid))
-    except Exception:
-        pass
+    for path in (ID_FILE, ACTIVE_FILE):
+        if not path:
+            continue
+        try:
+            with open(path, 'w') as f:
+                f.write(str(rid))
+        except Exception:
+            pass
+
+def _clear_active():
+    # The run reached a terminal — it is no longer the in-flight target.
+    if ACTIVE_FILE:
+        try:
+            os.remove(ACTIVE_FILE)
+        except OSError:
+            pass
 
 _last = 0
 _id_saved = False
@@ -197,7 +284,8 @@ for raw in sys.stdin:
             seq = payload.get('sequence_number')
             if isinstance(seq, int):
                 _last = seq
-            # Extract response id from the first lifecycle event we see.
+            # Extract response id from the first lifecycle event we see and
+            # publish it (PID-private + shared active file) immediately.
             if not _id_saved:
                 resp = payload.get('response') or {}
                 rid = resp.get('id')
@@ -214,6 +302,9 @@ for raw in sys.stdin:
                 status = resp.get('status') or t.split('.')[-1]
                 sys.stdout.write('\n\033[2m[' + t + ' status=' + str(status) + ']\033[0m\n')
                 sys.stdout.flush()
+                if t in ('response.completed', 'response.failed',
+                         'response.cancelled', 'response.incomplete'):
+                    _clear_active()
         current_event = None
         current_data = []
         continue
@@ -252,6 +343,7 @@ cmd_start() {
     PREV_RESPONSE_ID=""
     LAST_SEQUENCE_NUMBER="0"
     AGENT_SESSION_ID="$(mint_session_id)"  # fresh sandbox-affinity session per run
+    rm -f "$ACTIVE_ID_FILE"                 # drop any stale in-flight id from a prior run
     save_session
     ensure_token
 
@@ -383,8 +475,9 @@ cmd_crash() {
         save_session
     fi
 
-    echo -e "${RED}Triggering container crash via input=\"crash\"${RESET}"
-    echo -e "${DIM}(requires DEMO_MODE=1 on the server; session=${AGENT_SESSION_ID})${RESET}"
+    echo -e "${RED}✖ crash fired @ $(_now_iso) — input=\"crash\", session=${AGENT_SESSION_ID}${RESET}"
+    echo -e "${DIM}(bare agent_session_id-pinned crash — NOT a previous_response_id steer, which would${RESET}"
+    echo -e "${DIM} only run AFTER the current turn; requires DEMO_MODE=1 on the server)${RESET}"
 
     local body
     body=$(python3 -c "
@@ -447,7 +540,7 @@ cmd_logs() {
 }
 
 cmd_reset() {
-    rm -f "$SESSION_FILE"
+    rm -f "$SESSION_FILE" "$ACTIVE_ID_FILE" .demo-session.lastseq.* .demo-session.rid.*
     echo -e "${DIM}Cleared ${SESSION_FILE}.${RESET}"
 }
 
@@ -475,13 +568,27 @@ Usage:
   ./demo-client.sh reset             Clear local session state
 
 Environment overrides:
-  ENDPOINT     Foundry agent protocols endpoint (set to your deployment).
-  API_VERSION  Default: v1.
+  ENDPOINT     Responses protocol-base endpoint (…/endpoint/protocols/openai).
+               Auto-discovered from your azd environment when unset — only
+               export this to override. A placeholder/unresolved value is
+               refused (the command fails loudly instead of silently no-op'ing).
+  API_VERSION  Auto-discovered from the azd endpoint; default: v1.
   MODEL        Default: gpt-4.1-mini.
 USAGE
 }
 
 # ── Dispatch ──────────────────────────────────────────────────────────────────
+
+# PY-9: UTC ISO-8601 banners (to stderr, so they never pollute SSE stdout) so the
+# client timeline can be lined up against the timestamped server log.
+_CMD="${1:-help}"
+_START_EPOCH=$(date +%s)
+echo -e "${CYAN}▶ command '${_CMD}' triggered @ $(_now_iso)${RESET}" >&2
+_end_banner() {
+    local rc=$?
+    echo -e "${CYAN}⏹ '${_CMD}' ended @ $(_now_iso) (elapsed $(( $(date +%s) - _START_EPOCH ))s, exit ${rc})${RESET}" >&2
+}
+trap _end_banner EXIT
 
 case "${1:-}" in
     start)   shift; cmd_start "${1:-}" ;;
