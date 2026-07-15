@@ -12,6 +12,10 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
     ModelVersionProperties as ModelVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
+    ModelVersionData as RegistryModelVersionData,
+    ModelVersionDetails as RegistryModelVersionDetails,
+)
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
@@ -62,6 +66,49 @@ def mock_model_operation_reg(
         service_client=mock_aml_services_2021_10_01_dataplanepreview,
         datastore_operations=mock_datastore_operation,
     )
+
+
+def _make_registry_model_rest_object(
+    version: str,
+    default_dt_asset_id: Optional[str] = None,
+    allowed_dt_asset_ids: Optional[list] = None,
+) -> Mock:
+    """Build a registry ModelVersionData mock mirroring the real GET/LIST response shapes.
+
+    The GET response carries default_deployment_template / allowed_deployment_templates; the
+    LIST (top=1) response used for label resolution omits them, which is what drops the
+    references on the label path (bug 5423568).
+    """
+    rest_properties = Mock(spec=RegistryModelVersionDetails)
+    rest_properties.description = "Test model"
+    rest_properties.tags = {}
+    rest_properties.properties = {}
+    rest_properties.flavors = {}
+    rest_properties.model_uri = "azureml://locations/test/artifacts/model"
+    rest_properties.model_type = "custom_model"
+    rest_properties.stage = None
+    rest_properties.job_name = None
+    rest_properties.intellectual_property = None
+    rest_properties.system_metadata = None
+    rest_properties.default_deployment_template = {"asset_id": default_dt_asset_id} if default_dt_asset_id else None
+    rest_properties.allowed_deployment_templates = (
+        [{"asset_id": asset_id} for asset_id in allowed_dt_asset_ids] if allowed_dt_asset_ids else None
+    )
+
+    rest_object = Mock(spec=RegistryModelVersionData)
+    rest_object.id = (
+        "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices"
+        f"/workspaces/ws/models/test-model/versions/{version}"
+    )
+    rest_object.properties = rest_properties
+
+    system_data = Mock()
+    system_data.created_by = "test_user"
+    system_data.created_at = None
+    system_data.last_modified_by = None
+    system_data.last_modified_at = None
+    rest_object.system_data = system_data
+    return rest_object
 
 
 @pytest.mark.unittest
@@ -171,6 +218,62 @@ path: ./model.pkl"""
         name = "random_string"
         with pytest.raises(Exception):
             mock_model_operation.get(name=name)
+
+    def test_get_with_label_rehydrates_deployment_template_references(
+        self, mock_model_operation_reg: ModelOperations
+    ) -> None:
+        """Bug 5423568: models.get(name, label='latest') must hydrate deployment-template
+        references identically to the explicit version= path.
+
+        Label resolution goes through the version LIST endpoint (top=1), whose items omit
+        default_deployment_template / allowed_deployment_templates. The fix re-fetches the
+        resolved version through the GET endpoint, which carries those references.
+        """
+        default_dt = "azureml://registries/azure-huggingface/deploymenttemplates/dt/versions/5"
+        allowed_dt = "azureml://registries/azure-huggingface/deploymenttemplates/dt/labels/latest"
+
+        # LIST shape (used by label resolution) -> deployment-template references dropped.
+        list_pager = Mock()
+        list_pager.next.return_value = _make_registry_model_rest_object(version="5")
+        mock_model_operation_reg._model_versions_operation.list.return_value = list_pager
+
+        # GET shape (used by the re-fetch) -> deployment-template references populated.
+        mock_model_operation_reg._model_versions_operation.get.return_value = _make_registry_model_rest_object(
+            version="5", default_dt_asset_id=default_dt, allowed_dt_asset_ids=[allowed_dt]
+        )
+
+        result = mock_model_operation_reg.get(name="test-model", label="latest")
+
+        # The resolved version was re-fetched through GET (not returned straight from the LIST shape).
+        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
+            name="test-model",
+            version="5",
+            registry_name=mock_model_operation_reg._registry_name,
+            **mock_model_operation_reg._scope_kwargs,
+        )
+        # Deployment-template references are hydrated, matching the explicit version= path.
+        assert result.version == "5"
+        assert result.default_deployment_template is not None
+        assert result.default_deployment_template.asset_id == default_dt
+        assert result.allowed_deployment_templates is not None
+        assert len(result.allowed_deployment_templates) == 1
+        assert result.allowed_deployment_templates[0].asset_id == allowed_dt
+
+    def test_get_with_label_workspace_does_not_refetch(self, mock_model_operation: ModelOperations) -> None:
+        """Bug 5423568: the deployment-template re-fetch is scoped to the registry.
+
+        Workspace models carry no deployment-template references, so the label path must not issue
+        the extra GET; this keeps workspace behaviour (and its recorded e2e sessions) unchanged.
+        """
+        resolved = Model(name="test-model", version="4")
+        with patch(
+            "azure.ai.ml.operations._model_operations._resolve_label_to_asset",
+            return_value=resolved,
+        ):
+            result = mock_model_operation.get(name="test-model", label="latest")
+
+        assert result is resolved
+        assert mock_model_operation._model_versions_operation.get.call_count == 0
 
     @patch.object(Model, "_from_rest_object", new=Mock())
     @patch.object(Model, "_from_container_rest_object", new=Mock())

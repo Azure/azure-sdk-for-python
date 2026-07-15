@@ -378,7 +378,10 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
         if label:
-            return _resolve_label_to_asset(self, name, label)
+            resolved_model = _resolve_label_to_asset(self, name, label)
+            if self._registry_name and resolved_model.version is not None:
+                return Model._from_rest_object(self._get(name, resolved_model.version))
+            return resolved_model
 
         if not version:
             msg = "Must provide either version or label"
