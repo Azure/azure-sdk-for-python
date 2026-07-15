@@ -264,10 +264,17 @@ def strip_protocol_from_uri(uri: str) -> str:
     slash_pos = uri.find("/")
     if slash_pos != -1:
         uri = uri[:slash_pos]
-    # Remove any port.
-    colon_pos = uri.find(":")
-    if colon_pos != -1:
-        uri = uri[:colon_pos]
+    # Remove any port, while preserving a bracketed IPv6 literal such as
+    # "[fe80::1]" (whose address contains colons). Only a port following the
+    # closing "]" should be stripped.
+    if uri.startswith("["):
+        bracket_pos = uri.find("]")
+        if bracket_pos != -1:
+            uri = uri[: bracket_pos + 1]
+    else:
+        colon_pos = uri.find(":")
+        if colon_pos != -1:
+            uri = uri[:colon_pos]
     return uri
 
 

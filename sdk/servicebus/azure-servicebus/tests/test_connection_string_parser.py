@@ -143,3 +143,9 @@ class TestServiceBusConnectionStringParser(AzureMgmtRecordedTestCase):
         assert strip_protocol_from_uri(host + ":443/") == host
         assert strip_protocol_from_uri("https://" + host + ":443/") == host  # ARM/portal-emitted form
         assert strip_protocol_from_uri("sb://" + host + ":5671/") == host
+
+        # Bracketed IPv6 literals must be preserved (their address contains
+        # colons); only a port following the closing "]" is stripped.
+        assert strip_protocol_from_uri("[fe80::1]") == "[fe80::1]"
+        assert strip_protocol_from_uri("[fe80::1]:5671") == "[fe80::1]"
+        assert strip_protocol_from_uri("sb://[fe80::1]:5671/") == "[fe80::1]"
