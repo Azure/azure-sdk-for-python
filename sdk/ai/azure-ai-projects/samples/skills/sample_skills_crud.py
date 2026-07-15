@@ -50,7 +50,7 @@ def print_skill_version_description(version: SkillVersion) -> None:
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
     skill_name = "product-support-skill"

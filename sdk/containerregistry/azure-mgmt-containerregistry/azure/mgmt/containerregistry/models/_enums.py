@@ -35,6 +35,13 @@ class ActivationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INACTIVE."""
 
 
+class AdditionalAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of authentication configuration used by a cache rule to access an upstream registry."""
+
+    GOOGLE_ARTIFACT_REGISTRY = "GoogleArtifactRegistry"
+    """Google Artifact Registry (GAR) authentication via workload identity federation."""
+
+
 class AuditLogStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether audit logs are enabled on the connected registry."""
 
@@ -496,6 +503,15 @@ class WebhookStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ENABLED."""
     DISABLED = "disabled"
     """DISABLED."""
+
+
+class WritableCacheRepos(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to allow cache operations that write to repositories in this registry."""
+
+    ENABLED = "Enabled"
+    """Cache write operations are enabled."""
+    DISABLED = "Disabled"
+    """Cache write operations are disabled."""
 
 
 class ZoneRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):

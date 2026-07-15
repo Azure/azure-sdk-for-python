@@ -203,18 +203,15 @@ class TestSamplesAsync(AzureRecordedTestCase):
         [
             AdditionalSampleTestDetail(
                 test_id="sample_create_hosted_agent_async",
-                sample_filename="sample_create_hosted_agent_async.py",
-                env_vars={
-                    "SKIP_RBAC": "true",
-                },
+                sample_filename="sample_create_hosted_agent_from_image_async.py",
+                env_vars={},
             ),
             AdditionalSampleTestDetail(
                 test_id="sample_create_hosted_agent_from_remote_build_async",
                 sample_filename="sample_create_hosted_agent_from_code_async.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
-                    "ZIP_FILE_PATH": "tests/samples/assets/echo-agent.zip",
-                    "SKIP_RBAC": "true",
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
                 },
             ),
             AdditionalSampleTestDetail(
@@ -222,7 +219,28 @@ class TestSamplesAsync(AzureRecordedTestCase):
                 sample_filename="sample_create_hosted_agent_from_code_async.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
-                    "SKIP_RBAC": "true",
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent-prebuilt.zip",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_session_log_stream_async",
+                sample_filename="sample_session_log_stream_async.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_sessions_crud_async",
+                sample_filename="sample_sessions_crud_async.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_sessions_files_upload_download_async",
+                sample_filename="sample_sessions_files_upload_download_async.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
                 },
             ),
         ]
@@ -232,8 +250,11 @@ class TestSamplesAsync(AzureRecordedTestCase):
         get_async_sample_paths(
             "hosted_agents",
             samples_to_skip=[
-                "sample_create_hosted_agent_async.py",  # Specified through AdditionalSampleTestDetail
+                "sample_create_hosted_agent_from_image_async.py",  # Specified through AdditionalSampleTestDetail
                 "sample_create_hosted_agent_from_code_async.py",  # Specified through AdditionalSampleTestDetail
+                "sample_session_log_stream_async.py",  # Specified through AdditionalSampleTestDetail
+                "sample_sessions_crud_async.py",  # Specified through AdditionalSampleTestDetail
+                "sample_sessions_files_upload_download_async.py",  # Specified through AdditionalSampleTestDetail
             ],
         ),
     )
