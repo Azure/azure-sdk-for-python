@@ -37,6 +37,10 @@ def _rest_io_to_snake_dict(rest_io: Any) -> Dict:
         asset_version = rest_io.get("assetVersion")
         if asset_version is not None:
             result["asset_version"] = asset_version
+        # ``as_attribute_dict`` passes the untyped ``assetVersion`` wire key through unchanged; drop it so the node
+        # carries only the snake ``version`` key (matching the legacy msrest node wire format; the camelCase
+        # ``assetVersion`` would otherwise be an extra field on the pipeline-node output/input).
+        result.pop("assetVersion", None)
         return result
     return rest_io.as_dict()
 
