@@ -366,6 +366,22 @@ def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
     return {_LAST_INPUT_ID_PAYLOAD_KEY: input_id}
 
 
+def _generate_input_id() -> str:
+    """Mint a fresh per-turn ``input_id`` for a multi-turn turn.
+
+    The task/streaming identity rule: ``input_id`` defaults to ``task_id`` for a
+    one-shot task (1:1), but each turn of a multi-turn chain gets its OWN unique
+    id when the caller does not supply one. Prefixed for readability; stays within
+    the ``input_id`` charset/length validated by :func:`_validate_input_id`.
+
+    :returns: A unique input id of the form ``input-<uuid4-hex>``.
+    :rtype: str
+    """
+    import uuid as _uuid  # pylint: disable=import-outside-toplevel
+
+    return f"input-{_uuid.uuid4().hex}"
+
+
 class TaskOptions:  # pylint: disable=too-many-instance-attributes
     """Internal task options bag.
 
@@ -1611,6 +1627,14 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         :return: The handler's return value for this turn.
         :rtype: Any
         """
+        # Multi-turn identity rule: each turn gets its OWN unique input_id.
+        # When the caller omits one (and isn't running an If-Match precondition,
+        # which requires an explicit advancing id), mint a fresh per-turn id so
+        # it is persisted as the chain head (``last_input_id``) and surfaced on
+        # the turn's ``TaskContext.input_id`` — matching the spec + this method's
+        # docstring + the .NET port. One-shot tasks still default to ``task_id``.
+        if input_id is None and if_last_input_id is None:
+            input_id = _generate_input_id()
         return await self._inner.run(
             task_id=task_id,
             input=input,
@@ -1636,6 +1660,9 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         :return: A :class:`TaskRun` handle bound to the turn.
         :rtype: TaskRun[Output]
         """
+        # See MultiTurnTask.run — mint a fresh per-turn input_id when omitted.
+        if input_id is None and if_last_input_id is None:
+            input_id = _generate_input_id()
         return await self._inner.start(
             task_id=task_id,
             input=input,

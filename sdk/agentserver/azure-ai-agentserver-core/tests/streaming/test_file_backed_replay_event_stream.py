@@ -433,3 +433,77 @@ class TestCompactionPreservesPostCompactionWrites:
         cursors = [e.payload["n"] for e in s2._buffer]
         assert 2 in cursors, f"post-compaction event missing after rehydrate; buffer={cursors}"
         await s2._on_delete()
+
+
+# ----------------------------------------------------------------
+# C-STR-FBR-6 — a non-final terminal sentinel is IGNORED (Spec 041 PY-1)
+# ----------------------------------------------------------------
+
+
+class TestNonFinalTerminalIgnored:
+    async def test_non_final_terminal_marker_ignored(self, tmp_path: Path) -> None:
+        """C-STR-FBR-6 — a ``__terminal__`` sentinel that is NOT the final line is
+        ignored; loading continues and the stream is NOT closed."""
+        p = tmp_path / "fb-midterm.jsonl"
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"emit_time": 100.0, "payload": {"n": 1}}) + "\n")
+            f.write(json.dumps({"__terminal__": True}) + "\n")  # non-final → ignored
+            f.write(json.dumps({"emit_time": 101.0, "payload": {"n": 2}}) + "\n")
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
+        # Final line is an event → the mid-file terminal was ignored, stream open.
+        assert s._state != s._STATE_CLOSED
+        # Both events parsed (cursor is recorded before TTL eviction).
+        assert s._highest_cursor == 2
+        await s._on_delete()
+
+    async def test_final_terminal_after_mid_file_terminal_still_closes(self, tmp_path: Path) -> None:
+        """C-STR-FBR-6 — a mid-file terminal is ignored, but a terminal sentinel
+        that IS the final line still closes the stream."""
+        p = tmp_path / "fb-twoterms.jsonl"
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"emit_time": 100.0, "payload": {"n": 1}}) + "\n")
+            f.write(json.dumps({"__terminal__": True}) + "\n")  # ignored (non-final)
+            f.write(json.dumps({"emit_time": 101.0, "payload": {"n": 2}}) + "\n")
+            f.write(json.dumps({"__terminal__": True}) + "\n")  # final → closes
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
+        # The final terminal closed the stream (it may then auto-transition to
+        # GONE because the ancient emit_time is already past the TTL horizon).
+        assert s._state in (s._STATE_CLOSED, s._STATE_GONE)
+        assert s._highest_cursor == 2
+        await s._on_delete()
+
+
+# ----------------------------------------------------------------
+# C-STR-FBR-3 — serializer/deserializer are both-or-neither (Spec 041 PY-2)
+# ----------------------------------------------------------------
+
+
+class TestSerializerDeserializerPairing:
+    async def test_serializer_without_deserializer_raises(self, tmp_path: Path) -> None:
+        with pytest.raises(ValueError, match="both-or-neither"):
+            FileBackedReplayEventStream(
+                path=tmp_path / "fb-half-ser.jsonl",
+                serializer=lambda payload: json.dumps(payload).encode("utf-8"),
+            )
+
+    async def test_deserializer_without_serializer_raises(self, tmp_path: Path) -> None:
+        with pytest.raises(ValueError, match="both-or-neither"):
+            FileBackedReplayEventStream(
+                path=tmp_path / "fb-half-de.jsonl",
+                deserializer=lambda b: json.loads(b.decode("utf-8")),
+            )
+
+    async def test_both_supplied_is_accepted(self, tmp_path: Path) -> None:
+        s = FileBackedReplayEventStream(
+            path=tmp_path / "fb-both.jsonl",
+            cursor_fn=lambda e: e["n"],
+            serializer=lambda payload: json.dumps(payload).encode("utf-8"),
+            deserializer=lambda b: json.loads(b.decode("utf-8")),
+        )
+        await s.emit({"n": 1})
+        await s._on_delete()
+
+    async def test_neither_supplied_is_accepted(self, tmp_path: Path) -> None:
+        s = FileBackedReplayEventStream(path=tmp_path / "fb-neither.jsonl", cursor_fn=lambda e: e["n"])
+        await s.emit({"n": 1})
+        await s._on_delete()

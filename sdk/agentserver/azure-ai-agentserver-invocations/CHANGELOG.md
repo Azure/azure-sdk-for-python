@@ -12,7 +12,7 @@
 
 ### Samples
 
-- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_copilot` (streaming chat with crash recovery), `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (LangGraph integration), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
+- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
 
 ### Bugs Fixed
 

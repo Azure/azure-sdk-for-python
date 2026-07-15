@@ -149,6 +149,12 @@ class _StreamsRegistry:
         :keyword deserializer: Optional bytes-to-payload deserializer. Defaults to JSON.
         :paramtype deserializer: Optional[Callable[[bytes], Any]]
         """
+        if (serializer is None) != (deserializer is None):
+            # C-STR-FBR-3 — fail fast at config time on a half-configured pair.
+            raise ValueError(
+                "use_file_backed_replay: 'serializer' and 'deserializer' must be "
+                "supplied both-or-neither (C-STR-FBR-3)"
+            )
         if storage_dir is None:
             from .._config import resolve_state_subdir  # pylint: disable=import-outside-toplevel
 
