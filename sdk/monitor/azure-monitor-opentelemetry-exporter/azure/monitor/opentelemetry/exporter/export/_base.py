@@ -12,7 +12,7 @@ from typing import List, Optional, Any
 from urllib.parse import urlparse
 import psutil
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HttpLoggingPolicy,
@@ -601,6 +601,21 @@ class BaseExporter:
                     exc_type = request_error.exc_type
                     if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
                         exc_type = request_error.__class__.__name__  # type: ignore
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
+                result = ExportResult.FAILED_RETRYABLE
+            except ServiceResponseError as response_error:
+                # The request was sent but the client failed to receive a response
+                # (e.g. read timeout).
+                logger.warning("Retrying due to server response error: %s.", response_error.message)
+
+                # Track retry items in customer sdkstats for client-side exceptions
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(envelopes, response_error)
+
+                if self._should_collect_stats():
+                    exc_type = response_error.exc_type
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
+                        exc_type = response_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:

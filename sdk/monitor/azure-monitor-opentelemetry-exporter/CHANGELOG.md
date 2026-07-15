@@ -3,6 +3,8 @@
 ## 1.0.0b56 (Unreleased)
 
 ### Features Added
+- Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
+  ([#47870](https://github.com/Azure/azure-sdk-for-python/pull/47870))
 
 ### Breaking Changes
 
