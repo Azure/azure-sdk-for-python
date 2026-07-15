@@ -668,13 +668,14 @@ point; and clients supporting resilient streams treat any later
 
 See the `samples/` directory for canonical resilient handler shapes:
 
-- `sample_18_resilient_copilot.py` — Stateful GitHub Copilot SDK conversation
-  (session resume on recovery).
-- `sample_19_resilient_streaming.py` — Handler-managed checkpointing
-  (no upstream framework).
-- `sample_20_resilient_steering.py` — Steerable variant of 19, demonstrating
-  cancellation × recovery composition.
-- `sample_21_resilient_langgraph.py` — LangGraph with `SqliteSaver`
-  checkpointer (upstream-framework-owned resilience).
+- `sample_19_resilient_streaming.py` — Canonical **framework-checkpoint**
+  handler (`stream.checkpoint()` + `context.persisted_response`, no upstream
+  framework).
+- `sample_20_resilient_steering.py` — Steering surface (`is_steered_turn` /
+  `pending_input_count`) with **naive re-run** recovery; cancellation ×
+  recovery composition.
+- `sample_21_resilient_langgraph.py` — **Composition** of LangGraph
+  `SqliteSaver` (graph-execution resume) with framework `stream.checkpoint()`
+  / `context.persisted_response` (client-visible items + ids).
 - `sample_22_resilient_multiturn.py` — Multi-turn conversation with
   `resilient_background=True, steerable_conversations=False`.

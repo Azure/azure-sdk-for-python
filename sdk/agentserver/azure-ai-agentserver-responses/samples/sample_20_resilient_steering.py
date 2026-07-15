@@ -26,15 +26,15 @@ What this sample demonstrates:
 - Steerable handler that ends a turn cleanly on STEERED (close builders +
   ``emit_completed`` with partial content).
 - Mid-stream shutdown returns without terminal — recovery re-runs the
-  turn from scratch.
-- ``context.is_recovery`` branch produces an empty resumption response
-  that signals the client to reset.
+  turn from scratch (the **naive** strategy: no recovery-specific code;
+  the fresh ``response.in_progress`` with empty output IS the client reset).
 - Cross-turn state via ``turn_count`` survives crashes.
 
 What this sample does NOT demonstrate:
 
-- Per-token checkpointing (impractical for non-deterministic upstreams).
-- Wrapping a stateful upstream SDK (see ``sample_17``, ``18``, ``21``).
+- Framework checkpoints / partial-output recovery (see ``sample_19``).
+- Wrapping a stateful upstream SDK composed with framework checkpoints
+  (see ``sample_21``).
 
 Usage::
 
@@ -66,7 +66,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
-from azure.ai.agentserver.responses.models._generated import ResponseObject
 
 options = ResponsesServerOptions(
     resilient_background=True,
@@ -85,27 +84,6 @@ async def _simulate_llm_stream(prompt: str):
         yield word + " "
 
 
-def _build_resumption_response(context: ResponseContext, request: CreateResponse) -> ResponseObject:
-    """Build an empty resumption response.
-
-    For a single-turn handler with a non-deterministic upstream there is
-    nothing to safely carry forward from a crashed mid-stream attempt —
-    the partial token stream cannot be byte-matched to a re-attempted
-    stream, so we discard it and let the recovered attempt produce
-    everything fresh. The empty payload tells the client to reset its
-    view.
-    """
-    return ResponseObject(
-        {
-            "id": context.response_id,
-            "object": "response",
-            "status": "in_progress",
-            "output": [],
-            "model": request.model,
-        }
-    )
-
-
 @app.response_handler
 async def handler(
     request: CreateResponse,
@@ -113,14 +91,13 @@ async def handler(
     cancellation_signal: asyncio.Event,
 ):
     """Steerable resilient handler with cancellation × recovery composition."""
-    # ── Recovery branch ─────────────────────────────────────────────
-    if context.is_recovery:
-        stream = ResponseEventStream(
-            response_id=context.response_id,
-            response=_build_resumption_response(context, request),
-        )
-    else:
-        stream = ResponseEventStream(response_id=context.response_id, request=request)
+    # ── Recovery: naive re-run ──────────────────────────────────────
+    # This handler wraps a non-deterministic upstream and does NOT
+    # checkpoint partial output, so recovery needs NO special code: build a
+    # fresh stream on every entry (recovered or not). The fresh
+    # ``response.in_progress`` (empty output) below IS the client-visible
+    # reset — the turn simply re-runs from scratch (guide → naive strategy).
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
 
     yield stream.emit_created()
 

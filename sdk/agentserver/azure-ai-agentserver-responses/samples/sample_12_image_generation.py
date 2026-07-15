@@ -26,6 +26,8 @@ Usage::
         -d '{"model": "image", "input": "Draw a blue circle", "stream": true}'
 """
 
+import asyncio
+
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -39,9 +41,16 @@ app = ResponsesAgentServerHost()
 TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8BQDwAEgAF/pooBPQAAAABJRU5ErkJggg=="
 
 
-# ── Variant 1: Convenience ──────────────────────────────────────────────
-@app.create("image.convenience")
-async def convenience_handler(request: CreateResponse, context: ResponseContext):
+# ── Variant 1: Convenience (the registered handler) ─────────────────────
+# One host has exactly one ``@app.response_handler``. Variants 2 and 3 below
+# are undecorated reference implementations of the same handler shape — swap
+# the decorator onto whichever variant you want to run.
+@app.response_handler
+async def convenience_handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Return an image using the convenience one-liner."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -55,8 +64,11 @@ async def convenience_handler(request: CreateResponse, context: ResponseContext)
 
 
 # ── Variant 2: Streaming partial images ─────────────────────────────────
-@app.create("image.streaming")
-async def streaming_handler(request: CreateResponse, context: ResponseContext):
+async def streaming_handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Stream partial image renders before the final result."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -78,8 +90,11 @@ async def streaming_handler(request: CreateResponse, context: ResponseContext):
 
 
 # ── Variant 3: Full control ─────────────────────────────────────────────
-@app.create("image.full_control")
-async def full_control_handler(request: CreateResponse, context: ResponseContext):
+async def full_control_handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Full manual control over the image generation lifecycle."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()

@@ -7,26 +7,31 @@ LangGraph's ``SqliteSaver`` checkpointer is the canonical example of an
 **upstream framework that owns resilience** — the SDK does the heavy
 lifting; the response handler is just the bridge.
 
-This sample implements the recovery contract:
+This sample implements the recovery contract by **composing two
+checkpointers**:
 
-- ``context.conversation_chain_metadata`` only stores a small ``stable_checkpoint_id``
-  watermark — the last graph checkpoint where the handler successfully
-  emitted an AI reply.
-- On recovered entry, the handler queries the graph's current state,
-  builds a resumption response from the AI messages already in the
-  graph history, and emits ``response.in_progress`` carrying it (the
-  client-visible reset point).
-- The recovered attempt then resumes ``graph.stream(None, ...)`` from
-  the current graph state. SqliteSaver guarantees node-boundary
-  recovery, so no node is re-executed.
-- Steering between turns is handled by ``fork_session``-style
-  ``graph.update_state(...)`` from the stable checkpoint.
+- LangGraph's ``SqliteSaver`` owns **graph-execution** resume, keyed by the
+  thread id = ``context.conversation_chain_id`` (the stable, per-conversation
+  chain id — same across turns and recovery attempts).
+- The **framework** owns the **client-visible response** (output items + their
+  ids): ``yield stream.checkpoint()`` after emitting the AI reply persists the
+  response snapshot. On a recovered entry the handler seeds the stream from
+  ``context.persisted_response`` — so an already-checkpointed reply is present
+  with its **original id** — and emits ``response.in_progress`` (the reset
+  point) to re-emit it verbatim. It never invents new ids.
+- The recovered attempt resumes ``graph.stream(None, ...)`` from the live
+  SqliteSaver checkpoint; already-completed nodes are not re-run. The reply is
+  emitted only if it is not already present in the persisted response, so it is
+  neither duplicated nor lost across any crash window.
+- Steering between turns forks the graph via ``graph.update_state(...)`` from a
+  ``stable_checkpoint_id`` watermark.
 
 Demonstrates:
 
-- LangGraph native checkpointing (``SqliteSaver`` is the source of truth).
+- Composing framework ``stream.checkpoint()`` / ``context.persisted_response``
+  with an upstream framework's own checkpointer (LangGraph ``SqliteSaver``).
+- Recovery that re-emits the SAME items with their ORIGINAL ids (no invented ids).
 - ``graph.stream()`` for inter-node cancellation.
-- Recovery contract: resumption response + reset ``in_progress``.
 - Cancellation policy applied at pre-entry / mid-stream / post-stream.
 - Fork-on-steer for new turns that supersede a prior one.
 
@@ -74,7 +79,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
-from azure.ai.agentserver.responses.models._generated import ResponseObject
 
 
 # ─── Graph State ────────────────────────────────────────────────────────────
@@ -181,12 +185,17 @@ def _invoke_cancellable(
 ) -> tuple[bool, list[str]]:
     """Stream graph node-by-node with inter-node cancellation.
 
-    Returns (completed, node_names_executed).
+    Returns (completed, node_names_executed). LangGraph pseudo-events
+    (``__end__``, ``__interrupt__``, …) are filtered out — only real node
+    names count as executed nodes (so a resume that re-yields ``__interrupt__``
+    does not surface as spurious node progress). ``durability="sync"`` ensures
+    each node's checkpoint is durable before the update is observed, matching
+    this sample's contract that SqliteSaver owns graph-execution resume.
     """
     nodes_executed: list[str] = []
-    for chunk in graph.stream(graph_input, config, stream_mode="updates"):
+    for chunk in graph.stream(graph_input, config, stream_mode="updates", durability="sync"):
         for node_name in chunk:
-            if node_name != "__end__":
+            if not node_name.startswith("__"):
                 nodes_executed.append(node_name)
         if cancel_event.is_set():
             return False, nodes_executed
@@ -212,54 +221,19 @@ def _fork_from_checkpoint(
     return True
 
 
-def _build_resumption_response(
-    context: ResponseContext,
-    request: CreateResponse,
-    thread_config: dict[str, Any],
-) -> ResponseObject:
-    """Build the recovery resumption response from current graph state.
+def _reply_already_persisted(resp_stream: ResponseEventStream) -> bool:
+    """True if a reply ``message`` item is already present in the response.
 
-    LangGraph is the source of truth for "what's safely committed" — each
-    AI message in graph state was emitted at a node boundary checkpointed
-    by SqliteSaver. We materialize one ``message`` output item per AI
-    message currently in graph state. The recovered attempt then resumes
-    ``graph.stream(None, ...)`` from the live checkpoint and any new AI
-    messages get appended as fresh output items.
+    On a recovered entry the stream is seeded from
+    ``context.persisted_response``, so any reply that was checkpointed before
+    the crash is already in ``resp_stream.response.output`` (with its ORIGINAL
+    id). We must NOT re-emit it (that would duplicate it with a fresh id). This
+    is the robust recovery guard: decide by "is the reply already represented
+    in the persisted response?" — NOT by "did generate_response run this
+    attempt?" (which would lose a reply that LangGraph committed but the
+    framework had not yet checkpointed).
     """
-    try:
-        state = _graph.get_state(thread_config)
-    except Exception:  # pylint: disable=broad-except
-        state = None
-
-    output: list[dict[str, Any]] = []
-    if state is not None:
-        messages = state.values.get("messages", []) if state.values else []
-        for idx, msg in enumerate(m for m in messages if isinstance(m, AIMessage)):
-            output.append(
-                {
-                    "type": "message",
-                    "id": f"recovered_ai_{idx}",
-                    "role": "assistant",
-                    "status": "completed",
-                    "content": [
-                        {
-                            "type": "output_text",
-                            "text": str(msg.content),
-                            "annotations": [],
-                        }
-                    ],
-                }
-            )
-
-    return ResponseObject(
-        {
-            "id": context.response_id,
-            "object": "response",
-            "status": "in_progress",
-            "output": output,
-            "model": request.model,
-        }
-    )
+    return any(getattr(item, "type", None) == "message" for item in resp_stream.response.output)
 
 
 @app.response_handler
@@ -268,21 +242,34 @@ async def handler(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """LangGraph with SqliteSaver checkpoints + recovery contract."""
+    """LangGraph with SqliteSaver checkpoints + framework checkpoints.
+
+    Composition of two checkpointers:
+    - **LangGraph SqliteSaver** owns graph-execution resume (keyed by the
+      thread id = ``context.conversation_chain_id``).
+    - **The framework** owns the client-visible response (output items + their
+      ids): ``stream.checkpoint()`` persists the response snapshot, and on a
+      recovered entry ``context.persisted_response`` re-emits the SAME items
+      with their ORIGINAL ids (never invents new ids).
+    """
     input_text = await context.get_input_text()
 
-    thread_id = context.conversation_id or context.response_id
+    # Stable chain id — same value across every turn of this conversation and
+    # across all recovery attempts; the intended upstream thread/session id.
+    thread_id = context.conversation_chain_id
     thread_config: dict[str, Any] = {"configurable": {"thread_id": thread_id}}
 
     # ── Recovery branch ─────────────────────────────────────────────
-    # On recovered entry, seed the stream with a resumption response
-    # built from the graph's current state (the upstream framework's
-    # source of truth). The recovery `response.in_progress` emitted
-    # below is the client-visible reset point.
-    if context.is_recovery:
+    # On recovered entry, seed the stream from the last framework checkpoint
+    # (``context.persisted_response``). Any output item checkpointed before the
+    # crash is already in ``resp_stream.response.output`` with its ORIGINAL id;
+    # the ``response.in_progress`` emitted below re-emits those items and IS the
+    # client-visible reset point. LangGraph's SqliteSaver independently resumes
+    # graph execution from its own checkpoint below.
+    if context.is_recovery and context.persisted_response is not None:
         resp_stream = ResponseEventStream(
             response_id=context.response_id,
-            response=_build_resumption_response(context, request, thread_config),
+            response=context.persisted_response,
         )
     else:
         resp_stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -338,9 +325,12 @@ async def handler(
             # Save new stable checkpoint
             state = await asyncio.to_thread(_graph.get_state, thread_config)
             context.conversation_chain_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
-            # Emit the AI reply
+            # Emit the AI reply (fresh — fork-on-steer never runs on recovery).
             for event in _build_reply_events(resp_stream, state):
                 yield event
+            # Framework checkpoint: persist the response snapshot (reply item +
+            # its id) so a crash before the terminal re-emits it verbatim.
+            yield resp_stream.checkpoint()
             if shutdown_timer and not shutdown_timer.done():
                 shutdown_timer.cancel()
             yield resp_stream.emit_completed()
@@ -374,12 +364,23 @@ async def handler(
         yield resp_stream.emit_completed()
         return
 
-    # Save stable checkpoint reference
+    # Save stable checkpoint reference (for fork-on-steer)
     state = await asyncio.to_thread(_graph.get_state, thread_config)
     context.conversation_chain_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
 
-    for event in _build_reply_events(resp_stream, state):
-        yield event
+    # Emit this turn's reply only if it isn't already in the persisted
+    # response. On a recovered entry where the reply was checkpointed before
+    # the crash, it is already seeded (with its original id) and re-emitted via
+    # the in_progress reset — re-emitting here would duplicate it with a fresh
+    # id. If the reply is NOT yet persisted (crash before the framework
+    # checkpoint), we emit it from the current graph state — which is durable
+    # via SqliteSaver — so the reply is never lost.
+    if not _reply_already_persisted(resp_stream):
+        for event in _build_reply_events(resp_stream, state):
+            yield event
+        # Framework checkpoint: persist the response snapshot (reply item + its
+        # id) so recovery re-emits it verbatim rather than inventing a new id.
+        yield resp_stream.checkpoint()
     yield resp_stream.emit_completed()
 
 
