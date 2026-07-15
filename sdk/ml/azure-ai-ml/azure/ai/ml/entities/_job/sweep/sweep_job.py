@@ -395,6 +395,13 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         for param, dist in properties.search_space.items():
             _search_space[param] = SweepDistribution._from_rest_object(dist)
 
+        # ``resources`` was dropped as a typed field from the shared arm_ml_service SweepJob (2025-01), so the response
+        # carries it as an untyped camelCase dict. Deserialize into the arm model so ``_from_rest_object`` reads the
+        # camelCase wire keys (e.g. instanceCount) instead of treating them as snake_case ctor kwargs.
+        rest_resources = properties.get("resources")
+        if isinstance(rest_resources, dict):
+            rest_resources = RestJobResourceConfiguration._deserialize(rest_resources, [])
+
         return SweepJob(
             name=obj.name,
             id=obj.id,
@@ -419,7 +426,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
                 _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
             ),
             queue_settings=properties.queue_settings,
-            resources=JobResourceConfiguration._from_rest_object(properties.get("resources")),
+            resources=JobResourceConfiguration._from_rest_object(rest_resources),
         )
 
     def _override_missing_properties_from_trial(self) -> None:
