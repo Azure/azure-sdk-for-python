@@ -8,21 +8,43 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Optional, Union, cast
+from collections.abc import MutableMapping  # pylint:disable=import-error
+from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
+from .. import models as _models
 from ._operations import _AnalyzeDocumentsClientOperationsMixin as GeneratedAnalyzeDocumentsClientOperationsMixin
 from .._lro import AnalyzeDocumentsLROPollingMethod
 
+JSON = MutableMapping[str, Any]
+
 
 class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
+    @overload
+    def begin_submit_job(
+        self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        ...
+
+    @overload
+    def begin_submit_job(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        ...
+
+    @overload
+    def begin_submit_job(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        ...
+
     @distributed_trace
     def begin_submit_job(
         self,
-        body: Any,
+        body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
