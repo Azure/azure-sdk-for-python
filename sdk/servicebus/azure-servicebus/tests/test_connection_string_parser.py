@@ -7,12 +7,20 @@
 import os
 import pytest
 from azure.servicebus import (
+    ServiceBusClient,
     ServiceBusConnectionStringProperties,
     parse_connection_string,
 )
+from azure.servicebus.aio import ServiceBusClient as ServiceBusClientAsync
 from azure.servicebus._common.utils import strip_protocol_from_uri
 
 from devtools_testutils import AzureMgmtRecordedTestCase
+
+
+_EMULATOR_CONN_STR = (
+    "Endpoint=sb://localhost:5673;SharedAccessKeyName=RootManageSharedAccessKey;"
+    "SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+)
 
 
 class TestServiceBusConnectionStringParser(AzureMgmtRecordedTestCase):
@@ -127,12 +135,8 @@ class TestServiceBusConnectionStringParser(AzureMgmtRecordedTestCase):
         assert parse_result.fully_qualified_namespace == "192.168.y.z"
 
     def test_strip_protocol_from_uri_normalizes_to_bare_host(self, **kwargs):
-        # strip_protocol_from_uri must reduce any accepted namespace form to the
-        # bare host - dropping scheme, port, and trailing path - so the value is
-        # usable as both the AMQP connection host and the SAS/AAD token audience.
-        # Regression test for issue #44034: the ARM/portal-emitted endpoint
-        # https://<ns>.servicebus.windows.net:443/ previously kept the ":443/",
-        # producing ServiceBusAuthenticationError (amqp:client-error).
+        # regression test for issue #44034: scheme, port and trailing path are
+        # stripped so the ARM-emitted https://<ns>...:443/ form yields a bare host
         host = "myservicebus.servicebus.windows.net"
         assert strip_protocol_from_uri(host) == host  # bare host (known-good)
         assert strip_protocol_from_uri("sb://" + host) == host  # protocol only
@@ -144,8 +148,18 @@ class TestServiceBusConnectionStringParser(AzureMgmtRecordedTestCase):
         assert strip_protocol_from_uri("https://" + host + ":443/") == host  # ARM/portal-emitted form
         assert strip_protocol_from_uri("sb://" + host + ":5671/") == host
 
-        # Bracketed IPv6 literals must be preserved (their address contains
-        # colons); only a port following the closing "]" is stripped.
+        # bracketed IPv6 literals are preserved; only a port after "]" is stripped
         assert strip_protocol_from_uri("[fe80::1]") == "[fe80::1]"
         assert strip_protocol_from_uri("[fe80::1]:5671") == "[fe80::1]"
         assert strip_protocol_from_uri("sb://[fe80::1]:5671/") == "[fe80::1]"
+
+    def test_emulator_nondefault_port_preserved_sync(self, **kwargs):
+        client = ServiceBusClient.from_connection_string(_EMULATOR_CONN_STR)
+        try:
+            assert client.fully_qualified_namespace == "localhost:5673"
+        finally:
+            client.close()
+
+    def test_emulator_nondefault_port_preserved_async(self, **kwargs):
+        client = ServiceBusClientAsync.from_connection_string(_EMULATOR_CONN_STR)
+        assert client.fully_qualified_namespace == "localhost:5673"

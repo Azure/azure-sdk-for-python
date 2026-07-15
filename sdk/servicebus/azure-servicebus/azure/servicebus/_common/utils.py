@@ -245,28 +245,29 @@ def transform_outbound_messages(
     return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
 
 
-def strip_protocol_from_uri(uri: str) -> str:
-    """Reduces a URI to the bare host by removing the protocol (e.g. http:// or
-    sb://), any port (e.g. :443) and any path (e.g. a trailing /), such as for a FQDN.
+def strip_protocol_from_uri(uri: str, *, strip_port: bool = True) -> str:
+    """Reduce a URI to its bare host by removing the scheme (e.g. sb://) and path.
 
-    Azure returns the namespace endpoint as ``https://<ns>.servicebus.windows.net:443/``;
-    the resulting host is used both as the AMQP connection host and as the token
-    audience, so port and path must be removed.
+    The port is also removed by default (e.g. the ``:443/`` in the ARM-emitted
+    ``https://<ns>.servicebus.windows.net:443/``). Pass ``strip_port=False`` for
+    the development emulator, whose non-default port must be kept.
 
     :param str uri: The URI to modify.
+    :keyword bool strip_port: Whether to also remove a trailing port. Defaults to ``True``.
     :return: The bare host portion of the URI.
     :rtype: str
     """
+    # Strip the scheme (everything up to and including "//").
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
         uri = uri[left_slash_pos + 2 :]
-    # Remove any path (trailing slash and everything after it).
+    # Strip the path (the first "/" and everything after it).
     slash_pos = uri.find("/")
     if slash_pos != -1:
         uri = uri[:slash_pos]
-    # Remove any port, while preserving a bracketed IPv6 literal such as
-    # "[fe80::1]" (whose address contains colons). Only a port following the
-    # closing "]" should be stripped.
+    if not strip_port:
+        return uri
+    # Strip the port, but preserve a bracketed IPv6 literal (e.g. "[fe80::1]").
     if uri.startswith("["):
         bracket_pos = uri.find("]")
         if bracket_pos != -1:
