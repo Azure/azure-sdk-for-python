@@ -196,7 +196,18 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         if obj is None:
             return None
         if isinstance(obj, dict):
-            return cls(**obj)
+            # Node dicts / unit tests provide snake_case keys, while the shared arm_ml_service response carries the
+            # ``resources`` bag as an untyped camelCase dict (e.g. ``instanceCount``). Normalize the known camelCase
+            # wire keys to their snake_case constructor kwargs so the value survives either way.
+            camel_to_snake = {
+                "instanceCount": "instance_count",
+                "instanceType": "instance_type",
+                "maxInstanceCount": "max_instance_count",
+                "dockerArgs": "docker_args",
+                "shmSize": "shm_size",
+            }
+            normalized = {camel_to_snake.get(key, key): value for key, value in obj.items()}
+            return cls(**normalized)
         return JobResourceConfiguration(
             # ``locations`` is on the v2023_04 msrest model but not the shared arm_ml_service model
             # (2025-01 path). It is still carried on the wire via dict assignment, so fall back to dict
