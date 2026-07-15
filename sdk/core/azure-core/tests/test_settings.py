@@ -179,6 +179,11 @@ class TestConverters(object):
         with pytest.raises(ValueError):
             m.convert_azure_cloud(10)
 
+        assert m.convert_azure_cloud("AZURE_PUBLIC_CLOUD") == AzureClouds.AZURE_PUBLIC_CLOUD
+        assert m.convert_azure_cloud("AZURE_CHINA_CLOUD") == AzureClouds.AZURE_CHINA_CLOUD
+        assert m.convert_azure_cloud("AZURE_US_GOVERNMENT") == AzureClouds.AZURE_US_GOVERNMENT
+        assert m.convert_azure_cloud("AZURE_BLEUCLOUD") == AzureClouds.AZURE_BLEUCLOUD
+
     def test_convert_tracing_impl_bad(self):
         m.convert_tracing_impl.cache_clear()
         # Invalid values now fall back to None with a warning logged.
