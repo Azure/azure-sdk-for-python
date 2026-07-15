@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.16.2 (2026-07-13)
+### 4.16.2 (2026-07-15)
 
 #### Features Added
 * Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
