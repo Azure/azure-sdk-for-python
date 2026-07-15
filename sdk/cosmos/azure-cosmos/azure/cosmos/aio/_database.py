@@ -40,7 +40,7 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
-from .._global_secondary_index import GlobalSecondaryIndexDefinition
+from .._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
 
 
 __all__ = ("DatabaseProxy",)
@@ -469,9 +469,7 @@ class DatabaseProxy(object):
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
         if global_secondary_index_definition is not None:
-            gsi_dict = (global_secondary_index_definition._to_dict()
-                        if hasattr(global_secondary_index_definition, '_to_dict')
-                        else global_secondary_index_definition)
+            gsi_dict = await self._resolve_gsi_definition(global_secondary_index_definition)
             definition["globalSecondaryIndexDefinition"] = gsi_dict
             definition["materializedViewDefinition"] = gsi_dict
         request_options = _build_options(kwargs)
@@ -480,6 +478,7 @@ class DatabaseProxy(object):
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
+        _normalize_gsi_container_properties(data)
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data), data
@@ -771,6 +770,32 @@ class DatabaseProxy(object):
         else:
             id_value = str(container['id'])
         return ContainerProxy(self.client_connection, self.database_link, id_value)
+
+    async def _resolve_gsi_definition(
+        self,
+        global_secondary_index_definition: Union["GlobalSecondaryIndexDefinition", dict[str, Any]],
+    ) -> dict[str, Any]:
+        """Serialize a GSI definition and populate the source container's resource id (_rid).
+
+        The service resolves the source container by its resource id (``sourceCollectionRid``).
+        When the caller only provides the source container id, read the source container to
+        obtain its ``_rid`` and populate ``sourceCollectionRid`` on the wire payload.
+
+        :param global_secondary_index_definition: The GSI definition object or raw dict.
+        :type global_secondary_index_definition:
+            ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :returns: The serialized GSI definition including ``sourceCollectionRid``.
+        :rtype: dict[str, Any]
+        """
+        gsi_dict = (global_secondary_index_definition._to_dict()  # pylint: disable=protected-access
+                    if hasattr(global_secondary_index_definition, '_to_dict')
+                    else dict(global_secondary_index_definition))
+        if not gsi_dict.get("sourceCollectionRid"):
+            source_container_id = gsi_dict.get("sourceCollectionId")
+            if source_container_id:
+                source_properties = await self.get_container_client(source_container_id).read()
+                gsi_dict["sourceCollectionRid"] = source_properties["_rid"]
+        return gsi_dict
 
     @distributed_trace
     def list_containers(
@@ -1109,15 +1134,14 @@ class DatabaseProxy(object):
             if value is not None
         }
         if global_secondary_index_definition is not None:
-            gsi_dict = (global_secondary_index_definition._to_dict()
-                        if hasattr(global_secondary_index_definition, '_to_dict')
-                        else global_secondary_index_definition)
+            gsi_dict = await self._resolve_gsi_definition(global_secondary_index_definition)
             parameters["globalSecondaryIndexDefinition"] = gsi_dict
             parameters["materializedViewDefinition"] = gsi_dict
 
         container_properties = await self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs
         )
+        _normalize_gsi_container_properties(container_properties)
 
         if not return_properties:
             return ContainerProxy(

@@ -4,7 +4,7 @@ parameters:
     default: 'auto'
   - name: VersionForReservation
     type: string
-    default: '0.0.0'
+    default: '0.0.0b1'
 
 jobs:
   - job: generate_namereserve_package
