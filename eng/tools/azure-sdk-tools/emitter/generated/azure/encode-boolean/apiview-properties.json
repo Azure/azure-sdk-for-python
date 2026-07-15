@@ -1,0 +1,15 @@
+{
+    "CrossLanguagePackageId": "Encode.Boolean",
+    "CrossLanguageDefinitionId": {
+        "encode.boolean.property.models.BoolAsStringProperty": "Encode.Boolean.Property.BoolAsStringProperty",
+        "encode.boolean.operations.PropertyOperations.true_lower": "Encode.Boolean.Property.trueLower",
+        "encode.boolean.aio.operations.PropertyOperations.true_lower": "Encode.Boolean.Property.trueLower",
+        "encode.boolean.operations.PropertyOperations.false_lower": "Encode.Boolean.Property.falseLower",
+        "encode.boolean.aio.operations.PropertyOperations.false_lower": "Encode.Boolean.Property.falseLower",
+        "encode.boolean.operations.PropertyOperations.true_upper": "Encode.Boolean.Property.trueUpper",
+        "encode.boolean.aio.operations.PropertyOperations.true_upper": "Encode.Boolean.Property.trueUpper",
+        "encode.boolean.operations.PropertyOperations.false_mixed": "Encode.Boolean.Property.falseMixed",
+        "encode.boolean.aio.operations.PropertyOperations.false_mixed": "Encode.Boolean.Property.falseMixed"
+    },
+    "CrossLanguageVersion": "774ecf75d81f"
+}

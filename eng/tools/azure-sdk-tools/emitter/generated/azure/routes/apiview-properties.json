@@ -1,6 +1,7 @@
 {
     "CrossLanguagePackageId": "Routes",
     "CrossLanguageDefinitionId": {
+        "routes.models.ExpandParameters": "Routes.ExpandParameters",
         "routes.operations.PathParametersOperations.template_only": "Routes.PathParameters.templateOnly",
         "routes.aio.operations.PathParametersOperations.template_only": "Routes.PathParameters.templateOnly",
         "routes.operations.PathParametersOperations.explicit": "Routes.PathParameters.explicit",
@@ -18,5 +19,5 @@
         "routes.RoutesClient.fixed": "Routes.fixed",
         "routes.aio.RoutesClient.fixed": "Routes.fixed"
     },
-    "CrossLanguageVersion": "61e0326a00d1"
+    "CrossLanguageVersion": "c6a64c6e889c"
 }

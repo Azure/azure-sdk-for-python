@@ -113,6 +113,17 @@ class TestRoutesQueryParametersOperations(RoutesClientTestBase):
 
     @RoutesPreparer()
     @recorded_by_proxy
+    def test_query_parameters_query_expansion_explode_model(self, routes_endpoint):
+        client = self.create_client(endpoint=routes_endpoint)
+        response = client.query_parameters.query_expansion.explode.model(
+            param={"field": "str", "value": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RoutesPreparer()
+    @recorded_by_proxy
     def test_query_parameters_query_continuation_standard_primitive(self, routes_endpoint):
         client = self.create_client(endpoint=routes_endpoint)
         response = client.query_parameters.query_continuation.standard.primitive(

@@ -1138,7 +1138,7 @@ class LroOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ExportResult]:
-        """A long-running resource action.
+        """export.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1167,7 +1167,7 @@ class LroOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ExportResult]:
-        """A long-running resource action.
+        """export.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1196,7 +1196,7 @@ class LroOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ExportResult]:
-        """A long-running resource action.
+        """export.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1223,7 +1223,7 @@ class LroOperations:
         body: Union[_models.ExportRequest, _types.ExportRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExportResult]:
-        """A long-running resource action.
+        """export.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1671,7 +1671,7 @@ class LroPagingOperations:
     def begin_post_paging_lro(
         self, resource_group_name: str, product_name: str, **kwargs: Any
     ) -> LROPoller[ItemPaged["_models.Product"]]:
-        """A long-running resource action.
+        """post_paging_lro.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
