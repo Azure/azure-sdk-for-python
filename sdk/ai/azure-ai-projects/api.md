@@ -39,7 +39,10 @@ namespace azure.ai.projects
             ) -> HttpResponse: ...
 
 
-    class azure.ai.projects.RLEEnvironment: implements ContextManager 
+    class azure.ai.projects.RLEError(RuntimeError):
+
+
+    class azure.ai.projects.RLESandboxSession: implements ContextManager 
         property sandbox_id: Optional[str]    # Read-only
 
         def __init__(
@@ -52,7 +55,6 @@ namespace azure.ai.projects
                 env_vars: Optional[Mapping[str, str]] = ..., 
                 memory: Optional[str] = ..., 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                runtime: RLEnvironmentRuntimeOperations, 
                 sandboxes: RLESandboxesOperations, 
                 version: Optional[str] = ...
             ) -> None: ...
@@ -60,10 +62,10 @@ namespace azure.ai.projects
         def close(self) -> None: ...
 
         @distributed_trace
-        def health(self) -> HealthResponse: ...
+        def health(self) -> Dict[str, Any]: ...
 
         @distributed_trace
-        def metadata(self) -> GetMetadataResponse: ...
+        def metadata(self) -> Dict[str, Any]: ...
 
         @distributed_trace
         def reset(
@@ -71,10 +73,10 @@ namespace azure.ai.projects
                 seed: Optional[int] = None, 
                 episode_id: Optional[str] = None, 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
         @distributed_trace
-        def schema(self) -> SchemaResponse: ...
+        def schema(self) -> Dict[str, Any]: ...
 
         @distributed_trace
         def state(self) -> RLEnvironmentState: ...
@@ -84,10 +86,7 @@ namespace azure.ai.projects
                 self, 
                 action: Any = None, 
                 **action_kwargs: Any
-            ) -> RLStepResult: ...
-
-
-    class azure.ai.projects.RLEError(RuntimeError):
+            ) -> RLEStepResult: ...
 
 
 namespace azure.ai.projects.aio
@@ -130,7 +129,7 @@ namespace azure.ai.projects.aio
             ) -> Awaitable[AsyncHttpResponse]: ...
 
 
-    class azure.ai.projects.aio.AsyncRLEEnvironment: implements AsyncContextManager 
+    class azure.ai.projects.aio.AsyncRLESandboxSession: implements AsyncContextManager 
         property sandbox_id: Optional[str]    # Read-only
 
         def __init__(
@@ -143,7 +142,6 @@ namespace azure.ai.projects.aio
                 env_vars: Optional[Mapping[str, str]] = ..., 
                 memory: Optional[str] = ..., 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                runtime: RLEnvironmentRuntimeOperations, 
                 sandboxes: RLESandboxesOperations, 
                 version: Optional[str] = ...
             ) -> None: ...
@@ -151,10 +149,10 @@ namespace azure.ai.projects.aio
         async def close(self) -> None: ...
 
         @distributed_trace_async
-        async def health(self) -> HealthResponse: ...
+        async def health(self) -> Dict[str, Any]: ...
 
         @distributed_trace_async
-        async def metadata(self) -> GetMetadataResponse: ...
+        async def metadata(self) -> Dict[str, Any]: ...
 
         @distributed_trace_async
         async def reset(
@@ -162,10 +160,10 @@ namespace azure.ai.projects.aio
                 seed: Optional[int] = None, 
                 episode_id: Optional[str] = None, 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
         @distributed_trace_async
-        async def schema(self) -> SchemaResponse: ...
+        async def schema(self) -> Dict[str, Any]: ...
 
         @distributed_trace_async
         async def state(self) -> RLEnvironmentState: ...
@@ -175,7 +173,7 @@ namespace azure.ai.projects.aio
                 self, 
                 action: Any = None, 
                 **action_kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
 
 namespace azure.ai.projects.aio.operations
@@ -2284,7 +2282,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[Index]: ...
 
 
-    class azure.ai.projects.aio.operations.RLESandboxesOperations:
+    class azure.ai.projects.aio.operations.RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
 
         def __init__(
                 self, 
@@ -2292,33 +2290,103 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
+        @overload
+        async def create_environment(
+                self, 
+                body: CreateRLEnvironmentRequest, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        async def create_environment(
+                self, 
+                body: IO[bytes], 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        async def create_environment(
+                self, 
+                *, 
+                acr_image_path: str, 
+                name: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        def create_session(
+                self, 
+                environment_id: str, 
+                *, 
+                cpu: Optional[str] = ..., 
+                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                version: Optional[str] = ...
+            ) -> AsyncRLESandboxSession: ...
+
+        @distributed_trace_async
+        async def delete_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_environment(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace_async
+        async def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace_async
+        async def get_metadata(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> dict[str, Any]: ...
+
         @distributed_trace_async
         async def get_sandbox(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
+
+        @distributed_trace_async
+        async def health(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> dict[str, Any]: ...
 
         @overload
         async def lease(
                 self, 
                 environment_id: str, 
-                body: CreateRLSandboxRequest, 
+                body: CreateRLESandboxRequest, 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
-
-        @overload
-        async def lease(
-                self, 
-                environment_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
 
         @overload
         async def lease(
@@ -2327,46 +2395,137 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
 
-        @distributed_trace
-        def list_sandboxes(
+        @distributed_trace_async
+        async def list_environments(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ListRLEnvironmentsResponse: ...
+
+        @distributed_trace_async
+        async def list_rl_environment_versions(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> List[RLEnvironmentVersion]: ...
+
+        @distributed_trace_async
+        async def list_sandboxes(
                 self, 
                 environment_id: str, 
                 *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[RLSandbox]: ...
+            ) -> ListRLESandboxesResponse: ...
 
         @distributed_trace_async
         async def release(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> None: ...
+
+        @overload
+        async def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: RLEResetRequest, 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
+
+        @overload
+        async def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
 
         @distributed_trace_async
         async def resume(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
+
+        @distributed_trace_async
+        async def schema(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> dict[str, Any]: ...
+
+        @distributed_trace_async
+        async def state(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEnvironmentState: ...
+
+        @overload
+        async def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: RLEStepRequest, 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
+
+        @overload
+        async def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
 
         @distributed_trace_async
         async def stop(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
 
 
-    class azure.ai.projects.aio.operations.RLEnvironmentRuntimeOperations:
+    class azure.ai.projects.aio.operations.RLESandboxesOperations:
 
         def __init__(
                 self, 
@@ -2379,39 +2538,85 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> GetMetadataResponse: ...
+            ) -> dict[str, Any]: ...
+
+        @distributed_trace_async
+        async def get_sandbox(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
 
         @distributed_trace_async
         async def health(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> HealthResponse: ...
+            ) -> dict[str, Any]: ...
+
+        @overload
+        async def lease(
+                self, 
+                environment_id: str, 
+                body: CreateRLESandboxRequest, 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
+
+        @overload
+        async def lease(
+                self, 
+                environment_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
+
+        @distributed_trace_async
+        async def list_sandboxes(
+                self, 
+                environment_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ListRLESandboxesResponse: ...
+
+        @distributed_trace_async
+        async def release(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> None: ...
 
         @overload
         async def reset(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                body: RLEResetRequest, 
                 *, 
                 content_type: str = "application/json", 
-                episode_id: Optional[str] = ..., 
-                seed: Optional[int] = ..., 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
-
-        @overload
-        async def reset(
-                self, 
-                environment_id: str, 
-                sandbox_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
         @overload
         async def reset(
@@ -2421,22 +2626,37 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
+
+        @distributed_trace_async
+        async def resume(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
 
         @distributed_trace_async
         async def schema(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> SchemaResponse: ...
+            ) -> dict[str, Any]: ...
 
         @distributed_trace_async
         async def state(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironmentState: ...
 
@@ -2445,22 +2665,12 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
-                *, 
-                action: dict[str, Any], 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLStepResult: ...
-
-        @overload
-        async def step(
-                self, 
-                environment_id: str, 
-                sandbox_id: str, 
-                body: JSON, 
+                body: RLEStepRequest, 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
         @overload
         async def step(
@@ -2470,11 +2680,22 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
+
+        @distributed_trace_async
+        async def stop(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
 
 
-    class azure.ai.projects.aio.operations.RLEnvironmentsOperations(_RLEnvironmentsOperationsGenerated):
+    class azure.ai.projects.aio.operations.RLEnvironmentsOperations:
 
         def __init__(
                 self, 
@@ -2488,15 +2709,7 @@ namespace azure.ai.projects.aio.operations
                 body: CreateRLEnvironmentRequest, 
                 *, 
                 content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLEnvironment: ...
-
-        @overload
-        async def create_environment(
-                self, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
@@ -2506,86 +2719,58 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
-        def create_runtime(
-                self, 
-                environment_id: str, 
-                *, 
-                cpu: Optional[str] = ..., 
-                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                disk: Optional[str] = ..., 
-                env_vars: Optional[Mapping[str, str]] = ..., 
-                memory: Optional[str] = ..., 
-                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                version: Optional[str] = ...
-            ) -> AsyncRLEEnvironment: ...
-
         @distributed_trace_async
-        async def delete_environment(
+        async def delete_environment_version(
                 self, 
-                environment_id: str, 
+                name: str, 
+                version: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get_environment(
                 self, 
-                environment_id: str, 
+                name: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
-        @distributed_trace
-        def list_environments(
+        @distributed_trace_async
+        async def get_environment_version(
                 self, 
+                name: str, 
+                version: str, 
                 *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RLEnvironment]: ...
-
-        @distributed_trace
-        def list_rl_environment_versions(
-                self, 
-                environment_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RLEnvironmentVersion]: ...
-
-        @overload
-        async def update_environment(
-                self, 
-                environment_id: str, 
-                body: UpdateRLEnvironmentRequest, 
-                *, 
-                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
-        @overload
-        async def update_environment(
+        @distributed_trace_async
+        async def list_environments(
                 self, 
-                environment_id: str, 
-                body: JSON, 
                 *, 
-                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                name: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> RLEnvironment: ...
+            ) -> ListRLEnvironmentsResponse: ...
 
-        @overload
-        async def update_environment(
+        @distributed_trace_async
+        async def list_rl_environment_versions(
                 self, 
-                environment_id: str, 
-                body: IO[bytes], 
+                name: str, 
                 *, 
-                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLEnvironment: ...
+            ) -> list[RLEnvironmentVersion]: ...
 
 
     class azure.ai.projects.aio.operations.TelemetryOperations:
@@ -4323,23 +4508,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CreateRLEnvironmentRequest(_Model):
-        acr_image_path: str
-        name: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                acr_image_path: str, 
-                name: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateRLSandboxRequest(_Model):
+    class azure.ai.projects.models.CreateRLESandboxRequest(_Model):
         cpu: Optional[str]
         disk: Optional[str]
         env_vars: Optional[dict[str, str]]
@@ -4355,6 +4524,22 @@ namespace azure.ai.projects.models
                 env_vars: Optional[dict[str, str]] = ..., 
                 memory: Optional[str] = ..., 
                 version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateRLEnvironmentRequest(_Model):
+        acr_image_path: str
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                acr_image_path: str, 
+                name: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -5996,9 +6181,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.GetMetadataResponse(_Model):
-
-
     class azure.ai.projects.models.GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CLOSED = "closed"
         OPENED = "opened"
@@ -6047,9 +6229,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.HealthResponse(_Model):
 
 
     class azure.ai.projects.models.HostedAgentDefinition(AgentDefinition, discriminator='hosted'):
@@ -6507,6 +6686,38 @@ namespace azure.ai.projects.models
         IN_PROGRESS = "in_progress"
         QUEUED = "queued"
         SUCCEEDED = "succeeded"
+
+
+    class azure.ai.projects.models.ListRLESandboxesResponse(_Model):
+        count: int
+        value: list[RLESandbox]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                count: int, 
+                value: list[RLESandbox]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ListRLEnvironmentsResponse(_Model):
+        count: int
+        value: list[RLEnvironment]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                count: int, 
+                value: list[RLEnvironment]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
@@ -7939,14 +8150,100 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.RLEResetRequest(_Model):
+        episode_id: Optional[str]
+        seed: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                episode_id: Optional[str] = ..., 
+                seed: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLESandbox(_Model):
+        adc_sandbox_id: Optional[str]
+        base_url: Optional[str]
+        created_at_utc: datetime
+        disk_image_id: str
+        environment_id: str
+        error: Optional[str]
+        project_id: str
+        sandbox_id: str
+        status: Union[str, RLESandboxStatus]
+        updated_at_utc: datetime
+
+
+    class azure.ai.projects.models.RLESandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATING = "Creating"
+        FAILED = "Failed"
+        RELEASED = "Released"
+        RUNNING = "Running"
+        STOPPED = "Stopped"
+
+
+    class azure.ai.projects.models.RLEStepRequest(_Model):
+        action: dict[str, Any]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: dict[str, Any]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEStepResult(_Model):
+        done: Optional[bool]
+        info: Optional[dict[str, Any]]
+        metadata: Optional[dict[str, Any]]
+        observation: Optional[dict[str, Any]]
+        reward: Optional[float]
+        terminated: Optional[bool]
+        truncated: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                done: Optional[bool] = ..., 
+                info: Optional[dict[str, Any]] = ..., 
+                metadata: Optional[dict[str, Any]] = ..., 
+                observation: Optional[dict[str, Any]] = ..., 
+                reward: Optional[float] = ..., 
+                terminated: Optional[bool] = ..., 
+                truncated: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.RLEnvironment(_Model):
         acr_image_path: str
         created_at_utc: datetime
+        disk_image_conversion_error: Optional[str]
+        disk_image_conversion_status: Union[str, RLEnvironmentDiskImageConversionStatus]
         environment_id: str
         name: Optional[str]
         project_id: str
         updated_at_utc: datetime
         version: str
+
+
+    class azure.ai.projects.models.RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        NOT_REQUESTED = "NotRequested"
+        PENDING = "Pending"
+        READY = "Ready"
 
 
     class azure.ai.projects.models.RLEnvironmentState(_Model):
@@ -7981,54 +8278,6 @@ namespace azure.ai.projects.models
                 environment_id: str, 
                 project_id: str, 
                 version: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.RLSandbox(_Model):
-        adc_sandbox_id: Optional[str]
-        created_at_utc: datetime
-        disk_image_id: str
-        environment_id: str
-        error: Optional[str]
-        project_id: str
-        sandbox_id: str
-        status: Union[str, RLSandboxStatus]
-        updated_at_utc: datetime
-        url: Optional[str]
-        version: str
-
-
-    class azure.ai.projects.models.RLSandboxStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CREATING = "Creating"
-        FAILED = "Failed"
-        RELEASED = "Released"
-        RUNNING = "Running"
-        STOPPED = "Stopped"
-
-
-    class azure.ai.projects.models.RLStepResult(_Model):
-        done: Optional[bool]
-        info: Optional[dict[str, Any]]
-        metadata: Optional[dict[str, Any]]
-        observation: Optional[dict[str, Any]]
-        reward: Optional[float]
-        terminated: Optional[bool]
-        truncated: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                done: Optional[bool] = ..., 
-                info: Optional[dict[str, Any]] = ..., 
-                metadata: Optional[dict[str, Any]] = ..., 
-                observation: Optional[dict[str, Any]] = ..., 
-                reward: Optional[float] = ..., 
-                terminated: Optional[bool] = ..., 
-                truncated: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -8544,9 +8793,6 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EVALUATION = "Evaluation"
         INSIGHT = "Insight"
-
-
-    class azure.ai.projects.models.SchemaResponse(_Model):
 
 
     class azure.ai.projects.models.SearchContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -9616,20 +9862,6 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.UpdateRLEnvironmentRequest(_Model):
-        acr_image_path: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                acr_image_path: str
             ) -> None: ...
 
         @overload
@@ -12038,7 +12270,7 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Index]: ...
 
 
-    class azure.ai.projects.operations.RLESandboxesOperations:
+    class azure.ai.projects.operations.RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
 
         def __init__(
                 self, 
@@ -12046,33 +12278,103 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
+        @overload
+        def create_environment(
+                self, 
+                body: CreateRLEnvironmentRequest, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        def create_environment(
+                self, 
+                body: IO[bytes], 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @overload
+        def create_environment(
+                self, 
+                *, 
+                acr_image_path: str, 
+                name: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        def create_session(
+                self, 
+                environment_id: str, 
+                *, 
+                cpu: Optional[str] = ..., 
+                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
+                disk: Optional[str] = ..., 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                memory: Optional[str] = ..., 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                version: Optional[str] = ...
+            ) -> RLESandboxSession: ...
+
+        @distributed_trace
+        def delete_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_environment(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def get_metadata(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> dict[str, Any]: ...
+
         @distributed_trace
         def get_sandbox(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
+
+        @distributed_trace
+        def health(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> dict[str, Any]: ...
 
         @overload
         def lease(
                 self, 
                 environment_id: str, 
-                body: CreateRLSandboxRequest, 
+                body: CreateRLESandboxRequest, 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
-
-        @overload
-        def lease(
-                self, 
-                environment_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
 
         @overload
         def lease(
@@ -12081,46 +12383,137 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
+
+        @distributed_trace
+        def list_environments(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ListRLEnvironmentsResponse: ...
+
+        @distributed_trace
+        def list_rl_environment_versions(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> List[RLEnvironmentVersion]: ...
 
         @distributed_trace
         def list_sandboxes(
                 self, 
                 environment_id: str, 
                 *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[RLSandbox]: ...
+            ) -> ListRLESandboxesResponse: ...
 
         @distributed_trace
         def release(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> None: ...
+
+        @overload
+        def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: RLEResetRequest, 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
+
+        @overload
+        def reset(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
 
         @distributed_trace
         def resume(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
+
+        @distributed_trace
+        def schema(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> dict[str, Any]: ...
+
+        @distributed_trace
+        def state(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEnvironmentState: ...
+
+        @overload
+        def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: RLEStepRequest, 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
+
+        @overload
+        def step(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
 
         @distributed_trace
         def stop(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLSandbox: ...
+            ) -> RLESandbox: ...
 
 
-    class azure.ai.projects.operations.RLEnvironmentRuntimeOperations:
+    class azure.ai.projects.operations.RLESandboxesOperations:
 
         def __init__(
                 self, 
@@ -12133,39 +12526,85 @@ namespace azure.ai.projects.operations
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> GetMetadataResponse: ...
+            ) -> dict[str, Any]: ...
+
+        @distributed_trace
+        def get_sandbox(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
 
         @distributed_trace
         def health(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> HealthResponse: ...
+            ) -> dict[str, Any]: ...
+
+        @overload
+        def lease(
+                self, 
+                environment_id: str, 
+                body: CreateRLESandboxRequest, 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
+
+        @overload
+        def lease(
+                self, 
+                environment_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
+
+        @distributed_trace
+        def list_sandboxes(
+                self, 
+                environment_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ListRLESandboxesResponse: ...
+
+        @distributed_trace
+        def release(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> None: ...
 
         @overload
         def reset(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                body: RLEResetRequest, 
                 *, 
                 content_type: str = "application/json", 
-                episode_id: Optional[str] = ..., 
-                seed: Optional[int] = ..., 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
-
-        @overload
-        def reset(
-                self, 
-                environment_id: str, 
-                sandbox_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
         @overload
         def reset(
@@ -12175,22 +12614,37 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
+
+        @distributed_trace
+        def resume(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
 
         @distributed_trace
         def schema(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> SchemaResponse: ...
+            ) -> dict[str, Any]: ...
 
         @distributed_trace
         def state(
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironmentState: ...
 
@@ -12199,22 +12653,12 @@ namespace azure.ai.projects.operations
                 self, 
                 environment_id: str, 
                 sandbox_id: str, 
-                *, 
-                action: dict[str, Any], 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLStepResult: ...
-
-        @overload
-        def step(
-                self, 
-                environment_id: str, 
-                sandbox_id: str, 
-                body: JSON, 
+                body: RLEStepRequest, 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
 
         @overload
         def step(
@@ -12224,11 +12668,22 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> RLStepResult: ...
+            ) -> RLEStepResult: ...
+
+        @distributed_trace
+        def stop(
+                self, 
+                environment_id: str, 
+                sandbox_id: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLESandbox: ...
 
 
-    class azure.ai.projects.operations.RLEnvironmentsOperations(_RLEnvironmentsOperationsGenerated):
+    class azure.ai.projects.operations.RLEnvironmentsOperations:
 
         def __init__(
                 self, 
@@ -12242,15 +12697,7 @@ namespace azure.ai.projects.operations
                 body: CreateRLEnvironmentRequest, 
                 *, 
                 content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLEnvironment: ...
-
-        @overload
-        def create_environment(
-                self, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
@@ -12260,33 +12707,36 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
-        def create_runtime(
-                self, 
-                environment_id: str, 
-                *, 
-                cpu: Optional[str] = ..., 
-                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                disk: Optional[str] = ..., 
-                env_vars: Optional[Mapping[str, str]] = ..., 
-                memory: Optional[str] = ..., 
-                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                version: Optional[str] = ...
-            ) -> RLEEnvironment: ...
-
         @distributed_trace
-        def delete_environment(
+        def delete_environment_version(
                 self, 
-                environment_id: str, 
+                name: str, 
+                version: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get_environment(
                 self, 
-                environment_id: str, 
+                name: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                *, 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
             ) -> RLEnvironment: ...
 
@@ -12294,52 +12744,21 @@ namespace azure.ai.projects.operations
         def list_environments(
                 self, 
                 *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
+                name: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[RLEnvironment]: ...
+            ) -> ListRLEnvironmentsResponse: ...
 
         @distributed_trace
         def list_rl_environment_versions(
                 self, 
-                environment_id: str, 
+                name: str, 
                 *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                foundry_features: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW], 
                 **kwargs: Any
-            ) -> ItemPaged[RLEnvironmentVersion]: ...
-
-        @overload
-        def update_environment(
-                self, 
-                environment_id: str, 
-                body: UpdateRLEnvironmentRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLEnvironment: ...
-
-        @overload
-        def update_environment(
-                self, 
-                environment_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLEnvironment: ...
-
-        @overload
-        def update_environment(
-                self, 
-                environment_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RLEnvironment: ...
+            ) -> list[RLEnvironmentVersion]: ...
 
 
     class azure.ai.projects.operations.TelemetryOperations:
