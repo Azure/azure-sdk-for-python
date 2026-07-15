@@ -136,9 +136,7 @@ class TestAsyncByoProjectResponsesClient:
         assert rkwargs["max_output_tokens"] == 800
 
     def test_with_options_returns_self(self):
-        client = AsyncByoProjectResponsesClient(
-            "c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock()
-        )
+        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
         assert client.with_options(timeout=5) is client
 
 
