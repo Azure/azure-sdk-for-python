@@ -137,7 +137,7 @@ class TestSample17ResilientClaude:
 
 
 def _make_sample18_app() -> TestClient:
-    """Reproduces sample_18 pattern with a simulated upstream (no real Copilot SDK)."""
+    """Reproduces the upstream-owned resilient recovery pattern with a simulated upstream."""
     options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
