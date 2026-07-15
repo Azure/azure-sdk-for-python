@@ -157,9 +157,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    content_settings = kwargs.pop('content_settings', None)
-    overwrite = kwargs.pop('overwrite', False)
-    max_concurrency = kwargs.pop('max_concurrency', None)
+    content_settings = kwargs.pop("content_settings", None)
+    overwrite = kwargs.pop("overwrite", False)
+    max_concurrency = kwargs.pop("max_concurrency", None)
     if max_concurrency is None:
         max_concurrency = DEFAULT_MAX_CONCURRENCY
     cpk = kwargs.pop("cpk", None)
@@ -693,7 +693,7 @@ def _stage_block_options(
     if isinstance(data, bytes):
         data = data[:length]
 
-    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+    validate_content = parse_validation_option(kwargs.pop("validate_content", None))
     cpk_scope_info = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop("cpk", None)
 
@@ -959,8 +959,8 @@ def _upload_page_options(page: bytes, offset: int, length: int, **kwargs: Any) -
     }
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
-    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
-    cpk = kwargs.pop('cpk', None)
+    validate_content = parse_validation_option(kwargs.pop("validate_content", None))
+    cpk = kwargs.pop("cpk", None)
     options = {
         "body": page[:length],
         "content_length": length,
@@ -1090,9 +1090,9 @@ def _append_block_options(
     if isinstance(data, bytes):
         data = data[:length]
 
-    appendpos_condition = kwargs.pop('appendpos_condition', None)
-    maxsize_condition = kwargs.pop('maxsize_condition', None)
-    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+    appendpos_condition = kwargs.pop("appendpos_condition", None)
+    maxsize_condition = kwargs.pop("maxsize_condition", None)
+    validate_content = parse_validation_option(kwargs.pop("validate_content", None))
     append_conditions_kwargs = {}
     if maxsize_condition or appendpos_condition is not None:
         append_conditions_kwargs["max_size"] = maxsize_condition

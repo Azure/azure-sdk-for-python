@@ -64,17 +64,8 @@ from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.validation import is_crc64_validation, parse_validation_option
-from ._serialize import (
-    get_access_conditions,
-    get_api_version,
-    get_modify_conditions,
-    get_version_id
-)
-from ._upload_helpers import (
-    upload_append_blob,
-    upload_block_blob,
-    upload_page_blob
-)
+from ._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from ._upload_helpers import upload_append_blob, upload_block_blob, upload_page_blob
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -626,7 +617,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Encryption required but no key was provided.")
         if kwargs.get("cpk") and self.scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None))
         if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _upload_blob_options(
@@ -773,7 +764,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Offset value must not be None if length is set.")
         if kwargs.get("cpk") and self.scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None))
         if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _download_blob_options(

@@ -374,7 +374,6 @@ class StaticWebsite(_BackCompatMixin):
     default_index_document_path: Optional[str]
     """Absolute path of the default index page."""
 
-
     _attribute_map = {
         "enabled": {"key": "Enabled", "type": "bool"},
         "index_document": {"key": "IndexDocument", "type": "str"},
@@ -1172,7 +1171,7 @@ class AccessPolicy(_BackCompatMixin):
             expiry=serialize_iso(self.expiry),
             permission=permission,
         )
-    
+
     @classmethod
     def _from_generated(cls, generated: Optional[GenAccessPolicy]) -> Optional["AccessPolicy"]:
         if generated is None:
@@ -1449,7 +1448,6 @@ class ArrowDialect(_BackCompatMixin):
     """The precision of the field."""
     scale: Optional[int]
     """The scale of the field."""
-
 
     _attribute_map = {
         "type": {"key": "Type", "type": "str"},

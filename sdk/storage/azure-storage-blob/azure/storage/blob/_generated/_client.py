@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -24,6 +24,11 @@ from .operations import (
     PageBlobOperations,
     ServiceOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -50,8 +55,9 @@ class BlobClient:  # pylint: disable=client-accepts-api-version-keyword
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
-     result in unsupported behavior.
+     are "2026-12-06" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype version: str
     """
 

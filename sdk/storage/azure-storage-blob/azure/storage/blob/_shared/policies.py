@@ -466,6 +466,7 @@ def _validate_content_response(
         if response.http_request.method == "GET":
             # Raises exception if missing
             content_length = int(response.http_response.headers[CONTENT_LENGTH_HEADER])
+
             def _make_wrapper(original):
                 def wrapped(*args, **kwargs):
                     iterator = original(*args, **kwargs)
@@ -475,6 +476,7 @@ def _validate_content_response(
                     if hasattr(iterator, "response"):
                         decoder.response = iterator.response  # type: ignore
                     return decoder
+
                 return wrapped
 
             # Patch response to return response iterator wrapped in structured message decoder.

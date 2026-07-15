@@ -646,7 +646,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Encryption required but no key was provided.")
         if kwargs.get("cpk") and self.scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None))
         if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _upload_blob_options(
@@ -793,7 +793,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Offset value must not be None if length is set.")
         if kwargs.get("cpk") and self.scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None))
         if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _download_blob_options(

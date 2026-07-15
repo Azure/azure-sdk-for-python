@@ -46,7 +46,7 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=service&comp=properties"
 
@@ -65,7 +65,7 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -86,7 +86,7 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -115,7 +115,7 @@ def build_service_list_containers_segment_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -147,7 +147,7 @@ def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -169,7 +169,7 @@ def build_service_get_account_info_request(*, timeout: Optional[int] = None, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=account&comp=properties"
 
@@ -190,7 +190,7 @@ def build_service_submit_batch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
@@ -220,7 +220,7 @@ def build_service_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -256,7 +256,7 @@ def build_container_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container"
 
@@ -288,7 +288,7 @@ def build_container_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container"
 
@@ -315,7 +315,7 @@ def build_container_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container"
 
@@ -346,7 +346,7 @@ def build_container_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container&comp=metadata"
 
@@ -372,7 +372,7 @@ def build_container_get_access_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -404,7 +404,7 @@ def build_container_set_access_policy_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container&comp=acl"
 
@@ -438,7 +438,7 @@ def build_container_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container&comp=undelete"
 
@@ -466,7 +466,7 @@ def build_container_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=container&comp=rename"
 
@@ -490,7 +490,7 @@ def build_container_submit_batch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
@@ -520,7 +520,7 @@ def build_container_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -557,7 +557,7 @@ def build_container_acquire_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -591,7 +591,7 @@ def build_container_release_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -623,7 +623,7 @@ def build_container_renew_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -655,7 +655,7 @@ def build_container_break_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -689,7 +689,7 @@ def build_container_change_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -723,7 +723,7 @@ def build_container_list_blob_flat_segment_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -750,6 +750,50 @@ def build_container_list_blob_flat_segment_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_container_list_blob_flat_segment_apache_arrow_request(  # pylint: disable=name-too-long
+    *,
+    prefix: Optional[str] = None,
+    marker: Optional[str] = None,
+    maxresults: Optional[int] = None,
+    include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    timeout: Optional[int] = None,
+    start_from: Optional[str] = None,
+    end_before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept: Literal["application/vnd.apache.arrow.stream,application/xml"] = kwargs.pop(
+        "accept", _headers.pop("accept", "application/vnd.apache.arrow.stream,application/xml")
+    )
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
+    # Construct URL
+    _url = "?restype=container&comp=list"
+
+    # Construct parameters
+    if prefix is not None:
+        _params["prefix"] = _SERIALIZER.query("prefix", prefix, "str")
+    if marker is not None:
+        _params["marker"] = _SERIALIZER.query("marker", marker, "str")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if include is not None:
+        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    if start_from is not None:
+        _params["startFrom"] = _SERIALIZER.query("start_from", start_from, "str")
+    if end_before is not None:
+        _params["endBefore"] = _SERIALIZER.query("end_before", end_before, "str")
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
     *,
     delimiter: str,
@@ -764,7 +808,7 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -792,11 +836,57 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_container_list_blob_hierarchy_segment_apache_arrow_request(  # pylint: disable=name-too-long
+    *,
+    delimiter: str,
+    prefix: Optional[str] = None,
+    marker: Optional[str] = None,
+    maxresults: Optional[int] = None,
+    include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    timeout: Optional[int] = None,
+    start_from: Optional[str] = None,
+    end_before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept: Literal["application/vnd.apache.arrow.stream,application/xml"] = kwargs.pop(
+        "accept", _headers.pop("accept", "application/vnd.apache.arrow.stream,application/xml")
+    )
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
+    # Construct URL
+    _url = "?restype=container&comp=list"
+
+    # Construct parameters
+    _params["delimiter"] = _SERIALIZER.query("delimiter", delimiter, "str")
+    if prefix is not None:
+        _params["prefix"] = _SERIALIZER.query("prefix", prefix, "str")
+    if marker is not None:
+        _params["marker"] = _SERIALIZER.query("marker", marker, "str")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if include is not None:
+        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    if start_from is not None:
+        _params["startFrom"] = _SERIALIZER.query("start_from", start_from, "str")
+    if end_before is not None:
+        _params["endBefore"] = _SERIALIZER.query("end_before", end_before, "str")
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_container_get_account_info_request(*, timeout: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=account&comp=properties"
 
@@ -833,7 +923,7 @@ def build_blob_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -907,7 +997,7 @@ def build_blob_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -967,7 +1057,7 @@ def build_blob_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -1015,7 +1105,7 @@ def build_blob_undelete_request(*, timeout: Optional[int] = None, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=undelete"
 
@@ -1039,7 +1129,7 @@ def build_blob_set_expiry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=expiry"
 
@@ -1076,7 +1166,7 @@ def build_blob_set_http_headers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -1135,7 +1225,7 @@ def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=immutabilityPolicies"
 
@@ -1168,7 +1258,7 @@ def build_blob_delete_immutability_policy_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=immutabilityPolicies"
 
@@ -1197,7 +1287,7 @@ def build_blob_set_legal_hold_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=legalhold"
 
@@ -1235,7 +1325,7 @@ def build_blob_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=metadata"
 
@@ -1291,7 +1381,7 @@ def build_blob_acquire_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1336,7 +1426,7 @@ def build_blob_release_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1379,7 +1469,7 @@ def build_blob_renew_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1423,7 +1513,7 @@ def build_blob_change_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1467,7 +1557,7 @@ def build_blob_break_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1515,7 +1605,7 @@ def build_blob_create_snapshot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=snapshot"
 
@@ -1583,7 +1673,7 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -1677,7 +1767,7 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -1756,7 +1846,7 @@ def build_blob_abort_copy_from_url_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=copy"
 
@@ -1788,7 +1878,7 @@ def build_blob_set_tier_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=tier"
 
@@ -1817,7 +1907,7 @@ def build_blob_get_account_info_request(*, timeout: Optional[int] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?restype=account&comp=properties"
 
@@ -1840,14 +1930,14 @@ def build_blob_get_tags_request(
     if_tags: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1873,11 +1963,13 @@ def build_blob_get_tags_request(
         _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
             "if_unmodified_since", if_unmodified_since, "rfc-1123"
         )
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
         _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1892,15 +1984,15 @@ def build_blob_set_tags_request(
     lease_id: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=tags"
 
@@ -1931,8 +2023,10 @@ def build_blob_set_tags_request(
         _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
             "if_unmodified_since", if_unmodified_since, "rfc-1123"
         )
+    if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
         _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
@@ -1970,7 +2064,7 @@ def build_append_blob_create_request(  # pylint: disable=too-many-locals
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -2068,7 +2162,7 @@ def build_append_blob_append_block_request(  # pylint: disable=too-many-locals
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=appendblock"
 
@@ -2161,7 +2255,7 @@ def build_append_blob_append_block_from_url_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=appendblock"
 
@@ -2261,7 +2355,7 @@ def build_append_blob_seal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=seal"
 
@@ -2326,7 +2420,7 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
 
     content_type: str = kwargs.pop("content_type")
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -2459,7 +2553,7 @@ def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -2588,7 +2682,7 @@ def build_block_blob_stage_block_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=block"
 
@@ -2647,19 +2741,19 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
     lease_id: Optional[str] = None,
     source_if_modified_since: Optional[datetime.datetime] = None,
     source_if_unmodified_since: Optional[datetime.datetime] = None,
-    source_if_match: Optional[str] = None,
-    source_if_none_match: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
     file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
     source_encryption_key: Optional[str] = None,
     source_encryption_key_sha256: Optional[str] = None,
     source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=block"
 
@@ -2700,10 +2794,6 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
         _headers["x-ms-source-if-unmodified-since"] = _SERIALIZER.header(
             "source_if_unmodified_since", source_if_unmodified_since, "rfc-1123"
         )
-    if source_if_match is not None:
-        _headers["x-ms-source-if-match"] = _SERIALIZER.header("source_if_match", source_if_match, "str")
-    if source_if_none_match is not None:
-        _headers["x-ms-source-if-none-match"] = _SERIALIZER.header("source_if_none_match", source_if_none_match, "str")
     if copy_source_authorization is not None:
         _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
             "copy_source_authorization", copy_source_authorization, "str"
@@ -2722,6 +2812,12 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
         _headers["x-ms-source-encryption-algorithm"] = _SERIALIZER.header(
             "source_encryption_algorithm", source_encryption_algorithm, "str"
         )
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["x-ms-source-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["x-ms-source-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2759,7 +2855,7 @@ def build_block_blob_commit_block_list_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=blocklist"
 
@@ -2852,7 +2948,7 @@ def build_block_blob_get_block_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -2895,7 +2991,7 @@ def build_block_blob_query_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -2971,7 +3067,7 @@ def build_page_blob_create_request(  # pylint: disable=too-many-locals
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = ""
 
@@ -3077,7 +3173,7 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
 
     content_type: str = kwargs.pop("content_type")
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=page"
 
@@ -3169,7 +3265,7 @@ def build_page_blob_clear_pages_request(
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=page"
 
@@ -3259,7 +3355,7 @@ def build_page_blob_upload_pages_from_url_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=page"
 
@@ -3368,7 +3464,7 @@ def build_page_blob_get_page_ranges_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -3427,7 +3523,7 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -3489,7 +3585,7 @@ def build_page_blob_resize_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -3544,7 +3640,7 @@ def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -3591,7 +3687,7 @@ def build_page_blob_copy_incremental_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-12-06"))
     # Construct URL
     _url = "?comp=incrementalcopy"
 
@@ -3650,7 +3746,8 @@ class ServiceOperations:
         :type storage_service_properties:
          ~azure.storage.blob._generated.models.StorageServiceProperties
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -3718,7 +3815,8 @@ class ServiceOperations:
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: StorageServiceProperties. The StorageServiceProperties is compatible with
@@ -3797,7 +3895,8 @@ class ServiceOperations:
         storage account.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: StorageServiceStats. The StorageServiceStats is compatible with MutableMapping
@@ -3879,29 +3978,24 @@ class ServiceOperations:
         include: Optional[list[Union[str, _models.ListContainersIncludeType]]] = None,
         **kwargs: Any
     ) -> _models.ListContainersSegmentResponse:
-        """The List Containers Segment operation returns a list of the containers under the specified
-        account.
+        """Returns a list of the containers in the specified account.
 
-        :keyword prefix: Filters the results to return only containers whose name begins with the
+        :keyword prefix: Filters the results to return only resources whose name begins with the
          specified prefix. Default value is None.
         :paramtype prefix: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword include: Include this parameter to specify that the container's metadata be returned
-         as part of the response body. Default value is None.
+        :keyword include: Specify to include additional, optional information. Default value is None.
         :paramtype include: list[str or ~azure.storage.blob.models.ListContainersIncludeType]
         :return: ListContainersSegmentResponse. The ListContainersSegmentResponse is compatible with
          MutableMapping
@@ -3986,7 +4080,8 @@ class ServiceOperations:
         :param key_info: Key information provided in the request. Required.
         :type key_info: ~azure.storage.blob._generated.models.KeyInfo
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: UserDelegationKey. The UserDelegationKey is compatible with MutableMapping
@@ -4066,10 +4161,11 @@ class ServiceOperations:
     def get_account_info(  # pylint: disable=inconsistent-return-statements
         self, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """Returns the sku name and account kind.
+        """Returns information about the storage account.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -4133,14 +4229,15 @@ class ServiceOperations:
     def submit_batch(
         self, body: _models.SubmitBatchRequest, *, content_length: int, timeout: Optional[int] = None, **kwargs: Any
     ) -> _models.SubmitBatchRequest:
-        """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
+        """Allows multiple API calls to be embedded into a single HTTP request.
 
         :param body: The body of the request. Required.
         :type body: ~azure.storage.blob._generated.models.SubmitBatchRequest
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: SubmitBatchRequest. The SubmitBatchRequest is compatible with MutableMapping
@@ -4230,29 +4327,24 @@ class ServiceOperations:
         include: Optional[list[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
-        """The Filter Blobs operation enables callers to list blobs across all containers whose tags match
-        a given search expression.
+        """Lists blobs across all containers whose tags match a given search expression.
 
-        :keyword where: Filters the results to return only to return only blobs whose tags match the
-         specified expression. Required.
+        :keyword where: Filters the results to return only blobs whose tags match the specified
+         expression. Required.
         :paramtype where: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
-        :keyword include: Include this parameter to specify one or more datasets to include in the
-         response. Default value is None.
+        :keyword include: Specify to include additional, optional information. Default value is None.
         :paramtype include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
         :return: FilterBlobSegment. The FilterBlobSegment is compatible with MutableMapping
         :rtype: ~azure.storage.blob._generated.models.FilterBlobSegment
@@ -4355,11 +4447,12 @@ class ContainerOperations:
         prevent_encryption_scope_override: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        """Creates a new container under the specified account. If the container with the same name
-        already exists, the operation fails.
+        """Creates a new container in the specified account. If the container with the same name already
+        exists, the operation fails.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
@@ -4367,13 +4460,11 @@ class ContainerOperations:
         :keyword access: The public access setting for the container. Known values are: "blob" and
          "container". Default value is None.
         :paramtype access: str or ~azure.storage.blob.models.PublicAccessType
-        :keyword default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the
-         default encryption scope to set on the container and use for all future writes. Default value
-         is None.
+        :keyword default_encryption_scope: Specifies the default encryption scope to set on the
+         container and use for all future requests. Default value is None.
         :paramtype default_encryption_scope: str
-        :keyword prevent_encryption_scope_override: If a blob has a lease and the lease is of infinite
-         duration then the value of this header is set to true, otherwise it is set to false. Default
-         value is None.
+        :keyword prevent_encryption_scope_override: Whether to prevent encryption scope override.
+         Default value is None.
         :paramtype prevent_encryption_scope_override: bool
         :return: None
         :rtype: None
@@ -4439,11 +4530,12 @@ class ContainerOperations:
     def get_properties(  # pylint: disable=inconsistent-return-statements
         self, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
     ) -> None:
-        """returns all user-defined metadata and system properties for the specified container. The data
+        """Returns all user-defined metadata and system properties for the specified container. The data
         returned does not include the container's list of blobs.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
@@ -4536,21 +4628,21 @@ class ContainerOperations:
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """operation marks the specified container for deletion. The container and any blobs contained
-        within it are later deleted during garbage collection.
+        """Deletes the specified container.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -4619,10 +4711,11 @@ class ContainerOperations:
         if_modified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """operation sets one or more user-defined name-value pairs for the specified container.
+        """Sets user-defined metadata for the specified container.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
@@ -4630,8 +4723,8 @@ class ContainerOperations:
         :paramtype lease_id: str
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -4696,11 +4789,11 @@ class ContainerOperations:
     def get_access_policy(
         self, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
     ) -> _models.SignedIdentifiers:
-        """gets the permissions for the specified container. The permissions indicate whether container
-        data may be accessed publicly.
+        """Gets the permissions for the specified container.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
@@ -4792,13 +4885,13 @@ class ContainerOperations:
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """sets the permissions for the specified container. The permissions indicate whether blobs in a
-        container may be accessed publicly.
+        """Sets the permissions for the specified container.
 
         :param container_acl: The access control list for the container. Default value is None.
         :type container_acl: ~azure.storage.blob._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
@@ -4807,11 +4900,11 @@ class ContainerOperations:
         :keyword access: The public access setting for the container. Known values are: "blob" and
          "container". Default value is None.
         :paramtype access: str or ~azure.storage.blob.models.PublicAccessType
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -4891,16 +4984,17 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
-        """Restores a previously-deleted container.
+        """Restores the specified previously-deleted container.
 
-        :keyword deleted_container_name: Optional.  Version 2019-12-12 and later.  Specifies the name
-         of the deleted container to restore. Default value is None.
+        :keyword deleted_container_name: Specifies the name of the deleted container to restore.
+         Default value is None.
         :paramtype deleted_container_name: str
-        :keyword deleted_container_version: Optional.  Version 2019-12-12 and later.  Specifies the
-         version of the deleted container to restore. Default value is None.
+        :keyword deleted_container_version: Specifies the version of the deleted container to restore.
+         Default value is None.
         :paramtype deleted_container_version: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -4968,16 +5062,16 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
-        """Renames an existing container.
+        """Renames the specified existing container.
 
-        :keyword source_container_name: Required.  Specifies the name of the container to rename.
-         Required.
+        :keyword source_container_name: Specifies the name of the container to rename. Required.
         :paramtype source_container_name: str
         :keyword source_lease_id: A lease ID for the source path. If specified, the source path must
          have an active lease and the lease ID must match. Default value is None.
         :paramtype source_lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -5040,14 +5134,15 @@ class ContainerOperations:
     def submit_batch(
         self, body: _models.SubmitBatchRequest, *, content_length: int, timeout: Optional[int] = None, **kwargs: Any
     ) -> _models.SubmitBatchRequest:
-        """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
+        """Allows multiple API calls to be embedded into a single HTTP request.
 
         :param body: The body of the request. Required.
         :type body: ~azure.storage.blob._generated.models.SubmitBatchRequest
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: SubmitBatchRequest. The SubmitBatchRequest is compatible with MutableMapping
@@ -5134,29 +5229,24 @@ class ContainerOperations:
         include: Optional[list[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
-        """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
-        given search expression.  Filter blobs searches within the given container.
+        """Lists blobs in the specified container whose tags match a given search expression.
 
-        :keyword where: Filters the results to return only to return only blobs whose tags match the
-         specified expression. Required.
+        :keyword where: Filters the results to return only blobs whose tags match the specified
+         expression. Required.
         :paramtype where: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
-        :keyword include: Include this parameter to specify one or more datasets to include in the
-         response. Default value is None.
+        :keyword include: Specify to include additional, optional information. Default value is None.
         :paramtype include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
         :return: FilterBlobSegment. The FilterBlobSegment is compatible with MutableMapping
         :rtype: ~azure.storage.blob._generated.models.FilterBlobSegment
@@ -5241,25 +5331,23 @@ class ContainerOperations:
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """The Acquire Lease operation requests a new lease on a container. The lease lock duration can be
-        15 to 60 seconds, or can be infinite.
+        """Requests a new lease on the specified container.
 
         :keyword duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
-         lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change. Required.
+         lease that never expires. A non-infinite lease can be between 15 and 60 seconds. Required.
         :paramtype duration: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword proposed_lease_id: Optional.  The proposed lease ID for the container. Default value
-         is None.
+        :keyword proposed_lease_id: The proposed lease ID for the lease. Default value is None.
         :paramtype proposed_lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -5334,21 +5422,22 @@ class ContainerOperations:
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """The Release Lease operation frees the lease if it's no longer needed, so that another client
-        can immediately acquire a lease against the container.
+        """Frees the lease if it's no longer needed, so that another client can immediately acquire a
+        lease against the container.
 
-        :keyword lease_id: Required.  A lease ID for the source path. If specified, the source path
-         must have an active lease and the lease ID must match. Required.
+        :keyword lease_id: A lease ID for the resource. The resource must have an active lease and the
+         lease ID must match. Required.
         :paramtype lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -5421,20 +5510,21 @@ class ContainerOperations:
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """The Renew Lease operation renews an existing lease.
+        """Renews an existing lease.
 
-        :keyword lease_id: Required.  A lease ID for the source path. If specified, the source path
-         must have an active lease and the lease ID must match. Required.
+        :keyword lease_id: A lease ID for the resource. The resource must have an active lease and the
+         lease ID must match. Required.
         :paramtype lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -5508,26 +5598,24 @@ class ContainerOperations:
         break_period: Optional[int] = None,
         **kwargs: Any
     ) -> None:
-        """The Break Lease operation ends a lease and ensures that another client can't acquire a new
-        lease until the current lease period has expired.
+        """Ends a lease and ensures that another client can't acquire a new lease until the current lease
+        period has expired.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword break_period: For a break operation, proposed duration the lease should continue
-         before it is broken, in seconds, between 0 and 60. This break period is only used if it is
-         shorter than the time remaining on the lease. If longer, the time remaining on the lease is
-         used. A new lease will not be available before the break period has expired, but the lease may
-         be held for longer than the break period. If this header does not appear with a break
-         operation, a fixed-duration lease breaks after the remaining lease period elapses, and an
-         infinite lease breaks immediately. Default value is None.
+        :keyword break_period: Proposed duration the lease should continue before it is broken, in
+         seconds, between 0 and 60. This break period is only used if it is shorter than the time
+         remaining on the lease. If longer, the time remaining on the lease is used. Default value is
+         None.
         :paramtype break_period: int
         :return: None
         :rtype: None
@@ -5602,22 +5690,23 @@ class ContainerOperations:
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """The Change Lease operation is used to change the ID of an existing lease.
+        """Change the ID of an existing lease.
 
-        :keyword lease_id: Required.  A lease ID for the source path. If specified, the source path
-         must have an active lease and the lease ID must match. Required.
+        :keyword lease_id: A lease ID for the resource. The resource must have an active lease and the
+         lease ID must match. Required.
         :paramtype lease_id: str
-        :keyword proposed_lease_id: Required.  The proposed lease ID for the container. Required.
+        :keyword proposed_lease_id: The proposed lease ID for the lease. Required.
         :paramtype proposed_lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
@@ -5685,7 +5774,7 @@ class ContainerOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def list_blob_flat_segment(
         self,
@@ -5698,31 +5787,27 @@ class ContainerOperations:
         start_from: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListBlobsResponse:
-        """The List Blobs operation returns a list of the blobs under the specified container.
+        """Returns a list of the blobs in the specified container.
 
-        :keyword prefix: Filters the results to return only containers whose name begins with the
+        :keyword prefix: Filters the results to return only resources whose name begins with the
          specified prefix. Default value is None.
         :paramtype prefix: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
-        :keyword include: Include this parameter to specify one or more datasets to include in the
-         response. Default value is None.
+        :keyword include: Specify to include additional, optional information. Default value is None.
         :paramtype include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword start_from: Specifies the relative path to list paths from. For non-recursive list,
-         only one entity level is supported; For recursive list, multiple entity levels are supported.
+         only one entity level is supported; for recursive list, multiple entity levels are supported.
          (Inclusive). Default value is None.
         :paramtype start_from: str
         :return: ListBlobsResponse. The ListBlobsResponse is compatible with MutableMapping
@@ -5800,8 +5885,141 @@ class ContainerOperations:
 
     @distributed_trace
     @api_version_validation(
+        method_added_on="2026-12-06",
+        params_added_on={
+            "2026-12-06": [
+                "version",
+                "client_request_id",
+                "accept",
+                "prefix",
+                "marker",
+                "maxresults",
+                "include",
+                "timeout",
+                "start_from",
+                "end_before",
+            ]
+        },
+        api_versions_list=["2026-12-06"],
+    )
+    def list_blob_flat_segment_apache_arrow(
+        self,
+        *,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        timeout: Optional[int] = None,
+        start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Returns a list of the blobs in Apache Arrow format as raw data, to be deserialized by the
+        client.
+
+        :keyword prefix: Filters the results to return only resources whose name begins with the
+         specified prefix. Default value is None.
+        :paramtype prefix: str
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Default value is None.
+        :paramtype maxresults: int
+        :keyword include: Specify to include additional, optional information. Default value is None.
+        :paramtype include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword start_from: Specifies the relative path to list paths from. For non-recursive list,
+         only one entity level is supported; for recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :paramtype start_from: str
+        :keyword end_before: Filters the results to return only names that are ordered before this
+         value. Currently only applies to Apache Arrow scenario. Default value is None.
+        :paramtype end_before: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        accept: Literal["application/vnd.apache.arrow.stream,application/xml"] = kwargs.pop(
+            "accept", _headers.pop("accept", "application/vnd.apache.arrow.stream,application/xml")
+        )
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_container_list_blob_flat_segment_apache_arrow_request(
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            start_from=start_from,
+            end_before=end_before,
+            accept=accept,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def list_blob_hierarchy_segment(
         self,
@@ -5814,43 +6032,38 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         start_from: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ListBlobsHierarchySegmentResponse:
-        """The List Blobs operation returns a list of the blobs under the specified container. A delimiter
-        can be used to traverse a virtual hierarchy of blobs as though it were a file system.
+    ) -> _models.ListBlobsHierarchicalResponse:
+        """Returns a list of the blobs in the specified container. A delimiter can be used to traverse a
+        virtual hierarchy of blobs as though it were a file system.
 
-        :keyword delimiter: When the request includes this parameter, the operation returns a
-         BlobPrefix element in the response body that acts as a placeholder for all blobs whose names
-         begin with the same substring up to the appearance of the delimiter character. The delimiter
-         may be a single character or a string. Required.
+        :keyword delimiter: If specified, the operation returns a BlobPrefix element that acts as a
+         placeholder for all blobs whose names begin with the same substring up to the appearance of the
+         delimiter character. The delimiter may be a single character or a string. Required.
         :paramtype delimiter: str
-        :keyword prefix: Filters the results to return only containers whose name begins with the
+        :keyword prefix: Filters the results to return only resources whose name begins with the
          specified prefix. Default value is None.
         :paramtype prefix: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
-        :keyword include: Include this parameter to specify one or more datasets to include in the
-         response. Default value is None.
+        :keyword include: Specify to include additional, optional information. Default value is None.
         :paramtype include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword start_from: Specifies the relative path to list paths from. For non-recursive list,
-         only one entity level is supported; For recursive list, multiple entity levels are supported.
+         only one entity level is supported; for recursive list, multiple entity levels are supported.
          (Inclusive). Default value is None.
         :paramtype start_from: str
-        :return: ListBlobsHierarchySegmentResponse. The ListBlobsHierarchySegmentResponse is compatible
-         with MutableMapping
-        :rtype: ~azure.storage.blob._generated.models.ListBlobsHierarchySegmentResponse
+        :return: ListBlobsHierarchicalResponse. The ListBlobsHierarchicalResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.storage.blob._generated.models.ListBlobsHierarchicalResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5864,7 +6077,7 @@ class ContainerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ListBlobsHierarchicalResponse] = kwargs.pop("cls", None)
 
         _request = build_container_list_blob_hierarchy_segment_request(
             delimiter=delimiter,
@@ -5916,7 +6129,148 @@ class ContainerOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize_xml(_models.ListBlobsHierarchySegmentResponse, response.text())
+            deserialized = _deserialize_xml(_models.ListBlobsHierarchicalResponse, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-12-06",
+        params_added_on={
+            "2026-12-06": [
+                "version",
+                "client_request_id",
+                "accept",
+                "delimiter",
+                "prefix",
+                "marker",
+                "maxresults",
+                "include",
+                "timeout",
+                "start_from",
+                "end_before",
+            ]
+        },
+        api_versions_list=["2026-12-06"],
+    )
+    def list_blob_hierarchy_segment_apache_arrow(
+        self,
+        *,
+        delimiter: str,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        timeout: Optional[int] = None,
+        start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Returns a list of the blobs in Apache Arrow format as raw data, to be deserialized by the
+        client. A delimiter can be used to traverse a virtual hierarchy of blobs as though it were a
+        file system.
+
+        :keyword delimiter: If specified, the operation returns a BlobPrefix element that acts as a
+         placeholder for all blobs whose names begin with the same substring up to the appearance of the
+         delimiter character. The delimiter may be a single character or a string. Required.
+        :paramtype delimiter: str
+        :keyword prefix: Filters the results to return only resources whose name begins with the
+         specified prefix. Default value is None.
+        :paramtype prefix: str
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Default value is None.
+        :paramtype maxresults: int
+        :keyword include: Specify to include additional, optional information. Default value is None.
+        :paramtype include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword start_from: Specifies the relative path to list paths from. For non-recursive list,
+         only one entity level is supported; for recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :paramtype start_from: str
+        :keyword end_before: Filters the results to return only names that are ordered before this
+         value. Currently only applies to Apache Arrow scenario. Default value is None.
+        :paramtype end_before: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        accept: Literal["application/vnd.apache.arrow.stream,application/xml"] = kwargs.pop(
+            "accept", _headers.pop("accept", "application/vnd.apache.arrow.stream,application/xml")
+        )
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_container_list_blob_hierarchy_segment_apache_arrow_request(
+            delimiter=delimiter,
+            prefix=prefix,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            start_from=start_from,
+            end_before=end_before,
+            accept=accept,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5927,10 +6281,11 @@ class ContainerOperations:
     def get_account_info(  # pylint: disable=inconsistent-return-statements
         self, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """Returns the sku name and account kind.
+        """Returns information about the storage account.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -6030,63 +6385,51 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        """The Download operation reads or downloads a blob from the system, including its metadata and
-        properties. You can also call Download to read a snapshot.
+        """Downloads the specified blob.
 
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword range: Return only the bytes of the blob in the specified range. Default value is
-         None.
+        :keyword range: Specifies the range of the blob to operate on. Default value is None.
         :paramtype range: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword range_get_content_md5: When set to true and specified together with the Range, the
-         service returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB
-         in size. Default value is None.
+        :keyword range_get_content_md5: When set to true and specified together with the ``Range``
+         header, the service returns the MD5 hash for the range, as long as the range is less than or
+         equal to 4 MiB in size. Default value is None.
         :paramtype range_get_content_md5: bool
-        :keyword range_get_content_crc64: Optional.  When this header is set to true and specified
-         together with the Range header, the service returns the CRC64 hash for the range, as long as
-         the range is less than or equal to 4 MB in size. Default value is None.
+        :keyword range_get_content_crc64: When set to true and the request includes a Range header, the
+         service returns the CRC64 hash for the range, as long as the range is less than or equal to 4
+         MiB in size. Default value is None.
         :paramtype range_get_content_crc64: bool
         :keyword structured_body_type: Specifies the response content should be returned as a
          structured message and specifies the message schema version and properties. Default value is
          None.
         :paramtype structured_body_type: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -6164,178 +6507,96 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-            response_headers["x-ms-creation-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-creation-time")
-            )
-            response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
-            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
-            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
-            response_headers["Content-Disposition"] = self._deserialize(
-                "str", response.headers.get("Content-Disposition")
-            )
-            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
-            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-                "int", response.headers.get("x-ms-blob-sequence-number")
-            )
-            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
-            response_headers["x-ms-copy-completion-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
-            )
-            response_headers["x-ms-copy-status-description"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-status-description")
-            )
-            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-            response_headers["x-ms-copy-progress"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-progress")
-            )
-            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
-            response_headers["x-ms-lease-duration"] = self._deserialize(
-                "str", response.headers.get("x-ms-lease-duration")
-            )
-            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
-            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
-            response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-            response_headers["x-ms-is-current-version"] = self._deserialize(
-                "bool", response.headers.get("x-ms-is-current-version")
-            )
-            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
-                "int", response.headers.get("x-ms-blob-committed-block-count")
-            )
-            response_headers["x-ms-server-encrypted"] = self._deserialize(
-                "bool", response.headers.get("x-ms-server-encrypted")
-            )
-            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-                "str", response.headers.get("x-ms-encryption-key-sha256")
-            )
-            response_headers["x-ms-encryption-scope"] = self._deserialize(
-                "str", response.headers.get("x-ms-encryption-scope")
-            )
-            response_headers["x-ms-blob-content-md5"] = self._deserialize(
-                "bytearray", response.headers.get("x-ms-blob-content-md5")
-            )
-            response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
-            response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
-            response_headers["x-ms-last-access-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-last-access-time")
-            )
-            response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
-            )
-            response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
-                "str", response.headers.get("x-ms-immutability-policy-mode")
-            )
-            response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
-            response_headers["x-ms-structured-body"] = self._deserialize(
-                "str", response.headers.get("x-ms-structured-body")
-            )
-            response_headers["x-ms-structured-content-length"] = self._deserialize(
-                "int", response.headers.get("x-ms-structured-content-length")
-            )
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if response.status_code == 206:
-            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-            response_headers["x-ms-client-request-id"] = self._deserialize(
-                "str", response.headers.get("x-ms-client-request-id")
-            )
-            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-            response_headers["x-ms-creation-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-creation-time")
-            )
-            response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
-            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-            response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
-            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
-            response_headers["Content-Disposition"] = self._deserialize(
-                "str", response.headers.get("Content-Disposition")
-            )
-            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
-            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-                "int", response.headers.get("x-ms-blob-sequence-number")
-            )
-            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
-            response_headers["x-ms-content-crc64"] = self._deserialize(
-                "bytearray", response.headers.get("x-ms-content-crc64")
-            )
-            response_headers["x-ms-copy-completion-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
-            )
-            response_headers["x-ms-copy-status-description"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-status-description")
-            )
-            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-            response_headers["x-ms-copy-progress"] = self._deserialize(
-                "str", response.headers.get("x-ms-copy-progress")
-            )
-            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
-            response_headers["x-ms-lease-duration"] = self._deserialize(
-                "str", response.headers.get("x-ms-lease-duration")
-            )
-            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
-            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
-            response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-            response_headers["x-ms-is-current-version"] = self._deserialize(
-                "bool", response.headers.get("x-ms-is-current-version")
-            )
-            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
-            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
-                "int", response.headers.get("x-ms-blob-committed-block-count")
-            )
-            response_headers["x-ms-server-encrypted"] = self._deserialize(
-                "bool", response.headers.get("x-ms-server-encrypted")
-            )
-            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-                "str", response.headers.get("x-ms-encryption-key-sha256")
-            )
-            response_headers["x-ms-encryption-scope"] = self._deserialize(
-                "str", response.headers.get("x-ms-encryption-scope")
-            )
-            response_headers["x-ms-blob-content-md5"] = self._deserialize(
-                "bytearray", response.headers.get("x-ms-blob-content-md5")
-            )
-            response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
-            response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
-            response_headers["x-ms-last-access-time"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-last-access-time")
-            )
-            response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
-                "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
-            )
-            response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
-                "str", response.headers.get("x-ms-immutability-policy-mode")
-            )
-            response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
-            response_headers["x-ms-structured-body"] = self._deserialize(
-                "str", response.headers.get("x-ms-structured-body")
-            )
-            response_headers["x-ms-structured-content-length"] = self._deserialize(
-                "int", response.headers.get("x-ms-structured-content-length")
-            )
-            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-creation-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-creation-time")
+        )
+        response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
+        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["x-ms-is-current-version"] = self._deserialize(
+            "bool", response.headers.get("x-ms-is-current-version")
+        )
+        response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-committed-block-count")
+        )
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
+        response_headers["x-ms-blob-content-md5"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-blob-content-md5")
+        )
+        response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
+        response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+        response_headers["x-ms-last-access-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-last-access-time")
+        )
+        response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+        )
+        response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+            "str", response.headers.get("x-ms-immutability-policy-mode")
+        )
+        response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
+        response_headers["x-ms-structured-content-length"] = self._deserialize(
+            "int", response.headers.get("x-ms-structured-content-length")
+        )
+        response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
+        response_headers["x-ms-access-tier-inferred"] = self._deserialize(
+            "bool", response.headers.get("x-ms-access-tier-inferred")
+        )
+        response_headers["x-ms-access-tier-change-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
+        )
+        response_headers["x-ms-smart-access-tier"] = self._deserialize(
+            "str", response.headers.get("x-ms-smart-access-tier")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -6362,48 +6623,38 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> bool:
-        """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
-        system properties for the blob. It does not return the content of the blob.
+        """Returns all user-defined metadata, standard HTTP properties, and system properties for the
+        specified blob. It does not return the content of the blob.
 
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -6567,7 +6818,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-04-06": ["access_tier_if_modified_since", "access_tier_if_unmodified_since"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -6587,58 +6838,40 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
-        permanently removed from the storage account. If the storage account's soft delete feature is
-        enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
-        immediately. However, the blob service retains the blob or snapshot for the number of days
-        specified by the DeleteRetentionPolicy section of [Storage service properties]
-        (Set-Blob-Service-Properties.md). After the specified number of days has passed, the blob's
-        data is permanently removed from the storage account. Note that you continue to be charged for
-        the soft-deleted blob's storage until it is permanently removed. Use the List Blobs API and
-        specify the \\"include=deleted\\" query parameter to discover which blobs and snapshots have
-        been soft deleted. You can then use the Undelete Blob API to restore a soft-deleted blob. All
-        other operations on a soft-deleted blob or snapshot causes the service to return an HTTP status
-        code of 404 (ResourceNotFound).
+        """Deletes the specified blob. If blob soft delete is enabled, the blob is marked for deletion and
+        can be recovered until the retention period expires.
 
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword delete_snapshots: Required if the blob has associated snapshots. Specify one of the
-         following two options: include: Delete the base blob and all of its snapshots. only: Delete
-         only the blob's snapshots and not the blob itself. Known values are: "only" and "include".
-         Default value is None.
+        :keyword delete_snapshots: Required if the blob has associated snapshots. Specifies the delete
+         behavior. Known values are: "only" and "include". Default value is None.
         :paramtype delete_snapshots: str or ~azure.storage.blob.models.DeleteSnapshotsOptionType
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
-         permanently delete a blob if blob soft delete is enabled. "Permanent" Default value is None.
+        :keyword blob_delete_type: The delete type. "Permanent" Default value is None.
         :paramtype blob_delete_type: str or ~azure.storage.blob.models.BlobDeleteType
         :keyword access_tier_if_modified_since: Specify this header value to operate only on a blob if
-         the access-tier has been modified since the specified date/time. Default value is None.
+         the access-tier has been modified since the specified date-time. Default value is None.
         :paramtype access_tier_if_modified_since: ~datetime.datetime
         :keyword access_tier_if_unmodified_since: Specify this header value to operate only on a blob
-         if the access-tier has not been modified since the specified date/time. Default value is None.
+         if the access-tier has not been modified since the specified date-time. Default value is None.
         :paramtype access_tier_if_unmodified_since: ~datetime.datetime
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -6721,10 +6954,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     def undelete(  # pylint: disable=inconsistent-return-statements
         self, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """Undelete a blob that was previously soft deleted.
+        """Undelete the specified previously soft deleted blob.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -6790,16 +7024,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         expires_on: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
-        """Set the expiration time of a blob.
+        """Set the expiration time of the specified blob.
 
-        :keyword expiry_options: Required. Indicates mode of the expiry time. Known values are:
+        :keyword expiry_options: Indicates the mode of the expiry time. Known values are:
          "NeverExpire", "RelativeToCreation", "RelativeToNow", and "Absolute". Required.
         :paramtype expiry_options: str or ~azure.storage.blob.models.BlobExpiryOptions
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword expires_on: The time this blob will expire. Default value is None.
+        :keyword expires_on: The date-time this blob will expire. Default value is None.
         :paramtype expires_on: ~datetime.datetime
         :return: None
         :rtype: None
@@ -6878,42 +7113,42 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Set HTTP Headers operation sets system properties on the blob.
+        """Sets system properties on the specified blob.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_cache_control: str
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
         :paramtype blob_content_md5: bytes
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_language: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_disposition: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7009,30 +7244,25 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Set the immutability policy of a blob.
+        """Set the immutability policy on the specified blob.
 
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Required.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Required.
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :return: None
         :rtype: None
@@ -7108,21 +7338,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
+        """Deletes the immutability policy on the specified blob.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :return: None
         :rtype: None
@@ -7190,23 +7415,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """The Set Legal Hold operation sets a legal hold on the blob.
+        """Sets a legal hold on the specified blob.
 
-        :keyword legal_hold: Required.  Specifies the legal hold status to set on the blob. Required.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Required.
         :paramtype legal_hold: bool
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :return: None
         :rtype: None
@@ -7284,11 +7504,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Set Metadata operation sets user-defined metadata for the specified blob as one or more
-        name-value pairs.
+        """Sets user-defined metadata for the specified blob.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
@@ -7296,32 +7516,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7425,28 +7639,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Acquire Lease operation requests a new lease on a blob. The lease lock duration can be 15
-        to 60 seconds, or can be infinite.
+        """Requests a new lease on the specified blob.
 
         :keyword duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
-         lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change. Required.
+         lease that never expires. A non-infinite lease can be between 15 and 60 seconds. Required.
         :paramtype duration: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword proposed_lease_id: Optional.  The proposed lease ID for the container. Default value
-         is None.
+        :keyword proposed_lease_id: The proposed lease ID for the lease. Default value is None.
         :paramtype proposed_lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7538,24 +7750,25 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Release Lease operation frees the lease if it's no longer needed, so that another client
-        can immediately acquire a lease against the blob.
+        """Frees the lease if it's no longer needed, so that another client can immediately acquire a
+        lease against the blob.
 
-        :keyword lease_id: Required.  A lease ID for the source path. If specified, the source path
-         must have an active lease and the lease ID must match. Required.
+        :keyword lease_id: A lease ID for the resource. The resource must have an active lease and the
+         lease ID must match. Required.
         :paramtype lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7645,23 +7858,24 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Renew Lease operation renews an existing lease.
+        """Renews an existing lease.
 
-        :keyword lease_id: Required.  A lease ID for the source path. If specified, the source path
-         must have an active lease and the lease ID must match. Required.
+        :keyword lease_id: A lease ID for the resource. The resource must have an active lease and the
+         lease ID must match. Required.
         :paramtype lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7753,25 +7967,26 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Change Lease operation is used to change the ID of an existing lease.
+        """Change the ID of an existing lease.
 
-        :keyword lease_id: Required.  A lease ID for the source path. If specified, the source path
-         must have an active lease and the lease ID must match. Required.
+        :keyword lease_id: A lease ID for the resource. The resource must have an active lease and the
+         lease ID must match. Required.
         :paramtype lease_id: str
-        :keyword proposed_lease_id: Required.  The proposed lease ID for the container. Required.
+        :keyword proposed_lease_id: The proposed lease ID for the lease. Required.
         :paramtype proposed_lease_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7863,29 +8078,27 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Break Lease operation ends a lease and ensures that another client can't acquire a new
-        lease until the current lease period has expired.
+        """Ends a lease and ensures that another client can't acquire a new lease until the current lease
+        period has expired.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword break_period: For a break operation, proposed duration the lease should continue
-         before it is broken, in seconds, between 0 and 60. This break period is only used if it is
-         shorter than the time remaining on the lease. If longer, the time remaining on the lease is
-         used. A new lease will not be available before the break period has expired, but the lease may
-         be held for longer than the break period. If this header does not appear with a break
-         operation, a fixed-duration lease breaks after the remaining lease period elapses, and an
-         infinite lease breaks immediately. Default value is None.
+        :keyword break_period: Proposed duration the lease should continue before it is broken, in
+         seconds, between 0 and 60. This break period is only used if it is shorter than the time
+         remaining on the lease. If longer, the time remaining on the lease is used. Default value is
+         None.
         :paramtype break_period: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -7981,40 +8194,35 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Create Snapshot operation creates a read-only snapshot of a blob.
+        """Creates a read-only snapshot of the specified blob.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
@@ -8129,15 +8337,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
+        """Starts an asynchronous copy from a source URL to a destination blob.
 
-        :keyword copy_source: Specifies the name of the source page blob snapshot. This value is a URL
-         of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as
-         it would appear in a request URI. The source blob must either be public or must be
-         authenticated via a shared access signature. Required.
+        :keyword copy_source: Specifies the name of the source URL for the copy operation. The value
+         should be URL-encoded as it would appear in a request URI. Required.
         :paramtype copy_source: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
@@ -8146,51 +8353,47 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob.models.AccessTier
-        :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
-         returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+        :keyword rehydrate_priority: The priority of the rehydration operation. Known values are:
          "High" and "Standard". Default value is None.
         :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
+        :keyword source_if_modified_since: Specify this value to operate only on a source blob if it
+         has been modified since the specified date-time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
         :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
+         has not been modified since the specified date-time. Default value is None.
         :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
+        :keyword source_if_match: Specify this value to operate only on a source blob with a matching
+         Etag value. Default value is None.
         :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
+        :keyword source_if_none_match: Specify this value to operate only on a source blob with a
+         non-matching Etag value. Default value is None.
         :paramtype source_if_none_match: str
-        :keyword source_if_tags: Specify a SQL where clause on blob tags to operate only on blobs with
-         a matching value. Default value is None.
+        :keyword source_if_tags: Specifies a SQL-like where clause on blob tags to operate only on a
+         source blob with matching tags. Default value is None.
         :paramtype source_if_tags: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
-         value is None.
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword seal_blob: Overrides the sealed state of the destination blob.  Service version
-         2019-12-12 and newer. Default value is None.
+        :keyword seal_blob: Overrides the sealed state of the destination blob. Default value is None.
         :paramtype seal_blob: bool
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
         :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
         :paramtype legal_hold: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -8311,16 +8514,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
-        return a response until the copy is complete.
+        """Synchronously copies a blob from a source URL to the destination blob.
 
-        :keyword copy_source: Specifies the name of the source page blob snapshot. This value is a URL
-         of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as
-         it would appear in a request URI. The source blob must either be public or must be
-         authenticated via a shared access signature. Required.
+        :keyword copy_source: Specifies the name of the source URL for the copy operation. The value
+         should be URL-encoded as it would appear in a request URI. Required.
         :paramtype copy_source: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
@@ -8329,57 +8530,54 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob.models.AccessTier
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
+        :keyword source_if_modified_since: Specify this value to operate only on a source blob if it
+         has been modified since the specified date-time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
         :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
+         has not been modified since the specified date-time. Default value is None.
         :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
+        :keyword source_if_match: Specify this value to operate only on a source blob with a matching
+         Etag value. Default value is None.
         :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
+        :keyword source_if_none_match: Specify this value to operate only on a source blob with a
+         non-matching Etag value. Default value is None.
         :paramtype source_if_none_match: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_md5: Specifies the MD5 hash calculated for the range of bytes that must
+         be read from the copy source. Default value is None.
         :paramtype source_content_md5: bytes
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
-         value is None.
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
         :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
         :paramtype legal_hold: bool
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
+        :keyword copy_source_authorization: Only the Bearer authorization scheme is supported, and the
+         value must be a valid OAuth access token for the copy source. Default value is None.
         :paramtype copy_source_authorization: str
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
-         copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
-         "COPY". Default value is None.
+        :keyword copy_source_tags: Indicates if source tags should be copied or replaced with the tags
+         specified. Default is 'Replace'. Known values are: "REPLACE" and "COPY". Default value is None.
         :paramtype copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
-        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
+        :keyword file_request_intent: Specifies the file request token intent. "backup" Default value
+         is None.
         :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -8486,14 +8684,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     def abort_copy_from_url(  # pylint: disable=inconsistent-return-statements
         self, *, copy_id: str, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
     ) -> None:
-        """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
-        destination blob with zero length and full metadata.
+        """Aborts a pending asynchronous copy operation and leaves a destination blob with zero length and
+        full metadata.
 
-        :keyword copy_id: The copy identifier provided in the x-ms-copy-id header of the original Copy
-         Blob operation. Required.
+        :keyword copy_id: The ID of the copy to be aborted. Required.
         :paramtype copy_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
@@ -8572,37 +8770,29 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if_tags: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """The Set Tier operation sets the tier on a block blob. The operation is allowed on a page blob
-        or block blob, but not on an append blob. A block blob's tier determines Hot/Cool/Archive
-        storage type. This operation does not update the blob's ETag.
+        """Sets the tier of the specified blob.
 
         :keyword tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
          "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium",
          "Cold", and "Smart". Required.
         :paramtype tier: str or ~azure.storage.blob.models.AccessTier
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
-         returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+        :keyword rehydrate_priority: The priority of the rehydration operation. Known values are:
          "High" and "Standard". Default value is None.
         :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :return: None
         :rtype: None
@@ -8668,10 +8858,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     def get_account_info(  # pylint: disable=inconsistent-return-statements
         self, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """Returns the sku name and account kind.
+        """Returns information about the storage account.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: None
@@ -8733,8 +8924,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "if_match", "if_none_match"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "etag", "match_condition"]},
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def get_tags(
         self,
@@ -8746,44 +8937,38 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if_tags: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.BlobTags:
-        """The Get Blob Tags operation enables users to get tags on a blob.
+        """Gets the tags of the specified blob.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
-         modified since the specified date/time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
-         been modified since the specified date/time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: Specify an ETag value to operate only on blobs without a matching
-         value. Default value is None.
-        :paramtype if_none_match: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: BlobTags. The BlobTags is compatible with MutableMapping
         :rtype: ~azure.storage.blob._generated.models.BlobTags
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8794,6 +8979,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -8809,8 +9000,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
+            etag=etag,
+            match_condition=match_condition,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -8862,8 +9053,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "if_match", "if_none_match"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "etag", "match_condition"]},
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def set_tags(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -8877,47 +9068,44 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         lease_id: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Set Tags operation enables users to set tags on a blob.
+        """Sets the tags of the specified blob.
 
         :param tags: The blob tags. Required.
         :type tags: ~azure.storage.blob._generated.models.BlobTags
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword version_id: The version id parameter is an opaque DateTime value that, when present,
-         specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
-         Default value is None.
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
         :paramtype version_id: str
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
         :paramtype transactional_content_crc64: bytes
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
-         modified since the specified date/time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
-         been modified since the specified date/time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: Specify an ETag value to operate only on blobs without a matching
-         value. Default value is None.
-        :paramtype if_none_match: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8928,6 +9116,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -8947,8 +9141,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=lease_id,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             version=self._config.version,
             content=_content,
@@ -9032,74 +9226,66 @@ class AppendBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Create operation creates a new append blob.
+        """Creates a new append blob.
 
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_language: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
         :paramtype blob_content_md5: bytes
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_cache_control: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_disposition: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
          value is None.
+        :paramtype encryption_scope: str
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
         :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
         :paramtype legal_hold: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -9229,64 +9415,54 @@ class AppendBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Append Block operation commits a new block of data to the end of an append blob.
+        """Uploads a new block of data to the end of an append blob.
 
         :param body: The body of the request. Required.
         :type body: bytes
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
         :paramtype transactional_content_crc64: bytes
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword max_size: Optional conditional header. The max length in bytes permitted for the
-         append blob. If the Append Block operation would cause the blob to exceed that limit or if the
-         blob size is already greater than the value specified in this header, the request will fail
-         with MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed). Default
-         value is None.
+        :keyword max_size: The max length of the blob. If the operation would cause the blob to exceed
+         that limit or if the blob size is already greater than the value specified, the request will
+         fail with MaxBlobSizeConditionNotMet. Default value is None.
         :paramtype max_size: int
-        :keyword append_position: Optional conditional header, used only for the Append Block
-         operation. A number indicating the byte offset to compare. Append Block will succeed only if
-         the append position is equal to this number. If it is not, the request will fail with the
-         AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed). Default value
-         is None.
-        :paramtype append_position: int
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+        :keyword append_position: A byte offset where the operation will only succeed if the append
+         position is equal. If not, the request will fail with AppendPositionConditionNotMet. Default
          value is None.
+        :paramtype append_position: int
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword structured_body_type: Required if the request body is a structured message. Specifies
          the message schema version and properties. Default value is None.
@@ -9411,7 +9587,7 @@ class AppendBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def append_block_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -9446,97 +9622,87 @@ class AppendBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Append Block From URL operation creates a new block to be committed as part of an append
-        blob where the contents are read from a URL.
+        """Uploads a new block of data from the specified URL to the end of an append blob.
 
-        :keyword source_url: Specify a URL to the copy source. Required.
+        :keyword source_url: Specifies the URL of the source. Required.
         :paramtype source_url: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
-        :keyword source_range: Bytes of source data in the specified range. Default value is None.
+        :keyword source_range: Specifies the bytes of the source. Default value is None.
         :paramtype source_range: str
-        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_md5: Specifies the MD5 hash calculated for the range of bytes that must
+         be read from the copy source. Default value is None.
         :paramtype source_content_md5: bytes
-        :keyword source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_crc64: Specifies the CRC64 calculated for the range of bytes that must
+         be read from the source. Default value is None.
         :paramtype source_content_crc64: bytes
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
-        :paramtype transactional_content_md5: bytes
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
          value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword max_size: Optional conditional header. The max length in bytes permitted for the
-         append blob. If the Append Block operation would cause the blob to exceed that limit or if the
-         blob size is already greater than the value specified in this header, the request will fail
-         with MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed). Default
-         value is None.
+        :keyword max_size: The max length of the blob. If the operation would cause the blob to exceed
+         that limit or if the blob size is already greater than the value specified, the request will
+         fail with MaxBlobSizeConditionNotMet. Default value is None.
         :paramtype max_size: int
-        :keyword append_position: Optional conditional header, used only for the Append Block
-         operation. A number indicating the byte offset to compare. Append Block will succeed only if
-         the append position is equal to this number. If it is not, the request will fail with the
-         AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed). Default value
-         is None.
+        :keyword append_position: A byte offset where the operation will only succeed if the append
+         position is equal. If not, the request will fail with AppendPositionConditionNotMet. Default
+         value is None.
         :paramtype append_position: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
+        :keyword source_if_modified_since: Specify this value to operate only on a source blob if it
+         has been modified since the specified date-time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
         :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
+         has not been modified since the specified date-time. Default value is None.
         :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
+        :keyword source_if_match: Specify this value to operate only on a source blob with a matching
+         Etag value. Default value is None.
         :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
+        :keyword source_if_none_match: Specify this value to operate only on a source blob with a
+         non-matching Etag value. Default value is None.
         :paramtype source_if_none_match: str
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
+        :keyword copy_source_authorization: Only the Bearer authorization scheme is supported, and the
+         value must be a valid OAuth access token for the copy source. Default value is None.
         :paramtype copy_source_authorization: str
-        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
+        :keyword file_request_intent: Specifies the file request token intent. "backup" Default value
+         is None.
         :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
+        :keyword source_encryption_key: Specifies the encryption key to use to decrypt the source data
+         provided in the request. Default value is None.
         :paramtype source_encryption_key: str
         :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+         Must be provided if the source encryption key is provided. Default value is None.
         :paramtype source_encryption_key_sha256: str
         :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. "AES256" Default value is None.
+         hash. Must be provided if the source encryption key is provided. "AES256" Default value is
+         None.
         :paramtype source_encryption_algorithm: str or
          ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
@@ -9665,27 +9831,25 @@ class AppendBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
-        version 2019-12-12 version or later.
+        """Seals the append blob to make it read-only.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword append_position: Optional conditional header, used only for the Append Block
-         operation. A number indicating the byte offset to compare. Append Block will succeed only if
-         the append position is equal to this number. If it is not, the request will fail with the
-         AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed). Default value
-         is None.
+        :keyword append_position: A byte offset where the operation will only succeed if the append
+         position is equal. If not, the request will fail with AppendPositionConditionNotMet. Default
+         value is None.
         :paramtype append_position: int
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -9814,11 +9978,8 @@ class BlockBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Upload Block Blob operation updates the content of an existing block blob. Updating an
-        existing block blob overwrites any existing metadata on the blob. Partial updates are not
-        supported with Put Blob; the content of the existing blob is overwritten with the content of
-        the new blob. To perform a partial update of the content of a block blob, use the Put Block
-        List operation.
+        """Uploads the content to the specified block blob. If the blob already exists, the data and any
+        existing metadata will be overwritten.
 
         :param body: The body of the request. Required.
         :type body: bytes
@@ -9827,80 +9988,71 @@ class BlockBlobOperations:
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_language: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
         :paramtype blob_content_md5: bytes
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_cache_control: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_disposition: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob.models.AccessTier
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
-         value is None.
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
         :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
         :paramtype legal_hold: bool
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
         :paramtype transactional_content_crc64: bytes
         :keyword structured_body_type: Required if the request body is a structured message. Specifies
          the message schema version and properties. Default value is None.
@@ -10032,7 +10184,7 @@ class BlockBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def put_blob_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -10074,122 +10226,109 @@ class BlockBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
-        read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
-        updates are not supported with Put Blob from URL; the content of an existing blob is
-        overwritten with the content of the new blob.  To perform partial updates to a block blob’s
-        contents using a source URL, use the Put Block from URL API in conjunction with Put Block List.
+        """Uploads the content from the specified URL to the block blob. If the blob already exists, the
+        data and any existing metadata will be overwritten.
 
-        :keyword copy_source: Specifies the name of the source page blob snapshot. This value is a URL
-         of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as
-         it would appear in a request URI. The source blob must either be public or must be
-         authenticated via a shared access signature. Required.
+        :keyword copy_source: Specifies the name of the source URL for the copy operation. The value
+         should be URL-encoded as it would appear in a request URI. Required.
         :paramtype copy_source: str
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_language: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
         :paramtype blob_content_md5: bytes
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_cache_control: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_disposition: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob.models.AccessTier
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
+        :keyword source_if_modified_since: Specify this value to operate only on a source blob if it
+         has been modified since the specified date-time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
         :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
+         has not been modified since the specified date-time. Default value is None.
         :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
+        :keyword source_if_match: Specify this value to operate only on a source blob with a matching
+         Etag value. Default value is None.
         :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
+        :keyword source_if_none_match: Specify this value to operate only on a source blob with a
+         non-matching Etag value. Default value is None.
         :paramtype source_if_none_match: str
-        :keyword source_if_tags: Specify a SQL where clause on blob tags to operate only on blobs with
-         a matching value. Default value is None.
+        :keyword source_if_tags: Specifies a SQL-like where clause on blob tags to operate only on a
+         source blob with matching tags. Default value is None.
         :paramtype source_if_tags: str
-        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_md5: Specifies the MD5 hash calculated for the range of bytes that must
+         be read from the copy source. Default value is None.
         :paramtype source_content_md5: bytes
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
-         value is None.
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword copy_source_blob_properties: Optional, default is true.  Indicates if properties from
-         the source blob should be copied. Default value is None.
+        :keyword copy_source_blob_properties: Indicates if properties from the source blob should be
+         copied. Default is true. Default value is None.
         :paramtype copy_source_blob_properties: bool
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
+        :keyword copy_source_authorization: Only the Bearer authorization scheme is supported, and the
+         value must be a valid OAuth access token for the copy source. Default value is None.
         :paramtype copy_source_authorization: str
-        :keyword copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
-         copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
-         "COPY". Default value is None.
+        :keyword copy_source_tags: Indicates if source tags should be copied or replaced with the tags
+         specified. Default is 'Replace'. Known values are: "REPLACE" and "COPY". Default value is None.
         :paramtype copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
-        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
+        :keyword file_request_intent: Specifies the file request token intent. "backup" Default value
+         is None.
         :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
+        :keyword source_encryption_key: Specifies the encryption key to use to decrypt the source data
+         provided in the request. Default value is None.
         :paramtype source_encryption_key: str
         :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+         Must be provided if the source encryption key is provided. Default value is None.
         :paramtype source_encryption_key_sha256: str
         :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. "AES256" Default value is None.
+         hash. Must be provided if the source encryption key is provided. "AES256" Default value is
+         None.
         :paramtype source_encryption_algorithm: str or
          ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
@@ -10288,6 +10427,9 @@ class BlockBlobOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-request-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-request-server-encrypted")
@@ -10327,47 +10469,41 @@ class BlockBlobOperations:
         structured_content_length: Optional[int] = None,
         **kwargs: Any
     ) -> None:
-        """The Stage Block operation creates a new block to be committed as part of a blob.
+        """Creates a new block of data to be committed as part of a blob.
 
         :param body: The body of the request. Required.
         :type body: bytes
-        :keyword block_id: A valid Base64 string value that identifies the block. Prior to encoding,
-         the string must be less than or equal to 64 bytes in size. For a given blob, the length of the
-         value specified for the blockid parameter must be the same size for each block. Required.
+        :keyword block_id: A Base64 value that identifies the block. Prior to encoding, the string must
+         be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
+         for the blockid parameter must be the same size for each block. Required.
         :paramtype block_id: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
         :paramtype transactional_content_crc64: bytes
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword structured_body_type: Required if the request body is a structured message. Specifies
          the message schema version and properties. Default value is None.
@@ -10467,7 +10603,7 @@ class BlockBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def stage_block_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -10486,87 +10622,81 @@ class BlockBlobOperations:
         lease_id: Optional[str] = None,
         source_if_modified_since: Optional[datetime.datetime] = None,
         source_if_unmodified_since: Optional[datetime.datetime] = None,
-        source_if_match: Optional[str] = None,
-        source_if_none_match: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         source_encryption_key: Optional[str] = None,
         source_encryption_key_sha256: Optional[str] = None,
         source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Stage Block From URL operation creates a new block to be committed as part of a blob where
-        the contents are read from a URL.
+        """Creates a new block of data from the specified URL to be committed as part of a blob.
 
-        :keyword block_id: A valid Base64 string value that identifies the block. Prior to encoding,
-         the string must be less than or equal to 64 bytes in size. For a given blob, the length of the
-         value specified for the blockid parameter must be the same size for each block. Required.
+        :keyword block_id: A Base64 value that identifies the block. Prior to encoding, the string must
+         be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
+         for the blockid parameter must be the same size for each block. Required.
         :paramtype block_id: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
-        :keyword source_url: Specify a URL to the copy source. Required.
+        :keyword source_url: Specifies the URL of the source. Required.
         :paramtype source_url: str
-        :keyword source_range: Bytes of source data in the specified range. Default value is None.
+        :keyword source_range: Specifies the bytes of the source. Default value is None.
         :paramtype source_range: str
-        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_md5: Specifies the MD5 hash calculated for the range of bytes that must
+         be read from the copy source. Default value is None.
         :paramtype source_content_md5: bytes
-        :keyword source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_crc64: Specifies the CRC64 calculated for the range of bytes that must
+         be read from the source. Default value is None.
         :paramtype source_content_crc64: bytes
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
+        :keyword source_if_modified_since: Specify this value to operate only on a source blob if it
+         has been modified since the specified date-time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
         :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
+         has not been modified since the specified date-time. Default value is None.
         :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
-        :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
-        :paramtype source_if_none_match: str
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
+        :keyword copy_source_authorization: Only the Bearer authorization scheme is supported, and the
+         value must be a valid OAuth access token for the copy source. Default value is None.
         :paramtype copy_source_authorization: str
-        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
+        :keyword file_request_intent: Specifies the file request token intent. "backup" Default value
+         is None.
         :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
+        :keyword source_encryption_key: Specifies the encryption key to use to decrypt the source data
+         provided in the request. Default value is None.
         :paramtype source_encryption_key: str
         :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+         Must be provided if the source encryption key is provided. Default value is None.
         :paramtype source_encryption_key_sha256: str
         :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. "AES256" Default value is None.
+         hash. Must be provided if the source encryption key is provided. "AES256" Default value is
+         None.
         :paramtype source_encryption_algorithm: str or
          ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10577,6 +10707,12 @@ class BlockBlobOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -10599,13 +10735,13 @@ class BlockBlobOperations:
             lease_id=lease_id,
             source_if_modified_since=source_if_modified_since,
             source_if_unmodified_since=source_if_unmodified_since,
-            source_if_match=source_if_match,
-            source_if_none_match=source_if_none_match,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
             source_encryption_key=source_encryption_key,
             source_encryption_key_sha256=source_encryption_key_sha256,
             source_encryption_algorithm=source_encryption_algorithm,
+            etag=etag,
+            match_condition=match_condition,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -10686,93 +10822,78 @@ class BlockBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
-        the blob. In order to be written as part of a blob, a block must have been successfully written
-        to the server in a prior Put Block operation. You can call Put Block List to update a blob by
-        uploading only those blocks that have changed, then committing the new and existing blocks
-        together. You can do this by specifying whether to commit a block from the committed block list
-        or from the uncommitted block list, or to commit the most recently uploaded version of the
-        block, whichever list it may belong to.
+        """Writes to the block blob by specifying the list of block IDs that make up the blob.
 
-        :param blocks: Blob Blocks. Required.
+        :param blocks: Blob blocks. Required.
         :type blocks: ~azure.storage.blob._generated.models.BlockLookupList
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_cache_control: str
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_language: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
         :paramtype blob_content_md5: bytes
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
         :paramtype transactional_content_crc64: bytes
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_disposition: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob.models.AccessTier
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
-         value is None.
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
         :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
         :paramtype legal_hold: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -10895,28 +11016,24 @@ class BlockBlobOperations:
         if_tags: Optional[str] = None,
         **kwargs: Any
     ) -> _models.BlockList:
-        """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
-        block blob.
+        """Retrieves the list of blocks that have been uploaded as part of the block blob.
 
         :keyword list_type: Specifies whether to return the list of committed blocks, the list of
          uncommitted blocks, or both lists together. Known values are: "committed", "uncommitted", and
          "all". Required.
         :paramtype list_type: str or ~azure.storage.blob.models.BlockListType
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :return: BlockList. The BlockList is compatible with MutableMapping
         :rtype: ~azure.storage.blob._generated.models.BlockList
@@ -11013,46 +11130,37 @@ class BlockBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        """The Query operation enables users to select/project on blob data by providing simple query
-        expressions.
+        """Queries the data of the specified blob with the provided query expressions.
 
         :param query_request: The query request. Required.
         :type query_request: ~azure.storage.blob._generated.models.QueryRequest
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -11240,84 +11348,75 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Create operation creates a new page blob.
+        """Creates a new page blob.
 
-        :keyword size: This header specifies the maximum size for the page blob, up to 1 TB. The page
-         blob size must be aligned to a 512-byte boundary. Required.
+        :keyword size: The maximum size for the page blob. Must be aligned to a 512-byte boundary.
+         Required.
         :paramtype size: int
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword tier: Optional. Indicates the tier to be set on the page blob. Known values are: "P4",
-         "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80". Default value is None.
+        :keyword tier: Indicates the tier to be set on the page blob. Known values are: "P4", "P6",
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80". Default value is None.
         :paramtype tier: str or ~azure.storage.blob.models.PremiumPageBlobAccessTier
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_type: Specifies the blob's Content-Type. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        :keyword blob_content_encoding: Specifies the blob's Content-Encoding. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+        :keyword blob_content_language: Specifies the blob's Content-Language. If specified, this
          property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_language: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
+        :keyword blob_content_md5: The MD5 hash of the blob content that is stored as a property on the
+         blob. Note: This hash is not validated. Default value is None.
         :paramtype blob_content_md5: bytes
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_cache_control: Specifies the blob's Cache-Control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_cache_control: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
+        :keyword blob_content_disposition: Specifies the blob's Content-Disposition. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_disposition: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword blob_sequence_number: Set for page blobs only. The sequence number is a
-         user-controlled value that you can use to track requests. The value of the sequence number must
-         be between 0 and 2^63 - 1. Default value is None.
-        :paramtype blob_sequence_number: int
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
          value is None.
+        :paramtype encryption_scope: str
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword blob_sequence_number: A value that can be used to track the request. The value of the
+         sequence number must be between 0 and 2^63 - 1. Default value is None.
+        :paramtype blob_sequence_number: int
+        :keyword blob_tags_string: The blob tags. Default value is None.
         :paramtype blob_tags_string: str
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
+        :keyword immutability_policy_expiry: The date-time that indicates the time at which the blob
+         immutability policy will expire. Default value is None.
         :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :keyword immutability_policy_mode: Indicates the immutability policy mode of the blob. Known
+         values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
+        :keyword legal_hold: Indicates whether the blob has a legal hold. Default value is None.
         :paramtype legal_hold: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -11452,63 +11551,57 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Upload Pages operation writes a range of pages to a page blob.
+        """Writes a range of pages to the specified page blob.
 
         :param body: The body of the request. Required.
         :type body: bytes
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
-        :keyword range: Bytes of data in the specified range. Required.
+        :keyword range: Specifies the range of the blob to operate on. Required.
         :paramtype range: str
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
+        :keyword transactional_content_md5: Specifies the transactional MD5 hash for the body. Default
+         value is None.
         :paramtype transactional_content_md5: bytes
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
+        :keyword transactional_content_crc64: Specifies the transactional CRC64 hash for the body.
+         Default value is None.
         :paramtype transactional_content_crc64: bytes
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
-         a blob if it has a sequence number less than or equal to the specified. Default value is None.
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this value to operate only on a blob
+         if it has a sequence number less than or equal to the specified. Default value is None.
         :paramtype if_sequence_number_less_than_or_equal_to: int
-        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
-         it has a sequence number less than the specified. Default value is None.
+        :keyword if_sequence_number_less_than: Specify this value to operate only on a blob if it has a
+         sequence number less than the specified. Default value is None.
         :paramtype if_sequence_number_less_than: int
-        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
-         has the specified sequence number. Default value is None.
+        :keyword if_sequence_number_equal_to: Specify this value to operate only on a blob if it has
+         the specified sequence number. Default value is None.
         :paramtype if_sequence_number_equal_to: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword structured_body_type: Required if the request body is a structured message. Specifies
          the message schema version and properties. Default value is None.
@@ -11650,52 +11743,47 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Clear Pages operation clears a range of pages from a page blob.
+        """Clears a range of pages from the specified page blob.
 
-        :keyword range: Bytes of data in the specified range. Required.
+        :keyword range: Specifies the range of the blob to operate on. Required.
         :paramtype range: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
-         a blob if it has a sequence number less than or equal to the specified. Default value is None.
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this value to operate only on a blob
+         if it has a sequence number less than or equal to the specified. Default value is None.
         :paramtype if_sequence_number_less_than_or_equal_to: int
-        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
-         it has a sequence number less than the specified. Default value is None.
+        :keyword if_sequence_number_less_than: Specify this value to operate only on a blob if it has a
+         sequence number less than the specified. Default value is None.
         :paramtype if_sequence_number_less_than: int
-        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
-         has the specified sequence number. Default value is None.
+        :keyword if_sequence_number_equal_to: Specify this value to operate only on a blob if it has
+         the specified sequence number. Default value is None.
         :paramtype if_sequence_number_equal_to: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -11794,7 +11882,7 @@ class PageBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
     )
     def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -11830,92 +11918,87 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Upload Pages operation writes a range of pages to a page blob where the contents are read
-        from a URL.
+        """Writes a range of pages to the specified page blob where the contents are read from a URL.
 
-        :keyword source_url: Specify a URL to the copy source. Required.
+        :keyword source_url: Specifies the URL of the source. Required.
         :paramtype source_url: str
-        :keyword source_range: Bytes of source data in the specified range. Required.
+        :keyword source_range: Specifies the bytes of the source. Required.
         :paramtype source_range: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
-        :keyword range: Bytes of data in the specified range. Required.
+        :keyword range: Specifies the range of the blob to operate on. Required.
         :paramtype range: str
-        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_md5: Specifies the MD5 hash calculated for the range of bytes that must
+         be read from the copy source. Default value is None.
         :paramtype source_content_md5: bytes
-        :keyword source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
+        :keyword source_content_crc64: Specifies the CRC64 calculated for the range of bytes that must
+         be read from the source. Default value is None.
         :paramtype source_content_crc64: bytes
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
-         a blob if it has a sequence number less than or equal to the specified. Default value is None.
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this value to operate only on a blob
+         if it has a sequence number less than or equal to the specified. Default value is None.
         :paramtype if_sequence_number_less_than_or_equal_to: int
-        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
-         it has a sequence number less than the specified. Default value is None.
+        :keyword if_sequence_number_less_than: Specify this value to operate only on a blob if it has a
+         sequence number less than the specified. Default value is None.
         :paramtype if_sequence_number_less_than: int
-        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
-         has the specified sequence number. Default value is None.
+        :keyword if_sequence_number_equal_to: Specify this value to operate only on a blob if it has
+         the specified sequence number. Default value is None.
         :paramtype if_sequence_number_equal_to: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
+        :keyword source_if_modified_since: Specify this value to operate only on a source blob if it
+         has been modified since the specified date-time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
         :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
+         has not been modified since the specified date-time. Default value is None.
         :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
+        :keyword source_if_match: Specify this value to operate only on a source blob with a matching
+         Etag value. Default value is None.
         :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
+        :keyword source_if_none_match: Specify this value to operate only on a source blob with a
+         non-matching Etag value. Default value is None.
         :paramtype source_if_none_match: str
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
+        :keyword copy_source_authorization: Only the Bearer authorization scheme is supported, and the
+         value must be a valid OAuth access token for the copy source. Default value is None.
         :paramtype copy_source_authorization: str
-        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
+        :keyword file_request_intent: Specifies the file request token intent. "backup" Default value
+         is None.
         :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
-        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
+        :keyword source_encryption_key: Specifies the encryption key to use to decrypt the source data
+         provided in the request. Default value is None.
         :paramtype source_encryption_key: str
         :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+         Must be provided if the source encryption key is provided. Default value is None.
         :paramtype source_encryption_key_sha256: str
         :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. "AES256" Default value is None.
+         hash. Must be provided if the source encryption key is provided. "AES256" Default value is
+         None.
         :paramtype source_encryption_algorithm: str or
          ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
@@ -12048,42 +12131,33 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
-        """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
-        of a page blob.
+        """Returns the list of valid page ranges for the specified page blob.
 
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword range: Return only the bytes of the blob in the specified range. Default value is
-         None.
+        :keyword range: Specifies the range of the blob to operate on. Default value is None.
         :paramtype range: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
@@ -12200,54 +12274,40 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
-        """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob or
-        snapshot of a page blob.
+        """Returns the list of page ranges in the diff between the specified page blob and the specified
+        previous snapshot.
 
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
         :paramtype snapshot: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword prevsnapshot: Optional in version 2015-07-08 and newer. The prevsnapshot parameter is
-         a DateTime value that specifies that the response will contain only pages that were changed
-         between target blob and previous snapshot. Changed pages include both updated and cleared
-         pages. The target blob may be a snapshot, as long as the snapshot specified by prevsnapshot is
-         the older of the two. Note that incremental snapshots are currently supported only for blobs
-         created on or after January 1, 2016. Default value is None.
+        :keyword prevsnapshot: Specifies the previous snapshot to be compared in the diff. Default
+         value is None.
         :paramtype prevsnapshot: str
-        :keyword prev_snapshot_url: Optional. This header is only supported in service versions
-         2019-04-19 and after and specifies the URL of a previous snapshot of the target blob. The
-         response will only contain pages that were changed between the target blob and its previous
-         snapshot. Default value is None.
+        :keyword prev_snapshot_url: Specifies the previous snapshot URL to be compared in the diff.
+         Default value is None.
         :paramtype prev_snapshot_url: str
-        :keyword range: Return only the bytes of the blob in the specified range. Default value is
-         None.
+        :keyword range: Specifies the range of the blob to operate on. Default value is None.
         :paramtype range: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
         :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Default value is None.
         :paramtype maxresults: int
@@ -12365,44 +12425,39 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Resize operation increases the size of the page blob to the specified size.
+        """Changes the size of the specified page blob.
 
-        :keyword size: This header specifies the maximum size for the page blob, up to 1 TB. The page
-         blob size must be aligned to a 512-byte boundary. Required.
+        :keyword size: The maximum size for the page blob. Must be aligned to a 512-byte boundary.
+         Required.
         :paramtype size: int
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
         :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
         :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
+        :keyword encryption_scope: Specifies the encryption scope used to encrypt the data. Default
+         value is None.
         :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -12500,33 +12555,32 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Update Sequence Number operation sets the blob's sequence number. The operation will fail
-        if the specified sequence number is less than the current sequence number of the blob.
+        """Updates the sequence number of the specified page blob. The operation will fail if the
+        specified sequence number is less than the current sequence number of the blob.
 
-        :keyword sequence_number_action: Required if the x-ms-blob-sequence-number header is set for
-         the request. This property applies to page blobs only. This property indicates how the service
-         should modify the blob's sequence number. Known values are: "increment", "max", and "update".
-         Required.
+        :keyword sequence_number_action: Required if the blob sequence number is provided. This
+         property indicates how the service should modify the blob's sequence number. Known values are:
+         "increment", "max", and "update". Required.
         :paramtype sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
-        :keyword blob_sequence_number: Set for page blobs only. The sequence number is a
-         user-controlled value that you can use to track requests. The value of the sequence number must
-         be between 0 and 2^63 - 1. Default value is None.
+        :keyword blob_sequence_number: A value that can be used to track the request. The value of the
+         sequence number must be between 0 and 2^63 - 1. Default value is None.
         :paramtype blob_sequence_number: int
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -12619,29 +12673,26 @@ class PageBlobOperations:
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
-        """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
-        blob. The snapshot is copied such that only the differential changes between the previously
-        copied snapshot are transferred to the destination. The copied snapshots are complete copies of
-        the original snapshot and can be read or copied from as usual. This API is supported since REST
-        version 2016-05-31.
+        """Copies a snapshot of the source page blob to a destination page blob. The snapshot is copied
+        such that only the differential changes between the previously copied snapshot are transferred
+        to the destination.
 
-        :keyword copy_source: Specifies the name of the source page blob snapshot. This value is a URL
-         of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as
-         it would appear in a request URI. The source blob must either be public or must be
-         authenticated via a shared access signature. Required.
+        :keyword copy_source: Specifies the name of the source URL for the copy operation. The value
+         should be URL-encoded as it would appear in a request URI. Required.
         :paramtype copy_source: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
         :paramtype if_tags: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.

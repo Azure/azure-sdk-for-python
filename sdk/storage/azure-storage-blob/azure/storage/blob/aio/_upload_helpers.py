@@ -112,11 +112,12 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         use_original_upload_path = (
             blob_settings.use_byte_buffer
             or validate_content not in (None, False)
-            or encryption_options.get('required')
+            or encryption_options.get("required")
             or blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold
-            or hasattr(stream, 'seekable') and not stream.seekable()
-            or not hasattr(stream, 'seek')
-            or not hasattr(stream, 'tell')
+            or hasattr(stream, "seekable")
+            and not stream.seekable()
+            or not hasattr(stream, "seek")
+            or not hasattr(stream, "tell")
         )
 
         if use_original_upload_path:

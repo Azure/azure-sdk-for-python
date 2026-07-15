@@ -28,13 +28,14 @@ class BlobClientConfiguration:  # pylint: disable=too-many-instance-attributes
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
-     result in unsupported behavior.
+     are "2026-12-06" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype version: str
     """
 
     def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        version: str = kwargs.pop("version", "2026-06-06")
+        version: str = kwargs.pop("version", "2026-12-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")

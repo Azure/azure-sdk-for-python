@@ -127,9 +127,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             chunk_data = b"\x00" * content_length
         else:
             range_header, range_validation = validate_and_format_range_headers(
-                download_range[0],
-                download_range[1],
-                check_content_md5=is_md5_validation(self.validate_content)
+                download_range[0], download_range[1], check_content_md5=is_md5_validation(self.validate_content)
             )
 
             retry_active = True
@@ -376,7 +374,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=is_md5_validation(self._validate_content)
+            check_content_md5=is_md5_validation(self._validate_content),
         )
 
         retry_active = True

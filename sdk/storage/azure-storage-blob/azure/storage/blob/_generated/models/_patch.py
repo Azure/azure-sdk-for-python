@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -42,7 +43,12 @@ class _BackCompatMixin:
         """
         return Model.serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
 
-    def as_dict(self, keep_readonly: bool = True, key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer, **kwargs: Any) -> JSON:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer,
+        **kwargs: Any,
+    ) -> JSON:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes.
@@ -122,7 +128,7 @@ class _BackCompatMixin:
         return Model.__str__(self)  # type: ignore[arg-type]
 
 
-# For backwards compatibility with older releases of `azure-storage-file-datalake` 
+# For backwards compatibility with older releases of `azure-storage-file-datalake`
 # that have models that inherit from the _generated.models of `azure-storage-blob` directly
 def _patched_getattr(self, name):
     """Lazily initialize ``_data`` for subclasses that skip ``super().__init__()``.
@@ -198,9 +204,7 @@ def _patched_new(cls, *args, **kwargs):  # pylint: disable=unused-argument
                     attr_to_rest_field[k] = v
                     v._module = mro_class.__module__
                     if not v._type:
-                        v._type = v._get_deserialize_callable_from_annotation(
-                            annotations.get(k, None)
-                        )
+                        v._type = v._get_deserialize_callable_from_annotation(annotations.get(k, None))
                     if not v._rest_name_input:
                         v._rest_name_input = k
 
@@ -209,9 +213,7 @@ def _patched_new(cls, *args, **kwargs):  # pylint: disable=unused-argument
             _Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
             for attr, rf in cls._attr_to_rest_field.items()
         }
-        cls._rest_name_to_attr = {
-            rf._rest_name: attr for attr, rf in attr_to_rest_field.items()
-        }
+        cls._rest_name_to_attr = {rf._rest_name: attr for attr, rf in attr_to_rest_field.items()}
         cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
     instance = object.__new__(cls)
@@ -253,6 +255,7 @@ def _apply_back_compat_to_generated(
     cls.__setattr__ = _patched_setattr  # type: ignore[assignment]
     cls.__getattribute__ = _patched_getattribute  # type: ignore[assignment]
 
+
 class Logging(_GeneratedLogging):
     """Back-compat subclass of the generated ``Logging`` that retains the msrest
     ``Model`` API surface (``serialize``/``as_dict``/``deserialize``/etc.) and routes
@@ -275,6 +278,7 @@ class CorsRule(_GeneratedCorsRule):
 
 class StaticWebsite(_GeneratedStaticWebsite):
     """Back-compat subclass of the generated ``StaticWebsite``. See :class:`Logging`."""
+
 
 _apply_back_compat_to_generated(
     Logging,

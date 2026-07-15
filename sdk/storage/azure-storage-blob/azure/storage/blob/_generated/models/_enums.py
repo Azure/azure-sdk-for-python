@@ -14,33 +14,33 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The access tiers."""
 
     P4 = "P4"
-    """The hot P4 tier."""
+    """The P4 access tier."""
     P6 = "P6"
-    """The hot P6 tier."""
+    """The P6 access tier."""
     P10 = "P10"
-    """The hot P10 tier."""
+    """The P10 access tier."""
     P15 = "P15"
-    """The hot P15 tier."""
+    """The P15 access tier."""
     P20 = "P20"
-    """The hot P20 tier."""
+    """The P20 access tier."""
     P30 = "P30"
-    """The hot P30 tier."""
+    """The P30 access tier."""
     P40 = "P40"
-    """The hot P40 tier."""
+    """The P40 access tier."""
     P50 = "P50"
-    """The hot P50 tier."""
+    """The P50 access tier."""
     P60 = "P60"
-    """The hot P60 tier."""
+    """The P60 access tier."""
     P70 = "P70"
-    """The hot P70 tier."""
+    """The P70 access tier."""
     P80 = "P80"
-    """The hot P80 tier."""
+    """The P80 access tier."""
     HOT = "Hot"
-    """The hot access tier."""
+    """The Hot access tier."""
     COOL = "Cool"
-    """The cool access tier."""
+    """The Cool access tier."""
     ARCHIVE = "Archive"
-    """The archive access tier."""
+    """The Archive access tier."""
     PREMIUM = "Premium"
     """The Premium access tier."""
     COLD = "Cold"
@@ -53,37 +53,37 @@ class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The account kind."""
 
     STORAGE = "Storage"
-    """The storage account is a general-purpose account."""
+    """A general-purpose account."""
     BLOB_STORAGE = "BlobStorage"
-    """The storage account is a blob storage account."""
+    """A blob storage account."""
     STORAGE_V2 = "StorageV2"
-    """The storage account is a storage V2 account."""
+    """A storage V2 account."""
     FILE_STORAGE = "FileStorage"
-    """The storage account is a file storage account."""
+    """A file storage account."""
     BLOCK_BLOB_STORAGE = "BlockBlobStorage"
-    """The storage account is a block blob storage account."""
+    """A block blob storage account."""
 
 
 class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The archive status."""
 
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
-    """The archive status is rehydrating pending to hot."""
+    """The archive status is rehydrating pending to Hot."""
     REHYDRATE_PENDING_TO_COOL = "rehydrate-pending-to-cool"
-    """The archive status is rehydrating pending to cool."""
+    """The archive status is rehydrating pending to Cool."""
     REHYDRATE_PENDING_TO_COLD = "rehydrate-pending-to-cold"
-    """The archive status is rehydrating pending to cold."""
+    """The archive status is rehydrating pending to Cold."""
     REHYDRATE_PENDING_TO_SMART = "rehydrate-pending-to-smart"
-    """The archive status is rehydrating pending to smart."""
+    """The archive status is rehydrating pending to Smart."""
 
 
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The blob copy source tags types."""
 
     REPLACE = "REPLACE"
-    """The replace blob source tags option."""
+    """The blob tags will be replaced."""
     COPY = "COPY"
-    """The copy blob source tags option."""
+    """The blob tags will be copied from the source."""
 
 
 class BlobDeleteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -94,7 +94,7 @@ class BlobDeleteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BlobExpiryOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The blob expiration options."""
+    """The blob expiry options."""
 
     NEVER_EXPIRE = "NeverExpire"
     """Never expire."""
@@ -121,11 +121,11 @@ class BlockListType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The block list types."""
 
     COMMITTED = "committed"
-    """The list of committed blocks."""
+    """Committed blocks."""
     UNCOMMITTED = "uncommitted"
-    """The list of uncommitted blocks."""
+    """Uncommitted blocks."""
     ALL = "all"
-    """Both lists together."""
+    """Both committed and uncommitted blocks."""
 
 
 class CopyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -138,22 +138,20 @@ class CopyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "failed"
     """The copy operation failed."""
     ABORTED = "aborted"
-    """The copy operation is aborted."""
+    """The copy operation was aborted."""
 
 
 class DeleteSnapshotsOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The delete snapshots option type."""
+    """Specifies the delete behavior of blob snapshots."""
 
     ONLY = "only"
-    """The delete snapshots include option is only."""
+    """Only delete the snapshots."""
     INCLUDE = "include"
-    """The delete snapshots include option is include."""
+    """Delete the blob and snapshots."""
 
 
 class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The algorithm used to produce the encryption key hash. Currently, the only accepted value is
-    \\"AES256\\". Must be provided if the x-ms-encryption-key header is provided.
-    """
+    """The algorithm used to produce the encryption key hash."""
 
     AES256 = "AES256"
     """The AES256 encryption algorithm."""
@@ -167,30 +165,30 @@ class FileShareTokenIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FilterBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The filter blobs includes."""
+    """Specifies what type of blobs should be returned as part of the filter operation."""
 
     NONE = "none"
     """The filter includes no versions."""
     VERSIONS = "versions"
-    """The filter includes n versions."""
+    """The filter includes versions."""
 
 
 class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The geo replication status."""
+    """The geo-replication status."""
 
     LIVE = "live"
-    """The geo replication is live."""
+    """Geo-replication is live."""
     BOOTSTRAP = "bootstrap"
-    """The geo replication is bootstrap."""
+    """Geo-replication is bootstrap."""
     UNAVAILABLE = "unavailable"
-    """The geo replication is unavailable."""
+    """Geo-replication is unavailable."""
 
 
 class ImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The immutability policy mode used in requests and responses."""
+    """The immutability policy mode."""
 
     MUTABLE = "mutable"
-    """The immutability policy is mutable. Should never be set, only returned."""
+    """Response only. The immutability policy is mutable."""
     LOCKED = "locked"
     """The immutability policy is locked."""
     UNLOCKED = "unlocked"
@@ -231,41 +229,39 @@ class LeaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ListBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The list blob includes parameter values."""
+    """Specifies additional datasets to include when listing blobs in a container."""
 
     COPY = "copy"
-    """The include copies."""
+    """Include copies."""
     DELETED = "deleted"
-    """The include deleted blobs."""
+    """Include deleted blobs."""
     METADATA = "metadata"
-    """The include metadata."""
+    """Include metadata."""
     SNAPSHOTS = "snapshots"
-    """The include snapshots."""
+    """Include snapshots."""
     UNCOMMITTED_BLOBS = "uncommittedblobs"
-    """The include uncommitted blobs."""
+    """Include uncommitted blobs."""
     VERSIONS = "versions"
-    """The include versions."""
+    """Include versions."""
     TAGS = "tags"
-    """The include tags."""
+    """Include tags."""
     IMMUTABILITY_POLICY = "immutabilitypolicy"
-    """The include immutable policy."""
+    """Include immutability policies."""
     LEGAL_HOLD = "legalhold"
-    """The include legal hold."""
+    """Include legal hold."""
     DELETED_WITH_VERSIONS = "deletedwithversions"
-    """The include deleted with versions."""
+    """Include deleted with versions."""
 
 
 class ListContainersIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Include this parameter to specify that the container's metadata be returned as part of the
-    response body.
-    """
+    """Specifies what additional information should be returned as part of the list operation."""
 
     METADATA = "metadata"
     """Include metadata."""
     DELETED = "deleted"
-    """Include deleted."""
+    """Include soft-deleted containers."""
     SYSTEM = "system"
-    """Include system."""
+    """Include system containers."""
 
 
 class PremiumPageBlobAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -296,7 +292,7 @@ class PremiumPageBlobAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PublicAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The public access types."""
+    """The public access type."""
 
     BLOB = "blob"
     """Blob access."""
@@ -318,16 +314,14 @@ class QueryFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class QueryRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The query request, note only SQL supported."""
+    """The query request type."""
 
     SQL = "SQL"
     """The SQL request query type."""
 
 
 class RehydratePriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If an object is in rehydrate pending state then this header is returned with priority of
-    rehydrate. Valid values are High and Standard.
-    """
+    """The priority of the rehydrate operation."""
 
     HIGH = "High"
     """The rehydrate priority is high."""
@@ -347,7 +341,7 @@ class SequenceNumberActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SKU types."""
+    """The account SKU."""
 
     STANDARD_LRS = "Standard_LRS"
     """The standard LRS SKU."""
@@ -501,7 +495,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
     """Incremental copy blob mismatch."""
     INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
-    """Incremental copy of earlier version snapshot not allowed."""
+    """Incremental copy of an earlier version snapshot is not allowed."""
     INCREMENTAL_COPY_SOURCE_MUST_BE_SNAPSHOT = "IncrementalCopySourceMustBeSnapshot"
     """Incremental copy source must be snapshot."""
     INFINITE_LEASE_DURATION_REQUIRED = "InfiniteLeaseDurationRequired"

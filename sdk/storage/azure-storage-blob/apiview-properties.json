@@ -4,7 +4,7 @@
         "azure.storage.blob.models.AccessPolicy": "Storage.Blob.AccessPolicy",
         "azure.storage.blob.models.ArrowConfiguration": "Storage.Blob.ArrowConfiguration",
         "azure.storage.blob.models.ArrowField": "Storage.Blob.ArrowField",
-        "azure.storage.blob.models.BlobHierarchyListSegment": "Storage.Blob.BlobHierarchyListSegment",
+        "azure.storage.blob.models.BlobHierarchyList": "Storage.Blob.BlobHierarchyList",
         "azure.storage.blob.models.BlobItemInternal": "Storage.Blob.BlobItem",
         "azure.storage.blob.models.BlobMetadata": "Storage.Blob.BlobMetadata",
         "azure.storage.blob.models.BlobName": "Storage.Blob.BlobName",
@@ -22,11 +22,11 @@
         "azure.storage.blob.models.DelimitedTextConfiguration": "Storage.Blob.DelimitedTextConfiguration",
         "azure.storage.blob.models.Error": "Storage.Blob.Error",
         "azure.storage.blob.models.FilterBlobItem": "Storage.Blob.FilterBlobItem",
-        "azure.storage.blob.models.FilterBlobSegment": "Storage.Blob.FilterBlobResponse",
+        "azure.storage.blob.models.FilterBlobSegment": "Storage.Blob.FilteredBlobResponse",
         "azure.storage.blob.models.GeoReplication": "Storage.Blob.GeoReplication",
         "azure.storage.blob.models.JsonTextConfiguration": "Storage.Blob.JsonTextConfiguration",
         "azure.storage.blob.models.KeyInfo": "Storage.Blob.KeyInfo",
-        "azure.storage.blob.models.ListBlobsHierarchySegmentResponse": "Storage.Blob.ListBlobsHierarchySegmentResponse",
+        "azure.storage.blob.models.ListBlobsHierarchicalResponse": "Storage.Blob.ListBlobsHierarchicalResponse",
         "azure.storage.blob.models.ListBlobsResponse": "Storage.Blob.ListBlobsResponse",
         "azure.storage.blob.models.ListContainersSegmentResponse": "Storage.Blob.ListContainersResponse",
         "azure.storage.blob.models.Logging": "Storage.Blob.Logging",
@@ -122,8 +122,12 @@
         "azure.storage.blob.aio.operations.ContainerOperations.change_lease": "Storage.Blob.Container.changeLease",
         "azure.storage.blob.operations.ContainerOperations.list_blob_flat_segment": "Storage.Blob.Container.listBlobs",
         "azure.storage.blob.aio.operations.ContainerOperations.list_blob_flat_segment": "Storage.Blob.Container.listBlobs",
+        "azure.storage.blob.operations.ContainerOperations.list_blob_flat_segment_apache_arrow": "Storage.Blob.Container.listBlobFlatSegmentApacheArrow",
+        "azure.storage.blob.aio.operations.ContainerOperations.list_blob_flat_segment_apache_arrow": "Storage.Blob.Container.listBlobFlatSegmentApacheArrow",
         "azure.storage.blob.operations.ContainerOperations.list_blob_hierarchy_segment": "Storage.Blob.Container.listBlobHierarchySegment",
         "azure.storage.blob.aio.operations.ContainerOperations.list_blob_hierarchy_segment": "Storage.Blob.Container.listBlobHierarchySegment",
+        "azure.storage.blob.operations.ContainerOperations.list_blob_hierarchy_segment_apache_arrow": "Storage.Blob.Container.listBlobHierarchySegmentApacheArrow",
+        "azure.storage.blob.aio.operations.ContainerOperations.list_blob_hierarchy_segment_apache_arrow": "Storage.Blob.Container.listBlobHierarchySegmentApacheArrow",
         "azure.storage.blob.operations.ContainerOperations.get_account_info": "Storage.Blob.Container.getAccountInfo",
         "azure.storage.blob.aio.operations.ContainerOperations.get_account_info": "Storage.Blob.Container.getAccountInfo",
         "azure.storage.blob.operations.BlobOperations.download": "Storage.Blob.Blob.download",
@@ -212,5 +216,6 @@
         "azure.storage.blob.aio.operations.PageBlobOperations.update_sequence_number": "Storage.Blob.PageBlob.setSequenceNumber",
         "azure.storage.blob.operations.PageBlobOperations.copy_incremental": "Storage.Blob.PageBlob.copyIncremental",
         "azure.storage.blob.aio.operations.PageBlobOperations.copy_incremental": "Storage.Blob.PageBlob.copyIncremental"
-    }
+    },
+    "CrossLanguageVersion": "dbc6a102b97c"
 }
