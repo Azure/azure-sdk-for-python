@@ -10,7 +10,7 @@ from io import IOBase
 import json
 from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
-from azure.core import AsyncPipelineClient
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -22,23 +22,88 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2, types as _types_models2
-from ...._utils.model_base import SdkJSONEncoder, _deserialize
-from ...._utils.serialization import Deserializer, Serializer
-from ....aio._configuration import BooleanClientConfiguration
-from ...operations._operations import (
-    build_property_false_lower_request,
-    build_property_false_mixed_request,
-    build_property_true_lower_request,
-    build_property_true_upper_request,
-)
+from .. import models as _models, types as _types
+from .._configuration import BooleanClientConfiguration
+from .._utils.model_base import SdkJSONEncoder, _deserialize
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+
+
+def build_property_true_lower_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/encode/boolean/property/true-lower"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_property_false_lower_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/encode/boolean/property/false-lower"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_property_true_upper_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/encode/boolean/property/true-upper"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_property_false_mixed_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/encode/boolean/property/false-mixed"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
 class PropertyOperations:
@@ -47,53 +112,53 @@ class PropertyOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~encode.boolean.aio.BooleanClient`'s
+        :class:`~encode.boolean.BooleanClient`'s
         :attr:`property` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: BooleanClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def true_lower(
-        self, value: _models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def true_lower(
+        self, value: _models.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """true_lower.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty
+        :type value: ~encode.boolean.models.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def true_lower(
-        self, value: _types_models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def true_lower(
+        self, value: _types.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """true_lower.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.types.BoolAsStringProperty
+        :type value: ~encode.boolean.types.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def true_lower(
+    def true_lower(
         self, value: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    ) -> _models.BoolAsStringProperty:
         """true_lower.
 
         :param value: Required.
@@ -102,21 +167,21 @@ class PropertyOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def true_lower(
-        self, value: Union[_models2.BoolAsStringProperty, _types_models2.BoolAsStringProperty, IO[bytes]], **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    @distributed_trace
+    def true_lower(
+        self, value: Union[_models.BoolAsStringProperty, _types.BoolAsStringProperty, IO[bytes]], **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """true_lower.
 
         :param value: Is either a BoolAsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty or
-         ~encode.boolean.property.types.BoolAsStringProperty or IO[bytes]
+        :type value: ~encode.boolean.models.BoolAsStringProperty or
+         ~encode.boolean.types.BoolAsStringProperty or IO[bytes]
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -131,7 +196,7 @@ class PropertyOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.BoolAsStringProperty] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BoolAsStringProperty] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -153,7 +218,7 @@ class PropertyOperations:
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -162,7 +227,7 @@ class PropertyOperations:
         if response.status_code not in [200]:
             if _stream:
                 try:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -171,7 +236,7 @@ class PropertyOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models2.BoolAsStringProperty, response.json())
+            deserialized = _deserialize(_models.BoolAsStringProperty, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -179,41 +244,41 @@ class PropertyOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def false_lower(
-        self, value: _models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def false_lower(
+        self, value: _models.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """false_lower.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty
+        :type value: ~encode.boolean.models.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def false_lower(
-        self, value: _types_models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def false_lower(
+        self, value: _types.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """false_lower.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.types.BoolAsStringProperty
+        :type value: ~encode.boolean.types.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def false_lower(
+    def false_lower(
         self, value: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    ) -> _models.BoolAsStringProperty:
         """false_lower.
 
         :param value: Required.
@@ -222,21 +287,21 @@ class PropertyOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def false_lower(
-        self, value: Union[_models2.BoolAsStringProperty, _types_models2.BoolAsStringProperty, IO[bytes]], **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    @distributed_trace
+    def false_lower(
+        self, value: Union[_models.BoolAsStringProperty, _types.BoolAsStringProperty, IO[bytes]], **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """false_lower.
 
         :param value: Is either a BoolAsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty or
-         ~encode.boolean.property.types.BoolAsStringProperty or IO[bytes]
+        :type value: ~encode.boolean.models.BoolAsStringProperty or
+         ~encode.boolean.types.BoolAsStringProperty or IO[bytes]
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -251,7 +316,7 @@ class PropertyOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.BoolAsStringProperty] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BoolAsStringProperty] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -273,7 +338,7 @@ class PropertyOperations:
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -282,7 +347,7 @@ class PropertyOperations:
         if response.status_code not in [200]:
             if _stream:
                 try:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -291,7 +356,7 @@ class PropertyOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models2.BoolAsStringProperty, response.json())
+            deserialized = _deserialize(_models.BoolAsStringProperty, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -299,41 +364,41 @@ class PropertyOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def true_upper(
-        self, value: _models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def true_upper(
+        self, value: _models.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """true_upper.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty
+        :type value: ~encode.boolean.models.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def true_upper(
-        self, value: _types_models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def true_upper(
+        self, value: _types.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """true_upper.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.types.BoolAsStringProperty
+        :type value: ~encode.boolean.types.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def true_upper(
+    def true_upper(
         self, value: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    ) -> _models.BoolAsStringProperty:
         """true_upper.
 
         :param value: Required.
@@ -342,21 +407,21 @@ class PropertyOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def true_upper(
-        self, value: Union[_models2.BoolAsStringProperty, _types_models2.BoolAsStringProperty, IO[bytes]], **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    @distributed_trace
+    def true_upper(
+        self, value: Union[_models.BoolAsStringProperty, _types.BoolAsStringProperty, IO[bytes]], **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """true_upper.
 
         :param value: Is either a BoolAsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty or
-         ~encode.boolean.property.types.BoolAsStringProperty or IO[bytes]
+        :type value: ~encode.boolean.models.BoolAsStringProperty or
+         ~encode.boolean.types.BoolAsStringProperty or IO[bytes]
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -371,7 +436,7 @@ class PropertyOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.BoolAsStringProperty] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BoolAsStringProperty] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -393,7 +458,7 @@ class PropertyOperations:
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -402,7 +467,7 @@ class PropertyOperations:
         if response.status_code not in [200]:
             if _stream:
                 try:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -411,7 +476,7 @@ class PropertyOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models2.BoolAsStringProperty, response.json())
+            deserialized = _deserialize(_models.BoolAsStringProperty, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -419,41 +484,41 @@ class PropertyOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def false_mixed(
-        self, value: _models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def false_mixed(
+        self, value: _models.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """false_mixed.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty
+        :type value: ~encode.boolean.models.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def false_mixed(
-        self, value: _types_models2.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    def false_mixed(
+        self, value: _types.BoolAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """false_mixed.
 
         :param value: Required.
-        :type value: ~encode.boolean.property.types.BoolAsStringProperty
+        :type value: ~encode.boolean.types.BoolAsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def false_mixed(
+    def false_mixed(
         self, value: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    ) -> _models.BoolAsStringProperty:
         """false_mixed.
 
         :param value: Required.
@@ -462,21 +527,21 @@ class PropertyOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def false_mixed(
-        self, value: Union[_models2.BoolAsStringProperty, _types_models2.BoolAsStringProperty, IO[bytes]], **kwargs: Any
-    ) -> _models2.BoolAsStringProperty:
+    @distributed_trace
+    def false_mixed(
+        self, value: Union[_models.BoolAsStringProperty, _types.BoolAsStringProperty, IO[bytes]], **kwargs: Any
+    ) -> _models.BoolAsStringProperty:
         """false_mixed.
 
         :param value: Is either a BoolAsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.boolean.property.models.BoolAsStringProperty or
-         ~encode.boolean.property.types.BoolAsStringProperty or IO[bytes]
+        :type value: ~encode.boolean.models.BoolAsStringProperty or
+         ~encode.boolean.types.BoolAsStringProperty or IO[bytes]
         :return: BoolAsStringProperty. The BoolAsStringProperty is compatible with MutableMapping
-        :rtype: ~encode.boolean.property.models.BoolAsStringProperty
+        :rtype: ~encode.boolean.models.BoolAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -491,7 +556,7 @@ class PropertyOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.BoolAsStringProperty] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BoolAsStringProperty] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -513,7 +578,7 @@ class PropertyOperations:
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -522,7 +587,7 @@ class PropertyOperations:
         if response.status_code not in [200]:
             if _stream:
                 try:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -531,7 +596,7 @@ class PropertyOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models2.BoolAsStringProperty, response.json())
+            deserialized = _deserialize(_models.BoolAsStringProperty, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
