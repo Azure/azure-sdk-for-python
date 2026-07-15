@@ -295,17 +295,23 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         .. note::
             When a message is received, the keys and any string values in this
             dictionary are returned as ``bytes``, not ``str`` (for example
-            ``{b"order_id": b"12345"}``). Access received properties using bytes
-            keys, and decode string values as needed::
+            ``{b"order_id": b"12345"}``). The property is ``None`` when the
+            message carries no application properties, so guard for that before
+            indexing. Access received properties using bytes keys, and decode
+            string values as needed::
 
-                value = message.application_properties.get(b"order_id")
+                props = message.application_properties or {}
+                value = props.get(b"order_id")
                 if isinstance(value, bytes):
                     value = value.decode("utf-8")
 
-            Non-string values (``int``, ``bool``, ``float``, :class:`uuid.UUID`,
-            ``datetime``) are returned as their native types. The same bytes
-            behavior applies to the raw AMQP ``annotations`` and
-            ``delivery_annotations`` accessed through ``raw_amqp_message``.
+            Non-string values are returned as decoded by the AMQP layer:
+            ``int``, ``bool``, ``float`` and :class:`uuid.UUID` keep their
+            native types, while an AMQP timestamp is returned as an integer
+            (milliseconds since the Unix epoch), not a
+            :class:`datetime.datetime`. The same bytes behavior applies to the
+            raw AMQP ``annotations`` and ``delivery_annotations`` accessed
+            through ``raw_amqp_message``.
 
         :rtype: dict[str or bytes, PrimitiveTypes] or None
         """
