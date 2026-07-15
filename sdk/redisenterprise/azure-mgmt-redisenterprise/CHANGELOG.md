@@ -11,14 +11,14 @@
   - Model `AccessPolicyAssignmentProperties` added property `access_string`
   - Model `AccessPolicyAssignmentProperties` added property `provisioning_error`
   - Added model `AccessPolicyAssignmentProvisioningError`
-  - Model `MigrationsOperations` added method `begin_cancel`
-  - Model `MigrationsOperations` added method `begin_start`
-  - Model `MigrationsOperations` added method `list`
+  - Operation group `MigrationsOperations` added method `begin_cancel`
+  - Operation group `MigrationsOperations` added method `begin_start`
+  - Operation group `MigrationsOperations` added method `list`
 
 ### Breaking Changes
 
   - Deleted or renamed client operation group `RedisEnterpriseManagementClient.migration`
-  - Deleted or renamed model `MigrationOperations`
+  - Deleted or renamed operation group `MigrationOperations`
 
 ## 4.0.0b2 (2026-06-12)
 
