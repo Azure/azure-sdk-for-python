@@ -267,7 +267,7 @@ class TestJobOperations:
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     def test_delete(self, mock_job_operation: JobOperations) -> None:
-        mock_job_operation.delete(name="random_name")
+        mock_job_operation.begin_delete(name="random_name")
         mock_job_operation._operation_2023_02_preview.begin_delete.assert_called_once()
         call_kwargs = mock_job_operation._operation_2023_02_preview.begin_delete.call_args.kwargs
         assert call_kwargs["id"] == "random_name"

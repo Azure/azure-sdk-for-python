@@ -92,7 +92,7 @@ def _get_rp():
         rp = "f"
     elif _is_on_app_service():
         rp = "a"
-    # TODO: Add VM scenario outside statsbeat
+    # TODO: Add VM scenario outside sdkstats
     # elif _is_on_vm():
     #     rp = 'v'
     elif _is_on_aks():

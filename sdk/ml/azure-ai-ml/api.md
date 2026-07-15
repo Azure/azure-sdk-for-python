@@ -10419,6 +10419,7 @@ namespace azure.ai.ml.operations
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
+                label: Optional[str] = None, 
                 **kwargs: Any
             ) -> DeploymentTemplate: ...
 
@@ -10894,8 +10895,8 @@ namespace azure.ai.ml.operations
             ) -> Job: ...
 
         @distributed_trace
-        @monitor_with_telemetry_mixin(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
-        def delete(
+        @monitor_with_activity(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
+        def begin_delete(
                 self, 
                 name: str, 
                 **kwargs: Any

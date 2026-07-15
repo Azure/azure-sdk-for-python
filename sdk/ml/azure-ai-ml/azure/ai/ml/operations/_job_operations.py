@@ -508,8 +508,8 @@ class JobOperations(_ScopeDependentOperations):
         return results
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(ops_logger, "Job.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, **kwargs: Any) -> LROPoller[None]:
+    @monitor_with_activity(ops_logger, "Job.Delete", ActivityType.PUBLICAPI)
+    def begin_delete(self, name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a job.
 
         :param name: The name of the job.
