@@ -11,6 +11,7 @@ import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
 import logging
+import queue
 
 from .._pyamqp import (
     utils,
@@ -156,6 +157,10 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
     ERROR_CODE_OUT_OF_RANGE: ServiceBusError,
     ERROR_CODE_TIMEOUT: OperationTimeoutError,
 }
+
+# Safety cap (seconds) for draining a receive link on close; the drain loop exits
+# early on quiescence, so a normal close returns well before this.
+RECEIVE_LINK_DRAIN_TIMEOUT = 5
 
 
 class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
@@ -798,6 +803,60 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
+
+    @staticmethod
+    def drain_and_release_messages(handler: "ReceiveClient") -> None:
+        """
+        Drain the receive link and release buffered/in-flight messages on close, so
+        they are not left locked at the broker until lock expiry. Intended for
+        non-session PEEK_LOCK receivers only (gated by the caller).
+        :param ReceiveClient handler: Client whose receive link to drain.
+        :rtype: None
+        """
+        # pylint: disable=protected-access
+        link = handler._link
+        if link is None or link._is_closed:
+            return  # cannot drain or settle through a closed/absent link
+        if link.current_link_credit > 0:
+            # Drain in-flight transfers into the buffer. Own try so a drain
+            # failure still falls through to the release below.
+            try:
+                outstanding = link.current_link_credit
+                link.flow(link_credit=0, drain=True)
+                deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
+                idle_cycles = 0
+                while True:
+                    remaining = deadline - time.time()
+                    if remaining <= 0:
+                        break
+                    before = handler._received_messages.qsize()
+                    # listen() directly, not do_work() (which re-issues credit at 0 and
+                    # undoes the drain). batch=outstanding assembles multi-frame transfers
+                    # in one cycle; cap each read by the remaining budget so close stays
+                    # bounded. pyamqp drops the drain echo, so stop after 2 idle cycles.
+                    wait = remaining if handler._socket_timeout is None else min(handler._socket_timeout, remaining)
+                    handler._connection.listen(wait=wait, batch=outstanding)
+                    if handler._received_messages.qsize() == before:
+                        idle_cycles += 1
+                        if idle_cycles >= 2:
+                            break
+                    else:
+                        idle_cycles = 0
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Draining the receive link on close failed.", exc_info=True)
+        # Release buffered deliveries (incl. credit==0 prefetch) so they are not
+        # left locked until lock expiry. Per-message try so one bad tag doesn't
+        # strand the rest; get_nowait handles the empty()/get race.
+        while True:
+            try:
+                frame, _ = handler._received_messages.get_nowait()
+            except queue.Empty:
+                break
+            try:
+                handler.settle_messages(frame[1], frame[2], "released")
+                handler._received_messages.task_done()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Releasing a buffered message on close failed.", exc_info=True)
 
     @staticmethod
     def settle_message_via_receiver_link(
