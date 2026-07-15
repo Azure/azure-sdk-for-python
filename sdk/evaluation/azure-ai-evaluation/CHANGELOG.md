@@ -1,15 +1,5 @@
 # Release History
 
-## 1.18.2 (Unreleased)
-
-### Bugs Fixed
-
-- Clarified `TaskNavigationEfficiencyValidator` error messages so they lead with the
-  azureml-assets input names (`actions`/`expected_actions`) and name their accepted SDK
-  aliases (`response`/`ground_truth`) as secondary. Previously a caller who supplied
-  `actions`/`expected_actions` could see an error referencing `response`/`ground_truth` —
-  names they never used — which was confusing. Message text only; no behavior change.
-
 ## 1.18.1 (2026-07-09)
 
 ### Bugs Fixed
