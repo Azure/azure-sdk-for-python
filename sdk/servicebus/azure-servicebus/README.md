@@ -255,6 +255,18 @@ with ServiceBusClient(fully_qualified_namespace, credential) as client:
 
 In this example, max_message_count declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
 
+> **NOTE:** When a message is received, the keys and any string values in `application_properties` are returned as `bytes`, not `str` (for example `{b"order_id": b"12345"}`). Access received properties using bytes keys and decode string values as needed:
+>
+> ```python
+> for message in received_message_array:
+>     value = message.application_properties.get(b"order_id")
+>     if isinstance(value, bytes):
+>         value = value.decode("utf-8")
+>     print(value)
+> ```
+>
+> Non-string values (`int`, `bool`, `float`, `uuid.UUID`, `datetime`) are returned as their native types.
+
 > **NOTE:** It should also be noted that `ServiceBusReceiver.peek_messages()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
