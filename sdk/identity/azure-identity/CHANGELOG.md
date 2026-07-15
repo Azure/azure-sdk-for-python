@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Added `AzureAuthorityHosts.AZURE_BLEUCLOUD` (`login.sovcloud-identity.fr`) for the Bleu national partner cloud (France). Interactive credentials' `authenticate` method now also defaults to the Bleu Azure Resource Manager scope when this authority is configured.
 - Credential HTTP pipeline policies can now be overridden via the `headers_policy`, `logging_policy`, `http_logging_policy`, `proxy_policy`, `user_agent_policy`, `custom_hook_policy`, and `retry_policy` keyword arguments when constructing credentials. The `per_retry_policies` and `per_call_policies` are also now supported. This allows users to inject custom policies or override settings of built-in policies. ([#46072](https://github.com/Azure/azure-sdk-for-python/pull/46072))
 
 ### Breaking Changes

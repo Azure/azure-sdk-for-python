@@ -26,6 +26,7 @@ ABC = abc.ABC
 _LOGGER = logging.getLogger(__name__)
 
 _DEFAULT_AUTHENTICATE_SCOPES = {
+    "https://" + KnownAuthorities.AZURE_BLEUCLOUD: ("https://management.sovcloud-api.fr//.default",),
     "https://" + KnownAuthorities.AZURE_CHINA: ("https://management.core.chinacloudapi.cn//.default",),
     "https://" + KnownAuthorities.AZURE_GOVERNMENT: ("https://management.core.usgovcloudapi.net//.default",),
     "https://" + KnownAuthorities.AZURE_PUBLIC_CLOUD: ("https://management.core.windows.net//.default",),
