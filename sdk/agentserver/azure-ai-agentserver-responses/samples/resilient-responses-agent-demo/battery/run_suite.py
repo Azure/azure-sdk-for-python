@@ -577,20 +577,25 @@ def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
         f"waiting {RESTART_WAIT_S}s for restore + recovery ..."
     )
     time.sleep(RESTART_WAIT_S)
-    # recover: reconnect (stream) or poll (non-stream)
+    # AUTHORITATIVE terminal via non-streaming GET poll (no stream TTL). The SSE
+    # stream typically expires across the ~150s restart window, so — for BOTH
+    # stream and non-stream runs — the stored response snapshot is the source of
+    # truth for the terminal. For stream runs we ALSO reconnect the SSE as
+    # supplementary continuity evidence (in_progress reset / re-assembled events).
+    term_res = poll_terminal(rid, d / "poll.postcrash.jsonl")
+    term = term_res.get("json", {}).get("status")
     if stream:
-        rc = reconnect_stream(rid, 0, d / "reconnect.sse")
-        in_progress_reset = "response.in_progress" in rc["event_types"]
-        created = sum(1 for t in rc["event_types"] if t == "response.created")
-        term = rc["terminal"]
-        recov = {
-            "reconnect_terminal": term,
-            "n_created_assembled": created,
-            "in_progress_reset_present": in_progress_reset,
-        }
+        try:
+            rc = reconnect_stream(rid, 0, d / "reconnect.sse")
+            recov = {
+                "poll_terminal": term,
+                "stream_reconnect_terminal": rc["terminal"],
+                "n_created_assembled": sum(1 for t in rc["event_types"] if t == "response.created"),
+                "in_progress_reset_present": "response.in_progress" in rc["event_types"],
+            }
+        except Exception as e:  # pylint: disable=broad-except  # noqa: BLE001
+            recov = {"poll_terminal": term, "stream_reconnect_terminal": f"(unavailable: {e!r})"}
     else:
-        term_res = poll_terminal(rid, d / "poll.postcrash.jsonl")
-        term = term_res.get("json", {}).get("status")
         recov = {"poll_terminal": term}
     cap.stop()
     time.sleep(2)

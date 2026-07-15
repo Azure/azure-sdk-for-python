@@ -150,19 +150,25 @@ def main():
     worker_instances = sorted(set(re.findall(r"worker-\d+-[a-f0-9]+-\d+", txt)))
     taskmgr_instances = sorted(set(re.findall(r"instance=(worker-\d+-[a-f0-9]+-\d+)", txt)))
 
-    # ── DETERMINISTIC recovery proof (no log scraping required) ─────────────
-    # Recovery is proven by four authoritative facts: (a) the crash hit the run's
-    # OWN sandbox (session affinity — else we killed an unrelated replica and the
-    # run only *looks* recovered), (b) we fired a hard crash and the streaming
-    # connection dropped (the sandbox died), (c) we observed pre-crash
-    # checkpointed progress, and (d) the response reached `completed` AFTER the
-    # crash — read via the non-streaming GET snapshot (no stream TTL). The log
-    # markers below are supplementary evidence only.
-    crash_confirmed = bool(crash.get("sandbox_dropped"))
+    # ── DETERMINISTIC recovery proof ───────────────────────────────────────
+    # Recovery is proven by: (a) the crash hit the run's OWN sandbox (session
+    # affinity — else we killed an unrelated replica), (b) pre-crash checkpointed
+    # progress, (c) the sandbox actually died AND restarted, and (d) the response
+    # reached `completed` AFTER the crash (authoritative non-streaming GET).
+    #
+    # (c) "the sandbox died + restarted" is confirmed by EITHER a dropped crash
+    # connection OR restart evidence (a NEW worker instance / reclaim / recovered
+    # markers). The connection-drop alone is unreliable — the handler may flush a
+    # terminal SSE event before ``os._exit`` so the client sees a clean close — so
+    # we accept either signal (and both being absent means the crash was a no-op).
+    restart_evidence = (
+        len(worker_instances) > 1 or markers["reclaimed_stale_task"] > 0 or markers["recovered_task_active"] > 0
+    )
+    crash_confirmed = bool(crash.get("sandbox_dropped")) or restart_evidence
     pre_crash_progress = p["items_done"] >= 1
     recovery_proven = crash_hit_target and crash_confirmed and pre_crash_progress and terminal == "completed"
     # Supplementary, log-derived restart evidence (informational).
-    log_restart_evidence = len(worker_instances) > 1 or markers["reclaimed_stale_task"] > 0
+    log_restart_evidence = restart_evidence
 
     verdict = {
         "rid": rid,
@@ -171,6 +177,7 @@ def main():
         "pre_crash_items_done": p["items_done"],
         "crash_hit_target": crash_hit_target,
         "crash_confirmed": crash_confirmed,
+        "sandbox_dropped_raw": bool(crash.get("sandbox_dropped")),
         "crash_session": crash.get("crash_session"),
         "authoritative_terminal": terminal,
         "recovery_proven": recovery_proven,
