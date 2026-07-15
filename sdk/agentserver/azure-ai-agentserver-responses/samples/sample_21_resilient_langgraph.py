@@ -91,8 +91,8 @@ class ConversationState(typing.TypedDict):
 
 # ─── Graph nodes ────────────────────────────────────────────────────────────
 
-_STEP_DELAY = 0.4  # Seconds per non-streaming node — makes progress observable.
-_TOKEN_DELAY = 0.08  # Seconds between streamed tokens — makes streaming visible.
+_STEP_DELAY = float(os.environ.get("LANGGRAPH_STEP_DELAY_SEC", "0.4"))  # Seconds per non-streaming node.
+_TOKEN_DELAY = float(os.environ.get("LANGGRAPH_TOKEN_DELAY_SEC", "0.08"))  # Seconds between streamed tokens.
 
 
 async def analyze_input(state: ConversationState) -> dict[str, Any]:
@@ -220,7 +220,10 @@ def _reply_already_persisted(stream: ResponseEventStream) -> bool:
 
 async def _fork_from_checkpoint(graph: Any, config: dict[str, Any], checkpoint_id: str, new_message: str) -> bool:
     """Fork graph state from a stable checkpoint with a new (steered) message."""
-    target_config = {"configurable": {**config["configurable"], "checkpoint_id": checkpoint_id}}
+    # The sqlite checkpointer requires ``checkpoint_ns`` on the config it writes
+    # through; the resilient context only carries ``thread_id``, so seed the
+    # default namespace explicitly before resolving + forking the state.
+    target_config = {"configurable": {"checkpoint_ns": "", **config["configurable"], "checkpoint_id": checkpoint_id}}
     target = await graph.aget_state(target_config)
     if not target or not target.config:
         return False
