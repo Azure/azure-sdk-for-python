@@ -427,7 +427,8 @@ def decode_payload(buffer: memoryview) -> Message:
 # wire field, so its _definition uses a None sentinel for that slot, which is
 # excluded from the count here.
 _PERFORMATIVE_FIELD_COUNT: Dict[int, int] = {
-    performative._code: sum(1 for field in performative._definition if field is not None)
+    # pylint: disable=protected-access
+    performative._code: sum(1 for field in performative._definition if field is not None)  # type: ignore
     for performative in (
         performatives.OpenFrame,
         performatives.BeginFrame,
@@ -463,6 +464,12 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
                 f"AMQP frame field count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
             )
         buffer = data[12:]
+    elif compound_list_type == 0x45:
+        # list0 0x45: an empty list with no size or count bytes. A sender may
+        # encode a performative whose fields are all omitted this way, so treat
+        # it as zero fields and let the padding below fill in the nulls.
+        count = 0
+        buffer = data[4:]
     else:
         # list8 0xc0: data[4] is size, data[5] is count (1 byte, bounded at 255).
         count = data[5]

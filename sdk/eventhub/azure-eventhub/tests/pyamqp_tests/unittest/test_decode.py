@@ -94,6 +94,27 @@ def test_short_transfer_pads_fields_and_preserves_payload():
     assert bytes(transfer.payload) == b"\xde\xad"
 
 
+def _list0_frame(code):
+    # Build a described performative whose body is an AMQP list0 (0x45): the most
+    # compact "all fields omitted" encoding, carrying no size or count bytes.
+    # described-type ctor (0x00), ulong ctor (0x53), descriptor code, list0 (0x45).
+    return memoryview(bytes([0x00, 0x53, code, 0x45]))
+
+
+# A performative with every field omitted may arrive as a list0 (0x45) body,
+# which has no count byte. The decoder must treat it as zero fields and pad up
+# to the full field count instead of indexing past the end of the buffer.
+@pytest.mark.parametrize("frame_cls", [performatives.EndFrame, performatives.CloseFrame])
+def test_list0_performative_pads_to_full_field_count(frame_cls):
+    frame = _list0_frame(frame_cls._code)
+    frame_type, fields = decode_frame(frame)
+    assert frame_type == frame_cls._code
+    assert len(fields) == _PERFORMATIVE_FIELD_COUNT[frame_cls._code]
+    # Every omitted field reads back as None and unpacking must not raise.
+    performative = frame_cls(*fields)
+    assert performative.error is None
+
+
 @pytest.mark.parametrize(
     "frame_cls,expected_count",
     [
