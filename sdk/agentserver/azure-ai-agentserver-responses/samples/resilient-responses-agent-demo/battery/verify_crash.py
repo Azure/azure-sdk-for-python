@@ -79,10 +79,18 @@ def main():
     d.mkdir(parents=True, exist_ok=True)
     log(f"artifacts: {d}")
 
-    # 1. start a resilient streaming run; stop streaming once 1 item is checkpointed
-    b = rs.body("Research topic: the history of lighthouses [crash-proof]", store=True, background=True, stream=True)
+    # 1. start a resilient streaming run PINNED to a fresh session so the crash
+    #    can target the run's own sandbox; stream until 1 item is checkpointed.
+    sess = rs.new_session()
+    b = rs.body(
+        "Research topic: the history of lighthouses [crash-proof]",
+        store=True,
+        background=True,
+        stream=True,
+        session=sess,
+    )
     (d / "request.json").write_text(json.dumps(b, indent=2))
-    log("starting resilient run; streaming until 1 item done ...")
+    log(f"starting resilient run (session={sess}); streaming until 1 item done ...")
     p = rs.wait_progress_stream(b, d / "stream.precrash.sse", want_items=1, max_wait=120)
     rid, sid = p["response_id"], p["session_id"]
     log(f"  rid={rid}  session={sid}  pre-crash items_done={p['items_done']}")
@@ -92,10 +100,13 @@ def main():
     cap.start()
     time.sleep(3)
 
-    # 3. fire crash (kills the single container instance -> takes target handler down)
-    log("firing crash (os._exit(137)) ...")
-    crash = rs.fire_crash()
+    # 3. fire crash PINNED to the run's session so it kills the sandbox actually
+    #    running the in-flight response (not an unrelated replica).
+    log(f"firing crash pinned to session={sess} (os._exit(137)) ...")
+    crash = rs.fire_crash(sess)
     (d / "crash.json").write_text(json.dumps(crash, indent=2))
+    crash_hit_target = crash.get("crash_session") == sess and sid == sess
+    log(f"  crash_hit_target={crash_hit_target} (crash_session={crash.get('crash_session')} run_session={sid})")
 
     # 4. keep capturing across the restart + recovery window
     log(f"capturing logs across restart for {RESTART_WAIT_S}s ...")
@@ -140,21 +151,25 @@ def main():
     taskmgr_instances = sorted(set(re.findall(r"instance=(worker-\d+-[a-f0-9]+-\d+)", txt)))
 
     # ── DETERMINISTIC recovery proof (no log scraping required) ─────────────
-    # Recovery is proven by three authoritative facts: (a) we fired a hard crash
-    # and the streaming connection dropped (the sandbox died), (b) we observed
-    # pre-crash checkpointed progress, and (c) the response reached `completed`
-    # AFTER the crash — read via the non-streaming GET snapshot (no stream TTL).
-    # The log markers below are supplementary evidence only.
+    # Recovery is proven by four authoritative facts: (a) the crash hit the run's
+    # OWN sandbox (session affinity — else we killed an unrelated replica and the
+    # run only *looks* recovered), (b) we fired a hard crash and the streaming
+    # connection dropped (the sandbox died), (c) we observed pre-crash
+    # checkpointed progress, and (d) the response reached `completed` AFTER the
+    # crash — read via the non-streaming GET snapshot (no stream TTL). The log
+    # markers below are supplementary evidence only.
     crash_confirmed = bool(crash.get("sandbox_dropped"))
     pre_crash_progress = p["items_done"] >= 1
-    recovery_proven = crash_confirmed and pre_crash_progress and terminal == "completed"
+    recovery_proven = crash_hit_target and crash_confirmed and pre_crash_progress and terminal == "completed"
     # Supplementary, log-derived restart evidence (informational).
     log_restart_evidence = len(worker_instances) > 1 or markers["reclaimed_stale_task"] > 0
 
     verdict = {
         "rid": rid,
         "session": sid,
+        "requested_session": sess,
         "pre_crash_items_done": p["items_done"],
+        "crash_hit_target": crash_hit_target,
         "crash_confirmed": crash_confirmed,
         "crash_session": crash.get("crash_session"),
         "authoritative_terminal": terminal,
@@ -169,6 +184,7 @@ def main():
     }
     (d / "verdict.json").write_text(json.dumps(verdict, indent=2))
     log("\n===== CRASH-RECOVERY VERDICT =====")
+    log(f"  crash hit target        : {crash_hit_target} (session affinity)")
     log(f"  crash confirmed (drop)  : {crash_confirmed}")
     log(f"  pre-crash progress      : {pre_crash_progress} (items_done={p['items_done']})")
     log(f"  authoritative terminal  : {terminal}")
@@ -184,8 +200,8 @@ def main():
     # Non-zero exit if the deterministic proof failed (usable as a battery gate).
     if not recovery_proven:
         raise SystemExit(
-            f"crash-recovery NOT proven: crash_confirmed={crash_confirmed} "
-            f"pre_crash_progress={pre_crash_progress} terminal={terminal!r}"
+            f"crash-recovery NOT proven: crash_hit_target={crash_hit_target} "
+            f"crash_confirmed={crash_confirmed} pre_crash_progress={pre_crash_progress} terminal={terminal!r}"
         )
 
 

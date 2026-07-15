@@ -70,7 +70,21 @@ save_session() {
         echo "RESPONSE_ID=\"${RESPONSE_ID:-}\""
         echo "PREV_RESPONSE_ID=\"${PREV_RESPONSE_ID:-}\""
         echo "LAST_SEQUENCE_NUMBER=\"${LAST_SEQUENCE_NUMBER:-0}\""
+        echo "AGENT_SESSION_ID=\"${AGENT_SESSION_ID:-}\""
     } > "$SESSION_FILE"
+}
+
+# Mint a sandbox-affinity session id. agent_session_id is a top-level
+# create-response body property and one session id == one sandbox/container, so
+# pinning it makes start/steer/crash all land on the SAME sandbox — a 'crash'
+# then kills the container actually running the in-flight response. uuidgen is
+# not always installed, so fall back to python3.
+mint_session_id() {
+    if command -v uuidgen >/dev/null 2>&1; then
+        echo "demo-$(uuidgen | tr 'A-Z' 'a-z' | tr -d '-' | cut -c1-12)"
+    else
+        echo "demo-$(python3 -c 'import uuid; print(uuid.uuid4().hex[:12])')"
+    fi
 }
 
 ensure_token() {
@@ -237,11 +251,13 @@ cmd_start() {
     RESPONSE_ID=""
     PREV_RESPONSE_ID=""
     LAST_SEQUENCE_NUMBER="0"
+    AGENT_SESSION_ID="$(mint_session_id)"  # fresh sandbox-affinity session per run
     save_session
     ensure_token
 
     echo -e "${GREEN}Starting a fresh research response${RESET}"
     echo -e "${DIM}Topic: ${topic}${RESET}"
+    echo -e "${DIM}Session: ${AGENT_SESSION_ID}${RESET}"
 
     local body
     body=$(python3 -c "
@@ -249,11 +265,12 @@ import json, sys
 print(json.dumps({
     'model': '$MODEL',
     'input': sys.argv[1],
+    'agent_session_id': sys.argv[2],
     'stream': True,
     'store': True,
     'background': True,
 }))
-" "$topic")
+" "$topic" "$AGENT_SESSION_ID")
 
     local response
     # POST with stream=true returns SSE; pipe through stream_sse which
@@ -311,11 +328,12 @@ print(json.dumps({
     'model': '$MODEL',
     'input': sys.argv[1],
     'previous_response_id': sys.argv[2],
+    'agent_session_id': sys.argv[3],
     'stream': True,
     'store': True,
     'background': True,
 }))
-" "$topic" "$RESPONSE_ID")
+" "$topic" "$RESPONSE_ID" "${AGENT_SESSION_ID:-}")
 
     PREV_RESPONSE_ID="$RESPONSE_ID"
     RESPONSE_ID=""
@@ -356,10 +374,30 @@ cmd_crash() {
     load_session
     ensure_token
 
-    echo -e "${RED}Triggering container crash via input=\"crash\"${RESET}"
-    echo -e "${DIM}(requires DEMO_MODE=1 on the server)${RESET}"
+    # Pin the crash to the run's session so it kills the sandbox actually running
+    # the in-flight response (not an unrelated replica). If no session is
+    # persisted (crash invoked standalone), mint one so the request is at least
+    # sandbox-consistent.
+    if [[ -z "${AGENT_SESSION_ID:-}" ]]; then
+        AGENT_SESSION_ID="$(mint_session_id)"
+        save_session
+    fi
 
-    local body='{"model": "'"$MODEL"'", "input": "crash", "stream": true, "store": true, "background": true}'
+    echo -e "${RED}Triggering container crash via input=\"crash\"${RESET}"
+    echo -e "${DIM}(requires DEMO_MODE=1 on the server; session=${AGENT_SESSION_ID})${RESET}"
+
+    local body
+    body=$(python3 -c "
+import json, sys
+print(json.dumps({
+    'model': '$MODEL',
+    'input': 'crash',
+    'agent_session_id': sys.argv[1],
+    'stream': True,
+    'store': True,
+    'background': True,
+}))
+" "$AGENT_SESSION_ID")
     # The crash POST returns SSE briefly (response.created + response.failed
     # if our handler emits before exit) — pipe through stream_sse so we see
     # whatever comes out before the container dies. The renderer's

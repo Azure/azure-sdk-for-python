@@ -76,11 +76,26 @@ def url(path: str = "") -> str:
     return f"{ENDPOINT_BASE}{path}{sep}api-version={API_VERSION}"
 
 
-def body(input_text: str, *, store: bool, background: bool, stream: bool, prev: str | None = None) -> dict:
+def body(
+    input_text: str, *, store: bool, background: bool, stream: bool, prev: str | None = None, session: str | None = None
+) -> dict:
     b = {"model": MODEL, "input": input_text, "store": store, "background": background, "stream": stream}
     if prev:
         b["previous_response_id"] = prev
+    if session:
+        # Session affinity: one agent_session_id == one sandbox/container. Pinning
+        # it makes start/steer/crash for a run all land on the SAME sandbox, so a
+        # 'crash' request kills the container actually running the in-flight
+        # response (not an unrelated replica). Top-level create-response body prop.
+        b["agent_session_id"] = session
     return b
+
+
+def new_session() -> str:
+    """Mint a fresh sandbox-affinity session id for a run (``demo-<uuid>``)."""
+    import uuid  # pylint: disable=import-outside-toplevel
+
+    return f"demo-{uuid.uuid4().hex[:12]}"
 
 
 # ---- SSE parsing -----------------------------------------------------------
@@ -257,16 +272,25 @@ def cancel(rid: str) -> dict:
         return {"status_code": r.status_code, "json": {"_raw": r.text}}
 
 
-def fire_crash() -> dict:
-    """Crash the (single) hosted sandbox via a streaming 'crash' request.
+def fire_crash(session: str) -> dict:
+    """Crash the sandbox running the in-flight run by pinning ``agent_session_id``.
 
-    Hosted agents run a single sandbox, so this reliably kills the sandbox
-    running the in-flight resilient task. ``os._exit(137)`` drops the streaming
-    connection mid-flight, which we detect as the positive "sandbox went down"
-    signal. The platform restores the sandbox within ~2 min and the resilient
-    task recovers.
+    A hosted agent runs one sandbox PER SESSION, so an unpinned 'crash' POST lands
+    on an arbitrary replica and kills the wrong container — the target run then
+    completes normally and merely *looks* recovered. Pinning the crash to the
+    run's own ``session`` guarantees it kills the container actually executing the
+    in-flight resilient task. ``os._exit(137)`` drops the streaming connection
+    mid-flight (our positive "sandbox went down" signal); the platform restores
+    the sandbox within ~2 min and the resilient task recovers.
+
+    :param session: The run's ``agent_session_id`` — the crash MUST target it.
+    :returns: ``sandbox_dropped`` (connection dropped), ``crash_session`` (the
+        sandbox that actually served the crash, from the echoed
+        ``x-agent-session-id`` header), and ``requested_session`` (what we asked
+        for). ``crash_session == requested_session`` proves the crash hit the
+        target sandbox.
     """
-    b = body("crash", store=True, background=True, stream=True)
+    b = body("crash", store=True, background=True, stream=True, session=session)
     dropped = False
     sid = None
     err = None
@@ -288,7 +312,7 @@ def fire_crash() -> dict:
     except Exception as e:  # any transport drop counts as the sandbox dying
         dropped = True
         err = repr(e)
-    return {"sandbox_dropped": dropped, "crash_session": sid, "err": err}
+    return {"sandbox_dropped": dropped, "crash_session": sid, "requested_session": session, "err": err}
 
 
 def steer_crash(rid: str) -> dict:
@@ -515,7 +539,16 @@ def case_reconnect(d: Path, combo: dict) -> dict:
 def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
     from verify_crash import ContinuousLogCapture  # lazy: avoid import cycle
 
-    b = body("Research topic: the evolution of writing systems [crash]", store=True, background=True, stream=stream)
+    # Pin a session so the run AND the crash land on the SAME sandbox — otherwise
+    # the crash kills an unrelated replica and the run only *looks* recovered.
+    sess = new_session()
+    b = body(
+        "Research topic: the evolution of writing systems [crash]",
+        store=True,
+        background=True,
+        stream=stream,
+        session=sess,
+    )
     (d / "request.json").write_text(json.dumps({"url": url("/responses"), "body": b}, indent=2))
     if stream:
         p = wait_progress_stream(b, d / "stream.precrash.sse", want_items=1, max_wait=120)
@@ -534,10 +567,15 @@ def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
     cap = ContinuousLogCapture(sid, d / "server.continuous.log")
     cap.start()
     time.sleep(3)
-    log(f"  crashing the single sandbox via streaming 'crash' (rid={rid}) ...")
-    crash = fire_crash()
+    log(f"  crashing the run's OWN sandbox (session={sess}, rid={rid}) ...")
+    crash = fire_crash(sess)
     (d / "crash.json").write_text(json.dumps(crash, indent=2))
-    log(f"  sandbox_dropped={crash.get('sandbox_dropped')}; waiting {RESTART_WAIT_S}s for restore + recovery ...")
+    # The crash must have hit the SAME sandbox as the run (session affinity).
+    crash_hit_target = crash.get("crash_session") == sess and sid == sess
+    log(
+        f"  sandbox_dropped={crash.get('sandbox_dropped')} crash_hit_target={crash_hit_target}; "
+        f"waiting {RESTART_WAIT_S}s for restore + recovery ..."
+    )
     time.sleep(RESTART_WAIT_S)
     # recover: reconnect (stream) or poll (non-stream)
     if stream:
@@ -572,20 +610,25 @@ def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
     recovered = len(re.findall(r"Recovered task .* is now active", both))
     recov.update(
         {
+            "crash_hit_target": crash_hit_target,
+            "crash_session": crash.get("crash_session"),
+            "run_session": sid,
             "reclaim_markers": reclaim,
             "recovered_markers": recovered,
             "recovery_markers_present": reclaim > 0 or recovered > 0,
         }
     )
-    ok = term == "completed"
+    # A recovery claim is only valid if the crash actually hit the run's sandbox.
+    ok = term == "completed" and crash_hit_target
     res = {
         "ok": ok,
         "terminal": term,
+        "crash_hit_target": crash_hit_target,
         "response_id": rid,
         "session_id": sid,
         "pre_crash": pre,
         "recovery": recov,
-        "assert": "single-sandbox: resilient run recovered to completed after a mid-run crash",
+        "assert": "session-pinned crash hit the run's own sandbox AND the run recovered to completed",
     }
     return res
 
@@ -626,7 +669,15 @@ def case_steering(d: Path, combo: dict) -> dict:
 def case_steering_crash(d: Path, combo: dict) -> dict:
     from verify_crash import ContinuousLogCapture  # lazy: avoid import cycle
 
-    b = body("Research topic: the history of clocks [steerXcrash-A]", store=True, background=True, stream=True)
+    # Pin a session so start + steer + crash all land on the SAME sandbox.
+    sess = new_session()
+    b = body(
+        "Research topic: the history of clocks [steerXcrash-A]",
+        store=True,
+        background=True,
+        stream=True,
+        session=sess,
+    )
     (d / "request.json").write_text(json.dumps(b, indent=2))
     p = wait_progress_stream(b, d / "streamA.sse", want_items=1, max_wait=120)
     rid, sid = p["response_id"], p["session_id"]
@@ -636,6 +687,7 @@ def case_steering_crash(d: Path, combo: dict) -> dict:
         background=True,
         stream=False,
         prev=rid,
+        session=sess,
     )
     steer = post_json(sb)
     (d / "steer.response.json").write_text(json.dumps(steer["json"], indent=2))
@@ -644,10 +696,14 @@ def case_steering_crash(d: Path, combo: dict) -> dict:
     cap = ContinuousLogCapture(sid, d / "server.continuous.log")
     cap.start()
     time.sleep(3)
-    log("  crashing the single sandbox via streaming 'crash' after steer ...")
-    crash = fire_crash()
+    log(f"  crashing the run's OWN sandbox (session={sess}) after steer ...")
+    crash = fire_crash(sess)
     (d / "crash.json").write_text(json.dumps(crash, indent=2))
-    log(f"  sandbox_dropped={crash.get('sandbox_dropped')}; waiting {RESTART_WAIT_S}s for restore + recovery ...")
+    crash_hit_target = crash.get("crash_session") == sess and sid == sess
+    log(
+        f"  sandbox_dropped={crash.get('sandbox_dropped')} crash_hit_target={crash_hit_target}; "
+        f"waiting {RESTART_WAIT_S}s for restore + recovery ..."
+    )
     time.sleep(RESTART_WAIT_S)
     term_res = poll_terminal(steered_rid, d / "poll.postcrash.jsonl") if steered_rid else {}
     status = term_res.get("json", {}).get("status")
@@ -664,15 +720,17 @@ def case_steering_crash(d: Path, combo: dict) -> dict:
     reclaim = len(re.findall(r"Reclaimed stale task", both))
     recovered = len(re.findall(r"Recovered task .* is now active", both))
     return {
-        "ok": status == "completed",
+        "ok": status == "completed" and crash_hit_target,
         "terminal": status,
+        "crash_hit_target": crash_hit_target,
+        "crash_session": crash.get("crash_session"),
         "response_id": rid,
         "steered_response_id": steered_rid,
         "session_id": sid,
         "reclaim_markers": reclaim,
         "recovered_markers": recovered,
         "recovery_markers_present": reclaim > 0 or recovered > 0,
-        "assert": "steered input survives single-sandbox crash; recovered run completes",
+        "assert": "session-pinned crash hit the run's sandbox; steered input survives; recovered run completes",
     }
 
 
