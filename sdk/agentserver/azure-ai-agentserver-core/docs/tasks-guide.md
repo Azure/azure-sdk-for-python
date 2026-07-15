@@ -886,6 +886,23 @@ JSON-only. Use a dedicated checkpointer (LangGraph SqliteSaver,
 your own DB, etc.) for large multi-turn state, and keep `metadata`
 to small watermarks and dedup tokens.
 
+**Q. I compose LangGraph with a resilient task. How do I fork its state on
+steer/recovery, and why do I get `KeyError: 'checkpoint_ns'`?**
+A. On a steered or crash-recovered turn, re-run from the last STABLE graph
+checkpoint (recorded in `ctx.metadata`) rather than resuming the graph's latest
+(possibly half-executed) tip — otherwise you mis-attribute the turn's input or
+lose work. To fork, resolve that checkpoint with
+`graph.get_state({"configurable": {"thread_id": ..., "checkpoint_id": cp}})` and
+`update_state(...)`. The catch: LangGraph's sqlite checkpointer (`SqliteSaver` /
+`AsyncSqliteSaver`) requires `checkpoint_ns` on the config it writes through, but
+a resilient task only carries `thread_id` — so seed the default namespace
+explicitly (`"checkpoint_ns": ""`) in that config, or the write raises
+`KeyError: 'checkpoint_ns'`. And use `Command(resume=...)` only when the graph is
+genuinely parked at an `interrupt()` (the normal next turn) — never to "resume" a
+crash-drifted graph pending a non-interrupt node. See
+`samples/resilient_langgraph` (invocations) and the responses
+`sample_21_resilient_langgraph` for a worked pattern.
+
 **Q. What if my handler ignores `ctx.cancel`?**
 A. Cooperative cancel is a request; nothing forces the handler to
 stop. If your handler must be interruptible, check
