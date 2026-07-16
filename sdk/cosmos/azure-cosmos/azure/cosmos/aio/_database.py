@@ -179,7 +179,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[dict[str, Any]] = None,
         change_feed_policy: Optional[dict[str, Any]] = None,
         full_text_policy: Optional[dict[str, Any]] = None,
-        global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
+        global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -218,10 +218,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -265,7 +265,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[dict[str, Any]] = None,
         change_feed_policy: Optional[dict[str, Any]] = None,
         full_text_policy: Optional[dict[str, Any]] = None,
-        global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
+        global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[True],
         **kwargs: Any
     ) -> tuple[ContainerProxy, CosmosDict]:
@@ -304,10 +304,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -376,10 +376,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -420,7 +420,7 @@ class DatabaseProxy(object):
         computed_properties = kwargs.pop('computed_properties', None)
         change_feed_policy = kwargs.pop('change_feed_policy', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
-        global_secondary_index_definition = kwargs.pop('global_secondary_index_definition', None)
+        global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
 
         session_token = kwargs.get('session_token')
@@ -468,8 +468,8 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-        if global_secondary_index_definition is not None:
-            gsi_dict = await self._resolve_gsi_definition(global_secondary_index_definition)
+        if global_secondary_index is not None:
+            gsi_dict = await self._resolve_gsi_definition(global_secondary_index)
             definition["globalSecondaryIndexDefinition"] = gsi_dict
             definition["materializedViewDefinition"] = gsi_dict
         request_options = _build_options(kwargs)
@@ -500,7 +500,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[dict[str, Any]] = None,
         change_feed_policy: Optional[dict[str, Any]] = None,
         full_text_policy: Optional[dict[str, Any]] = None,
-        global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
+        global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -541,10 +541,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -570,7 +570,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[dict[str, Any]] = None,
         change_feed_policy: Optional[dict[str, Any]] = None,
         full_text_policy: Optional[dict[str, Any]] = None,
-        global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
+        global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[True],
         **kwargs: Any
     ) -> tuple[ContainerProxy, CosmosDict]:
@@ -611,10 +611,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -667,10 +667,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -694,7 +694,7 @@ class DatabaseProxy(object):
         computed_properties = kwargs.pop('computed_properties', None)
         change_feed_policy = kwargs.pop('change_feed_policy', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
-        global_secondary_index_definition = kwargs.pop('global_secondary_index_definition', None)
+        global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
 
         session_token = kwargs.get('session_token')
@@ -739,7 +739,7 @@ class DatabaseProxy(object):
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
-                global_secondary_index_definition=global_secondary_index_definition,
+                global_secondary_index=global_secondary_index,
                 return_properties=return_properties,
                 **kwargs
             )
@@ -773,7 +773,7 @@ class DatabaseProxy(object):
 
     async def _resolve_gsi_definition(
         self,
-        global_secondary_index_definition: Union["GlobalSecondaryIndexDefinition", dict[str, Any]],
+        global_secondary_index: Union["GlobalSecondaryIndexDefinition", dict[str, Any]],
     ) -> dict[str, Any]:
         """Serialize a GSI definition and populate the source container's resource id (_rid).
 
@@ -781,15 +781,15 @@ class DatabaseProxy(object):
         When the caller only provides the source container id, read the source container to
         obtain its ``_rid`` and populate ``sourceCollectionRid`` on the wire payload.
 
-        :param global_secondary_index_definition: The GSI definition object or raw dict.
-        :type global_secondary_index_definition:
+        :param global_secondary_index: The GSI definition object or raw dict.
+        :type global_secondary_index:
             ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :returns: The serialized GSI definition including ``sourceCollectionRid``.
         :rtype: dict[str, Any]
         """
-        gsi_dict = (global_secondary_index_definition._to_dict()  # pylint: disable=protected-access
-                    if hasattr(global_secondary_index_definition, '_to_dict')
-                    else dict(global_secondary_index_definition))
+        gsi_dict = (global_secondary_index._to_dict()  # pylint: disable=protected-access
+                    if hasattr(global_secondary_index, '_to_dict')
+                    else dict(global_secondary_index))
         if not gsi_dict.get("sourceCollectionRid"):
             source_container_id = gsi_dict.get("sourceCollectionId")
             if source_container_id:
@@ -903,7 +903,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
         full_text_policy: Optional[dict[str, Any]] = None,
-        global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
+        global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[False] = False,
         vector_embedding_policy: Optional[dict[str, Any]] = None,
         **kwargs: Any
@@ -934,10 +934,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container.
@@ -969,7 +969,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
         full_text_policy: Optional[dict[str, Any]] = None,
-        global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
+        global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[True],
         vector_embedding_policy: Optional[dict[str, Any]] = None,
         **kwargs: Any
@@ -1000,10 +1000,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :returns: A tuple of the `ContainerProxy` and CosmosDict with the container properties.
@@ -1056,10 +1056,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword global_secondary_index_definition: **provisional** The global secondary index
+        :keyword global_secondary_index: **provisional** The global secondary index
             definition for the container.
             Used to create a GSI container derived from a source container via a SQL projection query.
-        :paramtype global_secondary_index_definition: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
@@ -1090,7 +1090,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         computed_properties = kwargs.pop('computed_properties', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
-        global_secondary_index_definition = kwargs.pop('global_secondary_index_definition', None)
+        global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
@@ -1133,8 +1133,8 @@ class DatabaseProxy(object):
             }.items()
             if value is not None
         }
-        if global_secondary_index_definition is not None:
-            gsi_dict = await self._resolve_gsi_definition(global_secondary_index_definition)
+        if global_secondary_index is not None:
+            gsi_dict = await self._resolve_gsi_definition(global_secondary_index)
             parameters["globalSecondaryIndexDefinition"] = gsi_dict
             parameters["materializedViewDefinition"] = gsi_dict
 

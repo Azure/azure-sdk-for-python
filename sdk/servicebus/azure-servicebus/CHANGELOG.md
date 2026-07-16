@@ -14,6 +14,10 @@
 - Fixed a bug where the async receiver factory methods on `azure.servicebus.aio.ServiceBusClient` (`get_queue_receiver`, `get_subscription_receiver`) and the async `ServiceBusReceiver` annotated the `auto_lock_renewer` keyword with the synchronous `AutoLockRenewer`, causing static type checkers to reject the documented `azure.servicebus.aio.AutoLockRenewer` usage. The annotation now references the async `AutoLockRenewer`, matching the docstrings and runtime behavior. ([#47948](https://github.com/Azure/azure-sdk-for-python/issues/47948))
 - Fixed a bug where closing a `PEEK_LOCK` receiver did not release messages that had been prefetched into the client buffer or were still in flight, so they remained locked at the broker until lock expiry — delaying their redelivery and inflating their delivery count. On close, a non-session `PEEK_LOCK` receiver now drains the link (stopping the broker and flushing in-flight transfers) and releases the buffered messages (`released` disposition), so the broker can redeliver them immediately without incrementing the delivery count. ([#42917](https://github.com/Azure/azure-sdk-for-python/issues/42917))
 
+### Other Changes
+
+- When using the async `AmqpOverWebsocket` transport on Python 3.10 or later, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). Python 3.9 users must upgrade Python to install an `aiohttp` release containing this fix. ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
+
 ## 7.14.3 (2025-11-11)
 
 ### Bugs Fixed
