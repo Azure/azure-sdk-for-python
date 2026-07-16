@@ -175,10 +175,15 @@ class AsyncByoProjectResponsesClient:
         self._project_endpoint = project_endpoint
         self._credential = credential
         self._client: Any = None
+        self._timeout: Optional[float] = None
         self.chat = _AsyncChat(self)
 
-    def with_options(self, **_kwargs: Any) -> "AsyncByoProjectResponsesClient":
-        # The prompty runner drives its own retry/timeout loop, so there is nothing to reconfigure here.
+    def with_options(self, *, timeout: Any = None, **_kwargs: Any) -> "AsyncByoProjectResponsesClient":
+        # The prompty runner sets a per-request timeout via with_options(timeout=...). Capture a
+        # concrete numeric value so it reaches responses.create; openai's ``NotGiven`` sentinel (used
+        # when no timeout is configured) is not numeric and is therefore ignored.
+        if isinstance(timeout, (int, float)) and not isinstance(timeout, bool):
+            self._timeout = float(timeout)
         return self
 
     def _openai(self) -> Any:
@@ -191,10 +196,12 @@ class AsyncByoProjectResponsesClient:
         return self._client
 
     async def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
+        extra: Dict[str, Any] = {"timeout": self._timeout} if self._timeout is not None else {}
         return await self._openai().responses.create(
             model=self._byo_model,
             input=_to_responses_input(messages),
             **_map_params(kwargs),
+            **extra,
         )
 
     @property

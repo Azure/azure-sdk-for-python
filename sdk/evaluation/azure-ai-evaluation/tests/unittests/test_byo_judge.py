@@ -166,6 +166,15 @@ class TestAsyncByoProjectResponsesClient:
         assert rkwargs["input"] == [{"type": "message", "role": "user", "content": "rate coherence"}]
         assert rkwargs["temperature"] == 0.0
         assert rkwargs["max_output_tokens"] == 800
+        # The per-request timeout set via with_options(timeout=30) reaches responses.create.
+        assert rkwargs["timeout"] == 30
+
+    def test_non_numeric_timeout_is_not_forwarded(self):
+        # openai passes a NotGiven() sentinel when no timeout is configured; the shim must ignore it
+        # (only a concrete numeric timeout is forwarded to responses.create).
+        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
+        client.with_options(timeout=object())
+        assert client._timeout is None
 
     def test_with_options_returns_self(self):
         client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
