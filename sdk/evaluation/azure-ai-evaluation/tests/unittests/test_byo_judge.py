@@ -221,6 +221,43 @@ class TestAsyncByoProjectResponsesClient:
         with pytest.raises(MissingRequiredPackage):
             asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
 
+    @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_extra_headers_forwarded_to_responses(self, mock_aipc):
+        # ACA may supply additional headers (e.g. correlation/telemetry headers) when running
+        # continuous evaluations; the shim must forward them to responses.create.
+        resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed")
+        oai = MagicMock()
+        oai.responses.create = AsyncMock(return_value=resp)
+        mock_aipc.return_value.get_openai_client.return_value = oai
+
+        headers = {"x-ms-client-request-id": "abc-123", "x-correlation-id": "def-456"}
+        client = AsyncByoProjectResponsesClient(
+            byo_model="c/d",
+            project_endpoint="https://acct.services.ai.azure.com/api/projects/p",
+            credential=MagicMock(),
+            extra_headers=headers,
+        )
+        asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
+
+        _, rkwargs = oai.responses.create.call_args
+        assert rkwargs["extra_headers"] == headers
+        # The shim copies the headers so later caller mutations do not leak into the client.
+        assert rkwargs["extra_headers"] is not headers
+
+    @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_no_extra_headers_by_default(self, mock_aipc):
+        # When no extra headers are supplied, none are forwarded to responses.create.
+        resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed")
+        oai = MagicMock()
+        oai.responses.create = AsyncMock(return_value=resp)
+        mock_aipc.return_value.get_openai_client.return_value = oai
+
+        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
+        asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
+
+        _, rkwargs = oai.responses.create.call_args
+        assert "extra_headers" not in rkwargs
+
 
 class TestValidateModelConfigByo:
     def test_byo_config_passes_through_validation(self):

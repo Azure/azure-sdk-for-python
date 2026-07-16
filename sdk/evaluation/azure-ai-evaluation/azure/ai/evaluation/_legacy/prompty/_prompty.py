@@ -304,6 +304,7 @@ class AsyncPrompty:
                 byo_model=configuration["byo_model"],
                 project_endpoint=configuration["project_endpoint"],
                 credential=self._token_credential,
+                extra_headers=configuration.get("extra_headers"),
             )
         else:
             connection = Connection.parse_from_config(configuration)

@@ -174,10 +174,18 @@ class AsyncByoProjectResponsesClient:
     (API key / managed identity / OAuth2), so evaluator code is unchanged.
     """
 
-    def __init__(self, byo_model: str, project_endpoint: str, credential: Any) -> None:
+    def __init__(
+        self,
+        byo_model: str,
+        project_endpoint: str,
+        credential: Any,
+        extra_headers: Optional[Dict[str, str]] = None,
+    ) -> None:
         self._byo_model = byo_model
         self._project_endpoint = project_endpoint
         self._credential = credential
+        # Optional headers forwarded on every Responses API call, needed when ACA runs continuous evaluations.
+        self._extra_headers: Optional[Dict[str, str]] = dict(extra_headers) if extra_headers else None
         self._client: Any = None
         self._timeout: Optional[float] = None
         self.chat = _AsyncChat(self)
@@ -212,7 +220,11 @@ class AsyncByoProjectResponsesClient:
 
     async def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
         client = await self._ensure_client()
-        extra: Dict[str, Any] = {"timeout": self._timeout} if self._timeout is not None else {}
+        extra: Dict[str, Any] = {}
+        if self._timeout is not None:
+            extra["timeout"] = self._timeout
+        if self._extra_headers:
+            extra["extra_headers"] = self._extra_headers
         return await client.responses.create(
             model=self._byo_model,
             input=_to_responses_input(messages),
