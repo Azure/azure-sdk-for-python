@@ -11,10 +11,6 @@ from azure.ai.agentserver.responses.models._wire import to_wire_dict
 from azure.ai.agentserver.responses.models import OutputItem, ResponseObject
 
 
-def _to_dict(value: Any) -> dict[str, Any]:
-    return to_wire_dict(value)
-
-
 def serialize_create_request(
     response: ResponseObject,
     input_items: Iterable[OutputItem] | None,
@@ -32,8 +28,8 @@ def serialize_create_request(
     :rtype: bytes
     """
     payload: dict[str, Any] = {
-        "response": _to_dict(response),
-        "input_items": [_to_dict(item) for item in (input_items or [])],
+        "response": to_wire_dict(response),
+        "input_items": [to_wire_dict(item) for item in (input_items or [])],
         "history_item_ids": list(history_item_ids or []),
     }
     return json.dumps(payload).encode("utf-8")
@@ -47,7 +43,7 @@ def serialize_response(response: ResponseObject) -> bytes:
     :returns: UTF-8 encoded JSON body.
     :rtype: bytes
     """
-    return json.dumps(_to_dict(response)).encode("utf-8")
+    return json.dumps(to_wire_dict(response)).encode("utf-8")
 
 
 def serialize_batch_request(item_ids: list[str]) -> bytes:

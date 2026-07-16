@@ -16,12 +16,6 @@ def get_field(payload: Any, field: str, default: Any = None) -> Any:
     return default
 
 
-def set_field(payload: Any, field: str, value: Any) -> None:
-    """Set a field on a mutable wire payload."""
-    if isinstance(payload, dict):
-        payload[field] = value
-
-
 def is_type(payload: Any, type_value: str) -> bool:
     """Return whether a wire payload has the requested discriminator value."""
     return get_field(payload, "type") == type_value

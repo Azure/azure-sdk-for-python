@@ -8,7 +8,6 @@ from typing import Any, Optional, cast
 
 from azure.ai.agentserver.responses.models._wire import get_field as _get_field
 from azure.ai.agentserver.responses.models._wire import is_type as _is_wire_type
-from azure.ai.agentserver.responses.models._wire import set_field as _set_field
 from azure.ai.agentserver.responses.models import (
     ConversationParam_2,
     CreateResponse,
@@ -124,7 +123,8 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
     # always see list[MessageContent] (matches .NET ExpandContent behaviour).
     for item in items:
         if _is_type(item, ItemMessage, "message") and isinstance(_get_field(item, "content"), str):
-            _set_field(item, "content", get_content_expanded(item))
+            if isinstance(item, dict):
+                item["content"] = get_content_expanded(item)
 
     return items
 
