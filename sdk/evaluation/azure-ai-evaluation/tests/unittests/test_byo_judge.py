@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Unit tests for admin-connected (BYO) judge-model support in the prompty judge path."""
 import asyncio
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -13,6 +14,7 @@ from azure.ai.evaluation._byo_judge import (
     _to_responses_input,
     _map_params,
     _map_response_format,
+    _ChatCompletion,
     _Usage,
 )
 
@@ -89,6 +91,32 @@ class TestUsageAdapter:
     def test_missing_fields_default_to_zero(self):
         usage = _Usage(object())
         assert (usage.prompt_tokens, usage.completion_tokens, usage.total_tokens) == (0, 0, 0)
+
+
+class TestFinishReason:
+    """A Responses result maps status -> chat.completions finish_reason (truncation detection)."""
+
+    @staticmethod
+    def _resp(**kwargs):
+        kwargs.setdefault("output_text", "ok")
+        kwargs.setdefault("usage", None)
+        kwargs.setdefault("id", "r")
+        kwargs.setdefault("model", "m")
+        return SimpleNamespace(**kwargs)
+
+    def test_completed_is_stop(self):
+        assert _ChatCompletion(self._resp(status="completed")).choices[0].finish_reason == "stop"
+
+    def test_missing_status_defaults_to_stop(self):
+        assert _ChatCompletion(self._resp()).choices[0].finish_reason == "stop"
+
+    def test_truncation_is_length(self):
+        resp = self._resp(status="incomplete", incomplete_details=SimpleNamespace(reason="max_output_tokens"))
+        assert _ChatCompletion(resp).choices[0].finish_reason == "length"
+
+    def test_other_incomplete_reason_passes_through(self):
+        resp = self._resp(status="incomplete", incomplete_details=SimpleNamespace(reason="content_filter"))
+        assert _ChatCompletion(resp).choices[0].finish_reason == "content_filter"
 
 
 class TestAsyncByoProjectResponsesClient:

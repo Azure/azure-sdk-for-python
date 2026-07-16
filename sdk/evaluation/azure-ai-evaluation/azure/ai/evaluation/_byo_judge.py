@@ -105,11 +105,29 @@ class _ChatMessage:
         self.tool_calls = None
 
 
+def _finish_reason(response: Any) -> str:
+    """Map a Responses result's status to a chat-completions ``finish_reason``.
+
+    A Responses call that stops early reports ``status="incomplete"`` with an
+    ``incomplete_details.reason`` (e.g. ``"max_output_tokens"`` / ``"content_filter"``).
+    Chat.completions callers expect ``"length"`` for truncation; surfacing it lets the prompty
+    formatter distinguish a truncated (invalid-JSON-prone) judge output from a complete one instead
+    of always seeing ``"stop"``.
+    """
+    if getattr(response, "status", None) != "incomplete":
+        return "stop"
+    details = getattr(response, "incomplete_details", None)
+    reason = getattr(details, "reason", None) if details is not None else None
+    if reason == "max_output_tokens":
+        return "length"
+    return reason or "stop"
+
+
 class _Choice:
-    def __init__(self, content: str) -> None:
+    def __init__(self, content: str, finish_reason: str = "stop") -> None:
         self.index = 0
         self.message = _ChatMessage(content)
-        self.finish_reason = "stop"
+        self.finish_reason = finish_reason
 
 
 class _ChatCompletion:
@@ -122,7 +140,7 @@ class _ChatCompletion:
         self.usage = _Usage(_usage) if _usage is not None else None
         self.object = "chat.completion"
         self.created = int(time.time())
-        self.choices = [_Choice(getattr(response, "output_text", "") or "")]
+        self.choices = [_Choice(getattr(response, "output_text", "") or "", _finish_reason(response))]
 
 
 class _AsyncChatCompletions:
