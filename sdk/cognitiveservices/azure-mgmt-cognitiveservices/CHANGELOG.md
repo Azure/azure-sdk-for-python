@@ -1,5 +1,26 @@
 # Release History
 
+## 15.0.0b4 (Unreleased)
+
+### Bugs Fixed
+
+  - `ComputesOperations.begin_create_or_update` now works for asynchronous compute creation that returns
+    HTTP 202 (Accepted) and no longer polls the compute operation-status endpoint. Previously the create
+    failed in two ways: the generated code rejected the 202 response with
+    `Operation returned an invalid status 'Accepted'`, and (when it did poll) the operation-status endpoint
+    (`.../locations/{location}/computeOperations/{operationId}`) required the
+    `Microsoft.CognitiveServices/locations/computeOperations/read` permission, so callers allowed to create a
+    compute but not granted that read permission were shown a misleading `AuthorizationFailed` error even
+    though the create succeeded. The 202 is now accepted and the long-running operation is tracked by polling
+    the compute resource itself (a `GET` on the resource URL, watching `provisioningState`) instead of the
+    operation-status endpoint, so it only needs the `computes/read` permission that callers already have. The
+    poller still blocks until the operation reaches a terminal state and raises on a genuine provisioning
+    failure; non-2xx create failures still propagate. Callers can opt out of blocking with `polling=False`.
+    The poller also tolerates the short read-after-write window right after the create where the compute is
+    briefly not yet queryable (a `GET` returns `404 "Cluster not found"`), so a successful create is not
+    wrongly reported as failed, and when provisioning does fail it surfaces the compute's own error detail
+    (e.g. a quota message) instead of a generic `Operation returned an invalid status 'OK'`.
+
 ## 15.0.0b3 (2026-06-26)
 
 ### Features Added
