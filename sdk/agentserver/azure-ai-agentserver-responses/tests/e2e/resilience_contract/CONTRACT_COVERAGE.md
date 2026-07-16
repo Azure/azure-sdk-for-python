@@ -220,3 +220,19 @@ This closes the latent `client_headers` / `query_parameters` drop-to-`{}` bug on
 recovery and pins the typed resilient-boundary's reconstruction fidelity
 (`responses-resilience-spec.md` §5.3 / §8.2). Reconstruction-level unit guard:
 `tests/e2e/test_recovery_reconstruction.py::test_reconstruct_preserves_client_headers_and_query`.
+
+---
+
+## Conformance gap closure — crash WHILE steering (steering-feature resilience)
+
+| Clause | Test | Dimension |
+|---|---|---|
+| A crash (SIGKILL) that lands while a **steered turn is mid-flight** (core `drain_in_progress`) MUST recover the steered response to terminal — the steered response must not be orphaned in `in_progress`. Both the superseded prior turn and the steered turn reach `completed` after restart, and the recovered steered turn re-runs the steered input (recovered `L1` lifetime) | `test_crash_while_steering.py::test_crash_while_steering_recovers_steered_turn` (steerable conversation; real SIGKILL mid-drain via `CrashHarness`) | response.status (both turns `completed`); recovery lifetime; steered input fidelity |
+
+This replaces the retired hosted battery `verify_crash_steer.py`, which used
+steering only as a crash-*delivery* mechanism (obsolete: a bare `crash` pinned
+via `agent_session_id` lands on the same sandbox). The prior "steered turn stuck
+`in_progress`" observation (`finding-t5`) was an artifact of steering the literal
+`crash` sentinel as the turn input (the recovered turn re-ran `crash`), not a
+framework steered-turn-recovery bug — this deterministic test proves normal
+steered-turn crash recovery holds.
