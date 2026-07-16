@@ -64,10 +64,10 @@ def _list8_frame(code, count, encoded_fields, payload=b""):
     return memoryview(header + encoded_fields + payload)
 
 
-# A sender may omit trailing null fields (AMQP 1.0 section 1.4), so an incoming
-# performative list can be shorter than the full field count. The decoder must
-# pad it back to the full count so positional access and namedtuple unpacking
-# stay safe and omitted fields read back as None.
+# A sender may omit trailing fields whose value is the default (AMQP 1.0 section
+# 1.4), so an incoming performative list can be shorter than the full field
+# count. The decoder must pad it back to the full count so positional access and
+# namedtuple unpacking stay safe and omitted fields read back as their default.
 def test_short_open_is_padded_to_full_field_count():
     # Open with only container_id set ("x"), 1 field on the wire out of 10.
     frame = _list8_frame(performatives.OpenFrame._code, 1, bytes([0xA1, 0x01, 0x78]))
@@ -81,6 +81,21 @@ def test_short_open_is_padded_to_full_field_count():
     assert fields[9] is None
 
 
+def test_short_open_materializes_non_null_field_defaults():
+    # An Open that omits max_frame_size/channel_max means their AMQP defaults,
+    # not null. _connection._incoming_open reads them positionally and numerically
+    # (frame[2] < 512, frame[3]); padding with None would raise TypeError there.
+    frame = _list8_frame(performatives.OpenFrame._code, 1, bytes([0xA1, 0x01, 0x78]))
+    _, fields = decode_frame(frame)
+    assert fields[2] == 4294967295  # max_frame_size default
+    assert fields[3] == 65535  # channel_max default
+    # Exercise the exact comparison _incoming_open performs; must not raise.
+    assert not fields[2] < 512
+    open_frame = performatives.OpenFrame(*fields)
+    assert open_frame.max_frame_size == 4294967295
+    assert open_frame.channel_max == 65535
+
+
 def test_short_transfer_pads_fields_and_preserves_payload():
     # Transfer with only handle (0) set, plus a message payload. The payload is
     # appended after the fields and must survive the padding.
@@ -91,7 +106,9 @@ def test_short_transfer_pads_fields_and_preserves_payload():
     assert len(fields) == 12
     transfer = performatives.TransferFrame(*fields)
     assert transfer.handle == 0
-    assert transfer.batchable is None
+    # Omitted boolean/uint fields read back as their AMQP defaults, not None.
+    assert transfer.message_format == 0
+    assert transfer.batchable is False
     assert bytes(transfer.payload) == b"\xde\xad"
 
 
@@ -125,13 +142,18 @@ def _list32_frame(code, count, encoded_fields, payload=b""):
     ],
 )
 def test_short_no_default_performative_is_padded(frame_cls):
-    full_field_count = _PERFORMATIVE_FIELD_COUNT[frame_cls._code]
+    # Each field's AMQP default, in wire order (the transfer payload sentinel
+    # is excluded, but these performatives have none).
+    defaults = [f.default for f in frame_cls._definition if f is not None]  # pylint: disable=protected-access
     # A single null field on the wire, the rest omitted.
     frame = _list8_frame(frame_cls._code, 1, bytes([0x40]))
     frame_type, fields = decode_frame(frame)
     assert frame_type == frame_cls._code
-    assert len(fields) == full_field_count
-    assert fields[-1] is None
+    assert len(fields) == len(defaults)
+    # The one wire field decoded as an explicit null; the omitted trailing fields
+    # are padded with their defaults (e.g. Disposition.batchable is False).
+    assert fields[0] is None
+    assert fields[1:] == defaults[1:]
     # Namedtuple construction must not raise on the omitted (now padded) fields.
     frame_cls(*fields)
 

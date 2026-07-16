@@ -417,18 +417,21 @@ def decode_payload(buffer: memoryview) -> Message:
     return Message(**message_properties)
 
 
-# Number of fields encoded on the wire for each performative, keyed by its
-# frame-type code. The AMQP 1.0 spec (section 1.4) lets a sender omit trailing
-# null fields, so an incoming performative list can be shorter than the full
-# field count. Padding the decoded list up to this count keeps positional
-# (frame[N]) access and namedtuple unpacking safe; the missing trailing fields
-# read back as None, which is the spec-defined meaning of an omitted field.
+# The AMQP-defined default of each wire field of a performative, keyed by its
+# frame-type code and ordered as the fields appear on the wire. The AMQP 1.0
+# spec (section 1.4) lets a sender omit trailing fields whose value is the
+# default, so an incoming performative list can be shorter than the full field
+# count. Padding the decoded list back up to the full count with these defaults
+# keeps positional (frame[N]) access and namedtuple unpacking safe, and makes an
+# omitted field read back as its default rather than None. That distinction
+# matters: an Open that omits max_frame_size means 4294967295, and the connection
+# compares it numerically (frame[2] < 512), which would raise on None.
 # The transfer performative (code 20) carries a trailing payload that is not a
 # wire field, so its _definition uses a None sentinel for that slot, which is
-# excluded from the count here.
-_PERFORMATIVE_FIELD_COUNT: Dict[int, int] = {
+# excluded here.
+_PERFORMATIVE_FIELD_DEFAULTS: Dict[int, List[Any]] = {
     # pylint: disable=protected-access
-    performative._code: sum(1 for field in performative._definition if field is not None)  # type: ignore
+    performative._code: [field.default for field in performative._definition if field is not None]  # type: ignore
     for performative in (
         performatives.OpenFrame,
         performatives.BeginFrame,
@@ -445,6 +448,12 @@ _PERFORMATIVE_FIELD_COUNT: Dict[int, int] = {
         performatives.SASLResponse,
         performatives.SASLOutcome,
     )
+}
+
+# The number of wire fields for each performative, derived from the defaults
+# above so the two stay in lockstep.
+_PERFORMATIVE_FIELD_COUNT: Dict[int, int] = {
+    code: len(defaults) for code, defaults in _PERFORMATIVE_FIELD_DEFAULTS.items()
 }
 
 
@@ -477,11 +486,13 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     fields: List[Optional[memoryview]] = [None] * count
     for i in range(count):
         buffer, fields[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
-    # A sender may omit trailing null fields, so pad the decoded list up to the
-    # performative's full field count before any positional access or unpacking.
-    full_field_count = _PERFORMATIVE_FIELD_COUNT.get(frame_type)
-    if full_field_count is not None and count < full_field_count:
-        fields.extend([None] * (full_field_count - count))
+    # A sender may omit trailing fields whose value is the default (AMQP 1.0
+    # section 1.4), so pad the decoded list back up to the performative's full
+    # field count with each omitted field's default before any positional access
+    # or unpacking.
+    field_defaults = _PERFORMATIVE_FIELD_DEFAULTS.get(frame_type)
+    if field_defaults is not None and count < len(field_defaults):
+        fields.extend(field_defaults[count:])
     if frame_type == 20:
         fields.append(buffer)
     return frame_type, fields
