@@ -170,6 +170,23 @@ def sample_submit_job() -> None:
         )
 
         print(f"Initial poller status: {poller.status()}")
+        print(f"Operation ID: {poller.details['operation_id']}")
+
+        results = poller.result()
+
+        print(f"Final job ID: {poller.details['job_id']}")
+        print(f"Final job status: {poller.details['status']}")
+
+        for tasks in results:
+            print(f"Total tasks: {tasks.total}")
+            print(f"Completed tasks: {tasks.completed}")
+            print(f"Failed tasks: {tasks.failed}")
+            print(f"In-progress tasks: {tasks.in_progress}")
+
+            if tasks.items_property:
+                for task_result in tasks.items_property:
+                    print(f"Task kind: {task_result.kind}")
+                    print(f"Task status: {task_result.status}")
 ```
 
 <!-- END SNIPPET -->
@@ -183,7 +200,6 @@ Use `get_job_state` to retrieve the current state of a submitted job:
 ```python
 def sample_get_job_state() -> None:
     import os
-    from urllib.parse import urlparse
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.documents import AnalyzeDocumentsClient
 
@@ -194,13 +210,8 @@ def sample_get_job_state() -> None:
 
     client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    operation_location = {}
-
-    def raw_response_hook(response):
-        operation_location["value"] = response.http_response.headers.get("Operation-Location")
-
     with client:
-        client.begin_submit_job(
+        poller = client.begin_submit_job(
             body={
                 "displayName": "Document Analysis Sample",
                 "analysisInput": {
@@ -228,12 +239,9 @@ def sample_get_job_state() -> None:
                     }
                 ],
             },
-            raw_response_hook=raw_response_hook,
         )
 
-        parsed = urlparse(operation_location["value"])
-        job_id = parsed.path.rstrip("/").split("/")[-1]
-
+        job_id = poller.details["operation_id"]
         response = client.get_job_state(job_id=job_id)
 
         print(f"Job ID: {response['jobId']}")
@@ -251,7 +259,6 @@ If you need to cancel a submitted job, use `begin_cancel_job`:
 ```python
 def sample_cancel_job() -> None:
     import os
-    from urllib.parse import urlparse
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.documents import AnalyzeDocumentsClient
 
@@ -262,13 +269,8 @@ def sample_cancel_job() -> None:
 
     client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    operation_location = {}
-
-    def raw_response_hook(response):
-        operation_location["value"] = response.http_response.headers.get("Operation-Location")
-
     with client:
-        client.begin_submit_job(
+        submit_poller = client.begin_submit_job(
             body={
                 "displayName": "Document Analysis Sample",
                 "analysisInput": {
@@ -296,11 +298,9 @@ def sample_cancel_job() -> None:
                     }
                 ],
             },
-            raw_response_hook=raw_response_hook,
         )
 
-        parsed = urlparse(operation_location["value"])
-        job_id = parsed.path.rstrip("/").split("/")[-1]
+        job_id = submit_poller.details["operation_id"]
 
         cancel_poller = client.begin_cancel_job(job_id=job_id)
         cancel_poller.result()
@@ -368,6 +368,23 @@ async def sample_submit_job() -> None:
         )
 
         print(f"Initial poller status: {poller.status()}")
+        print(f"Operation ID: {poller.details['operation_id']}")
+
+        results = await poller.result()
+
+        print(f"Final job ID: {poller.details['job_id']}")
+        print(f"Final job status: {poller.details['status']}")
+
+        async for tasks in results:
+            print(f"Total tasks: {tasks.total}")
+            print(f"Completed tasks: {tasks.completed}")
+            print(f"Failed tasks: {tasks.failed}")
+            print(f"In-progress tasks: {tasks.in_progress}")
+
+            if tasks.items_property:
+                for task_result in tasks.items_property:
+                    print(f"Task kind: {task_result.kind}")
+                    print(f"Task status: {task_result.status}")
 ```
 
 <!-- END SNIPPET -->
