@@ -15,9 +15,9 @@ namespace azure.ai.agentserver.invocations
         def __init__(
                 self, 
                 *, 
-                openapi_spec: Optional[dict[str, Any]] = ..., 
                 asyncapi_spec_json: Optional[dict[str, Any]] = ..., 
                 asyncapi_spec_yaml: Optional[str] = ..., 
+                openapi_spec: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
