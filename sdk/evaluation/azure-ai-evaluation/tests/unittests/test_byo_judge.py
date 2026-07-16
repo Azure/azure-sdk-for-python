@@ -22,6 +22,10 @@ class TestByoJudgeHelpers:
         assert is_byo_model_config({"byo_model": "c/d", "project_endpoint": "https://x"})
         assert not is_byo_model_config({"azure_endpoint": "https://x"})
         assert not is_byo_model_config({})
+        # Both markers are required — byo_model alone must not activate the BYO path
+        # (the prompty branch needs project_endpoint to route, else it would KeyError).
+        assert not is_byo_model_config({"byo_model": "c/d"})
+        assert not is_byo_model_config({"project_endpoint": "https://x"})
 
     def test_to_responses_input(self):
         assert _to_responses_input([{"role": "user", "content": "hi"}]) == [

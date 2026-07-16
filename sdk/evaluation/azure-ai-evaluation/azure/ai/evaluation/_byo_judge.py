@@ -185,5 +185,11 @@ class AsyncByoProjectResponsesClient:
 
 
 def is_byo_model_config(model_config: Dict[str, Any]) -> bool:
-    """Return True if the model configuration references an admin-connected (BYO) model."""
-    return bool(model_config) and bool(model_config.get("byo_model"))
+    """Return True if the model configuration references an admin-connected (BYO) model.
+
+    Requires **both** markers — ``byo_model`` (``"connection/deployment"``) and ``project_endpoint``
+    — because the prompty branch needs the project endpoint to route the call. Requiring both matches
+    the control-plane contract (BYO is active iff both markers are present) and avoids a ``KeyError``
+    when only a partial config is supplied.
+    """
+    return bool(model_config) and bool(model_config.get("byo_model")) and bool(model_config.get("project_endpoint"))
