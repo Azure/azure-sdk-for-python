@@ -316,7 +316,7 @@ def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, 
     from azure.ai.evaluation._byo_judge import is_byo_model_config
 
     if is_byo_model_config(config):
-        return cast(AzureOpenAIModelConfiguration, config)
+        return cast(Any, config)
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:
