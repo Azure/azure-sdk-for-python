@@ -13,8 +13,6 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import (
     evaluate_feature,
     _matches_override_rule,
     _matches_condition,
-    _compare_versions,
-    _parse_version_with_beta,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
@@ -32,30 +30,33 @@ class TestConfigurationProfile(unittest.TestCase):
         _ConfigurationProfile.version = ""
         _ConfigurationProfile.component = ""
         _ConfigurationProfile.region = ""
+        _ConfigurationProfile.ikey = ""
 
     def test_fill_empty_profile(self):
         """Test filling an empty profile with all parameters."""
         _ConfigurationProfile.fill(
-            os="w",
-            rp="f",
-            attach="m",
+            os="windows",
+            rp="fn",
+            attach="manual",
             version="1.0.0",
             component="ext",
             region="westus",
+            ikey="12345678-1234-1234-1234-123456789abc",
         )
 
-        self.assertEqual(_ConfigurationProfile.os, "w")
-        self.assertEqual(_ConfigurationProfile.rp, "f")
-        self.assertEqual(_ConfigurationProfile.attach, "m")
+        self.assertEqual(_ConfigurationProfile.os, "windows")
+        self.assertEqual(_ConfigurationProfile.rp, "fn")
+        self.assertEqual(_ConfigurationProfile.attach, "manual")
         self.assertEqual(_ConfigurationProfile.version, "1.0.0")
         self.assertEqual(_ConfigurationProfile.component, "ext")
         self.assertEqual(_ConfigurationProfile.region, "westus")
+        self.assertEqual(_ConfigurationProfile.ikey, "12345678-1234-1234-1234-123456789abc")
 
     def test_fill_partial_profile(self):
         """Test filling profile with only some parameters."""
-        _ConfigurationProfile.fill(os="l", version="2.0.0")
+        _ConfigurationProfile.fill(os="linux", version="2.0.0")
 
-        self.assertEqual(_ConfigurationProfile.os, "l")
+        self.assertEqual(_ConfigurationProfile.os, "linux")
         self.assertEqual(_ConfigurationProfile.version, "2.0.0")
         self.assertEqual(_ConfigurationProfile.rp, "")
         self.assertEqual(_ConfigurationProfile.attach, "")
@@ -65,17 +66,17 @@ class TestConfigurationProfile(unittest.TestCase):
     def test_fill_no_overwrite(self):
         """Test that fill doesn't overwrite existing values."""
         # Set initial values
-        _ConfigurationProfile.os = "w"
+        _ConfigurationProfile.os = "windows"
         _ConfigurationProfile.version = "1.0.0"
 
         # Try to overwrite - should be ignored
-        _ConfigurationProfile.fill(os="l", version="2.0.0", rp="f")
+        _ConfigurationProfile.fill(os="linux", version="2.0.0", rp="fn")
 
         # Original values should be preserved
-        self.assertEqual(_ConfigurationProfile.os, "w")
+        self.assertEqual(_ConfigurationProfile.os, "windows")
         self.assertEqual(_ConfigurationProfile.version, "1.0.0")
         # New value should be set
-        self.assertEqual(_ConfigurationProfile.rp, "f")
+        self.assertEqual(_ConfigurationProfile.rp, "fn")
 
 
 class TestOneSettingsResponse(unittest.TestCase):
@@ -86,7 +87,7 @@ class TestOneSettingsResponse(unittest.TestCase):
         response = OneSettingsResponse()
 
         self.assertIsNone(response.etag)
-        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(response.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.has_exception)
@@ -94,10 +95,10 @@ class TestOneSettingsResponse(unittest.TestCase):
     def test_custom_initialization(self):
         """Test OneSettingsResponse with custom values."""
         settings = {"key": "value"}
-        response = OneSettingsResponse(etag="test-etag", refresh_interval=3600, settings=settings, status_code=304)
+        response = OneSettingsResponse(etag="test-etag", refresh_interval_s=3600, settings=settings, status_code=304)
 
         self.assertEqual(response.etag, "test-etag")
-        self.assertEqual(response.refresh_interval, 3600)
+        self.assertEqual(response.refresh_interval_s, 3600)
         self.assertEqual(response.settings, settings)
         self.assertEqual(response.status_code, 304)
         self.assertFalse(response.has_exception)
@@ -107,7 +108,7 @@ class TestOneSettingsResponse(unittest.TestCase):
         response = OneSettingsResponse(has_exception=True, status_code=500)
 
         self.assertIsNone(response.etag)
-        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(response.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertEqual(response.status_code, 500)
         self.assertTrue(response.has_exception)
@@ -117,7 +118,7 @@ class TestOneSettingsResponse(unittest.TestCase):
         response = OneSettingsResponse(has_exception=True)
 
         self.assertIsNone(response.etag)
-        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(response.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.has_exception)
@@ -159,7 +160,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Verify response
         self.assertEqual(result.etag, "test-etag")
-        self.assertEqual(result.refresh_interval, 1800)  # 30 minutes * 60
+        self.assertEqual(result.refresh_interval_s, 1800)  # 30 minutes * 60
         self.assertEqual(result.settings, {"key": "value", "FEATURE_X": "enabled"})
         self.assertEqual(result.status_code, 200)
         self.assertFalse(result.has_exception)
@@ -173,7 +174,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with timeout and exception indicators
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -187,7 +188,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator but no timeout
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -201,7 +202,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -215,7 +216,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -240,7 +241,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -255,14 +256,19 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
             with self.subTest(status_code=status_code):
                 mock_response = Mock()
                 mock_response.status_code = status_code
-                mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(f"HTTP {status_code}")
+                mock_response.headers = {}
+                mock_response.content = b""
                 mock_get.return_value = mock_response
 
                 result = make_onesettings_request("http://test.com")
 
-                # Should return response with exception indicator
-                self.assertTrue(result.has_exception)
-                self.assertEqual(result.status_code, 200)  # Default status when exception occurs
+                # HTTP errors are NOT surfaced as transient exceptions here; the real status code is
+                # preserved so callers can classify retryable vs non-retryable. has_exception is
+                # reserved for genuine network/timeout failures.
+                self.assertFalse(result.has_exception)
+                self.assertEqual(result.status_code, status_code)
+                self.assertIsNone(result.etag)
+                self.assertEqual(result.settings, {})
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._utils.requests.get")
     def test_request_exception_legacy(self, mock_get):
@@ -273,7 +279,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 
         # Should return response with exception indicator
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
@@ -292,7 +298,7 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         result = _parse_onesettings_response(mock_response)
 
         self.assertEqual(result.etag, "test-etag")
-        self.assertEqual(result.refresh_interval, 2700)  # 45 minutes * 60
+        self.assertEqual(result.refresh_interval_s, 2700)  # 45 minutes * 60
         self.assertEqual(result.settings, {"feature": "enabled", "CHANGE_VERSION": "10"})
         self.assertEqual(result.status_code, 200)
 
@@ -306,7 +312,7 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         result = _parse_onesettings_response(mock_response)
 
         self.assertEqual(result.etag, "cached-etag")
-        self.assertEqual(result.refresh_interval, 3600)  # 60 minutes * 60
+        self.assertEqual(result.refresh_interval_s, 3600)  # 60 minutes * 60
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 304)
 
@@ -320,7 +326,7 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         result = _parse_onesettings_response(mock_response)
 
         self.assertIsNone(result.etag)
-        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.refresh_interval_s, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertEqual(result.status_code, 200)
 
@@ -330,12 +336,13 @@ class TestEvaluateFeature(unittest.TestCase):
 
     def setUp(self):
         """Set up test configuration profile."""
-        _ConfigurationProfile.os = "w"
-        _ConfigurationProfile.rp = "f"
-        _ConfigurationProfile.attach = "m"
+        _ConfigurationProfile.os = "windows"
+        _ConfigurationProfile.rp = "fn"
+        _ConfigurationProfile.attach = "manual"
         _ConfigurationProfile.version = "1.0.0"
         _ConfigurationProfile.component = "ext"
         _ConfigurationProfile.region = "westus"
+        _ConfigurationProfile.ikey = "12345678-1234-1234-1234-123456789abc"
 
     def tearDown(self):
         """Reset profile after each test."""
@@ -345,6 +352,7 @@ class TestEvaluateFeature(unittest.TestCase):
         _ConfigurationProfile.version = ""
         _ConfigurationProfile.component = ""
         _ConfigurationProfile.region = ""
+        _ConfigurationProfile.ikey = ""
 
     def test_feature_enabled_by_default(self):
         """Test feature that is enabled by default with no overrides."""
@@ -365,7 +373,7 @@ class TestEvaluateFeature(unittest.TestCase):
         settings = {
             "test_feature": {
                 "default": "disabled",
-                "override": [{"os": "w", "component": "ext"}],
+                "override": [{"os": "windows", "component": "ext"}],
             }
         }
 
@@ -377,7 +385,7 @@ class TestEvaluateFeature(unittest.TestCase):
         settings = {
             "test_feature": {
                 "default": "enabled",
-                "override": [{"os": "l", "component": "dst"}],
+                "override": [{"os": "linux", "component": "dst"}],
             }
         }
 
@@ -390,8 +398,8 @@ class TestEvaluateFeature(unittest.TestCase):
             "test_feature": {
                 "default": "disabled",
                 "override": [
-                    {"os": "l"},  # Doesn't match
-                    {"component": "ext", "rp": "f"},  # Matches
+                    {"os": "linux"},  # Doesn't match
+                    {"component": "ext", "rp": "fn"},  # Matches
                     {"region": "eastus"},  # Doesn't match
                 ],
             }
@@ -420,7 +428,7 @@ class TestMatchesOverrideRule(unittest.TestCase):
 
     def setUp(self):
         """Set up test configuration profile."""
-        _ConfigurationProfile.os = "w"
+        _ConfigurationProfile.os = "windows"
         _ConfigurationProfile.version = "1.0.0"
         _ConfigurationProfile.component = "ext"
 
@@ -432,12 +440,31 @@ class TestMatchesOverrideRule(unittest.TestCase):
 
     def test_all_conditions_match(self):
         """Test rule where all conditions match."""
-        rule = {"os": "w", "component": "ext"}
+        rule = {"os": "windows", "component": "ext"}
         self.assertTrue(_matches_override_rule(rule))
 
     def test_some_conditions_match(self):
         """Test rule where only some conditions match."""
-        rule = {"os": "w", "component": "dst"}  # component doesn't match
+        rule = {"os": "windows", "component": "dst"}  # component doesn't match
+        self.assertFalse(_matches_override_rule(rule))
+
+    def test_ver_without_component_does_not_match(self):
+        """Test that a ver condition without a component condition never matches."""
+        # ver matches the profile, but component is absent -> rule is ignored
+        rule = {"ver": "1.0.0"}
+        self.assertFalse(_matches_override_rule(rule))
+        # ver combined with a non-component field is still ignored
+        rule = {"os": "windows", "ver": "1.0.0"}
+        self.assertFalse(_matches_override_rule(rule))
+
+    def test_ver_with_matching_component_matches(self):
+        """Test that ver is honored when component is present and matches."""
+        rule = {"ver": "1.0.0", "component": "ext"}
+        self.assertTrue(_matches_override_rule(rule))
+
+    def test_ver_with_non_matching_component_does_not_match(self):
+        """Test that ver + component fails when the component does not match the profile."""
+        rule = {"ver": "1.0.0", "component": "dst"}  # component doesn't match profile ("ext")
         self.assertFalse(_matches_override_rule(rule))
 
     def test_empty_rule(self):
@@ -451,12 +478,13 @@ class TestMatchesCondition(unittest.TestCase):
 
     def setUp(self):
         """Set up test configuration profile."""
-        _ConfigurationProfile.os = "w"
+        _ConfigurationProfile.os = "windows"
         _ConfigurationProfile.version = "1.0.0"
         _ConfigurationProfile.component = "ext"
-        _ConfigurationProfile.rp = "f"
+        _ConfigurationProfile.rp = "fn"
         _ConfigurationProfile.region = "westus"
-        _ConfigurationProfile.attach = "m"
+        _ConfigurationProfile.attach = "manual"
+        _ConfigurationProfile.ikey = "12345678-1234-1234-1234-123456789abc"
 
     def tearDown(self):
         """Reset profile after each test."""
@@ -466,119 +494,50 @@ class TestMatchesCondition(unittest.TestCase):
         _ConfigurationProfile.rp = ""
         _ConfigurationProfile.region = ""
         _ConfigurationProfile.attach = ""
+        _ConfigurationProfile.ikey = ""
 
-    def test_os_condition_single_value(self):
-        """Test OS condition with single value."""
-        self.assertTrue(_matches_condition("os", "w"))
-        self.assertFalse(_matches_condition("os", "l"))
-
-    def test_os_condition_list_value(self):
-        """Test OS condition with list value."""
-        self.assertTrue(_matches_condition("os", ["w", "l"]))
-        self.assertFalse(_matches_condition("os", ["l", "d"]))
+    def test_os_condition(self):
+        """Test OS condition with exact match."""
+        self.assertTrue(_matches_condition("os", "windows"))
+        self.assertFalse(_matches_condition("os", "linux"))
 
     def test_version_condition_exact(self):
         """Test version condition with exact match."""
         self.assertTrue(_matches_condition("ver", "1.0.0"))
         self.assertFalse(_matches_condition("ver", "2.0.0"))
 
-    def test_version_condition_range(self):
-        """Test version condition with min/max range."""
-        # Within range
-        self.assertTrue(_matches_condition("ver", {"min": "0.9.0", "max": "1.1.0"}))
-        # Below minimum
-        self.assertFalse(_matches_condition("ver", {"min": "1.1.0", "max": "2.0.0"}))
-        # Above maximum
-        self.assertFalse(_matches_condition("ver", {"min": "0.5.0", "max": "0.9.0"}))
-
     def test_component_condition(self):
         """Test component condition."""
         self.assertTrue(_matches_condition("component", "ext"))
         self.assertFalse(_matches_condition("component", "dst"))
 
-    def test_rp_condition_single_value(self):
-        """Test runtime platform condition with single value."""
-        self.assertTrue(_matches_condition("rp", "f"))
-        self.assertFalse(_matches_condition("rp", "a"))
-
-    def test_rp_condition_list_value(self):
-        """Test runtime platform condition with list value."""
-        self.assertTrue(_matches_condition("rp", ["f", "a"]))
-        self.assertFalse(_matches_condition("rp", ["a", "k"]))
+    def test_rp_condition(self):
+        """Test resource provider condition with exact match."""
+        self.assertTrue(_matches_condition("rp", "fn"))
+        self.assertFalse(_matches_condition("rp", "appsvc"))  # cspell:ignore appsvc
 
     def test_region_condition(self):
         """Test region condition."""
         self.assertTrue(_matches_condition("region", "westus"))
-        self.assertTrue(_matches_condition("region", ["westus", "eastus"]))
         self.assertFalse(_matches_condition("region", "eastus"))
-        self.assertFalse(_matches_condition("region", ["eastus", "centralus"]))
 
     def test_attach_condition(self):
         """Test attach condition."""
-        self.assertTrue(_matches_condition("attach", "m"))
-        self.assertTrue(_matches_condition("attach", ["m", "i"]))
-        self.assertFalse(_matches_condition("attach", "i"))
-        self.assertFalse(_matches_condition("attach", ["i"]))
+        self.assertTrue(_matches_condition("attach", "manual"))
+        self.assertFalse(_matches_condition("attach", "integratedauto"))
+
+    def test_ikey_condition(self):
+        """Test instrumentation key condition (case-insensitive exact match)."""
+        self.assertTrue(_matches_condition("ikey", "12345678-1234-1234-1234-123456789abc"))
+        # Case-insensitive match
+        self.assertTrue(_matches_condition("ikey", "12345678-1234-1234-1234-123456789ABC"))
+        self.assertFalse(_matches_condition("ikey", "00000000-0000-0000-0000-000000000000"))
 
     def test_invalid_condition(self):
         """Test invalid condition key."""
         self.assertFalse(_matches_condition("unknown", "value"))
         self.assertFalse(_matches_condition("", "value"))
         self.assertFalse(_matches_condition("os", None))
-
-
-class TestCompareVersions(unittest.TestCase):
-    """Test cases for _compare_versions function."""
-
-    def test_basic_version_comparison(self):
-        """Test basic semantic version comparison."""
-        # Greater than
-        self.assertTrue(_compare_versions("2.0.0", "1.0.0", ">="))
-        self.assertTrue(_compare_versions("1.1.0", "1.0.0", ">"))
-
-        # Less than
-        self.assertTrue(_compare_versions("1.0.0", "2.0.0", "<="))
-        self.assertTrue(_compare_versions("1.0.0", "1.1.0", "<"))
-
-        # Equal
-        self.assertTrue(_compare_versions("1.0.0", "1.0.0", "=="))
-        self.assertTrue(_compare_versions("1.0.0", "1.0.0", ">="))
-        self.assertTrue(_compare_versions("1.0.0", "1.0.0", "<="))
-
-    def test_beta_version_comparison(self):
-        """Test comparison with beta versions."""
-        # Beta vs beta
-        self.assertTrue(_compare_versions("1.0.0b2", "1.0.0b1", ">"))
-        self.assertTrue(_compare_versions("1.0.0b1", "1.0.0b2", "<"))
-
-        # Beta vs release
-        self.assertTrue(_compare_versions("1.0.0", "1.0.0b1", ">"))
-        self.assertTrue(_compare_versions("1.0.0b1", "1.0.0", "<"))
-
-    def test_invalid_version_fallback(self):
-        """Test fallback to string comparison for invalid versions."""
-        # Should fall back to string comparison
-        self.assertTrue(_compare_versions("invalid", "invalid", "=="))
-        self.assertTrue(_compare_versions("z", "a", ">"))
-
-
-class TestParseVersionWithBeta(unittest.TestCase):
-    """Test cases for _parse_version_with_beta function."""
-
-    def test_release_version(self):
-        """Test parsing release version."""
-        result = _parse_version_with_beta("1.2.3")
-        self.assertEqual(result, (1, 2, 3, float("inf")))
-
-    def test_beta_version(self):
-        """Test parsing beta version."""
-        result = _parse_version_with_beta("1.2.3b10")
-        self.assertEqual(result, (1, 2, 3, 10))
-
-    def test_beta_version_no_number(self):
-        """Test parsing beta version without number."""
-        result = _parse_version_with_beta("1.2.3b")
-        self.assertEqual(result, (1, 2, 3, 0))
 
 
 class TestOneSettingsResponseErrorHandling(unittest.TestCase):
@@ -614,9 +573,9 @@ class TestFeatureEvaluationIntegration(unittest.TestCase):
 
     def setUp(self):
         """Set up test configuration profile."""
-        _ConfigurationProfile.os = "w"
-        _ConfigurationProfile.rp = "f"
-        _ConfigurationProfile.attach = "m"
+        _ConfigurationProfile.os = "windows"
+        _ConfigurationProfile.rp = "fn"
+        _ConfigurationProfile.attach = "manual"
         _ConfigurationProfile.version = "1.0.0b20"
         _ConfigurationProfile.component = "ext"
         _ConfigurationProfile.region = "westus"
@@ -633,44 +592,45 @@ class TestFeatureEvaluationIntegration(unittest.TestCase):
     def test_complex_feature_evaluation(self):
         """Test complex feature evaluation with multiple conditions."""
         settings = {
-            "live_metrics": {
+            "FEATURE_LIVE_METRICS": {
                 "default": "disabled",
                 "override": [
-                    {"os": "w"},  # This should match
-                    {"os": "l", "ver": {"min": "1.0.0b20"}},
-                    {"component": "dst", "rp": "f"},
+                    {"os": "windows"},  # This should match
+                    {"os": "linux", "ver": "1.0.0b20", "component": "dst"},
+                    {"component": "dst", "rp": "fn"},
                 ],
             },
-            "sampling": {
+            "FEATURE_SDK_STATS": {
                 "default": "enabled",
                 "override": [
-                    {"os": ["w", "l"]},  # This should match and disable
+                    {"os": "windows"},  # This should match and disable
                 ],
             },
-            "profiling": {
+            "FEATURE_PROFILING": {
                 "default": "disabled",
                 "override": [
                     {
-                        "os": "w",
-                        "ver": {"min": "2.0.0", "max": "3.0.0"},
+                        "os": "windows",
+                        "ver": "2.0.0",
+                        "component": "ext",
                     },  # Version doesn't match
                     {
                         "component": "ext",
-                        "rp": ["f", "a"],
-                        "region": ["westus", "eastus"],
+                        "rp": "fn",
+                        "region": "westus",
                     },  # All match
                 ],
             },
         }
 
-        # live_metrics: disabled by default, but Windows override matches
-        self.assertTrue(evaluate_feature("live_metrics", settings))
+        # FEATURE_LIVE_METRICS: disabled by default, but Windows override matches
+        self.assertTrue(evaluate_feature("FEATURE_LIVE_METRICS", settings))
 
-        # sampling: enabled by default, but OS override matches to disable
-        self.assertFalse(evaluate_feature("sampling", settings))
+        # FEATURE_SDK_STATS: enabled by default, but OS override matches to disable
+        self.assertFalse(evaluate_feature("FEATURE_SDK_STATS", settings))
 
-        # profiling: disabled by default, second override matches to enable
-        self.assertTrue(evaluate_feature("profiling", settings))
+        # FEATURE_PROFILING: disabled by default, second override matches to enable
+        self.assertTrue(evaluate_feature("FEATURE_PROFILING", settings))
 
 
 if __name__ == "__main__":

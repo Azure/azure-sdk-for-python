@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator,
 import time
 import math
 import random
+import logging
+import queue
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
@@ -42,7 +44,7 @@ from ..._common.constants import (
     OPERATION_TIMEOUT,
     NEXT_AVAILABLE_SESSION,
 )
-from ..._transport._pyamqp_transport import PyamqpTransport
+from ..._transport._pyamqp_transport import PyamqpTransport, RECEIVE_LINK_DRAIN_TIMEOUT
 from ...exceptions import (
     OperationTimeoutError,
     ServiceBusConnectionError,
@@ -57,6 +59,9 @@ if TYPE_CHECKING:
     from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
     from ..._pyamqp.aio._client_async import AMQPClientAsync
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
@@ -300,6 +305,61 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :rtype: None
         """
         await handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
+
+    @staticmethod
+    async def drain_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
+        """
+        Drain the receive link and release buffered/in-flight messages on close, so
+        they are not left locked at the broker until lock expiry. Intended for
+        non-session PEEK_LOCK receivers only (gated by the caller).
+        :param ReceiveClientAsync handler: Client whose receive link to drain.
+        :rtype: None
+        """
+        # pylint: disable=protected-access
+        link = handler._link
+        if link is None or link._is_closed:
+            return  # cannot drain or settle through a closed/absent link
+        if link.current_link_credit > 0:
+            # Drain in-flight transfers into the buffer. Own try so a drain
+            # failure still falls through to the release below.
+            try:
+                outstanding = link.current_link_credit
+                await link.flow(link_credit=0, drain=True)
+                deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
+                idle_cycles = 0
+                while True:
+                    remaining = deadline - time.time()
+                    if remaining <= 0:
+                        break
+                    before = handler._received_messages.qsize()
+                    # listen() directly, not do_work_async() (which re-issues credit at
+                    # 0 and undoes the drain). batch=outstanding assembles multi-frame
+                    # transfers in one cycle; cap each read by the remaining budget so
+                    # close stays bounded. pyamqp drops the drain echo, so stop after 2
+                    # idle cycles.
+                    wait = remaining if handler._socket_timeout is None else min(handler._socket_timeout, remaining)
+                    await handler._connection.listen(wait=wait, batch=outstanding)
+                    if handler._received_messages.qsize() == before:
+                        idle_cycles += 1
+                        if idle_cycles >= 2:
+                            break
+                    else:
+                        idle_cycles = 0
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Draining the receive link on close failed.", exc_info=True)
+        # Release buffered deliveries (incl. credit==0 prefetch) so they are not
+        # left locked until lock expiry. Per-message try so one bad tag doesn't
+        # strand the rest; get_nowait handles the empty()/get race.
+        while True:
+            try:
+                frame, _ = handler._received_messages.get_nowait()
+            except queue.Empty:
+                break
+            try:
+                await handler.settle_messages_async(frame[1], frame[2], "released")
+                handler._received_messages.task_done()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Releasing a buffered message on close failed.", exc_info=True)
 
     @staticmethod
     async def settle_message_via_receiver_link_async(

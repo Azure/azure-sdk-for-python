@@ -48,7 +48,7 @@ from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancell
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
 from ..streaming._helpers import _encode_sse
-from ..streaming._sse import encode_sse_any_event
+from ..streaming._sse import encode_sse_any_event, with_keep_alive
 from ..streaming._state_machine import _normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
 from ._observability import (
@@ -696,7 +696,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             disconnect_task.cancel()
 
                 sse_response = StreamingResponse(
-                    _iter_with_context(),
+                    with_keep_alive(
+                        _iter_with_context(),
+                        self._runtime_options.sse_keep_alive_interval_seconds,
+                    ),
                     media_type="text/event-stream",
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                 )
@@ -1046,7 +1049,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
                 yield encode_sse_any_event(event)
 
-        return StreamingResponse(_stream_from_subject(), media_type="text/event-stream", headers=merged_headers)
+        return StreamingResponse(
+            with_keep_alive(_stream_from_subject(), self._runtime_options.sse_keep_alive_interval_seconds),
+            media_type="text/event-stream",
+            headers=merged_headers,
+        )
 
     async def _try_replay_persisted_stream(
         self,
