@@ -1,16 +1,12 @@
 ## Release History
 
-### 4.16.2 (Unreleased)
+### 4.16.2 (2026-07-15)
 
 #### Features Added
-* Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index_definition` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
-
-#### Breaking Changes
+* Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
 
 #### Bugs Fixed
 * Fixed `KeyError: 'version'` in `SessionContainer.get_session_token` (sync and async) when the container's `partitionKey` definition returned by the service does not include the optional `version` field. The error was silently swallowed by a broad `except`, causing the client to send no `x-ms-session-token` header on subsequent reads. Against the Dedicated Gateway, this turned every Session-consistency read into an Integrated Cache miss. `partitionKey.version` is now treated as optional and defaults to `1`, matching how `PartitionKey` handles a missing version. See [PR 47143](https://github.com/Azure/azure-sdk-for-python/pull/47143)
-
-#### Other Changes
 
 ### 4.16.1 (2026-06-01)
 

@@ -2,6 +2,14 @@
 
 ## 1.0.0b7 (Unreleased)
 
+### Features Added
+
+- AsyncAPI docs endpoints — `InvocationAgentServerHost` now accepts optional
+  `asyncapi_spec_json` (dict) and/or `asyncapi_spec_yaml` (raw YAML string)
+  constructor args, served at `GET /invocations/docs/asyncapi.json` and
+  `GET /invocations/docs/asyncapi.yaml` respectively. Either representation
+  returns `404` if not registered. See README for details.
+
 ### Bugs Fixed
 
 - Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute.
