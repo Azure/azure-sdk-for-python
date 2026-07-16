@@ -18,7 +18,6 @@ class TestJsonlBasicOperations(JsonlClientTestBase):
         client = self.create_client(endpoint=jsonl_endpoint)
         response = client.basic.send(
             body=bytes("bytes", encoding="utf-8"),
-            content_type="str",
         )
 
         # please add some check logic here by yourself

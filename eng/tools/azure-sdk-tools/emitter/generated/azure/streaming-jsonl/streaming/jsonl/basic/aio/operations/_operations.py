@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterator, Callable, Optional, TypeVar
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -49,12 +49,40 @@ class BasicOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def send(self, body: bytes, **kwargs: Any) -> None:
+    @overload
+    async def send(self, body: bytes, *, content_type: str = "application/jsonl", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
         :type body: bytes
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/jsonl".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def send(self, body: IO[bytes], *, content_type: str = "application/jsonl", **kwargs: Any) -> None:
+        """send.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/jsonl".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def send(self, body: Union[bytes, IO[bytes]], **kwargs: Any) -> None:
+        """send.
+
+        :param body: Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70,9 +98,10 @@ class BasicOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/jsonl"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/jsonl"
         _content = body
 
         _request = build_basic_send_request(

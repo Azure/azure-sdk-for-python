@@ -19,7 +19,6 @@ class TestJsonlBasicOperationsAsync(JsonlClientTestBaseAsync):
         client = self.create_async_client(endpoint=jsonl_endpoint)
         response = await client.basic.send(
             body=bytes("bytes", encoding="utf-8"),
-            content_type="str",
         )
 
         # please add some check logic here by yourself
