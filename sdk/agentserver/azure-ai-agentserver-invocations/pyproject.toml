@@ -22,6 +22,12 @@ keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b7",
+    # Pull aiohttp transitively from core, but pin the upper bound here too so the
+    # `--pre` CI install does not try to build the broken aiohttp 4.0.0a1 alpha
+    # (no py3.11 wheel -> sdist compile fails: longintrepr.h). Must be <4.0.0a0,
+    # NOT <4.0.0 (4.0.0a1 < 4.0.0 under PEP 440, so <4.0.0 still admits the alpha).
+    # Do not remove: keep in sync with core/responses/activity.
+    "aiohttp>=3.10.0,<4.0.0a0",
 ]
 
 [dependency-groups]
