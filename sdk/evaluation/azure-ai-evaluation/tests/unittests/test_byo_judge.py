@@ -28,6 +28,11 @@ class TestByoJudgeHelpers:
         # (the prompty branch needs project_endpoint to route, else it would KeyError).
         assert not is_byo_model_config({"byo_model": "c/d"})
         assert not is_byo_model_config({"project_endpoint": "https://x"})
+        # Markers must be non-empty strings — truthy-but-invalid values (e.g. ints) must not
+        # activate BYO, else they bypass validate_model_config and fail deep inside the client.
+        assert not is_byo_model_config({"byo_model": 1, "project_endpoint": 2})
+        assert not is_byo_model_config({"byo_model": "", "project_endpoint": "https://x"})
+        assert not is_byo_model_config({"byo_model": "c/d", "project_endpoint": ""})
 
     def test_to_responses_input(self):
         assert _to_responses_input([{"role": "user", "content": "hi"}]) == [

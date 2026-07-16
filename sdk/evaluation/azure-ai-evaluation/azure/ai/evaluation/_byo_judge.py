@@ -225,8 +225,16 @@ def is_byo_model_config(model_config: Dict[str, Any]) -> bool:
     """Return True if the model configuration references an admin-connected (BYO) model.
 
     Requires **both** markers — ``byo_model`` (``"connection/deployment"``) and ``project_endpoint``
-    — because the prompty branch needs the project endpoint to route the call. Requiring both matches
-    the control-plane contract (BYO is active iff both markers are present) and avoids a ``KeyError``
-    when only a partial config is supplied.
+    — to be present **non-empty strings**, because the prompty branch needs the project endpoint to
+    route the call. Requiring both matches the control-plane contract (BYO is active iff both markers
+    are present) and avoids a ``KeyError`` when only a partial config is supplied. Enforcing the string
+    type prevents truthy-but-invalid values (e.g. ``{"byo_model": 1, "project_endpoint": 2}``) from
+    bypassing the evaluator's normal model-config validation and failing deep inside the client instead.
     """
-    return bool(model_config) and bool(model_config.get("byo_model")) and bool(model_config.get("project_endpoint"))
+    if not model_config:
+        return False
+    byo_model = model_config.get("byo_model")
+    project_endpoint = model_config.get("project_endpoint")
+    return (
+        isinstance(byo_model, str) and bool(byo_model) and isinstance(project_endpoint, str) and bool(project_endpoint)
+    )
