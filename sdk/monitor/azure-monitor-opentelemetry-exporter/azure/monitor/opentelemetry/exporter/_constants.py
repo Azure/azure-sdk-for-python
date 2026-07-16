@@ -99,7 +99,6 @@ _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
 _ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
-_ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
 _ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
@@ -115,6 +114,8 @@ _ONE_SETTINGS_FEATURE_LIVE_METRICS = "FEATURE_LIVE_METRICS"
 _ONE_SETTINGS_FEATURE_SDK_STATS = "FEATURE_SDK_STATS"
 # Maximum refresh interval cap (24 hours in seconds)
 _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS = 24 * 60 * 60  # 86,400 seconds
+# Base delay for exponential backoff on transient change-detection errors (1 hour in seconds)
+_ONE_SETTINGS_BACKOFF_BASE_SECONDS = 3600
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
@@ -352,6 +353,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry-instrumentation-tornado",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.httpx",
     "opentelemetry.instrumentation.wsgi",
 )
 

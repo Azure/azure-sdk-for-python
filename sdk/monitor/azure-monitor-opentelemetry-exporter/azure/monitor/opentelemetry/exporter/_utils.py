@@ -92,7 +92,7 @@ def _get_rp():
         rp = "f"
     elif _is_on_app_service():
         rp = "a"
-    # TODO: Add VM scenario outside statsbeat
+    # TODO: Add VM scenario outside sdkstats
     # elif _is_on_vm():
     #     rp = 'v'
     elif _is_on_aks():
@@ -115,6 +115,41 @@ def _get_attach_type():
     if _is_attach_enabled():
         attach_type = "i"
     return attach_type
+
+
+# OneSettings
+
+# cspell:ignore appsvc
+# The OneSettings feature-flag schema expects full names for os/rp/attach (windows/linux/darwin,
+# appsvc/fn/aks, manual/integratedauto), unlike the short single-letter codes used for the statsbeat
+# SDK version prefix. These helpers are used only for the OneSettings _ConfigurationProfile.
+
+
+def _get_os_name():
+    system = platform.system()
+    if system == "Linux":
+        return "linux"
+    if system == "Windows":
+        return "windows"
+    if system == "Darwin":
+        return "darwin"
+    return "unknown"
+
+
+def _get_rp_name():
+    if _is_on_functions():
+        return "fn"
+    if _is_on_app_service():
+        return "appsvc"
+    if _is_on_aks():
+        return "aks"
+    return "unknown"
+
+
+def _get_attach_type_name():
+    if _is_attach_enabled():
+        return "integratedauto"
+    return "manual"
 
 
 def _get_sdk_version_prefix():
