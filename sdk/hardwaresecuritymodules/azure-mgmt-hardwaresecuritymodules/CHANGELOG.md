@@ -22,9 +22,9 @@
   - Added enum `PaymentHsmClusterSkuFamily`
   - Added enum `PaymentHsmClusterSkuName`
   - Added model `PaymentHsmProperties`
-  - Added model `PaymentHsmClusterPrivateEndpointConnectionsOperations`
-  - Added model `PaymentHsmClusterPrivateLinkResourcesOperations`
-  - Added model `PaymentHsmClustersOperations`
+  - Added operation group `PaymentHsmClusterPrivateEndpointConnectionsOperations`
+  - Added operation group `PaymentHsmClusterPrivateLinkResourcesOperations`
+  - Added operation group `PaymentHsmClustersOperations`
 
 ### Breaking Changes
 
