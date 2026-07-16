@@ -51,9 +51,16 @@ class AnalyzeDocumentsAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Gener
 
     @property
     def details(self) -> Mapping[str, Any]:
-        """Metadata associated with the long-running operation."""
+        """Metadata associated with the long-running operation.
+
+        :return: Metadata associated with the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         try:
-            headers = getattr(self.polling_method(), "_initial_response").http_response.headers  # type: ignore[attr-defined]
+            headers = getattr(  # type: ignore[attr-defined]
+                self.polling_method(),
+                "_initial_response",
+            ).http_response.headers
             op_loc = headers.get("Operation-Location") or headers.get("operation-location")
         except (AttributeError, TypeError):
             op_loc = None
@@ -90,20 +97,20 @@ class AnalyzeDocumentsAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Gener
 
 
 class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
-    @overload # type: ignore[override]
-    async def begin_submit_job(
+    @overload
+    async def begin_submit_job(  # type: ignore[override]
         self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
-    @overload  # type: ignore[override]
-    async def begin_submit_job(
+    @overload
+    async def begin_submit_job(  # type: ignore[override]
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
-    @overload  # type: ignore[override]
-    async def begin_submit_job(
+    @overload
+    async def begin_submit_job(  # type: ignore[override]
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
