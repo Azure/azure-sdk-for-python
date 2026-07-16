@@ -105,7 +105,7 @@ def _build_root_init(types_py: Path) -> str:
     enum_lines = "\n".join(f'{name} = getattr(_generated_enums, "{name}")' for name in enum_names)
     return (
         ROOT_INIT_PREFIX
-        + "from .models import _enums as _generated_enums\n\n"
+        + "from . import _enums as _generated_enums\n\n"
         + enum_lines
         + "\n"
     )
@@ -129,7 +129,7 @@ def finalize(emitter_output_root: Path, generated_root: Path) -> None:
         shutil.copy2(emitted_root / "models" / file_name, models_root / file_name)
 
     (generated_root / "__init__.py").write_text(_build_root_init(generated_root / "types.py"), encoding="utf-8")
-    (models_root / "_enums.py").write_text(_build_enum_fallback(generated_root / "types.py"), encoding="utf-8")
+    (generated_root / "_enums.py").write_text(_build_enum_fallback(generated_root / "types.py"), encoding="utf-8")
     _remove_pycache(generated_root)
 
 

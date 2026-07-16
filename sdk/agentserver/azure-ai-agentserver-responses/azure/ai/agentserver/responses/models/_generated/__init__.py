@@ -8,7 +8,7 @@
 
 from ._unions import *  # type: ignore # noqa: F401,F403
 from .types import *  # type: ignore # noqa: F401,F403
-from .models import _enums as _generated_enums
+from . import _enums as _generated_enums
 
 AgentDefinitionOptInKeys = getattr(_generated_enums, "AgentDefinitionOptInKeys")
 AgentKind = getattr(_generated_enums, "AgentKind")
