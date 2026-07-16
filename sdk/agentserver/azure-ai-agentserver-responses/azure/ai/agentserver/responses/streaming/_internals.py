@@ -83,9 +83,14 @@ def response_agent_reference(agent_reference: AgentReference | dict[str, Any] | 
     An empty dict is still used elsewhere as the sentinel for "do not stamp
     output items", but response snapshots must carry a valid agent_reference
     object.
+
+    :param agent_reference: The candidate agent reference payload.
+    :type agent_reference: AgentReference | dict[str, Any] | None
+    :returns: A response-level agent reference payload.
+    :rtype: dict[str, Any]
     """
     if isinstance(agent_reference, MutableMapping) and agent_reference:
-        return deepcopy(agent_reference)
+        return dict(deepcopy(agent_reference))
     return deepcopy(_DEFAULT_AGENT_REFERENCE)
 
 
@@ -166,24 +171,25 @@ def apply_common_defaults(
         snapshot = event.get("response")
         if not isinstance(snapshot, MutableMapping):
             continue
-        snapshot.setdefault("id", response_id)
-        snapshot.setdefault("response_id", response_id)
-        snapshot.setdefault("object", "response")
-        existing_agent_reference = snapshot.get("agent_reference")
+        snapshot_dict = cast(dict[str, Any], snapshot)
+        snapshot_dict.setdefault("id", response_id)
+        snapshot_dict.setdefault("response_id", response_id)
+        snapshot_dict.setdefault("object", "response")
+        existing_agent_reference = snapshot_dict.get("agent_reference")
         if (
             not isinstance(existing_agent_reference, MutableMapping)
             or not existing_agent_reference
             or (is_default_agent_reference(existing_agent_reference) and bool(agent_reference))
         ):
-            snapshot["agent_reference"] = response_agent_reference(agent_reference)
+            snapshot_dict["agent_reference"] = response_agent_reference(agent_reference)
         if model is not None:
-            snapshot.setdefault("model", model)
+            snapshot_dict.setdefault("model", model)
         # S-038: forcibly stamp session ID on every response.* event
         if agent_session_id is not None:
-            snapshot["agent_session_id"] = agent_session_id
+            snapshot_dict["agent_session_id"] = agent_session_id
         # S-040: forcibly stamp conversation on every response.* event
         if conversation_id is not None:
-            snapshot["conversation"] = {"id": conversation_id}
+            snapshot_dict["conversation"] = {"id": conversation_id}
 
 
 def track_completed_output_item(
@@ -239,7 +245,7 @@ def coerce_usage(
     if usage is None:
         return None
     if isinstance(usage, dict):
-        return deepcopy(usage)
+        return dict(deepcopy(usage))
     raise TypeError("usage must be a dict")
 
 
@@ -258,7 +264,7 @@ def extract_response_fields(
         return None, None
     agent_reference = payload.get("agent_reference")
     agent_ref: AgentReference | dict[str, Any] | None = (
-        deepcopy(agent_reference) if isinstance(agent_reference, MutableMapping) else None
+        dict(deepcopy(agent_reference)) if isinstance(agent_reference, MutableMapping) else None
     )
     model = payload.get("model")
     model_str = model if isinstance(model, str) and model else None

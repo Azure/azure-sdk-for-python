@@ -69,7 +69,7 @@ def normalize_create_response(
     """
     model = request.get("model")
     if (model is None or (isinstance(model, str) and not model.strip())) and options:
-        request["model"] = options.default_model
+        request["model"] = options.default_model or ""
         model = request.get("model")
 
     if isinstance(model, str):

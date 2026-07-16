@@ -62,7 +62,7 @@ class RequestValidationError(ValueError):
         if detail_errors is not None:
             error["details"] = detail_errors
         if self.debug_info is not None:
-            error["debug_info"] = self.debug_info
+            error["debugInfo"] = self.debug_info
         return error
 
     def to_api_error_response(self) -> ApiErrorResponse:

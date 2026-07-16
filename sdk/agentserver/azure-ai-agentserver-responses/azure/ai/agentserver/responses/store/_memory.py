@@ -540,9 +540,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         now = datetime.now(timezone.utc)
         stamped: list[ResponseStreamEvent] = []
         for ev in events:
-            copy = deepcopy(ev)
+            copy = dict(deepcopy(ev))
             copy.setdefault("_saved_at", now)
-            stamped.append(copy)
+            stamped.append(cast(ResponseStreamEvent, copy))
         async with self._locked():
             self._stream_events[response_id] = stamped
 
@@ -571,7 +571,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             entry = self._entries.get(response_id)
             ttl = entry.replay_event_ttl_seconds if entry is not None else _DEFAULT_REPLAY_EVENT_TTL_SECONDS
             cutoff = datetime.now(timezone.utc) - timedelta(seconds=ttl)
-            live = [e for e in events if e.get("_saved_at", cutoff) >= cutoff]
+            live = [
+                e
+                for e in events
+                if (saved_at if isinstance((saved_at := e.get("_saved_at", cutoff)), datetime) else cutoff) >= cutoff
+            ]
             return deepcopy(live)
 
     async def delete_stream_events(
@@ -655,7 +659,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         cutoff = current_time - timedelta(seconds=_DEFAULT_REPLAY_EVENT_TTL_SECONDS)
         for rid in orphaned_ids:
             events = self._stream_events[rid]
-            live = [e for e in events if e.get("_saved_at", cutoff) >= cutoff]
+            live = [
+                e
+                for e in events
+                if (saved_at if isinstance((saved_at := e.get("_saved_at", cutoff)), datetime) else cutoff) >= cutoff
+            ]
             if live:
                 self._stream_events[rid] = live
             else:

@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterable
-from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator, cast
 
 from azure.ai.agentserver.responses import models as response_models
@@ -13,6 +12,18 @@ from ._base import BaseOutputItemBuilder, BuilderLifecycleState, _require_wire_d
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
+
+
+def _with_annotation_type(annotation: dict[str, Any]) -> dict[str, Any]:
+    if "type" in annotation:
+        return annotation
+    if "url" in annotation:
+        return {**annotation, "type": "url_citation"}
+    if "container_id" in annotation:
+        return {**annotation, "type": "container_file_citation"}
+    if "filename" in annotation:
+        return {**annotation, "type": "file_citation"}
+    return {**annotation, "type": "file_path"}
 
 
 class TextContentBuilder:
@@ -183,6 +194,7 @@ class TextContentBuilder:
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
+        annotation_payload = _with_annotation_type(_require_wire_dict(annotation, "annotation"))
         return cast(
             response_models.ResponseOutputTextAnnotationAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
@@ -192,7 +204,7 @@ class TextContentBuilder:
                     "output_index": self._output_index,
                     "content_index": self._content_index,
                     "annotation_index": annotation_index,
-                    "annotation": _require_wire_dict(annotation, "annotation"),
+                    "annotation": annotation_payload,
                 }
             ),
         )

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union
+from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union, cast
 
 from azure.ai.agentserver.responses import models as response_models
 from ._event_stream import ResponseEventStream
@@ -96,7 +96,7 @@ class TextResponse:
         )
 
         if self._configure is not None:
-            self._configure(stream.response)
+            self._configure(cast("ResponseObject", stream.response))
 
         yield stream.emit_created()
         yield stream.emit_in_progress()

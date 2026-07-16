@@ -9,7 +9,12 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
-from azure.ai.agentserver.responses.models import AgentReference, OutputItem, ResponseStreamEvent, ResponseStreamEventType
+from azure.ai.agentserver.responses.models import (
+    AgentReference,
+    OutputItem,
+    ResponseStreamEvent,
+    ResponseStreamEventType,
+)
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext

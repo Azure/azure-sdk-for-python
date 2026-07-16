@@ -24,7 +24,8 @@
       "myhost",
       "bkey",
       "bval",
-      "xhigh"
+      "xhigh",
+      "MCPHTTP"
     ],
     "ignorePaths": [
       "*.csv",

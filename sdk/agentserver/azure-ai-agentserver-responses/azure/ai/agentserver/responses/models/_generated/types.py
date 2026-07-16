@@ -283,7 +283,10 @@ MessagePhase = Literal["commentary", "final_answer"]
 requests, preserve and resend phase on all assistant messages — dropping it can degrade
 performance. Not used for user messages."""
 
-MessageRole = Literal["unknown", "user", "assistant", "system", "critic", "discriminator", "developer", "tool"]
+if TYPE_CHECKING:
+    MessageRole = Any
+else:
+    MessageRole = Literal["unknown", "user", "assistant", "system", "critic", "discriminator", "developer", "tool"]
 """Type of MessageRole."""
 
 MessageStatus = Literal["in_progress", "completed", "incomplete"]
@@ -514,61 +517,64 @@ ResponseErrorCode = Literal[
 ResponseObjectType = Literal["response"]
 """Type of ResponseObjectType."""
 
-ResponseStreamEventType = Literal[
-    "response.audio.delta",
-    "response.audio.done",
-    "response.audio.transcript.delta",
-    "response.audio.transcript.done",
-    "response.code_interpreter_call_code.delta",
-    "response.code_interpreter_call_code.done",
-    "response.code_interpreter_call.completed",
-    "response.code_interpreter_call.in_progress",
-    "response.code_interpreter_call.interpreting",
-    "response.completed",
-    "response.content_part.added",
-    "response.content_part.done",
-    "response.created",
-    "error",
-    "response.file_search_call.completed",
-    "response.file_search_call.in_progress",
-    "response.file_search_call.searching",
-    "response.function_call_arguments.delta",
-    "response.function_call_arguments.done",
-    "response.in_progress",
-    "response.failed",
-    "response.incomplete",
-    "response.output_item.added",
-    "response.output_item.done",
-    "response.reasoning_summary_part.added",
-    "response.reasoning_summary_part.done",
-    "response.reasoning_summary_text.delta",
-    "response.reasoning_summary_text.done",
-    "response.reasoning_text.delta",
-    "response.reasoning_text.done",
-    "response.refusal.delta",
-    "response.refusal.done",
-    "response.output_text.delta",
-    "response.output_text.done",
-    "response.web_search_call.completed",
-    "response.web_search_call.in_progress",
-    "response.web_search_call.searching",
-    "response.image_generation_call.completed",
-    "response.image_generation_call.generating",
-    "response.image_generation_call.in_progress",
-    "response.image_generation_call.partial_image",
-    "response.mcp_call_arguments.delta",
-    "response.mcp_call_arguments.done",
-    "response.mcp_call.completed",
-    "response.mcp_call.failed",
-    "response.mcp_call.in_progress",
-    "response.mcp_list_tools.completed",
-    "response.mcp_list_tools.failed",
-    "response.mcp_list_tools.in_progress",
-    "response.output_text.annotation.added",
-    "response.queued",
-    "response.custom_tool_call_input.delta",
-    "response.custom_tool_call_input.done",
-]
+if TYPE_CHECKING:
+    ResponseStreamEventType = Any
+else:
+    ResponseStreamEventType = Literal[
+        "response.audio.delta",
+        "response.audio.done",
+        "response.audio.transcript.delta",
+        "response.audio.transcript.done",
+        "response.code_interpreter_call_code.delta",
+        "response.code_interpreter_call_code.done",
+        "response.code_interpreter_call.completed",
+        "response.code_interpreter_call.in_progress",
+        "response.code_interpreter_call.interpreting",
+        "response.completed",
+        "response.content_part.added",
+        "response.content_part.done",
+        "response.created",
+        "error",
+        "response.file_search_call.completed",
+        "response.file_search_call.in_progress",
+        "response.file_search_call.searching",
+        "response.function_call_arguments.delta",
+        "response.function_call_arguments.done",
+        "response.in_progress",
+        "response.failed",
+        "response.incomplete",
+        "response.output_item.added",
+        "response.output_item.done",
+        "response.reasoning_summary_part.added",
+        "response.reasoning_summary_part.done",
+        "response.reasoning_summary_text.delta",
+        "response.reasoning_summary_text.done",
+        "response.reasoning_text.delta",
+        "response.reasoning_text.done",
+        "response.refusal.delta",
+        "response.refusal.done",
+        "response.output_text.delta",
+        "response.output_text.done",
+        "response.web_search_call.completed",
+        "response.web_search_call.in_progress",
+        "response.web_search_call.searching",
+        "response.image_generation_call.completed",
+        "response.image_generation_call.generating",
+        "response.image_generation_call.in_progress",
+        "response.image_generation_call.partial_image",
+        "response.mcp_call_arguments.delta",
+        "response.mcp_call_arguments.done",
+        "response.mcp_call.completed",
+        "response.mcp_call.failed",
+        "response.mcp_call.in_progress",
+        "response.mcp_list_tools.completed",
+        "response.mcp_list_tools.failed",
+        "response.mcp_list_tools.in_progress",
+        "response.output_text.annotation.added",
+        "response.queued",
+        "response.custom_tool_call_input.delta",
+        "response.custom_tool_call_input.done",
+    ]
 """Type of ResponseStreamEventType."""
 
 SearchContentType = Literal["text", "image"]
@@ -894,7 +900,7 @@ class AISearchIndexResource(TypedDict, total=False):
     :ivar top_k: Number of documents to retrieve from search and present to the model.
     :vartype top_k: int
     :ivar filter: filter string for search resource. `Learn more here
-     <https://learn.microsoft.com/azure/search/search-filters>`_.
+     <https://learn.microsoft.com/azure/search/search-filters>`__.
     :vartype filter: str
     :ivar index_asset_id: Index asset id for search resource.
     :vartype index_asset_id: str
@@ -911,7 +917,7 @@ class AISearchIndexResource(TypedDict, total=False):
     """Number of documents to retrieve from search and present to the model."""
     filter: str
     """filter string for search resource. `Learn more here
-     <https://learn.microsoft.com/azure/search/search-filters>`_."""
+     <https://learn.microsoft.com/azure/search/search-filters>`__."""
     index_asset_id: str
     """Index asset id for search resource."""
 
@@ -2775,6 +2781,61 @@ CreateResponseInternalMetadataUserContext.__doc__ = """CreateResponseInternalMet
 :ivar ms_user_agent:
 :vartype ms_user_agent: str
 """
+
+if not TYPE_CHECKING:
+    CreateResponseInternalMetadata.__annotations__ = {
+        "feature_flags": list[str],
+        "web_search": "CreateResponseInternalMetadataWebSearch",
+        "user_context": "CreateResponseInternalMetadataUserContext",
+        "response_context": "CreateResponseInternalMetadataResponseContext",
+        "application_context": "CreateResponseInternalMetadataApplicationContext",
+        "defender_for_ai_context": "CreateResponseInternalMetadataDefenderForAiContext",
+    }
+    CreateResponseInternalMetadataApplicationContext.__annotations__ = {
+        "resource_id": str,
+        "subscription_id": str,
+        "tenant_id": str,
+        "region": str,
+        "creation_date": str,
+        "user_isolation_key": str,
+        "chat_isolation_key": str,
+        "application_id": str,
+    }
+    CreateResponseInternalMetadataResponseContext.__annotations__ = {
+        "agent_name": str,
+        "agent_version": str,
+        "agent_version_id": str,
+        "agent_kind": str,
+        "conversation_id": str,
+        "model": str,
+        "top_p": str,
+        "temperature": str,
+        "tools": list["CreateResponseInternalMetadataResponseContextTool"],
+        "reasoning_effort": str,
+        "reasoning_summary": str,
+        "max_tool_calls": int,
+        "parallel_tool_calls": bool,
+        "max_output_tokens": int,
+        "previous_response_id": str,
+        "agent_version_created_at": str,
+        "agent_version_description": str,
+        "hosted_agent_image": str,
+    }
+    CreateResponseInternalMetadataResponseContextTool.__annotations__ = {
+        "tool_name": str,
+        "tool_type": str,
+    }
+    CreateResponseInternalMetadataUserContext.__annotations__ = {
+        "request_ip": str,
+        "oid": str,
+        "tid": str,
+        "appid": str,
+        "auth_type": str,
+        "token_type": str,
+        "upn": str,
+        "user_agent": str,
+        "ms_user_agent": str,
+    }
 
 
 class CreateResponseInternalMetadataWebSearch(TypedDict, total=False):
@@ -5769,7 +5830,7 @@ class MCPTool(TypedDict, total=False):
     ]
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
-      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+      </docs/guides/tools-remote-mcp#connectors>`__. Currently supported ``connector_id`` values are:
 
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
@@ -7935,7 +7996,7 @@ class OutputMessageContentRefusalContent(TypedDict, total=False):
 
 class Prompt(TypedDict, total=False):
     """Reference to a prompt template and its variables. `Learn more
-    </docs/guides/text?api-mode=responses#reusable-prompts>`_.
+    </docs/guides/text?api-mode=responses#reusable-prompts>`__.
 
     :ivar id: The unique identifier of the prompt template to use. Required.
     :vartype id: str
@@ -9308,16 +9369,16 @@ class ResponseObject(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_.
+     </docs/guides/safety-best-practices#safety-identifiers>`__.
     :vartype user: str
     :ivar safety_identifier: A stable identifier used to help detect users of your application that
      may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
      each user, with a maximum length of 64 characters. We recommend hashing their username or email
      address, in order to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_.
+     </docs/guides/safety-best-practices#safety-identifiers>`__.
     :vartype safety_identifier: str
     :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
+     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__.
     :vartype prompt_cache_key: str
     :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
      Literal["flex"], Literal["scale"], Literal["priority"]
@@ -9361,14 +9422,10 @@ class ResponseObject(TypedDict, total=False):
     :vartype error: "ResponseError"
     :ivar incomplete_details: Required.
     :vartype incomplete_details: "ResponseIncompleteDetails"
-    :ivar output: An array of content items generated by the model.
-
-     * The length and order of items in the `output` array is dependent
-     on the model's response.
-     * Rather than accessing the first item in the `output` array and
-     assuming it's an `assistant` message with the content generated by
-     the model, you might consider using the `output_text` property where
-     supported in SDKs. Required.
+    :ivar output: An array of content items generated by the model. The length and order of items in
+     the `output` array is dependent on the model's response. Rather than accessing the first item in
+     the `output` array and assuming it's an `assistant` message with the content generated by the
+     model, you might consider using the `output_text` property where supported in SDKs. Required.
     :vartype output: list["OutputItem"]
     :ivar reasoning:
     :vartype reasoning: "Reasoning"
@@ -9399,16 +9456,16 @@ class ResponseObject(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_."""
+     </docs/guides/safety-best-practices#safety-identifiers>`__."""
     safety_identifier: str
     """A stable identifier used to help detect users of your application that may be violating
      OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
      maximum length of 64 characters. We recommend hashing their username or email address, in order
      to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_."""
+     </docs/guides/safety-best-practices#safety-identifiers>`__."""
     prompt_cache_key: str
     """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_."""
+     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__."""
     service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
      Literal[\"scale\"], Literal[\"priority\"]"""
@@ -9444,14 +9501,10 @@ class ResponseObject(TypedDict, total=False):
     incomplete_details: Required[Optional["ResponseIncompleteDetails"]]
     """Required."""
     output: Required[list["OutputItem"]]
-    """An array of content items generated by the model.
-
-      * The length and order of items in the `output` array is dependent
-      on the model's response.
-      * Rather than accessing the first item in the `output` array and
-      assuming it's an `assistant` message with the content generated by
-      the model, you might consider using the `output_text` property where
-      supported in SDKs. Required."""
+    """An array of content items generated by the model. The length and order of items in the
+     `output` array is dependent on the model's response. Rather than accessing the first item in the
+     `output` array and assuming it's an `assistant` message with the content generated by the model,
+     you might consider using the `output_text` property where supported in SDKs. Required."""
     reasoning: Optional["Reasoning"]
     instructions: Required[Optional[Union[str, list["Item"]]]]
     """Required. Is either a str type or a [Item] type."""
@@ -10514,7 +10567,7 @@ class ToolChoiceAllowed(TypedDict, total=False):
 
 class ToolChoiceCodeInterpreter(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. CODE_INTERPRETER.
     :vartype type: Literal["code_interpreter"]
@@ -10526,7 +10579,7 @@ class ToolChoiceCodeInterpreter(TypedDict, total=False):
 
 class ToolChoiceComputer(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. COMPUTER.
     :vartype type: Literal["computer"]
@@ -10538,7 +10591,7 @@ class ToolChoiceComputer(TypedDict, total=False):
 
 class ToolChoiceComputerUse(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. COMPUTER_USE.
     :vartype type: Literal["computer_use"]
@@ -10550,7 +10603,7 @@ class ToolChoiceComputerUse(TypedDict, total=False):
 
 class ToolChoiceComputerUsePreview(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. COMPUTER_USE_PREVIEW.
     :vartype type: Literal["computer_use_preview"]
@@ -10577,7 +10630,7 @@ class ToolChoiceCustom(TypedDict, total=False):
 
 class ToolChoiceFileSearch(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. FILE_SEARCH.
     :vartype type: Literal["file_search"]
@@ -10604,7 +10657,7 @@ class ToolChoiceFunction(TypedDict, total=False):
 
 class ToolChoiceImageGeneration(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. IMAGE_GENERATION.
     :vartype type: Literal["image_generation"]
@@ -10634,7 +10687,7 @@ class ToolChoiceMCP(TypedDict, total=False):
 
 class ToolChoiceWebSearchPreview(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW.
     :vartype type: Literal["web_search_preview"]
@@ -10646,7 +10699,7 @@ class ToolChoiceWebSearchPreview(TypedDict, total=False):
 
 class ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
     :vartype type: Literal["web_search_preview_2025_03_11"]
@@ -11569,16 +11622,16 @@ class CreateResponse(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_.
+     </docs/guides/safety-best-practices#safety-identifiers>`__.
     :vartype user: str
     :ivar safety_identifier: A stable identifier used to help detect users of your application that
      may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
      each user, with a maximum length of 64 characters. We recommend hashing their username or email
      address, in order to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_.
+     </docs/guides/safety-best-practices#safety-identifiers>`__.
     :vartype safety_identifier: str
     :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
+     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__.
     :vartype prompt_cache_key: str
     :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
      Literal["flex"], Literal["scale"], Literal["priority"]
@@ -11649,16 +11702,16 @@ class CreateResponse(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_."""
+     </docs/guides/safety-best-practices#safety-identifiers>`__."""
     safety_identifier: str
     """A stable identifier used to help detect users of your application that may be violating
      OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
      maximum length of 64 characters. We recommend hashing their username or email address, in order
      to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`_."""
+     </docs/guides/safety-best-practices#safety-identifiers>`__."""
     prompt_cache_key: str
     """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_."""
+     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__."""
     service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
      Literal[\"scale\"], Literal[\"priority\"]"""

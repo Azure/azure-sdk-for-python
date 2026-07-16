@@ -59,10 +59,31 @@ def _resolve_conversation_param(raw: Any) -> str | None:
 
 
 def _require_wire_dict(obj: Any, field_name: str) -> dict[str, Any]:
-    """Validate that a convenience-method payload is already dict-native."""
+    """Validate that a convenience-method payload is already dict-native.
+
+    :param obj: The payload to validate.
+    :type obj: Any
+    :param field_name: The field name to include in error messages.
+    :type field_name: str
+    :returns: The validated wire payload.
+    :rtype: dict[str, Any]
+    """
     if not isinstance(obj, dict):
         raise TypeError(f"{field_name} must be a dict-native wire payload")
     return obj
+
+
+class _MutableResponseDict(dict[str, Any]):
+    """Mutable response wire payload with legacy attribute access."""
+
+    def __getattr__(self, name: str) -> Any:
+        try:
+            return self[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        self[name] = value
 
 
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
@@ -72,7 +93,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self,
         *,
         response_id: str | None = None,
-        agent_reference: AgentReference | None = None,
+        agent_reference: AgentReference | dict[str, Any] | None = None,
         model: str | None = None,
         request: response_models.CreateResponse | None = None,
         response: response_models.ResponseObject | None = None,
@@ -109,18 +130,20 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response_id = resolved_response_id
 
         if response_mapping is not None:
-            payload = deepcopy(response_mapping)
+            payload = _MutableResponseDict(deepcopy(response_mapping))
             payload["id"] = self._response_id
             payload.setdefault("object", "response")
             payload.setdefault("output", [])
             self._response = payload
         else:
-            self._response = {
-                "id": self._response_id,
-                "object": "response",
-                "output": [],
-                "created_at": datetime.now(timezone.utc),
-            }
+            self._response = _MutableResponseDict(
+                {
+                    "id": self._response_id,
+                    "object": "response",
+                    "output": [],
+                    "created_at": datetime.now(timezone.utc),
+                }
+            )
             if request_mapping is not None:
                 for field_name in ("metadata", "background", "previous_response_id"):
                     value = request_mapping.get(field_name)
@@ -144,7 +167,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if agent_reference is not None:
             self._response["agent_reference"] = deepcopy(agent_reference)
 
-        self._agent_reference, self._model = _internals.extract_response_fields(self._response)
+        self._agent_reference, self._model = _internals.extract_response_fields(
+            cast(response_models.ResponseObject, self._response)
+        )
         self._events: list[response_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
         self._output_index = 0
@@ -238,7 +263,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def emit_failed(
         self,
         *,
-        code: str | response_models.ResponseErrorCode = "server_error",
+        code: str = "server_error",
         message: str = "An internal server error occurred.",
         usage: response_models.ResponseUsage | None = None,
     ) -> response_models.ResponseFailedEvent:
@@ -515,7 +540,12 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_structured_output_item_id(self._response_id)
-        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+        return OutputItemBuilder(
+            self,
+            output_index=output_index,
+            item_id=item_id,
+            default_type="structured_outputs",
+        )
 
     def add_output_item_computer_call(self) -> OutputItemBuilder:
         """Add a computer-call output item and return its generic builder.
@@ -673,15 +703,22 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         candidate["sequence_number"] = len(self._events)
 
         # Apply response-level defaults to lifecycle events
+        typed_candidate = cast(response_models.ResponseStreamEvent, candidate)
         _internals.apply_common_defaults(
-            [candidate], response_id=self._response_id, agent_reference=self._agent_reference, model=self._model
+            [typed_candidate],
+            response_id=self._response_id,
+            agent_reference=self._agent_reference,
+            model=self._model,
         )
         # Track completed output items on the response envelope
-        _internals.track_completed_output_item(self._response, candidate)
+        _internals.track_completed_output_item(
+            cast(response_models.ResponseObject, self._response),
+            typed_candidate,
+        )
 
         self._validator.validate_next(candidate)
-        self._events.append(candidate)
-        return cast(response_models.ResponseStreamEvent, candidate)
+        self._events.append(typed_candidate)
+        return typed_candidate
 
     # ---- Generator convenience methods (S-056/S-057) ----
     # Output-item convenience generators that encapsulate the full lifecycle.

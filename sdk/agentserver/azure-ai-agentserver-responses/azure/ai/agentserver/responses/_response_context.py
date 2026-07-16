@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 from azure.ai.agentserver.responses.models._wire import get_field as _get_field
 from azure.ai.agentserver.responses.models._wire import is_type as _is_wire_type
-from azure.ai.agentserver.responses.models import CreateResponse, InputParam, Item, ItemReferenceParam, OutputItem
+from azure.ai.agentserver.responses.models import CreateResponse, InputParam, Item, OutputItem
 
 from .models._helpers import get_input_expanded, is_item_reference, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
@@ -184,7 +184,10 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
 
         for item in expanded:
             if is_item_reference(item):
-                reference_ids.append(str(item["id"]))
+                reference_id = _get_field(item, "id")
+                if reference_id is None:
+                    continue
+                reference_ids.append(str(reference_id))
                 reference_positions.append(len(results))
                 results.append(None)  # placeholder
             else:

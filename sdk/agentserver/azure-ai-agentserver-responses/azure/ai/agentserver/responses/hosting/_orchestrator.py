@@ -19,9 +19,9 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 import anyio
 
 from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.responses import models as response_models
 
 from .._options import ResponsesServerOptions
-from azure.ai.agentserver.responses import models as response_models
 from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
@@ -108,7 +108,8 @@ def _check_first_event_contract(normalized: response_models.ResponseStreamEvent,
     :rtype: str | None
     """
     event_type = normalized.get("type")
-    response = normalized.get("response") or {}
+    response_raw = normalized.get("response")
+    response = response_raw if isinstance(response_raw, dict) else {}
     if event_type != "response.created":
         return f"first event must be response.created, got '{event_type}'"
     emitted_id = response.get("id")
@@ -298,7 +299,8 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     first_event_processed = True
 
                     # FR-008a: output manipulation detection on response.created
-                    created_response = normalized.get("response") or {}
+                    created_response_raw = normalized.get("response")
+                    created_response = created_response_raw if isinstance(created_response_raw, dict) else {}
                     created_output = created_response.get("output")
                     if isinstance(created_output, list) and len(created_output) != 0:
                         raise ValueError(
@@ -340,7 +342,10 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                             )
                             _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                             await provider.create_response(
-                                _response_obj, _resolved_items, _history_ids, context=_context
+                                cast(response_models.ResponseObject, _response_obj),
+                                _resolved_items,
+                                _history_ids,
+                                context=_context,
                             )
                             _provider_created = True
                         except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -375,7 +380,8 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     # FR-008a: detect direct Output manipulation on response.* events
                     n_type = normalized.get("type", "")
                     if n_type in _RESPONSE_SNAPSHOT_TYPES:
-                        n_response = normalized.get("response") or {}
+                        n_response_raw = normalized.get("response")
+                        n_response = n_response_raw if isinstance(n_response_raw, dict) else {}
                         n_output = n_response.get("output")
                         if isinstance(n_output, list) and len(n_output) > output_item_count:
                             raise ValueError(
@@ -504,12 +510,20 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                 _context = context.platform_context if context else None
                 try:
                     if _provider_created:
-                        await provider.update_response(record.response, context=_context)
+                        await provider.update_response(
+                            cast(response_models.ResponseObject, record.response),
+                            context=_context,
+                        )
                     else:
                         # Response was never created (handler yielded nothing or
                         # failed before response.created) — create instead of update.
                         _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-                        await provider.create_response(record.response, _resolved_items, None, context=_context)
+                        await provider.create_response(
+                            cast(response_models.ResponseObject, record.response),
+                            _resolved_items,
+                            None,
+                            context=_context,
+                        )
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                     setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                     logger.error(
@@ -923,7 +937,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 try:
                     if state.provider_created:
                         # bg+stream: initial create already done at response.created — use update
-                        await self._provider.update_response(record.response, context=_context)
+                        await self._provider.update_response(
+                            cast(response_models.ResponseObject, record.response),
+                            context=_context,
+                        )
                     else:
                         # non-bg stream or bg stream where initial create was never registered:
                         # full create
@@ -939,7 +956,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         )
                         _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                         await self._provider.create_response(
-                            response_payload,
+                            cast(response_models.ResponseObject, response_payload),
                             _resolved_items,
                             _history_ids,
                             context=_context,
@@ -1027,7 +1044,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
             try:
                 await self._provider.create_response(
-                    _initial_response_obj, _resolved_items, _history_ids, context=_context
+                    cast(response_models.ResponseObject, _initial_response_obj),
+                    _resolved_items,
+                    _history_ids,
+                    context=_context,
                 )
                 state.provider_created = True
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -1202,7 +1222,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # FR-008a: output manipulation detection on response.created.
         # If the handler directly added items to response.output instead of
         # using builder events, the output list will be non-empty.
-        created_response = first_normalized.get("response") or {}
+        created_response_raw = first_normalized.get("response")
+        created_response = created_response_raw if isinstance(created_response_raw, dict) else {}
         created_output = created_response.get("output")
         if isinstance(created_output, list) and len(created_output) != 0:
             _fr008a_msg = (
@@ -1255,7 +1276,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 if _pre_type == response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
-                    _pre_response = _pre_coerced.get("response") or {}
+                    _pre_response_raw = _pre_coerced.get("response")
+                    _pre_response = _pre_response_raw if isinstance(_pre_response_raw, dict) else {}
                     _pre_output = _pre_response.get("output")
                     if isinstance(_pre_output, list) and len(_pre_output) > output_item_count:
                         _fr008a_msg = (
@@ -1671,7 +1693,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                 await self._provider.create_response(
-                    _response_obj,
+                    cast(response_models.ResponseObject, _response_obj),
                     _resolved_items,
                     _history_ids,
                     context=_context,

@@ -78,7 +78,7 @@ def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:
     """
     if not isinstance(event, Mapping):
         raise TypeError("SSE event must be a mapping")
-    payload = event.copy() if isinstance(event, dict) else {key: value for key, value in event.items()}
+    payload = event.copy() if isinstance(event, dict) else dict(event.items())
     event_type = payload.get("type")
 
     if not event_type:

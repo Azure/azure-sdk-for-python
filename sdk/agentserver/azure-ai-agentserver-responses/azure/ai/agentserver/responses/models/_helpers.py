@@ -13,7 +13,6 @@ from azure.ai.agentserver.responses.models import (
     CreateResponse,
     Item,
     ItemMessage,
-    ItemReferenceParam,
     MessageContent,
     MessageContentInputTextContent,
     MessageRole,
@@ -28,8 +27,8 @@ def _is_type(obj: Any, _model_cls: type, type_value: str) -> bool:
 
     :param obj: The object to check.
     :type obj: Any
-    :param model_cls: Retained for call-site readability; ignored at runtime.
-    :type model_cls: type
+    :param _model_cls: Retained for call-site readability; ignored at runtime.
+    :type _model_cls: type
     :param type_value: The string type discriminator to match in dicts.
     :type type_value: str
     :returns: True if *obj* matches the wire type value.
@@ -43,6 +42,11 @@ def is_item_reference(item: Any) -> bool:
 
     Item references are identified by OpenAI's typed ``item_reference`` shape,
     or by the legacy id-only shorthand.
+
+    :param item: The item payload to inspect.
+    :type item: Any
+    :returns: ``True`` if the item is an item reference payload.
+    :rtype: bool
     """
     if not isinstance(item, dict):
         return False
@@ -104,27 +108,28 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
         return []
     if isinstance(inp, str):
         return [
-            {
+            cast(
+                Item,
+                {
                 "type": "message",
                 "role": MessageRole.USER,
                 "content": [{"type": "input_text", "text": inp}],
-            }
+                },
+            )
         ]
     # Normalize items: per the OpenAI spec, items without an explicit
     # ``type`` default to ``"message"`` (C-MSG-01 compliance).
     items: list[Item] = []
     for raw in inp:
-        item = raw
-        if isinstance(item, dict):
-            item = _ensure_item_type(item)
-        items.append(item)
-
-    # Auto-expand string content on message items so downstream consumers
-    # always see list[MessageContent] (matches .NET ExpandContent behaviour).
-    for item in items:
-        if _is_type(item, ItemMessage, "message") and isinstance(_get_field(item, "content"), str):
-            if isinstance(item, dict):
-                item["content"] = get_content_expanded(item)
+        if isinstance(raw, dict):
+            item_dict = _ensure_item_type(dict(raw))
+            # Auto-expand string content on message items so downstream consumers
+            # always see list[MessageContent] (matches .NET ExpandContent behaviour).
+            if _is_type(item_dict, ItemMessage, "message") and isinstance(_get_field(item_dict, "content"), str):
+                item_dict["content"] = get_content_expanded(cast(ItemMessage, item_dict))
+            items.append(cast(Item, item_dict))
+        else:
+            items.append(raw)
 
     return items
 
@@ -168,7 +173,7 @@ def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoicePara
     if tc is None:
         return None
     if isinstance(tc, dict) and "type" in tc:
-        return tc
+        return cast(ToolChoiceParam, tc)
     if isinstance(tc, str):
         normalized = getattr(tc, "value", tc)
         if normalized in ("auto", "required"):
@@ -195,7 +200,7 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
     if conv is None:
         return None
     if isinstance(conv, dict) and conv.get("id"):
-        return conv
+        return cast(ConversationParam_2, conv)
     if isinstance(conv, str):
         return cast(ConversationParam_2, {"id": conv}) if conv else None
     return None
@@ -228,7 +233,7 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
                 "id": "",
                 "status": "completed",
                 "type": "message",
-                "role": MessageRole.DEVELOPER.value,
+                "role": MessageRole.DEVELOPER,
                 "content": [{"type": "input_text", "text": instr}],
             }
         ]
@@ -361,7 +366,7 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
     if item_id is None:
         return None  # ItemReferenceParam or unrecognised
 
-    data = _ensure_item_type(item.copy())
+    data = _ensure_item_type(dict(item))
     data["id"] = item_id
 
     item_type = data.get("type", "")
@@ -393,7 +398,7 @@ def to_item(output_item: OutputItem) -> Item | None:
         return None
     if output_item.get("type") == "output_message":
         return cast(Item, {**output_item, "type": "message"})
-    item = _ensure_item_type(output_item.copy())
+    item = _ensure_item_type(dict(output_item))
     if "type" not in item:
         return None
     return cast(Item, item)

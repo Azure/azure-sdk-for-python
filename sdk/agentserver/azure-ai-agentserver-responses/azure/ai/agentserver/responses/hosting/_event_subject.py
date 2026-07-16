@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from typing import AsyncIterator
+from typing import AsyncIterator, cast
 
 from azure.ai.agentserver.responses.models import ResponseStreamEvent
 
@@ -85,7 +85,7 @@ class _ResponseEventSubject:
                 if item is self._DONE:
                     return
                 assert isinstance(item, dict) and isinstance(item.get("type"), str)
-                yield item
+                yield cast(ResponseStreamEvent, item)
         finally:
             # Clean up subscription on client disconnect or normal completion
             async with self._lock:

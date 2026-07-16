@@ -22,6 +22,8 @@ def _member_value(enum_name: str, member_name: str) -> str:
 
 class _EnumFallbackMeta(type):
     def __getattr__(cls, name: str) -> _EnumMemberFallback:
+        if name.startswith("__") and name.endswith("__"):
+            raise AttributeError(name)
         return _EnumMemberFallback(_member_value(cls.__name__, name))
 
 
@@ -30,4 +32,6 @@ class _EnumFallback(str, metaclass=_EnumFallbackMeta):
 
 
 def __getattr__(name: str) -> type[_EnumFallback]:
+    if name.startswith("__") and name.endswith("__"):
+        raise AttributeError(name)
     return type(name, (_EnumFallback,), {})

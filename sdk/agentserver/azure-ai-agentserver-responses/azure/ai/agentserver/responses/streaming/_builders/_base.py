@@ -31,7 +31,15 @@ def _require_non_empty(value: str, field_name: str) -> str:
 
 
 def _require_wire_dict(value: Any, field_name: str) -> dict[str, Any]:
-    """Validate that a builder payload is already a dict-native wire payload."""
+    """Validate that a builder payload is already a dict-native wire payload.
+
+    :param value: The value to validate.
+    :type value: Any
+    :param field_name: The field name to include in error messages.
+    :type field_name: str
+    :returns: The validated wire payload.
+    :rtype: dict[str, Any]
+    """
     if not isinstance(value, dict):
         raise TypeError(f"{field_name} must be a dict-native wire payload")
     return value
@@ -166,6 +174,33 @@ class BaseOutputItemBuilder:
 class OutputItemBuilder(BaseOutputItemBuilder):
     """Generic output-item builder for item types without dedicated scoped builders."""
 
+    def __init__(
+        self,
+        stream: "ResponseEventStream",
+        output_index: int,
+        item_id: str,
+        *,
+        default_type: str | None = None,
+    ) -> None:
+        """Initialize a generic output-item builder.
+
+        :param stream: The parent event stream to emit events into.
+        :type stream: ResponseEventStream
+        :param output_index: The zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        :keyword default_type: Optional discriminator to apply when an item omits ``type``.
+        :paramtype default_type: str | None
+        """
+        super().__init__(stream, output_index, item_id)
+        self._default_type = default_type
+
+    def _with_default_type(self, item: dict[str, Any]) -> dict[str, Any]:
+        if self._default_type is not None and "type" not in item:
+            return {**item, "type": self._default_type}
+        return item
+
     def emit_added(self, item: response_models.OutputItem) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for a generic item.
 
@@ -174,7 +209,7 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseOutputItemAddedEvent
         """
-        return self._emit_added(_require_wire_dict(item, "item"))
+        return self._emit_added(self._with_default_type(_require_wire_dict(item, "item")))
 
     def emit_done(self, item: response_models.OutputItem) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for a generic item.
@@ -184,4 +219,4 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseOutputItemDoneEvent
         """
-        return self._emit_done(_require_wire_dict(item, "item"))
+        return self._emit_done(self._with_default_type(_require_wire_dict(item, "item")))

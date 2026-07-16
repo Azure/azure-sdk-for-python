@@ -39,6 +39,7 @@ from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY  # pylint
 from azure.ai.agentserver.responses.models import (
     AgentReference,
     CreateResponse,
+    ResponseObject,
     ResponseStreamEventType,
 )
 
@@ -394,14 +395,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: _ExecutionContext
         """
         stream = bool(parsed.get("stream", False))
-        store = True if parsed.get("store") is None else bool(parsed["store"])
+        store_value = parsed.get("store")
+        store = True if store_value is None else bool(store_value)
         background = bool(parsed.get("background", False))
         model = parsed.get("model") or ""
         _expanded = get_input_expanded(parsed)
         input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
+        previous_response_value = parsed.get("previous_response_id")
         previous_response_id: str | None = (
-            parsed["previous_response_id"]
-            if isinstance(parsed.get("previous_response_id"), str) and parsed.get("previous_response_id")
+            previous_response_value
+            if isinstance(previous_response_value, str) and previous_response_value
             else None
         )
         conversation_id = _resolve_conversation_id(parsed)
@@ -1333,7 +1336,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Persist cancelled state to durable store (B11: cancellation always wins)
         try:
             if record.response is not None:
-                await self._provider.update_response(record.response, context=_extract_platform_context(request))
+                await self._provider.update_response(
+                    cast(ResponseObject, record.response),
+                    context=_extract_platform_context(request),
+                )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Best-effort cancel persist failed for response_id=%s", record.response_id, exc_info=True)
 

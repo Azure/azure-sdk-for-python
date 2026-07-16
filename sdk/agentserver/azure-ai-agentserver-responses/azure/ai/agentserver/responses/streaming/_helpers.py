@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from copy import deepcopy
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, cast
 
 from azure.ai.agentserver.responses import models as response_models
 from azure.ai.agentserver.responses.models import AgentReference
@@ -112,7 +112,7 @@ def _coerce_handler_event(
     if not isinstance(event_type, str) or not event_type:
         raise ValueError("handler event must include a non-empty 'type'")
 
-    return event_data
+    return cast(response_models.ResponseStreamEvent, event_data)
 
 
 def _apply_stream_event_defaults(
@@ -168,12 +168,13 @@ def _apply_stream_event_defaults(
     if event_type in ("response.output_item.added", "response.output_item.done"):
         item = normalized.get("item")
         if isinstance(item, (dict, MutableMapping)):
-            item.setdefault("response_id", response_id)
+            item_dict = cast(dict[str, Any], item)
+            item_dict.setdefault("response_id", response_id)
             if agent_reference:
                 # Use explicit None check instead of setdefault so that
                 # builder items with agent_reference=None are overridden.
-                if item.get("agent_reference") is None:
-                    item["agent_reference"] = agent_reference
+                if item_dict.get("agent_reference") is None:
+                    item_dict["agent_reference"] = agent_reference
 
     if sequence_number is not None:
         normalized["sequence_number"] = sequence_number
@@ -217,7 +218,7 @@ def _extract_response_snapshot_from_events(
         event_type = event.get("type")
         snapshot_source = event.get("response")
         if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES and isinstance(snapshot_source, MutableMapping):
-            snapshot = deepcopy(snapshot_source)
+            snapshot = cast(dict[str, Any], deepcopy(dict(snapshot_source)))
             snapshot.setdefault("id", response_id)
             snapshot.setdefault("response_id", response_id)
             existing_agent_reference = snapshot.get("agent_reference")
@@ -249,7 +250,7 @@ def _extract_response_snapshot_from_events(
     )
     # _build_events returns wire payloads — extract snapshot from the last lifecycle event.
     last_event = fallback_events[-1]
-    fallback_snapshot = deepcopy(last_event.get("response", {}))
+    fallback_snapshot = cast(dict[str, Any], deepcopy(last_event.get("response", {})))
     fallback_snapshot.setdefault("output", [])
     fallback_snapshot["agent_reference"] = _internals.response_agent_reference(agent_reference)
     # S-038: forcibly stamp session ID on fallback snapshot
