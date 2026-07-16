@@ -258,6 +258,19 @@ class TestAsyncByoProjectResponsesClient:
         _, rkwargs = oai.responses.create.call_args
         assert "extra_headers" not in rkwargs
 
+    @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_preserves_server_created_timestamp(self, mock_aipc):
+        # When the Responses result carries a server ``created`` timestamp, the shim preserves it
+        # instead of overwriting with local wall-clock time.
+        resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed", created=1752694800)
+        oai = MagicMock()
+        oai.responses.create = AsyncMock(return_value=resp)
+        mock_aipc.return_value.get_openai_client.return_value = oai
+
+        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
+        result = asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
+        assert result.created == 1752694800
+
 
 class TestValidateModelConfigByo:
     def test_byo_config_passes_through_validation(self):

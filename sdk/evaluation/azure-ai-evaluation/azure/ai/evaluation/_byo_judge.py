@@ -143,7 +143,11 @@ class _ChatCompletion:
         _usage = getattr(response, "usage", None)
         self.usage = _Usage(_usage) if _usage is not None else None
         self.object = "chat.completion"
-        self.created = int(time.time())
+        # Preserve the server-provided created timestamp when present; fall back to now otherwise.
+        _created = getattr(response, "created", None)
+        self.created = (
+            int(_created) if isinstance(_created, (int, float)) and not isinstance(_created, bool) else int(time.time())
+        )
         self.choices = [_Choice(getattr(response, "output_text", "") or "", _finish_reason(response))]
 
 
