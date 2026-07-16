@@ -33,8 +33,8 @@ def _prevent_distro_setup(request):
 
     When running E2E tracing tests (``-m tracing_e2e``), the real distro
     export is needed so spans actually reach Application Insights."""
-    markexpr = request.config.getoption("-m", default="")
-    if "tracing_e2e" in markexpr:
+    mark_expression = request.config.getoption("-m", default="")
+    if "tracing_e2e" in mark_expression:
         yield
     else:
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
