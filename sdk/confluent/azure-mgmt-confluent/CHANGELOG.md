@@ -6,8 +6,6 @@
 
   - Client `ConfluentManagementClient` added operation group `access_point_resources`
   - Client `ConfluentManagementClient` added operation group `network_gateway_resources`
-  - Enum `ConnectorClass` added member `AZURECOSMOSV2_SINK`
-  - Enum `ConnectorClass` added member `AZURECOSMOSV2_SOURCE`
   - Added model `AccessPointProperties`
   - Added model `AccessPointResource`
   - Added model `ActivateSaaSParameterRequest`
@@ -26,8 +24,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed enum value `ConnectorClass.AZURECOSMOSV2SINK`
-  - Deleted or renamed enum value `ConnectorClass.AZURECOSMOSV2SOURCE`
+  - Renamed enum value `ConnectorClass.AZURECOSMOSV2SINK` to `AZURECOSMOSV2_SINK`
+  - Renamed enum value `ConnectorClass.AZURECOSMOSV2SOURCE` to `AZURECOSMOSV2_SOURCE`
 
 ## 3.0.0b1 (2026-03-16)
 
