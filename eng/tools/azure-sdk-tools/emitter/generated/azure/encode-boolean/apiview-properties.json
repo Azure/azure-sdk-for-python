@@ -1,7 +1,7 @@
 {
     "CrossLanguagePackageId": "Encode.Boolean",
     "CrossLanguageDefinitionId": {
-        "encode.boolean.property.models.BoolAsStringProperty": "Encode.Boolean.Property.BoolAsStringProperty",
+        "encode.boolean.models.BoolAsStringProperty": "Encode.Boolean.Property.BoolAsStringProperty",
         "encode.boolean.operations.PropertyOperations.true_lower": "Encode.Boolean.Property.trueLower",
         "encode.boolean.aio.operations.PropertyOperations.true_lower": "Encode.Boolean.Property.trueLower",
         "encode.boolean.operations.PropertyOperations.false_lower": "Encode.Boolean.Property.falseLower",

@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import BooleanClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .property.operations import PropertyOperations
+from .operations import PropertyOperations
 
 if sys.version_info >= (3, 11):
     from typing import Self
