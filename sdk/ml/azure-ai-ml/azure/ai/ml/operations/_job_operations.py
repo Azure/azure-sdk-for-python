@@ -839,11 +839,15 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_different_version_api(
+                rest_job_resource=job_object, strip_none_body=True, **kwargs
+            )
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def _create_or_update_with_different_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
+    def _create_or_update_with_different_version_api(
+        self, rest_job_resource: JobBase, strip_none_body: bool = False, **kwargs: Any
+    ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         if rest_job_resource.properties.job_type == _FINE_TUNING_JOB_TYPE:
             service_client_operation = self.service_client_10_2024_preview.jobs
@@ -856,13 +860,17 @@ class JobOperations(_ScopeDependentOperations):
         if rest_job_resource.properties.job_type == RestJobType.COMMAND:
             service_client_operation = self.service_client_01_2025_preview.jobs
 
-        # The migrated arm_ml_service models serialize present-but-None fields as
-        # explicit JSON ``null`` whereas the previous msrest clients omitted them.
-        # For round-tripped bodies (e.g. the local-run re-submit that re-PUTs a
-        # previously fetched job) this would emit ``null`` keys that were never on
-        # the wire before. Serialize and drop None values to keep the wire identical.
-        body = json.loads(json.dumps(rest_job_resource, cls=SdkJSONEncoder, exclude_readonly=True))
-        _strip_none_values(body)
+        # ``body`` is normally the arm model, which the client serializes on send.
+        # For round-tripped bodies (the local-run re-submit that re-PUTs a previously
+        # fetched, fully-resolved job) the migrated arm SdkJSONEncoder emits
+        # present-but-None fields as explicit JSON ``null`` whereas the msrest client
+        # it replaced omitted them. In that case only, pre-serialize and drop None
+        # values so the wire stays byte-identical. The fresh-create path keeps passing
+        # the model unchanged (it may contain unresolved entities not yet wire-ready).
+        body: Any = rest_job_resource
+        if strip_none_body:
+            body = json.loads(json.dumps(rest_job_resource, cls=SdkJSONEncoder, exclude_readonly=True))
+            _strip_none_values(body)
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
