@@ -8,7 +8,7 @@
 FILE: sample_submit_job.py
 
 DESCRIPTION:
-    This sample shows how to submit an analyze documents job.
+    This sample shows how to submit an analyze documents job and get the final task results.
 
 USAGE:
     python sample_submit_job.py
@@ -66,6 +66,23 @@ def sample_submit_job() -> None:
         )
 
         print(f"Initial poller status: {poller.status()}")
+        print(f"Operation ID: {poller.details['operation_id']}")
+
+        results = poller.result()
+
+        print(f"Final job ID: {poller.details['job_id']}")
+        print(f"Final job status: {poller.details['status']}")
+
+        for tasks in results:
+            print(f"Total tasks: {tasks.total}")
+            print(f"Completed tasks: {tasks.completed}")
+            print(f"Failed tasks: {tasks.failed}")
+            print(f"In-progress tasks: {tasks.in_progress}")
+
+            if tasks.items_property:
+                for task_result in tasks.items_property:
+                    print(f"Task kind: {task_result.kind}")
+                    print(f"Task status: {task_result.status}")
 
 
 # [END sample_submit_job]

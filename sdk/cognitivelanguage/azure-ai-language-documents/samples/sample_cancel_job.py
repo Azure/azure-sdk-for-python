@@ -20,13 +20,10 @@ USAGE:
     4) AZURE_LANGUAGE_DOCUMENTS_TARGET_LOCATION - the output location.
 """
 
-from urllib.parse import urlparse
-
 
 # [START sample_cancel_job]
 def sample_cancel_job() -> None:
     import os
-    from urllib.parse import urlparse
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.documents import AnalyzeDocumentsClient
 
@@ -37,13 +34,8 @@ def sample_cancel_job() -> None:
 
     client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    operation_location = {}
-
-    def raw_response_hook(response):
-        operation_location["value"] = response.http_response.headers.get("Operation-Location")
-
     with client:
-        client.begin_submit_job(
+        submit_poller = client.begin_submit_job(
             body={
                 "displayName": "Document Analysis Sample",
                 "analysisInput": {
@@ -71,11 +63,9 @@ def sample_cancel_job() -> None:
                     }
                 ],
             },
-            raw_response_hook=raw_response_hook,
         )
 
-        parsed = urlparse(operation_location["value"])
-        job_id = parsed.path.rstrip("/").split("/")[-1]
+        job_id = submit_poller.details["operation_id"]
 
         cancel_poller = client.begin_cancel_job(job_id=job_id)
         cancel_poller.result()
