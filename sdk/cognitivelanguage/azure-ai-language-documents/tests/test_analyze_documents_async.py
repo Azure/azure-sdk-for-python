@@ -35,11 +35,6 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsAsyncClientTestBase):
     ):
         client = self.create_client(endpoint=analyzedocuments_endpoint)
 
-        operation_location = {}
-
-        def _raw_response_hook(response):
-            operation_location["value"] = response.http_response.headers.get("Operation-Location")
-
         async with client:
             poller = await client.begin_submit_job(
                 body={
@@ -73,14 +68,12 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsAsyncClientTestBase):
                         }
                     ],
                 },
-                raw_response_hook=_raw_response_hook,
             )
 
             assert poller is not None
-            assert operation_location["value"]
 
-            parsed = urlparse(operation_location["value"])
-            job_id = parsed.path.rstrip("/").split("/")[-1]
+            await poller.result()
+            job_id = poller.details["job_id"]
 
             response = await client.get_job_state(job_id=job_id)
 
@@ -137,6 +130,23 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsAsyncClientTestBase):
             assert poller is not None
             assert poller.continuation_token()
             assert poller.status()
+            assert poller.details["operation_id"]
+
+            result = await poller.result()
+            task_pages = []
+
+            async for tasks in result:
+                task_pages.append(tasks)
+
+            assert task_pages
+            tasks = task_pages[0]
+            assert tasks is not None
+            assert tasks["total"] == 1
+            assert tasks["completed"] + tasks["failed"] + tasks["inProgress"] == tasks["total"]
+            assert tasks["items"]
+
+            assert poller.details["job_id"]
+            assert poller.details["status"] in ["succeeded", "partiallyCompleted"]
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy_async
