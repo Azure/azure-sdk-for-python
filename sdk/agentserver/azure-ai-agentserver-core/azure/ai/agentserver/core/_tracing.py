@@ -602,21 +602,22 @@ class _FoundryEnrichmentSpanProcessor:
         if attrs is None:
             return
         try:
+            target = getattr(attrs, "_dict", attrs)
             if self.agent_name:
-                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+                target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
-                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+                target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
-                attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+                target[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
             if self.agent_blueprint_id:
-                attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
+                target[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
             if self.agent_tenant_id:
-                attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
+                target[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
-    def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
-        pass
+    def on_end(self, span: Any) -> None:
+        self._on_ending(span)
 
     def shutdown(self) -> None:
         pass
