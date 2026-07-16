@@ -13,7 +13,7 @@ class BoolAsStringProperty(_Model):
     :vartype value: bool
     """
 
-    value: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], format="str")
     """Required."""
 
     @overload
