@@ -29,17 +29,18 @@ pip install azure-ai-agentserver-activity
 ```python
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
-app = ActivityAgentServerHost()
+host = ActivityAgentServerHost()
+app = host.agent_app
 
-@app.agent_app.activity("message")
+@app.activity("message")
 async def on_message(context, state):
     await context.send_activity(f"Echo: {context.activity.text}")
 
-@app.agent_app.error
+@app.error
 async def on_error(context, error):
     await context.send_activity(f"Error: {error}")
 
-app.run()
+host.run()
 ```
 
 **Build the M365 stack, with overrides** — same default path, but override any
@@ -60,8 +61,8 @@ app = ActivityAgentServerHost(storage=MemoryStorage())
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 # agent_app: a fully-built microsoft_agents AgentApplication (with an adapter)
-app = ActivityAgentServerHost.from_agent_application(agent_app)
-app.run()
+host = ActivityAgentServerHost(agent_app=agent_app)
+host.run()
 ```
 
 **Custom handler** — you own the request pipeline (the M365 SDK is not initialized):
@@ -76,8 +77,8 @@ async def handle(request):
     # Custom processing...
     return Response(status_code=202)
 
-app = ActivityAgentServerHost.from_request_handler(handle)
-app.run()
+host = ActivityAgentServerHost(request_handler=handle)
+host.run()
 ```
 
 ### Request header contract
@@ -92,13 +93,13 @@ app.run()
 ### Public API
 
 - `ActivityAgentServerHost` — the host class. Constructed directly, it builds the
-  M365 stack and acts as the underlying M365 `AgentApplication`: register handlers
-  and reach the full M365 surface (`activity`/`error`/`message`/`proactive`/`auth`
-  ...) directly on the host. Optional keyword overrides: `digital_worker`,
-  `storage`, `connection_manager`, `adapter`, `authorization`, `config`.
-- `ActivityAgentServerHost.from_agent_application(agent_app)` — host a pre-built
+  M365 stack and exposes the built `AgentApplication` as the `agent_app` property:
+  register handlers on it (`host.agent_app.activity`/`error`/`message`/`proactive`/`auth`
+  ...). Optional keyword overrides: `digital_worker`, `storage`,
+  `connection_manager`, `adapter`, `authorization`, `connection_config`.
+- `ActivityAgentServerHost(agent_app=agent_app)` — host a pre-built
   M365 `AgentApplication` (the adapter is taken from `agent_app.adapter`).
-- `ActivityAgentServerHost.from_request_handler(handler)` — host a custom async
+- `ActivityAgentServerHost(request_handler=handler)` — host a custom async
   request handler; the M365 SDK is not initialized.
 - `get_hosted_agent_env(*, digital_worker=False)` — return a config mapping
   (`os.environ` overlaid with the derived `CONNECTIONS__*` settings from the
@@ -106,6 +107,8 @@ app.run()
   default constructor derives this for you; call it yourself only when you build
   the `MsalConnectionManager` (or a pre-built `AgentApplication`) manually — see
   the `03-self-hosted-app` sample.
+- `ActivityAgentServerHost.agent_app` — the underlying M365 `AgentApplication`
+  (available when the host builds or is given one).
 - `ActivityAgentServerHost.adapter` — the channel adapter for the underlying
   `AgentApplication`.
 
@@ -115,35 +118,35 @@ See the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/m
 
 - `01-echo` — the simplest agent: the host builds the M365 stack and you register handlers directly on it to echo the user's message back.
 - `02-custom-components` — override one or more M365 components (storage, connection manager, adapter, authorization, config) while the host builds the rest.
-- `03-self-hosted-app` — build the M365 `AgentApplication` yourself and host it with `from_agent_application`.
-- `04-custom-handler` — own the request pipeline with `from_request_handler` (the M365 SDK is not initialized).
+- `03-self-hosted-app` — build the M365 `AgentApplication` yourself and host it by passing `agent_app=`.
+- `04-custom-handler` — own the request pipeline with `request_handler=` (the M365 SDK is not initialized).
 - `05-multi-protocol` — compose the Activity and Invocations protocols on a single server.
 
 ## Troubleshooting
 
 ### `ImportError`: M365 Agents SDK not installed
 
-Constructing `ActivityAgentServerHost()` directly (or via `from_agent_application`)
+Constructing `ActivityAgentServerHost()` directly (or with `agent_app=`)
 requires the M365 Agents SDK. Install it:
 
 ```bash
 pip install microsoft-agents-hosting-core microsoft-agents-authentication-msal microsoft-agents-activity azure-identity
 ```
 
-Alternatively, use `ActivityAgentServerHost.from_request_handler(...)`, which does
+Alternatively, use `ActivityAgentServerHost(request_handler=...)`, which does
 not initialize the M365 SDK.
 
 ### `TypeError`: handler must be an async function
 
-`from_request_handler(...)` requires an `async def` handler
+`request_handler=...` requires an `async def` handler
 (`async def handle(request) -> Response`). A plain `def` is rejected.
 
 ### `AttributeError` when accessing `agent_app`
 
-`app.agent_app` (and handler registration via `@app.agent_app.activity(...)` /
-`@app.agent_app.error`) is only available when the host builds or is given an M365
-`AgentApplication` (the default constructor or `from_agent_application`). A host
-created with `from_request_handler(...)` does not expose the M365 surface.
+`host.agent_app` (and handler registration via `@host.agent_app.activity(...)` /
+`@host.agent_app.error`) is only available when the host builds or is given an M365
+`AgentApplication` (the default constructor or `agent_app=`). A host
+created with `request_handler=...` does not expose the M365 surface.
 
 ## Next steps
 

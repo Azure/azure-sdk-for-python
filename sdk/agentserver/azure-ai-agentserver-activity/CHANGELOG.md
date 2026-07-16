@@ -18,17 +18,16 @@
 
 ### Breaking Changes
 
-- Custom handlers and pre-built `AgentApplication` injection now use dedicated
-  factory classmethods instead of `__init__` keyword arguments, so an invalid
-  combination of construction options cannot be expressed:
-  - `ActivityAgentServerHost(handler=fn)` → `ActivityAgentServerHost.from_request_handler(fn)`
-  - `ActivityAgentServerHost(agent_app=app)` → `ActivityAgentServerHost.from_agent_application(app)`
-  The default constructor now accepts only the build-the-M365-stack options
+- Custom handlers and pre-built `AgentApplication` injection use dedicated
+  keyword-only constructor arguments (renamed from the `1.0.0b1` `handler=`):
+  - `ActivityAgentServerHost(handler=fn)` → `ActivityAgentServerHost(request_handler=fn)`
+  - Pre-built injection: `ActivityAgentServerHost(agent_app=app)`
+  The default constructor accepts the build-the-M365-stack options
   (`digital_worker`, `storage`, `connection_manager`, `adapter`,
-  `authorization`, `config`). `ActivityAgentServerHost()` (simple Teams
-  agent) is unchanged.
-- Removed the lazy M365 initialization and the ``@app.activity(...)`` / ``@app.error`` host decorators in their old form. When constructed directly (no `from_request_handler`), the M365 Agents SDK is now initialized eagerly during `ActivityAgentServerHost(...)` construction and the built `AgentApplication` is exposed as the `app.agent_app` property. Register handlers on it with `@app.agent_app.activity(...)` / `@app.agent_app.error`, and reach the rest of the M365 surface (`message`/`proactive`/`auth` ...) the same way; you can also capture it (`agent_app = app.agent_app`) and use it standalone. The adapter is available via `app.adapter`.
-  - The previous implicit attribute delegation (`__getattr__` forwarding `app.activity` to the underlying `AgentApplication`) was removed in favor of the explicit, statically-typed `app.agent_app` property. Update `@app.activity(...)` → `@app.agent_app.activity(...)` and `@app.error` → `@app.agent_app.error`.
+  `authorization`, `connection_config`). `ActivityAgentServerHost()` (simple
+  Teams agent) is unchanged.
+- Removed the lazy M365 initialization and the ``@app.activity(...)`` / ``@app.error`` host decorators in their old form. When constructed directly (no `request_handler`), the M365 Agents SDK is now initialized eagerly during `ActivityAgentServerHost(...)` construction and the built `AgentApplication` is exposed as the `host.agent_app` property. Register handlers on it with `@host.agent_app.activity(...)` / `@host.agent_app.error`, and reach the rest of the M365 surface (`message`/`proactive`/`auth` ...) the same way; you can also capture it (`app = host.agent_app`) and use it standalone. The adapter is available via `host.adapter`.
+  - The previous implicit attribute delegation (`__getattr__` forwarding `app.activity` to the underlying `AgentApplication`) was removed in favor of the explicit, statically-typed `host.agent_app` property. Update `@app.activity(...)` → `@host.agent_app.activity(...)` and `@app.error` → `@host.agent_app.error`.
 - Removed the public `apply_msal_patches()` export. The MSAL/FMI patch is now applied internally (digital-worker model only) during construction.
 - Replaced the `request.state.user_isolation_key` / `request.state.chat_isolation_key` request-state fields with the request-scoped platform context (`get_request_context()` exposes `user_id` / `call_id`) per container protocol version `2.0.0`. Requires `azure-ai-agentserver-core>=2.0.0b7`.
 
