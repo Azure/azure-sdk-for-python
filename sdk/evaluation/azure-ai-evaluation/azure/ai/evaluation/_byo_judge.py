@@ -192,7 +192,15 @@ class AsyncByoProjectResponsesClient:
 
     async def _ensure_client(self) -> Any:
         if self._client is None:
-            from azure.ai.projects.aio import AIProjectClient
+            try:
+                from azure.ai.projects.aio import AIProjectClient
+            except ImportError as ex:
+                from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
+
+                raise MissingRequiredPackage(
+                    message="Please install the 'azure-ai-projects' package to use admin-connected "
+                    "(BYO) judge models."
+                ) from ex
 
             client = AIProjectClient(endpoint=self._project_endpoint, credential=self._credential).get_openai_client()
             # ``get_openai_client()`` is synchronous in some azure-ai-projects versions and a coroutine

@@ -202,6 +202,20 @@ class TestAsyncByoProjectResponsesClient:
         client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
         assert client.with_options(timeout=5) is client
 
+    def test_missing_azure_ai_projects_raises_clear_error(self, monkeypatch):
+        # azure-ai-projects is an optional dependency (not in install_requires). When the BYO path
+        # is used without it installed, the shim must surface a clear MissingRequiredPackage error
+        # instead of a raw ModuleNotFoundError. A None entry in sys.modules makes
+        # ``from azure.ai.projects.aio import AIProjectClient`` raise ImportError.
+        import sys
+
+        from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
+
+        monkeypatch.setitem(sys.modules, "azure.ai.projects.aio", None)
+        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
+        with pytest.raises(MissingRequiredPackage):
+            asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
+
 
 class TestValidateModelConfigByo:
     def test_byo_config_passes_through_validation(self):
