@@ -16,10 +16,10 @@
   - Added model `ImmutabilityPolicyData`
   - Added model `ImmutabilityPolicyLockData`
   - Added enum `ImmutabilityPolicyType`
-  - Model `SnapshotsOperations` added method `begin_update_immutability_policy`
-  - Model `SnapshotsOperations` added method `begin_update_immutability_policy_lock`
-  - Added model `SharedGalleryInvitesOperations`
-  - Added model `TenantLevelSharedGalleryInvitesOperations`
+  - Operation group `SnapshotsOperations` added method `begin_update_immutability_policy`
+  - Operation group `SnapshotsOperations` added method `begin_update_immutability_policy_lock`
+  - Added operation group `SharedGalleryInvitesOperations`
+  - Added operation group `TenantLevelSharedGalleryInvitesOperations`
 
 ## 38.1.0 (2026-06-17)
 
