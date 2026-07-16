@@ -44,6 +44,25 @@ def test_short_open_materializes_non_null_field_defaults():
     assert open_frame.channel_max == 65535
 
 
+def test_open_with_explicit_null_field_uses_default():
+    # Only trailing fields may be omitted, so an Open that sets a later field
+    # (channel_max) while wanting the default max_frame_size must encode
+    # max_frame_size as an explicit null. That null must still read back as the
+    # 4294967295 default, or _incoming_open's frame[2] < 512 raises TypeError.
+    # container_id="x", hostname=null, max_frame_size=null, channel_max=100.
+    frame = _list8_frame(
+        performatives.OpenFrame._code, 4, bytes([0xA1, 0x01, 0x78, 0x40, 0x40, 0x52, 0x64])
+    )
+    _, fields = decode_frame(frame)
+    assert fields[2] == 4294967295  # explicit null normalized to the default
+    assert not fields[2] < 512  # the comparison _incoming_open performs
+    assert fields[3] == 100  # the explicitly set later field is preserved
+    assert fields[1] is None  # a null-default field (hostname) stays None
+    open_frame = performatives.OpenFrame(*fields)
+    assert open_frame.max_frame_size == 4294967295
+    assert open_frame.channel_max == 100
+
+
 def test_short_transfer_pads_fields_and_preserves_payload():
     # Transfer with only handle (0) set, plus a message payload. The payload is
     # appended after the fields and must survive the padding.

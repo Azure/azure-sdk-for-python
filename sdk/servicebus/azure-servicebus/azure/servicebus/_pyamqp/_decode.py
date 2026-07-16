@@ -493,8 +493,20 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     # field count with each omitted field's default before any positional access
     # or unpacking.
     field_defaults = _PERFORMATIVE_FIELD_DEFAULTS.get(frame_type)
-    if field_defaults is not None and count < len(field_defaults):
-        fields.extend(field_defaults[count:])
+    if field_defaults is not None:
+        if count < len(field_defaults):
+            fields.extend(field_defaults[count:])
+        # Only trailing fields may be omitted, so a sender that sets a later
+        # field while wanting an earlier one's default must encode that earlier
+        # field as an explicit null. A decoded null for a field whose AMQP
+        # default is non-null therefore also means that default; normalize it so
+        # it reads back identically to the omitted case. For example, an Open
+        # that nulls max_frame_size must still compare as 4294967295, not None,
+        # when _incoming_open evaluates frame[2] < 512. Fields whose declared
+        # default is null are left as None.
+        for index, default in enumerate(field_defaults):
+            if default is not None and fields[index] is None:
+                fields[index] = default
     if frame_type == 20:
         fields.append(buffer)
     return frame_type, fields
