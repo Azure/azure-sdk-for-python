@@ -7,7 +7,13 @@ from unittest import mock
 from datetime import datetime
 
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
-from azure.core.exceptions import ServiceRequestTimeoutError, HttpResponseError
+from azure.core.exceptions import (
+    ServiceRequestTimeoutError,
+    HttpResponseError,
+    ServiceResponseTimeoutError,
+    ServiceResponseError,
+    ServiceRequestError,
+)
 
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
@@ -310,6 +316,7 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
             ReadTimeout("Read timeout"),
             TimeoutError("Generic timeout"),
             Timeout("Requests timeout"),
+            ServiceResponseTimeoutError("Service response timeout"),
         ]
 
         for error in timeout_errors:
@@ -343,6 +350,8 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
         network_errors = [
             ConnectionError("Connection failed"),
             OSError("OS error occurred"),
+            ServiceResponseError("Service response error"),
+            ServiceRequestError("Service request error"),
         ]
 
         for error in network_errors:

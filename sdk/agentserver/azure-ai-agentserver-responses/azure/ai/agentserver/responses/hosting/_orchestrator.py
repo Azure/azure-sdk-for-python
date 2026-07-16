@@ -41,7 +41,7 @@ from ..streaming._helpers import (
     _extract_response_snapshot_from_events,
 )
 from ..streaming._internals import construct_event_model
-from ..streaming._sse import encode_keep_alive_comment, encode_sse_any_event, new_stream_counter
+from ..streaming._sse import encode_sse_any_event, new_stream_counter
 from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
@@ -1461,7 +1461,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         - Empty handler (fallback synthesised events).
         - Mid-stream handler errors (``response.failed`` SSE event, S-035).
         - Cancellation terminal events.
-        - Optional SSE keep-alive comments.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -1476,7 +1475,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         Delegates all event processing (first-event handling, normalisation,
         bg record registration, S-035 / S-015 / B11 terminal events) to
         :meth:`_process_handler_events`.  This method only encodes each event
-        dict to SSE and handles keep-alive comment injection.
+        dict to SSE. Keep-alive comment injection is handled at the transport
+        layer (:func:`streaming._sse.with_keep_alive`) in the endpoint handler.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -1499,153 +1499,77 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
 
-        # --- Fast path: no keep-alive ---
-        if not self._runtime_options.sse_keep_alive_enabled:
-            if not (ctx.background and ctx.store):
-                # Simple fast path for non-background streaming.
-                _stream_completed = False
-                try:
-                    async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        yield encode_sse_any_event(event)
-                    _stream_completed = True
-                    # Persist-then-yield: resolve the buffered terminal event
-                    if state.pending_terminal is not None:
-                        record = state.bg_record or _make_ephemeral_record(ctx, state)
-                        resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                        yield encode_sse_any_event(resolved)
-                finally:
-                    # B17: If the stream did not complete naturally (e.g. client
-                    # disconnect → CancelledError), mark it as interrupted so
-                    # _finalize_stream skips persistence for non-bg streams.
-                    if not _stream_completed:
-                        state.stream_interrupted = True
-                    await _finalize()
-                return
-
-            # Background+stream without keep-alive: run the handler as an independent
-            # asyncio.Task so that finalization (including subject.complete()) is
-            # guaranteed to run even when the original SSE connection is dropped before
-            # all events are delivered.  Without this, _live_stream can be abandoned
-            # mid-iteration by Starlette (the async-generator finalizer may not fire
-            # promptly), leaving GET-replay subscribers blocked on await q.get() forever.
-            _SENTINEL_BG = object()
-            bg_queue: asyncio.Queue[object] = asyncio.Queue()
-
-            async def _bg_producer_inner() -> None:
-                try:
-                    async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        await bg_queue.put(encode_sse_any_event(event))
-                    # Persist-then-yield: resolve the buffered terminal event
-                    if state.pending_terminal is not None:
-                        record = state.bg_record or _make_ephemeral_record(ctx, state)
-                        resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                        await bg_queue.put(encode_sse_any_event(resolved))
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logger.error(
-                        "Background stream producer failed (response_id=%s)",
-                        ctx.response_id,
-                        exc_info=exc,
-                    )
-                    state.captured_error = exc
-                finally:
-                    # Always finalize (includes subject.complete()) — this runs even if
-                    # the original POST SSE connection was dropped and _live_stream is
-                    # never properly closed by Starlette.
-                    await _finalize()
-                    await bg_queue.put(_SENTINEL_BG)
-
-            async def _bg_producer() -> None:
-                try:
-                    # FR-013: Shield the inner producer via asyncio.shield so
-                    # that Starlette's anyio cancel-scope cancellation (triggered
-                    # by client disconnect) does NOT propagate into the handler.
-                    # asyncio.shield() creates a new inner Task whose cancellation
-                    # is independent of the outer task.
-                    await asyncio.shield(_bg_producer_inner())
-                except asyncio.CancelledError:
-                    pass  # outer task cancelled by scope; inner task continues
-
-            bg_task = asyncio.create_task(_bg_producer())
-            try:
-                while True:
-                    item = await bg_queue.get()
-                    if item is _SENTINEL_BG:
-                        break
-                    yield item  # type: ignore[misc]
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass  # SSE connection dropped; bg_task continues independently
-            finally:
-                # Wait for the handler task so _finalize() has run before we exit.
-                # Do NOT cancel it — background+stream must reach a terminal state
-                # regardless of client connectivity.
-                if not bg_task.done():
-                    try:
-                        await bg_task
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        pass
-            return
-
-        # --- Keep-alive path: merge handler events with periodic keep-alive comments ---
-        # via a shared asyncio.Queue so comments are sent even while the handler is idle.
-        _SENTINEL = object()
-        merge_queue: asyncio.Queue[str | object] = asyncio.Queue()
-
-        async def _handler_producer() -> None:
+        if not (ctx.background and ctx.store):
+            # Simple path for non-background (or non-store) streaming.
+            _stream_completed = False
             try:
                 async for event in self._process_handler_events(ctx, state, handler_iterator):
-                    await merge_queue.put(encode_sse_any_event(event))
+                    yield encode_sse_any_event(event)
+                _stream_completed = True
                 # Persist-then-yield: resolve the buffered terminal event
                 if state.pending_terminal is not None:
                     record = state.bg_record or _make_ephemeral_record(ctx, state)
                     resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                    await merge_queue.put(encode_sse_any_event(resolved))
+                    yield encode_sse_any_event(resolved)
             finally:
-                await merge_queue.put(_SENTINEL)
+                # B17: mark an interrupted (not naturally completed) stream so
+                # _finalize_stream skips persistence for non-bg streams.
+                if not _stream_completed:
+                    state.stream_interrupted = True
+                await _finalize()
+            return
 
-        async def _keep_alive_producer(interval: int) -> None:
+        # Background+stream (store): run the handler as an independent task so finalization
+        # (including subject.complete()) runs even when the SSE connection is dropped before
+        # all events are delivered.
+        _SENTINEL_BG = object()
+        bg_queue: asyncio.Queue[object] = asyncio.Queue()
+
+        async def _bg_producer_inner() -> None:
             try:
-                while True:
-                    await asyncio.sleep(interval)
-                    await merge_queue.put(encode_keep_alive_comment())
+                async for event in self._process_handler_events(ctx, state, handler_iterator):
+                    await bg_queue.put(encode_sse_any_event(event))
+                # Persist-then-yield: resolve the buffered terminal event
+                if state.pending_terminal is not None:
+                    record = state.bg_record or _make_ephemeral_record(ctx, state)
+                    resolved = await self._persist_and_resolve_terminal(ctx, state, record)
+                    await bg_queue.put(encode_sse_any_event(resolved))
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Background stream producer failed (response_id=%s)",
+                    ctx.response_id,
+                    exc_info=exc,
+                )
+                state.captured_error = exc
+            finally:
+                await _finalize()
+                await bg_queue.put(_SENTINEL_BG)
+
+        async def _bg_producer() -> None:
+            try:
+                # FR-013: Shield the producer so client-disconnect cancellation does not
+                # propagate into the handler.
+                await asyncio.shield(_bg_producer_inner())
             except asyncio.CancelledError:
-                return
+                pass  # outer task cancelled by scope; inner task continues
 
-        handler_task = asyncio.create_task(_handler_producer())
-        keep_alive_task = asyncio.create_task(
-            _keep_alive_producer(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
-        )
-
-        _ka_stream_completed = False
+        bg_task = asyncio.create_task(_bg_producer())
         try:
             while True:
-                item = await merge_queue.get()
-                if item is _SENTINEL:
-                    _ka_stream_completed = True
+                item = await bg_queue.get()
+                if item is _SENTINEL_BG:
                     break
                 yield item  # type: ignore[misc]
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error(
-                "Stream consumer failed (response_id=%s)",
-                ctx.response_id,
-                exc_info=exc,
-            )
-            state.captured_error = exc
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass  # SSE connection dropped; bg_task continues independently
         finally:
-            if not _ka_stream_completed:
-                state.stream_interrupted = True
-            keep_alive_task.cancel()
-            try:
-                await keep_alive_task
-            except asyncio.CancelledError:
-                pass
-            # Ensure the handler task has finished before finalising
-            if not handler_task.done():
-                handler_task.cancel()
+            # Await the producer (do not cancel it) so it reaches a terminal state and
+            # _finalize() has run before returning.
+            if not bg_task.done():
                 try:
-                    await handler_task
-                except asyncio.CancelledError:
+                    await bg_task
+                except Exception:  # pylint: disable=broad-exception-caught
                     pass
-            await _finalize()
 
     async def run_sync(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Execute a synchronous (non-stream, non-background) create-response request.

@@ -69,7 +69,7 @@ class TestSessionResource:
     @pytest.mark.asyncio
     async def test_session_update_with_request_session(self):
         """Test session update with RequestSession object."""
-        session = RequestSession(model="gpt-4o-realtime-preview", modalities=[Modality.TEXT, Modality.AUDIO])
+        session = RequestSession(model="gpt-realtime", modalities=[Modality.TEXT, Modality.AUDIO])
 
         await self.session_resource.update(session=session)
 
@@ -81,7 +81,7 @@ class TestSessionResource:
     @pytest.mark.asyncio
     async def test_session_update_with_mapping(self):
         """Test session update with dictionary mapping."""
-        session_dict = {"model": "gpt-4o-realtime-preview", "modalities": ["text", "audio"], "temperature": 0.7}
+        session_dict = {"model": "gpt-realtime", "modalities": ["text", "audio"], "temperature": 0.7}
 
         await self.session_resource.update(session=session_dict)
 
@@ -93,7 +93,7 @@ class TestSessionResource:
     @pytest.mark.asyncio
     async def test_session_update_with_event_id(self):
         """Test session update with event ID."""
-        session = RequestSession(model="gpt-4o-realtime-preview")
+        session = RequestSession(model="gpt-realtime")
         event_id = "test-event-123"
 
         await self.session_resource.update(session=session, event_id=event_id)
@@ -249,7 +249,7 @@ class TestVoiceLiveConnectionIntegration:
                 connection = VoiceLiveConnection(endpoint, credential)
 
                 # Test session update
-                session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
+                session = RequestSession(model="gpt-realtime", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
 
                 # Mock the send method
                 connection.send = AsyncMock()
@@ -278,7 +278,7 @@ class TestConnectionResourceInteraction:
         response_resource = ResponseResource(self.mock_connection)
 
         # Update session
-        session = RequestSession(model="gpt-4o-realtime-preview", temperature=0.8)
+        session = RequestSession(model="gpt-realtime", temperature=0.8)
         await session_resource.update(session=session)
 
         # Create response
@@ -293,11 +293,11 @@ class TestConnectionResourceInteraction:
         session_resource = SessionResource(self.mock_connection)
 
         # First update
-        session1 = RequestSession(model="gpt-4o-realtime-preview")
+        session1 = RequestSession(model="gpt-realtime")
         await session_resource.update(session=session1, event_id="update-1")
 
         # Second update
-        session2 = RequestSession(model="gpt-4o-realtime-preview", temperature=0.5)
+        session2 = RequestSession(model="gpt-realtime", temperature=0.5)
         await session_resource.update(session=session2, event_id="update-2")
 
         # Verify both updates were sent
@@ -333,7 +333,7 @@ class TestConnectionErrorScenarios:
         session_resource = SessionResource(self.mock_connection)
 
         with pytest.raises(ConnectionError):
-            session = RequestSession(model="gpt-4o-realtime-preview")
+            session = RequestSession(model="gpt-realtime")
             await session_resource.update(session=session)
 
     @pytest.mark.asyncio
@@ -671,7 +671,7 @@ class TestAgentConfigUrlPreparation:
         manager = _VoiceLiveConnectionManager(
             credential=self.credential,
             endpoint="https://test.azure.com",
-            api_version="2026-04-10",
+            api_version="2026-07-15",
             agent_config=agent_config,
             extra_query={},
             extra_headers={},
@@ -679,7 +679,7 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-04-10" in url
+        assert "api-version=2026-07-15" in url
 
     def test_url_uses_default_api_version(self):
         """Test that URL uses the current SDK default API version when none is provided."""
@@ -698,4 +698,4 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-06-01-preview" in url
+        assert "api-version=2026-07-15" in url
