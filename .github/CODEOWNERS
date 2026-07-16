@@ -265,12 +265,12 @@
 /sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
 
 # PRLabel: %Hosted Agents
-/sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
+/sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi @Shivakishore14
 # PRLabel: %Hosted Agents
 /sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
-# ServiceOwners: @ankitbko @vangarp @RaviPidaparthi
+# ServiceOwners: @ankitbko @vangarp @RaviPidaparthi @Shivakishore14
 
 # ServiceLabel: %Image Analysis %Service Attention
 # PRLabel: %Image Analysis
