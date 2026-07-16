@@ -2000,8 +2000,8 @@ namespace azure.mgmt.confluent.models
     class azure.mgmt.confluent.models.ConnectorClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZUREBLOBSINK = "AZUREBLOBSINK"
         AZUREBLOBSOURCE = "AZUREBLOBSOURCE"
-        AZURECOSMOSV2_SINK = "AZURECOSMOSV2SINK"
-        AZURECOSMOSV2_SOURCE = "AZURECOSMOSV2SOURCE"
+        AZURECOSMOSV2SINK = "AZURECOSMOSV2SINK"
+        AZURECOSMOSV2SOURCE = "AZURECOSMOSV2SOURCE"
 
 
     class azure.mgmt.confluent.models.ConnectorInfoBase(_Model):
