@@ -21,7 +21,6 @@ USAGE:
 """
 
 import asyncio
-from urllib.parse import urlparse
 
 
 # [START sample_cancel_job_async]
@@ -37,13 +36,8 @@ async def sample_cancel_job() -> None:
 
     client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    operation_location = {}
-
-    def raw_response_hook(response):
-        operation_location["value"] = response.http_response.headers.get("Operation-Location")
-
     async with client:
-        await client.begin_submit_job(
+        submit_poller = await client.begin_submit_job(
             body={
                 "displayName": "Document Analysis Sample",
                 "analysisInput": {
@@ -71,11 +65,9 @@ async def sample_cancel_job() -> None:
                     }
                 ],
             },
-            raw_response_hook=raw_response_hook,
         )
 
-        parsed = urlparse(operation_location["value"])
-        job_id = parsed.path.rstrip("/").split("/")[-1]
+        job_id = submit_poller.details["operation_id"]
 
         cancel_poller = await client.begin_cancel_job(job_id=job_id)
         await cancel_poller.result()

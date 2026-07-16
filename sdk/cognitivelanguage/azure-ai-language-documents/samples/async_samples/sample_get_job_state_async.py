@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -21,7 +21,6 @@ USAGE:
 """
 
 import asyncio
-from urllib.parse import urlparse
 
 
 # [START sample_get_job_state_async]
@@ -37,13 +36,8 @@ async def sample_get_job_state() -> None:
 
     client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    operation_location = {}
-
-    def raw_response_hook(response):
-        operation_location["value"] = response.http_response.headers.get("Operation-Location")
-
     async with client:
-        await client.begin_submit_job(
+        poller = await client.begin_submit_job(
             body={
                 "displayName": "Document Analysis Sample",
                 "analysisInput": {
@@ -71,12 +65,9 @@ async def sample_get_job_state() -> None:
                     }
                 ],
             },
-            raw_response_hook=raw_response_hook,
         )
 
-        parsed = urlparse(operation_location["value"])
-        job_id = parsed.path.rstrip("/").split("/")[-1]
-
+        job_id = poller.details["operation_id"]
         response = await client.get_job_state(job_id=job_id)
 
         print(f"Job ID: {response['jobId']}")
