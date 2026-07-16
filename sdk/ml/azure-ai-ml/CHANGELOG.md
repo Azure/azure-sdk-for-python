@@ -10,6 +10,7 @@
 - Fixed `deployment_templates.list(name=...)` raising `AttributeError: 'str' object has no attribute 'request_timeout'`. In the list response, `requestSettings` / `livenessProbe` / `readinessProbe` arrive as stringified dicts nested under `properties`; these are now parsed before conversion, giving `list()` parity with `models.list()` / `environments.list()`.
 - Fixed `deployment_templates.get(name)` failing with a 404 (`DeploymentTemplate {name}:latest not found`) when no version was supplied, because the literal string `"latest"` was sent as the version. The latest version is now resolved client-side (the service exposes no `latest` label and no server-side ordering), and `get()` accepts a `label` keyword (`label="latest"` resolves to the latest version) mirroring `models.get()`. `delete(name)` resolves the latest version the same way.
 - Fixed `models.get(name, label="latest")` returning a `Model` whose `default_deployment_template` / `allowed_deployment_templates` references had `asset_id=None`. Label resolution goes through the version list endpoint (`top=1`), whose items omit the deployment-template references; for registry models the resolved version is now re-fetched through the get endpoint, so the label path hydrates these references identically to the explicit `version=` path.
+- Added `MLClient.jobs.begin_delete(name)` to delete a job.
 
 ### Other Changes
 
@@ -28,7 +29,6 @@
 
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
-- Added `MLClient.jobs.begin_delete(name)` to delete a job.
 
 ### Other Changes
 
