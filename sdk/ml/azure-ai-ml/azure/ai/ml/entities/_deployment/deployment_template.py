@@ -11,12 +11,106 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
+    OnlineRequestSettings as RestOnlineRequestSettings,
+)
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
+    ProbeSettings as RestProbeSettings,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._deployment.accelerator_map import AcceleratorMap
 from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._system_data import SystemData
+
+
+def _read_wire_value(source: Any, *keys: str) -> Any:
+    """Read the first non-None value for any of ``keys`` from a REST object.
+
+    Handles both mapping-style access (wire/camelCase keys such as ``createdTime``) and
+    attribute-style access (snake_case such as ``created_time``). This is needed because
+    some service fields are returned as undeclared/flattened keys that only exist on the
+    backing mapping of the generated REST model, not as typed attributes.
+    """
+    if source is None:
+        return None
+    for key in keys:
+        getter = getattr(source, "get", None)
+        if callable(getter) and not isinstance(source, str):
+            try:
+                value = source.get(key)
+            except Exception:  # pylint: disable=broad-except
+                value = None
+            if value is not None:
+                return value
+        value = getattr(source, key, None)
+        if value is not None:
+            return value
+    return None
+
+
+def _parse_iso_datetime(value: Any) -> Any:
+    """Best-effort parse of an ISO-8601 timestamp string into a ``datetime``.
+
+    Returns the original value unchanged when it is not a parseable string, so the raw
+    timestamp is still surfaced rather than dropped.
+    """
+    if not isinstance(value, str):
+        return value
+    try:
+        import isodate
+
+        return isodate.parse_datetime(value)
+    except Exception:  # pylint: disable=broad-except
+        return value
+
+
+def _extract_created_by(value: Any) -> Any:
+    """Extract a readable ``created_by`` identity from a service ``createdBy`` value.
+
+    The value may be a plain string identity, an object/dict such as ``{"userName": ...}``
+    (get() shape), or a stringified dict such as ``"{'userName': ...}"`` (list() shape).
+    Returns the ``userName`` (or object id) when available, otherwise the value unchanged.
+    """
+    if value is None:
+        return None
+    if isinstance(value, str):
+        # list() returns createdBy as a stringified dict; parse it, else treat as a plain identity.
+        import ast
+
+        try:
+            parsed = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return value
+        if isinstance(parsed, dict):
+            value = parsed
+        else:
+            return value
+    return _read_wire_value(value, "userName", "user_name", "userObjectId", "user_object_id")
+
+
+def _coerce_rest_settings(value: Any, rest_cls: type) -> Any:
+    """Coerce a settings value into ``rest_cls`` so attribute-based converters work.
+
+    In the ``list()`` response, settings such as ``requestSettings`` / ``livenessProbe`` /
+    ``readinessProbe`` arrive as stringified dicts nested under ``properties`` (whereas
+    ``get()`` returns typed objects at the top level). Parse the string and wrap the
+    resulting dict into the typed REST model so ``_from_rest_object`` works for both shapes.
+    """
+    import ast
+
+    if value is None or isinstance(value, rest_cls):
+        return value
+    if isinstance(value, str):
+        try:
+            value = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            return None
+    if isinstance(value, dict):
+        return rest_cls(value)
+    return value
 
 
 @experimental
@@ -464,6 +558,13 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             except (ValueError, SyntaxError):
                 allowed_environment_variable_overrides = None
 
+        # In the list() response shape these settings arrive as stringified dicts nested under
+        # ``properties`` (get() returns typed objects at the top level instead). Coerce them into
+        # the typed REST models so the attribute-based converters below work for both shapes.
+        request_settings = _coerce_rest_settings(request_settings, RestOnlineRequestSettings)
+        liveness_probe = _coerce_rest_settings(liveness_probe, RestProbeSettings)
+        readiness_probe = _coerce_rest_settings(readiness_probe, RestProbeSettings)
+
         # Convert request_settings to OnlineRequestSettings object using the built-in conversion method
         request_settings_obj = OnlineRequestSettings._from_rest_object(request_settings) if request_settings else None
 
@@ -486,6 +587,34 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             except (ValueError, TypeError):
                 scoring_port = None
 
+        # Populate creation_context so DeploymentTemplate is consistent with Model and
+        # Environment. Those entities return a nested ``systemData`` block, but the
+        # deployment-template API (e.g. the azure-huggingface registry) instead returns
+        # flattened ``createdTime`` / ``modifiedTime`` / ``createdBy`` fields. These live at the
+        # top level in the get() response but nested under ``properties`` in the list() response,
+        # so read properties-first with an obj fallback (matching the other fields above).
+        system_data = get_value(obj, "system_data") or get_value(obj, "systemData")
+        if system_data is not None:
+            creation_context = SystemData._from_rest_object(system_data)
+        else:
+            created_time = _read_wire_value(properties, "createdTime", "createdAt") or _read_wire_value(
+                obj, "createdTime", "created_time", "createdAt", "created_at"
+            )
+            modified_time = _read_wire_value(properties, "modifiedTime", "lastModifiedAt") or _read_wire_value(
+                obj, "modifiedTime", "modified_time", "lastModifiedAt", "last_modified_at"
+            )
+            created_by = _extract_created_by(
+                _read_wire_value(properties, "createdBy") or _read_wire_value(obj, "createdBy", "created_by")
+            )
+            if created_time or modified_time or created_by:
+                creation_context = SystemData(
+                    created_at=_parse_iso_datetime(created_time),
+                    created_by=created_by,
+                    last_modified_at=_parse_iso_datetime(modified_time),
+                )
+            else:
+                creation_context = None
+
         template = cls(
             name=name or "unknown",
             version=version or "1.0",
@@ -494,6 +623,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             tags=tags,  # Include tags from REST response
             properties=properties,  # Include properties from REST response
             id=get_value(obj, "id"),  # Set the ID from the REST response
+            creation_context=creation_context,  # Populate created/modified metadata from systemData
             environment=environment_id,  # Use the environment ID from API
             request_settings=request_settings_obj,  # Use proper OnlineRequestSettings object or None
             liveness_probe=liveness_probe_obj,  # Use proper ProbeSettings object or None

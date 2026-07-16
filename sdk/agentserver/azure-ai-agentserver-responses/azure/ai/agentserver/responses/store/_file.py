@@ -205,11 +205,21 @@ class FileResponseStore(ResponseProviderProtocol):
 
     :param storage_dir: Root directory for the store. Created if it does
         not exist. Subdirectories ``responses/``, ``items/``, and
-        ``conversations/`` are managed by the store.
-    :type storage_dir: str | ~pathlib.Path
+        ``conversations/`` are managed by the store. Defaults to
+        ``resolve_state_subdir("responses")`` — a ``responses`` directory
+        under the shared agent-server state root (``AGENTSERVER_STATE_ROOT``,
+        or ``~/.agentserver`` when unset), alongside ``tasks`` and
+        ``streams``.
+    :type storage_dir: str | ~pathlib.Path | None
     """
 
-    def __init__(self, storage_dir: str | Path) -> None:
+    def __init__(self, storage_dir: str | Path | None = None) -> None:
+        if storage_dir is None:
+            from azure.ai.agentserver.core import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+                resolve_state_subdir,
+            )
+
+            storage_dir = resolve_state_subdir("responses")
         self._root = Path(storage_dir)
         self._responses_dir = self._root / "responses"
         self._items_dir_global = self._root / "items"

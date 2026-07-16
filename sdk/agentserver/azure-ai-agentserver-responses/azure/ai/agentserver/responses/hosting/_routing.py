@@ -130,9 +130,6 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
     streams created after it. In tests with multiple hosts per process,
     the per-test fixtures snapshot/restore the registry's private state.
     """
-    from azure.ai.agentserver.core._config import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
-        resolve_state_subdir,
-    )
     from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
         streams,
     )
@@ -140,10 +137,11 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
     if runtime_options.resilient_background:
         # (Spec 024 Phase 3a) Stream store path resolves via the unified
         # storage-paths helper; legacy ``AGENTSERVER_STREAM_STORE_PATH``
-        # env var + per-temp-dir default are deleted.
-        stream_dir = resolve_state_subdir("streams")
+        # env var + per-temp-dir default are deleted. ``storage_dir`` is
+        # omitted so the core registry applies its own default
+        # (``resolve_state_subdir("streams")``) — the single source of
+        # truth for the shared state root.
         streams.use_file_backed_replay(
-            storage_dir=stream_dir,
             cursor_fn=_stream_cursor,
             ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,
             serializer=_serialize_event_payload,
@@ -322,15 +320,14 @@ class ResponsesAgentServerHost(AgentServerHost):
         # two are inseparable (the default path depends on the unified
         # root resolution).
         if store is None:
-            from azure.ai.agentserver.core._config import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
-                resolve_state_subdir,
-            )
-
             from ..store._file import (
                 FileResponseStore,
             )  # pylint: disable=import-outside-toplevel
 
-            store = FileResponseStore(storage_dir=resolve_state_subdir("responses"))
+            # ``storage_dir`` is omitted so the store resolves its own default
+            # (``resolve_state_subdir("responses")``) — the single source of
+            # truth for the shared state root.
+            store = FileResponseStore()
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
 

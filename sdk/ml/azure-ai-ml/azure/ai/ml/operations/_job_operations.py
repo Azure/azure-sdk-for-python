@@ -654,7 +654,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
+    def create_or_update(  # pylint: disable=too-many-branches
         self,
         job: Job,
         *,
@@ -722,6 +722,67 @@ class JobOperations(_ScopeDependentOperations):
             job.tags = tags
         if experiment_name is not None:
             job.experiment_name = experiment_name
+
+        # ---------------- TEMPORARY HOTFIX (metadata-only shortcut) ----------------
+        # Root bug: for a Job fetched via jobs.get(name) then mutated and passed to
+        # create_or_update, the serialize + MFE PUT round-trip fails for AutoML,
+        # Command, Pipeline, Sweep, Spark (each with a different serializer /
+        # comparator error). Until MFE + per-jobType serializers are fixed upstream,
+        # detect the "fetched job with only metadata changes" case and route through
+        # the RunHistory PATCH endpoint (same call used by ML Studio's portal for
+        # inline edits, and by the new jobs.update() API added alongside this fix).
+        #
+        # Shortcut is taken only when:
+        #   * the incoming job carries an ARM resource id (=> it was fetched, not
+        #     freshly created), AND
+        #   * the caller is not trying to change compute or experiment_name (these
+        #     are not supported by the shortcut and were rejected by MFE anyway).
+        # Any failure inside the shortcut falls through to the original path so
+        # brand-new job creation behavior is preserved bit-for-bit.
+        if getattr(job, "id", None) and getattr(job, "name", None) and compute is None and experiment_name is None:
+            job_name: str = cast(str, job.name)
+            patch_succeeded = False
+            try:
+                job_object = self._get_job(job_name)
+                if job_object.properties.job_type == RestJobType.PIPELINE:
+                    job_object = self._get_job_2401(job_name)
+                if _is_pipeline_child_job(job_object):
+                    raise PipelineChildJobError(job_id=job_object.id)
+
+                from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+                self._runs_operations._operation.add_or_modify_by_experiment_name(
+                    subscription_id=self._operation_scope.subscription_id,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    experiment_name=job_object.properties.experiment_name,
+                    run_id=job_name,
+                    body=CreateRun(
+                        display_name=getattr(job, "display_name", None),
+                        description=getattr(job, "description", None),
+                        tags=getattr(job, "tags", None),
+                        properties=getattr(job, "properties", None),
+                    ),
+                )
+                patch_succeeded = True
+            except PipelineChildJobError:
+                raise
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Only failures BEFORE and INCLUDING the RunHistory PATCH are swallowed
+                # (job not found, transient RunHistory error, etc.) so we can fall
+                # through to the original code path without regressing creation.
+                pass
+
+            if patch_succeeded:
+                # PATCH already persisted the metadata change server-side. Any failure
+                # in the refresh/resolve below must surface directly — falling back to
+                # the original MFE PUT path would re-execute the very round-trip this
+                # hotfix exists to avoid and would surface a misleading error.
+                refreshed = self._get_job(job_name)
+                if refreshed.properties.job_type == RestJobType.PIPELINE:
+                    refreshed = self._get_job_2401(job_name)
+                return self._resolve_azureml_id(Job._from_rest_object(refreshed))
+        # ------------------ END TEMPORARY HOTFIX --------------------------------
 
         if job.compute == LOCAL_COMPUTE_TARGET:
             job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"  # type: ignore
@@ -850,8 +911,34 @@ class JobOperations(_ScopeDependentOperations):
             job_object = self._get_job_2401(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
-        job_object.properties.is_archived = is_archived
 
+        # ---------------- TEMPORARY HOTFIX (archive/restore shortcut) ----------------
+        # The legacy _create_or_update_with_different_version_api PUT round-trip fails
+        # on AutoML, Command, Sweep, and Spark jobs for the same serializer/comparator
+        # reasons as create_or_update (see the shortcut in create_or_update above).
+        # RunHistory's "hidden" flag is the same server-side field surfaced by MFE as
+        # properties.isArchived (verified via probe_runhistory_hidden.py), so we can
+        # PATCH it directly - which is what ML Studio's portal does for the Archive
+        # button. Any failure falls through to the original path so behavior is
+        # preserved for Pipeline (which already works via _get_job_2401).
+        try:
+            from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+            self._runs_operations._operation.add_or_modify_by_experiment_name(
+                subscription_id=self._operation_scope.subscription_id,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                experiment_name=job_object.properties.experiment_name,
+                run_id=name,
+                body=CreateRun(hidden=is_archived),
+            )
+            return
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Fall through to the original code path on any RunHistory error.
+            pass
+        # ------------------ END TEMPORARY HOTFIX --------------------------------
+
+        job_object.properties.is_archived = is_archived
         self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
@@ -895,6 +982,71 @@ class JobOperations(_ScopeDependentOperations):
         """
 
         self._archive_or_restore(name=name, is_archived=False)
+
+    @distributed_trace
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Update", ActivityType.PUBLICAPI)
+    def update(
+        self,
+        name: str,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ) -> Job:
+        """Partially updates the display_name, description, tags or properties of an existing job.
+
+        This routes through the RunHistory PATCH endpoint that Azure ML Studio's portal uses
+        for inline edits, which works uniformly for all job types (AutoML, Command, Pipeline,
+        Sweep, Spark, Parallel) and merges tags/properties rather than replacing them.
+
+        :param name: The name of the job to update.
+        :type name: str
+        :keyword display_name: New display name for the job. If None, leaves the current value unchanged.
+        :paramtype display_name: Optional[str]
+        :keyword description: New description for the job. If None, leaves the current value unchanged.
+        :paramtype description: Optional[str]
+        :keyword tags: Tags to merge into the job's existing tags.
+        :paramtype tags: Optional[Dict[str, str]]
+        :keyword properties: Properties to merge into the job's existing properties.
+        :paramtype properties: Optional[Dict[str, str]]
+        :raises ~azure.ai.ml.exceptions.UserErrorException: Raised if no updatable field is supplied.
+        :raises ~azure.ai.ml.exceptions.PipelineChildJobError: Raised if the target job is a pipeline child job.
+        :return: The refreshed Job entity.
+        :rtype: ~azure.ai.ml.entities.Job
+        """
+        if display_name is None and description is None and tags is None and properties is None:
+            raise UserErrorException(
+                "jobs.update() requires at least one of "
+                "display_name, description, tags or properties to be specified."
+            )
+
+        job_object = self._get_job(name)
+        if job_object.properties.job_type == RestJobType.PIPELINE:
+            job_object = self._get_job_2401(name)
+        if _is_pipeline_child_job(job_object):
+            raise PipelineChildJobError(job_id=job_object.id)
+
+        from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+        self._runs_operations._operation.add_or_modify_by_experiment_name(
+            subscription_id=self._operation_scope.subscription_id,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            experiment_name=job_object.properties.experiment_name,
+            run_id=name,
+            body=CreateRun(
+                display_name=display_name,
+                description=description,
+                tags=tags,
+                properties=properties,
+            ),
+        )
+
+        refreshed = self._get_job(name)
+        if refreshed.properties.job_type == RestJobType.PIPELINE:
+            refreshed = self._get_job_2401(name)
+        return self._resolve_azureml_id(Job._from_rest_object(refreshed))
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "Job.Stream", ActivityType.PUBLICAPI)

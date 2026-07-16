@@ -20,6 +20,7 @@ Public API::
         get_request_context,
         record_error,
         read_request_id,
+        resolve_state_subdir,
         set_current_span,
         trace_stream,
     )
@@ -28,7 +29,7 @@ Public API::
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._base import AgentServerHost
-from ._config import AgentConfig
+from ._config import AgentConfig, resolve_state_subdir
 from ._errors import create_error_response
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
@@ -66,6 +67,7 @@ __all__ = [
     "record_error",
     "read_request_id",
     "reset_request_context",
+    "resolve_state_subdir",
     "set_current_span",
     "set_request_context",
     "trace_stream",

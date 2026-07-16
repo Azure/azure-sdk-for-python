@@ -152,6 +152,15 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
             request.http_request.url = urljoin(request.http_request.url, message_id)
 
 
+class RangeHeaderPolicy(SansIOHTTPPolicy):
+    """Policy that converts the Range header to x-ms-range."""
+
+    def on_request(self, request):
+        range_value = request.http_request.headers.pop("Range", None)
+        if range_value is not None:
+            request.http_request.headers["x-ms-range"] = range_value
+
+
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = "x-ms-client-request-id"
 

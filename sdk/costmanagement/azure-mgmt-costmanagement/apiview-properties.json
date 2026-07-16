@@ -360,5 +360,5 @@
         "azure.mgmt.costmanagement.operations.PriceSheetOperations.begin_download_by_billing_account": "Microsoft.CostManagement.PriceSheetOperationGroup.downloadByBillingAccount",
         "azure.mgmt.costmanagement.aio.operations.PriceSheetOperations.begin_download_by_billing_account": "Microsoft.CostManagement.PriceSheetOperationGroup.downloadByBillingAccount"
     },
-    "CrossLanguageVersion": "7e56384cc34d"
+    "CrossLanguageVersion": "e883ab5009d5"
 }

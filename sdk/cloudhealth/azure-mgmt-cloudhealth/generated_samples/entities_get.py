@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.entities.get(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        entity_name="entity1",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        entity_name="orders-db",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/Entities_Get.json
+# x-ms-original-file: 2026-05-01-preview/Entities_Get.json
 if __name__ == "__main__":
     main()
