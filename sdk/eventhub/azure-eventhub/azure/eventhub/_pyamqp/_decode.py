@@ -430,7 +430,9 @@ def decode_payload(buffer: memoryview) -> Message:
 # wire field, so its _definition uses a None sentinel for that slot, which is
 # excluded here.
 _PERFORMATIVE_FIELD_DEFAULTS: Dict[int, List[Any]] = {
-    # pylint: disable=protected-access
+    # _code and _definition are assigned onto the performative classes at import
+    # time (see performatives.py), so pylint cannot see them statically.
+    # pylint: disable=protected-access,no-member
     performative._code: [field.default for field in performative._definition if field is not None]  # type: ignore
     for performative in (
         performatives.OpenFrame,
