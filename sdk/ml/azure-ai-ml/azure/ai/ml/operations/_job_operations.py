@@ -24,6 +24,7 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient022023Preview
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
@@ -144,6 +145,26 @@ module_logger = ops_logger.module_logger
 # so compare against the literal wire value for routing. Remove once arm_ml_service is regenerated
 # with api-version "all".
 _FINE_TUNING_JOB_TYPE = "FineTuning"
+
+
+def _strip_none_values(obj: Any) -> None:
+    """Recursively remove keys whose value is ``None`` from a JSON-like structure in place.
+
+    The arm_ml_service hybrid models serialize present-but-``None`` fields as explicit JSON
+    ``null``, whereas the msrest clients they replaced omitted such fields entirely. Stripping
+    ``None`` values reproduces the msrest wire so re-PUT bodies remain byte-identical.
+
+    :param obj: A JSON-like structure (``dict``/``list``) to prune in place.
+    :type obj: Any
+    """
+    if isinstance(obj, dict):
+        for key in [k for k, v in obj.items() if v is None]:
+            del obj[key]
+        for value in obj.values():
+            _strip_none_values(value)
+    elif isinstance(obj, list):
+        for item in obj:
+            _strip_none_values(item)
 
 
 class JobOperations(_ScopeDependentOperations):
@@ -835,11 +856,19 @@ class JobOperations(_ScopeDependentOperations):
         if rest_job_resource.properties.job_type == RestJobType.COMMAND:
             service_client_operation = self.service_client_01_2025_preview.jobs
 
+        # The migrated arm_ml_service models serialize present-but-None fields as
+        # explicit JSON ``null`` whereas the previous msrest clients omitted them.
+        # For round-tripped bodies (e.g. the local-run re-submit that re-PUTs a
+        # previously fetched job) this would emit ``null`` keys that were never on
+        # the wire before. Serialize and drop None values to keep the wire identical.
+        body = json.loads(json.dumps(rest_job_resource, cls=SdkJSONEncoder, exclude_readonly=True))
+        _strip_none_values(body)
+
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            body=rest_job_resource,
+            body=body,
             **kwargs,
         )
 
