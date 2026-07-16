@@ -1849,6 +1849,7 @@
     {
       "filename": "sdk/confidentialledger/azure-confidentialledger/**",
       "words": [
+        "deser",
         "mrenclave",
         "MRENCLAVE",
         "oeverify"
