@@ -18,11 +18,11 @@
   - Added model `SaaSData`
   - Added model `SaaSResourceDetailsResponse`
   - Added model `VnetInjectionDetails`
-  - Model `OrganizationOperations` added method `begin_activate_resource`
-  - Model `OrganizationOperations` added method `begin_link_saa_s`
-  - Model `OrganizationOperations` added method `latest_linked_saa_s`
-  - Added model `AccessPointResourcesOperations`
-  - Added model `NetworkGatewayResourcesOperations`
+  - Operation group `OrganizationOperations` added method `begin_activate_resource`
+  - Operation group `OrganizationOperations` added method `begin_link_saa_s`
+  - Operation group `OrganizationOperations` added method `latest_linked_saa_s`
+  - Added operation group `AccessPointResourcesOperations`
+  - Added operation group `NetworkGatewayResourcesOperations`
 
 ### Breaking Changes
 
