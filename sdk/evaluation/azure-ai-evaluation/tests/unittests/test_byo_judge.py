@@ -92,6 +92,11 @@ class TestUsageAdapter:
         usage = _Usage(object())
         assert (usage.prompt_tokens, usage.completion_tokens, usage.total_tokens) == (0, 0, 0)
 
+    def test_total_tokens_falls_back_to_prompt_plus_completion(self):
+        # Responses usage without total_tokens -> compute it from prompt + completion.
+        usage = _Usage(SimpleNamespace(input_tokens=5, output_tokens=7))
+        assert usage.total_tokens == 12
+
 
 class TestFinishReason:
     """A Responses result maps status -> chat.completions finish_reason (truncation detection)."""

@@ -95,7 +95,10 @@ class _Usage:
     def __init__(self, response_usage: Any) -> None:
         self.prompt_tokens = getattr(response_usage, "input_tokens", 0) or 0
         self.completion_tokens = getattr(response_usage, "output_tokens", 0) or 0
-        self.total_tokens = getattr(response_usage, "total_tokens", 0) or 0
+        # Fall back to prompt + completion when the Responses usage omits total_tokens.
+        self.total_tokens = (getattr(response_usage, "total_tokens", 0) or 0) or (
+            self.prompt_tokens + self.completion_tokens
+        )
 
 
 class _ChatMessage:
