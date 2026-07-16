@@ -90,26 +90,26 @@ class AnalyzeDocumentsAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Gener
 
 
 class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
-    @overload
+    @overload # type: ignore[override]
     async def begin_submit_job(
         self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_submit_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
     @distributed_trace_async
-    async def begin_submit_job(
+    async def begin_submit_job(  # type: ignore[override]
         self,
         body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
         **kwargs: Any
@@ -133,7 +133,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
             resp = await self._client.send_request(req)  # type: ignore[attr-defined]
             if resp.status_code != 200:
                 raise HttpResponseError(response=resp)
-            return _models.AnalyzeDocumentsJobState(json.loads(await resp.text()))
+            return _models.AnalyzeDocumentsJobState(json.loads(resp.text()))
 
         def _build_pager_from_state(state: _models.AnalyzeDocumentsJobState) -> AsyncItemPaged[_models.Tasks]:
             async def extract_data(s: _models.AnalyzeDocumentsJobState):

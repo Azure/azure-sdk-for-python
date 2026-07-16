@@ -90,26 +90,26 @@ class AnalyzeDocumentsLROPoller(LROPoller[PollingReturnType_co], Generic[Polling
 
 
 class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
-    @overload
+    @overload  # type: ignore[override]
     def begin_submit_job(
         self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsLROPoller[ItemPaged[_models.Tasks]]:
         ...
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_submit_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsLROPoller[ItemPaged[_models.Tasks]]:
         ...
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsLROPoller[ItemPaged[_models.Tasks]]:
         ...
 
     @distributed_trace
-    def begin_submit_job(
+    def begin_submit_job( # type: ignore[override]
         self,
         body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
         **kwargs: Any
