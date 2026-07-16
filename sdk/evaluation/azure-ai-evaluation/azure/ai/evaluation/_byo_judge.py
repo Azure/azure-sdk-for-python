@@ -13,6 +13,7 @@ Prompty-based judge evaluators (coherence, relevance, fluency, groundedness, etc
 **shim** that routes those calls to the project Responses API for a BYO model, so evaluator
 code can use admin-connected connections **without any change to its calling code**.
 """
+import inspect
 import time
 from typing import Any, Dict, List, Optional
 
@@ -189,27 +190,27 @@ class AsyncByoProjectResponsesClient:
             self._timeout = float(timeout)
         return self
 
-    def _openai(self) -> Any:
+    async def _ensure_client(self) -> Any:
         if self._client is None:
             from azure.ai.projects.aio import AIProjectClient
 
-            self._client = AIProjectClient(
-                endpoint=self._project_endpoint, credential=self._credential
-            ).get_openai_client()
+            client = AIProjectClient(endpoint=self._project_endpoint, credential=self._credential).get_openai_client()
+            # ``get_openai_client()`` is synchronous in some azure-ai-projects versions and a coroutine
+            # in others; await it only when needed so the shim works across both.
+            if inspect.isawaitable(client):
+                client = await client
+            self._client = client
         return self._client
 
     async def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
+        client = await self._ensure_client()
         extra: Dict[str, Any] = {"timeout": self._timeout} if self._timeout is not None else {}
-        return await self._openai().responses.create(
+        return await client.responses.create(
             model=self._byo_model,
             input=_to_responses_input(messages),
             **_map_params(kwargs),
             **extra,
         )
-
-    @property
-    def responses(self) -> Any:
-        return self._openai().responses
 
 
 def is_byo_model_config(model_config: Dict[str, Any]) -> bool:

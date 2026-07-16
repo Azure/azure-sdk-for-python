@@ -181,6 +181,23 @@ class TestAsyncByoProjectResponsesClient:
         client.with_options(timeout=object())
         assert client._timeout is None
 
+    @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_awaits_coroutine_get_openai_client(self, mock_aipc):
+        # In some azure-ai-projects versions get_openai_client() is a coroutine; the shim must await it.
+        resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed")
+        oai = MagicMock()
+        oai.responses.create = AsyncMock(return_value=resp)
+
+        async def _coro_get_openai_client(*args, **kwargs):
+            return oai
+
+        mock_aipc.return_value.get_openai_client = _coro_get_openai_client
+
+        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
+        result = asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
+        assert result.choices[0].message.content == "ok"
+        oai.responses.create.assert_awaited_once()
+
     def test_with_options_returns_self(self):
         client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
         assert client.with_options(timeout=5) is client
