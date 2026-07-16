@@ -50,7 +50,11 @@ def _run_breaking(args, tmp_path):
     ), patch.object(
         chk, "install_dev_reqs"
     ) as install_dev_reqs:
-        result = chk.run(args)
+original_cwd = os.getcwd()
+        try:
+            result = chk.run(args)
+        finally:
+            os.chdir(original_cwd)
 
     return {
         "result": result,
