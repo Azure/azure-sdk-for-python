@@ -6,6 +6,6 @@ httpx
 pytest-asyncio
 opentelemetry-api>=1.40.0
 opentelemetry-sdk>=1.40.0
-opentelemetry-exporter-otlp-proto-grpc>=1.40.0
+opentelemetry-exporter-otlp-proto-grpc~=1.43.0
 grpcio
 opentelemetry-proto
