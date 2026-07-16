@@ -220,5 +220,5 @@
         "azure.mgmt.confluent.operations.ValidationsOperations.validate_organization_v2": "Microsoft.Confluent.ValidationsOperationGroup.validateOrganizationV2",
         "azure.mgmt.confluent.aio.operations.ValidationsOperations.validate_organization_v2": "Microsoft.Confluent.ValidationsOperationGroup.validateOrganizationV2"
     },
-    "CrossLanguageVersion": "dba742094ffe"
+    "CrossLanguageVersion": "a73a18ca88f5"
 }
