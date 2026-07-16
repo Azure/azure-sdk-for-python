@@ -129,6 +129,16 @@
 //!         adds the query `Content-Type`/`x-ms-documentdb-isquery` markers that
 //!         `query_offers` requires. Returns body shape `{"Offers":[...]}`.
 //!
+//!   * `replace_offer(handle, prepared) -> (status, sub_status,
+//!                                          headers, body, diagnostics)`
+//!         Replaces a container's provisioned throughput by PUTting the mutated
+//!         offer document to `/offers/{rid}` (an account-level, non-partitioned
+//!         resource). The offer RID rides in `PreparedRequest.item_id`; the mutated
+//!         offer document rides in the body. Unlike the read path there is no query
+//!         `Content-Type` to force -- a replace carries a resource body and the
+//!         driver defaults `Content-Type` to `application/json`. Returns the single
+//!         updated offer document.
+//!
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
 //! is lifted to the typed `OperationOptions::content_response_on_write`
@@ -170,6 +180,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_feed_ranges);
     add_pyfn!(m, documents::feed_range_from_partition_key);
     add_pyfn!(m, documents::read_offer);
+    add_pyfn!(m, documents::replace_offer);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
     add_pyfn!(m, documents::create_item_async);
@@ -183,6 +194,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_feed_ranges_async);
     add_pyfn!(m, documents::feed_range_from_partition_key_async);
     add_pyfn!(m, documents::read_offer_async);
+    add_pyfn!(m, documents::replace_offer_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.

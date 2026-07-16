@@ -379,6 +379,29 @@ def _aio_read_offer_target() -> Tuple[Any, str, str]:
 _register_op("read_offer", sync=_sync_read_offer_target, aio=_aio_read_offer_target)
 
 
+# replace_throughput --------------------------------------------------------
+# Points the parity harness at the customer call that *changes* provisioned RU/s
+# (the read-modify-write on the container's offer). Without this registration the
+# harness would not know how to intercept the throughput change, so the two-column
+# replace_throughput audit (core-python vs rust) could not be generated at all.
+
+def _sync_replace_throughput_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "replace_throughput"
+
+
+def _aio_replace_throughput_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "replace_throughput"
+
+
+_register_op(
+    "replace_throughput",
+    sync=_sync_replace_throughput_target,
+    aio=_aio_replace_throughput_target,
+)
+
+
 # ---------------------------------------------------------------------------
 # Capture state (per pytest session)
 # ---------------------------------------------------------------------------

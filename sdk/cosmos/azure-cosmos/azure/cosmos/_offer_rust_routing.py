@@ -3,19 +3,28 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-"""Shared Rust-routing helpers for the offer/throughput read (sync + aio).
+"""Shared Rust-routing helpers for the offer/throughput read and replace (sync + aio).
 
-``read_offer`` (the deprecated alias) and ``get_throughput`` read a container's
-provisioned throughput. On the legacy path this is a query over the account's
-``/offers`` feed, filtered to the one offer whose ``resource`` link is this
-container, then deserialized into ``ThroughputProperties``.
+Every Cosmos container has one "offer" record that holds how much throughput
+(RU/s) the container is provisioned for. Two public methods touch it:
 
-Both the sync and async ``get_throughput`` methods call into this one module so
-the two paths build the identical request and return the identical offer records.
-Without it, each surface would carry its own copy of the can-use / build / parse
-logic; the two could drift, and the Rust path could hand back offer records that
-differ from the legacy path -- which would show customers a different RU/s number
-or autoscale ceiling depending on which surface they used.
+- ``get_throughput`` (and its deprecated alias ``read_offer``) *reads* that record.
+- ``replace_throughput`` *changes* it: read the current offer, apply the new RU/s
+  (or autoscale setting), and PUT it back. This is a read-modify-write, so it uses
+  the read helpers below plus the replace helpers.
+
+On the legacy (core-python) path both are done by hand over the account's
+``/offers`` feed. This module lets a Rust-backed client run the exact same work on
+the Rust driver instead, and -- key point -- hand back offer records with the
+identical shape, so the code that turns them into ``ThroughputProperties`` is
+unchanged and the customer sees the same RU/s number and autoscale ceiling either
+way.
+
+Both the sync and async surfaces call into this one module so they build the
+identical request and parse the identical response. Without it, each surface would
+carry its own copy of the can-use / build / parse logic; the two could drift, and a
+customer's throughput read or change could behave differently depending on which
+surface (sync vs async) they used.
 
 """
 from __future__ import annotations
@@ -26,7 +35,7 @@ from . import _base as base
 from . import _runtime_constants as runtime_constants
 from . import documents
 from . import http_constants
-from ._backend.base import OP_READ_OFFER, PreparedRequest
+from ._backend.base import OP_READ_OFFER, OP_REPLACE_OFFER, PreparedRequest
 from ._constants import _Constants as Constants
 from ._helpers._body_wire import serialize_body_to_bytes
 from ._helpers._response_parse import parse_backend_response
@@ -283,3 +292,209 @@ async def try_read_offer_with_rust_backend_async(
         response_hook=None,
     )
     return parse_read_offer_payload(cast(Mapping[str, Any], parsed))
+
+
+def can_use_rust_backend_for_replace_throughput(
+    *,
+    backend: Any,
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+) -> bool:
+    """Return True when ``replace_throughput`` can use the Rust backend.
+
+    ``replace_throughput`` is a two-step read-modify-write on the container's offer:
+    it first reads the offer (the same query ``get_throughput`` runs) and then PUTs
+    the mutated offer back. Both steps ride the offer entry points on the Rust
+    driver, and both honor exactly the same knobs, so the gate mirrors the read gate
+    (``can_use_rust_backend_for_read_offer``): Rust-backed client, no socket read
+    timeout, no client-side availability strategy, and no extra kwargs. Any unmirrored
+    knob keeps the whole call on legacy so nothing a customer passed is silently
+    dropped.
+
+    :param backend: The client's Rust backend, or ``None`` for core-python.
+    :type backend: Any
+    :param options: Normalized request options for this call.
+    :type options: Mapping[str, Any]
+    :param kwargs: The caller's remaining arguments (any unmirrored knob keeps the
+        call on legacy).
+    :type kwargs: Mapping[str, Any]
+    :rtype: bool
+    """
+    return can_use_rust_backend_for_read_offer(backend=backend, options=options, kwargs=kwargs)
+
+
+def build_replace_offer_prepared_request(
+    *,
+    container_link: str,
+    offer: Mapping[str, Any],
+    offer_id: str,
+    req_headers: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Build the PreparedRequest the binding's ``replace_offer`` entry point consumes.
+
+    The body is the full, already-mutated offer document (the same document the
+    legacy ``ReplaceOffer`` PUTs). The offer RID travels in ``item_id`` -- that is
+    which offer the driver overwrites (it PUTs to ``/offers/{rid}``). Headers are
+    copied from the legacy request-preparation path so Rust execution preserves
+    parity for routing/session/timeout behavior and internal request metadata.
+
+    :param container_link: The container's link, used as request context.
+    :type container_link: str
+    :param offer: The mutated offer document to send as the request body.
+    :type offer: Mapping[str, Any]
+    :param offer_id: The offer's RID (resolved from the offer's ``_self`` link).
+    :type offer_id: str
+    :param req_headers: Legacy-prepared request headers for this call.
+    :type req_headers: Mapping[str, Any]
+    :param options: Normalized request options for this call.
+    :type options: Mapping[str, Any]
+    :rtype: ~azure.cosmos._backend.base.PreparedRequest
+    """
+    normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
+    body_bytes = serialize_body_to_bytes(dict(offer))
+    headers = _build_prepared_headers_for_rust_offer_dispatch(options=options, req_headers=req_headers)
+    return PreparedRequest(
+        op=OP_REPLACE_OFFER,
+        container_link=normalized_container_link,
+        body_bytes=body_bytes,
+        partition_key_header="[]",
+        headers=headers,
+        item_id=offer_id,
+    )
+
+
+def _prepare_offer_replace_headers(
+    *,
+    client_connection: Any,
+    offer_link: str,
+    offer_id: str,
+    options: Mapping[str, Any],
+) -> dict[str, Any]:
+    headers = dict(getattr(client_connection, "default_headers", {}))
+    return base.GetHeaders(
+        client_connection,
+        headers,
+        "put",
+        base.GetPathFromLink(offer_link),
+        offer_id,
+        http_constants.ResourceType.Offer,
+        documents._OperationType.Replace,
+        options,
+    )
+
+
+def try_replace_offer_with_rust_backend(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> Optional[Any]:
+    """Execute ``replace_throughput``'s offer PUT through Rust, or return None.
+
+    Builds the offer-replace request from the already-mutated offer document, runs it
+    on the Rust backend, and returns the parsed updated offer (a ``CosmosDict``) so
+    the caller can read back the applied RU/s and build ``ThroughputProperties``.
+    Returns None (so the caller falls back to legacy) when there is no backend or the
+    backend declines the call.
+
+    Without it, ``replace_throughput`` on a Rust-backed client could read the offer on
+    the Rust driver but would have no way to write the change there, so setting
+    throughput would either stay on the core-python path or not run on Rust at all.
+
+    :param client_connection: The connection whose backend runs the request.
+    :type client_connection: Any
+    :param container_link: The container's link.
+    :type container_link: str
+    :param offer: The mutated offer document (its ``_self`` supplies the offer RID).
+    :type offer: Mapping[str, Any]
+    :param options: Normalized request options for this call.
+    :type options: Mapping[str, Any]
+    :rtype: Optional[Any]
+    """
+    backend = getattr(client_connection, "_backend", None)
+    if backend is None:
+        return None
+    offer_link = offer["_self"]
+    offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
+    req_headers = _prepare_offer_replace_headers(
+        client_connection=client_connection, offer_link=offer_link, offer_id=offer_id, options=options
+    )
+    request_params = RequestObject(
+        http_constants.ResourceType.Offer,
+        documents._OperationType.Replace,
+        req_headers,
+        options.get("partitionKey", None),
+    )
+    base.set_session_token_header(
+        client_connection, req_headers, base.GetPathFromLink(offer_link), request_params, options
+    )
+    prepared = build_replace_offer_prepared_request(
+        container_link=container_link,
+        offer=offer,
+        offer_id=offer_id,
+        req_headers=req_headers,
+        options=options,
+    )
+    backend_response = backend.execute(prepared)
+    if backend_response is None:
+        return None
+    return parse_backend_response(
+        backend_response,
+        client_connection=client_connection,
+        response_hook=None,
+    )
+
+
+async def try_replace_offer_with_rust_backend_async(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> Optional[Any]:
+    """Async sibling of ``try_replace_offer_with_rust_backend``.
+
+    :param client_connection: The connection whose backend runs the request.
+    :type client_connection: Any
+    :param container_link: The container's link.
+    :type container_link: str
+    :param offer: The mutated offer document (its ``_self`` supplies the offer RID).
+    :type offer: Mapping[str, Any]
+    :param options: Normalized request options for this call.
+    :type options: Mapping[str, Any]
+    :rtype: Optional[Any]
+    """
+    backend = getattr(client_connection, "_backend", None)
+    if backend is None:
+        return None
+    offer_link = offer["_self"]
+    offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
+    req_headers = _prepare_offer_replace_headers(
+        client_connection=client_connection, offer_link=offer_link, offer_id=offer_id, options=options
+    )
+    request_params = RequestObject(
+        http_constants.ResourceType.Offer,
+        documents._OperationType.Replace,
+        req_headers,
+        options.get("partitionKey", None),
+    )
+    await base.set_session_token_header_async(
+        client_connection, req_headers, base.GetPathFromLink(offer_link), request_params, options
+    )
+    prepared = build_replace_offer_prepared_request(
+        container_link=container_link,
+        offer=offer,
+        offer_id=offer_id,
+        req_headers=req_headers,
+        options=options,
+    )
+    backend_response = await backend.execute(prepared)
+    if backend_response is None:
+        return None
+    return parse_backend_response(
+        backend_response,
+        client_connection=client_connection,
+        response_hook=None,
+    )

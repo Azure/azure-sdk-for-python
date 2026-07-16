@@ -57,7 +57,9 @@ from ._feed_ranges_rust_routing import (
 )
 from ._offer_rust_routing import (
     can_use_rust_backend_for_read_offer,
+    can_use_rust_backend_for_replace_throughput,
     try_read_offer_with_rust_backend,
+    try_replace_offer_with_rust_backend,
 )
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
@@ -1826,10 +1828,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         throughput_properties: list[dict[str, Any]]
         properties = self._get_properties()
-        link = properties["_self"]
+        container_self_link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
+            "parameters": [{"name": "@link", "value": container_self_link}],
         }
         container_rid = properties["_rid"]
         options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
@@ -1886,19 +1888,71 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         throughput_properties: list[dict[str, Any]]
         properties = self._get_properties()
-        link = properties["_self"]
+        container_self_link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
+            "parameters": [{"name": "@link", "value": container_self_link}],
         }
-        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
+        container_rid = properties["_rid"]
+        options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
+
+        # Replace throughput on Rust when the client is Rust-backed and the call
+        # carries no knob the Rust offer path can't honor yet. `timeout` (the
+        # end-to-end deadline) IS supported -- it is popped below and forwarded to
+        # the driver. The blockers are `read_timeout` (socket read timeout) and
+        # `availability_strategy` (cross-region hedging), both known driver-side
+        # gaps, plus any other extra kwarg -- those keep the whole call on the legacy
+        # QueryOffers + ReplaceOffer path below so nothing a customer passed is
+        # silently dropped. Either way the read-modify-write on the container's offer
+        # is the same, so the caller sees the identical ThroughputProperties.
+        backend = getattr(self.client_connection, "_backend", None)
+        if backend is not None:
+            rust_kwargs: Dict[str, Any] = dict(kwargs)
+            rust_options = build_options(rust_kwargs)
+            rust_options[Constants.ContainerRID] = container_rid
+            # build_options lifts `timeout` into options; drop it from the kwargs copy
+            # so the "no extra kwargs" gate doesn't treat the supported timeout as an
+            # unmirrored knob.
+            rust_kwargs.pop("timeout", None)
+            if can_use_rust_backend_for_replace_throughput(
+                backend=backend, options=rust_options, kwargs=rust_kwargs
+            ):
+                rust_offers = try_read_offer_with_rust_backend(
+                    client_connection=self.client_connection,
+                    container_link=self.container_link,
+                    offer_query=query_spec,
+                    options=rust_options,
+                )
+                if rust_offers:
+                    new_offer = rust_offers[0].copy()
+                    _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
+                    updated_offer = try_replace_offer_with_rust_backend(
+                        client_connection=self.client_connection,
+                        container_link=self.container_link,
+                        offer=new_offer,
+                        options=rust_options,
+                    )
+                    if updated_offer is not None:
+                        if response_hook:
+                            response_hook(self.client_connection.last_response_headers, updated_offer)
+                        return ThroughputProperties(
+                            offer_throughput=updated_offer["content"]["offerThroughput"], properties=updated_offer
+                        )
+
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
-        data = self.client_connection.ReplaceOffer(
-            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], response_hook=response_hook, **kwargs)
+        updated_offer = self.client_connection.ReplaceOffer(
+            offer_link=new_throughput_properties["_self"],
+            offer=new_throughput_properties,
+            response_hook=response_hook,
+            **kwargs
+        )
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(
+            offer_throughput=updated_offer["content"]["offerThroughput"],
+            properties=updated_offer
+        )
 
     @distributed_trace
     def list_conflicts(

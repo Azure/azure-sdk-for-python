@@ -1,10 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The binding's front counter for the ten migrated operations:
-//! create / upsert / replace / delete / read / patch / query_items /
-//! read_all_items / read_feed_ranges / feed_range_from_partition_key -- each in a synchronous and an async version (20 functions
-//! in all).
+//! The binding's front counter for the migrated operations -- each in a
+//! synchronous and an async version.
 //!
 //! Where this fits in the layering (same direction as a normal call):
 //!
@@ -63,12 +61,14 @@ use crate::wire::{
     extract_read_feed_ranges_force_refresh, extract_required_item_id,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
-    run_read_all_items_operation, run_read_all_items_operation_async, run_read_feed_ranges_operation,
-    run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
+    run_read_all_items_operation, run_read_all_items_operation_async,
+    run_read_feed_ranges_operation, run_read_feed_ranges_operation_async, run_read_offer_operation,
+    run_read_offer_operation_async, run_replace_offer_operation, run_replace_offer_operation_async,
     OpModifiers,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
+const REPLACE_OFFER_ID_REQUIRED: &str = "replace_offer: PreparedRequest.item_id is required (the offer RID to overwrite, resolved from the throughput offer's `_self`)";
 const DELETE_ITEM_ID_REQUIRED: &str =
     "delete_item: PreparedRequest.item_id is required for delete operations";
 const READ_ITEM_ID_REQUIRED: &str =
@@ -79,6 +79,7 @@ type CommonInputs = (String, String, OpModifiers);
 type ItemInputs = (String, String, OpModifiers, String);
 type ItemBodyInputs = (String, String, OpModifiers, String, Vec<u8>);
 type QueryInputs = (String, String, OpModifiers, Vec<u8>);
+type OfferReplaceInputs = (OpModifiers, String, Vec<u8>);
 type ReadAllInputs = (String, String, OpModifiers);
 type ReadFeedRangesInputs = (String, bool);
 type FeedRangeFromPartitionKeyInputs = (String, String);
@@ -143,6 +144,18 @@ fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     Ok((container_link, partition_key_header, modifiers, body_bytes))
+}
+
+/// Inputs for `replace_offer`: per-request modifiers, the offer RID (required, from
+/// `PreparedRequest.item_id`), and the mutated offer document body. Offers are an
+/// account-level, non-partitioned resource, so the container link and partition-key
+/// header on the PreparedRequest are unused here (mirrors `read_offer`).
+fn extract_replace_offer_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
+    let (_container_link, _partition_key_header, modifiers): CommonInputs =
+        extract_common_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    let offer_id = extract_required_item_id(prepared, REPLACE_OFFER_ID_REQUIRED)?;
+    Ok((modifiers, offer_id, body_bytes))
 }
 
 /// Common fields for read-all feed operations (container link, partition-key
@@ -435,6 +448,25 @@ pub(crate) fn read_offer<'py>(
     run_read_offer_operation(py, handle, modifiers, body_bytes, "read_offer")
 }
 
+/// replace_offer: replace a container's provisioned throughput by PUTting the
+/// already-mutated offer document to `/offers/{rid}`. Offers are an account-level,
+/// non-partitioned resource, so -- like `read_offer` -- the container link and
+/// partition-key header on the PreparedRequest are unused; the offer RID (which
+/// offer to overwrite) rides in `PreparedRequest.item_id` and the mutated offer
+/// document rides in the body. Returns the single updated offer document (the
+/// single-document tuple shape), so `get_throughput`'s caller can read back the
+/// applied RU/s. Without it, `replace_throughput` could not run on the rust driver
+/// and would stay on the core-python path.
+#[pyfunction]
+pub(crate) fn replace_offer<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (modifiers, offer_id, body_bytes) = extract_replace_offer_inputs(prepared)?;
+    run_replace_offer_operation(py, handle, modifiers, offer_id, body_bytes, "replace_offer")
+}
+
 // ---------------------------------------------------------------------------
 // Async entry points
 // ---------------------------------------------------------------------------
@@ -703,4 +735,15 @@ pub(crate) fn read_offer_async<'py>(
     let (_container_link, _partition_key_header, modifiers, body_bytes) =
         extract_query_inputs(prepared)?;
     run_read_offer_operation_async(py, handle, modifiers, body_bytes, "read_offer")
+}
+
+/// Async twin of `replace_offer`.
+#[pyfunction]
+pub(crate) fn replace_offer_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (modifiers, offer_id, body_bytes) = extract_replace_offer_inputs(prepared)?;
+    run_replace_offer_operation_async(py, handle, modifiers, offer_id, body_bytes, "replace_offer")
 }
