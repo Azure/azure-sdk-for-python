@@ -121,6 +121,10 @@ class TestDatastoreOperations:
         with patch("uuid.uuid4", return_value="random_uuid"), patch(
             "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_datastore_uri"
         ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
+            # build_datastore_uri returns a str in production; the mount request now JSON-encodes this value
+            # into the HttpRequest body, so the mock must return a real string (a bare Mock would be fed to
+            # SdkJSONEncoder and recurse unboundedly).
+            mock_build_uri.return_value = "azureml://datastores/random_name/paths/random"
             mock_datastore_operation.mount(
                 path="azureml://datastores/random_name",
                 mount_point="/tmp/mount/random-local-path-for-datastore/",
