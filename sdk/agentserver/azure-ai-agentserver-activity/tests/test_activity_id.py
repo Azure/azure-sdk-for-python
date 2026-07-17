@@ -83,3 +83,25 @@ async def test_malformed_activity_id_falls_back_to_uuid(asgi_client):
     activity_id = resp.headers["x-agent-activity-id"]
     assert "<script>" not in activity_id
     uuid.UUID(activity_id)  # fallback UUID
+
+
+@pytest.mark.asyncio
+async def test_trailing_newline_activity_id_falls_back_to_uuid(asgi_client):
+    """An id ending in a newline must be rejected (header-injection defense)."""
+
+    async def handle(_request):
+        return JSONResponse({"ok": True})
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    async with asgi_client(app) as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hi", "id": "valid-id\n"},
+            headers={"Authorization": "Bearer test-token"},
+        )
+
+    assert resp.status_code == 200
+    activity_id = resp.headers["x-agent-activity-id"]
+    assert "\n" not in activity_id
+    uuid.UUID(activity_id)  # fallback UUID
+

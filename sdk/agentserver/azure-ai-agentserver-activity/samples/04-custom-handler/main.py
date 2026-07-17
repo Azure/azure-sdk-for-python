@@ -37,7 +37,17 @@ _INSTANCE_CLIENT_ID = environ.get("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "").strip(
 
 
 async def _send_teams_reply(service_url: str, conversation_id: str, text: str) -> None:
-    """Mint a Bot Connector token and POST a message activity back to the channel."""
+    """Mint a Bot Connector token and POST a message activity back to the channel.
+
+    SECURITY (production): custom-handler mode performs no M365 inbound
+    authentication, so ``service_url`` here comes straight from the inbound
+    payload and is untrusted. Sending a managed-identity Bot Connector token to
+    an unvalidated URL allows token exfiltration and SSRF. Before minting or
+    attaching credentials in a real deployment, authenticate the inbound
+    activity (JWT from the Bot Framework) and validate ``service_url`` against an
+    allowlist of trusted Bot Connector endpoints. This sample skips those steps
+    for brevity and must not be used as-is in production.
+    """
     cred_kwargs = {"managed_identity_client_id": _INSTANCE_CLIENT_ID} if _INSTANCE_CLIENT_ID else {}
     credential = DefaultAzureCredential(**cred_kwargs)
     try:

@@ -178,4 +178,4 @@ class ActivityFields:
 # ID validation (defense in depth): bound length and allowed characters for
 # user-provided IDs before they reach headers, span attributes, and logs.
 MAX_ID_LENGTH: int = 256
-VALID_ID_PATTERN: str = r"^[a-zA-Z0-9\-_.:]+$"
+VALID_ID_PATTERN: str = r"^[a-zA-Z0-9\-_.:]+\Z"

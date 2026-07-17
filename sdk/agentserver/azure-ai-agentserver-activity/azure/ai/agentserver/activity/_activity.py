@@ -152,7 +152,13 @@ def _apply_error_source_headers(
     """
     merged = {**headers, ERROR_SOURCE: error_source}
     if error_detail:
-        merged[ERROR_DETAIL] = error_detail
+        # Strip control characters (CR/LF/etc.) so request-derived exception text
+        # cannot inject additional headers or cause response splitting.
+        sanitized_detail = "".join(
+            ch for ch in error_detail if ch == " " or (ch.isprintable() and ch not in "\r\n")
+        )
+        if sanitized_detail:
+            merged[ERROR_DETAIL] = sanitized_detail
     return merged
 
 

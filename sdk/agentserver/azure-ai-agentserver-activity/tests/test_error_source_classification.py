@@ -45,3 +45,28 @@ async def test_platform_tagged_error_is_classified_platform_with_detail(asgi_cli
     assert resp.status_code == 500
     assert resp.headers[ERROR_SOURCE] == "platform"
     assert "platform storage failure" in resp.headers[ERROR_DETAIL]
+
+
+@pytest.mark.asyncio
+async def test_platform_error_detail_strips_control_characters(asgi_client):
+    """CR/LF in exception text must not reach the error-detail header (no response splitting)."""
+
+    async def handle(_request):
+        exc = RuntimeError("bad\r\nInjected-Header: evil")
+        setattr(exc, PLATFORM_ERROR_TAG, True)
+        raise exc
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    async with asgi_client(app) as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hello"},
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 500
+    assert resp.headers[ERROR_SOURCE] == "platform"
+    detail = resp.headers[ERROR_DETAIL]
+    assert "\r" not in detail and "\n" not in detail
+    assert "injected-header" not in resp.headers
+
