@@ -7,6 +7,20 @@ The breaking changes tool compares the last stable/GA version of the library (if
 
 Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/scripts/breaking_changes_checker/breaking_changes_allowlist.py).
 
+## Run tests
+
+The default test command runs the full suite, including slow integration tests that generate full code reports for large packages:
+
+```bash
+python -m pytest tests/
+```
+
+Skip those slow tests for a faster local signal:
+
+```bash
+python -m pytest tests/ --fast
+```
+
 ## Run locally with `azpysdk`
 
 **1) Install azpysdk:**
