@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.enclave import VirtualEnclavesMgmtClient
+from azure.mgmt.enclave import EnclaveMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestVirtualEnclavesMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
+class TestEnclaveMgmtEnclaveConnectionOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(VirtualEnclavesMgmtClient)
+        self.client = self.create_mgmt_client(EnclaveMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_enclave_list_by_resource_group(self, resource_group):
-        response = self.client.virtual_enclave.list_by_resource_group(
+    def test_enclave_connection_list_by_resource_group(self, resource_group):
+        response = self.client.enclave_connection.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -29,7 +29,7 @@ class TestVirtualEnclavesMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_enclave_list_by_subscription(self, resource_group):
-        response = self.client.virtual_enclave.list_by_subscription()
+    def test_enclave_connection_list_by_subscription(self, resource_group):
+        response = self.client.enclave_connection.list_by_subscription()
         result = [r for r in response]
         assert len(result)
