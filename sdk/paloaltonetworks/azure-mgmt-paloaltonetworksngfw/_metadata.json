@@ -3,9 +3,9 @@
   "apiVersions": {
     "PaloAltoNetworks.Cloudngfw": "2026-05-11-preview"
   },
-  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
+  "commit": "3c9d98a73b3b13feb7baff1d9a6fc65f16268ca1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/paloaltonetworks/PaloAltoNetworks.Management",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.0"
+  "typespec_src": "specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/Cloudngfw",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

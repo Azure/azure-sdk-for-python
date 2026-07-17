@@ -5007,44 +5007,6 @@ namespace azure.mgmt.paloaltonetworksngfw.operations
 
 namespace azure.mgmt.paloaltonetworksngfw.types
 
-    class azure.mgmt.paloaltonetworksngfw.types.AdvSecurityObjectListResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[AdvSecurityObjectModel]
-        next_link: str
-        value: AdvSecurityObjectModel
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.AdvSecurityObjectModel(TypedDict, total=False):
-        key "entry": Required[list[NameDescriptionObject]]
-        key "type": str
-        entry: list[NameDescriptionObject]
-        type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.AppSeenData(TypedDict, total=False):
-        key "appSeenList": Required[list[AppSeenInfo]]
-        key "count": Required[int]
-        app_seen_list: list[AppSeenInfo]
-        count: int
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.AppSeenInfo(TypedDict, total=False):
-        key "category": Required[str]
-        key "risk": Required[str]
-        key "standardPorts": Required[str]
-        key "subCategory": Required[str]
-        key "tag": Required[str]
-        key "technology": Required[str]
-        key "title": Required[str]
-        category: str
-        risk: str
-        standard_ports: str
-        sub_category: str
-        tag: str
-        technology: str
-        title: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.ApplicationInsights(TypedDict, total=False):
         key "id": str
         key "key": str
@@ -5118,34 +5080,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         type: str
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.Changelog(TypedDict, total=False):
-        key "changes": Required[list[str]]
-        key "lastCommitted": str
-        key "lastModified": str
-        changes: list[str]
-        last_committed: str
-        last_modified: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.CloudManagerTenantList(TypedDict, total=False):
-        key "value": Required[list[str]]
-        value: list[str]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.CountriesResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[Country]]
-        next_link: str
-        value: list[Country]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.Country(TypedDict, total=False):
-        key "code": Required[str]
-        key "description": str
-        code: str
-        description: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.CustomCaptureConfigurationsFilter(TypedDict, total=False):
         key "destinationIpAddress": Required[str]
         key "destinationPort": Required[int]
@@ -5215,30 +5149,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "port": Required[str]
         address: IPAddress
         port: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
 
 
     class azure.mgmt.paloaltonetworksngfw.types.EventHub(TypedDict, total=False):
@@ -5334,36 +5244,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         strata_cloud_manager_config: StrataCloudManagerConfig
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.FirewallStatusProperty(TypedDict, total=False):
-        key "healthReason": str
-        key "healthStatus": Union[str, HealthStatus]
-        key "isPanoramaManaged": Union[str, BooleanEnum]
-        key "isStrataCloudManaged": Union[str, BooleanEnum]
-        key "panoramaStatus": ForwardRef('PanoramaStatus', module='types')
-        key "provisioningState": Union[str, ReadOnlyProvisioningState]
-        key "strataCloudManagerInfo": ForwardRef('StrataCloudManagerInfo', module='types')
-        health_reason: str
-        health_status: Union[str, HealthStatus]
-        is_panorama_managed: Union[str, BooleanEnum]
-        is_strata_cloud_managed: Union[str, BooleanEnum]
-        panorama_status: PanoramaStatus
-        provisioning_state: Union[str, ReadOnlyProvisioningState]
-        strata_cloud_manager_info: StrataCloudManagerInfo
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.FirewallStatusResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": Required[FirewallStatusProperty]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: FirewallStatusProperty
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.FqdnListGlobalRulestackResource(ProxyResource):
         key "id": str
         key "name": str
@@ -5412,11 +5292,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         frontend_configuration: EndpointConfiguration
         name: str
         protocol: Union[str, ProtocolType]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.GlobalRulestackInfo(TypedDict, total=False):
-        key "azureId": Required[str]
-        azure_id: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.GlobalRulestackResource(ProxyResource):
@@ -5476,20 +5351,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "resourceId": str
         address_space: str
         resource_id: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ListAppIdResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[str]]
-        next_link: str
-        value: list[str]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ListFirewallsResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[str]]
-        next_link: str
-        value: list[str]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.LocalRulesResource(ProxyResource):
@@ -5624,13 +5485,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         workspace: str
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.NameDescriptionObject(TypedDict, total=False):
-        key "description": str
-        key "name": Required[str]
-        description: str
-        name: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.NetworkProfile(TypedDict, total=False):
         key "enableEgressNat": Required[Union[str, EgressNat]]
         key "networkType": Required[Union[str, NetworkType]]
@@ -5650,30 +5504,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         vwan_configuration: VwanConfiguration
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.PanoramaConfig(TypedDict, total=False):
         key "cgName": str
         key "configString": Required[str]
@@ -5691,13 +5521,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         panorama_server2: str
         tpl_name: str
         vm_auth_key: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.PanoramaStatus(TypedDict, total=False):
-        key "panoramaServer2Status": Union[str, ServerStatus]
-        key "panoramaServerStatus": Union[str, ServerStatus]
-        panorama_server2_status: Union[str, ServerStatus]
-        panorama_server_status: Union[str, ServerStatus]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.PlanData(TypedDict, total=False):
@@ -5735,20 +5558,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         properties: RuleEntry
         system_data: SystemData
         type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.PredefinedUrlCategoriesResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[PredefinedUrlCategory]]
-        next_link: str
-        value: list[PredefinedUrlCategory]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.PredefinedUrlCategory(TypedDict, total=False):
-        key "action": Required[str]
-        key "name": Required[str]
-        action: str
-        name: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.PrefixListGlobalRulestackResource(ProxyResource):
@@ -5790,18 +5599,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         provisioning_state: Union[str, ProvisioningState]
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.ProductSerialNumberRequestStatus(TypedDict, total=False):
-        key "status": Required[str]
-        status: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ProductSerialNumberStatus(TypedDict, total=False):
-        key "serialNumber": str
-        key "status": Required[Union[str, ProductSerialStatusValues]]
-        serial_number: str
-        status: Union[str, ProductSerialStatusValues]
-
-
     class azure.mgmt.paloaltonetworksngfw.types.ProxyResource(Resource):
         key "id": str
         key "name": str
@@ -5822,42 +5619,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         name: str
         system_data: SystemData
         type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.RuleCounter(TypedDict, total=False):
-        key "appSeen": ForwardRef('AppSeenData', module='types')
-        key "firewallName": str
-        key "hitCount": int
-        key "lastUpdatedTimestamp": str
-        key "priority": Required[str]
-        key "requestTimestamp": str
-        key "ruleListName": str
-        key "ruleName": Required[str]
-        key "ruleStackName": str
-        key "timestamp": str
-        app_seen: AppSeenData
-        firewall_name: str
-        hit_count: int
-        last_updated_timestamp: str
-        priority: str
-        request_timestamp: str
-        rule_list_name: str
-        rule_name: str
-        rule_stack_name: str
-        timestamp: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.RuleCounterReset(TypedDict, total=False):
-        key "firewallName": str
-        key "priority": str
-        key "ruleListName": str
-        key "ruleName": str
-        key "ruleStackName": str
-        firewall_name: str
-        priority: str
-        rule_list_name: str
-        rule_name: str
-        rule_stack_name: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.RuleEntry(TypedDict, total=False):
@@ -5950,20 +5711,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         vulnerability_profile: str
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.SecurityServicesResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[SecurityServicesTypeList]
-        next_link: str
-        value: SecurityServicesTypeList
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SecurityServicesTypeList(TypedDict, total=False):
-        key "entry": Required[list[NameDescriptionObject]]
-        key "type": str
-        entry: list[NameDescriptionObject]
-        type: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.SourceAddr(TypedDict, total=False):
         cidrs: list[str]
         countries: list[str]
@@ -5984,73 +5731,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
     class azure.mgmt.paloaltonetworksngfw.types.StrataCloudManagerConfig(TypedDict, total=False):
         key "cloudManagerName": Required[str]
         cloud_manager_name: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.StrataCloudManagerInfo(TypedDict, total=False):
-        key "folderName": str
-        key "hubUrl": str
-        folder_name: str
-        hub_url: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SupportInfo(TypedDict, total=False):
-        key "accountId": str
-        key "accountRegistered": Union[str, BooleanEnum]
-        key "freeTrial": Union[str, BooleanEnum]
-        key "freeTrialCreditLeft": int
-        key "freeTrialDaysLeft": int
-        key "helpURL": str
-        key "productSerial": str
-        key "productSku": str
-        key "registerURL": str
-        key "supportURL": str
-        key "userDomainSupported": Union[str, BooleanEnum]
-        key "userRegistered": Union[str, BooleanEnum]
-        account_id: str
-        account_registered: Union[str, BooleanEnum]
-        free_trial: Union[str, BooleanEnum]
-        free_trial_credit_left: int
-        free_trial_days_left: int
-        help_url: str
-        product_serial: str
-        product_sku: str
-        register_url: str
-        support_url: str
-        user_domain_supported: Union[str, BooleanEnum]
-        user_registered: Union[str, BooleanEnum]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SupportInfoModel(TypedDict, total=False):
-        key "accountId": str
-        key "accountRegistrationStatus": Union[str, RegistrationStatus]
-        key "credits": int
-        key "endDateForCredits": str
-        key "freeTrial": Union[str, EnableStatus]
-        key "freeTrialCreditLeft": int
-        key "freeTrialDaysLeft": int
-        key "helpURL": str
-        key "hubUrl": str
-        key "monthlyCreditLeft": int
-        key "productSerial": str
-        key "productSku": str
-        key "registerURL": str
-        key "startDateForCredits": str
-        key "supportURL": str
-        account_id: str
-        account_registration_status: Union[str, RegistrationStatus]
-        credits: int
-        end_date_for_credits: str
-        free_trial: Union[str, EnableStatus]
-        free_trial_credit_left: int
-        free_trial_days_left: int
-        help_url: str
-        hub_url: str
-        monthly_credit_left: int
-        product_serial: str
-        product_sku: str
-        register_url: str
-        start_date_for_credits: str
-        support_url: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.SystemData(TypedDict, total=False):

@@ -1,5 +1,41 @@
 # Release History
 
+## 2.0.0b3 (2026-07-17)
+
+### Breaking Changes
+
+  - Deleted or renamed model `AdvSecurityObjectListResponse`
+  - Deleted or renamed model `AdvSecurityObjectModel`
+  - Deleted or renamed model `AppSeenData`
+  - Deleted or renamed model `AppSeenInfo`
+  - Deleted or renamed model `Changelog`
+  - Deleted or renamed model `CloudManagerTenantList`
+  - Deleted or renamed model `CountriesResponse`
+  - Deleted or renamed model `Country`
+  - Deleted or renamed model `ErrorAdditionalInfo`
+  - Deleted or renamed model `ErrorDetail`
+  - Deleted or renamed model `ErrorResponse`
+  - Deleted or renamed model `FirewallStatusProperty`
+  - Deleted or renamed model `FirewallStatusResource`
+  - Deleted or renamed model `GlobalRulestackInfo`
+  - Deleted or renamed model `ListAppIdResponse`
+  - Deleted or renamed model `ListFirewallsResponse`
+  - Deleted or renamed model `NameDescriptionObject`
+  - Deleted or renamed model `Operation`
+  - Deleted or renamed model `OperationDisplay`
+  - Deleted or renamed model `PanoramaStatus`
+  - Deleted or renamed model `PredefinedUrlCategoriesResponse`
+  - Deleted or renamed model `PredefinedUrlCategory`
+  - Deleted or renamed model `ProductSerialNumberRequestStatus`
+  - Deleted or renamed model `ProductSerialNumberStatus`
+  - Deleted or renamed model `RuleCounter`
+  - Deleted or renamed model `RuleCounterReset`
+  - Deleted or renamed model `SecurityServicesResponse`
+  - Deleted or renamed model `SecurityServicesTypeList`
+  - Deleted or renamed model `StrataCloudManagerInfo`
+  - Deleted or renamed model `SupportInfo`
+  - Deleted or renamed model `SupportInfoModel`
+
 ## 2.0.0b2 (2026-07-07)
 
 ### Features Added

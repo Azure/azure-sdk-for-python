@@ -14125,7 +14125,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def create_product_serial_number(self, **kwargs: Any) -> _models.ProductSerialNumberRequestStatus:
-        """create_product_serial_number.
+        """A long-running provider action.
 
         :return: ProductSerialNumberRequestStatus. The ProductSerialNumberRequestStatus is compatible
          with MutableMapping
@@ -14189,7 +14189,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def list_cloud_manager_tenants(self, **kwargs: Any) -> _models.CloudManagerTenantList:
-        """list_cloud_manager_tenants.
+        """A long-running provider action.
 
         :return: CloudManagerTenantList. The CloudManagerTenantList is compatible with MutableMapping
         :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CloudManagerTenantList
@@ -14252,7 +14252,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def list_product_serial_number_status(self, **kwargs: Any) -> Optional[_models.ProductSerialNumberStatus]:
-        """list_product_serial_number_status.
+        """A long-running provider action.
 
         :return: ProductSerialNumberStatus or None. The ProductSerialNumberStatus is compatible with
          MutableMapping
@@ -14318,7 +14318,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def list_support_info(self, **kwargs: Any) -> _models.SupportInfoModel:
-        """list_support_info.
+        """A long-running provider action.
 
         :return: SupportInfoModel. The SupportInfoModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.paloaltonetworksngfw.models.SupportInfoModel

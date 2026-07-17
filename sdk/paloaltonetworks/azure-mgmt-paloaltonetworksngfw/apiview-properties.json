@@ -324,5 +324,5 @@
         "azure.mgmt.paloaltonetworksngfw.operations.PaloAltoNetworksCloudngfwOperationsOperations.list_support_info": "PaloAltoNetworks.Cloudngfw.PaloAltoNetworksCloudngfwOperationsOperationGroup.listSupportInfo",
         "azure.mgmt.paloaltonetworksngfw.aio.operations.PaloAltoNetworksCloudngfwOperationsOperations.list_support_info": "PaloAltoNetworks.Cloudngfw.PaloAltoNetworksCloudngfwOperationsOperationGroup.listSupportInfo"
     },
-    "CrossLanguageVersion": "11660445fba7"
+    "CrossLanguageVersion": "f8a12beb8d34"
 }
