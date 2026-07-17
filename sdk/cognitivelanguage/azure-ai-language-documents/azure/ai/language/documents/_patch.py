@@ -8,8 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from ._operations._patch import AnalyzeDocumentsLROPoller
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = ["AnalyzeDocumentsLROPoller"]
 
 
 def patch_sdk():
