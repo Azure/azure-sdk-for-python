@@ -121,6 +121,30 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AnalyzeDocumentsLROPoller[ItemPaged[_models.Tasks]]:
+        """Submit a collection of text documents for analysis.
+
+        Specify one or more unique tasks to be executed as a long-running operation.
+
+        :param body: The input for the analyze documents operation. Is one of the following types:
+         AnalyzeDocumentsJob, JSON, IO[bytes]. Required.
+        :type body: ~azure.ai.language.documents.models.AnalyzeDocumentsJob or JSON or IO[bytes]
+        :keyword content_type: Body parameter content-type. Default value is "application/json".
+        :paramtype content_type: str
+        :keyword polling: Polling method for the long-running operation. ``polling=False`` is not
+         supported because this operation must poll to the final result response. Default value is
+         True.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+         no Retry-After header is present.
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response.
+        :return: An instance of AnalyzeDocumentsLROPoller that returns an ItemPaged of Tasks.
+        :rtype: ~azure.ai.language.documents.AnalyzeDocumentsLROPoller[
+         ~azure.core.paging.ItemPaged[~azure.ai.language.documents.models.Tasks]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ValueError: If ``polling=False`` is passed.
+        """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
