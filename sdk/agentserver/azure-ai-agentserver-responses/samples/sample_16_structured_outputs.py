@@ -17,6 +17,8 @@ Usage::
         -d '{"model": "analysis", "input": "Analyze the product reviews"}'
 """
 
+from typing import cast
+
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -64,7 +66,10 @@ async def full_control_handler(request: CreateResponse, context: ResponseContext
     yield stream.emit_in_progress()
 
     builder = stream.add_output_item_structured_outputs()
-    item = StructuredOutputsOutputItem(id=builder.item_id, output={"status": "ok", "count": 42})
+    item = cast(
+        StructuredOutputsOutputItem,
+        {"id": builder.item_id, "type": "structured_outputs", "output": {"status": "ok", "count": 42}},
+    )
     yield builder.emit_added(item)
     yield builder.emit_done(item)
 

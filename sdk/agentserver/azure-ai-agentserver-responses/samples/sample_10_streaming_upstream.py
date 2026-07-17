@@ -70,12 +70,15 @@ def _build_response_snapshot(request: CreateResponse, context: ResponseContext) 
         "model": request.get("model") or "",
         "output": [],
     }
-    if request.get("metadata") is not None:
-        snapshot["metadata"] = request["metadata"]
-    if request.get("background") is not None:
-        snapshot["background"] = request["background"]
-    if request.get("previous_response_id") is not None:
-        snapshot["previous_response_id"] = request["previous_response_id"]
+    metadata = request.get("metadata")
+    if metadata is not None:
+        snapshot["metadata"] = metadata
+    background = request.get("background")
+    if background is not None:
+        snapshot["background"] = background
+    previous_response_id = request.get("previous_response_id")
+    if previous_response_id is not None:
+        snapshot["previous_response_id"] = previous_response_id
     # Normalize conversation to ConversationReference form.
     conv = request.get("conversation")
     if isinstance(conv, str):
