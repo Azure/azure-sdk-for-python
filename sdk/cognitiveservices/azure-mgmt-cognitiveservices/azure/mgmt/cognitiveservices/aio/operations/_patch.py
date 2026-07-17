@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import time
 from collections.abc import MutableMapping
@@ -84,6 +84,7 @@ class _AsyncComputeListPolling(AsyncPollingMethod):
         self._status = "InProgress"
         self._resource: Optional[_models.Compute] = None
         self._first_missing_at: Optional[float] = None
+        self._initial_response: Any = None
 
     def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         self._initial_response = initial_response

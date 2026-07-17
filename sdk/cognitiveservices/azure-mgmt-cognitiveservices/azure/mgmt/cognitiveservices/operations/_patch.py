@@ -44,7 +44,17 @@ _CANCELED_STATES = frozenset({"canceled", "cancelled"})
 
 
 def _encode_continuation_token(resource_group_name: str, account_name: str, compute_name: str) -> str:
-    """Encode the polling scope (resource group, account, compute) into an opaque continuation token."""
+    """Encode the polling scope (resource group, account, compute) into an opaque continuation token.
+
+    :param resource_group_name: The resource group name of the compute being polled.
+    :type resource_group_name: str
+    :param account_name: The Cognitive Services account name of the compute being polled.
+    :type account_name: str
+    :param compute_name: The name of the compute being polled.
+    :type compute_name: str
+    :return: A url-safe, opaque continuation token encoding the polling scope.
+    :rtype: str
+    """
     payload = json.dumps(
         {
             "resource_group_name": resource_group_name,
@@ -58,6 +68,10 @@ def _encode_continuation_token(resource_group_name: str, account_name: str, comp
 def _decode_continuation_token(continuation_token: str):
     """Decode a token produced by :func:`_encode_continuation_token` into its polling scope.
 
+    :param continuation_token: A token previously produced by :func:`_encode_continuation_token`.
+    :type continuation_token: str
+    :return: The decoded scope as ``(resource_group_name, account_name, compute_name)``.
+    :rtype: tuple[str, str, str]
     :raises ValueError: if the token is malformed, so a bad or unrelated token fails loudly instead of
         silently resuming the wrong operation.
     """
@@ -69,7 +83,13 @@ def _decode_continuation_token(continuation_token: str):
 
 
 def _state_of(compute: Any) -> str:
-    """Return a compute's ``provisioningState`` as a lowercase string (handles enum or str)."""
+    """Return a compute's ``provisioningState`` as a lowercase string (handles enum or str).
+
+    :param compute: A compute object (model or mapping) as returned by ``ComputesOperations.list``.
+    :type compute: any
+    :return: The compute's ``provisioningState`` lowercased, or an empty string if it is unavailable.
+    :rtype: str
+    """
     props = getattr(compute, "properties", None)
     state = getattr(props, "provisioning_state", None) if props is not None else None
     if state is None and isinstance(compute, MutableMapping):
@@ -85,6 +105,11 @@ def _provisioning_error(compute: Any) -> HttpResponseError:
     Because the poller reads status from ``list`` (not the operation-status endpoint), the failure
     detail lives in the compute's ``properties.errors``. Surface that instead of azure-core's generic
     ``Operation failed or canceled`` / ``invalid status`` messages.
+
+    :param compute: A compute whose provisioning reached a failed/canceled terminal state.
+    :type compute: any
+    :return: An error describing the failure using the compute's own ``properties.errors`` detail.
+    :rtype: ~azure.core.exceptions.HttpResponseError
     """
     props = getattr(compute, "properties", None)
     errors = getattr(props, "errors", None) if props is not None else None
@@ -145,6 +170,7 @@ class _ComputeListPolling(PollingMethod):
         self._status = "InProgress"
         self._resource: Optional[_models.Compute] = None
         self._first_missing_at: Optional[float] = None
+        self._initial_response: Any = None
 
     def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         self._initial_response = initial_response
