@@ -232,6 +232,78 @@ def test_shadow_types_module_kept_without_models_sibling():
     assert class_name == "TrustedHostSubscription"
 
 
+def test_shadow_types_module_kept_when_class_missing_in_models():
+    # If the sibling `models` module exists but does NOT contain the class, the `types`
+    # class has no `models` counterpart and its change must be preserved.
+    stable = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    current = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+                # Only present in the `types` module, no counterpart in `models`.
+                "OrphanInput": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    bc = ChangelogTracker(
+        stable, current, "azure-mgmt-computelimit", post_processing_checkers=[ShadowTypesModuleChecker()]
+    )
+    bc.run_checks()
+
+    added_models = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_CLASS_MSG]
+    assert len(added_models) == 1
+    _, _, module_name, class_name = added_models[0]
+    assert module_name == "azure.mgmt.computelimit.types"
+    assert class_name == "OrphanInput"
+
+
+def test_shadow_types_module_breaking_change_preserved_for_unmatched_member():
+    # A breaking change on a `types` class that has NO counterpart in the sibling `models`
+    # module must be preserved, while a duplicate whose class does exist in `models` is dropped.
+    checker = ShadowTypesModuleChecker()
+    current_nodes = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {"RealModel": {}}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {"RealModel": {}}},
+    }
+    stable_nodes = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {"RealModel": {}}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {"RealModel": {}, "OrphanInput": {}}},
+    }
+    breaking_changes = [
+        # `OrphanInput` only ever existed in `types`, so its removal is a real breaking change.
+        ("Deleted model `{}`", "RemovedOrRenamedClass", "azure.mgmt.computelimit.types", "OrphanInput"),
+    ]
+    features_added = [
+        # `RealModel` exists in `models`, so the `types` copy is a shadow duplicate.
+        ("Added model `{}`", "AddedClass", "azure.mgmt.computelimit.types", "RealModel"),
+    ]
+
+    bc_out, fa_out = checker.run_check(
+        breaking_changes, features_added, diff={}, stable_nodes=stable_nodes, current_nodes=current_nodes
+    )
+
+    assert bc_out == breaking_changes  # unmatched `types` breaking change preserved
+    assert fa_out == []  # shadow duplicate removed
+
+
 def test_new_class_property_added_init():
     # Testing if a property is added both in the init and at the class level that we only get 1 report for it
     current = {

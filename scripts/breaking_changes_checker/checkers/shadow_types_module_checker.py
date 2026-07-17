@@ -12,9 +12,10 @@
 # name exists in both modules, changes such as adding a new model are reported twice, e.g.
 # "Added model `Foo`" appears once for `...models` and once for `...types`.
 #
-# Since the `types` module is always a shadow of the `models` module, any change reported for
-# the `types` module is a duplicate of the corresponding `models` change. This checker removes
-# entries originating from a `types` module when the sibling `models` module exists.
+# A `types` entry is only treated as a shadow duplicate when the sibling `models` module
+# actually contains a class with the same name. This class-existence guard ensures we do not
+# silently drop a change that only exists on the `types` side (a class with no `models`
+# counterpart), which would otherwise disappear from the breaking-change / changelog output.
 # --------------------------------------------------------------------------------------------
 
 import sys
@@ -24,20 +25,37 @@ sys.path.append(os.path.abspath("../../scripts/breaking_changes_checker"))
 
 class ShadowTypesModuleChecker:
     def run_check(self, breaking_changes: list, features_added: list, *, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> tuple[list, list]:
-        def _is_shadow_types_module(module_name) -> bool:
-            # The module name is the third element of every reported change tuple.
+        def _sibling_models_module(module_name):
             if not isinstance(module_name, str):
-                return False
+                return None
             if module_name != "types" and not module_name.endswith(".types"):
+                return None
+            return module_name[: -len("types")] + "models"
+
+        def _models_has_class(models_module, class_name) -> bool:
+            if not isinstance(class_name, str):
                 return False
-            # Only treat it as a shadow module when a sibling `models` module exists.
-            sibling_models = module_name[: -len("types")] + "models"
-            return sibling_models in current_nodes or sibling_models in stable_nodes
+            for nodes in (current_nodes, stable_nodes):
+                module = nodes.get(models_module)
+                if module and class_name in module.get("class_nodes", {}):
+                    return True
+            return False
+
+        def _is_shadow_duplicate(change) -> bool:
+            # The module name is the third element of every reported change tuple and the
+            # class name (when present) is the fourth.
+            sibling_models = _sibling_models_module(change[2])
+            if sibling_models is None:
+                return False
+            if len(change) <= 3:
+                # Module-level change with no class to match against; keep it to be safe.
+                return False
+            return _models_has_class(sibling_models, change[3])
 
         breaking_changes_copy = [
-            change for change in breaking_changes if not _is_shadow_types_module(change[2])
+            change for change in breaking_changes if not _is_shadow_duplicate(change)
         ]
         features_added_copy = [
-            change for change in features_added if not _is_shadow_types_module(change[2])
+            change for change in features_added if not _is_shadow_duplicate(change)
         ]
         return breaking_changes_copy, features_added_copy
