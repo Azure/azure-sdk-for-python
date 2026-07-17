@@ -148,6 +148,7 @@ class LogRecordFields:
 class ErrorSource:
     """Error-source classification values for the ``ERROR_SOURCE`` header."""
 
+    USER: str = "user"
     UPSTREAM: str = "upstream"
     PLATFORM: str = "platform"
 

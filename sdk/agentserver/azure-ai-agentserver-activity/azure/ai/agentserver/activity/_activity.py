@@ -595,7 +595,7 @@ class ActivityAgentServerHost(AgentServerHost):
             ErrorCode.INVALID_REQUEST,
             message,
             status_code=400,
-            headers=_apply_error_source_headers({}, ErrorSource.UPSTREAM),
+            headers=_apply_error_source_headers({}, ErrorSource.USER),
         )
         self._add_required_response_headers(response, session_id)
         return response
@@ -648,8 +648,10 @@ class ActivityAgentServerHost(AgentServerHost):
         :rtype: ~contextvars.Token
         """
         ctx = _otel_baggage.set_baggage(BaggageKeys.SESSION_ID, session_id or "", context=_otel_context.get_current())
-        if conversation_id:
-            ctx = _otel_baggage.set_baggage(BaggageKeys.CONVERSATION_ID, conversation_id, context=ctx)
+        # Always set the conversation-id baggage (even to empty) so a stale or
+        # untrusted value inherited from the inbound context cannot leak into the
+        # current turn's spans/logs.
+        ctx = _otel_baggage.set_baggage(BaggageKeys.CONVERSATION_ID, conversation_id or "", context=ctx)
         return _otel_context.attach(ctx)
 
     def _build_invoke_span_attrs(self, activity_id: str, conversation_id: str, session_id: str) -> dict[str, str]:
@@ -722,9 +724,16 @@ class ActivityAgentServerHost(AgentServerHost):
             response = await self._handler(request)
             response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
             self._add_required_response_headers(response, session_id)
+            # The package contract guarantees an error-source on every error
+            # response. A handler (or the M365 adapter) can return a 4xx/5xx
+            # directly without raising, which skips the exception path below, so
+            # classify any unclassified error status as ``upstream`` here.
+            status_code = getattr(response, "status_code", 0)
+            if status_code >= 400 and ERROR_SOURCE not in response.headers:
+                response.headers[ERROR_SOURCE] = ErrorSource.UPSTREAM
             logger.info(
                 "Activity response sent | status_code=%s | activity_id=%s | conversation_id=%s | session_id=%s",
-                getattr(response, "status_code", 0),
+                status_code,
                 activity_id,
                 conversation_id,
                 session_id,
