@@ -11,15 +11,14 @@
     (`.../locations/{location}/computeOperations/{operationId}`) required the
     `Microsoft.CognitiveServices/locations/computeOperations/read` permission, so callers allowed to create a
     compute but not granted that read permission were shown a misleading `AuthorizationFailed` error even
-    though the create succeeded. The 202 is now accepted and the long-running operation is tracked by polling
-    the compute resource itself (a `GET` on the resource URL, watching `provisioningState`) instead of the
-    operation-status endpoint, so it only needs the `computes/read` permission that callers already have. The
-    poller still blocks until the operation reaches a terminal state and raises on a genuine provisioning
-    failure; non-2xx create failures still propagate. Callers can opt out of blocking with `polling=False`.
-    The poller also tolerates the short read-after-write window right after the create where the compute is
-    briefly not yet queryable (a `GET` returns `404 "Cluster not found"`), so a successful create is not
-    wrongly reported as failed, and when provisioning does fail it surfaces the compute's own error detail
-    (e.g. a quota message) instead of a generic `Operation returned an invalid status 'OK'`.
+    though the create succeeded. The 202 is now accepted and the long-running operation is tracked by reading
+    `provisioningState` from the `list` API, so it only needs the `computes/read` permission that callers
+    already have. The `list` API is used rather than a `get` on the resource because a `GET` on a just-created
+    compute returns `404 "Cluster not found"` for an extended period while it provisions, whereas `list`
+    reflects the compute's state from the moment the create is accepted. The poller still blocks until the
+    operation reaches a terminal state and surfaces the compute's own error detail (e.g. a quota message) on a
+    genuine provisioning failure; non-2xx create failures still propagate, and callers can opt out of blocking
+    with `polling=False`.
 
 ## 15.0.0b3 (2026-06-26)
 
