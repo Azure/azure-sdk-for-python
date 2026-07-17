@@ -68,7 +68,8 @@ pytyped = ["py.typed"]
 verifytypes = false
 
 [tool.mypy]
-exclude = '.*samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$'
+mypy_path = ["samples"]
+exclude = '(^|.*[\\/])samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$|(^|.*[\\/])samples[\\/].+[\\/]utils?\.py$'
 
 [tool.azure-sdk-conda]
 in_bundle = false

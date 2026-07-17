@@ -20,7 +20,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
        with key equals to "Authorization" and value to be "Bearer <your GitHub PAT token>".
        Token can be created in https://github.com/settings/personal-access-tokens/new
 """
@@ -29,6 +30,7 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
@@ -36,34 +38,36 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main():
+    mcp_tool = MCPTool(
+        server_label="api-specs",
+        server_url="https://api.githubcopilot.com/mcp",
+        require_approval="always",
+        project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
+    )
+
+    # Create tools list with proper typing for the agent definition
+    tools: list[Tool] = [mcp_tool]
+
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
-    ):
-        mcp_tool = MCPTool(
-            server_label="api-specs",
-            server_url="https://api.githubcopilot.com/mcp",
-            require_approval="always",
-            project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
-        )
-
-        # Create tools list with proper typing for the agent definition
-        tools: list[Tool] = [mcp_tool]
-
-        # Create a prompt agent with MCP tool capabilities
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
             definition=PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="Use MCP tools as needed",
                 tools=tools,
             ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        ),
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
         # Create a conversation thread to maintain context across multiple interactions
         conversation = await openai_client.conversations.create()
@@ -73,7 +77,6 @@ async def main():
         response = await openai_client.responses.create(
             conversation=conversation.id,
             input="What is my username in GitHub profile?",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Process any MCP approval requests that were generated
@@ -98,15 +101,9 @@ async def main():
         response = await openai_client.responses.create(
             input=input_list,
             previous_response_id=response.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response: {response.output_text}")
-
-        # Clean up resources by deleting the agent version
-        # This prevents accumulation of unused agent versions in your project
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
 
 
 if __name__ == "__main__":

@@ -21,11 +21,13 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
 from dotenv import load_dotenv
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool
@@ -33,28 +35,28 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+mcp_tool = MCPTool(
+    server_label="api-specs",
+    server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+    require_approval="always",
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-    mcp_tool = MCPTool(
-        server_label="api-specs",
-        server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
-        require_approval="always",
-    )
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
             tools=[mcp_tool],
         ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     # Create a conversation thread to maintain context across multiple interactions
     conversation = openai_client.conversations.create()
     print(f"Created conversation (id: {conversation.id})")
@@ -63,7 +65,6 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="Please summarize the Azure REST API specifications Readme",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     # Process any MCP approval requests that were generated
@@ -89,12 +90,6 @@ with (
     response = openai_client.responses.create(
         input=input_list,
         previous_response_id=response.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print(f"Agent response: {response.output_text}")
-
-    # Clean up resources by deleting the agent version
-    # This prevents accumulation of unused agent versions in your project
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
