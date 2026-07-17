@@ -2,7 +2,9 @@
 
 ## 3.1.0b1 (2026-07-17)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Regular Release
 
 ## 3.0.0 (2026-06-24)
 
