@@ -6,8 +6,7 @@
 
   - Client `ComputeLimitMgmtClient` added operation group `trusted_host_subscriptions`
   - Added model `TrustedHostSubscription`
-  - Added model `TrustedHostSubscriptionsOperations`
-  - Added model `TrustedHostSubscription`
+  - Added operation group `TrustedHostSubscriptionsOperations`
 
 ## 1.2.1 (2026-07-07)
 
