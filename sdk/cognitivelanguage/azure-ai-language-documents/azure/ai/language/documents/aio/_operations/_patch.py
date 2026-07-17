@@ -244,6 +244,21 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
 
     @distributed_trace_async
     async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Cancel a long-running Text Analysis job.
+
+        :param job_id: The job ID to cancel. Required.
+        :type job_id: str
+        :keyword polling: Polling method for the long-running operation. Default value is True.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+         no Retry-After header is present.
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response.
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
