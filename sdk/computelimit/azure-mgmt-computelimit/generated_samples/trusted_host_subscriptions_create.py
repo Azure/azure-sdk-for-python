@@ -15,7 +15,7 @@ from azure.mgmt.computelimit import ComputeLimitMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computelimit
 # USAGE
-    python vm_families_get.py
+    python trusted_host_subscriptions_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,26 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.vm_families.get(
+    response = client.trusted_host_subscriptions.create(
         location="eastus",
-        vm_family_name="standardDSv2Family",
+        host_subscription_id="22222222-2222-2222-2222-222222222222",
+        resource={
+            "id": "str",
+            "name": "str",
+            "systemData": {
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "createdByType": "str",
+                "lastModifiedAt": "2020-02-20 00:00:00",
+                "lastModifiedBy": "str",
+                "lastModifiedByType": "str",
+            },
+            "type": "str",
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-07-31/VmFamilies_Get.json
+# x-ms-original-file: 2026-07-31/TrustedHostSubscriptions_Create.json
 if __name__ == "__main__":
     main()
