@@ -10,11 +10,12 @@ Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/lat
 
 ## CI Build Process
 
-- Update `CondaArtifacts` parameters as necessary within `eng/pipelines/templates/stages/conda-sdk-client.yml` .
-- If necessary, add or update the conda recipes present under `/conda/conda-recipes`.
-- Update `conda/conda-recipes/conda_env.yml` variable `AZURESDK_CONDA_VERSION` to the target version you wish to release.
-- Invoke [python - conda](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321) manually, checking off which packages you wish to release.
-- Once built, approve the packages for release individually, there will be pending approval stages.
+The quarterly CI build/release process is documented in full in
+[conda-release.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release.md) —
+the recipe/version updates are produced automatically by the Conda Update
+Pipeline, and the packages are built and published by the Conda Build/Release
+Pipeline. Refer to that document as the single source of truth for releasing;
+this page focuses on building a conda package locally.
 
 ## How to Build an Azure SDK Conda Package Locally
 

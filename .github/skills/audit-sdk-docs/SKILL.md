@@ -25,7 +25,10 @@ is to reflect on what worked, and fold any reusable pattern back into this skill
 - **Every candidate needs agent judgement.** Tools surface *candidates*, not
   confirmed bugs. Legitimate, leave-alone cases include placeholders
   (`sdk/mypackage/...`), generated paths (`conda/noarch`), gitignored user files
-  (`testsettings_local.cfg`), and code-snippet regex noise (`{{`, `or`).
+  (`testsettings_local.cfg`), code-snippet regex noise (`{{`, `or`), and
+  **historical references** - a path introduced with wording like "Previously in",
+  "formerly at", "moved from", or "deprecated path" is describing history on
+  purpose, so leave it even though the target no longer exists.
 - **Preserve meaning.** When simplifying or de-duplicating, never drop information;
   consolidate it into a single source of truth and link to it.
 
@@ -135,3 +138,10 @@ If nothing new was learned, state that explicitly in the report and skip the edi
 - `doc/dev/mgmt/tests.md`: sample `conftest.py` link pointed at the removed
   `sdk/advisor/azure-mgmt-advisor/tests/` folder; repointed to
   `sdk/apimanagement/azure-mgmt-apimanagement/tests/conftest.py`. *(Dimension 1)*
+- `doc/dev/conda-builds.md`: its "CI Build Process" bullets duplicated and partly
+  contradicted (manual version bump) the now-authoritative, largely-automated
+  process in `conda-release.md`; consolidated to a pointer, keeping this page
+  focused on local builds. *(Dimensions 3 + 4)*
+- `sdk_build_conda` flags (`-c/--config`, `--channel`) in `conda-builds.md`
+  verified against `ci_tools/conda/conda_functions.py` argparse - accurate, no
+  change. *(Dimension 2, no fix)*
