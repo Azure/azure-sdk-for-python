@@ -14,18 +14,6 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from . import _unions
 
-AgentDefinitionOptInKeys = Literal["HostedAgents=V1Preview", "WorkflowAgents=V1Preview"]
-"""Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
-
-AgentKind = Literal["prompt", "hosted", "workflow"]
-"""Type of AgentKind."""
-
-AgentObjectType = Literal["agent", "agent.version", "agent.deleted", "agent.version.deleted", "agent.container"]
-"""Type of AgentObjectType."""
-
-AgentProtocol = Literal["activity_protocol", "responses"]
-"""Type of AgentProtocol."""
-
 AnnotationType = Literal["file_citation", "url_citation", "container_file_citation", "file_path"]
 """Type of AnnotationType."""
 
@@ -78,11 +66,6 @@ DetailEnum = Literal["low", "high", "auto", "original"]
 
 FileInputDetail = Literal["low", "high"]
 """Type of FileInputDetail."""
-
-FoundryFeaturesOptInKeys = Literal[
-    "Evaluations=V1Preview", "Schedules=V1Preview", "RedTeams=V1Preview", "Insights=V1Preview", "MemoryStores=V1Preview"
-]
-"""Type of FoundryFeaturesOptInKeys."""
 
 FunctionAndCustomToolCallOutputType = Literal["input_text", "input_image", "input_file"]
 """Type of FunctionAndCustomToolCallOutputType."""
@@ -252,18 +235,6 @@ MCPToolCallStatus = Literal["in_progress", "completed", "incomplete", "calling",
 MemoryItemKind = Literal["user_profile", "chat_summary"]
 """Memory item kind."""
 
-MemoryOperationKind = Literal["create", "update", "delete"]
-"""Memory operation kind."""
-
-MemoryStoreKind = Literal["default"]
-"""The type of memory store implementation to use."""
-
-MemoryStoreObjectType = Literal["memory_store", "memory_store.deleted", "memory_store.scope.deleted"]
-"""Type of MemoryStoreObjectType."""
-
-MemoryStoreUpdateStatus = Literal["queued", "in_progress", "completed", "failed", "superseded"]
-"""Status of a memory store update operation."""
-
 MessageContentType = Literal[
     "input_text",
     "output_text",
@@ -283,10 +254,7 @@ MessagePhase = Literal["commentary", "final_answer"]
 requests, preserve and resend phase on all assistant messages — dropping it can degrade
 performance. Not used for user messages."""
 
-if TYPE_CHECKING:
-    MessageRole = Any
-else:
-    MessageRole = Literal["unknown", "user", "assistant", "system", "critic", "discriminator", "developer", "tool"]
+MessageRole = Literal["unknown", "user", "assistant", "system", "critic", "discriminator", "developer", "tool"]
 """Type of MessageRole."""
 
 MessageStatus = Literal["in_progress", "completed", "incomplete"]
@@ -434,9 +402,6 @@ OutputItemType = Literal[
     "custom_tool_call",
     "custom_tool_call_output",
     "message",
-    "remote_function_call",
-    "remote_function_call_output",
-    "item_reference",
     "structured_outputs",
     "oauth_consent_request",
     "memory_search_call",
@@ -514,67 +479,61 @@ ResponseErrorCode = Literal[
 ]
 """The error code for the response."""
 
-ResponseObjectType = Literal["response"]
-"""Type of ResponseObjectType."""
-
-if TYPE_CHECKING:
-    ResponseStreamEventType = Any
-else:
-    ResponseStreamEventType = Literal[
-        "response.audio.delta",
-        "response.audio.done",
-        "response.audio.transcript.delta",
-        "response.audio.transcript.done",
-        "response.code_interpreter_call_code.delta",
-        "response.code_interpreter_call_code.done",
-        "response.code_interpreter_call.completed",
-        "response.code_interpreter_call.in_progress",
-        "response.code_interpreter_call.interpreting",
-        "response.completed",
-        "response.content_part.added",
-        "response.content_part.done",
-        "response.created",
-        "error",
-        "response.file_search_call.completed",
-        "response.file_search_call.in_progress",
-        "response.file_search_call.searching",
-        "response.function_call_arguments.delta",
-        "response.function_call_arguments.done",
-        "response.in_progress",
-        "response.failed",
-        "response.incomplete",
-        "response.output_item.added",
-        "response.output_item.done",
-        "response.reasoning_summary_part.added",
-        "response.reasoning_summary_part.done",
-        "response.reasoning_summary_text.delta",
-        "response.reasoning_summary_text.done",
-        "response.reasoning_text.delta",
-        "response.reasoning_text.done",
-        "response.refusal.delta",
-        "response.refusal.done",
-        "response.output_text.delta",
-        "response.output_text.done",
-        "response.web_search_call.completed",
-        "response.web_search_call.in_progress",
-        "response.web_search_call.searching",
-        "response.image_generation_call.completed",
-        "response.image_generation_call.generating",
-        "response.image_generation_call.in_progress",
-        "response.image_generation_call.partial_image",
-        "response.mcp_call_arguments.delta",
-        "response.mcp_call_arguments.done",
-        "response.mcp_call.completed",
-        "response.mcp_call.failed",
-        "response.mcp_call.in_progress",
-        "response.mcp_list_tools.completed",
-        "response.mcp_list_tools.failed",
-        "response.mcp_list_tools.in_progress",
-        "response.output_text.annotation.added",
-        "response.queued",
-        "response.custom_tool_call_input.delta",
-        "response.custom_tool_call_input.done",
-    ]
+ResponseStreamEventType = Literal[
+    "response.audio.delta",
+    "response.audio.done",
+    "response.audio.transcript.delta",
+    "response.audio.transcript.done",
+    "response.code_interpreter_call_code.delta",
+    "response.code_interpreter_call_code.done",
+    "response.code_interpreter_call.completed",
+    "response.code_interpreter_call.in_progress",
+    "response.code_interpreter_call.interpreting",
+    "response.completed",
+    "response.content_part.added",
+    "response.content_part.done",
+    "response.created",
+    "error",
+    "response.file_search_call.completed",
+    "response.file_search_call.in_progress",
+    "response.file_search_call.searching",
+    "response.function_call_arguments.delta",
+    "response.function_call_arguments.done",
+    "response.in_progress",
+    "response.failed",
+    "response.incomplete",
+    "response.output_item.added",
+    "response.output_item.done",
+    "response.reasoning_summary_part.added",
+    "response.reasoning_summary_part.done",
+    "response.reasoning_summary_text.delta",
+    "response.reasoning_summary_text.done",
+    "response.reasoning_text.delta",
+    "response.reasoning_text.done",
+    "response.refusal.delta",
+    "response.refusal.done",
+    "response.output_text.delta",
+    "response.output_text.done",
+    "response.web_search_call.completed",
+    "response.web_search_call.in_progress",
+    "response.web_search_call.searching",
+    "response.image_generation_call.completed",
+    "response.image_generation_call.generating",
+    "response.image_generation_call.in_progress",
+    "response.image_generation_call.partial_image",
+    "response.mcp_call_arguments.delta",
+    "response.mcp_call_arguments.done",
+    "response.mcp_call.completed",
+    "response.mcp_call.failed",
+    "response.mcp_call.in_progress",
+    "response.mcp_list_tools.completed",
+    "response.mcp_list_tools.failed",
+    "response.mcp_list_tools.in_progress",
+    "response.output_text.annotation.added",
+    "response.queued",
+    "response.custom_tool_call_input.delta",
+    "response.custom_tool_call_input.done",
+]
 """Type of ResponseStreamEventType."""
 
 SearchContentType = Literal["text", "image"]
@@ -610,7 +569,6 @@ ToolChoiceParamType = Literal[
     "code_interpreter",
     "computer",
     "computer_use",
-    "remote_tool",
 ]
 """Type of ToolChoiceParamType."""
 
@@ -633,13 +591,13 @@ ToolType = Literal[
     "tool_search",
     "web_search_preview",
     "apply_patch",
-    "remote_tool",
     "a2a_preview",
     "bing_custom_search_preview",
     "browser_automation_preview",
     "fabric_dataagent_preview",
     "sharepoint_grounding_preview",
     "memory_search_preview",
+    "work_iq_preview",
     "azure_ai_search",
     "azure_function",
     "bing_grounding",
@@ -654,6 +612,10 @@ class A2APreviewTool(TypedDict, total=False):
 
     :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2_A_PREVIEW.
     :vartype type: Literal["a2a_preview"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -667,6 +629,10 @@ class A2APreviewTool(TypedDict, total=False):
 
     type: Required[Literal["a2a_preview"]]
     """The type of the tool. Always ``\"a2a_preview``. Required. A2_A_PREVIEW."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     base_url: str
     """Base URL of the agent."""
     agent_card_path: str
@@ -680,8 +646,6 @@ class A2APreviewTool(TypedDict, total=False):
 class A2AToolCall(TypedDict, total=False):
     """An A2A (Agent-to-Agent) tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -697,9 +661,10 @@ class A2AToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -715,13 +680,13 @@ class A2AToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class A2AToolCallOutput(TypedDict, total=False):
     """The output of an A2A (Agent-to-Agent) tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -738,9 +703,10 @@ class A2AToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -756,6 +722,8 @@ class A2AToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class AdditionalToolsItemParam(TypedDict, total=False):
@@ -782,40 +750,6 @@ class AdditionalToolsItemParam(TypedDict, total=False):
     """A list of additional tools made available at this item. Required."""
 
 
-class AgentObject(TypedDict, total=False):
-    """AgentObject.
-
-    :ivar object: The object type, which is always 'agent'. Required. AGENT.
-    :vartype object: Literal["agent"]
-    :ivar id: The unique identifier of the agent. Required.
-    :vartype id: str
-    :ivar name: The name of the agent. Required.
-    :vartype name: str
-    :ivar versions: The latest version of the agent. Required.
-    :vartype versions: "AgentObjectVersions"
-    """
-
-    object: Required[Literal["agent"]]
-    """The object type, which is always 'agent'. Required. AGENT."""
-    id: Required[str]
-    """The unique identifier of the agent. Required."""
-    name: Required[str]
-    """The name of the agent. Required."""
-    versions: Required["AgentObjectVersions"]
-    """The latest version of the agent. Required."""
-
-
-class AgentObjectVersions(TypedDict, total=False):
-    """AgentObjectVersions.
-
-    :ivar latest: Required.
-    :vartype latest: "AgentVersionObject"
-    """
-
-    latest: Required["AgentVersionObject"]
-    """Required."""
-
-
 class AgentReference(TypedDict, total=False):
     """AgentReference.
 
@@ -835,58 +769,6 @@ class AgentReference(TypedDict, total=False):
     """The version identifier of the agent."""
 
 
-class AgentVersionObject(TypedDict, total=False):
-    """AgentVersionObject.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters. Required.
-    :vartype metadata: dict[str, str]
-    :ivar object: The object type, which is always 'agent.version'. Required. AGENT_VERSION.
-    :vartype object: Literal["agent.version"]
-    :ivar id: The unique identifier of the agent version. Required.
-    :vartype id: str
-    :ivar name: The name of the agent. Name can be used to retrieve/update/delete the agent.
-     Required.
-    :vartype name: str
-    :ivar version: The version identifier of the agent. Agents are immutable and every update
-     creates a new version while keeping the name same. Required.
-    :vartype version: str
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar created_at: The Unix timestamp (seconds) when the agent was created. Required.
-    :vartype created_at: int
-    :ivar definition: Required.
-    :vartype definition: "AgentDefinition"
-    """
-
-    metadata: Required[Optional[dict[str, str]]]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters. Required."""
-    object: Required[Literal["agent.version"]]
-    """The object type, which is always 'agent.version'. Required. AGENT_VERSION."""
-    id: Required[str]
-    """The unique identifier of the agent version. Required."""
-    name: Required[str]
-    """The name of the agent. Name can be used to retrieve/update/delete the agent. Required."""
-    version: Required[str]
-    """The version identifier of the agent. Agents are immutable and every update creates a new
-     version while keeping the name same. Required."""
-    description: str
-    """A human-readable description of the agent."""
-    created_at: Required[int]
-    """The Unix timestamp (seconds) when the agent was created. Required."""
-    definition: Required["AgentDefinition"]
-    """Required."""
-
-
 class AISearchIndexResource(TypedDict, total=False):
     """A AI Search Index resource.
 
@@ -894,13 +776,17 @@ class AISearchIndexResource(TypedDict, total=False):
     :vartype project_connection_id: str
     :ivar index_name: The name of an index in an IndexResource attached to this agent.
     :vartype index_name: str
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
      "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
     :vartype query_type: AzureAISearchQueryType
     :ivar top_k: Number of documents to retrieve from search and present to the model.
     :vartype top_k: int
     :ivar filter: filter string for search resource. `Learn more here
-     <https://learn.microsoft.com/azure/search/search-filters>`__.
+     <https://learn.microsoft.com/azure/search/search-filters>`_.
     :vartype filter: str
     :ivar index_asset_id: Index asset id for search resource.
     :vartype index_asset_id: str
@@ -910,6 +796,10 @@ class AISearchIndexResource(TypedDict, total=False):
     """An index connection ID in an IndexResource attached to this agent."""
     index_name: str
     """The name of an index in an IndexResource attached to this agent."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     query_type: AzureAISearchQueryType
     """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
      \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
@@ -917,7 +807,7 @@ class AISearchIndexResource(TypedDict, total=False):
     """Number of documents to retrieve from search and present to the model."""
     filter: str
     """filter string for search resource. `Learn more here
-     <https://learn.microsoft.com/azure/search/search-filters>`__."""
+     <https://learn.microsoft.com/azure/search/search-filters>`_."""
     index_asset_id: str
     """Index asset id for search resource."""
 
@@ -1159,12 +1049,20 @@ class AzureAISearchTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH.
     :vartype type: Literal["azure_ai_search"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar azure_ai_search: The azure ai search index resource. Required.
     :vartype azure_ai_search: "AzureAISearchToolResource"
     """
 
     type: Required[Literal["azure_ai_search"]]
     """The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     azure_ai_search: Required["AzureAISearchToolResource"]
     """The azure ai search index resource. Required."""
 
@@ -1172,8 +1070,6 @@ class AzureAISearchTool(TypedDict, total=False):
 class AzureAISearchToolCall(TypedDict, total=False):
     """An Azure AI Search tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1187,9 +1083,10 @@ class AzureAISearchToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1203,13 +1100,13 @@ class AzureAISearchToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class AzureAISearchToolCallOutput(TypedDict, total=False):
     """The output of an Azure AI Search tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1224,9 +1121,10 @@ class AzureAISearchToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1241,16 +1139,26 @@ class AzureAISearchToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class AzureAISearchToolResource(TypedDict, total=False):
     """A set of index resources used by the ``azure_ai_search`` tool.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar indexes: The indices attached to this agent. There can be a maximum of 1 index resource
      attached to the agent. Required.
     :vartype indexes: list["AISearchIndexResource"]
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     indexes: Required[list["AISearchIndexResource"]]
     """The indices attached to this agent. There can be a maximum of 1 index resource attached to the
      agent. Required."""
@@ -1352,8 +1260,6 @@ class AzureFunctionTool(TypedDict, total=False):
 class AzureFunctionToolCall(TypedDict, total=False):
     """An Azure Function tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1369,9 +1275,10 @@ class AzureFunctionToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1387,13 +1294,13 @@ class AzureFunctionToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class AzureFunctionToolCallOutput(TypedDict, total=False):
     """The output of an Azure Function tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1410,9 +1317,10 @@ class AzureFunctionToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1429,11 +1337,17 @@ class AzureFunctionToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BingCustomSearchConfiguration(TypedDict, total=False):
     """A bing custom search configuration.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connection_id: Project connection id for grounding with bing search. Required.
     :vartype project_connection_id: str
     :ivar instance_name: Name of the custom configuration instance given to config. Required.
@@ -1449,6 +1363,10 @@ class BingCustomSearchConfiguration(TypedDict, total=False):
     :vartype freshness: str
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """Project connection id for grounding with bing search. Required."""
     instance_name: Required[str]
@@ -1470,6 +1388,10 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW.
     :vartype type: Literal["bing_custom_search_preview"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar bing_custom_search_preview: The bing custom search tool parameters. Required.
     :vartype bing_custom_search_preview: "BingCustomSearchToolParameters"
     """
@@ -1477,6 +1399,10 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
     type: Required[Literal["bing_custom_search_preview"]]
     """The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     bing_custom_search_preview: Required["BingCustomSearchToolParameters"]
     """The bing custom search tool parameters. Required."""
 
@@ -1484,8 +1410,6 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
 class BingCustomSearchToolCall(TypedDict, total=False):
     """A Bing custom search tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1499,9 +1423,10 @@ class BingCustomSearchToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1515,13 +1440,13 @@ class BingCustomSearchToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BingCustomSearchToolCallOutput(TypedDict, total=False):
     """The output of a Bing custom search tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1536,9 +1461,10 @@ class BingCustomSearchToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1553,16 +1479,26 @@ class BingCustomSearchToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BingCustomSearchToolParameters(TypedDict, total=False):
     """The bing custom search tool parameters.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar search_configurations: The project connections attached to this tool. There can be a
      maximum of 1 connection resource attached to the tool. Required.
     :vartype search_configurations: list["BingCustomSearchConfiguration"]
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     search_configurations: Required[list["BingCustomSearchConfiguration"]]
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool. Required."""
@@ -1571,6 +1507,10 @@ class BingCustomSearchToolParameters(TypedDict, total=False):
 class BingGroundingSearchConfiguration(TypedDict, total=False):
     """Search configuration for Bing Grounding.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connection_id: Project connection id for grounding with bing search. Required.
     :vartype project_connection_id: str
     :ivar market: The market where the results come from.
@@ -1584,6 +1524,10 @@ class BingGroundingSearchConfiguration(TypedDict, total=False):
     :vartype freshness: str
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """Project connection id for grounding with bing search. Required."""
     market: str
@@ -1600,11 +1544,19 @@ class BingGroundingSearchConfiguration(TypedDict, total=False):
 class BingGroundingSearchToolParameters(TypedDict, total=False):
     """The bing grounding search tool parameters.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar search_configurations: The search configurations attached to this tool. There can be a
      maximum of 1 search configuration resource attached to the tool. Required.
     :vartype search_configurations: list["BingGroundingSearchConfiguration"]
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     search_configurations: Required[list["BingGroundingSearchConfiguration"]]
     """The search configurations attached to this tool. There can be a maximum of 1 search
      configuration resource attached to the tool. Required."""
@@ -1616,12 +1568,20 @@ class BingGroundingTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. BING_GROUNDING.
     :vartype type: Literal["bing_grounding"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar bing_grounding: The bing grounding search tool parameters. Required.
     :vartype bing_grounding: "BingGroundingSearchToolParameters"
     """
 
     type: Required[Literal["bing_grounding"]]
     """The object type, which is always 'bing_grounding'. Required. BING_GROUNDING."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     bing_grounding: Required["BingGroundingSearchToolParameters"]
     """The bing grounding search tool parameters. Required."""
 
@@ -1629,8 +1589,6 @@ class BingGroundingTool(TypedDict, total=False):
 class BingGroundingToolCall(TypedDict, total=False):
     """A Bing grounding tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1644,9 +1602,10 @@ class BingGroundingToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1660,13 +1619,13 @@ class BingGroundingToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BingGroundingToolCallOutput(TypedDict, total=False):
     """The output of a Bing grounding tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1681,9 +1640,10 @@ class BingGroundingToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1698,6 +1658,8 @@ class BingGroundingToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BrowserAutomationPreviewTool(TypedDict, total=False):
@@ -1706,6 +1668,10 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
     :vartype type: Literal["browser_automation_preview"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar browser_automation_preview: The Browser Automation Tool parameters. Required.
     :vartype browser_automation_preview: "BrowserAutomationToolParameters"
     """
@@ -1713,6 +1679,10 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
     type: Required[Literal["browser_automation_preview"]]
     """The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     browser_automation_preview: Required["BrowserAutomationToolParameters"]
     """The Browser Automation Tool parameters. Required."""
 
@@ -1720,8 +1690,6 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
 class BrowserAutomationToolCall(TypedDict, total=False):
     """A browser automation tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1735,9 +1703,10 @@ class BrowserAutomationToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1751,13 +1720,13 @@ class BrowserAutomationToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BrowserAutomationToolCallOutput(TypedDict, total=False):
     """The output of a browser automation tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -1772,9 +1741,10 @@ class BrowserAutomationToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -1789,16 +1759,26 @@ class BrowserAutomationToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class BrowserAutomationToolConnectionParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """Definition of input parameters for the connection used by the Browser Automation Tool.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connection_id: The ID of the project connection to your Azure Playwright
      resource. Required.
     :vartype project_connection_id: str
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """The ID of the project connection to your Azure Playwright resource. Required."""
 
@@ -1806,11 +1786,19 @@ class BrowserAutomationToolConnectionParameters(TypedDict, total=False):  # pyli
 class BrowserAutomationToolParameters(TypedDict, total=False):
     """Definition of input parameters for the Browser Automation Tool.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar connection: The project connection parameters associated with the Browser Automation
      Tool. Required.
     :vartype connection: "BrowserAutomationToolConnectionParameters"
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     connection: Required["BrowserAutomationToolConnectionParameters"]
     """The project connection parameters associated with the Browser Automation Tool. Required."""
 
@@ -1928,6 +1916,10 @@ class CodeInterpreterTool(TypedDict, total=False):
     :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
      CODE_INTERPRETER.
     :vartype type: Literal["code_interpreter"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar container: The code interpreter container. Can be a container ID or an object that
      specifies uploaded file IDs to make available to your code, along with an optional
      ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
@@ -1937,6 +1929,10 @@ class CodeInterpreterTool(TypedDict, total=False):
 
     type: Required[Literal["code_interpreter"]]
     """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     container: Union[str, "AutoCodeInterpreterToolParam"]
     """The code interpreter container. Can be a container ID or an object that specifies uploaded file
      IDs to make available to your code, along with an optional ``memory_limit`` setting. If not
@@ -2335,33 +2331,6 @@ class ContextManagementParam(TypedDict, total=False):
     compact_threshold: Optional[int]
 
 
-class ConversationItemList(TypedDict, total=False):
-    """The conversation item list.
-
-    :ivar object: The type of object returned, must be ``list``. Required. Default value is "list".
-    :vartype object: Literal["list"]
-    :ivar data: A list of conversation items. Required.
-    :vartype data: list["OutputItem"]
-    :ivar has_more: Whether there are more items available. Required.
-    :vartype has_more: bool
-    :ivar first_id: The ID of the first item in the list. Required.
-    :vartype first_id: str
-    :ivar last_id: The ID of the last item in the list. Required.
-    :vartype last_id: str
-    """
-
-    object: Required[Literal["list"]]
-    """The type of object returned, must be ``list``. Required. Default value is \"list\"."""
-    data: Required[list["OutputItem"]]
-    """A list of conversation items. Required."""
-    has_more: Required[bool]
-    """Whether there are more items available. Required."""
-    first_id: Required[str]
-    """The ID of the first item in the list. Required."""
-    last_id: Required[str]
-    """The ID of the last item in the list. Required."""
-
-
 class ConversationParam_2(TypedDict, total=False):
     """Conversation object.
 
@@ -2384,38 +2353,6 @@ class ConversationReference(TypedDict, total=False):
     """The unique ID of the conversation that this response was associated with. Required."""
 
 
-class ConversationResource(TypedDict, total=False):
-    """ConversationResource.
-
-    :ivar id: The unique ID of the conversation. Required.
-    :vartype id: str
-    :ivar object: The object type, which is always ``conversation``. Required. Default value is
-     "conversation".
-    :vartype object: Literal["conversation"]
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured         format, and
-     querying for objects via API or the dashboard. Keys are strings with a maximum length of 64
-     characters. Values are strings         with a maximum length of 512 characters. Required.
-    :vartype metadata: "Metadata"
-    :ivar created_at: The time at which the conversation was created, measured in seconds since the
-     Unix epoch. Required.
-    :vartype created_at: int
-    """
-
-    id: Required[str]
-    """The unique ID of the conversation. Required."""
-    object: Required[Literal["conversation"]]
-    """The object type, which is always ``conversation``. Required. Default value is \"conversation\"."""
-    metadata: Required["Metadata"]
-    """Set of 16 key-value pairs that can be attached to an object. This can be         useful for
-     storing additional information about the object in a structured         format, and querying
-     for objects via API or the dashboard. Keys are strings with a maximum length of 64 characters.
-     Values are strings         with a maximum length of 512 characters. Required."""
-    created_at: Required[int]
-    """The time at which the conversation was created, measured in seconds since the Unix epoch.
-     Required."""
-
-
 class CoordParam(TypedDict, total=False):
     """Coordinate.
 
@@ -2431,424 +2368,142 @@ class CoordParam(TypedDict, total=False):
     """The y-coordinate. Required."""
 
 
-class CreateAgentFromManifestRequest(TypedDict, total=False):
-    """CreateAgentFromManifestRequest.
+class CreateResponse(TypedDict, total=False):
+    """CreateResponse.
 
-    :ivar name: The unique name that identifies the agent. Name can be used to
-     retrieve/update/delete the agent.
-
-     * Must start and end with alphanumeric characters,
-     * Can contain hyphens in the middle
-     * Must not exceed 63 characters. Required.
-    :vartype name: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar manifest_id: The manifest ID to import the agent version from. Required.
-    :vartype manifest_id: str
-    :ivar parameter_values: The inputs to the manifest that will result in a fully materialized
-     Agent. Required.
-    :vartype parameter_values: dict[str, Any]
+    :ivar metadata:
+    :vartype metadata: "Metadata"
+    :ivar top_logprobs:
+    :vartype top_logprobs: int
+    :ivar temperature:
+    :vartype temperature: float
+    :ivar top_p:
+    :vartype top_p: float
+    :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
+     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
+     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
+     OpenAI detect and prevent abuse. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
+    :vartype user: str
+    :ivar safety_identifier: A stable identifier used to help detect users of your application that
+     may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
+     each user, with a maximum length of 64 characters. We recommend hashing their username or email
+     address, in order to avoid sending us any identifying information. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
+    :vartype safety_identifier: str
+    :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
+     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
+    :vartype prompt_cache_key: str
+    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+     Literal["flex"], Literal["scale"], Literal["priority"]
+    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority"]
+    :ivar prompt_cache_retention: Is either a Literal["in_memory"] type or a Literal["24h"] type.
+    :vartype prompt_cache_retention: Literal["in_memory", "24h"]
+    :ivar previous_response_id:
+    :vartype previous_response_id: str
+    :ivar model: The model deployment to use for the creation of this response.
+    :vartype model: str
+    :ivar background:
+    :vartype background: bool
+    :ivar max_tool_calls:
+    :vartype max_tool_calls: int
+    :ivar text:
+    :vartype text: "ResponseTextParam"
+    :ivar tools:
+    :vartype tools: list["Tool"]
+    :ivar tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
+    :vartype tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
+    :ivar prompt:
+    :vartype prompt: "Prompt"
+    :ivar truncation: Is either a Literal["auto"] type or a Literal["disabled"] type.
+    :vartype truncation: Literal["auto", "disabled"]
+    :ivar reasoning:
+    :vartype reasoning: "Reasoning"
+    :ivar input: Is either a str type or a [Item] type.
+    :vartype input: "_unions.InputParam"
+    :ivar include:
+    :vartype include: list[IncludeEnum]
+    :ivar parallel_tool_calls:
+    :vartype parallel_tool_calls: bool
+    :ivar store:
+    :vartype store: bool
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar moderation:
+    :vartype moderation: "ModerationParam"
+    :ivar stream:
+    :vartype stream: bool
+    :ivar stream_options:
+    :vartype stream_options: "ResponseStreamOptions"
+    :ivar conversation: Is either a str type or a ConversationParam_2 type.
+    :vartype conversation: "_unions.ConversationParam"
+    :ivar context_management: Context management configuration for this request.
+    :vartype context_management: list["ContextManagementParam"]
+    :ivar max_output_tokens:
+    :vartype max_output_tokens: int
+    :ivar agent_reference: The agent to use for generating the response.
+    :vartype agent_reference: "AgentReference"
+    :ivar structured_inputs: The structured inputs to the response that can participate in prompt
+     template substitution or tool argument bindings.
+    :vartype structured_inputs: dict[str, Any]
     """
 
-    name: Required[str]
-    """The unique name that identifies the agent. Name can be used to retrieve/update/delete the
-      agent.
-
-      * Must start and end with alphanumeric characters,
-      * Can contain hyphens in the middle
-      * Must not exceed 63 characters. Required."""
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    manifest_id: Required[str]
-    """The manifest ID to import the agent version from. Required."""
-    parameter_values: Required[dict[str, Any]]
-    """The inputs to the manifest that will result in a fully materialized Agent. Required."""
-
-
-class CreateAgentRequest(TypedDict, total=False):
-    """CreateAgentRequest.
-
-    :ivar name: The unique name that identifies the agent. Name can be used to
-     retrieve/update/delete the agent.
-
-     * Must start and end with alphanumeric characters,
-     * Can contain hyphens in the middle
-     * Must not exceed 63 characters. Required.
-    :vartype name: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar definition: The agent definition. This can be a workflow, hosted agent, or a simple agent
-     definition. Required.
-    :vartype definition: "AgentDefinition"
-    """
-
-    name: Required[str]
-    """The unique name that identifies the agent. Name can be used to retrieve/update/delete the
-      agent.
-
-      * Must start and end with alphanumeric characters,
-      * Can contain hyphens in the middle
-      * Must not exceed 63 characters. Required."""
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    definition: Required["AgentDefinition"]
-    """The agent definition. This can be a workflow, hosted agent, or a simple agent definition.
-     Required."""
-
-
-class CreateAgentVersionFromManifestRequest(TypedDict, total=False):
-    """CreateAgentVersionFromManifestRequest.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar manifest_id: The manifest ID to import the agent version from. Required.
-    :vartype manifest_id: str
-    :ivar parameter_values: The inputs to the manifest that will result in a fully materialized
-     Agent. Required.
-    :vartype parameter_values: dict[str, Any]
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    manifest_id: Required[str]
-    """The manifest ID to import the agent version from. Required."""
-    parameter_values: Required[dict[str, Any]]
-    """The inputs to the manifest that will result in a fully materialized Agent. Required."""
-
-
-class CreateAgentVersionRequest(TypedDict, total=False):
-    """CreateAgentVersionRequest.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar definition: The agent definition. This can be a workflow, hosted agent, or a simple agent
-     definition. Required.
-    :vartype definition: "AgentDefinition"
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    definition: Required["AgentDefinition"]
-    """The agent definition. This can be a workflow, hosted agent, or a simple agent definition.
-     Required."""
-
-
-CreateResponseInternalMetadata = TypedDict(
-    "CreateResponseInternalMetadata",
-    {
-        "feature_flags": list[str],
-        "web_search": "CreateResponseInternalMetadataWebSearch",
-        "user-context": "CreateResponseInternalMetadataUserContext",
-        "response-context": "CreateResponseInternalMetadataResponseContext",
-        "application-context": "CreateResponseInternalMetadataApplicationContext",
-        "defender-for-ai-context": "CreateResponseInternalMetadataDefenderForAiContext",
-    },
-    total=False,
-)
-CreateResponseInternalMetadata.__doc__ = """CreateResponseInternalMetadata.
-
-:ivar feature_flags:
-:vartype feature_flags: list[str]
-:ivar web_search:
-:vartype web_search: "CreateResponseInternalMetadataWebSearch"
-:ivar user_context:
-:vartype user_context: "CreateResponseInternalMetadataUserContext"
-:ivar response_context:
-:vartype response_context: "CreateResponseInternalMetadataResponseContext"
-:ivar application_context:
-:vartype application_context: "CreateResponseInternalMetadataApplicationContext"
-:ivar defender_for_ai_context:
-:vartype defender_for_ai_context: "CreateResponseInternalMetadataDefenderForAiContext"
-"""
-
-
-CreateResponseInternalMetadataApplicationContext = TypedDict(
-    "CreateResponseInternalMetadataApplicationContext",
-    {
-        "resource-id": str,
-        "subscription-id": str,
-        "tenant-id": str,
-        "region": str,
-        "creation-date": str,
-        "user-isolation-key": str,
-        "chat-isolation-key": str,
-        "application-id": str,
-    },
-    total=False,
-)
-CreateResponseInternalMetadataApplicationContext.__doc__ = """CreateResponseInternalMetadataApplicationContext.
-
-:ivar resource_id:
-:vartype resource_id: str
-:ivar subscription_id:
-:vartype subscription_id: str
-:ivar tenant_id:
-:vartype tenant_id: str
-:ivar region:
-:vartype region: str
-:ivar creation_date:
-:vartype creation_date: str
-:ivar user_isolation_key:
-:vartype user_isolation_key: str
-:ivar chat_isolation_key:
-:vartype chat_isolation_key: str
-:ivar application_id:
-:vartype application_id: str
-"""
-
-
-class CreateResponseInternalMetadataDefenderForAiContext(TypedDict, total=False):  # pylint: disable=name-too-long
-    """CreateResponseInternalMetadataDefenderForAiContext.
-
-    :ivar enabled:
-    :vartype enabled: bool
-    """
-
-    enabled: bool
-
-
-CreateResponseInternalMetadataResponseContext = TypedDict(
-    "CreateResponseInternalMetadataResponseContext",
-    {
-        "agent-name": str,
-        "agent-version": str,
-        "agent-version-id": str,
-        "agent-kind": str,
-        "conversation-id": str,
-        "model": str,
-        "top-p": str,
-        "temperature": str,
-        "tools": list["CreateResponseInternalMetadataResponseContextTool"],
-        "reasoning-effort": str,
-        "reasoning-summary": str,
-        "max-tool-calls": int,
-        "parallel-tool-calls": bool,
-        "max-output-tokens": int,
-        "previous-response-id": str,
-        "agent-version-created-at": str,
-        "agent-version-description": str,
-        "hosted-agent-image": str,
-    },
-    total=False,
-)
-CreateResponseInternalMetadataResponseContext.__doc__ = """CreateResponseInternalMetadataResponseContext.
-
-:ivar agent_name:
-:vartype agent_name: str
-:ivar agent_version:
-:vartype agent_version: str
-:ivar agent_version_id:
-:vartype agent_version_id: str
-:ivar agent_kind:
-:vartype agent_kind: str
-:ivar conversation_id:
-:vartype conversation_id: str
-:ivar model:
-:vartype model: str
-:ivar top_p:
-:vartype top_p: str
-:ivar temperature:
-:vartype temperature: str
-:ivar tools:
-:vartype tools: list["CreateResponseInternalMetadataResponseContextTool"]
-:ivar reasoning_effort:
-:vartype reasoning_effort: str
-:ivar reasoning_summary:
-:vartype reasoning_summary: str
-:ivar max_tool_calls:
-:vartype max_tool_calls: int
-:ivar parallel_tool_calls:
-:vartype parallel_tool_calls: bool
-:ivar max_output_tokens:
-:vartype max_output_tokens: int
-:ivar previous_response_id:
-:vartype previous_response_id: str
-:ivar agent_version_created_at:
-:vartype agent_version_created_at: str
-:ivar agent_version_description:
-:vartype agent_version_description: str
-:ivar hosted_agent_image:
-:vartype hosted_agent_image: str
-"""
-
-
-CreateResponseInternalMetadataResponseContextTool = TypedDict(
-    "CreateResponseInternalMetadataResponseContextTool",
-    {
-        "tool-name": str,
-        "tool-type": str,
-    },
-    total=False,
-)
-CreateResponseInternalMetadataResponseContextTool.__doc__ = """CreateResponseInternalMetadataResponseContextTool.
-
-:ivar tool_name:
-:vartype tool_name: str
-:ivar tool_type:
-:vartype tool_type: str
-"""
-
-
-CreateResponseInternalMetadataUserContext = TypedDict(
-    "CreateResponseInternalMetadataUserContext",
-    {
-        "request-ip": str,
-        "oid": str,
-        "tid": str,
-        "appid": str,
-        "auth-type": str,
-        "token-type": str,
-        "upn": str,
-        "user-agent": str,
-        "ms-user-agent": str,
-    },
-    total=False,
-)
-CreateResponseInternalMetadataUserContext.__doc__ = """CreateResponseInternalMetadataUserContext.
-
-:ivar request_ip:
-:vartype request_ip: str
-:ivar oid:
-:vartype oid: str
-:ivar tid:
-:vartype tid: str
-:ivar appid:
-:vartype appid: str
-:ivar auth_type:
-:vartype auth_type: str
-:ivar token_type:
-:vartype token_type: str
-:ivar upn:
-:vartype upn: str
-:ivar user_agent:
-:vartype user_agent: str
-:ivar ms_user_agent:
-:vartype ms_user_agent: str
-"""
-
-if not TYPE_CHECKING:
-    CreateResponseInternalMetadata.__annotations__ = {
-        "feature_flags": list[str],
-        "web_search": "CreateResponseInternalMetadataWebSearch",
-        "user_context": "CreateResponseInternalMetadataUserContext",
-        "response_context": "CreateResponseInternalMetadataResponseContext",
-        "application_context": "CreateResponseInternalMetadataApplicationContext",
-        "defender_for_ai_context": "CreateResponseInternalMetadataDefenderForAiContext",
-    }
-    CreateResponseInternalMetadataApplicationContext.__annotations__ = {
-        "resource_id": str,
-        "subscription_id": str,
-        "tenant_id": str,
-        "region": str,
-        "creation_date": str,
-        "user_isolation_key": str,
-        "chat_isolation_key": str,
-        "application_id": str,
-    }
-    CreateResponseInternalMetadataResponseContext.__annotations__ = {
-        "agent_name": str,
-        "agent_version": str,
-        "agent_version_id": str,
-        "agent_kind": str,
-        "conversation_id": str,
-        "model": str,
-        "top_p": str,
-        "temperature": str,
-        "tools": list["CreateResponseInternalMetadataResponseContextTool"],
-        "reasoning_effort": str,
-        "reasoning_summary": str,
-        "max_tool_calls": int,
-        "parallel_tool_calls": bool,
-        "max_output_tokens": int,
-        "previous_response_id": str,
-        "agent_version_created_at": str,
-        "agent_version_description": str,
-        "hosted_agent_image": str,
-    }
-    CreateResponseInternalMetadataResponseContextTool.__annotations__ = {
-        "tool_name": str,
-        "tool_type": str,
-    }
-    CreateResponseInternalMetadataUserContext.__annotations__ = {
-        "request_ip": str,
-        "oid": str,
-        "tid": str,
-        "appid": str,
-        "auth_type": str,
-        "token_type": str,
-        "upn": str,
-        "user_agent": str,
-        "ms_user_agent": str,
-    }
-
-
-class CreateResponseInternalMetadataWebSearch(TypedDict, total=False):
-    """CreateResponseInternalMetadataWebSearch.
-
-    :ivar custom_search_config_id:
-    :vartype custom_search_config_id: str
-    :ivar custom_search_resource_id:
-    :vartype custom_search_resource_id: str
-    """
-
-    custom_search_config_id: str
-    custom_search_resource_id: str
+    metadata: Optional["Metadata"]
+    top_logprobs: Optional[int]
+    temperature: Optional[float]
+    top_p: Optional[float]
+    user: str
+    """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
+     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
+     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
+     OpenAI detect and prevent abuse. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
+    safety_identifier: str
+    """A stable identifier used to help detect users of your application that may be violating
+     OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
+     maximum length of 64 characters. We recommend hashing their username or email address, in order
+     to avoid sending us any identifying information. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
+    prompt_cache_key: str
+    """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
+     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_."""
+    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
+    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
+     Literal[\"scale\"], Literal[\"priority\"]"""
+    prompt_cache_retention: Optional[Literal["in_memory", "24h"]]
+    """Is either a Literal[\"in_memory\"] type or a Literal[\"24h\"] type."""
+    previous_response_id: Optional[str]
+    model: str
+    """The model deployment to use for the creation of this response."""
+    background: Optional[bool]
+    max_tool_calls: Optional[int]
+    text: "ResponseTextParam"
+    tools: list["Tool"]
+    tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
+    """Is either a types.ToolChoiceOptions type or a ToolChoiceParam type."""
+    prompt: "Prompt"
+    truncation: Optional[Literal["auto", "disabled"]]
+    """Is either a Literal[\"auto\"] type or a Literal[\"disabled\"] type."""
+    reasoning: Optional["Reasoning"]
+    input: "_unions.InputParam"
+    """Is either a str type or a [Item] type."""
+    include: Optional[list[IncludeEnum]]
+    parallel_tool_calls: Optional[bool]
+    store: Optional[bool]
+    instructions: Optional[str]
+    moderation: Optional["ModerationParam"]
+    stream: Optional[bool]
+    stream_options: Optional["ResponseStreamOptions"]
+    conversation: Optional["_unions.ConversationParam"]
+    """Is either a str type or a ConversationParam_2 type."""
+    context_management: Optional[list["ContextManagementParam"]]
+    """Context management configuration for this request."""
+    max_output_tokens: Optional[int]
+    agent_reference: "AgentReference"
+    """The agent to use for generating the response."""
+    structured_inputs: dict[str, Any]
+    """The structured inputs to the response that can participate in prompt template substitution or
+     tool argument bindings."""
 
 
 class CustomGrammarFormatParam(TypedDict, total=False):
@@ -3011,103 +2666,23 @@ class CustomToolParam(TypedDict, total=False):
     """Whether this tool should be deferred and discovered via tool search."""
 
 
-class DeleteAgentResponse(TypedDict, total=False):
-    """A deleted agent Object.
-
-    :ivar object: The object type. Always 'agent.deleted'. Required. AGENT_DELETED.
-    :vartype object: Literal["agent.deleted"]
-    :ivar name: The name of the agent. Required.
-    :vartype name: str
-    :ivar deleted: Whether the agent was successfully deleted. Required.
-    :vartype deleted: bool
-    """
-
-    object: Required[Literal["agent.deleted"]]
-    """The object type. Always 'agent.deleted'. Required. AGENT_DELETED."""
-    name: Required[str]
-    """The name of the agent. Required."""
-    deleted: Required[bool]
-    """Whether the agent was successfully deleted. Required."""
-
-
-class DeleteAgentVersionResponse(TypedDict, total=False):
-    """A deleted agent version Object.
-
-    :ivar object: The object type. Always 'agent.version.deleted'. Required. AGENT_VERSION_DELETED.
-    :vartype object: Literal["agent.version.deleted"]
-    :ivar name: The name of the agent. Required.
-    :vartype name: str
-    :ivar version: The version identifier of the agent. Required.
-    :vartype version: str
-    :ivar deleted: Whether the agent was successfully deleted. Required.
-    :vartype deleted: bool
-    """
-
-    object: Required[Literal["agent.version.deleted"]]
-    """The object type. Always 'agent.version.deleted'. Required. AGENT_VERSION_DELETED."""
-    name: Required[str]
-    """The name of the agent. Required."""
-    version: Required[str]
-    """The version identifier of the agent. Required."""
-    deleted: Required[bool]
-    """Whether the agent was successfully deleted. Required."""
-
-
-class DeletedConversationResource(TypedDict, total=False):
-    """DeletedConversationResource.
-
-    :ivar object: Required. Default value is "conversation.deleted".
-    :vartype object: Literal["conversation.deleted"]
-    :ivar deleted: Required.
-    :vartype deleted: bool
-    :ivar id: Required.
-    :vartype id: str
-    """
-
-    object: Required[Literal["conversation.deleted"]]
-    """Required. Default value is \"conversation.deleted\"."""
-    deleted: Required[bool]
-    """Required."""
-    id: Required[str]
-    """Required."""
-
-
-class DeleteMemoryStoreResponse(TypedDict, total=False):
-    """DeleteMemoryStoreResponse.
-
-    :ivar object: The object type. Always 'memory_store.deleted'. Required. MEMORY_STORE_DELETED.
-    :vartype object: Literal["memory_store.deleted"]
-    :ivar name: The name of the memory store. Required.
-    :vartype name: str
-    :ivar deleted: Whether the memory store was successfully deleted. Required.
-    :vartype deleted: bool
-    """
-
-    object: Required[Literal["memory_store.deleted"]]
-    """The object type. Always 'memory_store.deleted'. Required. MEMORY_STORE_DELETED."""
-    name: Required[str]
-    """The name of the memory store. Required."""
-    deleted: Required[bool]
-    """Whether the memory store was successfully deleted. Required."""
-
-
 class DeleteResponseResult(TypedDict, total=False):
     """The result of a delete response operation.
 
     :ivar id: The operation ID. Required.
     :vartype id: str
-    :ivar object: Always return 'response'. Required. RESPONSE.
-    :vartype object: Literal["response"]
     :ivar deleted: Always return true. Required. Default value is True.
     :vartype deleted: Literal[True]
+    :ivar object: Required. Default value is "response".
+    :vartype object: Literal["response"]
     """
 
     id: Required[str]
     """The operation ID. Required."""
-    object: Required[Literal["response"]]
-    """Always return 'response'. Required. RESPONSE."""
     deleted: Required[Literal[True]]
     """Always return true. Required. Default value is True."""
+    object: Required[Literal["response"]]
+    """Required. Default value is \"response\"."""
 
 
 class DoubleClickAction(TypedDict, total=False):
@@ -3208,8 +2783,6 @@ class Error(TypedDict, total=False):
 class FabricDataAgentToolCall(TypedDict, total=False):
     """A Fabric data agent tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -3223,9 +2796,10 @@ class FabricDataAgentToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -3239,13 +2813,13 @@ class FabricDataAgentToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class FabricDataAgentToolCallOutput(TypedDict, total=False):
     """The output of a Fabric data agent tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -3260,9 +2834,10 @@ class FabricDataAgentToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -3277,16 +2852,26 @@ class FabricDataAgentToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class FabricDataAgentToolParameters(TypedDict, total=False):
     """The fabric data agent tool parameters.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connections: The project connections attached to this tool. There can be a
      maximum of 1 connection resource attached to the tool.
     :vartype project_connections: list["ToolProjectConnection"]
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connections: list["ToolProjectConnection"]
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool."""
@@ -3348,6 +2933,10 @@ class FileSearchTool(TypedDict, total=False):
     :vartype ranking_options: "RankingOptions"
     :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
     :vartype filters: "_unions.Filters"
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     """
 
     type: Required[Literal["file_search"]]
@@ -3360,6 +2949,10 @@ class FileSearchTool(TypedDict, total=False):
     """Ranking options for search."""
     filters: Optional["_unions.Filters"]
     """Is either a ComparisonFilter type or a CompoundFilter type."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
 
 
 class FileSearchToolCallResults(TypedDict, total=False):
@@ -3724,11 +3317,19 @@ class FunctionShellToolParam(TypedDict, total=False):
     :vartype type: Literal["shell"]
     :ivar environment:
     :vartype environment: "FunctionShellToolParamEnvironment"
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     """
 
     type: Required[Literal["shell"]]
     """The type of the shell tool. Always ``shell``. Required. SHELL."""
     environment: Optional["FunctionShellToolParamEnvironment"]
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
 
 
 class FunctionShellToolParamEnvironmentContainerReferenceParam(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3820,48 +3421,6 @@ class FunctionToolParam(TypedDict, total=False):
     """Whether this function should be deferred and discovered via tool search."""
 
 
-class HostedAgentDefinition(TypedDict, total=False):
-    """The hosted agent definition.
-
-    :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
-    :vartype rai_config: "RaiConfig"
-    :ivar kind: Required. HOSTED.
-    :vartype kind: Literal["hosted"]
-    :ivar tools: An array of tools the hosted agent's model may call while generating a response.
-     You can specify which tool to use by setting the ``tool_choice`` parameter.
-    :vartype tools: list["Tool"]
-    :ivar container_protocol_versions: The protocols that the agent supports for ingress
-     communication of the containers. Required.
-    :vartype container_protocol_versions: list["ProtocolVersionRecord"]
-    :ivar cpu: The CPU configuration for the hosted agent. Required.
-    :vartype cpu: str
-    :ivar memory: The memory configuration for the hosted agent. Required.
-    :vartype memory: str
-    :ivar environment_variables: Environment variables to set in the hosted agent container.
-    :vartype environment_variables: dict[str, str]
-    :ivar image: The image ID for the agent, applicable to image-based hosted agents.
-    :vartype image: str
-    """
-
-    rai_config: "RaiConfig"
-    """Configuration for Responsible AI (RAI) content filtering and safety features."""
-    kind: Required[Literal["hosted"]]
-    """Required. HOSTED."""
-    tools: list["Tool"]
-    """An array of tools the hosted agent's model may call while generating a response. You can
-     specify which tool to use by setting the ``tool_choice`` parameter."""
-    container_protocol_versions: Required[list["ProtocolVersionRecord"]]
-    """The protocols that the agent supports for ingress communication of the containers. Required."""
-    cpu: Required[str]
-    """The CPU configuration for the hosted agent. Required."""
-    memory: Required[str]
-    """The memory configuration for the hosted agent. Required."""
-    environment_variables: dict[str, str]
-    """Environment variables to set in the hosted agent container."""
-    image: str
-    """The image ID for the agent, applicable to image-based hosted agents."""
-
-
 class HybridSearchOptions(TypedDict, total=False):
     """HybridSearchOptions.
 
@@ -3928,6 +3487,10 @@ class ImageGenTool(TypedDict, total=False):
     :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
      Known values are: "generate", "edit", and "auto".
     :vartype action: ImageGenActionEnum
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     """
 
     type: Required[Literal["image_generation"]]
@@ -3972,6 +3535,10 @@ class ImageGenTool(TypedDict, total=False):
     action: ImageGenActionEnum
     """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
      \"generate\", \"edit\", and \"auto\"."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
 
 
 class ImageGenToolInputImageMask(TypedDict, total=False):
@@ -5009,6 +4576,12 @@ class ItemFieldMessage(TypedDict, total=False):
 
     :ivar type: The type of the message. Always set to ``message``. Required. MESSAGE.
     :vartype type: Literal["message"]
+    :ivar id: The unique ID of the message. Required.
+    :vartype id: str
+    :ivar status: The status of item. One of ``in_progress``, ``completed``, or ``incomplete``.
+     Populated when items are returned via API. Required. Known values are: "in_progress",
+     "completed", and "incomplete".
+    :vartype status: MessageStatus
     :ivar role: The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``,
      ``critic``, ``discriminator``, ``developer``, or ``tool``. Required. Known values are:
      "unknown", "user", "assistant", "system", "critic", "discriminator", "developer", and "tool".
@@ -5017,14 +4590,16 @@ class ItemFieldMessage(TypedDict, total=False):
     :vartype content: list["MessageContent"]
     :ivar phase: Known values are: "commentary" and "final_answer".
     :vartype phase: MessagePhase
-    :ivar id:
-    :vartype id: str
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: MessageStatus
     """
 
     type: Required[Literal["message"]]
     """The type of the message. Always set to ``message``. Required. MESSAGE."""
+    id: Required[str]
+    """The unique ID of the message. Required."""
+    status: Required[MessageStatus]
+    """The status of item. One of ``in_progress``, ``completed``, or ``incomplete``. Populated when
+     items are returned via API. Required. Known values are: \"in_progress\", \"completed\", and
+     \"incomplete\"."""
     role: Required[MessageRole]
     """The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``, ``critic``,
      ``discriminator``, ``developer``, or ``tool``. Required. Known values are: \"unknown\",
@@ -5034,9 +4609,6 @@ class ItemFieldMessage(TypedDict, total=False):
     """The content of the message. Required."""
     phase: Optional[MessagePhase]
     """Known values are: \"commentary\" and \"final_answer\"."""
-    id: str
-    status: MessageStatus
-    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
 
 
 class ItemFieldReasoningItem(TypedDict, total=False):
@@ -5448,10 +5020,6 @@ class ItemMessage(TypedDict, total=False):
     :vartype role: MessageRole
     :ivar phase: Known values are: "commentary" and "final_answer".
     :vartype phase: MessagePhase
-    :ivar id:
-    :vartype id: str
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: MessageStatus
     :ivar content: Required. Is either a str type or a [MessageContent] type.
     :vartype content: Union[str, list["MessageContent"]]
     """
@@ -5465,9 +5033,6 @@ class ItemMessage(TypedDict, total=False):
      \"tool\"."""
     phase: Optional[MessagePhase]
     """Known values are: \"commentary\" and \"final_answer\"."""
-    id: str
-    status: MessageStatus
-    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
     content: Required[Union[str, list["MessageContent"]]]
     """Required. Is either a str type or a [MessageContent] type."""
 
@@ -5654,10 +5219,18 @@ class LocalShellToolParam(TypedDict, total=False):
 
     :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
     :vartype type: Literal["local_shell"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     """
 
     type: Required[Literal["local_shell"]]
     """The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
 
 
 class LocalSkillParam(TypedDict, total=False):
@@ -5830,7 +5403,7 @@ class MCPTool(TypedDict, total=False):
     ]
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
-      </docs/guides/tools-remote-mcp#connectors>`__. Currently supported ``connector_id`` values are:
+      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
 
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
@@ -5899,23 +5472,6 @@ class MCPToolRequireApproval(TypedDict, total=False):
     never: "MCPToolFilter"
 
 
-class MemoryOperation(TypedDict, total=False):
-    """Represents a single memory operation (create, update, or delete) performed on a memory item.
-
-    :ivar kind: The type of memory operation being performed. Required. Known values are: "create",
-     "update", and "delete".
-    :vartype kind: MemoryOperationKind
-    :ivar memory_item: The memory item to create, update, or delete. Required.
-    :vartype memory_item: "MemoryItem"
-    """
-
-    kind: Required[MemoryOperationKind]
-    """The type of memory operation being performed. Required. Known values are: \"create\",
-     \"update\", and \"delete\"."""
-    memory_item: Required["MemoryItem"]
-    """The memory item to create, update, or delete. Required."""
-
-
 class MemorySearchItem(TypedDict, total=False):
     """A retrieved memory item from memory search.
 
@@ -5944,6 +5500,10 @@ class MemorySearchPreviewTool(TypedDict, total=False):
     :ivar type: The type of the tool. Always ``memory_search_preview``. Required.
      MEMORY_SEARCH_PREVIEW.
     :vartype type: Literal["memory_search_preview"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar memory_store_name: The name of the memory store to use. Required.
     :vartype memory_store_name: str
     :ivar scope: The namespace used to group and isolate memories, such as a user ID. Limits which
@@ -5959,6 +5519,10 @@ class MemorySearchPreviewTool(TypedDict, total=False):
 
     type: Required[Literal["memory_search_preview"]]
     """The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH_PREVIEW."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     memory_store_name: Required[str]
     """The name of the memory store to use. Required."""
     scope: Required[str]
@@ -5989,8 +5553,6 @@ class MemorySearchToolCallItemParam(TypedDict, total=False):
 class MemorySearchToolCallItemResource(TypedDict, total=False):
     """MemorySearchToolCallItemResource.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6004,9 +5566,10 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
     :vartype status: Literal["in_progress", "searching", "completed", "incomplete", "failed"]
     :ivar results: The results returned from the memory search.
     :vartype results: list["MemorySearchItem"]
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6020,219 +5583,8 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
      Literal[\"incomplete\"], Literal[\"failed\"]"""
     results: Optional[list["MemorySearchItem"]]
     """The results returned from the memory search."""
-
-
-class MemoryStoreDefaultDefinition(TypedDict, total=False):
-    """Default memory store implementation.
-
-    :ivar kind: The kind of the memory store. Required. The default memory store implementation.
-    :vartype kind: Literal["default"]
-    :ivar chat_model: The name or identifier of the chat completion model deployment used for
-     memory processing. Required.
-    :vartype chat_model: str
-    :ivar embedding_model: The name or identifier of the embedding model deployment used for memory
-     processing. Required.
-    :vartype embedding_model: str
-    :ivar options: Default memory store options.
-    :vartype options: "MemoryStoreDefaultOptions"
-    """
-
-    kind: Required[Literal["default"]]
-    """The kind of the memory store. Required. The default memory store implementation."""
-    chat_model: Required[str]
-    """The name or identifier of the chat completion model deployment used for memory processing.
-     Required."""
-    embedding_model: Required[str]
-    """The name or identifier of the embedding model deployment used for memory processing. Required."""
-    options: "MemoryStoreDefaultOptions"
-    """Default memory store options."""
-
-
-class MemoryStoreDefaultOptions(TypedDict, total=False):
-    """Default memory store configurations.
-
-    :ivar user_profile_enabled: Whether to enable user profile extraction and storage. Default is
-     true. Required.
-    :vartype user_profile_enabled: bool
-    :ivar user_profile_details: Specific categories or types of user profile information to extract
-     and store.
-    :vartype user_profile_details: str
-    :ivar chat_summary_enabled: Whether to enable chat summary extraction and storage. Default is
-     true. Required.
-    :vartype chat_summary_enabled: bool
-    """
-
-    user_profile_enabled: Required[bool]
-    """Whether to enable user profile extraction and storage. Default is true. Required."""
-    user_profile_details: str
-    """Specific categories or types of user profile information to extract and store."""
-    chat_summary_enabled: Required[bool]
-    """Whether to enable chat summary extraction and storage. Default is true. Required."""
-
-
-class MemoryStoreDeleteScopeResponse(TypedDict, total=False):
-    """Response for deleting memories from a scope.
-
-    :ivar object: The object type. Always 'memory_store.scope.deleted'. Required.
-     MEMORY_STORE_SCOPE_DELETED.
-    :vartype object: Literal["memory_store.scope.deleted"]
-    :ivar name: The name of the memory store. Required.
-    :vartype name: str
-    :ivar scope: The scope from which memories were deleted. Required.
-    :vartype scope: str
-    :ivar deleted: Whether the deletion operation was successful. Required.
-    :vartype deleted: bool
-    """
-
-    object: Required[Literal["memory_store.scope.deleted"]]
-    """The object type. Always 'memory_store.scope.deleted'. Required. MEMORY_STORE_SCOPE_DELETED."""
-    name: Required[str]
-    """The name of the memory store. Required."""
-    scope: Required[str]
-    """The scope from which memories were deleted. Required."""
-    deleted: Required[bool]
-    """Whether the deletion operation was successful. Required."""
-
-
-class MemoryStoreObject(TypedDict, total=False):
-    """A memory store that can store and retrieve user memories.
-
-    :ivar object: The object type, which is always 'memory_store'. Required. MEMORY_STORE.
-    :vartype object: Literal["memory_store"]
-    :ivar id: The unique identifier of the memory store. Required.
-    :vartype id: str
-    :ivar created_at: The Unix timestamp (seconds) when the memory store was created. Required.
-    :vartype created_at: int
-    :ivar updated_at: The Unix timestamp (seconds) when the memory store was last updated.
-     Required.
-    :vartype updated_at: int
-    :ivar name: The name of the memory store. Required.
-    :vartype name: str
-    :ivar description: A human-readable description of the memory store.
-    :vartype description: str
-    :ivar metadata: Arbitrary key-value metadata to associate with the memory store.
-    :vartype metadata: dict[str, str]
-    :ivar definition: The definition of the memory store. Required.
-    :vartype definition: "MemoryStoreDefinition"
-    """
-
-    object: Required[Literal["memory_store"]]
-    """The object type, which is always 'memory_store'. Required. MEMORY_STORE."""
     id: Required[str]
-    """The unique identifier of the memory store. Required."""
-    created_at: Required[int]
-    """The Unix timestamp (seconds) when the memory store was created. Required."""
-    updated_at: Required[int]
-    """The Unix timestamp (seconds) when the memory store was last updated. Required."""
-    name: Required[str]
-    """The name of the memory store. Required."""
-    description: str
-    """A human-readable description of the memory store."""
-    metadata: dict[str, str]
-    """Arbitrary key-value metadata to associate with the memory store."""
-    definition: Required["MemoryStoreDefinition"]
-    """The definition of the memory store. Required."""
-
-
-class MemoryStoreOperationUsage(TypedDict, total=False):
-    """Usage statistics of a memory store operation.
-
-    :ivar embedding_tokens: The number of embedding tokens. Required.
-    :vartype embedding_tokens: int
-    :ivar input_tokens: The number of input tokens. Required.
-    :vartype input_tokens: int
-    :ivar input_tokens_details: A detailed breakdown of the input tokens. Required.
-    :vartype input_tokens_details: "ResponseUsageInputTokensDetails"
-    :ivar output_tokens: The number of output tokens. Required.
-    :vartype output_tokens: int
-    :ivar output_tokens_details: A detailed breakdown of the output tokens. Required.
-    :vartype output_tokens_details: "ResponseUsageOutputTokensDetails"
-    :ivar total_tokens: The total number of tokens used. Required.
-    :vartype total_tokens: int
-    """
-
-    embedding_tokens: Required[int]
-    """The number of embedding tokens. Required."""
-    input_tokens: Required[int]
-    """The number of input tokens. Required."""
-    input_tokens_details: Required["ResponseUsageInputTokensDetails"]
-    """A detailed breakdown of the input tokens. Required."""
-    output_tokens: Required[int]
-    """The number of output tokens. Required."""
-    output_tokens_details: Required["ResponseUsageOutputTokensDetails"]
-    """A detailed breakdown of the output tokens. Required."""
-    total_tokens: Required[int]
-    """The total number of tokens used. Required."""
-
-
-class MemoryStoreSearchResponse(TypedDict, total=False):
-    """Memory search response.
-
-    :ivar search_id: The unique ID of this search request. Use this value as previous_search_id in
-     subsequent requests to perform incremental searches. Required.
-    :vartype search_id: str
-    :ivar memories: Related memory items found during the search operation. Required.
-    :vartype memories: list["MemorySearchItem"]
-    :ivar usage: Usage statistics associated with the memory search operation. Required.
-    :vartype usage: "MemoryStoreOperationUsage"
-    """
-
-    search_id: Required[str]
-    """The unique ID of this search request. Use this value as previous_search_id in subsequent
-     requests to perform incremental searches. Required."""
-    memories: Required[list["MemorySearchItem"]]
-    """Related memory items found during the search operation. Required."""
-    usage: Required["MemoryStoreOperationUsage"]
-    """Usage statistics associated with the memory search operation. Required."""
-
-
-class MemoryStoreUpdateCompletedResult(TypedDict, total=False):
-    """Memory update result.
-
-    :ivar memory_operations: A list of individual memory operations that were performed during the
-     update. Required.
-    :vartype memory_operations: list["MemoryOperation"]
-    :ivar usage: Usage statistics associated with the memory update operation. Required.
-    :vartype usage: "MemoryStoreOperationUsage"
-    """
-
-    memory_operations: Required[list["MemoryOperation"]]
-    """A list of individual memory operations that were performed during the update. Required."""
-    usage: Required["MemoryStoreOperationUsage"]
-    """Usage statistics associated with the memory update operation. Required."""
-
-
-class MemoryStoreUpdateResponse(TypedDict, total=False):
-    """Provides the status of a memory store update operation.
-
-    :ivar update_id: The unique ID of this update request. Use this value as previous_update_id in
-     subsequent requests to perform incremental updates. Required.
-    :vartype update_id: str
-    :ivar status: The status of the memory update operation. One of "queued", "in_progress",
-     "completed", "failed", or "superseded". Required. Known values are: "queued", "in_progress",
-     "completed", "failed", and "superseded".
-    :vartype status: MemoryStoreUpdateStatus
-    :ivar superseded_by: The update_id the operation was superseded by when status is "superseded".
-    :vartype superseded_by: str
-    :ivar result: The result of memory store update operation when status is "completed".
-    :vartype result: "MemoryStoreUpdateCompletedResult"
-    :ivar error: Error object that describes the error when status is "failed".
-    :vartype error: "Error"
-    """
-
-    update_id: Required[str]
-    """The unique ID of this update request. Use this value as previous_update_id in subsequent
-     requests to perform incremental updates. Required."""
-    status: Required[MemoryStoreUpdateStatus]
-    """The status of the memory update operation. One of \"queued\", \"in_progress\", \"completed\",
-     \"failed\", or \"superseded\". Required. Known values are: \"queued\", \"in_progress\",
-     \"completed\", \"failed\", and \"superseded\"."""
-    superseded_by: str
-    """The update_id the operation was superseded by when status is \"superseded\"."""
-    result: "MemoryStoreUpdateCompletedResult"
-    """The result of memory store update operation when status is \"completed\"."""
-    error: "Error"
-    """Error object that describes the error when status is \"failed\"."""
+    """Required."""
 
 
 class MessageContentInputFileContent(TypedDict, total=False):
@@ -6378,6 +5730,10 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW.
     :vartype type: Literal["fabric_dataagent_preview"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar fabric_dataagent_preview: The fabric data agent tool parameters. Required.
     :vartype fabric_dataagent_preview: "FabricDataAgentToolParameters"
     """
@@ -6385,6 +5741,10 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
     type: Required[Literal["fabric_dataagent_preview"]]
     """The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     fabric_dataagent_preview: Required["FabricDataAgentToolParameters"]
     """The fabric data agent tool parameters. Required."""
 
@@ -6687,8 +6047,6 @@ class OpenApiTool(TypedDict, total=False):
 class OpenApiToolCall(TypedDict, total=False):
     """An OpenAPI tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6704,9 +6062,10 @@ class OpenApiToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6722,13 +6081,13 @@ class OpenApiToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class OpenApiToolCallOutput(TypedDict, total=False):
     """The output of an OpenAPI tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -6745,9 +6104,10 @@ class OpenApiToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -6763,6 +6123,8 @@ class OpenApiToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class OutputContentOutputTextContent(TypedDict, total=False):
@@ -7587,6 +6949,12 @@ class OutputItemMessage(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: The type of the message. Always set to ``message``. Required. MESSAGE.
     :vartype type: Literal["message"]
+    :ivar id: The unique ID of the message. Required.
+    :vartype id: str
+    :ivar status: The status of item. One of ``in_progress``, ``completed``, or ``incomplete``.
+     Populated when items are returned via API. Required. Known values are: "in_progress",
+     "completed", and "incomplete".
+    :vartype status: MessageStatus
     :ivar role: The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``,
      ``critic``, ``discriminator``, ``developer``, or ``tool``. Required. Known values are:
      "unknown", "user", "assistant", "system", "critic", "discriminator", "developer", and "tool".
@@ -7595,10 +6963,6 @@ class OutputItemMessage(TypedDict, total=False):
     :vartype content: list["MessageContent"]
     :ivar phase: Known values are: "commentary" and "final_answer".
     :vartype phase: MessagePhase
-    :ivar id:
-    :vartype id: str
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: MessageStatus
     """
 
     agent_reference: "AgentReference"
@@ -7607,6 +6971,12 @@ class OutputItemMessage(TypedDict, total=False):
     """The response on which the item is created."""
     type: Required[Literal["message"]]
     """The type of the message. Always set to ``message``. Required. MESSAGE."""
+    id: Required[str]
+    """The unique ID of the message. Required."""
+    status: Required[MessageStatus]
+    """The status of item. One of ``in_progress``, ``completed``, or ``incomplete``. Populated when
+     items are returned via API. Required. Known values are: \"in_progress\", \"completed\", and
+     \"incomplete\"."""
     role: Required[MessageRole]
     """The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``, ``critic``,
      ``discriminator``, ``developer``, or ``tool``. Required. Known values are: \"unknown\",
@@ -7616,9 +6986,6 @@ class OutputItemMessage(TypedDict, total=False):
     """The content of the message. Required."""
     phase: Optional[MessagePhase]
     """Known values are: \"commentary\" and \"final_answer\"."""
-    id: str
-    status: MessageStatus
-    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
 
 
 class OutputItemOutputMessage(TypedDict, total=False):
@@ -7705,120 +7072,6 @@ class OutputItemReasoningItem(TypedDict, total=False):
     """The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``. Populated
      when items are returned via API. Is one of the following types: Literal[\"in_progress\"],
      Literal[\"completed\"], Literal[\"incomplete\"]"""
-
-
-class OutputItemReference(TypedDict, total=False):
-    """OutputItemReference.
-
-    :ivar id:
-    :vartype id: str
-    :ivar agent_reference: The agent that created the item.
-    :vartype agent_reference: "AgentReference"
-    :ivar response_id: The response on which the item is created.
-    :vartype response_id: str
-    :ivar type: Required. ITEM_REFERENCE.
-    :vartype type: Literal["item_reference"]
-    """
-
-    id: str
-    agent_reference: "AgentReference"
-    """The agent that created the item."""
-    response_id: str
-    """The response on which the item is created."""
-    type: Required[Literal["item_reference"]]
-    """Required. ITEM_REFERENCE."""
-
-
-class OutputItemRemoteToolCall(TypedDict, total=False):
-    """OutputItemRemoteToolCall.
-
-    :ivar id:
-    :vartype id: str
-    :ivar agent_reference: The agent that created the item.
-    :vartype agent_reference: "AgentReference"
-    :ivar response_id: The response on which the item is created.
-    :vartype response_id: str
-    :ivar type: Required. REMOTE_TOOL_CALL.
-    :vartype type: Literal["remote_function_call"]
-    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
-    :vartype call_id: str
-    :ivar name: The name of the function to run.
-    :vartype name: str
-    :ivar label: The label associated with the current object.
-    :vartype label: str
-    :ivar arguments: A JSON string of the arguments to pass to the function. Required.
-    :vartype arguments: str
-    :ivar status: The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``.
-     Populated when items are returned via API. Required. Is one of the following types:
-     Literal["in_progress"], Literal["completed"], Literal["incomplete"]
-    :vartype status: Literal["in_progress", "completed", "incomplete"]
-    """
-
-    id: str
-    agent_reference: "AgentReference"
-    """The agent that created the item."""
-    response_id: str
-    """The response on which the item is created."""
-    type: Required[Literal["remote_function_call"]]
-    """Required. REMOTE_TOOL_CALL."""
-    call_id: Required[str]
-    """The unique ID of the function tool call generated by the model. Required."""
-    name: str
-    """The name of the function to run."""
-    label: str
-    """The label associated with the current object."""
-    arguments: Required[str]
-    """A JSON string of the arguments to pass to the function. Required."""
-    status: Required[Literal["in_progress", "completed", "incomplete"]]
-    """The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``. Populated
-     when items are returned via API. Required. Is one of the following types:
-     Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
-
-
-class OutputItemRemoteToolCallOutput(TypedDict, total=False):
-    """OutputItemRemoteToolCallOutput.
-
-    :ivar id:
-    :vartype id: str
-    :ivar agent_reference: The agent that created the item.
-    :vartype agent_reference: "AgentReference"
-    :ivar response_id: The response on which the item is created.
-    :vartype response_id: str
-    :ivar type: Required. REMOTE_TOOL_CALL_OUTPUT.
-    :vartype type: Literal["remote_function_call_output"]
-    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
-    :vartype call_id: str
-    :ivar name: The name of the function to run.
-    :vartype name: str
-    :ivar label: The label associated with the current object.
-    :vartype label: str
-    :ivar output: A output of the function tool call.
-    :vartype output: Any
-    :ivar status: The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``.
-     Populated when items are returned via API. Required. Is one of the following types:
-     Literal["in_progress"], Literal["completed"], Literal["incomplete"]
-    :vartype status: Literal["in_progress", "completed", "incomplete"]
-    """
-
-    id: str
-    agent_reference: "AgentReference"
-    """The agent that created the item."""
-    response_id: str
-    """The response on which the item is created."""
-    type: Required[Literal["remote_function_call_output"]]
-    """Required. REMOTE_TOOL_CALL_OUTPUT."""
-    call_id: Required[str]
-    """The unique ID of the function tool call generated by the model. Required."""
-    name: str
-    """The name of the function to run."""
-    label: str
-    """The label associated with the current object."""
-    output: Any
-    """A output of the function tool call."""
-    status: Required[Literal["in_progress", "completed", "incomplete"]]
-    """The status of the item. One of ``in_progress``, ``completed``, or ``incomplete``. Populated
-     when items are returned via API. Required. Is one of the following types:
-     Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
 
 class OutputItemToolSearchCall(TypedDict, total=False):
@@ -7996,7 +7249,7 @@ class OutputMessageContentRefusalContent(TypedDict, total=False):
 
 class Prompt(TypedDict, total=False):
     """Reference to a prompt template and its variables. `Learn more
-    </docs/guides/text?api-mode=responses#reusable-prompts>`__.
+    </docs/guides/text?api-mode=responses#reusable-prompts>`_.
 
     :ivar id: The unique identifier of the prompt template to use. Required.
     :vartype id: str
@@ -8010,118 +7263,6 @@ class Prompt(TypedDict, total=False):
     """The unique identifier of the prompt template to use. Required."""
     version: Optional[str]
     variables: Optional["ResponsePromptVariables"]
-
-
-class PromptAgentDefinition(TypedDict, total=False):
-    """The prompt agent definition.
-
-    :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
-    :vartype rai_config: "RaiConfig"
-    :ivar kind: Required. PROMPT.
-    :vartype kind: Literal["prompt"]
-    :ivar model: The model deployment to use for this agent. Required.
-    :vartype model: str
-    :ivar instructions: A system (or developer) message inserted into the model's context.
-    :vartype instructions: str
-    :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-     will make the output more random, while lower values like 0.2 will make it more focused and
-     deterministic. We generally recommend altering this or ``top_p`` but not both.
-    :vartype temperature: float
-    :ivar top_p: An alternative to sampling with temperature, called nucleus sampling,
-     where the model considers the results of the tokens with top_p probability
-     mass. So 0.1 means only the tokens comprising the top 10% probability mass
-     are considered.
-
-     We generally recommend altering this or ``temperature`` but not both.
-    :vartype top_p: float
-    :ivar reasoning:
-    :vartype reasoning: "Reasoning"
-    :ivar tools: An array of tools the model may call while generating a response. You can specify
-     which tool to use by setting the ``tool_choice`` parameter.
-    :vartype tools: list["Tool"]
-    :ivar tool_choice: How the model should select which tool (or tools) to use when generating a
-     response. See the ``tools`` parameter to see how to specify which tools the model can call. Is
-     either a str type or a ToolChoiceParam type.
-    :vartype tool_choice: Union[str, "ToolChoiceParam"]
-    :ivar text: Configuration options for a text response from the model. Can be plain text or
-     structured JSON data.
-    :vartype text: "PromptAgentDefinitionTextOptions"
-    :ivar structured_inputs: Set of structured inputs that can participate in prompt template
-     substitution or tool argument bindings.
-    :vartype structured_inputs: dict[str, "StructuredInputDefinition"]
-    """
-
-    rai_config: "RaiConfig"
-    """Configuration for Responsible AI (RAI) content filtering and safety features."""
-    kind: Required[Literal["prompt"]]
-    """Required. PROMPT."""
-    model: Required[str]
-    """The model deployment to use for this agent. Required."""
-    instructions: Optional[str]
-    """A system (or developer) message inserted into the model's context."""
-    temperature: Optional[float]
-    """What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output
-     more random, while lower values like 0.2 will make it more focused and deterministic. We
-     generally recommend altering this or ``top_p`` but not both."""
-    top_p: Optional[float]
-    """An alternative to sampling with temperature, called nucleus sampling,
-     where the model considers the results of the tokens with top_p probability
-     mass. So 0.1 means only the tokens comprising the top 10% probability mass
-     are considered.
-
-     We generally recommend altering this or ``temperature`` but not both."""
-    reasoning: Optional["Reasoning"]
-    tools: list["Tool"]
-    """An array of tools the model may call while generating a response. You can specify which tool to
-     use by setting the ``tool_choice`` parameter."""
-    tool_choice: Union[str, "ToolChoiceParam"]
-    """How the model should select which tool (or tools) to use when generating a response. See the
-     ``tools`` parameter to see how to specify which tools the model can call. Is either a str type
-     or a ToolChoiceParam type."""
-    text: "PromptAgentDefinitionTextOptions"
-    """Configuration options for a text response from the model. Can be plain text or structured JSON
-     data."""
-    structured_inputs: dict[str, "StructuredInputDefinition"]
-    """Set of structured inputs that can participate in prompt template substitution or tool argument
-     bindings."""
-
-
-class PromptAgentDefinitionTextOptions(TypedDict, total=False):
-    """Configuration options for a text response from the model. Can be plain text or structured JSON
-    data.
-
-    :ivar format:
-    :vartype format: "TextResponseFormatConfiguration"
-    """
-
-    format: "TextResponseFormatConfiguration"
-
-
-class ProtocolVersionRecord(TypedDict, total=False):
-    """A record mapping for a single protocol and its version.
-
-    :ivar protocol: The protocol type. Required. Known values are: "activity_protocol" and
-     "responses".
-    :vartype protocol: AgentProtocol
-    :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
-    :vartype version: str
-    """
-
-    protocol: Required[AgentProtocol]
-    """The protocol type. Required. Known values are: \"activity_protocol\" and \"responses\"."""
-    version: Required[str]
-    """The version string for the protocol, e.g. 'v0.1.1'. Required."""
-
-
-class RaiConfig(TypedDict, total=False):
-    """Configuration for Responsible AI (RAI) content filtering and safety features.
-
-    :ivar rai_policy_name: The name of the RAI policy to apply. Required.
-    :vartype rai_policy_name: str
-    """
-
-    rai_policy_name: Required[str]
-    """The name of the RAI policy to apply. Required."""
 
 
 class RankingOptions(TypedDict, total=False):
@@ -8244,112 +7385,6 @@ class ReasoningTextContent(TypedDict, total=False):
      \"reasoning_text\"."""
     text: Required[str]
     """The reasoning text from the model. Required."""
-
-
-class RemoteTool(TypedDict, total=False):
-    """RemoteTool.
-
-    :ivar type: Required. REMOTE_TOOL.
-    :vartype type: Literal["remote_tool"]
-    :ivar tool_arguments:
-    :vartype tool_arguments: list["RemoteToolArgument"]
-    """
-
-    type: Required[Literal["remote_tool"]]
-    """Required. REMOTE_TOOL."""
-    tool_arguments: list["RemoteToolArgument"]
-
-
-class RemoteToolArgument(TypedDict, total=False):
-    """RemoteToolArgument.
-
-    :ivar name: The name of the remote tool.
-    :vartype name: str
-    :ivar description: The description of the remote tool.
-    :vartype description: str
-    :ivar arguments: The arguments for the remote tool.
-    :vartype arguments: "RemoteToolArgumentArguments"
-    """
-
-    name: str
-    """The name of the remote tool."""
-    description: str
-    """The description of the remote tool."""
-    arguments: "RemoteToolArgumentArguments"
-    """The arguments for the remote tool."""
-
-
-class RemoteToolArgumentArguments(TypedDict, total=False):
-    """RemoteToolArgumentArguments.
-
-    :ivar connection_id:
-    :vartype connection_id: str
-    :ivar knowledge_sources:
-    :vartype knowledge_sources: list["RemoteToolArgumentArgumentsKnowledgeSource"]
-    """
-
-    connection_id: str
-    knowledge_sources: list["RemoteToolArgumentArgumentsKnowledgeSource"]
-
-
-class RemoteToolArgumentArgumentsKnowledgeSource(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RemoteToolArgumentArgumentsKnowledgeSource.
-
-    :ivar connection_id:
-    :vartype connection_id: str
-    :ivar query_parameters:
-    :vartype query_parameters: dict[str, Any]
-    :ivar index_id:
-    :vartype index_id: str
-    :ivar index_details:
-    :vartype index_details: "RemoteToolArgumentArgumentsKnowledgeSourceIndexDetails"
-    """
-
-    connection_id: str
-    query_parameters: dict[str, Any]
-    index_id: str
-    index_details: "RemoteToolArgumentArgumentsKnowledgeSourceIndexDetails"
-
-
-class RemoteToolArgumentArgumentsKnowledgeSourceIndexDetails(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RemoteToolArgumentArgumentsKnowledgeSourceIndexDetails.
-
-    :ivar index_configuration:
-    :vartype index_configuration:
-     "RemoteToolArgumentArgumentsKnowledgeSourceIndexDetailsIndexConfiguration"
-    """
-
-    index_configuration: "RemoteToolArgumentArgumentsKnowledgeSourceIndexDetailsIndexConfiguration"
-
-
-class RemoteToolArgumentArgumentsKnowledgeSourceIndexDetailsIndexConfiguration(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """RemoteToolArgumentArgumentsKnowledgeSourceIndexDetailsIndexConfiguration.
-
-    :ivar index_name:
-    :vartype index_name: str
-    :ivar index_connection_id:
-    :vartype index_connection_id: str
-    """
-
-    index_name: str
-    index_connection_id: str
-
-
-class RemoteToolChoiceParam(TypedDict, total=False):
-    """RemoteToolChoiceParam.
-
-    :ivar type: Required. REMOTE_TOOL.
-    :vartype type: Literal["remote_tool"]
-    :ivar name: Name of the tool in the remote tool server to use. Required.
-    :vartype name: str
-    """
-
-    type: Required[Literal["remote_tool"]]
-    """Required. REMOTE_TOOL."""
-    name: Required[str]
-    """Name of the tool in the remote tool server to use. Required."""
 
 
 class ResponseAudioDeltaEvent(TypedDict, total=False):
@@ -8730,31 +7765,6 @@ class ResponseCustomToolCallInputDoneEvent(TypedDict, total=False):
     """The complete input data for the custom tool call. Required."""
 
 
-class ResponseError(TypedDict, total=False):
-    """An error object returned when the model fails to generate a Response.
-
-    :ivar code: Required. Known values are: "server_error", "rate_limit_exceeded",
-     "invalid_prompt", "vector_store_timeout", "invalid_image", "invalid_image_format",
-     "invalid_base64_image", "invalid_image_url", "image_too_large", "image_too_small",
-     "image_parse_error", "image_content_policy_violation", "invalid_image_mode",
-     "image_file_too_large", "unsupported_image_media_type", "empty_image_file",
-     "failed_to_download_image", and "image_file_not_found".
-    :vartype code: ResponseErrorCode
-    :ivar message: A human-readable description of the error. Required.
-    :vartype message: str
-    """
-
-    code: Required[ResponseErrorCode]
-    """Required. Known values are: \"server_error\", \"rate_limit_exceeded\", \"invalid_prompt\",
-     \"vector_store_timeout\", \"invalid_image\", \"invalid_image_format\",
-     \"invalid_base64_image\", \"invalid_image_url\", \"image_too_large\", \"image_too_small\",
-     \"image_parse_error\", \"image_content_policy_violation\", \"invalid_image_mode\",
-     \"image_file_too_large\", \"unsupported_image_media_type\", \"empty_image_file\",
-     \"failed_to_download_image\", and \"image_file_not_found\"."""
-    message: Required[str]
-    """A human-readable description of the error. Required."""
-
-
 class ResponseErrorEvent(TypedDict, total=False):
     """Emitted when an error occurs.
 
@@ -8780,6 +7790,31 @@ class ResponseErrorEvent(TypedDict, total=False):
     """Required."""
     sequence_number: Required[int]
     """The sequence number of this event. Required."""
+
+
+class ResponseErrorInfo(TypedDict, total=False):
+    """An error object returned when the model fails to generate a Response.
+
+    :ivar code: Required. Known values are: "server_error", "rate_limit_exceeded",
+     "invalid_prompt", "vector_store_timeout", "invalid_image", "invalid_image_format",
+     "invalid_base64_image", "invalid_image_url", "image_too_large", "image_too_small",
+     "image_parse_error", "image_content_policy_violation", "invalid_image_mode",
+     "image_file_too_large", "unsupported_image_media_type", "empty_image_file",
+     "failed_to_download_image", and "image_file_not_found".
+    :vartype code: ResponseErrorCode
+    :ivar message: A human-readable description of the error. Required.
+    :vartype message: str
+    """
+
+    code: Required[ResponseErrorCode]
+    """Required. Known values are: \"server_error\", \"rate_limit_exceeded\", \"invalid_prompt\",
+     \"vector_store_timeout\", \"invalid_image\", \"invalid_image_format\",
+     \"invalid_base64_image\", \"invalid_image_url\", \"image_too_large\", \"image_too_small\",
+     \"image_parse_error\", \"image_content_policy_violation\", \"invalid_image_mode\",
+     \"image_file_too_large\", \"unsupported_image_media_type\", \"empty_image_file\",
+     \"failed_to_download_image\", and \"image_file_not_found\"."""
+    message: Required[str]
+    """A human-readable description of the error. Required."""
 
 
 class ResponseFailedEvent(TypedDict, total=False):
@@ -9369,16 +8404,16 @@ class ResponseObject(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__.
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype user: str
     :ivar safety_identifier: A stable identifier used to help detect users of your application that
      may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
      each user, with a maximum length of 64 characters. We recommend hashing their username or email
      address, in order to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__.
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype safety_identifier: str
     :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__.
+     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
     :vartype prompt_cache_key: str
     :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
      Literal["flex"], Literal["scale"], Literal["priority"]
@@ -9419,13 +8454,17 @@ class ResponseObject(TypedDict, total=False):
     :ivar completed_at:
     :vartype completed_at: int
     :ivar error: Required.
-    :vartype error: "ResponseError"
+    :vartype error: "ResponseErrorInfo"
     :ivar incomplete_details: Required.
     :vartype incomplete_details: "ResponseIncompleteDetails"
-    :ivar output: An array of content items generated by the model. The length and order of items in
-     the `output` array is dependent on the model's response. Rather than accessing the first item in
-     the `output` array and assuming it's an `assistant` message with the content generated by the
-     model, you might consider using the `output_text` property where supported in SDKs. Required.
+    :ivar output: An array of content items generated by the model.
+
+     * The length and order of items in the `output` array is dependent
+     on the model's response.
+     * Rather than accessing the first item in the `output` array and
+     assuming it's an `assistant` message with the content generated by
+     the model, you might consider using the `output_text` property where
+     supported in SDKs. Required.
     :vartype output: list["OutputItem"]
     :ivar reasoning:
     :vartype reasoning: "Reasoning"
@@ -9456,16 +8495,16 @@ class ResponseObject(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__."""
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
     safety_identifier: str
     """A stable identifier used to help detect users of your application that may be violating
      OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
      maximum length of 64 characters. We recommend hashing their username or email address, in order
      to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__."""
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
     prompt_cache_key: str
     """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__."""
+     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_."""
     service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
      Literal[\"scale\"], Literal[\"priority\"]"""
@@ -9496,15 +8535,19 @@ class ResponseObject(TypedDict, total=False):
     created_at: Required[int]
     """Unix timestamp (in seconds) of when this Response was created. Required."""
     completed_at: Optional[int]
-    error: Required[Optional["ResponseError"]]
+    error: Required[Optional["ResponseErrorInfo"]]
     """Required."""
     incomplete_details: Required[Optional["ResponseIncompleteDetails"]]
     """Required."""
     output: Required[list["OutputItem"]]
-    """An array of content items generated by the model. The length and order of items in the
-     `output` array is dependent on the model's response. Rather than accessing the first item in the
-     `output` array and assuming it's an `assistant` message with the content generated by the model,
-     you might consider using the `output_text` property where supported in SDKs. Required."""
+    """An array of content items generated by the model.
+
+      * The length and order of items in the `output` array is dependent
+      on the model's response.
+      * Rather than accessing the first item in the `output` array and
+      assuming it's an `assistant` message with the content generated by
+      the model, you might consider using the `output_text` property where
+      supported in SDKs. Required."""
     reasoning: Optional["Reasoning"]
     instructions: Required[Optional[Union[str, list["Item"]]]]
     """Required. Is either a str type or a [Item] type."""
@@ -10221,8 +9264,6 @@ class ScrollParam(TypedDict, total=False):
 class SharepointGroundingToolCall(TypedDict, total=False):
     """A SharePoint grounding tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -10236,9 +9277,10 @@ class SharepointGroundingToolCall(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -10252,13 +9294,13 @@ class SharepointGroundingToolCall(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class SharepointGroundingToolCallOutput(TypedDict, total=False):
     """The output of a SharePoint grounding tool call.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -10273,9 +9315,10 @@ class SharepointGroundingToolCallOutput(TypedDict, total=False):
     :ivar status: The status of the tool call. Required. Known values are: "in_progress",
      "completed", "incomplete", and "failed".
     :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -10290,16 +9333,26 @@ class SharepointGroundingToolCallOutput(TypedDict, total=False):
     status: Required[ToolCallStatus]
     """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
      \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class SharepointGroundingToolParameters(TypedDict, total=False):
     """The sharepoint grounding tool parameters.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connections: The project connections attached to this tool. There can be a
      maximum of 1 connection resource attached to the tool.
     :vartype project_connections: list["ToolProjectConnection"]
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connections: list["ToolProjectConnection"]
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool."""
@@ -10311,6 +9364,10 @@ class SharepointPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW.
     :vartype type: Literal["sharepoint_grounding_preview"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar sharepoint_grounding_preview: The sharepoint grounding tool parameters. Required.
     :vartype sharepoint_grounding_preview: "SharepointGroundingToolParameters"
     """
@@ -10318,6 +9375,10 @@ class SharepointPreviewTool(TypedDict, total=False):
     type: Required[Literal["sharepoint_grounding_preview"]]
     """The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW."""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     sharepoint_grounding_preview: Required["SharepointGroundingToolParameters"]
     """The sharepoint grounding tool parameters. Required."""
 
@@ -10363,30 +9424,6 @@ class SpecificFunctionShellParam(TypedDict, total=False):
     """The tool to call. Always ``shell``. Required. SHELL."""
 
 
-class StructuredInputDefinition(TypedDict, total=False):
-    """An structured input that can participate in prompt template substitutions and tool argument
-    binding.
-
-    :ivar description: A human-readable description of the input.
-    :vartype description: str
-    :ivar default_value: The default value for the input if no run-time value is provided.
-    :vartype default_value: Any
-    :ivar schema: The JSON schema for the structured input (optional).
-    :vartype schema: dict[str, Any]
-    :ivar required: Whether the input property is required when the agent is invoked.
-    :vartype required: bool
-    """
-
-    description: str
-    """A human-readable description of the input."""
-    default_value: Any
-    """The default value for the input if no run-time value is provided."""
-    schema: dict[str, Any]
-    """The JSON schema for the structured input (optional)."""
-    required: bool
-    """Whether the input property is required when the agent is invoked."""
-
-
 class StructuredOutputDefinition(TypedDict, total=False):
     """A structured output that can be produced by the agent.
 
@@ -10415,8 +9452,6 @@ class StructuredOutputDefinition(TypedDict, total=False):
 class StructuredOutputsOutputItem(TypedDict, total=False):
     """StructuredOutputsOutputItem.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -10425,9 +9460,10 @@ class StructuredOutputsOutputItem(TypedDict, total=False):
     :vartype type: Literal["structured_outputs"]
     :ivar output: The structured output captured during the response. Required.
     :vartype output: Any
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -10436,6 +9472,8 @@ class StructuredOutputsOutputItem(TypedDict, total=False):
     """Required. STRUCTURED_OUTPUTS."""
     output: Required[Any]
     """The structured output captured during the response. Required."""
+    id: Required[str]
+    """Required."""
 
 
 class SummaryTextContent(TypedDict, total=False):
@@ -10567,7 +9605,7 @@ class ToolChoiceAllowed(TypedDict, total=False):
 
 class ToolChoiceCodeInterpreter(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. CODE_INTERPRETER.
     :vartype type: Literal["code_interpreter"]
@@ -10579,7 +9617,7 @@ class ToolChoiceCodeInterpreter(TypedDict, total=False):
 
 class ToolChoiceComputer(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER.
     :vartype type: Literal["computer"]
@@ -10591,7 +9629,7 @@ class ToolChoiceComputer(TypedDict, total=False):
 
 class ToolChoiceComputerUse(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER_USE.
     :vartype type: Literal["computer_use"]
@@ -10603,7 +9641,7 @@ class ToolChoiceComputerUse(TypedDict, total=False):
 
 class ToolChoiceComputerUsePreview(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER_USE_PREVIEW.
     :vartype type: Literal["computer_use_preview"]
@@ -10630,7 +9668,7 @@ class ToolChoiceCustom(TypedDict, total=False):
 
 class ToolChoiceFileSearch(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. FILE_SEARCH.
     :vartype type: Literal["file_search"]
@@ -10657,7 +9695,7 @@ class ToolChoiceFunction(TypedDict, total=False):
 
 class ToolChoiceImageGeneration(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. IMAGE_GENERATION.
     :vartype type: Literal["image_generation"]
@@ -10687,7 +9725,7 @@ class ToolChoiceMCP(TypedDict, total=False):
 
 class ToolChoiceWebSearchPreview(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW.
     :vartype type: Literal["web_search_preview"]
@@ -10699,7 +9737,7 @@ class ToolChoiceWebSearchPreview(TypedDict, total=False):
 
 class ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
-    built-in tools <https://platform.openai.com/docs/guides/tools>`__.
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
     :vartype type: Literal["web_search_preview_2025_03_11"]
@@ -10712,11 +9750,19 @@ class ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
 class ToolProjectConnection(TypedDict, total=False):
     """A project connection resource.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connection_id: A project connection in a ToolProjectConnectionList attached to
      this tool. Required.
     :vartype project_connection_id: str
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """A project connection in a ToolProjectConnectionList attached to this tool. Required."""
 
@@ -10840,71 +9886,6 @@ class TypeParam(TypedDict, total=False):
      TYPE."""
     text: Required[str]
     """The text to type. Required."""
-
-
-class UpdateAgentFromManifestRequest(TypedDict, total=False):
-    """UpdateAgentFromManifestRequest.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar manifest_id: The manifest ID to import the agent version from. Required.
-    :vartype manifest_id: str
-    :ivar parameter_values: The inputs to the manifest that will result in a fully materialized
-     Agent. Required.
-    :vartype parameter_values: dict[str, Any]
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    manifest_id: Required[str]
-    """The manifest ID to import the agent version from. Required."""
-    parameter_values: Required[dict[str, Any]]
-    """The inputs to the manifest that will result in a fully materialized Agent. Required."""
-
-
-class UpdateAgentRequest(TypedDict, total=False):
-    """UpdateAgentRequest.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar definition: The agent definition. This can be a workflow, hosted agent, or a simple agent
-     definition. Required.
-    :vartype definition: "AgentDefinition"
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    definition: Required["AgentDefinition"]
-    """The agent definition. This can be a workflow, hosted agent, or a simple agent definition.
-     Required."""
 
 
 class UrlCitationBody(TypedDict, total=False):
@@ -11087,6 +10068,10 @@ class WebSearchApproximateLocation(TypedDict, total=False):
 class WebSearchConfiguration(TypedDict, total=False):
     """A web search configuration for bing custom search.
 
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar project_connection_id: Project connection id for grounding with bing custom search.
      Required.
     :vartype project_connection_id: str
@@ -11094,6 +10079,10 @@ class WebSearchConfiguration(TypedDict, total=False):
     :vartype instance_name: str
     """
 
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """Project connection id for grounding with bing custom search. Required."""
     instance_name: Required[str]
@@ -11141,6 +10130,10 @@ class WebSearchTool(TypedDict, total=False):
      for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
      the following types: Literal["low"], Literal["medium"], Literal["high"]
     :vartype search_context_size: Literal["low", "medium", "high"]
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar custom_search_configuration: The project connections attached to this tool. There can be
      a maximum of 1 connection resource attached to the tool.
     :vartype custom_search_configuration: "WebSearchConfiguration"
@@ -11155,6 +10148,10 @@ class WebSearchTool(TypedDict, total=False):
     """High level guidance for the amount of context window space to use for the search. One of
      ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of the following types:
      Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"]"""
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
     custom_search_configuration: "WebSearchConfiguration"
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool."""
@@ -11173,8 +10170,6 @@ class WebSearchToolFilters(TypedDict, total=False):
 class WorkflowActionOutputItem(TypedDict, total=False):
     """WorkflowActionOutputItem.
 
-    :ivar id:
-    :vartype id: str
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
     :ivar response_id: The response on which the item is created.
@@ -11193,9 +10188,10 @@ class WorkflowActionOutputItem(TypedDict, total=False):
      Required. Is one of the following types: Literal["completed"], Literal["failed"],
      Literal["in_progress"], Literal["cancelled"]
     :vartype status: Literal["completed", "failed", "in_progress", "cancelled"]
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    id: str
     agent_reference: "AgentReference"
     """The agent that created the item."""
     response_id: str
@@ -11214,544 +10210,34 @@ class WorkflowActionOutputItem(TypedDict, total=False):
     """Status of the action (e.g., 'in_progress', 'completed', 'failed', 'cancelled'). Required. Is
      one of the following types: Literal[\"completed\"], Literal[\"failed\"],
      Literal[\"in_progress\"], Literal[\"cancelled\"]"""
+    id: Required[str]
+    """Required."""
 
 
-class WorkflowAgentDefinition(TypedDict, total=False):
-    """The workflow agent definition.
+class WorkIQPreviewTool(TypedDict, total=False):
+    """A WorkIQ server-side tool.
 
-    :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
-    :vartype rai_config: "RaiConfig"
-    :ivar kind: Required. WORKFLOW.
-    :vartype kind: Literal["workflow"]
-    :ivar workflow: The CSDL YAML definition of the workflow.
-    :vartype workflow: str
+    :ivar type: The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW.
+    :vartype type: Literal["work_iq_preview"]
+    :ivar work_iq_preview: The WorkIQ tool parameters. Required.
+    :vartype work_iq_preview: "WorkIQPreviewToolParameters"
     """
 
-    rai_config: "RaiConfig"
-    """Configuration for Responsible AI (RAI) content filtering and safety features."""
-    kind: Required[Literal["workflow"]]
-    """Required. WORKFLOW."""
-    workflow: str
-    """The CSDL YAML definition of the workflow."""
+    type: Required[Literal["work_iq_preview"]]
+    """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
+    work_iq_preview: Required["WorkIQPreviewToolParameters"]
+    """The WorkIQ tool parameters. Required."""
 
 
-class CreateAgentRequest1(TypedDict, total=False):
-    """CreateAgentRequest1.
+class WorkIQPreviewToolParameters(TypedDict, total=False):
+    """The WorkIQ tool parameters.
 
-    :ivar name: The unique name that identifies the agent. Name can be used to
-     retrieve/update/delete the agent.
-
-     * Must start and end with alphanumeric characters,
-     * Can contain hyphens in the middle
-     * Must not exceed 63 characters. Required.
-    :vartype name: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar definition: The agent definition. This can be a workflow, hosted agent, or a simple agent
-     definition. Required.
-    :vartype definition: "AgentDefinition"
+    :ivar project_connection_id: The ID of the WorkIQ project connection. Required.
+    :vartype project_connection_id: str
     """
 
-    name: Required[str]
-    """The unique name that identifies the agent. Name can be used to retrieve/update/delete the
-      agent.
-
-      * Must start and end with alphanumeric characters,
-      * Can contain hyphens in the middle
-      * Must not exceed 63 characters. Required."""
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    definition: Required["AgentDefinition"]
-    """The agent definition. This can be a workflow, hosted agent, or a simple agent definition.
-     Required."""
-
-
-class UpdateAgentRequest1(TypedDict, total=False):
-    """UpdateAgentRequest1.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar definition: The agent definition. This can be a workflow, hosted agent, or a simple agent
-     definition. Required.
-    :vartype definition: "AgentDefinition"
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    definition: Required["AgentDefinition"]
-    """The agent definition. This can be a workflow, hosted agent, or a simple agent definition.
-     Required."""
-
-
-class CreateAgentFromManifestRequest1(TypedDict, total=False):
-    """CreateAgentFromManifestRequest1.
-
-    :ivar name: The unique name that identifies the agent. Name can be used to
-     retrieve/update/delete the agent.
-
-     * Must start and end with alphanumeric characters,
-     * Can contain hyphens in the middle
-     * Must not exceed 63 characters. Required.
-    :vartype name: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar manifest_id: The manifest ID to import the agent version from. Required.
-    :vartype manifest_id: str
-    :ivar parameter_values: The inputs to the manifest that will result in a fully materialized
-     Agent. Required.
-    :vartype parameter_values: dict[str, Any]
-    """
-
-    name: Required[str]
-    """The unique name that identifies the agent. Name can be used to retrieve/update/delete the
-      agent.
-
-      * Must start and end with alphanumeric characters,
-      * Can contain hyphens in the middle
-      * Must not exceed 63 characters. Required."""
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    manifest_id: Required[str]
-    """The manifest ID to import the agent version from. Required."""
-    parameter_values: Required[dict[str, Any]]
-    """The inputs to the manifest that will result in a fully materialized Agent. Required."""
-
-
-class UpdateAgentFromManifestRequest1(TypedDict, total=False):
-    """UpdateAgentFromManifestRequest1.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar manifest_id: The manifest ID to import the agent version from. Required.
-    :vartype manifest_id: str
-    :ivar parameter_values: The inputs to the manifest that will result in a fully materialized
-     Agent. Required.
-    :vartype parameter_values: dict[str, Any]
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    manifest_id: Required[str]
-    """The manifest ID to import the agent version from. Required."""
-    parameter_values: Required[dict[str, Any]]
-    """The inputs to the manifest that will result in a fully materialized Agent. Required."""
-
-
-class CreateAgentVersionRequest1(TypedDict, total=False):
-    """CreateAgentVersionRequest1.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar definition: The agent definition. This can be a workflow, hosted agent, or a simple agent
-     definition. Required.
-    :vartype definition: "AgentDefinition"
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    definition: Required["AgentDefinition"]
-    """The agent definition. This can be a workflow, hosted agent, or a simple agent definition.
-     Required."""
-
-
-class CreateAgentVersionFromManifestRequest1(TypedDict, total=False):
-    """CreateAgentVersionFromManifestRequest1.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar manifest_id: The manifest ID to import the agent version from. Required.
-    :vartype manifest_id: str
-    :ivar parameter_values: The inputs to the manifest that will result in a fully materialized
-     Agent. Required.
-    :vartype parameter_values: dict[str, Any]
-    """
-
-    metadata: dict[str, str]
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    description: str
-    """A human-readable description of the agent."""
-    manifest_id: Required[str]
-    """The manifest ID to import the agent version from. Required."""
-    parameter_values: Required[dict[str, Any]]
-    """The inputs to the manifest that will result in a fully materialized Agent. Required."""
-
-
-class CreateMemoryStoreRequest(TypedDict, total=False):
-    """CreateMemoryStoreRequest.
-
-    :ivar name: The name of the memory store. Required.
-    :vartype name: str
-    :ivar description: A human-readable description of the memory store.
-    :vartype description: str
-    :ivar metadata: Arbitrary key-value metadata to associate with the memory store.
-    :vartype metadata: dict[str, str]
-    :ivar definition: The memory store definition. Required.
-    :vartype definition: "MemoryStoreDefinition"
-    """
-
-    name: Required[str]
-    """The name of the memory store. Required."""
-    description: str
-    """A human-readable description of the memory store."""
-    metadata: dict[str, str]
-    """Arbitrary key-value metadata to associate with the memory store."""
-    definition: Required["MemoryStoreDefinition"]
-    """The memory store definition. Required."""
-
-
-class UpdateMemoryStoreRequest(TypedDict, total=False):
-    """UpdateMemoryStoreRequest.
-
-    :ivar description: A human-readable description of the memory store.
-    :vartype description: str
-    :ivar metadata: Arbitrary key-value metadata to associate with the memory store.
-    :vartype metadata: dict[str, str]
-    """
-
-    description: str
-    """A human-readable description of the memory store."""
-    metadata: dict[str, str]
-    """Arbitrary key-value metadata to associate with the memory store."""
-
-
-class SearchMemoriesRequest(TypedDict, total=False):
-    """SearchMemoriesRequest.
-
-    :ivar scope: The namespace that logically groups and isolates memories, such as a user ID.
-     Required.
-    :vartype scope: str
-    :ivar items_property: Items for which to search for relevant memories.
-    :vartype items_property: list["Item"]
-    :ivar previous_search_id: The unique ID of the previous search request, enabling incremental
-     memory search from where the last operation left off.
-    :vartype previous_search_id: str
-    :ivar options: Memory search options.
-    :vartype options: "MemorySearchOptions"
-    """
-
-    scope: Required[str]
-    """The namespace that logically groups and isolates memories, such as a user ID. Required."""
-    items: list["Item"]
-    """Items for which to search for relevant memories."""
-    previous_search_id: str
-    """The unique ID of the previous search request, enabling incremental memory search from where the
-     last operation left off."""
-    options: "MemorySearchOptions"
-    """Memory search options."""
-
-
-class UpdateMemoriesRequest(TypedDict, total=False):
-    """UpdateMemoriesRequest.
-
-    :ivar scope: The namespace that logically groups and isolates memories, such as a user ID.
-     Required.
-    :vartype scope: str
-    :ivar items_property: Conversation items to be stored in memory.
-    :vartype items_property: list["Item"]
-    :ivar previous_update_id: The unique ID of the previous update request, enabling incremental
-     memory updates from where the last operation left off.
-    :vartype previous_update_id: str
-    :ivar update_delay: Timeout period before processing the memory update in seconds. If a new
-     update request is received during this period, it will cancel the current request and reset the
-     timeout. Set to 0 to immediately trigger the update without delay. Defaults to 300 (5 minutes).
-    :vartype update_delay: int
-    """
-
-    scope: Required[str]
-    """The namespace that logically groups and isolates memories, such as a user ID. Required."""
-    items: list["Item"]
-    """Conversation items to be stored in memory."""
-    previous_update_id: str
-    """The unique ID of the previous update request, enabling incremental memory updates from where
-     the last operation left off."""
-    update_delay: int
-    """Timeout period before processing the memory update in seconds. If a new update request is
-     received during this period, it will cancel the current request and reset the timeout. Set to 0
-     to immediately trigger the update without delay. Defaults to 300 (5 minutes)."""
-
-
-class DeleteScopeRequest(TypedDict, total=False):
-    """DeleteScopeRequest.
-
-    :ivar scope: The namespace that logically groups and isolates memories to delete, such as a
-     user ID. Required.
-    :vartype scope: str
-    """
-
-    scope: Required[str]
-    """The namespace that logically groups and isolates memories to delete, such as a user ID.
-     Required."""
-
-
-class CreateConversationBody(TypedDict, total=False):
-    """CreateConversationBody.
-
-    :ivar metadata:
-    :vartype metadata: "Metadata"
-    :ivar items_property:
-    :vartype items_property: list["Item"]
-    """
-
-    metadata: Optional["Metadata"]
-    items: Optional[list["Item"]]
-
-
-class UpdateConversationRequest(TypedDict, total=False):
-    """UpdateConversationRequest.
-
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured         format, and
-     querying for objects via API or the dashboard. Keys are strings with a maximum length of 64
-     characters. Values are strings         with a maximum length of 512 characters. Required.
-    :vartype metadata: "Metadata"
-    """
-
-    metadata: Required[Optional["Metadata"]]
-    """Set of 16 key-value pairs that can be attached to an object. This can be         useful for
-     storing additional information about the object in a structured         format, and querying
-     for objects via API or the dashboard. Keys are strings with a maximum length of 64 characters.
-     Values are strings         with a maximum length of 512 characters. Required."""
-
-
-class CreateConversationItemsRequest(TypedDict, total=False):
-    """CreateConversationItemsRequest.
-
-    :ivar items_property: The items to add to the conversation. You may add up to 20 items at a
-     time. Required.
-    :vartype items_property: list["Item"]
-    """
-
-    items: Required[list["Item"]]
-    """The items to add to the conversation. You may add up to 20 items at a time. Required."""
-
-
-class CreateResponse(TypedDict, total=False):
-    """CreateResponse.
-
-    :ivar metadata:
-    :vartype metadata: "Metadata"
-    :ivar top_logprobs:
-    :vartype top_logprobs: int
-    :ivar temperature:
-    :vartype temperature: float
-    :ivar top_p:
-    :vartype top_p: float
-    :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
-     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
-     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__.
-    :vartype user: str
-    :ivar safety_identifier: A stable identifier used to help detect users of your application that
-     may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
-     each user, with a maximum length of 64 characters. We recommend hashing their username or email
-     address, in order to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__.
-    :vartype safety_identifier: str
-    :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__.
-    :vartype prompt_cache_key: str
-    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
-     Literal["flex"], Literal["scale"], Literal["priority"]
-    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority"]
-    :ivar prompt_cache_retention: Is either a Literal["in_memory"] type or a Literal["24h"] type.
-    :vartype prompt_cache_retention: Literal["in_memory", "24h"]
-    :ivar previous_response_id:
-    :vartype previous_response_id: str
-    :ivar model: The model deployment to use for the creation of this response.
-    :vartype model: str
-    :ivar background:
-    :vartype background: bool
-    :ivar max_tool_calls:
-    :vartype max_tool_calls: int
-    :ivar text:
-    :vartype text: "ResponseTextParam"
-    :ivar tools:
-    :vartype tools: list["Tool"]
-    :ivar tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
-    :vartype tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
-    :ivar prompt:
-    :vartype prompt: "Prompt"
-    :ivar truncation: Is either a Literal["auto"] type or a Literal["disabled"] type.
-    :vartype truncation: Literal["auto", "disabled"]
-    :ivar reasoning:
-    :vartype reasoning: "Reasoning"
-    :ivar input: Is either a str type or a [Item] type.
-    :vartype input: "_unions.InputParam"
-    :ivar include:
-    :vartype include: list[IncludeEnum]
-    :ivar parallel_tool_calls:
-    :vartype parallel_tool_calls: bool
-    :ivar store:
-    :vartype store: bool
-    :ivar instructions:
-    :vartype instructions: str
-    :ivar moderation:
-    :vartype moderation: "ModerationParam"
-    :ivar stream:
-    :vartype stream: bool
-    :ivar stream_options:
-    :vartype stream_options: "ResponseStreamOptions"
-    :ivar conversation: Is either a str type or a ConversationParam_2 type.
-    :vartype conversation: "_unions.ConversationParam"
-    :ivar context_management: Context management configuration for this request.
-    :vartype context_management: list["ContextManagementParam"]
-    :ivar max_output_tokens:
-    :vartype max_output_tokens: int
-    :ivar rai_config:
-    :vartype rai_config: str
-    :ivar internal_metadata:
-    :vartype internal_metadata: "CreateResponseInternalMetadata"
-    :ivar resolved_agent_version:
-    :vartype resolved_agent_version: "AgentVersionObject"
-    :ivar agent_reference: The agent to use for generating the response.
-    :vartype agent_reference: "AgentReference"
-    :ivar structured_inputs: The structured inputs to the response that can participate in prompt
-     template substitution or tool argument bindings.
-    :vartype structured_inputs: dict[str, Any]
-    """
-
-    metadata: Optional["Metadata"]
-    top_logprobs: Optional[int]
-    temperature: Optional[float]
-    top_p: Optional[float]
-    user: str
-    """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
-     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
-     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__."""
-    safety_identifier: str
-    """A stable identifier used to help detect users of your application that may be violating
-     OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
-     maximum length of 64 characters. We recommend hashing their username or email address, in order
-     to avoid sending us any identifying information. `Learn more
-     </docs/guides/safety-best-practices#safety-identifiers>`__."""
-    prompt_cache_key: str
-    """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`__."""
-    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
-    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
-     Literal[\"scale\"], Literal[\"priority\"]"""
-    prompt_cache_retention: Optional[Literal["in_memory", "24h"]]
-    """Is either a Literal[\"in_memory\"] type or a Literal[\"24h\"] type."""
-    previous_response_id: Optional[str]
-    model: str
-    """The model deployment to use for the creation of this response."""
-    background: Optional[bool]
-    max_tool_calls: Optional[int]
-    text: "ResponseTextParam"
-    tools: list["Tool"]
-    tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
-    """Is either a types.ToolChoiceOptions type or a ToolChoiceParam type."""
-    prompt: "Prompt"
-    truncation: Optional[Literal["auto", "disabled"]]
-    """Is either a Literal[\"auto\"] type or a Literal[\"disabled\"] type."""
-    reasoning: Optional["Reasoning"]
-    input: "_unions.InputParam"
-    """Is either a str type or a [Item] type."""
-    include: Optional[list[IncludeEnum]]
-    parallel_tool_calls: Optional[bool]
-    store: Optional[bool]
-    instructions: Optional[str]
-    moderation: Optional["ModerationParam"]
-    stream: Optional[bool]
-    stream_options: Optional["ResponseStreamOptions"]
-    conversation: Optional["_unions.ConversationParam"]
-    """Is either a str type or a ConversationParam_2 type."""
-    context_management: Optional[list["ContextManagementParam"]]
-    """Context management configuration for this request."""
-    max_output_tokens: Optional[int]
-    rai_config: str
-    internal_metadata: "CreateResponseInternalMetadata"
-    resolved_agent_version: "AgentVersionObject"
-    agent_reference: "AgentReference"
-    """The agent to use for generating the response."""
-    structured_inputs: dict[str, Any]
-    """The structured inputs to the response that can participate in prompt template substitution or
-     tool argument bindings."""
+    project_connection_id: Required[str]
+    """The ID of the WorkIQ project connection. Required."""
 
 
 class CompactResponseMethodPublicBody(TypedDict, total=False):
@@ -11855,12 +10341,12 @@ Tool = Union[
     MemorySearchPreviewTool,
     NamespaceToolParam,
     OpenApiTool,
-    RemoteTool,
     SharepointPreviewTool,
     FunctionShellToolParam,
     ToolSearchToolParam,
     WebSearchTool,
     WebSearchPreviewTool,
+    WorkIQPreviewTool,
 ]
 OutputItem = Union[
     A2AToolCall,
@@ -11890,7 +10376,6 @@ OutputItem = Union[
     OutputItemFunctionToolCall,
     OutputItemFunctionToolCallOutput,
     OutputItemImageGenToolCall,
-    OutputItemReference,
     OutputItemLocalShellToolCall,
     OutputItemLocalShellToolCallOutput,
     OutputItemMcpApprovalRequest,
@@ -11904,8 +10389,6 @@ OutputItem = Union[
     OpenApiToolCallOutput,
     OutputItemOutputMessage,
     OutputItemReasoningItem,
-    OutputItemRemoteToolCall,
-    OutputItemRemoteToolCallOutput,
     SharepointGroundingToolCall,
     SharepointGroundingToolCallOutput,
     OutputItemFunctionShellCall,
@@ -11947,7 +10430,6 @@ Item = Union[
     ToolSearchOutputItemParam,
     ItemWebSearchToolCall,
 ]
-AgentDefinition = Union[HostedAgentDefinition, PromptAgentDefinition, WorkflowAgentDefinition]
 Annotation = Union[ContainerFileCitationBody, FileCitationBody, FilePath, UrlCitationBody]
 ApplyPatchFileOperation = Union[
     ApplyPatchCreateFileOperation, ApplyPatchDeleteFileOperation, ApplyPatchUpdateFileOperation
@@ -12028,29 +10510,11 @@ ItemField = Union[
     ItemFieldToolSearchOutput,
     ItemFieldWebSearchToolCall,
 ]
-MemoryStoreDefinition = Union[MemoryStoreDefaultDefinition]
 ModerationEntry = Union[ModerationErrorBody, ModerationResultBody]
 OpenApiAuthDetails = Union[OpenApiAnonymousAuthDetails, OpenApiManagedAuthDetails, OpenApiProjectConnectionAuthDetails]
 OutputContent = Union[OutputContentOutputTextContent, OutputContentReasoningTextContent, OutputContentRefusalContent]
 OutputMessageContent = Union[OutputMessageContentOutputTextContent, OutputMessageContentRefusalContent]
 RealtimeMCPError = Union[RealtimeMCPHTTPError, RealtimeMCPProtocolError, RealtimeMCPToolExecutionError]
-ToolChoiceParam = Union[
-    ToolChoiceAllowed,
-    SpecificApplyPatchParam,
-    ToolChoiceCodeInterpreter,
-    ToolChoiceComputer,
-    ToolChoiceComputerUse,
-    ToolChoiceComputerUsePreview,
-    ToolChoiceCustom,
-    ToolChoiceFileSearch,
-    ToolChoiceFunction,
-    ToolChoiceImageGeneration,
-    ToolChoiceMCP,
-    RemoteToolChoiceParam,
-    SpecificFunctionShellParam,
-    ToolChoiceWebSearchPreview,
-    ToolChoiceWebSearchPreview20250311,
-]
 ResponseStreamEvent = Union[
     ResponseErrorEvent,
     ResponseAudioDeltaEvent,
@@ -12105,6 +10569,22 @@ ResponseStreamEvent = Union[
     ResponseWebSearchCallCompletedEvent,
     ResponseWebSearchCallInProgressEvent,
     ResponseWebSearchCallSearchingEvent,
+]
+ToolChoiceParam = Union[
+    ToolChoiceAllowed,
+    SpecificApplyPatchParam,
+    ToolChoiceCodeInterpreter,
+    ToolChoiceComputer,
+    ToolChoiceComputerUse,
+    ToolChoiceComputerUsePreview,
+    ToolChoiceCustom,
+    ToolChoiceFileSearch,
+    ToolChoiceFunction,
+    ToolChoiceImageGeneration,
+    ToolChoiceMCP,
+    SpecificFunctionShellParam,
+    ToolChoiceWebSearchPreview,
+    ToolChoiceWebSearchPreview20250311,
 ]
 TextResponseFormatConfiguration = Union[
     TextResponseFormatConfigurationResponseFormatJsonObject,

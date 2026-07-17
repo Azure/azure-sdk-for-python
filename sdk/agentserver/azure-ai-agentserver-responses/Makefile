@@ -10,7 +10,6 @@
 OUTPUT_DIR  ?= azure/ai/agentserver/responses/models/_generated
 TYPESPEC_DIR ?= type_spec
 TEMP_TSP_DIR := $(TYPESPEC_DIR)/TempTypeSpecFiles
-TSP_SOURCE_ROOT := $(TEMP_TSP_DIR)/src
 TEMP_OUTPUT_DIR := .tmp_typeddict_codegen
 TYPESPEC_PYTHON_EMITTER_PATH ?=
 TYPESPEC_HTTP_CLIENT_PYTHON_PATH ?=
@@ -18,7 +17,7 @@ OPENAPI_SPEC ?= $(TEMP_TSP_DIR)/Foundry/openapi.virtual-public-preview.yaml
 VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
 OVERLAY ?= _scripts/validation-overlay.yaml
-CONTRACTS_DIR := $(TSP_SOURCE_ROOT)/sdk-service-agents-contracts
+CONTRACTS_DIR := $(TEMP_TSP_DIR)/sdk-service-agentserver-contracts
 
 .PHONY: generate-models generate-validators generate-openapi generate-contracts clean install-typespec-deps
 
@@ -63,7 +62,7 @@ generate-openapi:
 		echo Error: TypeSpec sources not found. Run 'make install-typespec-deps' first. 1>&2 && exit /b 1 \
 	)
 	@echo Compiling TypeSpec to OpenAPI spec...
-	cd /d $(TSP_SOURCE_ROOT) && npx tsp compile sdk-service-agents-contracts\client.tsp --emit @typespec/openapi3 --option "@typespec/openapi3.emitter-output-dir=$(abspath $(dir $(OPENAPI_SPEC)))"
+	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @typespec/openapi3 --option "@typespec/openapi3.emitter-output-dir=$(abspath $(dir $(OPENAPI_SPEC)))"
 	@if not exist "$(OPENAPI_SPEC)" (echo Error: OpenAPI spec was not generated at $(OPENAPI_SPEC). 1>&2 && exit /b 1)
 	@echo OpenAPI spec generated at $(OPENAPI_SPEC)
 else
@@ -77,7 +76,7 @@ generate-openapi:
 		exit 1; \
 	}
 	@echo "Compiling TypeSpec → OpenAPI spec..."
-	cd $(TSP_SOURCE_ROOT) && npx tsp compile sdk-service-agents-contracts/client.tsp --emit @typespec/openapi3 --option "@typespec/openapi3.emitter-output-dir=$(abspath $(dir $(OPENAPI_SPEC)))"
+	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @typespec/openapi3 --option "@typespec/openapi3.emitter-output-dir=$(abspath $(dir $(OPENAPI_SPEC)))"
 	@test -f "$(OPENAPI_SPEC)" || { \
 		echo "Error: OpenAPI spec was not generated at $(OPENAPI_SPEC)." >&2; \
 		exit 1; \
@@ -106,7 +105,7 @@ generate-models:
 	@echo Generating local Python TypedDict models...
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
 	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
-	cd /d $(TSP_SOURCE_ROOT) && npx tsp compile sdk-service-agents-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
 	python _scripts\extract_model_contracts.py --emitter-output-root "$(TEMP_OUTPUT_DIR)" --generated-root "$(OUTPUT_DIR)"
 	@if not exist "$(OUTPUT_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
 	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
@@ -134,7 +133,7 @@ generate-models:
 	@echo "Generating local Python TypedDict models..."
 	rm -rf $(OUTPUT_DIR)
 	rm -rf $(TEMP_OUTPUT_DIR)
-	cd $(TSP_SOURCE_ROOT) && npx tsp compile sdk-service-agents-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
 	python _scripts/extract_model_contracts.py --emitter-output-root "$(TEMP_OUTPUT_DIR)" --generated-root "$(OUTPUT_DIR)"
 	@test -d $(OUTPUT_DIR) || { \
 		echo "Error: generated model package was not found." >&2; \

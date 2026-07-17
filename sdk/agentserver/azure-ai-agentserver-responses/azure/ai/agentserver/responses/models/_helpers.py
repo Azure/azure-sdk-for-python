@@ -230,8 +230,6 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
     if isinstance(instr, str):
         return [
             {
-                "id": "",
-                "status": "completed",
                 "type": "message",
                 "role": MessageRole.DEVELOPER,
                 "content": [{"type": "input_text", "text": instr}],
