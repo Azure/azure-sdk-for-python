@@ -61,5 +61,6 @@ verifytypes = false
 latestdependency = false
 pylint = true
 type_check_samples = false
+apistub = false
 
 [tool.uv.sources]
