@@ -57,6 +57,25 @@ class TestInvokeEventSync:
         assert result.data_type == WebPubSubDataType.TEXT
         assert result.invocation_id is not None
 
+    def test_response_received_during_send(self):
+        """invoke_event handles a response that arrives before it starts waiting."""
+        client = _make_client()
+
+        def fake_send(message, **kwargs):
+            client._invocation_map.resolve(
+                InvokeResponseMessage(
+                    invocation_id=message.invocation_id,
+                    success=True,
+                    data_type=WebPubSubDataType.TEXT,
+                    data="pong",
+                )
+            )
+
+        with patch.object(client, "_send_message", side_effect=fake_send):
+            result = client.invoke_event("echo", "ping", WebPubSubDataType.TEXT)
+
+        assert result.data == "pong"
+
     def test_request_response_correlation_json(self):
         """invoke_event returns the correct InvokeEventResult for a successful JSON response."""
         client = _make_client()

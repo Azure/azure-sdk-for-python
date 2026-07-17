@@ -814,22 +814,25 @@ class WebPubSubClient(
         )
 
         try:
-            with entry.cv:
-                try:
-                    self._send_message(invoke_message, **kwargs)
-                except Exception as e:
-                    invocation_error = (
-                        e
-                        if isinstance(e, InvocationError)
-                        else InvocationError(
-                            str(e) if str(e) else "Failed to send invocation message.",
-                            invocation_id=invocation_id,
-                        )
+            try:
+                self._send_message(invoke_message, **kwargs)
+            except Exception as e:
+                invocation_error = (
+                    e
+                    if isinstance(e, InvocationError)
+                    else InvocationError(
+                        str(e) if str(e) else "Failed to send invocation message.",
+                        invocation_id=invocation_id,
                     )
-                    self._invocation_map.reject(invocation_id, invocation_error)
-                    raise invocation_error from e
+                )
+                self._invocation_map.reject(invocation_id, invocation_error)
+                raise invocation_error from e
 
-                notified = entry.cv.wait(timeout)
+            with entry.cv:
+                completed = entry.cv.wait_for(
+                    lambda: entry.result is not None or entry.error is not None,
+                    timeout,
+                )
 
             if entry.error:
                 raise entry.error
@@ -837,14 +840,16 @@ class WebPubSubClient(
             if entry.result is None:
                 raise InvocationError(
                     "Timeout while waiting for invoke response."
-                    if not notified
+                    if not completed
                     else "No invoke response received.",
                     invocation_id=invocation_id,
                 )
 
             return self._map_invoke_response(entry.result)
-        except Exception as e: # pylint: disable=broad-except
-            should_cancel = isinstance(e, InvocationError) and e.error_detail is None
+        except Exception as e:  # pylint: disable=broad-except
+            should_cancel = (
+                entry.result is None and isinstance(e, InvocationError) and e.error_detail is None
+            )
             if should_cancel:
                 self._send_cancel_invocation(invocation_id)
             raise

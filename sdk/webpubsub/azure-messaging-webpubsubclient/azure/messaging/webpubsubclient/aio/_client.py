@@ -762,7 +762,9 @@ class WebPubSubClient(
                 invocation_id=invocation_id,
             ) from e
         except Exception as e: # pylint: disable=broad-except
-            should_cancel = isinstance(e, InvocationError) and e.error_detail is None
+            should_cancel = (
+                 entry.result is None and isinstance(e, InvocationError) and e.error_detail is None
+             )
             if should_cancel:
                 await self._send_cancel_invocation(invocation_id)
             raise

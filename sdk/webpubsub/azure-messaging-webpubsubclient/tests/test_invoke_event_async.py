@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Client-level mocktests for invoke_event (async) exercising request/response
+"""Client-level mock tests for invoke_event (async) exercising request/response
 correlation, timeout, error mapping and disconnect rejection.
 """
 

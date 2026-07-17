@@ -105,7 +105,7 @@ with client:
         )
         print(f"Invocation result: {result.data}")
     except InvocationError as e:
-        print(f"Invocation timed out: {e}")
+        print(f"Invocation failed: {e}")
 ```
 
 _Streaming and service-initiated invocations are not yet supported._
