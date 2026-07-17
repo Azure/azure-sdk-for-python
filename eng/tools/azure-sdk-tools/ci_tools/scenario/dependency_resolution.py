@@ -29,6 +29,29 @@ DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 PKGS_TXT_FILE = "packages.txt"
 
+# Internal Azure Artifacts (CFS) feed used when no usable index is configured. Version resolution
+# below builds a ``PyPIClient`` whose backend is chosen from ``PIP_INDEX_URL``: an Azure Artifacts
+# URL selects the AzDO REST backend, anything else falls back to pypi.org. Under the ``CFSClean``
+# network isolation policy, pypi.org egress is blocked, so an unset or pypi.org index would make
+# resolution fail. Mirror the default applied by ``azpysdk.main`` so shared resolution always
+# targets the CFS feed unless an Azure Artifacts index is already set.
+CFS_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+
+
+def _ensure_resolution_index() -> None:
+    """Point ``PIP_INDEX_URL`` at the CFS feed unless an Azure Artifacts index is already set.
+
+    This keeps ``PyPIClient`` on its AzDO backend during version resolution, which is required
+    under the ``CFSClean`` policy that blocks pypi.org.
+    """
+
+    current = os.environ.get("PIP_INDEX_URL", "")
+    if "pkgs.dev.azure.com" in current:
+        return
+    if current:
+        logger.info("Overriding PIP_INDEX_URL %s with CFS feed for dependency resolution.", current)
+    os.environ["PIP_INDEX_URL"] = CFS_INDEX_URL
+
 # GENERIC_OVERRIDES dictionaries pair a specific dependency with a MINIMUM or MAXIMUM inclusive bound.
 # During LATEST and MINIMUM dependency checks, we sometimes need to ignore versions for various compatibility
 # reasons.
@@ -120,6 +143,8 @@ def install_dependent_packages(
     """
 
     python_exe = python_executable or sys.executable
+
+    _ensure_resolution_index()
 
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
     override_added_packages: List[str] = []
