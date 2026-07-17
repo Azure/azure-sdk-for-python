@@ -6,6 +6,3 @@ http://localhost:8000/samples/pyodide_integration
 https://pypi.org/project/azure-mynewpackage/
 https://aka.ms/azsdk/python/migrate/my-new-package
 https://github.com/Azure/azure-sdk-for-python/compare/main..
-https://aka.ms/azsdk/foundry/hosted-agents
-https://aka.ms/azsdk/foundry/activity-protocol
-https://aka.ms/azsdk/foundry/quickstarts

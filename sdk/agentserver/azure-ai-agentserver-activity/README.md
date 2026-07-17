@@ -150,10 +150,7 @@ created with `request_handler=...` does not expose the M365 surface.
 
 ## Next steps
 
-- Review the [Azure AI Hosted Agent documentation](https://aka.ms/azsdk/foundry/hosted-agents)
-- Explore the [Activity Protocol specification](https://aka.ms/azsdk/foundry/activity-protocol)
 - Check the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) package for base host functionality
-- Learn about deployment patterns in [Foundry quickstarts](https://aka.ms/azsdk/foundry/quickstarts)
 
 ## Contributing
 
