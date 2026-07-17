@@ -18,10 +18,6 @@
 # counterpart), which would otherwise disappear from the breaking-change / changelog output.
 # --------------------------------------------------------------------------------------------
 
-import sys
-import os
-sys.path.append(os.path.abspath("../../scripts/breaking_changes_checker"))
-
 
 class ShadowTypesModuleChecker:
     def run_check(self, breaking_changes: list, features_added: list, *, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> tuple[list, list]:
