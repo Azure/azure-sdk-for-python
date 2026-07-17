@@ -745,7 +745,20 @@ def resolve_compatible_package(package_name: str, immutable_requirements: List[R
                 versions = [v for v in versions if not v.is_prerelease]
 
         for version in versions:
-            version_release = pypi.project_release(package_name, version).get("info", {}).get("requires_dist", [])
+            # ``project_release`` reads per-version metadata from the PyPI JSON API. Under the
+            # ``CFSClean`` network isolation policy pypi.org is unreachable, so this best-effort
+            # compatibility walk cannot fetch metadata. Treat an unreachable endpoint as "no info"
+            # and continue rather than hard-failing the entire dependency check.
+            try:
+                version_release = pypi.project_release(package_name, version).get("info", {}).get("requires_dist", [])
+            except Exception as e:
+                logging.warning(
+                    "Unable to retrieve release metadata for %s==%s while resolving a compatible version: %s",
+                    package_name,
+                    version,
+                    e,
+                )
+                continue
 
             if version_release:
                 requirements_for_dev_req = [Requirement(r) for r in version_release]
