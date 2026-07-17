@@ -19,7 +19,6 @@ from unittest.mock import Mock, patch
 
 from helpers import build_aad_response, get_discovery_response, id_token_claims, GET_TOKEN_METHODS
 
-
 # fake object for tests which need to exercise request_token but don't care about its return value
 REQUEST_TOKEN_RESULT = build_aad_response(
     access_token="***",
@@ -182,6 +181,7 @@ def test_scopes_round_trip(get_token_method):
 @pytest.mark.parametrize(
     "authority,expected_scope",
     (
+        (KnownAuthorities.AZURE_BLEUCLOUD, "https://management.sovcloud-api.fr//.default"),
         (KnownAuthorities.AZURE_CHINA, "https://management.core.chinacloudapi.cn//.default"),
         (KnownAuthorities.AZURE_GOVERNMENT, "https://management.core.usgovcloudapi.net//.default"),
         (KnownAuthorities.AZURE_PUBLIC_CLOUD, "https://management.core.windows.net//.default"),
