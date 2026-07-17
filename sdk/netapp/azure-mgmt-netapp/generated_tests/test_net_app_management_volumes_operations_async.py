@@ -53,6 +53,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "backupId": "str",
                         "baremetalTenantId": "str",
                         "breakthroughMode": "str",
+                        "breakthroughModeOld": "str",
                         "capacityPoolResourceId": "str",
                         "cloneProgress": 0,
                         "coolAccess": bool,
@@ -120,10 +121,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "isRestoring": bool,
                         "kerberosEnabled": bool,
                         "keyVaultPrivateEndpointResourceId": "str",
-                        "language": "str",
-                        "largeVolumeType": "str",
                         "ldapEnabled": bool,
-                        "ldapServerType": "str",
                         "maximumNumberOfFiles": 0,
                         "mountTargets": [
                             {"fileSystemId": "str", "ipAddress": "str", "mountTargetId": "str", "smbServerFqdn": "str"}
