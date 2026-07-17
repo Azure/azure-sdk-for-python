@@ -32,7 +32,7 @@ This guide walks you through how to investigate failures, common errors in the `
 
     ```Shell
     # <mySubscriptionID>: Subscription ID of the Azure AI Foundry hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
-    # <myResourceGroupName>: Resource group of the Azure AI Foundry hub's linked storage account.
+    # <myResourceGroupName>: Resource group of the Microsoft Foundry hub's linked storage account.
     # <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
 
     az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
