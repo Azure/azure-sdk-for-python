@@ -65,7 +65,7 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-    from .._common.auto_lock_renewer import AutoLockRenewer
+    from ._async_auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -527,6 +527,17 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
     async def _close_handler(self):
         self._message_iter = None
+        if (
+            self._handler
+            and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK
+            and not self._session
+        ):
+            # Drain the link and release buffered/in-flight messages so they are not
+            # left locked at the broker until lock expiry (delaying redelivery,
+            # inflating delivery count). Non-session gate matches .NET; the PEEK_LOCK
+            # gate is Python-specific (a pre-settled RECEIVE_AND_DELETE delivery
+            # cannot be released-settled).
+            await self._amqp_transport.drain_and_release_messages_async(self._handler)
         await super(ServiceBusReceiver, self)._close_handler()
 
     @property

@@ -10419,6 +10419,7 @@ namespace azure.ai.ml.operations
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
+                label: Optional[str] = None, 
                 **kwargs: Any
             ) -> DeploymentTemplate: ...
 
