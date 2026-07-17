@@ -18,6 +18,10 @@ jobs:
         inputs:
           versionSpec: '3.13'
 
+      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+        parameters:
+          EnableTwineAuth: false
+
       - pwsh: |
           python -m pip install -r eng/ci_tools.txt
         displayName: Install Dependencies
