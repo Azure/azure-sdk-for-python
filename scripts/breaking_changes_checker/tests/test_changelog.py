@@ -350,6 +350,25 @@ def test_shadow_types_module_member_change_deduped_across_naming():
     assert bc_out[0][2] == "azure.mgmt.computelimit.models"
 
 
+def test_shadow_types_module_class_name_matched_exactly():
+    # Class names are compared exactly (not snake_case normalized), so a `types` class whose
+    # name only collides with a differently-named `models` class after normalization is kept.
+    checker = ShadowTypesModuleChecker()
+    features_added = [
+        # Different class names that would collide if class names were snake_cased
+        # (`FooBar` -> `foo_bar`, `Foo_Bar` -> `foo_bar`).
+        ("Added model `{}`", "AddedClass", "azure.mgmt.computelimit.models", "Foo_Bar"),
+        ("Added model `{}`", "AddedClass", "azure.mgmt.computelimit.types", "FooBar"),
+    ]
+
+    _, fa_out = checker.run_check(
+        [], features_added, diff={}, stable_nodes={}, current_nodes={}
+    )
+
+    # No exact class-name match in `models`, so the `types` entry is preserved.
+    assert len(fa_out) == 2
+
+
 def test_new_class_property_added_init():
     # Testing if a property is added both in the init and at the class level that we only get 1 report for it
     current = {

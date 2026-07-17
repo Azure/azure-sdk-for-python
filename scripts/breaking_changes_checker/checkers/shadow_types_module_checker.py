@@ -15,9 +15,10 @@
 # A `types` entry is only dropped when the sibling `models` module reports the *same* change
 # (same change type and arguments, with the module substituted). This ensures we never silently
 # drop a change that only exists on the `types` side (which would otherwise disappear from the
-# breaking-change / changelog output). Member names are normalized to snake_case before
-# comparison because the `types` TypedDicts expose wire names (e.g. `serviceTreeId`) while the
-# `models` classes expose the Python attribute names (e.g. `service_tree_id`).
+# breaking-change / changelog output). Class names and semantic values (type strings, defaults)
+# are compared exactly; only the member-name position is normalized to snake_case, because the
+# `types` TypedDicts expose wire names (e.g. `serviceTreeId`) while the `models` classes expose
+# the Python attribute names (e.g. `service_tree_id`).
 # --------------------------------------------------------------------------------------------
 
 import re
@@ -40,10 +41,16 @@ class ShadowTypesModuleChecker:
                 return None
             return module_name[: -len("types")] + "models"
 
-        def _normalized_payload(change, module):
-            # (change_type, module, *args) with member/class names normalized to snake_case so
-            # that `types` wire names match the corresponding `models` attribute names.
-            return (change[1], module) + tuple(_to_snake_case(arg) for arg in change[3:])
+        def _match_key(change, module):
+            # Key is (change_type, module, class_name, [member_name], *rest). The class name
+            # (args[0]) and any trailing semantic values are compared exactly; only the member
+            # name (args[1]) is normalized so that `types` wire names match `models` attribute
+            # names.
+            args = change[3:]
+            normalized_args = tuple(
+                _to_snake_case(arg) if index == 1 else arg for index, arg in enumerate(args)
+            )
+            return (change[1], module) + normalized_args
 
         def _is_shadow_duplicate(change, changes_list) -> bool:
             # The module name is the third element of every reported change tuple and the
@@ -54,11 +61,11 @@ class ShadowTypesModuleChecker:
             if len(change) <= 3:
                 # Module-level change with no class to match against; keep it to be safe.
                 return False
-            target = _normalized_payload(change, sibling_models)
+            target = _match_key(change, sibling_models)
             for candidate in changes_list:
                 if candidate is change or candidate[2] != sibling_models:
                     continue
-                if _normalized_payload(candidate, candidate[2]) == target:
+                if _match_key(candidate, candidate[2]) == target:
                     return True
             return False
 
