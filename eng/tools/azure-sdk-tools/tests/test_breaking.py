@@ -39,6 +39,7 @@ def _run_breaking(args, tmp_path):
     fake_parsed.folder = str(tmp_path)
     fake_parsed.name = "azure-core"
 
+    original_cwd = os.getcwd()
     with patch("azpysdk.breaking.set_envvar_defaults"), patch(
         "azpysdk.breaking.install_into_venv"
     ) as install_into_venv, patch("azpysdk.breaking.create_package_and_install") as create_package_and_install, patch(
@@ -50,7 +51,6 @@ def _run_breaking(args, tmp_path):
     ), patch.object(
         chk, "install_dev_reqs"
     ) as install_dev_reqs:
-original_cwd = os.getcwd()
         try:
             result = chk.run(args)
         finally:
